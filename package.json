@@ -27,8 +27,8 @@
     "prepublish": "npm run build"
   },
   "dependencies": {
-    "react": "^15.5.4",
-    "react-dom": "^15.5.4",
+    "react": "^15.6.0",
+    "react-dom": "^15.6.0",
     "recompose": "^0.23.5",
     "yup": "^0.21.3"
   },
@@ -51,8 +51,9 @@
     "webpack": "^2.6.1"
   },
   "peerDependencies": {
-    "react": "^15.5.4",
-    "react-dom": "^15.5.4"
+    "react": "^15.6.0",
+    "react-dom": "^15.6.0",
+    "yup": "^0.21.3"
   },
   "jest": {
     "transform": {

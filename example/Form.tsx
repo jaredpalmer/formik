@@ -1,11 +1,9 @@
-import './App.css';
-
 import * as React from 'react';
 import * as yup from 'yup';
 
 import Formik, { InjectedFormikProps } from 'formik';
 
-export interface FormFixtureProps {
+export interface FormProps {
   email: string;
   firstName: string;
   social: {
@@ -13,23 +11,21 @@ export interface FormFixtureProps {
   };
 }
 
-interface FormFixtureState {
+interface FormValues {
   email: string;
   firstName: string;
   facebook: string;
 }
 
-interface FormFixturePayload {
-  data: FormFixtureState;
+interface FormPayload {
+  data: FormValues;
 }
 
 function Form({
   onSubmit,
-  email,
-  firstName,
-  facebook,
+  values: { email, firstName, facebook },
   onChange,
-}: FormFixtureState & InjectedFormikProps) {
+}: InjectedFormikProps<FormValues>) {
   return (
     <form onSubmit={onSubmit}>
       <input
@@ -53,23 +49,38 @@ function Form({
         onChange={onChange}
         placeholder="facebook username"
       />
+      <button type="submit">Submit</button>
     </form>
   );
 }
 
-export default Formik<FormFixtureProps, FormFixtureState, FormFixturePayload>({
+export default Formik<FormProps, FormValues, FormPayload>({
   displayName: 'TestForm',
-  mapPropsToFormState: ({ email, firstName, social }) => ({
+  mapPropsToValues: ({ email, firstName, social }) => ({
     email,
     firstName,
     ...social,
   }),
-  mapFormStateToPayload: formState => ({ data: formState }),
-  handleSubmit: payload => {
-    console.log(payload);
-  },
+  mapValuesToPayload: values => ({ data: values }),
   validationSchema: yup.object().shape({
     email: yup.string().email().min(5).required(),
-    password: yup.string().min(5).required(),
+    firstName: yup.string().min(5).required(),
+    facebook: yup.string(),
   }),
-})(Form);
+  handleSubmit: (payload, { props, setSubmitting }) => {
+    setSubmitting(true);
+    callMyApi(payload)
+      .then(res => {
+        setSubmitting(false);
+        MyToast.show({
+          message: 'Success!'
+        });
+      }, err => => {
+        setSubmitting(false);
+        MyToast.show({
+          message: 'Error!'
+        });
+      });
+  },
+ 
+})(Form as any);

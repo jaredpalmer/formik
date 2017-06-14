@@ -1,7 +1,3 @@
-// import compose from 'recompose/compose';
-// import mapProps from 'recompose/mapProps';
-// import setDisplayName from 'recompose/setDisplayName';
-// import withState from 'recompose/withState';
 import {
   ComponentEnhancer,
   compose,
@@ -60,34 +56,46 @@ export function validateFormData<T>(
   );
 }
 
-export interface FormikConfig<Props, FormState, Payload> {
+export interface FormikConfig<Props, Values, Payload> {
+  /* Component's display  name */
   displayName: string;
-  mapPropsToFormState?: (props: Props) => FormState;
-  mapFormStateToPayload?: (formState: FormState) => Payload;
+  /* Map props to the form values */
+  mapPropsToValues?: (props: Props) => Values;
+  /* Map form values to submission payload */
+  mapValuesToPayload?: (values: Values) => Payload;
+  /*  Yup Schema */
   validationSchema: any;
-  handleSubmit: (payload: Payload) => void;
+  /* Submission handler */
+  handleSubmit: (payload: Payload, formikBag: FormikBag) => void;
 }
 
-export interface FormikState<T> {
-  form?: T;
+export interface InjectedFormikProps<T> {
+  /* Form values */
+  values: T;
   /** map of field names to specific error for that field */
   errors: FormikErrors;
   /** map of field names to whether the field has been touched */
   touched: FormikTouched;
   /** whether the form is currently submitting */
   isSubmitting: boolean;
-}
-
-export interface InjectedFormikProps {
-  /** map of field names to specific error for that field */
-  errors: FormikErrors;
-  /** map of field names to whether the field has been touched */
-  touched: FormikTouched;
-  /** whether the form is currently submitting */
-  isSubmitting: boolean;
-
+  /* Form submit handler */
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+  /* Classic React change handler, keyed by input name */
   onChange: (e: React.ChangeEvent<any>) => void;
+  /* Change value of form field directly */
+  onChangeValue: (name: string, value: any) => void;
+}
+
+export interface FormikBag {
+  props: { [field: string]: any };
+  setErrors: (errors: FormikErrors) => void;
+  setSubmitting: (isSubmitting: boolean) => void;
+  setTouched: (touched: FormikTouched) => void;
+  setValues: (values: FormikValues) => void;
+}
+
+export interface FormikValues {
+  [field: string]: any;
 }
 
 export interface FormikErrors {
@@ -100,66 +108,95 @@ export interface FormikTouched {
 
 export default function Formik<Props, State, Payload>({
   displayName,
-  mapPropsToFormState = formProps => formProps,
-  mapFormStateToPayload = formPartialState => {
+  mapPropsToValues = formProps => formProps,
+  mapValuesToPayload = formPartialState => {
     // in this case State and Payload are the same.
     const payload = (formPartialState as any) as Payload;
     return payload;
   },
   validationSchema,
   handleSubmit,
-}: FormikConfig<Props, State, Payload>): ComponentEnhancer<{}, Props> {
+}: FormikConfig<Props, State, Payload>): ComponentEnhancer<{}, any> {
   return compose<{}, Props>(
     setDisplayName(displayName),
-    withState('form', 'setForm', (props: Props) => mapPropsToFormState(props)),
+    withState('values', 'setValues', (props: Props) => mapPropsToValues(props)),
     withState('errors', 'setErrors', {}),
     withState('touched', 'setTouched', {}),
     withState('isSubmitting', 'setSubmitting', false),
-    mapProps(({ // onSubmit,
-      form, errors, touched, isSubmitting, setErrors, setForm, setTouched, setSubmitting, ...rest }) => ({
-      onChange: (e: React.ChangeEvent<any>) => {
-        e.persist();
-        const { type, name, value, checked } = e.target;
-        const val = /number|range/.test(type)
-          ? parseFloat(value)
-          : /checkbox/.test(type)
-            ? checked
-            : /radio/.test(type) // is this needed?
-              ? value
-              : value;
-        // Set changed fields as touched
-        setTouched({ ...touched, [name]: true });
-        // Set form fields by name
-        setForm({ ...form, [name]: val });
-        // Validate against schema
-        validateFormData<State>(
-          { ...form, [name]: val },
-          validationSchema,
-          setErrors
-        );
-      },
-      onSubmit: (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        setTouched(touchAllFields(form));
-        validateFormData<State>(
-          form,
-          validationSchema,
-          setErrors
-        ).then((isValid: boolean) => {
-          console.log('isValid:' + isValid);
-          if (isValid) {
-            handleSubmit(mapFormStateToPayload(form));
-          }
-        });
-      },
-      setForm,
-      setErrors,
-      setSubmitting,
-      errors,
-      isSubmitting,
-      touched,
-      ...rest,
-      ...form,
-    }))
+    mapProps(
+      ({
+        values,
+        errors,
+        touched,
+        isSubmitting,
+        setErrors,
+        setValues,
+        setTouched,
+        setSubmitting,
+        ...rest,
+      }) => ({
+        onChange: (e: React.ChangeEvent<any>) => {
+          e.persist();
+          const { type, name, value, checked } = e.target;
+          const val = /number|range/.test(type)
+            ? parseFloat(value)
+            : /checkbox/.test(type)
+              ? checked
+              : /radio/.test(type) // is this needed?
+                ? value
+                : value;
+          // Set changed fields as touched
+          setTouched({ ...touched, [name]: true });
+          // Set form fields by name
+          setValues({ ...values, [name]: val });
+          // Validate against schema
+          validateFormData<State>(
+            { ...values, [name]: val },
+            validationSchema,
+            setErrors
+          );
+        },
+        onChangeValue: (name: string, value: any) => {
+          // Set changed fields as touched
+          setTouched({ ...touched, [name]: true });
+          // Set form fields by name
+          setValues({ ...values, [name]: value });
+          // Validate against schema
+          validateFormData<State>(
+            { ...values, [name]: value },
+            validationSchema,
+            setErrors
+          );
+        },
+        onSubmit: (e: React.FormEvent<HTMLFormElement>) => {
+          e.preventDefault();
+          setTouched(touchAllFields(values));
+          validateFormData<State>(
+            values,
+            validationSchema,
+            setErrors
+          ).then((isValid: boolean) => {
+            console.log('isValid:' + isValid);
+            if (isValid) {
+              handleSubmit(mapValuesToPayload(values), {
+                setTouched,
+                setErrors,
+                setSubmitting,
+                setValues,
+                props: rest,
+              });
+            }
+          });
+        },
+        setValues,
+        setErrors,
+        setSubmitting,
+        errors,
+        isSubmitting,
+        touched,
+        values,
+        ...rest,
+      })
+    )
   );
 }

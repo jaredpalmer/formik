@@ -1,0 +1,70 @@
+{
+  "name": "formik",
+  "description": "An elegant way to handle forms in React",
+  "version": "0.0.0",
+  "license": "MIT",
+  "author": "Jared Palmer <jared@palmer.net>",
+  "repository": "jaredpalmer/formik",
+  "keywords": [
+    "react",
+    "forms",
+    "recompose",
+    "hoc"
+  ],
+  "main": "lib/index.js",
+  "typings": "index.d.ts",
+  "files": [
+    "es6",
+    "lib",
+    "umd",
+    "index.d.ts"
+  ],
+  "scripts": {
+    "test": "jest",
+    "clean": "rimraf lib umd es6",
+    "size": "cat umd/index.min.js | gzip | wc -c",
+    "build": "npm run clean && tsc --project tsconfig.json -m es6 --outDir es6 && webpack -p --config ./webpack.lib && webpack -p --config webpack.umd.js",
+    "prepublish": "npm run build"
+  },
+  "dependencies": {
+    "lodash.throttle": "^4.1.1",
+    "react": "^15.5.4",
+    "react-dom": "^15.5.4",
+    "recompose": "^0.23.5",
+    "yup": "^0.21.3"
+  },
+  "devDependencies": {
+    "@types/jest": "^19.2.3",
+    "@types/react": "^15.0.25",
+    "@types/react-dom": "^15.5.0",
+    "@types/react-test-renderer": "^15.5.0",
+    "@types/recompose": "^0.23.0",
+    "@types/webpack": "^2.2.15",
+    "@types/webpack-env": "^1.13.0",
+    "jest": "^20.0.4",
+    "react-test-renderer": "^15.5.4",
+    "rimraf": "^2.6.1",
+    "ts-jest": "^20.0.5",
+    "ts-loader": "^2.1.0",
+    "tslint": "^5.3.2",
+    "tslint-react": "^3.0.0",
+    "typescript": "^2.3.4",
+    "webpack": "^2.6.1"
+  },
+  "peerDependencies": {
+    "react": "^15.5.4",
+    "react-dom": "^15.5.4"
+  },
+  "jest": {
+    "transform": {
+      ".(ts|tsx)": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+    },
+    "testRegex": "(/src/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js)$",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "json"
+    ]
+  }
+}

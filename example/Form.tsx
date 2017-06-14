@@ -1,3 +1,5 @@
+import './App.css';
+
 import * as React from 'react';
 import * as yup from 'yup';
 
@@ -67,9 +69,7 @@ export default Formik<FormFixtureProps, FormFixtureState, FormFixturePayload>({
     console.log(payload);
   },
   validationSchema: yup.object().shape({
-    validationSchema: yup.object().shape({
-      email: yup.string().email().min(5).required(),
-      password: yup.string().min(5).required(),
-    }),
+    email: yup.string().email().min(5).required(),
+    password: yup.string().min(5).required(),
   }),
 })(Form);

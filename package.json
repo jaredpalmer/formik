@@ -26,14 +26,16 @@
     "prepublish": "npm run build"
   },
   "dependencies": {
-    "react": "^15.6.0",
-    "react-dom": "^15.6.0",
-    "recompose": "^0.23.5",
+    "react": "^15.5.4",
+    "react-dom": "^15.5.4",
+    "recompose": "^0.23.5"
+  },
+  "peerDependencies": {
     "yup": "^0.21.3"
   },
   "devDependencies": {
     "@types/jest": "^19.2.3",
-    "@types/react": "^15.0.25",
+    "@types/react": "^15.0.28",
     "@types/react-dom": "^15.5.0",
     "@types/react-test-renderer": "^15.5.0",
     "@types/recompose": "^0.23.0",
@@ -48,11 +50,6 @@
     "tslint-react": "^3.0.0",
     "typescript": "^2.3.4",
     "webpack": "^2.6.1"
-  },
-  "peerDependencies": {
-    "react": "^15.6.0",
-    "react-dom": "^15.6.0",
-    "yup": "^0.21.3"
   },
   "jest": {
     "transform": {

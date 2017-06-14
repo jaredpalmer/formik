@@ -12,12 +12,11 @@
     "hoc"
   ],
   "main": "lib/index.js",
-  "typings": "index.d.ts",
+  "typings": "lib/index.d.ts",
   "files": [
     "es6",
     "lib",
-    "umd",
-    "index.d.ts"
+    "umd"
   ],
   "scripts": {
     "test": "jest",

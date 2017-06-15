@@ -2,25 +2,38 @@
 
 #### Forms in React, *without tears.*
 
-Let's face it, forms are really really verbose in React. To make matters worse, most form helpers do wayyyyy too much magic and often have a significant performace cost. Formik takes a step back and helps you with the 3 most annoying parts: 
+Let's face it, forms are really really verbose in React. To make matters worse, most form helpers do wayyyyy too much magic and often have a significant performace cost. Formik is minimal a Higher Order Component that helps you with the 3 most annoying parts: 
 
- 1. Transforming props to React state, 
+ 1. Transforming props to a flat React state, 
  2. Validation and error messages
- 3. Transforming React state into a consumable payload for your API
+ 3. Transforming a flat React state back into a consumable payload for your API
 
 Lastly, Formik helps you stay organized by colocating all of the above plus your submission handler in one place. This makes testing, refactoring, and reasoning about your forms a breeze.
 
 ## Installation
 
-Add Formik to your project.
+Add Formik and Yup to your project. Formik uses Yup, which is like Joi, for schema validation. 
 
 ```bash
-npm i formik --save
+npm i formik yup --save
 ```
 
-## Walkthrough
+## Usage 
 
-Imagine you want to build a form that let's you edit user data. However, your User API has nested objects like so. 
+Formik will inject the following into your stateless functional form component:
+
+#### Injected Props (What you get for free)
+- `values: object` - Your form's values
+- `errors: object` - Validation errors, keys match values object shape exactly.
+- `onSubmit: (e: React.FormEvent<HTMLFormEvent>) => void` - Submit handler. This should be passed to `<form onSubmit={onSubmit}>...</form>`
+- `isSubmitting: boolean` - Submitting state. Either true or false.
+- `onChange: (e: React.ChangeEvent<any>) => void` - General onChange event handler. This will update the form value according to an `<input/>`'s `name` attribute.
+- `onChangeValue: (name: string, value: any) => void` - Custom onChange handler. Use this when you have custom inputs (e.g. react-autocomplete). `name` should match the form value you wish to update.
+
+
+### Simple Example
+
+Imagine you want to build a form that lets you edit user data. However, your user API has nested objects like so. 
 
 ```js
 {
@@ -33,75 +46,118 @@ Imagine you want to build a form that let's you edit user data. However, your Us
    }
 }
 ```
-With Formik, you'd write:
 
-```js
-import React from 'react';
-import Formik from 'formik';
-import Yup from 'yup';
-
-const EditUserForm = ({
-  values: { email, facebook, twitter },
-  onChange,
-  onSubmit,
-  errors,
-  isSubmitting,
-}) =>
-  <form onSubmit={onSubmit}>
-    <label htmlFor="email">Public Email</label>
-    <input type="email" name="email" onChange={onChange} value={email} />
-    {errors.email && <div>{errors.email}</div>}
-
-    <label htmlFor="facebook">Facebook Page URL</label>
-    <input type="text" name="facebook" onChange={onChange} value={facebook} />
-    {errors.facebook && <div>{errors.facebook}</div>}
-
-    <label htmlFor="twitter">Twitter URL</label>
-    <input type="url" name="twitter" onChange={onChange} value={facebook} />
-    {errors.twitter && <div>{errors.twitter}</div>}
-
-    <button type="submit" disabled={isSubmitting}>Submit</button>
-  </form>;
-
-export default Formik({
-  // Helps with debugging in React DevTools
-  displayName: 'SimpleForm',
-  
-  // Form schemas with Yup (which is like Joi, but for the browser)
-  validationSchema: Yup.object().shape({
-    email: Yup.string().email().required(),
-    facebook: Yup.string().url(),
-    twitter: Yup.string().url(),
-  }),
-  
-  // Maps props to form values
-  mapPropsToValues: ({ email, social }) => ({ email, ...social }),
-  
-  // Map form values to submission payload
-  mapValuesToPayload: ({ email, facebook, twitter }) => ({
-    email,
-    social: { facebook, twitter },
-  }),
-  
-  // Submission handler
-  handleSubmit: (payload, { props, setSubmitting }) => {
-    // submit the payload to your api.
-  },
-})(EditUserForm);
-
-``` 
-
-Now we can use the form anywhere and move on with our lives.
+When we are done we want our form to accept just a `user` prop and that's it.   
 
 ```js
 // User.js
 import React from 'react';
-import EditUserForm from './EditUserForm'
+import Dialog from 'MySuperDialog';
+import EditUserForm from './EditUserForm';
 
-const User = ({ user }) =>
-  <div>
+const EditUserDialog = ({ user }) =>
+  <Dialog>
   	<EditUserForm user={user} />
-  </div>;
+  </Dialog>;
+```
+
+Enter Formik. 
+
+```js
+// EditUserForm.js
+import React from 'react';
+import Formik from 'formik';
+import Yup from 'yup';
+
+// Formik is a Higher Order Component that wraps a React Form. Mutable form values 
+// are injected into a prop called `values`. Additionally, Formik injects
+// a single onChange handler that you can use on every input. You also get
+// onSubmit, errors, and isSubmitting for free. This makes building custom
+// inputs easy.
+const SimpleForm = ({ values, onChange, onSubmit, errors, isSubmitting }) =>
+  <form onSubmit={onSubmit}>
+    <input
+      type="text"
+      name="email"
+      value={values.email}
+      onChange={onChange}
+      placeholder="john@apple.com"
+    />
+    {errors.email && <div>{errors.email}</div>}
+    <input
+      type="text"
+      name="facebook"
+      value={values.facebook}
+      onChange={onChange}
+      placeholder="facebook username"
+    />
+    {errors.facebook && <div>{errors.facebook}</div>}
+    <input
+      type="text"
+      name="twitter"
+      value={values.twitter}
+      onChange={onChange}
+      placeholder="twitter username"
+    />
+    {errors.twitter && <div>{errors.twitter}</div>}
+    <button type="submit" disabled={isSubmitting}>Submit</button>
+  </form>;
+
+// Now for the fun part. We need to tell Formik how we want to validate,
+// transform props/state, and submit our form.
+export default Formik({
+  // Give our form a name for debugging in React DevTools
+  displayName: 'SimpleForm',
+
+  // Define our form's validation schema with Yup. It's like Joi, but for
+  // the browser.
+  validationSchema: Yup.object().shape({
+    email: Yup.string().email().required(),
+    twitter: Yup.string(),
+    facebook: Yup.string(),
+  }),
+
+  // We now map React props to form values. These will be injected as `values` into
+  // our form. (Note: in the real world, you would destructure props, but for clarity this is
+  // not shown)
+  mapPropsToValues: props => ({
+    email: props.user.email,
+    twitter: props.user.social,
+    facebook: props.user.facebook,
+  }),
+
+  // Sometimes your API needs a different object shape than your form. Formik let's 
+  // you map `values` back into a `payload` before they are
+  // passed to handleSubmit.
+  mapValuesToPayload: values => ({
+    email: values.email,
+    social: { 
+      twitter: values.twitter, 
+      facebook: values.facebook 
+    },
+  }),
+
+  // Formik lets you colocate your submission handler with your form.
+  // In addition to the payload (the result of mapValuesToPayload), you have
+  // access to all props and some stateful helpers.
+  handleSubmit: (payload, { props, setSubmitting }) => {
+    // do stuff with your payload
+    setSubmitting(true) // this will toggler isSubmitting in your form
+    CallMyApi(props.user.id, payload)
+      .then(
+        res => {
+          setSubmitting(false)
+          // do something to show success
+          // MyToaster.showSuccess({ message: 'Success!' })
+        },
+        err => {
+          setSubmitting(false)
+          // do something to show a rejected api submission
+          // MyToaster.showError({ message: 'Shit!', error: err })
+        }
+      )
+  },
+})(SimpleForm);
 ```
 
 #### Authors

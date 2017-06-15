@@ -81,13 +81,13 @@ export interface InjectedFormikProps<Props, Values> {
   /** whether the form is currently submitting */
   isSubmitting: boolean;
   /* Form submit handler */
-  onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+  handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
   /* Classic React change handler, keyed by input name */
-  onChange: (e: React.ChangeEvent<any>) => void;
+  handleChange: (e: React.ChangeEvent<any>) => void;
   /* Mark input as touched */
-  onBlur: (e: any) => void;
+  handleBlur: (e: any) => void;
   /* Change value of form field directly */
-  onChangeValue: (name: string, value: any) => void;
+  handleChangeValue: (name: string, value: any) => void;
   /* Manually set top level error */
   setError: (e: any) => void;
   /* Reset form */
@@ -149,7 +149,7 @@ export default function Formik<Props, State, Payload>({
         setSubmitting,
         ...rest,
       }) => ({
-        onChange: (e: React.ChangeEvent<any>) => {
+        handleChange: (e: React.ChangeEvent<any>) => {
           e.persist();
           const { type, name, value, checked } = e.target;
           const val = /number|range/.test(type)
@@ -168,11 +168,11 @@ export default function Formik<Props, State, Payload>({
             setErrors
           );
         },
-        onBlur: (e: any) => {
+        handleBlur: (e: any) => {
           e.persist();
           setTouched({ ...values, [e.target.name]: true });
         },
-        onChangeValue: (name: string, value: any) => {
+        handleChangeValue: (name: string, value: any) => {
           // Set changed fields as touched
           setTouched({ ...touched, [name]: true });
           // Set form fields by name
@@ -184,7 +184,7 @@ export default function Formik<Props, State, Payload>({
             setErrors
           );
         },
-        onSubmit: (e: React.FormEvent<HTMLFormElement>) => {
+        handleSubmit: (e: React.FormEvent<HTMLFormElement>) => {
           e.preventDefault();
           setTouched(touchAllFields(values));
           setSubmitting(true);
@@ -219,7 +219,7 @@ export default function Formik<Props, State, Payload>({
             setValues(mapPropsToValues(rest as Props));
           }
         },
-        onReset: () => {
+        handleReset: () => {
           setSubmitting(false);
           setErrors({});
           setTouched({});

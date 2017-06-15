@@ -26,11 +26,11 @@ Formik will inject the following into your stateless functional form component:
 - `values: object` - Your form's values
 - `errors: object` - Validation errors, keys match values object shape exactly.
 - `error: any` - A top-level error object, can be whatever you need.
-- `onSubmit: (e: React.FormEvent<HTMLFormEvent>) => void` - Submit handler. This should be passed to `<form onSubmit={onSubmit}>...</form>`
-- `onReset: () => void` - Reset handler. This should be passed to `<button onClick={onReset}>...</button>`
+- `handleSubmit: (e: React.FormEvent<HTMLFormEvent>) => void` - Submit handler. This should be passed to `<form onSubmit={onSubmit}>...</form>`
+- `handleReset: () => void` - Reset handler. This should be passed to `<button onClick={handleReset}>...</button>`
 - `isSubmitting: boolean` - Submitting state. Either true or false.
-- `onChange: (e: React.ChangeEvent<any>) => void` - General onChange event handler. This will update the form value according to an `<input/>`'s `name` attribute.
-- `onChangeValue: (name: string, value: any) => void` - Custom onChange handler. Use this when you have custom inputs (e.g. react-autocomplete). `name` should match the form value you wish to update.
+- `handleChange: (e: React.ChangeEvent<any>) => void` - General onChange event handler. This will update the form value according to an `<input/>`'s `name` attribute.
+- `handleChangeValue: (name: string, value: any) => void` - Custom onChange handler. Use this when you have custom inputs (e.g. react-autocomplete). `name` should match the form value you wish to update.
 
 
 ### Simple Example
@@ -73,16 +73,16 @@ import Yup from 'yup';
 
 // Formik is a Higher Order Component that wraps a React Form. Mutable form values 
 // are injected into a prop called `values`. Additionally, Formik injects
-// a single onChange handler that you can use on every input. You also get
-// onSubmit, errors, and isSubmitting for free. This makes building custom
+// an onChange handler that you can use on every input. You also get
+// handleSubmit, errors, and isSubmitting for free. This makes building custom
 // inputs easy.
-const SimpleForm = ({ values, onChange, onSubmit, onReset, errors, error isSubmitting,  }) =>
-  <form onSubmit={onSubmit}>
+const SimpleForm = ({ values, handleChange, handleSubmit, handleReset, errors, error isSubmitting,  }) =>
+  <form onSubmit={handleSubmit}>
     <input
       type="text"
       name="email"
       value={values.email}
-      onChange={onChange}
+      onChange={handleChange}
       placeholder="john@apple.com"
     />
     {errors.email && <div>{errors.email}</div>}
@@ -90,7 +90,7 @@ const SimpleForm = ({ values, onChange, onSubmit, onReset, errors, error isSubmi
       type="text"
       name="facebook"
       value={values.facebook}
-      onChange={onChange}
+      onChange={handleChange}
       placeholder="facebook username"
     />
     {errors.facebook && <div>{errors.facebook}</div>}
@@ -98,12 +98,12 @@ const SimpleForm = ({ values, onChange, onSubmit, onReset, errors, error isSubmi
       type="text"
       name="twitter"
       value={values.twitter}
-      onChange={onChange}
+      onChange={handleChange}
       placeholder="twitter username"
     />
     {errors.twitter && <div>{errors.twitter}</div>}
     {error && error.message && <div style={{color: 'red'}}>Top Level Error: {error.message}</div>}
-    <button onClick={onReset}>Reset</button>
+    <button onClick={handleReset}>Reset</button>
     <button type="submit" disabled={isSubmitting}>Submit</button>
   </form>;
 

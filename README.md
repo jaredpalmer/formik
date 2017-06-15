@@ -74,8 +74,9 @@ import Yup from 'yup';
 // a single onChange handler that you can use on every input. You also get
 // onSubmit, errors, and isSubmitting for free. This makes building custom
 // inputs easy.
-const SimpleForm = ({ values, onChange, onSubmit, errors, isSubmitting }) =>
+const SimpleForm = ({ values, onChange, onSubmit, onReset, errors, isSubmitting,  }) =>
   <form onSubmit={onSubmit}>
+    <button onClick={onReset}>Reset</button>
     <input
       type="text"
       name="email"
@@ -140,9 +141,9 @@ export default Formik({
   // Formik lets you colocate your submission handler with your form.
   // In addition to the payload (the result of mapValuesToPayload), you have
   // access to all props and some stateful helpers.
-  handleSubmit: (payload, { props, setSubmitting }) => {
+  handleSubmit: (payload, { props, setError, setSubmitting }) => {
     // do stuff with your payload
-    setSubmitting(true) // this will toggler isSubmitting in your form
+    // e.preventDefault(), setSubmitting, setError(undefined) are called before handle submit is. so you don
     CallMyApi(props.user.id, payload)
       .then(
         res => {

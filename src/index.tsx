@@ -90,6 +90,8 @@ export interface InjectedFormikProps<Props, Values> {
   setError: (e: any) => void;
   /* Reset form */
   resetForm: (nextProps?: Props) => void;
+  /* Reset form event handler  */
+  onReset: () => void;
 }
 
 export interface FormikBag {
@@ -208,6 +210,9 @@ export default function Formik<Props, State, Payload>({
           } else {
             setValues(mapPropsToValues(rest as Props));
           }
+        },
+        onReset: () => {
+          setValues(mapPropsToValues(rest as Props));
         },
         setValues,
         setErrors,

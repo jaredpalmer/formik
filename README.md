@@ -25,7 +25,7 @@ Formik will inject the following into your stateless functional form component:
 #### Injected Props (What you get for free)
 - `values: object` - Your form's values
 - `errors: object` - Validation errors, keys match values object shape exactly.
-- `error: object` - A top-level error object, can be whatever you need.
+- `error: any` - A top-level error object, can be whatever you need.
 - `onSubmit: (e: React.FormEvent<HTMLFormEvent>) => void` - Submit handler. This should be passed to `<form onSubmit={onSubmit}>...</form>`
 - `onReset: () => void` - Reset handler. This should be passed to `<button onClick={onReset}>...</button>`
 - `isSubmitting: boolean` - Submitting state. Either true or false.

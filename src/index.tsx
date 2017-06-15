@@ -182,6 +182,7 @@ export default function Formik<Props, State, Payload>({
           e.preventDefault();
           setTouched(touchAllFields(values));
           setSubmitting(true);
+          setErrors({});
           setError(undefined);
           validateFormData<State>(
             values,

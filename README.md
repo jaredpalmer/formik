@@ -25,7 +25,9 @@ Formik will inject the following into your stateless functional form component:
 #### Injected Props (What you get for free)
 - `values: object` - Your form's values
 - `errors: object` - Validation errors, keys match values object shape exactly.
+- `error: object` - A top-level error object, can be whatever you need.
 - `onSubmit: (e: React.FormEvent<HTMLFormEvent>) => void` - Submit handler. This should be passed to `<form onSubmit={onSubmit}>...</form>`
+- `onReset: () => void` - Reset handler. This should be passed to `<button onClick={onReset}>...</button>`
 - `isSubmitting: boolean` - Submitting state. Either true or false.
 - `onChange: (e: React.ChangeEvent<any>) => void` - General onChange event handler. This will update the form value according to an `<input/>`'s `name` attribute.
 - `onChangeValue: (name: string, value: any) => void` - Custom onChange handler. Use this when you have custom inputs (e.g. react-autocomplete). `name` should match the form value you wish to update.
@@ -74,7 +76,7 @@ import Yup from 'yup';
 // a single onChange handler that you can use on every input. You also get
 // onSubmit, errors, and isSubmitting for free. This makes building custom
 // inputs easy.
-const SimpleForm = ({ values, onChange, onSubmit, errors, isSubmitting }) =>
+const SimpleForm = ({ values, onChange, onSubmit, onReset, errors, error isSubmitting,  }) =>
   <form onSubmit={onSubmit}>
     <input
       type="text"
@@ -100,6 +102,8 @@ const SimpleForm = ({ values, onChange, onSubmit, errors, isSubmitting }) =>
       placeholder="twitter username"
     />
     {errors.twitter && <div>{errors.twitter}</div>}
+    {error && error.message && <div style={{color: 'red'}}>Top Level Error: {error.message}</div>}
+    <button onClick={onReset}>Reset</button>
     <button type="submit" disabled={isSubmitting}>Submit</button>
   </form>;
 
@@ -140,9 +144,9 @@ export default Formik({
   // Formik lets you colocate your submission handler with your form.
   // In addition to the payload (the result of mapValuesToPayload), you have
   // access to all props and some stateful helpers.
-  handleSubmit: (payload, { props, setSubmitting }) => {
+  handleSubmit: (payload, { props, setError, setSubmitting }) => {
     // do stuff with your payload
-    setSubmitting(true) // this will toggler isSubmitting in your form
+    // e.preventDefault(), setSubmitting, setError(undefined) are called before handle submit is. so you don
     CallMyApi(props.user.id, payload)
       .then(
         res => {
@@ -152,6 +156,7 @@ export default Formik({
         },
         err => {
           setSubmitting(false)
+          setError(err)
           // do something to show a rejected api submission
           // MyToaster.showError({ message: 'Shit!', error: err })
         }

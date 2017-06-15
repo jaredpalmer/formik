@@ -69,9 +69,11 @@ export interface FormikConfig<Props, Values, Payload> {
   handleSubmit: (payload: Payload, formikBag: FormikBag) => void;
 }
 
-export interface InjectedFormikProps<T> {
+export interface InjectedFormikProps<Props, Values> {
   /* Form values */
-  values: T;
+  values: Values;
+  /* Top level error, in case you need it */
+  error: any;
   /** map of field names to specific error for that field */
   errors: FormikErrors;
   /** map of field names to whether the field has been touched */
@@ -84,10 +86,17 @@ export interface InjectedFormikProps<T> {
   onChange: (e: React.ChangeEvent<any>) => void;
   /* Change value of form field directly */
   onChangeValue: (name: string, value: any) => void;
+  /* Manually set top level error */
+  setError: (e: any) => void;
+  /* Reset form */
+  resetForm: (nextProps?: Props) => void;
+  /* Reset form event handler  */
+  onReset: () => void;
 }
 
 export interface FormikBag {
   props: { [field: string]: any };
+  setError: (error: any) => void;
   setErrors: (errors: FormikErrors) => void;
   setSubmitting: (isSubmitting: boolean) => void;
   setTouched: (touched: FormikTouched) => void;
@@ -121,14 +130,17 @@ export default function Formik<Props, State, Payload>({
     setDisplayName(displayName),
     withState('values', 'setValues', (props: Props) => mapPropsToValues(props)),
     withState('errors', 'setErrors', {}),
+    withState('error', 'setError', undefined),
     withState('touched', 'setTouched', {}),
     withState('isSubmitting', 'setSubmitting', false),
     mapProps(
       ({
         values,
+        error,
         errors,
         touched,
         isSubmitting,
+        setError,
         setErrors,
         setValues,
         setTouched,
@@ -171,6 +183,9 @@ export default function Formik<Props, State, Payload>({
         onSubmit: (e: React.FormEvent<HTMLFormElement>) => {
           e.preventDefault();
           setTouched(touchAllFields(values));
+          setSubmitting(true);
+          setErrors({});
+          setError(undefined);
           validateFormData<State>(
             values,
             validationSchema,
@@ -181,6 +196,7 @@ export default function Formik<Props, State, Payload>({
               handleSubmit(mapValuesToPayload(values), {
                 setTouched,
                 setErrors,
+                setError,
                 setSubmitting,
                 setValues,
                 props: rest,
@@ -188,10 +204,21 @@ export default function Formik<Props, State, Payload>({
             }
           });
         },
+        resetForm: (nextProps?: Props) => {
+          if (nextProps) {
+            setValues(mapPropsToValues(nextProps));
+          } else {
+            setValues(mapPropsToValues(rest as Props));
+          }
+        },
+        onReset: () => {
+          setValues(mapPropsToValues(rest as Props));
+        },
         setValues,
         setErrors,
         setSubmitting,
         errors,
+        error,
         isSubmitting,
         touched,
         values,

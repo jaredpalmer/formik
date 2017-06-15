@@ -76,7 +76,7 @@ import Yup from 'yup';
 // an onChange handler that you can use on every input. You also get
 // handleSubmit, errors, and isSubmitting for free. This makes building custom
 // inputs easy.
-const SimpleForm = ({ values, handleChange, handleSubmit, handleReset, errors, error isSubmitting,  }) =>
+const SimpleForm = ({ values, handleChange, handleSubmit, handleReset, errors, error, isSubmitting,  }) =>
   <form onSubmit={handleSubmit}>
     <input
       type="text"

@@ -74,9 +74,8 @@ import Yup from 'yup';
 // a single onChange handler that you can use on every input. You also get
 // onSubmit, errors, and isSubmitting for free. This makes building custom
 // inputs easy.
-const SimpleForm = ({ values, onChange, onSubmit, onReset, errors, isSubmitting,  }) =>
+const SimpleForm = ({ values, onChange, onSubmit, onReset, errors, error isSubmitting,  }) =>
   <form onSubmit={onSubmit}>
-    <button onClick={onReset}>Reset</button>
     <input
       type="text"
       name="email"
@@ -101,6 +100,8 @@ const SimpleForm = ({ values, onChange, onSubmit, onReset, errors, isSubmitting,
       placeholder="twitter username"
     />
     {errors.twitter && <div>{errors.twitter}</div>}
+    {error && error.message && <div style={{color: 'red'}}>Top Level Error: {error.message}</div>}
+    <button onClick={onReset}>Reset</button>
     <button type="submit" disabled={isSubmitting}>Submit</button>
   </form>;
 
@@ -153,6 +154,7 @@ export default Formik({
         },
         err => {
           setSubmitting(false)
+          setError(err)
           // do something to show a rejected api submission
           // MyToaster.showError({ message: 'Shit!', error: err })
         }

@@ -169,3 +169,5 @@ export default Formik({
 
 - Jared Palmer [@jaredpalmer](https://twitter.com/jaredpalmer)
 - Ian White [@eonwhite](https://twitter.com/eonwhite)
+
+MIT License. 

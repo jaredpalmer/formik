@@ -84,6 +84,8 @@ export interface InjectedFormikProps<Props, Values> {
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
   /* Classic React change handler, keyed by input name */
   onChange: (e: React.ChangeEvent<any>) => void;
+  /* Mark input as touched */
+  onBlur: (e: any) => void;
   /* Change value of form field directly */
   onChangeValue: (name: string, value: any) => void;
   /* Manually set top level error */
@@ -157,8 +159,6 @@ export default function Formik<Props, State, Payload>({
               : /radio/.test(type) // is this needed?
                 ? value
                 : value;
-          // Set changed fields as touched
-          setTouched({ ...touched, [name]: true });
           // Set form fields by name
           setValues({ ...values, [name]: val });
           // Validate against schema
@@ -167,6 +167,10 @@ export default function Formik<Props, State, Payload>({
             validationSchema,
             setErrors
           );
+        },
+        onBlur: (e: any) => {
+          e.persist();
+          setTouched({ ...values, [e.target.name]: true });
         },
         onChangeValue: (name: string, value: any) => {
           // Set changed fields as touched
@@ -205,6 +209,10 @@ export default function Formik<Props, State, Payload>({
           });
         },
         resetForm: (nextProps?: Props) => {
+          setSubmitting(false);
+          setErrors({});
+          setTouched({});
+          setError(undefined);
           if (nextProps) {
             setValues(mapPropsToValues(nextProps));
           } else {
@@ -212,6 +220,10 @@ export default function Formik<Props, State, Payload>({
           }
         },
         onReset: () => {
+          setSubmitting(false);
+          setErrors({});
+          setTouched({});
+          setError(undefined);
           setValues(mapPropsToValues(rest as Props));
         },
         setValues,

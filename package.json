@@ -28,7 +28,8 @@
   "dependencies": {
     "react": "^15.5.4",
     "react-dom": "^15.5.4",
-    "recompose": "^0.23.5"
+    "recompose": "^0.23.5",
+    "yup": "^0.21.3"
   },
   "peerDependencies": {
     "yup": "^0.21.3"
@@ -44,7 +45,7 @@
     "jest": "^20.0.4",
     "react-test-renderer": "^15.5.4",
     "rimraf": "^2.6.1",
-    "ts-jest": "^20.0.5",
+    "ts-jest": "^20.0.6",
     "ts-loader": "^2.1.0",
     "tslint": "^5.3.2",
     "tslint-react": "^3.0.0",

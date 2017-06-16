@@ -1,0 +1,35 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Formik mapsPropsToValues 1`] = `
+<form
+  onSubmit={[Function]}
+>
+  <input
+    name="thing"
+    onChange={[Function]}
+    type="text"
+    value="hello"
+  />
+  <input
+    type="submit"
+    value="Submit"
+  />
+</form>
+`;
+
+exports[`Formik renders Formik correctly 1`] = `
+<form
+  onSubmit={[Function]}
+>
+  <input
+    name="thing"
+    onChange={[Function]}
+    type="text"
+    value="hello"
+  />
+  <input
+    type="submit"
+    value="Submit"
+  />
+</form>
+`;

@@ -1,4 +1,4 @@
-# Formik
+![](https://user-images.githubusercontent.com/4060187/27243721-3b5219d0-52b1-11e7-96f1-dae8391a3ef6.png)
 
 #### Forms in React, *without tears.*
 

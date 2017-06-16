@@ -198,7 +198,7 @@ A higher-order React component class that passes props and form handlers ("the F
 The following props and methods will be injected into the `WrappedComponent` (i.e. your form):
 
 - **`values: { [field]: any }`** Your form's values, the result of `mapPropsToValues` (if specified) or all props that are not functions passed to your `WrappedComponent`.
-- **`isSubmitting: boolean`** Submitting state. Either true or false. Formik will set this to true on your behalf before calling `handleSubmit` to reduce boilerplate.
+- **`isSubmitting: boolean`** Submitting state. Either `true` or `false`. Formik will set this to `true` on your behalf before calling `handleSubmit` to reduce boilerplate.
 - **`errors: { [field]: string }`** Form validation errors. Keys match the shape of the `validationSchema` defined in Formik options. This should therefore also map to your `values` object as well. Internally, Formik transforms raw [Yup validation errors](https://github.com/jquense/yup#validationerrorerrors-string--arraystring-value-any-path-string) on your behalf. 
 - **`error?: any`** - A top-level error object, can be whatever you need.
 - **`touched: { [field]: string }`** Touched fields. Use this to keep track of which fields have been visited. Use `handleBlur` to toggle on a given input. Keys work like `errors` and `values`.

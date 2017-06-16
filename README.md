@@ -191,9 +191,9 @@ Create a Formik Higher-order React component.
 
 #### Returns
 
-A higher-order React component class that passes props and form handlers ("the FormikBag") into your component derived from supplied options. 
+A higher-order React component class that passes props and form handlers (the "`FormikBag`") into your component derived from supplied options. 
 
-##### Injected props and methods (a.k.a. the "Formik Bag")
+##### Injected props and methods (a.k.a. the "`Formik Bag`")
 
 The following props and methods will be injected into the `WrappedComponent` (i.e. your form):
 

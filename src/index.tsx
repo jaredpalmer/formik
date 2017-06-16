@@ -117,17 +117,25 @@ export interface FormikTouched {
   [field: string]: boolean;
 }
 
-export default function Formik<Props, State, Payload>({
+export default function Formik<Props, Values extends FormikValues, Payload>({
   displayName,
-  mapPropsToValues = formProps => formProps,
-  mapValuesToPayload = formPartialState => {
-    // in this case State and Payload are the same.
-    const payload = (formPartialState as any) as Payload;
+  mapPropsToValues = props => {
+    let values: FormikValues = {};
+    for (let k in props) {
+      if (props.hasOwnProperty(k) && typeof props[k] !== 'function') {
+        values[k] = props[k];
+      }
+    }
+    return values;
+  },
+  mapValuesToPayload = values => {
+    // in this case Values and Payload are the same.
+    const payload = (values as any) as Payload;
     return payload;
   },
   validationSchema,
   handleSubmit,
-}: FormikConfig<Props, State, Payload>): ComponentEnhancer<{}, any> {
+}: FormikConfig<Props, Values, Payload>): ComponentEnhancer<{}, any> {
   return compose<{}, Props>(
     setDisplayName(displayName),
     withState('values', 'setValues', (props: Props) => mapPropsToValues(props)),
@@ -147,39 +155,38 @@ export default function Formik<Props, State, Payload>({
         setValues,
         setTouched,
         setSubmitting,
-        ...rest,
+        ...otherProps,
       }) => ({
         handleChange: (e: React.ChangeEvent<any>) => {
           e.persist();
-          const { type, name, value, checked } = e.target;
+          const { type, name, id, value, checked } = e.target;
+          const field = name ? name : id;
           const val = /number|range/.test(type)
             ? parseFloat(value)
-            : /checkbox/.test(type)
-              ? checked
-              : /radio/.test(type) // is this needed?
-                ? value
-                : value;
+            : /checkbox/.test(type) ? checked : value;
           // Set form fields by name
-          setValues({ ...values, [name]: val });
+          setValues({ ...values, [field]: val });
           // Validate against schema
-          validateFormData<State>(
-            { ...values, [name]: val },
+          validateFormData<Values>(
+            { ...values, [field]: val },
             validationSchema,
             setErrors
           );
         },
         handleBlur: (e: any) => {
           e.persist();
-          setTouched({ ...values, [e.target.name]: true });
+          const { name, id } = e.target;
+          const field = name ? name : id;
+          setTouched({ ...values, [field]: true });
         },
-        handleChangeValue: (name: string, value: any) => {
+        handleChangeValue: (field: string, value: any) => {
           // Set changed fields as touched
-          setTouched({ ...touched, [name]: true });
+          setTouched({ ...touched, [field]: true });
           // Set form fields by name
-          setValues({ ...values, [name]: value });
+          setValues({ ...values, [field]: value });
           // Validate against schema
-          validateFormData<State>(
-            { ...values, [name]: value },
+          validateFormData<Values>(
+            { ...values, [field]: value },
             validationSchema,
             setErrors
           );
@@ -188,14 +195,11 @@ export default function Formik<Props, State, Payload>({
           e.preventDefault();
           setTouched(touchAllFields(values));
           setSubmitting(true);
-          setErrors({});
-          setError(undefined);
-          validateFormData<State>(
+          validateFormData<Values>(
             values,
             validationSchema,
             setErrors
           ).then((isValid: boolean) => {
-            console.log('isValid:' + isValid);
             if (isValid) {
               handleSubmit(mapValuesToPayload(values), {
                 setTouched,
@@ -203,7 +207,7 @@ export default function Formik<Props, State, Payload>({
                 setError,
                 setSubmitting,
                 setValues,
-                props: rest,
+                props: otherProps,
               });
             }
           });
@@ -216,7 +220,7 @@ export default function Formik<Props, State, Payload>({
           if (nextProps) {
             setValues(mapPropsToValues(nextProps));
           } else {
-            setValues(mapPropsToValues(rest as Props));
+            setValues(mapPropsToValues(otherProps as Props));
           }
         },
         handleReset: () => {
@@ -224,7 +228,7 @@ export default function Formik<Props, State, Payload>({
           setErrors({});
           setTouched({});
           setError(undefined);
-          setValues(mapPropsToValues(rest as Props));
+          setValues(mapPropsToValues(otherProps as Props));
         },
         setValues,
         setErrors,
@@ -234,7 +238,7 @@ export default function Formik<Props, State, Payload>({
         isSubmitting,
         touched,
         values,
-        ...rest,
+        ...otherProps,
       })
     )
   );

@@ -12,26 +12,32 @@ Lastly, Formik helps you stay organized by colocating all of the above plus your
 
 ## Installation
 
-Add Formik and Yup to your project. Formik uses Yup, which is like Joi, for schema validation. 
+Add Formik and Yup to your project. Formik uses [Yup](https://github.com/jquense/yup) ([Joi](https://github.com/hapijs/joi) for the browser) for schema validation. 
 
 ```bash
 npm i formik yup --save
 ```
 
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**
+
+- [Usage](#usage)
+  - [Simple Example](#simple-example)
+- [Recipes](#recipes)
+  - [Ways to call `Formik`](#ways-to-call-formik)
+  - [Accessing React Component Lifecycle Functions](#accessing-react-component-lifecycle-functions)
+    - [Example: Resetting a form when props change](#example-resetting-a-form-when-props-change)
+- [API](#api)
+  - [`Formik(options)`](#formikoptions)
+    - [Arguments](#arguments)
+    - [Returns](#returns)
+      - [Injected props and methods (a.k.a. the "Formik Bag")](#injected-props-and-methods-aka-the-formik-bag)
+- [Authors](#authors)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 ## Usage 
-
-Formik will inject the following into your stateless functional form component:
-
-#### Injected Props (What you get for free)
-- `values: object` - Your form's values
-- `errors: object` - Validation errors, keys match values object shape exactly.
-- `error: any` - A top-level error object, can be whatever you need.
-- `handleSubmit: (e: React.FormEvent<HTMLFormEvent>) => void` - Submit handler. This should be passed to `<form onSubmit={onSubmit}>...</form>`
-- `handleReset: () => void` - Reset handler. This should be passed to `<button onClick={handleReset}>...</button>`
-- `isSubmitting: boolean` - Submitting state. Either true or false.
-- `handleChange: (e: React.ChangeEvent<any>) => void` - General onChange event handler. This will update the form value according to an `<input/>`'s `name` attribute.
-- `handleChangeValue: (name: string, value: any) => void` - Custom onChange handler. Use this when you have custom inputs (e.g. react-autocomplete). `name` should match the form value you wish to update.
-
 
 ### Simple Example
 
@@ -165,7 +171,158 @@ export default Formik({
 })(SimpleForm);
 ```
 
-#### Authors
+## Recipes
+
+### Ways to call `Formik`
+
+Formik is a Higher Order Component factory or "Monad" in functional programming lingo. In practice, you use it exactly like React Redux's `connect` or Apollo's `graphql`. Thus are basically three ways to call Formik on your component:
+
+You can assign the HoC returned by Formik to a variable (i.e. `withFormik`) for later use.
+```js
+import React from 'react';
+import Formik from 'formik';
+
+// Assign the HoC returned by Formik to a variable
+const withFormik = Formik({...}); 
+
+// Your form
+const MyForm = (props) => (
+ <form onSubmit={props.handleSubmit}>
+   <input type="text" name="thing" value={props.values.thing} onChange={props.handleChange} />
+   <input type="submit" value="Submit"/>
+ </form>
+);
+
+// Use HoC by passing your form to it as an argument.
+export default withFormik(MyForm);
+```
+
+You can also skip a step and immediately invoke (i.e. "curry") Formik instead of assigning it to a variable. This method has been popularized by React Redux. One downside is that when you read the file containing your form, its props seem to come out of nowhere.
+
+```js
+import React from 'react';
+import Formik from 'formik';
+
+// Your form
+const MyForm = (props) => (
+ <form onSubmit={props.handleSubmit}>
+   <input type="text" name="thing" value={props.values.thing} onChange={props.handleChange} />
+   <input type="submit" value="Submit"/>
+ </form>
+);
+
+// Configure and call Formik immediately
+export default Formik({...})(MyForm);
+```
+
+Lastly, you can define your form component anonymously:
+
+```js
+import React from 'react';
+import Formik from 'formik';
+
+// Configure and call Formik immediately
+export default Formik({...})((props) => (
+ <form onSubmit={props.handleSubmit}>
+   <input type="text" name="thing" value={props.values.thing} onChange={props.handleChange} />
+   <input type="submit" value="Submit"/>
+ </form>
+));
+```
+
+I suggest using the first method, as it makes it clear what Formik is doing. It also let's you configure Formik above your component, so when you read your form's code, you know where those props are coming from. It also makes testing much easier.
+
+### Accessing React Component Lifecycle Functions
+
+Sometimes you need to access [React Component Lifecycle methods](https://facebook.github.io/react/docs/react-component.html#the-component-lifecycle) to manipulate your form. In this situation, you have some options:
+
+- Lift that lifecycle method up into a React class component that's child is your Formik-wrapped form and pass whatever props it needs from there
+- Convert your form into a React component class (instead of a stateless functional component) and wrap that class with Formik. 
+
+There isn't a hard rule whether one is better than the other. The decision comes down to either whether you want to colocate this logic with your form or not. (Note: if you need `refs` you'll need to convert your stateless functional form component into a React class anyway). 
+
+#### Example: Resetting a form when props change
+
+```js
+// Reset form when a certain prop changes
+import React from 'react';
+import Formik from 'formik'
+
+const withFormik = Formik({...});
+
+class MyForm extends React.Component {
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.thing !== this.props.thing) {
+      this.props.resetForm(nextProps)
+    }
+  }
+
+  render() {
+   // Formik props are available on `this.props`
+    return (
+      <form onSubmit={this.props.handleSubmit}>
+        <input
+          type="text"
+          ref={i => this.myInput = i}
+          name="thing"
+          value={this.props.values.thing}
+          onChange={this.props.handleChange}
+        />
+        <input type="submit" value="Submit" />
+      </form>
+    );
+  }
+}
+
+export default withFormik(MyForm);
+```
+
+As for colocating a React lifecycle method with your form, imagine a situation where you want to use if you have a modal that's only job is to display a form based on the presence of props or not.
+
+## API
+
+### `Formik(options)`
+
+Create a Formik Higher-order React component.
+
+#### Arguments
+
+- **`options`** (*Object*): Formik configuration object:
+
+	- **`displayName: string`** (*string*): Set the display name of your component.
+	- **`validationSchema: Schema`**: (*Yup Schema*): [A Yup schema](https://github.com/jquense/yup). This is used on each onChange event for validation. Errors are mapped by key to the `WrappedComponent`'s `props.errors`. Its keys should almost always match those of `WrappedComponent's` `props.values`. 
+	- **`mapPropsToValues?: (props) => props`** (*Function*): If this option is specified, then Formik will transfer its results into updatable form state and make these values available to the new component as `props.values`. If `mapPropsToValues` is **not** specified, then Formik will map all props that are not functions to the new component's `props.values`. That is, if you omit it, Formik will only pass `props` where `typeof props[k] !== 'function'`, where `k` is some key.
+	- **`mapValuesToPayload?: (values) => payload`** (*Function*): If this option is specified, then Formik will run this function just before calling `handleSubmit`. Use it to transform the your form's `values` back into a shape that's consumable for other parts of your application or API. If `mapValuesToPayload` is **not** specified, then Formik will map all `values` directly to `payload` (which will be passed to `handleSubmit`). While this transformation can be moved into `handleSubmit`, consistently defining it in `mapValuesToPayload` separates concerns and helps you stay organized.
+	- **`handleSubmit: (payload, FormikBag) => void`** (*Function*): Your form submission handler. It is passed the result of `mapValuesToPayload` (if specified), or the result of `mapPropsToValues`, or all props that are not functions (in that order of precedence) and the "`FormikBag`".
+
+
+#### Returns
+
+A higher-order React component class that passes props and form handlers ("the FormikBag") into your component derived from supplied options. 
+
+##### Injected props and methods (a.k.a. the "Formik Bag")
+
+The following props and methods will be injected into the `WrappedComponent` (i.e. your form):
+
+- **`values: { [field]: any }`** Your form's values, the result of `mapPropsToValues` (if specified) or all props that are not functions passed to your `WrappedComponent`.
+- **`isSubmitting: boolean`**Submitting state. Either true or false. Formik will set this to true on your behalf before calling `handleSubmit` to reduce boilerplate.
+- **`errors: { [field]: string }`** Form validation errors. Keys match the shape of the `validationSchema` defined in Formik options. This should therefore also map to your `values` object as well. Internally, Formik transforms raw [Yup validation errors](https://github.com/jquense/yup#validationerrorerrors-string--arraystring-value-any-path-string) on your behalf. 
+- **`error?: any`** - A top-level error object, can be whatever you need.
+- **`touched: { [field]: string }`** Touched fields. Use this to keep track of which fields have been visited. Use `handleBlur` to toggle on a given input. Keys work like `errors` and `values`.
+- **`handleBlur: (e: any) => void`** `onBlur` event handler. Useful for when you need to track whether an input has been `touched` or not. This should be passed to `<input onBlur={handleBlur} ... />`
+- **`handleSubmit: (e: React.FormEvent<HTMLFormEvent>) => void`** Submit handler. This should be passed to `<form onSubmit={handleSubmit}>...</form>`
+- **`handleReset: () => void`** Reset handler. This should be passed to `<button onClick={handleReset}>...</button>`
+- **`handleChange: (e: React.ChangeEvent<any>) => void`** General input change event handler. This will update the form value according to an input's `name` attribute. If `name` is not present, `handleChange` will look for an input's `id` attribute. Note: "input" here means all HTML inputs.
+- **`handleChangeValue: (name: string, value: any) => void`** Custom input change handler. Use this when you have custom inputs. `name` should match the key of form value you wish to update.
+- **`resetForm: (nextProps?: Props) => void`** Imperatively reset the form. This will clear `errors` and `touched`, set `isSubmitting` to `false` and rerun `mapPropsToValues` with the current `WrappedComponent`'s `props` or what's passed as an argument. That latter is useful for calling `resetForm` within `componentWillReceiveProps`.
+- **`setErrors(fields: { [field]: string }) => void`** Set `errors` manually.
+- **`setTouched(fields: { [field]: string }) => void`** Set `touched` manually.
+- **`setValues(fields: { [field]: any }) => void`** Set `values` manually.
+- **`setError(err: any) => void`** Set a top-level `error` object. This can only be done manually. It is an escape hatch.
+- **`setSubmitting(boolean) => void`** Set a `isSubmitting` manually.
+
+
+## Authors
 
 - Jared Palmer [@jaredpalmer](https://twitter.com/jaredpalmer)
 - Ian White [@eonwhite](https://twitter.com/eonwhite)

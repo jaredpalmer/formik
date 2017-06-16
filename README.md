@@ -27,28 +27,28 @@ npm i formik yup --save
 - [API](#api)
   - [`Formik(options)`](#formikoptions)
     - [`options`](#options)
-      - [`displayName: string`:](#displayname-string)
-      - [`validationSchema: Schema`](#validationschema-schema)
+      - [`displayName: string`](#displayname-string)
+      - [`handleSubmit: (payload, FormikBag) => void`)](#handlesubmit-payload-formikbag--void)
       - [`mapPropsToValues?: (props) => props`](#mappropstovalues-props--props)
       - [`mapValuesToPayload?: (values) => payload`](#mapvaluestopayload-values--payload)
-      - [`handleSubmit: (payload, FormikBag) => void`)](#handlesubmit-payload-formikbag--void)
+      - [`validationSchema: Schema`](#validationschema-schema)
     - [Injected props and methods](#injected-props-and-methods)
-      - [`values: { [field]: any }`](#values--field-any-)
-      - [`isSubmitting: boolean`](#issubmitting-boolean)
-      - [`errors: { [field]: string }`](#errors--field-string-)
       - [`error?: any`](#error-any)
-      - [`touched: { [field]: string }`](#touched--field-string-)
+      - [`errors: { [field]: string }`](#errors--field-string-)
       - [`handleBlur: (e: any) => void`](#handleblur-e-any--void)
-      - [`handleSubmit: (e: React.FormEvent<HTMLFormEvent>) => void`](#handlesubmit-e-reactformeventhtmlformevent--void)
-      - [`handleReset: () => void`](#handlereset---void)
       - [`handleChange: (e: React.ChangeEvent<any>) => void`](#handlechange-e-reactchangeeventany--void)
       - [`handleChangeValue: (name: string, value: any) => void`](#handlechangevalue-name-string-value-any--void)
+      - [`handleReset: () => void`](#handlereset---void)
+      - [`handleSubmit: (e: React.FormEvent<HTMLFormEvent>) => void`](#handlesubmit-e-reactformeventhtmlformevent--void)
+      - [`isSubmitting: boolean`](#issubmitting-boolean)
       - [`resetForm: (nextProps?: Props) => void`](#resetform-nextprops-props--void)
+      - [`setError(err: any) => void`](#seterrorerr-any--void)
       - [`setErrors(fields: { [field]: string }) => void`](#seterrorsfields--field-string---void)
+      - [`setSubmitting(boolean) => void`](#setsubmittingboolean--void)
       - [`setTouched(fields: { [field]: string }) => void`](#settouchedfields--field-string---void)
       - [`setValues(fields: { [field]: any }) => void`](#setvaluesfields--field-any---void)
-      - [`setError(err: any) => void`](#seterrorerr-any--void)
-      - [`setSubmitting(boolean) => void`](#setsubmittingboolean--void)
+      - [`touched: { [field]: string }`](#touched--field-string-)
+      - [`values: { [field]: any }`](#values--field-any-)
 - [Recipes](#recipes)
   - [Ways to call `Formik`](#ways-to-call-formik)
   - [Accessing React Component Lifecycle Functions](#accessing-react-component-lifecycle-functions)
@@ -200,11 +200,11 @@ Create A higher-order React component class that passes props and form handlers 
 
 #### `options`
 
-##### `displayName: string`: 
+##### `displayName: string` 
 Set the display name of your component.
 
-##### `validationSchema: Schema`
-[A Yup schema](https://github.com/jquense/yup). This is used for validation on each onChange event. Errors are mapped by key to the `WrappedComponent`'s `props.errors`. Its keys should almost always match those of `WrappedComponent's` `props.values`. 
+##### `handleSubmit: (payload, FormikBag) => void`)
+Your form submission handler. It is passed the result of `mapValuesToPayload` (if specified), or the result of `mapPropsToValues`, or all props that are not functions (in that order of precedence) and the "`FormikBag`".
 
 ##### `mapPropsToValues?: (props) => props`
 If this option is specified, then Formik will transfer its results into updatable form state and make these values available to the new component as `props.values`. If `mapPropsToValues` is not specified, then Formik will map all props that are not functions to the new component's `props.values`. That is, if you omit it, Formik will only pass `props` where `typeof props[k] !== 'function'`, where `k` is some key.
@@ -212,37 +212,21 @@ If this option is specified, then Formik will transfer its results into updatabl
 ##### `mapValuesToPayload?: (values) => payload`
 If this option is specified, then Formik will run this function just before calling `handleSubmit`. Use it to transform the your form's `values` back into a shape that's consumable for other parts of your application or API. If `mapValuesToPayload` **is not** specified, then Formik will map all `values` directly to `payload` (which will be passed to `handleSubmit`). While this transformation can be moved into `handleSubmit`, consistently defining it in `mapValuesToPayload` separates concerns and helps you stay organized.
 
-##### `handleSubmit: (payload, FormikBag) => void`)
-Your form submission handler. It is passed the result of `mapValuesToPayload` (if specified), or the result of `mapPropsToValues`, or all props that are not functions (in that order of precedence) and the "`FormikBag`".
-
+##### `validationSchema: Schema`
+[A Yup schema](https://github.com/jquense/yup). This is used for validation on each onChange event. Errors are mapped by key to the `WrappedComponent`'s `props.errors`. Its keys should almost always match those of `WrappedComponent's` `props.values`. 
 
 #### Injected props and methods
 
 The following props and methods will be injected into the `WrappedComponent` (i.e. your form):
 
-##### `values: { [field]: any }`
-Your form's values, the result of `mapPropsToValues` (if specified) or all props that are not functions passed to your `WrappedComponent`.
-
-##### `isSubmitting: boolean`
-Submitting state. Either `true` or `false`. Formik will set this to `true` on your behalf before calling `handleSubmit` to reduce boilerplate.
+##### `error?: any`
+A top-level error object, can be whatever you need.
 
 ##### `errors: { [field]: string }`
 Form validation errors. Keys match the shape of the `validationSchema` defined in Formik options. This should therefore also map to your `values` object as well. Internally, Formik transforms raw [Yup validation errors](https://github.com/jquense/yup#validationerrorerrors-string--arraystring-value-any-path-string) on your behalf. 
 
-##### `error?: any`
-A top-level error object, can be whatever you need.
-
-##### `touched: { [field]: string }`
-Touched fields. Use this to keep track of which fields have been visited. Use `handleBlur` to toggle on a given input. Keys work like `errors` and `values`.
-
 ##### `handleBlur: (e: any) => void`
 `onBlur` event handler. Useful for when you need to track whether an input has been `touched` or not. This should be passed to `<input onBlur={handleBlur} ... />`
-
-##### `handleSubmit: (e: React.FormEvent<HTMLFormEvent>) => void`
-Submit handler. This should be passed to `<form onSubmit={handleSubmit}>...</form>`
-
-##### `handleReset: () => void`
-Reset handler. This should be passed to `<button onClick={handleReset}>...</button>`
 
 ##### `handleChange: (e: React.ChangeEvent<any>) => void`
 General input change event handler. This will update the form value according to an input's `name` attribute. If `name` is not present, `handleChange` will look for an input's `id` attribute. Note: "input" here means all HTML inputs.
@@ -250,11 +234,26 @@ General input change event handler. This will update the form value according to
 ##### `handleChangeValue: (name: string, value: any) => void`
 Custom input change handler. Use this when you have custom inputs. `name` should match the key of form value you wish to update.
 
+##### `handleReset: () => void`
+Reset handler. This should be passed to `<button onClick={handleReset}>...</button>`
+
+##### `handleSubmit: (e: React.FormEvent<HTMLFormEvent>) => void`
+Submit handler. This should be passed to `<form onSubmit={handleSubmit}>...</form>`
+
+##### `isSubmitting: boolean`
+Submitting state. Either `true` or `false`. Formik will set this to `true` on your behalf before calling `handleSubmit` to reduce boilerplate.
+
 ##### `resetForm: (nextProps?: Props) => void`
 Imperatively reset the form. This will clear `errors` and `touched`, set `isSubmitting` to `false` and rerun `mapPropsToValues` with the current `WrappedComponent`'s `props` or what's passed as an argument. That latter is useful for calling `resetForm` within `componentWillReceiveProps`.
 
+##### `setError(err: any) => void`
+Set a top-level `error` object. This can only be done manually. It is an escape hatch.
+
 ##### `setErrors(fields: { [field]: string }) => void`
 Set `errors` manually.
+
+##### `setSubmitting(boolean) => void`
+Set a `isSubmitting` manually.
 
 ##### `setTouched(fields: { [field]: string }) => void`
 Set `touched` manually.
@@ -262,11 +261,11 @@ Set `touched` manually.
 ##### `setValues(fields: { [field]: any }) => void`
 Set `values` manually.
 
-##### `setError(err: any) => void`
-Set a top-level `error` object. This can only be done manually. It is an escape hatch.
+##### `touched: { [field]: string }`
+Touched fields. Use this to keep track of which fields have been visited. Use `handleBlur` to toggle on a given input. Keys work like `errors` and `values`.
 
-##### `setSubmitting(boolean) => void`
-Set a `isSubmitting` manually.
+##### `values: { [field]: any }`
+Your form's values, the result of `mapPropsToValues` (if specified) or all props that are not functions passed to your `WrappedComponent`.
 
 ## Recipes
 

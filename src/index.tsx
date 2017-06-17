@@ -177,7 +177,7 @@ export default function Formik<Props, Values extends FormikValues, Payload>({
           e.persist();
           const { name, id } = e.target;
           const field = name ? name : id;
-          setTouched({ ...values, [field]: true });
+          setTouched({ ...touched, [field]: true });
         },
         handleChangeValue: (field: string, value: any) => {
           // Set changed fields as touched

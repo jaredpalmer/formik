@@ -29,7 +29,6 @@
     "hoist-non-react-statics": "^1.2.0",
     "react": "^15.5.4",
     "react-dom": "^15.5.4",
-    "recompose": "^0.23.5",
     "yup": "^0.21.3"
   },
   "peerDependencies": {

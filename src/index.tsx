@@ -283,10 +283,18 @@ export default function formik<
 
       handleChangeValue = (field: string, value: any) => {
         const { touched, values } = this.state;
-        // Set changed fields as touched
-        this.setTouched({ ...touched, [field]: true });
-        // Set form fields by name
-        this.setValues({ ...values as any, [field]: value });
+        // Set touched and form fields by name
+        this.setState(state => ({
+          ...state,
+          values: {
+            ...values as object,
+            [field]: val,
+          },
+          touched: {
+            ...touched as object,
+            [field]: true,
+          },
+        }));
         // Validate against schema
         validateFormData<Values>(
           { ...values as any, [field]: value },
@@ -322,8 +330,8 @@ export default function formik<
       render() {
         return (
           <WrappedComponent
-            {...this.props}
-            {...this.state}
+            {...this.props as any}
+            {...this.state as any}
             setError={this.setError}
             setErrors={this.setErrors}
             setSubmitting={this.setSubmitting}

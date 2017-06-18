@@ -93,7 +93,7 @@ export interface InjectedFormikProps<Props, Values> {
   /* Reset form */
   resetForm: (nextProps?: Props) => void;
   /* Reset form event handler  */
-  onReset: () => void;
+  handleReset: () => void;
 }
 
 export interface FormikBag {

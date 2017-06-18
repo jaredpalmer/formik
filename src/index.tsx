@@ -288,7 +288,7 @@ export default function formik<
           ...state,
           values: {
             ...values as object,
-            [field]: val,
+            [field]: value,
           },
           touched: {
             ...touched as object,

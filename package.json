@@ -1,7 +1,7 @@
 {
   "name": "formik",
   "description": "An elegant way to handle forms in React",
-  "version": "0.5.2",
+  "version": "0.5.3",
   "license": "MIT",
   "author": "Jared Palmer <jared@palmer.net>",
   "repository": "jaredpalmer/formik",

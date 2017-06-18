@@ -9,7 +9,6 @@ import Yup from 'yup';
 describe('Formik', () => {
   it('renders Formik correctly', () => {
     const Form = Formik<SimpleProps, SimpleProps, SimpleProps>({
-      displayName: 'Simple',
       validationSchema: Yup.object().shape({
         thing: Yup.string(),
       }),
@@ -18,16 +17,13 @@ describe('Formik', () => {
       },
     })(Simple as any);
 
-    const tree = renderer.create(
-      <Form thing="hello" />
-    ).toJSON();
+    const tree = renderer.create(<Form thing="hello" />).toJSON();
     expect(tree).toMatchSnapshot();
   });
 
   it('mapsPropsToValues', () => {
-    const Form = Formik<{hello: string}, SimpleProps, SimpleProps>({
-      displayName: 'Simple',
-      mapPropsToValues: ({ hello }) => ({thing: hello})
+    const Form = Formik<{ hello: string }, SimpleProps, SimpleProps>({
+      mapPropsToValues: ({ hello }) => ({ thing: hello }),
       validationSchema: Yup.object().shape({
         thing: Yup.string(),
       }),

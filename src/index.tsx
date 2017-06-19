@@ -123,7 +123,7 @@ export interface FormikHandlers {
 /**
  * State, handlers, and helpers injected as props into the wrapped form component.
  */
-export type InjectedFormikProps<Props, Values> = Props &
+export type InjectedFormikProps<Props, Values = Props> = Props &
   FormikState<Values> &
   FormikActions<Props> &
   FormikHandlers;

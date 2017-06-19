@@ -1,9 +1,9 @@
 import * as React from 'react';
 import * as yup from 'yup';
 
-import Formik, { InjectedFormikProps } from 'formik';
+import Formik, { FormikBag, InjectedFormikProps } from 'formik';
 
-export interface FormProps {
+export interface Props {
   email: string;
   firstName: string;
   social: {
@@ -11,17 +11,17 @@ export interface FormProps {
   };
 }
 
-interface FormValues {
+interface Values {
   email: string;
   firstName: string;
   facebook: string;
 }
 
-interface FormPayload {
-  data: FormValues;
+interface Payload {
+  data: Values;
 }
 
-const withFormik = Formik<FormProps, FormValues, FormPayload>({
+const FormikEnhancer = Formik<Props, Values, Payload>({
   mapPropsToValues: ({ email, firstName, social }) => ({
     email,
     firstName,
@@ -33,7 +33,10 @@ const withFormik = Formik<FormProps, FormValues, FormPayload>({
     firstName: yup.string().min(5).required(),
     facebook: yup.string(),
   }),
-  handleSubmit: (payload, { props, setSubmitting }) => {
+  handleSubmit: (
+    payload: Payload,
+    { setSubmitting }: FormikBag<Props, Values>
+  ) => {
     callMyApi(payload).then(
       res => {
         setSubmitting(false);
@@ -55,7 +58,7 @@ function MyForm({
   handleSubmit,
   values: { email, firstName, facebook },
   handleChange,
-}: InjectedFormikProps<FormValues>) {
+}: InjectedFormikProps<Props, Values>) {
   return (
     <form onSubmit={handleSubmit}>
       <input
@@ -84,4 +87,4 @@ function MyForm({
   );
 }
 
-export default withFormik(MyForm);
+export default FormikEnhancer(MyForm);

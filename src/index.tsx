@@ -3,7 +3,6 @@ const hoistNonReactStatics = require('hoist-non-react-statics');
 
 /**
  * Transform Yup ValidationError to a more usable object
- * @param yupError any
  */
 export function yupToFormErrors(yupError: any): FormikErrors {
   let errors: FormikErrors = {};
@@ -17,7 +16,6 @@ export function yupToFormErrors(yupError: any): FormikErrors {
 
 /**
  * Given an object, map keys to boolean
- * @param fields Object
  */
 export function touchAllFields<T>(fields: T): { [field: string]: boolean } {
   let touched: { [field: string]: boolean } = {};

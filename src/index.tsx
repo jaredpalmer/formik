@@ -123,7 +123,7 @@ export interface FormikHandlers {
 /**
  * State, handlers, and helpers injected as props into the wrapped form component.
  */
-export type InjectedFormikProps<Props, Values = Props> = Props &
+export type InjectedFormikProps<Props, Values> = Props &
   FormikState<Values> &
   FormikActions<Props> &
   FormikHandlers;
@@ -131,7 +131,7 @@ export type InjectedFormikProps<Props, Values = Props> = Props &
 /**
  * Formik actions + { props }
  */
-export type FormikBag<P, V = P> = { props: P } & FormikActions<P>;
+export type FormikBag<P, V> = { props: P } & FormikActions<P>;
 
 export type CompositeComponent<P> =
   | React.ComponentClass<P>
@@ -147,11 +147,7 @@ export interface InferableComponentDecorator<TOwnProps> {
   <T extends CompositeComponent<TOwnProps>>(component: T): T;
 }
 
-export default function formik<
-  Props = {},
-  Values extends FormikValues = Props,
-  Payload = Values
->({
+export default function formik<Props, Values extends FormikValues, Payload>({
   displayName,
   mapPropsToValues = vanillaProps => {
     let values: Values = {} as Values;

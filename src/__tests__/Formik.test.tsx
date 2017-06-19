@@ -9,7 +9,7 @@ describe('Formik', () => {
   it('renders Formik correctly', () => {
     interface Props { thing: string }
     // when props and values are the same, you can pass just one generic to InjectedFormikProps
-    const Form: React.SFC<InjectedFormikProps<Props>> = ({
+    const Form: React.SFC<InjectedFormikProps<Props, Props>> = ({
       values,
       handleSubmit,
       handleChange,
@@ -29,7 +29,7 @@ describe('Formik', () => {
       );
     };
 
-    const FormikEnhancer = Formik<Props>({
+    const FormikEnhancer = Formik<Props, Props, Props>({
       validationSchema: Yup.object().shape({
         thing: Yup.string(),
       }),
@@ -68,7 +68,7 @@ describe('Formik', () => {
       );
     };
 
-    const FormikEnhancer = Formik<Props, Values>({
+    const FormikEnhancer = Formik<Props, Values, Values>({
       mapPropsToValues: ({ hello }) => ({ thing: hello }),
       validationSchema: Yup.object().shape({
         thing: Yup.string(),

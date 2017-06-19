@@ -131,7 +131,7 @@ export type InjectedFormikProps<Props, Values = Props> = Props &
 /**
  * Formik actions + { props }
  */
-export type FormikBag<P, V> = { props: P } & FormikActions<P>;
+export type FormikBag<P, V = P> = { props: P } & FormikActions<P>;
 
 export type CompositeComponent<P> =
   | React.ComponentClass<P>

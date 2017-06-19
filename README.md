@@ -136,9 +136,6 @@ const SimpleForm = ({ values, handleChange, handleSubmit, handleReset, errors, e
 // Now for the fun part. We need to tell Formik how we want to validate,
 // transform props/state, and submit our form.
 export default Formik({
-  // Give our form a name for debugging in React DevTools
-  displayName: 'SimpleForm',
-
   // Define our form's validation schema with Yup. It's like Joi, but for
   // the browser.
   validationSchema: Yup.object().shape({
@@ -200,7 +197,7 @@ Create A higher-order React component class that passes props and form handlers 
 
 #### `options`
 
-##### `displayName: string` 
+##### `displayName?: string` 
 Set the display name of your component.
 
 ##### `handleSubmit: (payload, FormikBag) => void`)

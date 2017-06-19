@@ -4,3 +4,4 @@ es6
 umd
 *.log
 coverage
+.DS_Store

@@ -1,13 +1,8 @@
-import {
-  ComponentEnhancer,
-  compose,
-  mapProps,
-  setDisplayName,
-  withState,
-} from 'recompose';
+import * as React from 'react';
+const hoistNonReactStatics = require('hoist-non-react-statics');
 
 /**
- * Given an error from yup validation, turn it into form errors
+ * Transform Yup ValidationError to a more usable object
  */
 export function yupToFormErrors(yupError: any): FormikErrors {
   let errors: FormikErrors = {};
@@ -20,7 +15,7 @@ export function yupToFormErrors(yupError: any): FormikErrors {
 }
 
 /**
- * Given a FormState, return a `touched` value with all of the fields touched.
+ * Given an object, map keys to boolean
  */
 export function touchAllFields<T>(fields: T): { [field: string]: boolean } {
   let touched: { [field: string]: boolean } = {};
@@ -29,12 +24,10 @@ export function touchAllFields<T>(fields: T): { [field: string]: boolean } {
   }
   return touched;
 }
-
-export function validateFormData<T>(
-  data: T,
-  schema: any,
-  setErrors: (errors: FormikErrors) => void
-): Promise<boolean> {
+/**
+ * Validate a yup schema.
+ */
+export function validateFormData<T>(data: T, schema: any): Promise<void> {
   let validateData: any = {};
   for (let k in data) {
     if (data.hasOwnProperty(k)) {
@@ -44,21 +37,29 @@ export function validateFormData<T>(
         : undefined;
     }
   }
-  return schema.validate(validateData, { abortEarly: false }).then(
-    () => {
-      setErrors({});
-      return true;
-    },
-    (err: any) => {
-      setErrors(yupToFormErrors(err));
-      return false;
-    }
-  );
+  return schema.validate(validateData, { abortEarly: false });
 }
 
+export interface FormikValues {
+  [field: string]: any;
+}
+
+// @todo make this limited to keys of values
+export interface FormikErrors {
+  [field: string]: string;
+}
+
+// @todo make this limited to keys of values
+// interfact FormikTouched<Values, Field extends keyof Values> ??
+export interface FormikTouched {
+  [field: string]: boolean;
+}
+
+/**
+ * Formik configuration options
+ */
 export interface FormikConfig<Props, Values, Payload> {
-  /* Component's display  name */
-  displayName: string;
+  displayName?: string;
   /* Map props to the form values */
   mapPropsToValues?: (props: Props) => Values;
   /* Map form values to submission payload */
@@ -66,20 +67,47 @@ export interface FormikConfig<Props, Values, Payload> {
   /*  Yup Schema */
   validationSchema: any;
   /* Submission handler */
-  handleSubmit: (payload: Payload, formikBag: FormikBag) => void;
+  handleSubmit: (payload: Payload, formikBag: FormikBag<Props, Values>) => void;
 }
 
-export interface InjectedFormikProps<Props, Values> {
+/**
+ * Formik state tree
+ */
+export interface FormikState<V> {
   /* Form values */
-  values: Values;
+  values: V;
   /* Top level error, in case you need it */
-  error: any;
+  error?: any;
   /** map of field names to specific error for that field */
   errors: FormikErrors;
   /** map of field names to whether the field has been touched */
   touched: FormikTouched;
   /** whether the form is currently submitting */
   isSubmitting: boolean;
+}
+
+/**
+ * Formik state helpers
+ */
+export interface FormikActions<P> {
+  /* Manually set top level error */
+  setError: (e: any) => void;
+  /* Manually set Errors */
+  setErrors: (errors: FormikErrors) => void;
+  /* Manually set isSubmitting */
+  setSubmitting: (isSubmitting: boolean) => void;
+  /* Manually set touched fields */
+  setTouched: (touched: FormikTouched) => void;
+  /* Manually set values  */
+  setValues: (values: FormikValues) => void;
+  /* Reset form */
+  resetForm: (nextProps?: P) => void;
+}
+
+/**
+ * Formik form event handlers 
+ */
+export interface FormikHandlers {
   /* Form submit handler */
   handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
   /* Classic React change handler, keyed by input name */
@@ -88,42 +116,51 @@ export interface InjectedFormikProps<Props, Values> {
   handleBlur: (e: any) => void;
   /* Change value of form field directly */
   handleChangeValue: (name: string, value: any) => void;
-  /* Manually set top level error */
-  setError: (e: any) => void;
-  /* Reset form */
-  resetForm: (nextProps?: Props) => void;
   /* Reset form event handler  */
   handleReset: () => void;
 }
 
-export interface FormikBag {
-  props: { [field: string]: any };
-  setError: (error: any) => void;
-  setErrors: (errors: FormikErrors) => void;
-  setSubmitting: (isSubmitting: boolean) => void;
-  setTouched: (touched: FormikTouched) => void;
-  setValues: (values: FormikValues) => void;
+/**
+ * State, handlers, and helpers injected as props into the wrapped form component.
+ */
+export type InjectedFormikProps<Props, Values = Props> = Props &
+  FormikState<Values> &
+  FormikActions<Props> &
+  FormikHandlers;
+
+/**
+ * Formik actions + { props }
+ */
+export type FormikBag<P, V> = { props: P } & FormikActions<P>;
+
+export type CompositeComponent<P> =
+  | React.ComponentClass<P>
+  | React.StatelessComponent<P>;
+
+export interface ComponentDecorator<TOwnProps, TMergedProps> {
+  (component: CompositeComponent<TMergedProps>): React.ComponentClass<
+    TOwnProps
+  >;
 }
 
-export interface FormikValues {
-  [field: string]: any;
+export interface InferableComponentDecorator<TOwnProps> {
+  <T extends CompositeComponent<TOwnProps>>(component: T): T;
 }
 
-export interface FormikErrors {
-  [field: string]: string;
-}
-
-export interface FormikTouched {
-  [field: string]: boolean;
-}
-
-export default function Formik<Props, Values extends FormikValues, Payload>({
+export default function formik<
+  Props = {},
+  Values extends FormikValues = Props,
+  Payload = Values
+>({
   displayName,
-  mapPropsToValues = props => {
-    let values: FormikValues = {};
-    for (let k in props) {
-      if (props.hasOwnProperty(k) && typeof props[k] !== 'function') {
-        values[k] = props[k];
+  mapPropsToValues = vanillaProps => {
+    let values: Values = {} as Values;
+    for (let k in vanillaProps) {
+      if (
+        vanillaProps.hasOwnProperty(k) &&
+        typeof vanillaProps[k] !== 'function'
+      ) {
+        values[k] = vanillaProps[k];
       }
     }
     return values;
@@ -135,111 +172,181 @@ export default function Formik<Props, Values extends FormikValues, Payload>({
   },
   validationSchema,
   handleSubmit,
-}: FormikConfig<Props, Values, Payload>): ComponentEnhancer<{}, any> {
-  return compose<{}, Props>(
-    setDisplayName(displayName),
-    withState('values', 'setValues', (props: Props) => mapPropsToValues(props)),
-    withState('errors', 'setErrors', {}),
-    withState('error', 'setError', undefined),
-    withState('touched', 'setTouched', {}),
-    withState('isSubmitting', 'setSubmitting', false),
-    mapProps(
-      ({
-        values,
-        error,
-        errors,
-        touched,
-        isSubmitting,
-        setError,
-        setErrors,
-        setValues,
-        setTouched,
-        setSubmitting,
-        ...otherProps,
-      }) => ({
-        handleChange: (e: React.ChangeEvent<any>) => {
-          e.persist();
-          const { type, name, id, value, checked } = e.target;
-          const field = name ? name : id;
-          const val = /number|range/.test(type)
-            ? parseFloat(value)
-            : /checkbox/.test(type) ? checked : value;
-          // Set form fields by name
-          setValues({ ...values, [field]: val });
-          // Validate against schema
-          validateFormData<Values>(
-            { ...values, [field]: val },
-            validationSchema,
-            setErrors
-          );
-        },
-        handleBlur: (e: any) => {
-          e.persist();
-          const { name, id } = e.target;
-          const field = name ? name : id;
-          setTouched({ ...touched, [field]: true });
-        },
-        handleChangeValue: (field: string, value: any) => {
-          // Set changed fields as touched
-          setTouched({ ...touched, [field]: true });
-          // Set form fields by name
-          setValues({ ...values, [field]: value });
-          // Validate against schema
-          validateFormData<Values>(
-            { ...values, [field]: value },
-            validationSchema,
-            setErrors
-          );
-        },
-        handleSubmit: (e: React.FormEvent<HTMLFormElement>) => {
-          e.preventDefault();
-          setTouched(touchAllFields(values));
-          setSubmitting(true);
-          validateFormData<Values>(
-            values,
-            validationSchema,
-            setErrors
-          ).then((isValid: boolean) => {
-            if (isValid) {
-              handleSubmit(mapValuesToPayload(values), {
-                setTouched,
-                setErrors,
-                setError,
-                setSubmitting,
-                setValues,
-                props: otherProps,
-              });
-            }
-          });
-        },
-        resetForm: (nextProps?: Props) => {
-          setSubmitting(false);
-          setErrors({});
-          setTouched({});
-          setError(undefined);
-          if (nextProps) {
-            setValues(mapPropsToValues(nextProps));
-          } else {
-            setValues(mapPropsToValues(otherProps as Props));
-          }
-        },
-        handleReset: () => {
-          setSubmitting(false);
-          setErrors({});
-          setTouched({});
-          setError(undefined);
-          setValues(mapPropsToValues(otherProps as Props));
-        },
-        setValues,
-        setErrors,
-        setSubmitting,
-        errors,
-        error,
-        isSubmitting,
-        touched,
-        values,
-        ...otherProps,
-      })
-    )
-  );
+}: FormikConfig<Props, Values, Payload>): ComponentDecorator<
+  Props,
+  InjectedFormikProps<Props, Values>
+> {
+  return function wrapWithFormik(
+    WrappedComponent: CompositeComponent<InjectedFormikProps<Props, Values>>
+  ): any {
+    class Formik extends React.Component<Props, FormikState<Values>> {
+      public static displayName = `Formik(${displayName ||
+        WrappedComponent.displayName ||
+        WrappedComponent.name ||
+        'Component'})`;
+      public static WrappedComponent = WrappedComponent;
+      public props: Props;
+
+      constructor(props: Props) {
+        super(props);
+        this.state = {
+          values: mapPropsToValues(props),
+          errors: {},
+          touched: {},
+          isSubmitting: false,
+        };
+      }
+
+      setErrors = (errors: FormikErrors) => {
+        this.setState({ errors });
+      };
+
+      setTouched = (touched: FormikTouched) => {
+        this.setState({ touched });
+      };
+
+      setValues = (values: Values) => {
+        this.setState({ values });
+      };
+
+      setError = (error: any) => {
+        this.setState({ error });
+      };
+
+      setSubmitting = (isSubmitting: boolean) => {
+        this.setState({ isSubmitting });
+      };
+
+      handleChange = (e: React.ChangeEvent<any>) => {
+        e.persist();
+        const { type, name, id, value, checked } = e.target;
+        const field = name ? name : id;
+        const val = /number|range/.test(type)
+          ? parseFloat(value)
+          : /checkbox/.test(type) ? checked : value;
+
+        const { values } = this.state;
+        // Set form fields by name
+        this.setState(state => ({
+          ...state,
+          values: {
+            ...values as object,
+            [field]: val,
+          },
+        }));
+        // Validate against schema
+        validateFormData<Values>(
+          { ...values as any, [field]: val },
+          validationSchema
+        ).then(
+          () => this.setState({ errors: {} }),
+          (err: any) => this.setState({ errors: yupToFormErrors(err) })
+        );
+      };
+
+      handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        // setTouched();
+        // setSubmitting(true);
+        this.setState({
+          touched: touchAllFields(this.state.values),
+          isSubmitting: true,
+        });
+        const { values } = this.state;
+        // Validate against schema
+        validateFormData<Values>(values, validationSchema).then(
+          () => {
+            this.setState({ errors: {} });
+            handleSubmit(mapValuesToPayload(this.state.values), {
+              setTouched: this.setTouched,
+              setErrors: this.setErrors,
+              setError: this.setError,
+              setSubmitting: this.setSubmitting,
+              setValues: this.setValues,
+              resetForm: this.resetForm,
+              props: this.props,
+            });
+          },
+          (err: any) => this.setState({ errors: yupToFormErrors(err) })
+        );
+      };
+
+      handleBlur = (e: any) => {
+        e.persist();
+        const { name, id } = e.target;
+        const field = name ? name : id;
+        const { touched } = this.state;
+        this.setTouched({ ...touched, [field]: true });
+      };
+
+      handleChangeValue = (field: string, value: any) => {
+        const { touched, values } = this.state;
+        // Set touched and form fields by name
+        this.setState(state => ({
+          ...state,
+          values: {
+            ...values as object,
+            [field]: value,
+          },
+          touched: {
+            ...touched as object,
+            [field]: true,
+          },
+        }));
+        // Validate against schema
+        validateFormData<Values>(
+          { ...values as any, [field]: value },
+          validationSchema
+        ).then(
+          () => this.setState({ errors: {} }),
+          (err: any) => this.setState({ errors: yupToFormErrors(err) })
+        );
+      };
+
+      resetForm = (nextProps?: Props) => {
+        this.setState({
+          isSubmitting: false,
+          errors: {},
+          touched: {},
+          error: undefined,
+          values: nextProps
+            ? mapPropsToValues(nextProps)
+            : mapPropsToValues(this.props),
+        });
+      };
+
+      handleReset = () => {
+        this.setState({
+          isSubmitting: false,
+          errors: {},
+          touched: {},
+          error: undefined,
+          values: mapPropsToValues(this.props),
+        });
+      };
+
+      render() {
+        return (
+          <WrappedComponent
+            {...this.props as any}
+            {...this.state as any}
+            setError={this.setError}
+            setErrors={this.setErrors}
+            setSubmitting={this.setSubmitting}
+            setTouched={this.setTouched}
+            setValues={this.setValues}
+            resetForm={this.resetForm}
+            handleReset={this.handleReset}
+            handleSubmit={this.handleSubmit}
+            handleChange={this.handleChange}
+            handleBlur={this.handleBlur}
+            handleChangeValue={this.handleChangeValue}
+          />
+        );
+      }
+    }
+    // Make sure we preserve any custom statics on the original component.
+    // @see https://github.com/apollographql/react-apollo/blob/master/src/graphql.tsx
+    return hoistNonReactStatics(Formik, WrappedComponent);
+  };
 }

@@ -22,7 +22,6 @@ interface FormPayload {
 }
 
 const withFormik = Formik<FormProps, FormValues, FormPayload>({
-  displayName: 'TestForm',
   mapPropsToValues: ({ email, firstName, social }) => ({
     email,
     firstName,

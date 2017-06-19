@@ -263,7 +263,8 @@ export default function formik<Props, Values extends FormikValues, Payload>({
               props: this.props,
             });
           },
-          (err: any) => this.setState({ errors: yupToFormErrors(err) })
+          (err: any) =>
+            this.setState({ isSubmitting: false, errors: yupToFormErrors(err) })
         );
       };
 

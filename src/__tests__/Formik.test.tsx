@@ -8,7 +8,6 @@ import Yup from 'yup';
 describe('Formik', () => {
   it('renders Formik correctly', () => {
     interface Props { thing: string }
-    // when props and values are the same, you can pass just one generic to InjectedFormikProps
     const Form: React.SFC<InjectedFormikProps<Props, Props>> = ({
       values,
       handleSubmit,

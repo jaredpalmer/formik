@@ -89,7 +89,7 @@ export interface FormikState<V> {
 /**
  * Formik state helpers
  */
-export interface FormikActions<P> {
+export interface FormikActions<P, V> {
   /* Manually set top level error */
   setError: (e: any) => void;
   /* Manually set Errors */
@@ -99,7 +99,7 @@ export interface FormikActions<P> {
   /* Manually set touched fields */
   setTouched: (touched: FormikTouched) => void;
   /* Manually set values  */
-  setValues: (values: FormikValues) => void;
+  setValues: (values: V) => void;
   /* Reset form */
   resetForm: (nextProps?: P) => void;
 }
@@ -125,13 +125,13 @@ export interface FormikHandlers {
  */
 export type InjectedFormikProps<Props, Values> = Props &
   FormikState<Values> &
-  FormikActions<Props> &
+  FormikActions<Props, Values> &
   FormikHandlers;
 
 /**
  * Formik actions + { props }
  */
-export type FormikBag<P, V> = { props: P } & FormikActions<P>;
+export type FormikBag<P, V> = { props: P } & FormikActions<P, V>;
 
 export type CompositeComponent<P> =
   | React.ComponentClass<P>

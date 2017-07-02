@@ -149,8 +149,8 @@ export default Formik({
   // not shown)
   mapPropsToValues: props => ({
     email: props.user.email,
-    twitter: props.user.social,
-    facebook: props.user.facebook,
+    twitter: props.user.social.twitter,
+    facebook: props.user.social.facebook,
   }),
 
   // Sometimes your API needs a different object shape than your form. Formik let's 

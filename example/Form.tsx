@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as yup from 'yup';
 
-import Formik, { FormikBag, InjectedFormikProps } from 'formik';
+import { Formik, FormikBag, InjectedFormikProps } from 'formik';
 
 export interface Props {
   email: string;

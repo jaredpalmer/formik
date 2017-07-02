@@ -85,7 +85,7 @@ import EditUserForm from './EditUserForm';
 
 const EditUserDialog = ({ user }) =>
   <Dialog>
-  	<EditUserForm user={user} />
+    <EditUserForm user={user} />
   </Dialog>;
 ```
 
@@ -94,7 +94,7 @@ Enter Formik.
 ```js
 // EditUserForm.js
 import React from 'react';
-import Formik from 'formik';
+import { Formik } from 'formik';
 import Yup from 'yup';
 
 // Formik is a Higher Order Component that wraps a React Form. Mutable form values 

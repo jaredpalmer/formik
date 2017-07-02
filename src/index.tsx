@@ -32,9 +32,8 @@ export function validateFormData<T>(data: T, schema: any): Promise<void> {
   for (let k in data) {
     if (data.hasOwnProperty(k)) {
       const key = String(k);
-      validateData[key] = (data as any)[key] !== ''
-        ? (data as any)[key]
-        : undefined;
+      validateData[key] =
+        (data as any)[key] !== '' ? (data as any)[key] : undefined;
     }
   }
   return schema.validate(validateData, { abortEarly: false });
@@ -147,7 +146,7 @@ export interface InferableComponentDecorator<TOwnProps> {
   <T extends CompositeComponent<TOwnProps>>(component: T): T;
 }
 
-export default function formik<Props, Values extends FormikValues, Payload>({
+export function Formik<Props, Values extends FormikValues, Payload>({
   displayName,
   mapPropsToValues = vanillaProps => {
     let values: Values = {} as Values;

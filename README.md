@@ -18,7 +18,7 @@ Add Formik and Yup to your project. Formik uses [Yup](https://github.com/jquense
 npm i formik yup --save
 ```
 
-[Demo on CodeSandbox.io](https://codesandbox.io/s/zKrK5YLDZ))
+You can also play around with this [live demo on CodeSandbox.io](https://codesandbox.io/s/zKrK5YLDZ)
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->

@@ -2,7 +2,7 @@
 
 #### Forms in React, *without tears.*
 
-Let's face it, forms are really really verbose in React. To make matters worse, most form helpers do wayyyyy too much magic and often have a significant performace cost. Formik is a minimal Higher Order Component that helps you with the 3 most annoying parts: 
+Let's face it, forms are really verbose in React. To make matters worse, most form helpers do wayyyy too much magic and often have a significant performace cost associated with them. Formik is a minimal Higher Order Component that helps you with the 3 most annoying parts: 
 
  1. Transforming props to a flat React state
  2. Validation and error messages

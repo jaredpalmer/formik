@@ -155,14 +155,14 @@ export default Formik({
     facebook: props.user.social.facebook,
   }),
 
-  // Sometimes your API needs a different object shape than your form. Formik let's 
+  // Sometimes your API needs a different object shape than your form. Formik lets 
   // you map `values` back into a `payload` before they are
   // passed to handleSubmit.
   mapValuesToPayload: values => ({
     email: values.email,
     social: { 
       twitter: values.twitter, 
-      facebook: values.facebook 
+      facebook: values.facebook,
     },
   }),
 
@@ -325,7 +325,7 @@ export default Formik({...})((props) => (
 ));
 ```
 
-I suggest using the first method, as it makes it clear what Formik is doing. It also let's you configure Formik above your component, so when you read your form's code, you know where those props are coming from. It also makes testing much easier.
+I suggest using the first method, as it makes it clear what Formik is doing. It also lets you configure Formik above your component, so when you read your form's code, you know where those props are coming from. It also makes testing much easier.
 
 ### Accessing React Component Lifecycle Functions
 

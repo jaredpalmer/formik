@@ -1,13 +1,15 @@
 import * as React from 'react';
 import * as renderer from 'react-test-renderer';
 
-import Formik, { InjectedFormikProps } from '../.';
+import { Formik, InjectedFormikProps } from '../.';
 
 import Yup from 'yup';
 
 describe('Formik', () => {
   it('renders Formik correctly', () => {
-    interface Props { thing: string }
+    interface Props {
+      thing: string;
+    }
     const Form: React.SFC<InjectedFormikProps<Props, Props>> = ({
       values,
       handleSubmit,
@@ -22,7 +24,10 @@ describe('Formik', () => {
             value={values.thing}
             name="thing"
           />
-          {errors.thing && <div>{errors.thing}</div>}
+          {errors.thing &&
+            <div>
+              {errors.thing}
+            </div>}
           <input type="submit" value="Submit" />
         </form>
       );
@@ -44,8 +49,12 @@ describe('Formik', () => {
   });
 
   it('mapsPropsToValues', () => {
-    interface Props { hello: string }
-    interface Values { thing: string }
+    interface Props {
+      hello: string;
+    }
+    interface Values {
+      thing: string;
+    }
 
     const Form: React.SFC<InjectedFormikProps<Props, Values>> = ({
       values,
@@ -61,7 +70,10 @@ describe('Formik', () => {
             value={values.thing}
             name="thing"
           />
-          {errors.thing && <div>{errors.thing}</div>}
+          {errors.thing &&
+            <div>
+              {errors.thing}
+            </div>}
           <input type="submit" value="Submit" />
         </form>
       );

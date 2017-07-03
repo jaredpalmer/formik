@@ -101,6 +101,8 @@ export interface FormikActions<P, V> {
   setValues: (values: V) => void;
   /* Reset form */
   resetForm: (nextProps?: P) => void;
+  /* Submit form */
+  submitForm: () => void;
 }
 
 /**
@@ -139,7 +141,7 @@ export type CompositeComponent<P> =
 export interface ComponentDecorator<TOwnProps, TMergedProps> {
   (component: CompositeComponent<TMergedProps>): React.ComponentClass<
     TOwnProps
-  >;
+    >;
 }
 
 export interface InferableComponentDecorator<TOwnProps> {
@@ -170,15 +172,15 @@ export function Formik<Props, Values extends FormikValues, Payload>({
 }: FormikConfig<Props, Values, Payload>): ComponentDecorator<
   Props,
   InjectedFormikProps<Props, Values>
-> {
+  > {
   return function wrapWithFormik(
     WrappedComponent: CompositeComponent<InjectedFormikProps<Props, Values>>
   ): any {
     class Formik extends React.Component<Props, FormikState<Values>> {
       public static displayName = `Formik(${displayName ||
-        WrappedComponent.displayName ||
-        WrappedComponent.name ||
-        'Component'})`;
+      WrappedComponent.displayName ||
+      WrappedComponent.name ||
+      'Component'})`;
       public static WrappedComponent = WrappedComponent;
       public props: Props;
 
@@ -236,13 +238,10 @@ export function Formik<Props, Values extends FormikValues, Payload>({
         ).then(
           () => this.setState({ errors: {} }),
           (err: any) => this.setState({ errors: yupToFormErrors(err) })
-        );
+          );
       };
 
-      handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        // setTouched();
-        // setSubmitting(true);
+      submitForm = () => {
         this.setState({
           touched: touchAllFields(this.state.values),
           isSubmitting: true,
@@ -259,12 +258,18 @@ export function Formik<Props, Values extends FormikValues, Payload>({
               setSubmitting: this.setSubmitting,
               setValues: this.setValues,
               resetForm: this.resetForm,
+              submitForm: this.submitForm,
               props: this.props,
             });
           },
           (err: any) =>
             this.setState({ isSubmitting: false, errors: yupToFormErrors(err) })
         );
+      }
+
+      handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        this.submitForm();
       };
 
       handleBlur = (e: any) => {
@@ -296,7 +301,7 @@ export function Formik<Props, Values extends FormikValues, Payload>({
         ).then(
           () => this.setState({ errors: {} }),
           (err: any) => this.setState({ errors: yupToFormErrors(err) })
-        );
+          );
       };
 
       resetForm = (nextProps?: Props) => {
@@ -333,6 +338,7 @@ export function Formik<Props, Values extends FormikValues, Payload>({
             setValues={this.setValues}
             resetForm={this.resetForm}
             handleReset={this.handleReset}
+            submitFomr={this.submitForm}
             handleSubmit={this.handleSubmit}
             handleChange={this.handleChange}
             handleBlur={this.handleBlur}

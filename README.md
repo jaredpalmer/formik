@@ -253,7 +253,7 @@ Set a top-level `error` object. This can only be done manually. It is an escape 
 Set `errors` manually.
 
 ##### `setSubmitting(boolean) => void`
-Set a `isSubmitting` manually.
+Set `isSubmitting` manually.
 
 ##### `setTouched(fields: { [field]: string }) => void`
 Set `touched` manually.

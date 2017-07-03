@@ -49,6 +49,7 @@ You can also try before you buy with this **[demo on CodeSandbox.io](https://cod
       - [`setSubmitting(boolean) => void`](#setsubmittingboolean--void)
       - [`setTouched(fields: { [field]: string }) => void`](#settouchedfields--field-string---void)
       - [`setValues(fields: { [field]: any }) => void`](#setvaluesfields--field-any---void)
+      - [`submitForm: () => void`](#submitform---void)
       - [`touched: { [field]: string }`](#touched--field-string-)
       - [`values: { [field]: any }`](#values--field-any-)
 - [Recipes](#recipes)
@@ -260,6 +261,9 @@ Set `touched` manually.
 
 ##### `setValues(fields: { [field]: any }) => void`
 Set `values` manually.
+
+##### `submitForm: () => void`
+Imperatively submit the form. A useful alternative to submitting the form via a "submit" type DOM Element. The "standard" submit workflow shall occur - i.e. toggling of the `isSubmitting` state, validation, and calling through to the registered [`handleSubmit`](#handlesubmit-e-reactformeventhtmlformevent--void) when the values are valid.
 
 ##### `touched: { [field]: string }`
 Touched fields. Use this to keep track of which fields have been visited. Use `handleBlur` to toggle on a given input. Keys work like `errors` and `values`.

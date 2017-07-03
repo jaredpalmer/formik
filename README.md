@@ -359,8 +359,8 @@ class MyForm extends React.Component {
       <form onSubmit={this.props.handleSubmit}>
         <input
           type="text"
-          name="thing"
-          value={this.props.values.thing}
+          name="otherThing"
+          value={this.props.values.otherThing}
           onChange={this.props.handleChange}
         />
         <input type="submit" value="Submit" />

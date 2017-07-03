@@ -171,8 +171,9 @@ export default Formik({
   // access to all props and some stateful helpers.
   handleSubmit: (payload, { props, setError, setSubmitting }) => {
     // do stuff with your payload
-    // e.preventDefault(), setSubmitting, setError(undefined) are // called before handleSubmit is. So you don't have to.
-    // HandleSubmit will only be executed if form values pass Yup validation.
+    // e.preventDefault(), setSubmitting, setError(undefined) are 
+    // called before handleSubmit is. So you don't have to do repeat this.
+    // handleSubmit will only be executed if form values pass Yup validation.
     CallMyApi(props.user.id, payload)
       .then(
         res => {
@@ -195,7 +196,7 @@ export default Formik({
 
 ### `Formik(options)`
 
-Create A higher-order React component class that passes props and form handlers (the "`FormikBag`") into your component derived from supplied options. 
+Create a higher-order React component class that passes props and form handlers (the "`FormikBag`") into your component derived from supplied options. 
 
 #### `options`
 

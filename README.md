@@ -29,7 +29,7 @@ You can also try before you buy with this **[demo on CodeSandbox.io](https://cod
 - [API](#api)
   - [`Formik(options)`](#formikoptions)
     - [`options`](#options)
-      - [`displayName: string`](#displayname-string)
+      - [`displayName?: string`](#displayname-string)
       - [`handleSubmit: (payload, FormikBag) => void`](#handlesubmit-payload-formikbag--void)
       - [`mapPropsToValues?: (props) => props`](#mappropstovalues-props--props)
       - [`mapValuesToPayload?: (values) => payload`](#mapvaluestopayload-values--payload)

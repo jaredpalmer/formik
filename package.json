@@ -1,29 +1,29 @@
 {
   "name": "formik",
-  "description": "An elegant way to handle forms in React",
+  "description": "Forms in React, without tears",
   "version": "0.7.0",
   "license": "MIT",
   "author": "Jared Palmer <jared@palmer.net>",
   "repository": "jaredpalmer/formik",
   "keywords": [
+    "formik",
     "react",
+    "react-dom",
     "forms",
-    "recompose",
+    "higher order component",
     "hoc"
   ],
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
-  "files": [
-    "es6",
-    "lib",
-    "umd"
-  ],
+  "files": ["es6", "lib", "umd"],
   "scripts": {
     "test": "jest",
     "clean": "rimraf lib umd es6",
     "size": "cat umd/index.min.js | gzip | wc -c",
     "build": "npm run clean && tsc --project tsconfig.json -m es6 --outDir es6 && webpack -p --config ./webpack.lib && webpack -p --config webpack.umd.js",
-    "prepublish": "npm run build"
+    "prepublish": "npm run build",
+    "format": "prettier --trailing-comma es5 --single-quote --write 'src/*/*.tsx'",
+    "precommit": "lint-staged"
   },
   "dependencies": {
     "hoist-non-react-statics": "^1.2.0",
@@ -39,7 +39,10 @@
     "@types/recompose": "^0.23.0",
     "@types/webpack": "^2.2.15",
     "@types/webpack-env": "^1.13.0",
+    "husky": "^0.14.2",
     "jest": "^20.0.4",
+    "lint-staged": "^4.0.0",
+    "prettier": "^1.5.2",
     "react-test-renderer": "^15.5.4",
     "rimraf": "^2.6.1",
     "ts-jest": "^20.0.6",
@@ -50,16 +53,17 @@
     "webpack": "^2.6.1",
     "yup": "^0.21.3"
   },
+  "lint-staged": {
+    "*.(ts|tsx)": [
+      "prettier --trailing-comma es5 --single-quote --write",
+      "git add"
+    ]
+  },
   "jest": {
     "transform": {
       ".(ts|tsx)": "<rootDir>/node_modules/ts-jest/preprocessor.js"
     },
     "testRegex": "(/src/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js)$",
-    "moduleFileExtensions": [
-      "ts",
-      "tsx",
-      "js",
-      "json"
-    ]
+    "moduleFileExtensions": ["ts", "tsx", "js", "json"]
   }
 }

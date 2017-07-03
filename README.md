@@ -36,7 +36,7 @@ You can also try before you buy with this **[demo on CodeSandbox.io](https://cod
       - [`validationSchema: Schema`](#validationschema-schema)
     - [Injected props and methods](#injected-props-and-methods)
       - [`error?: any`](#error-any)
-      - [`errors: { [field]: string }`](#errors--field-string-)
+      - [`errors: { [field: string]: string }`](#errors--field-string-string-)
       - [`handleBlur: (e: any) => void`](#handleblur-e-any--void)
       - [`handleChange: (e: React.ChangeEvent<any>) => void`](#handlechange-e-reactchangeeventany--void)
       - [`handleChangeValue: (name: string, value: any) => void`](#handlechangevalue-name-string-value-any--void)
@@ -45,12 +45,12 @@ You can also try before you buy with this **[demo on CodeSandbox.io](https://cod
       - [`isSubmitting: boolean`](#issubmitting-boolean)
       - [`resetForm: (nextProps?: Props) => void`](#resetform-nextprops-props--void)
       - [`setError(err: any) => void`](#seterrorerr-any--void)
-      - [`setErrors(fields: { [field]: string }) => void`](#seterrorsfields--field-string---void)
+      - [`setErrors(fields: { [field: string]: string }) => void`](#seterrorsfields--field-string-string---void)
       - [`setSubmitting(boolean) => void`](#setsubmittingboolean--void)
-      - [`setTouched(fields: { [field]: string }) => void`](#settouchedfields--field-string---void)
-      - [`setValues(fields: { [field]: any }) => void`](#setvaluesfields--field-any---void)
-      - [`touched: { [field]: string }`](#touched--field-string-)
-      - [`values: { [field]: any }`](#values--field-any-)
+      - [`setTouched(fields: { [field: string]: boolean }) => void`](#settouchedfields--field-string-boolean---void)
+      - [`setValues(fields: { [field: string]: any }) => void`](#setvaluesfields--field-string-any---void)
+      - [`touched: { [field: string]: boolean}`](#touched--field-string-boolean)
+      - [`values: { [field: string]: any }`](#values--field-string-any-)
 - [Recipes](#recipes)
   - [Ways to call `Formik`](#ways-to-call-formik)
   - [Accessing React Component Lifecycle Functions](#accessing-react-component-lifecycle-functions)
@@ -222,7 +222,7 @@ The following props and methods will be injected into the `WrappedComponent` (i.
 ##### `error?: any`
 A top-level error object, can be whatever you need.
 
-##### `errors: { [field]: string }`
+##### `errors: { [field: string]: string }`
 Form validation errors. Keys match the shape of the `validationSchema` defined in Formik options. This should therefore also map to your `values` object as well. Internally, Formik transforms raw [Yup validation errors](https://github.com/jquense/yup#validationerrorerrors-string--arraystring-value-any-path-string) on your behalf. 
 
 ##### `handleBlur: (e: any) => void`
@@ -249,22 +249,22 @@ Imperatively reset the form. This will clear `errors` and `touched`, set `isSubm
 ##### `setError(err: any) => void`
 Set a top-level `error` object. This can only be done manually. It is an escape hatch.
 
-##### `setErrors(fields: { [field]: string }) => void`
+##### `setErrors(fields: { [field: string]: string }) => void`
 Set `errors` manually.
 
 ##### `setSubmitting(boolean) => void`
 Set `isSubmitting` manually.
 
-##### `setTouched(fields: { [field]: string }) => void`
+##### `setTouched(fields: { [field: string]: boolean }) => void`
 Set `touched` manually.
 
-##### `setValues(fields: { [field]: any }) => void`
+##### `setValues(fields: { [field: string]: any }) => void`
 Set `values` manually.
 
-##### `touched: { [field]: string }`
+##### `touched: { [field: string]: boolean}`
 Touched fields. Use this to keep track of which fields have been visited. Use `handleBlur` to toggle on a given input. Keys work like `errors` and `values`.
 
-##### `values: { [field]: any }`
+##### `values: { [field: string]: any }`
 Your form's values, the result of `mapPropsToValues` (if specified) or all props that are not functions passed to your `WrappedComponent`.
 
 ## Recipes

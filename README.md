@@ -201,7 +201,7 @@ Create a higher-order React component class that passes props and form handlers 
 #### `options`
 
 ##### `displayName?: string` 
-Set the display name of your component.
+When your inner form component is a stateless functional component, you can use the `displayName` option to give the component a proper name so you can more easily find it in [React DevTools](https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi?hl=en). If specified, your wrapped form will show up as `Formik(displayName)`. If omitted, it will show up as `Formik(Component)`. This option is not required for class components (e.g. `class XXXXX extends React.Component {..}`).
 
 ##### `handleSubmit: (payload, FormikBag) => void`
 Your form submission handler. It is passed the result of `mapValuesToPayload` (if specified), or the result of `mapPropsToValues`, or all props that are not functions (in that order of precedence) and the "`FormikBag`".

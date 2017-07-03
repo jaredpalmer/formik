@@ -30,7 +30,7 @@ You can also try before you buy with this **[demo on CodeSandbox.io](https://cod
   - [`Formik(options)`](#formikoptions)
     - [`options`](#options)
       - [`displayName: string`](#displayname-string)
-      - [`handleSubmit: (payload, FormikBag) => void`)](#handlesubmit-payload-formikbag--void)
+      - [`handleSubmit: (payload, FormikBag) => void`](#handlesubmit-payload-formikbag--void)
       - [`mapPropsToValues?: (props) => props`](#mappropstovalues-props--props)
       - [`mapValuesToPayload?: (values) => payload`](#mapvaluestopayload-values--payload)
       - [`validationSchema: Schema`](#validationschema-schema)
@@ -203,7 +203,7 @@ Create a higher-order React component class that passes props and form handlers 
 ##### `displayName?: string` 
 Set the display name of your component.
 
-##### `handleSubmit: (payload, FormikBag) => void`)
+##### `handleSubmit: (payload, FormikBag) => void`
 Your form submission handler. It is passed the result of `mapValuesToPayload` (if specified), or the result of `mapPropsToValues`, or all props that are not functions (in that order of precedence) and the "`FormikBag`".
 
 ##### `mapPropsToValues?: (props) => props`

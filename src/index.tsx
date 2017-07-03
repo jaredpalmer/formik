@@ -338,7 +338,7 @@ export function Formik<Props, Values extends FormikValues, Payload>({
             setValues={this.setValues}
             resetForm={this.resetForm}
             handleReset={this.handleReset}
-            submitFomr={this.submitForm}
+            submitForm={this.submitForm}
             handleSubmit={this.handleSubmit}
             handleChange={this.handleChange}
             handleBlur={this.handleBlur}

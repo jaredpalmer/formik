@@ -2,7 +2,7 @@
 
 #### Forms in React, *without tears.*
 
-Let's face it, forms are really verbose in React. To make matters worse, most form helpers do wayyyy too much magic and often have a significant performace cost associated with them. Formik is a minimal Higher Order Component that helps you with the 3 most annoying parts: 
+Let's face it, forms are really verbose in React. To make matters worse, most form helpers do wayyyy too much magic and often have a significant performance cost associated with them. Formik is a minimal Higher Order Component that helps you with the 3 most annoying parts:
 
  1. Transforming props to a flat React state
  2. Validation and error messages
@@ -12,7 +12,7 @@ Lastly, Formik helps you stay organized by colocating all of the above plus your
 
 ## Installation
 
-Add Formik and Yup to your project. Formik uses [Yup](https://github.com/jquense/yup) (which is like [Joi](https://github.com/hapijs/joi), but for the browser) for schema validation. 
+Add Formik and Yup to your project. Formik uses [Yup](https://github.com/jquense/yup) (which is like [Joi](https://github.com/hapijs/joi), but for the browser) for schema validation.
 
 ```bash
 npm i formik yup --save
@@ -36,7 +36,7 @@ You can also try before you buy with this **[demo on CodeSandbox.io](https://cod
       - [`validationSchema: Schema`](#validationschema-schema)
     - [Injected props and methods](#injected-props-and-methods)
       - [`error?: any`](#error-any)
-      - [`errors: { [field]: string }`](#errors--field-string-)
+      - [`errors: { [field: string]: string }`](#errors--field-string-string-)
       - [`handleBlur: (e: any) => void`](#handleblur-e-any--void)
       - [`handleChange: (e: React.ChangeEvent<any>) => void`](#handlechange-e-reactchangeeventany--void)
       - [`handleChangeValue: (name: string, value: any) => void`](#handlechangevalue-name-string-value-any--void)
@@ -45,13 +45,13 @@ You can also try before you buy with this **[demo on CodeSandbox.io](https://cod
       - [`isSubmitting: boolean`](#issubmitting-boolean)
       - [`resetForm: (nextProps?: Props) => void`](#resetform-nextprops-props--void)
       - [`setError(err: any) => void`](#seterrorerr-any--void)
-      - [`setErrors(fields: { [field]: string }) => void`](#seterrorsfields--field-string---void)
+      - [`setErrors(fields: { [field: string]: string }) => void`](#seterrorsfields--field-string-string---void)
       - [`setSubmitting(boolean) => void`](#setsubmittingboolean--void)
-      - [`setTouched(fields: { [field]: string }) => void`](#settouchedfields--field-string---void)
-      - [`setValues(fields: { [field]: any }) => void`](#setvaluesfields--field-any---void)
+      - [`setTouched(fields: { [field: string]: boolean }) => void`](#settouchedfields--field-string-boolean---void)
+      - [`setValues(fields: { [field: string]: any }) => void`](#setvaluesfields--field-string-any---void)
       - [`submitForm: () => void`](#submitform---void)
-      - [`touched: { [field]: string }`](#touched--field-string-)
-      - [`values: { [field]: any }`](#values--field-any-)
+      - [`touched: { [field: string]: boolean}`](#touched--field-string-boolean)
+      - [`values: { [field: string]: any }`](#values--field-string-any-)
 - [Recipes](#recipes)
   - [Ways to call `Formik`](#ways-to-call-formik)
   - [Accessing React Component Lifecycle Functions](#accessing-react-component-lifecycle-functions)
@@ -60,11 +60,11 @@ You can also try before you buy with this **[demo on CodeSandbox.io](https://cod
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-## Usage 
+## Usage
 
 ### Simple Example
 
-Imagine you want to build a form that lets you edit user data. However, your user API has nested objects like so. 
+Imagine you want to build a form that lets you edit user data. However, your user API has nested objects like so.
 
 ```js
 {
@@ -92,7 +92,7 @@ const EditUserDialog = ({ user }) =>
   </Dialog>;
 ```
 
-Enter Formik. 
+Enter Formik.
 
 ```js
 // EditUserForm.js
@@ -100,7 +100,7 @@ import React from 'react';
 import { Formik } from 'formik';
 import Yup from 'yup';
 
-// Formik is a Higher Order Component that wraps a React Form. Mutable form values 
+// Formik is a Higher Order Component that wraps a React Form. Mutable form values
 // are injected into a prop called `values`. Additionally, Formik injects
 // an onChange handler that you can use on every input. You also get
 // handleSubmit, errors, and isSubmitting for free. This makes building custom
@@ -156,13 +156,13 @@ export default Formik({
     facebook: props.user.social.facebook,
   }),
 
-  // Sometimes your API needs a different object shape than your form. Formik lets 
+  // Sometimes your API needs a different object shape than your form. Formik lets
   // you map `values` back into a `payload` before they are
   // passed to handleSubmit.
   mapValuesToPayload: values => ({
     email: values.email,
-    social: { 
-      twitter: values.twitter, 
+    social: {
+      twitter: values.twitter,
       facebook: values.facebook,
     },
   }),
@@ -172,7 +172,7 @@ export default Formik({
   // access to all props and some stateful helpers.
   handleSubmit: (payload, { props, setError, setSubmitting }) => {
     // do stuff with your payload
-    // e.preventDefault(), setSubmitting, setError(undefined) are 
+    // e.preventDefault(), setSubmitting, setError(undefined) are
     // called before handleSubmit is. So you don't have to do repeat this.
     // handleSubmit will only be executed if form values pass Yup validation.
     CallMyApi(props.user.id, payload)
@@ -197,12 +197,12 @@ export default Formik({
 
 ### `Formik(options)`
 
-Create a higher-order React component class that passes props and form handlers (the "`FormikBag`") into your component derived from supplied options. 
+Create a higher-order React component class that passes props and form handlers (the "`FormikBag`") into your component derived from supplied options.
 
 #### `options`
 
-##### `displayName?: string` 
-Set the display name of your component.
+##### `displayName?: string`
+When your inner form component is a stateless functional component, you can use the `displayName` option to give the component a proper name so you can more easily find it in [React DevTools](https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi?hl=en). If specified, your wrapped form will show up as `Formik(displayName)`. If omitted, it will show up as `Formik(Component)`. This option is not required for class components (e.g. `class XXXXX extends React.Component {..}`).
 
 ##### `handleSubmit: (payload, FormikBag) => void`
 Your form submission handler. It is passed the result of `mapValuesToPayload` (if specified), or the result of `mapPropsToValues`, or all props that are not functions (in that order of precedence) and the "`FormikBag`".
@@ -214,7 +214,7 @@ If this option is specified, then Formik will transfer its results into updatabl
 If this option is specified, then Formik will run this function just before calling `handleSubmit`. Use it to transform your form's `values` back into a shape that's consumable for other parts of your application or API. If `mapValuesToPayload` **is not** specified, then Formik will map all `values` directly to `payload` (which will be passed to `handleSubmit`). While this transformation can be moved into `handleSubmit`, consistently defining it in `mapValuesToPayload` separates concerns and helps you stay organized.
 
 ##### `validationSchema: Schema`
-[A Yup schema](https://github.com/jquense/yup). This is used for validation on each onChange event. Errors are mapped by key to the `WrappedComponent`'s `props.errors`. Its keys should almost always match those of `WrappedComponent's` `props.values`. 
+[A Yup schema](https://github.com/jquense/yup). This is used for validation on each onChange event. Errors are mapped by key to the `WrappedComponent`'s `props.errors`. Its keys should almost always match those of `WrappedComponent's` `props.values`.
 
 #### Injected props and methods
 
@@ -223,8 +223,8 @@ The following props and methods will be injected into the `WrappedComponent` (i.
 ##### `error?: any`
 A top-level error object, can be whatever you need.
 
-##### `errors: { [field]: string }`
-Form validation errors. Keys match the shape of the `validationSchema` defined in Formik options. This should therefore also map to your `values` object as well. Internally, Formik transforms raw [Yup validation errors](https://github.com/jquense/yup#validationerrorerrors-string--arraystring-value-any-path-string) on your behalf. 
+##### `errors: { [field: string]: string }`
+Form validation errors. Keys match the shape of the `validationSchema` defined in Formik options. This should therefore also map to your `values` object as well. Internally, Formik transforms raw [Yup validation errors](https://github.com/jquense/yup#validationerrorerrors-string--arraystring-value-any-path-string) on your behalf.
 
 ##### `handleBlur: (e: any) => void`
 `onBlur` event handler. Useful for when you need to track whether an input has been `touched` or not. This should be passed to `<input onBlur={handleBlur} ... />`
@@ -250,25 +250,29 @@ Imperatively reset the form. This will clear `errors` and `touched`, set `isSubm
 ##### `setError(err: any) => void`
 Set a top-level `error` object. This can only be done manually. It is an escape hatch.
 
-##### `setErrors(fields: { [field]: string }) => void`
+##### `setErrors(fields: { [field: string]: string }) => void`
 Set `errors` manually.
 
 ##### `setSubmitting(boolean) => void`
 Set `isSubmitting` manually.
 
-##### `setTouched(fields: { [field]: string }) => void`
+##### `setTouched(fields: { [field: string]: boolean }) => void`
 Set `touched` manually.
 
-##### `setValues(fields: { [field]: any }) => void`
+##### `setValues(fields: { [field: string]: any }) => void`
 Set `values` manually.
 
+<<<<<<< HEAD
 ##### `submitForm: () => void`
 Imperatively submit the form. A useful alternative to submitting the form via a "submit" type DOM Element. The "standard" submit workflow shall occur - i.e. toggling of the `isSubmitting` state, validation, and calling through to the registered [`handleSubmit`](#handlesubmit-e-reactformeventhtmlformevent--void) when the values are valid.
 
-##### `touched: { [field]: string }`
+##### `touched: { [field: string]: boolean}`
+=======
+##### `touched: { [field: string]: boolean}`
+>>>>>>> upstream/master
 Touched fields. Use this to keep track of which fields have been visited. Use `handleBlur` to toggle on a given input. Keys work like `errors` and `values`.
 
-##### `values: { [field]: any }`
+##### `values: { [field: string]: any }`
 Your form's values, the result of `mapPropsToValues` (if specified) or all props that are not functions passed to your `WrappedComponent`.
 
 ## Recipes
@@ -283,7 +287,7 @@ import React from 'react';
 import Formik from 'formik';
 
 // Assign the HoC returned by Formik to a variable
-const withFormik = Formik({...}); 
+const withFormik = Formik({...});
 
 // Your form
 const MyForm = (props) => (
@@ -337,9 +341,9 @@ I suggest using the first method, as it makes it clear what Formik is doing. It 
 Sometimes you need to access [React Component Lifecycle methods](https://facebook.github.io/react/docs/react-component.html#the-component-lifecycle) to manipulate your form. In this situation, you have some options:
 
 - Lift that lifecycle method up into a React class component that's child is your Formik-wrapped form and pass whatever props it needs from there
-- Convert your form into a React component class (instead of a stateless functional component) and wrap that class with Formik. 
+- Convert your form into a React component class (instead of a stateless functional component) and wrap that class with Formik.
 
-There isn't a hard rule whether one is better than the other. The decision comes down to whether you want to colocate this logic with your form or not. (Note: if you need `refs` you'll need to convert your stateless functional form component into a React class anyway). 
+There isn't a hard rule whether one is better than the other. The decision comes down to whether you want to colocate this logic with your form or not. (Note: if you need `refs` you'll need to convert your stateless functional form component into a React class anyway).
 
 #### Example: Resetting a form when props change
 
@@ -384,4 +388,4 @@ As for colocating a React lifecycle method with your form, imagine a situation w
 - Jared Palmer [@jaredpalmer](https://twitter.com/jaredpalmer)
 - Ian White [@eonwhite](https://twitter.com/eonwhite)
 
-MIT License. 
+MIT License.

@@ -3,7 +3,7 @@ import * as renderer from 'react-test-renderer';
 
 import { Formik, InjectedFormikProps } from '../.';
 
-import Yup from 'yup';
+const Yup = require('yup');
 
 describe('Formik', () => {
   it('renders Formik correctly', () => {

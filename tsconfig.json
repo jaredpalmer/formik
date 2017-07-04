@@ -12,25 +12,17 @@
     "sourceMap": false,
     "stripInternal": true,
     "target": "es5",
-    "lib": [
-      "es2015",
-      "dom"
-    ],
-    "types": [
-      "node"
-    ],
+    "lib": ["es2015", "dom"],
     "outDir": "."
   },
-  "include": [
-    "src/**/*"
-  ],
+  "include": ["src/**/*"],
   "exclude": [
     "node_modules",
     "es6",
     "lib",
     "umd",
     "example",
-    "src/__tests__",
-    "src/__fixtures__"
-  ]
+    "src/__tests__/**/*"
+  ],
+  "types": ["node", "webpack-env"]
 }

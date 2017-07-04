@@ -262,7 +262,6 @@ Set `touched` manually.
 ##### `setValues(fields: { [field: string]: any }) => void`
 Set `values` manually.
 
-
 ##### `submitForm: () => void`
 Imperatively submit the form. A useful alternative to submitting the form via a "submit" type DOM Element. The "standard" submit workflow shall occur - i.e. toggling of the `isSubmitting` state, validation, and calling through to the registered [`handleSubmit`](#handlesubmit-e-reactformeventhtmlformevent--void) when the values are valid.
 

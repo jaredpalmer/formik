@@ -271,7 +271,7 @@ Your form's values, the result of `mapPropsToValues` (if specified) or all props
 
 ### Ways to call `Formik`
 
-Formik is a Higher Order Component factory or "Monad" in functional programming lingo. In practice, you use it exactly like React Redux's `connect` or Apollo's `graphql`. There are basically three ways to call Formik on your component:
+Formik is a Higher Order Component factory; you can use it exactly like React Redux's `connect` or Apollo's `graphql`. There are three ways to call Formik on your component:
 
 You can assign the HoC returned by Formik to a variable (i.e. `withFormik`) for later use.
 ```js
@@ -293,7 +293,7 @@ const MyForm = (props) => (
 export default withFormik(MyForm);
 ```
 
-You can also skip a step and immediately invoke (i.e. "curry") Formik instead of assigning it to a variable. This method has been popularized by React Redux. One downside is that when you read the file containing your form, its props seem to come out of nowhere.
+You can also skip a step and immediately invoke Formik instead of assigning it to a variable. This method has been popularized by React Redux. One downside is that when you read the file containing your form, its props seem to come out of nowhere.
 
 ```js
 import React from 'react';

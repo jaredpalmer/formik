@@ -379,7 +379,7 @@ As for colocating a React lifecycle method with your form, imagine a situation w
 
 ### React Native
 
-**Formik is 100% compatible with React Native and React Native Web.** However, because of differences between ReactDOM's and React Native's handling of forms and text input, there are two differences to be aware of. This guide will walk you through them and what I consider to be best practices.
+**Formik is 100% compatible with React Native and React Native Web.** However, because of differences between ReactDOM's and React Native's handling of forms and text input, there are two differences to be aware of. This section will walk you through them and what I consider to be best practices.
 
 Before going any further, here's a super minimal gist of how to use Formik with React Native that demonstrates the key differences:
 

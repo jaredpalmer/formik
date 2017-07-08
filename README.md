@@ -55,6 +55,9 @@ You can also try before you buy with this **[demo on CodeSandbox.io](https://cod
   - [Ways to call `Formik`](#ways-to-call-formik)
   - [Accessing React Component Lifecycle Functions](#accessing-react-component-lifecycle-functions)
     - [Example: Resetting a form when props change](#example-resetting-a-form-when-props-change)
+  - [React Native](#react-native)
+    - [Why `handleChangeValue` instead of `handleChange`?](#why-handlechangevalue-instead-of-handlechange)
+    - [Avoiding a Render Callback](#avoiding-a-render-callback)
 - [Authors](#authors)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -373,6 +376,167 @@ export default withFormik(MyForm);
 ```
 
 As for colocating a React lifecycle method with your form, imagine a situation where you want to use if you have a modal that's only job is to display a form based on the presence of props or not.
+
+### React Native
+
+**Formik is 100% compatible with React Native and React Native Web.** However, because of differences between ReactDOM's and React Native's handling of forms and text input, there are two differences to be aware of. This guide will walk you through them and what I consider to be best practices.
+
+Before going any further, here's a super minimal gist of how to use Formik with React Native that demonstrates the key differences:
+
+```js
+// Formik x React Native example
+import React from 'react'
+import { Button, TextInput, View } from 'react-native'
+import { Formik } from 'formik'
+
+const withFormik = Formik({...})
+
+const MyReactNativeForm = (props) => (
+  <View>
+    <TextInput 
+      onChangeText={text => props.handleChangeValue('email', text)} 
+      value={props.values.email}
+    />
+   <Button onPress={props.handleSubmit} title="Submit" /> // 
+  </View>
+)
+
+export default withFormik(MyReactNativeForm)
+```
+
+As you can above, the notable differences between using Formik with React DOM and React Native are:
+
+1. Formik's `props.handleSubmit` is passed to a `<Button onPress={...}/>` instead of HTML `<form onSubmit={...}/>` component (since there is no `<form/>` element in React Native).
+- `<TextInput />` uses Formik's `props.handleChangeValue` instead of `props.handleChange`. To understand why, see the discussion below.
+
+
+#### Why `handleChangeValue` instead of `handleChange`?
+
+**This does NOT work:**
+
+```js
+
+import { Button, TextInput, View } from 'react-native'
+import { Formik } from 'formik'
+
+const withFormik = Formik({...})
+
+// This will not update the TextInput when the user types
+const MyReactNativeForm = (props) => (
+    <View>
+        <TextInput 
+           name="email"
+           onChangeText={props.handleChange} 
+           value={props.values.email} 
+        />
+       <Button onPress={props.handleSubmit} title="submit" />
+    </View>
+)
+
+export default withFormik(MyReactNativeForm)
+```
+
+The reason is that Formik's `props.handleChange` function expects its first argument to be synthetic DOM event where the `event.target` is the DOM input element and `event.target.id` or `event.target.name` matches the field to be updated. Without this, `props.handleChange` will do nothing. 
+
+In React Native, neither [`<TextInput />`](https://facebook.github.io/react-native/docs/textinput.html)'s [`onChange`](https://facebook.github.io/react-native/docs/textinput.html#onchange) nor [`onChangeText`](https://facebook.github.io/react-native/docs/textinput.html#onchange) callbacks pass such an event or one like it to its callback. Instead, they do the following *(emphasis added)*:
+
+> [`onChange?: function`](https://facebook.github.io/react-native/docs/textinput.html#onchange)  
+> Callback that is called when the text input's text changes.
+> 
+> [`onChangeText?: function`](https://facebook.github.io/react-native/docs/textinput.html#onchangetext)  
+> Callback that is called when the text input's text changes. **Changed text is passed as an argument to the callback handler.**
+
+
+However, Formik works just fine if you use `props.handleChangeValue`! Philisophically, just treat React Native's `<TextInput/>` the same way you would any other 3rd party custom input element.
+
+**but this does:**
+
+```js
+...
+// this works.
+export const MyReactNativeForm = (props) => (
+  <View>
+    <TextInput 
+      onChangeText={email => props.handleChangeValue('email', email) } 
+      value={props.values.email} 
+    />
+    <Button onPress={props.handleSubmit} />
+  </View>
+)
+...
+```
+
+
+#### Avoiding a Render Callback
+
+If you are like me, and do not like render callbacks, I suggest treating React Native's `<TextInput/>` as if it were another 3rd party custom input element:
+ 
+  - Write your own class wrapper around the custom input element
+  - Pass the custom component `props.handleChangeValue` instead of `props.handleChange`
+  - Use a custom change handler callback that calls whatever you passed-in `handleChangeValue` as (in this case we'll match the React Native TextInput API and call it `this.props.onChangeText` for parity).
+
+```tsx
+// FormikReactNativeTextInput.tsx
+import * as React from 'react'
+import { TextInput } from 'react-native'
+
+interface FormikReactNativeTextInputProps {
+  /** Current value of the input */
+  value: string;
+  /** Change handler (this will be Formik's handleChangeValue ;) ) */
+  onChangeText: (value: string) => void;
+  /** The name of the Formik field to be updated upon change */
+  name: string;
+  ... 
+  // the rest of the React Native `TextInput` props
+}
+
+export default class FormikReactNativeTextInput extends React.Component<FormikReactNativeTextInputProps, {}> {
+    handleChange = (value: string) => {
+       // remember that onChangeText will be Formik's handleChangeValue
+       this.props.onChangeText(this.props.name, value)
+    }
+    
+    render() {
+     // we want to pass through all the props except for onChangeText
+      const { onChangeText, ...otherProps } = this.props
+      return (
+        <TextInput 
+          onChangeText={this.handleChange}
+          {...otherProps} // IRL, you should be more explicit when using TS
+        />
+      );
+    }
+}
+```
+
+Then you could just use this custom input as follows: 
+
+```tsx
+// MyReactNativeForm.tsx
+import { View } from 'react-native'
+import Button from './MyButton' // Assume this just exists
+import { FormikReactNativeTextInput as TextInput } from './FormikReactNativeTextInput'
+import { Formik, InjectedFormikProps } from 'formik'
+
+interface Props {...}
+interface Values {...}
+interface Payload {...}
+
+export const MyReactNativeForm: React.SFC<InjectedFormikProps<Props, Values>> = (props) => (
+    <View>
+        <TextInput 
+           name="email"
+           onChangeText={props.handleChangeValue} 
+           value={props.values.email} 
+        />
+       <Button onPress={props.handleSubmit} />
+    </View>
+)
+
+export default Formik<Props, Values, Payload>({ ... })(MyReactNativeForm)
+```
+
 
 
 ## Authors

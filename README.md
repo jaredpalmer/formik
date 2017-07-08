@@ -407,7 +407,7 @@ export default withFormik(MyReactNativeForm)
 As you can see above, the notable differences between using Formik with React DOM and React Native are:
 
 1. Formik's `props.handleSubmit` is passed to a `<Button onPress={...}/>` instead of HTML `<form onSubmit={...}/>` component (since there is no `<form/>` element in React Native).
-- `<TextInput />` uses Formik's `props.handleChangeValue` instead of `props.handleChange`. To understand why, see the discussion below.
+2. `<TextInput />` uses Formik's `props.handleChangeValue` instead of `props.handleChange`. To understand why, see the discussion below.
 
 
 #### Why use `handleChangeValue` instead of `handleChange`?

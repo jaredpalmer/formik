@@ -410,27 +410,26 @@ As you can above, the notable differences between using Formik with React DOM an
 - `<TextInput />` uses Formik's `props.handleChangeValue` instead of `props.handleChange`. To understand why, see the discussion below.
 
 
-#### Why `handleChangeValue` instead of `handleChange`?
+#### Why use `handleChangeValue` instead of `handleChange`?
 
-**This does NOT work:**
+'cuz `handleChange` will not work in React Native...
 
 ```js
-
 import { Button, TextInput, View } from 'react-native'
 import { Formik } from 'formik'
 
 const withFormik = Formik({...})
 
-// This will not update the TextInput when the user types
+// This will NOT update the TextInput when the user types
 const MyReactNativeForm = (props) => (
-    <View>
-        <TextInput 
-           name="email"
-           onChangeText={props.handleChange} 
-           value={props.values.email} 
-        />
-       <Button onPress={props.handleSubmit} title="submit" />
-    </View>
+  <View>
+    <TextInput 
+      name="email"
+      onChangeText={props.handleChange} 
+      value={props.values.email} 
+    />
+   <Button onPress={props.handleSubmit} title="submit" />
+ </View>
 )
 
 export default withFormik(MyReactNativeForm)
@@ -449,7 +448,7 @@ In React Native, neither [`<TextInput />`](https://facebook.github.io/react-nati
 
 However, Formik works just fine if you use `props.handleChangeValue`! Philisophically, just treat React Native's `<TextInput/>` the same way you would any other 3rd party custom input element.
 
-**but this does:**
+In conclusion, the following WILL work in React Native:
 
 ```js
 ...
@@ -457,7 +456,7 @@ However, Formik works just fine if you use `props.handleChangeValue`! Philisophi
 export const MyReactNativeForm = (props) => (
   <View>
     <TextInput 
-      onChangeText={email => props.handleChangeValue('email', email) } 
+      onChangeText={textl => props.handleChangeValue('email', text) } 
       value={props.values.email} 
     />
     <Button onPress={props.handleSubmit} />
@@ -466,10 +465,9 @@ export const MyReactNativeForm = (props) => (
 ...
 ```
 
-
 #### Avoiding a Render Callback
 
-If you are like me, and do not like render callbacks, I suggest treating React Native's `<TextInput/>` as if it were another 3rd party custom input element:
+If you are like me and do not like render callbacks, I suggest treating React Native's `<TextInput/>` as if it were another 3rd party custom input element:
  
   - Write your own class wrapper around the custom input element
   - Pass the custom component `props.handleChangeValue` instead of `props.handleChange`
@@ -488,7 +486,7 @@ interface FormikReactNativeTextInputProps {
   /** The name of the Formik field to be updated upon change */
   name: string;
   ... 
-  // the rest of the React Native `TextInput` props
+  // the rest of the React Native's `TextInput` props
 }
 
 export default class FormikReactNativeTextInput extends React.Component<FormikReactNativeTextInputProps, {}> {
@@ -524,14 +522,14 @@ interface Values {...}
 interface Payload {...}
 
 export const MyReactNativeForm: React.SFC<InjectedFormikProps<Props, Values>> = (props) => (
-    <View>
-        <TextInput 
-           name="email"
-           onChangeText={props.handleChangeValue} 
-           value={props.values.email} 
-        />
-       <Button onPress={props.handleSubmit} />
-    </View>
+  <View>
+    <TextInput 
+      name="email"
+      onChangeText={props.handleChangeValue} 
+      value={props.values.email} 
+    />
+    <Button onPress={props.handleSubmit} />
+  </View>
 )
 
 export default Formik<Props, Values, Payload>({ ... })(MyReactNativeForm)

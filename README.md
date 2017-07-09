@@ -107,13 +107,24 @@ import Yup from 'yup';
 // an onChange handler that you can use on every input. You also get
 // handleSubmit, errors, and isSubmitting for free. This makes building custom
 // inputs easy.
-const SimpleForm = ({ values, touched, handleChange, handleSubmit, handleReset, errors, error, isSubmitting }) =>
+const SimpleForm = ({ 
+  values, 
+  touched,
+  errors,
+  error, 
+  handleChange, 
+  handleSubmit, 
+  handleBlur, 
+  handleReset, 
+  isSubmitting 
+ }) =>
   <form onSubmit={handleSubmit}>
     <input
       type="text"
       name="email"
       value={values.email}
       onChange={handleChange}
+      onBlur={handleBlur}
       placeholder="john@apple.com"
     />
     {errors.email && touched.email && <div>{errors.email}</div>}
@@ -122,6 +133,7 @@ const SimpleForm = ({ values, touched, handleChange, handleSubmit, handleReset, 
       name="facebook"
       value={values.facebook}
       onChange={handleChange}
+      onBlur={handleBlur}
       placeholder="facebook username"
     />
     {errors.facebook && touched.facebook && <div>{errors.facebook}</div>}
@@ -130,6 +142,7 @@ const SimpleForm = ({ values, touched, handleChange, handleSubmit, handleReset, 
       name="twitter"
       value={values.twitter}
       onChange={handleChange}
+      onBlur={handleBlur}
       placeholder="twitter username"
     />
     {errors.twitter && touched.twitter && <div>{errors.twitter}</div>}

@@ -107,7 +107,7 @@ import Yup from 'yup';
 // an onChange handler that you can use on every input. You also get
 // handleSubmit, errors, and isSubmitting for free. This makes building custom
 // inputs easy.
-const SimpleForm = ({ values, handleChange, handleSubmit, handleReset, errors, error, isSubmitting }) =>
+const SimpleForm = ({ values, touched, handleChange, handleSubmit, handleReset, errors, error, isSubmitting }) =>
   <form onSubmit={handleSubmit}>
     <input
       type="text"
@@ -116,7 +116,7 @@ const SimpleForm = ({ values, handleChange, handleSubmit, handleReset, errors, e
       onChange={handleChange}
       placeholder="john@apple.com"
     />
-    {errors.email && <div>{errors.email}</div>}
+    {errors.email && touched.email && <div>{errors.email}</div>}
     <input
       type="text"
       name="facebook"
@@ -124,7 +124,7 @@ const SimpleForm = ({ values, handleChange, handleSubmit, handleReset, errors, e
       onChange={handleChange}
       placeholder="facebook username"
     />
-    {errors.facebook && <div>{errors.facebook}</div>}
+    {errors.facebook && touched.facebook && <div>{errors.facebook}</div>}
     <input
       type="text"
       name="twitter"
@@ -132,7 +132,7 @@ const SimpleForm = ({ values, handleChange, handleSubmit, handleReset, errors, e
       onChange={handleChange}
       placeholder="twitter username"
     />
-    {errors.twitter && <div>{errors.twitter}</div>}
+    {errors.twitter && touched.twitter && <div>{errors.twitter}</div>}
     {error && error.message && <div style={{color: 'red'}}>Top Level Error: {error.message}</div>}
     <button onClick={handleReset}>Reset</button>
     <button type="submit" disabled={isSubmitting}>Submit</button>

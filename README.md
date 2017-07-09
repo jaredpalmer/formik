@@ -20,6 +20,13 @@ npm i formik yup --save
 
 You can also try before you buy with this **[demo on CodeSandbox.io](https://codesandbox.io/s/zKrK5YLDZ)**
 
+## Demos
+
+- [Basic](https://codesandbox.io/s/zKrK5YLDZ)
+- [Building your own input primitives](https://codesandbox.io/s/qJR4ykJk)
+- Integrating 3rd party input components
+  - [react-select](https://codesandbox.io/s/jRzE53pqR)
+
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**

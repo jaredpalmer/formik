@@ -24,8 +24,7 @@ You can also try before you buy with this **[demo on CodeSandbox.io](https://cod
 
 - [Basic](https://codesandbox.io/s/zKrK5YLDZ)
 - [Building your own input primitives](https://codesandbox.io/s/qJR4ykJk)
-- Integrating 3rd party input components
-  - [react-select](https://codesandbox.io/s/jRzE53pqR)
+- [Working with 3rd party input components](https://codesandbox.io/s/jRzE53pqR)
 
 ---
 

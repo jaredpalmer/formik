@@ -227,7 +227,7 @@ export function Formik<Props, Values extends FormikValues, Payload>({
 
   ${outerHTML}
 
-Formik cannot determine which value to update. Check the See docs for more information: https://github.com/jaredpalmer/formik#handlechange-e-reactchangeeventany--void
+Formik cannot determine which value to update. See docs for more information: https://github.com/jaredpalmer/formik#handlechange-e-reactchangeeventany--void
 `
           );
         }

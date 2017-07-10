@@ -216,7 +216,6 @@ export function Formik<Props, Values extends FormikValues, Payload>({
         e.persist();
         const { type, name, id, value, checked, outerHTML } = e.target;
         const field = name ? name : id;
-        console.log(e);
         const val = /number|range/.test(type)
           ? parseFloat(value)
           : /checkbox/.test(type) ? checked : value;

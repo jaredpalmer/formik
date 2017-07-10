@@ -214,11 +214,23 @@ export function Formik<Props, Values extends FormikValues, Payload>({
 
       handleChange = (e: React.ChangeEvent<any>) => {
         e.persist();
-        const { type, name, id, value, checked } = e.target;
+        const { type, name, id, value, checked, outerHTML } = e.target;
         const field = name ? name : id;
+        console.log(e);
         const val = /number|range/.test(type)
           ? parseFloat(value)
           : /checkbox/.test(type) ? checked : value;
+
+        if (!field && process.env.NODE_ENV !== 'production') {
+          console.error(
+            `Warning: You forgot to pass an \`id\` or \`name\` attribute to your input:
+
+  ${outerHTML}
+
+Formik cannot determine which value to update. Check the See docs for more information: https://github.com/jaredpalmer/formik#handlechange-e-reactchangeeventany--void
+`
+          );
+        }
 
         const { values } = this.state;
         // Set form fields by name

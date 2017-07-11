@@ -206,7 +206,7 @@ export function Formik<Props, Values extends FormikValues, Payload>({
         const field = name ? name : id;
         const val = /number|range/.test(type) ? parseFloat(value) : /checkbox/.test(type) ? checked : value;
 
-        if (!field && process.env.NODE_ENV !== 'production') {
+        if (!field) {
           console.error(
             `Warning: You forgot to pass an \`id\` or \`name\` attribute to your input:
 

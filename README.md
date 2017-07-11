@@ -366,7 +366,7 @@ There isn't a hard rule whether one is better than the other. The decision comes
 ```js
 // Reset form when a certain prop changes
 import React from 'react';
-import Formik from 'formik'
+import { Formik } from 'formik'
 
 const withFormik = Formik({...});
 

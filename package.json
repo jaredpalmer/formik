@@ -1,7 +1,7 @@
 {
   "name": "formik",
   "description": "Forms in React, without tears",
-  "version": "0.7.1",
+  "version": "0.7.2",
   "license": "MIT",
   "author": "Jared Palmer <jared@palmer.net>",
   "repository": "jaredpalmer/formik",
@@ -15,7 +15,11 @@
   ],
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
-  "files": ["es6", "lib", "umd"],
+  "files": [
+    "es6",
+    "lib",
+    "umd"
+  ],
   "scripts": {
     "test": "jest",
     "clean": "rimraf lib umd es6",
@@ -62,7 +66,9 @@
     ]
   },
   "jest": {
-    "collectCoverageFrom": ["src/**/*.{ts,tsx}"],
+    "collectCoverageFrom": [
+      "src/**/*.{ts,tsx}"
+    ],
     "transform": {
       ".(ts|tsx)": "<rootDir>/node_modules/ts-jest/preprocessor.js"
     },
@@ -70,7 +76,14 @@
       "<rootDir>/src/**/__tests__/**/*.ts?(x)",
       "<rootDir>/src/**/?(*.)(spec|test).ts?(x)"
     ],
-    "transformIgnorePatterns": ["[/\\\\]node_modules[/\\\\].+\\.(js|jsx)$"],
-    "moduleFileExtensions": ["ts", "tsx", "js", "json"]
+    "transformIgnorePatterns": [
+      "[/\\\\]node_modules[/\\\\].+\\.(js|jsx)$"
+    ],
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "json"
+    ]
   }
 }

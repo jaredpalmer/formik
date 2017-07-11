@@ -6,7 +6,7 @@
   "author": "Jared Palmer <jared@palmer.net>",
   "repository": "jaredpalmer/formik",
   "keywords": ["formik", "react", "react-dom", "forms", "higher order component", "hoc"],
-  "main": "dist/formik.umd.js",
+  "main": "dist/formik.js",
   "module": "dist/formik.es6.js",
   "typings": "dist/types/formik.d.ts",
   "files": ["dist"],
@@ -16,7 +16,7 @@
     "start": "NODE_ENV=development tsc-watch --onSuccess \"rollup -c\"",
     "prebuild": "rimraf dist",
     "size": "cat umd/index.min.js | gzip | wc -c",
-    "build": "tsc && NODE_ENV=production rollup -c && rimraf compiled",
+    "build": "tsc && NODE_ENV=production rollup -c && NODE_ENV=production rollup -c rollup.config.umd.js && NODE_ENV=development rollup -c rollup.config.umd.js && rimraf compiled",
     "prepublish": "npm run build",
     "format": "prettier --trailing-comma es5 --single-quote --write 'src/*/*.tsx'",
     "precommit": "lint-staged"

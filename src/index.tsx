@@ -282,8 +282,7 @@ Formik cannot determine which value to update. See docs for more information: ht
         e.persist();
         const { name, id } = e.target;
         const field = name ? name : id;
-        const { touched } = this.state;
-        this.setTouched({ ...touched, [field]: true });
+        this.setState(state => ({ touched: { ...state.touched, [field]: true } }));
       };
 
       handleChangeValue = (field: string, value: any) => {

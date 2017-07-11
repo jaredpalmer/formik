@@ -25,6 +25,7 @@ You can also try before you buy with this **[demo on CodeSandbox.io](https://cod
 - [Basic](https://codesandbox.io/s/zKrK5YLDZ)
 - [Building your own input primitives](https://codesandbox.io/s/qJR4ykJk)
 - [Working with 3rd party input components](https://codesandbox.io/s/jRzE53pqR)
+- [Accessing React lifecycle functions](https://codesandbox.io/s/pgD4DLypy)
 
 ---
 
@@ -300,7 +301,7 @@ Formik is a Higher Order Component factory; you can use it exactly like React Re
 You can assign the HoC returned by Formik to a variable (i.e. `withFormik`) for later use.
 ```js
 import React from 'react';
-import Formik from 'formik';
+import { Formik } from 'formik';
 
 // Assign the HoC returned by Formik to a variable
 const withFormik = Formik({...}); 
@@ -321,7 +322,7 @@ You can also skip a step and immediately invoke Formik instead of assigning it t
 
 ```js
 import React from 'react';
-import Formik from 'formik';
+import { Formik } from 'formik';
 
 // Your form
 const MyForm = (props) => (
@@ -339,7 +340,7 @@ Lastly, you can define your form component anonymously:
 
 ```js
 import React from 'react';
-import Formik from 'formik';
+import { Formik } from 'formik';
 
 // Configure and call Formik immediately
 export default Formik({...})((props) => (

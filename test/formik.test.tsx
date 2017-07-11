@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as renderer from 'react-test-renderer';
 
-import { Formik, InjectedFormikProps } from '../.';
+import { Formik, InjectedFormikProps } from '../src/formik';
 
 const Yup = require('yup');
 
@@ -10,20 +10,10 @@ describe('Formik', () => {
     interface Props {
       thing: string;
     }
-    const Form: React.SFC<InjectedFormikProps<Props, Props>> = ({
-      values,
-      handleSubmit,
-      handleChange,
-      errors,
-    }) => {
+    const Form: React.SFC<InjectedFormikProps<Props, Props>> = ({ values, handleSubmit, handleChange, errors }) => {
       return (
         <form onSubmit={handleSubmit}>
-          <input
-            type="text"
-            onChange={handleChange}
-            value={values.thing}
-            name="thing"
-          />
+          <input type="text" onChange={handleChange} value={values.thing} name="thing" />
           {errors.thing &&
             <div>
               {errors.thing}
@@ -56,20 +46,10 @@ describe('Formik', () => {
       thing: string;
     }
 
-    const Form: React.SFC<InjectedFormikProps<Props, Values>> = ({
-      values,
-      handleSubmit,
-      handleChange,
-      errors,
-    }) => {
+    const Form: React.SFC<InjectedFormikProps<Props, Values>> = ({ values, handleSubmit, handleChange, errors }) => {
       return (
         <form onSubmit={handleSubmit}>
-          <input
-            type="text"
-            onChange={handleChange}
-            value={values.thing}
-            name="thing"
-          />
+          <input type="text" onChange={handleChange} value={values.thing} name="thing" />
           {errors.thing &&
             <div>
               {errors.thing}

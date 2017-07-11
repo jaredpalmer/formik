@@ -477,7 +477,7 @@ In conclusion, the following WILL work in React Native:
 export const MyReactNativeForm = (props) => (
   <View>
     <TextInput 
-      onChangeText={textl => props.handleChangeValue('email', text) } 
+      onChangeText={text => props.handleChangeValue('email', text) } 
       value={props.values.email} 
     />
     <Button onPress={props.handleSubmit} />

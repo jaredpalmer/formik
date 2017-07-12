@@ -1,4 +1,3 @@
-import filesize from 'rollup-plugin-filesize';
 import resolve from 'rollup-plugin-node-resolve';
 import sourceMaps from 'rollup-plugin-sourcemaps';
 
@@ -19,6 +18,5 @@ export default {
     resolve(),
     // Resolve source maps to the original source
     sourceMaps(),
-    filesize(),
   ],
 };

@@ -13,11 +13,9 @@
   "scripts": {
     "test": "jest",
     "test:watch": "jest --watch",
-    "start": "NODE_ENV=development tsc-watch --onSuccess \"npm run bundle\"",
+    "start": "NODE_ENV=development tsc-watch --onSuccess \"rollup -c\"",
     "prebuild": "rimraf dist",
-    "size": "cat umd/index.min.js | gzip | wc -c",
-    "bundle": "NODE_ENV=production rollup -c && NODE_ENV=production rollup -c rollup.config.umd.js && NODE_ENV=development rollup -c rollup.config.umd.js",
-    "build": "tsc && npm run bundle && rimraf compiled",
+    "build": "tsc && NODE_ENV=production rollup -c && NODE_ENV=production rollup -c rollup.config.umd.js && NODE_ENV=development rollup -c rollup.config.umd.js && rimraf compiled",
     "prepublish": "npm run build",
     "format": "prettier --trailing-comma es5 --single-quote --write 'src/*/*.tsx'",
     "precommit": "lint-staged"

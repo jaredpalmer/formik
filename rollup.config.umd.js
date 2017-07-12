@@ -32,7 +32,7 @@ export default {
     }),
     // Resolve source maps to the original source
     sourceMaps(),
-    filesize(),
+    process.env.NODE_ENV === 'production' && filesize(),
     process.env.NODE_ENV === 'production' && uglify(),
   ],
 };

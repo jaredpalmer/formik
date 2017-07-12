@@ -5,85 +5,67 @@
   "license": "MIT",
   "author": "Jared Palmer <jared@palmer.net>",
   "repository": "jaredpalmer/formik",
-  "keywords": [
-    "formik",
-    "react",
-    "react-dom",
-    "forms",
-    "higher order component",
-    "hoc"
-  ],
-  "main": "lib/index.js",
-  "typings": "lib/index.d.ts",
-  "files": [
-    "es6",
-    "lib",
-    "umd"
-  ],
+  "keywords": ["formik", "react", "react-dom", "forms", "higher order component", "hoc"],
+  "main": "dist/formik.js",
+  "module": "dist/formik.es6.js",
+  "typings": "dist/types/formik.d.ts",
+  "files": ["dist"],
   "scripts": {
     "test": "jest",
-    "clean": "rimraf lib umd es6",
+    "test:watch": "jest --watch",
+    "start": "NODE_ENV=development tsc-watch --onSuccess \"npm run bundle\"",
+    "prebuild": "rimraf dist",
     "size": "cat umd/index.min.js | gzip | wc -c",
-    "build": "npm run clean && tsc --project tsconfig.json -m es6 --outDir es6 && webpack -p --config ./webpack.lib && webpack -p --config webpack.umd.js",
+    "bundle": "NODE_ENV=production rollup -c && NODE_ENV=production rollup -c rollup.config.umd.js && NODE_ENV=development rollup -c rollup.config.umd.js",
+    "build": "tsc && npm run bundle && rimraf compiled",
     "prepublish": "npm run build",
     "format": "prettier --trailing-comma es5 --single-quote --write 'src/*/*.tsx'",
     "precommit": "lint-staged"
   },
-  "dependencies": {
-    "hoist-non-react-statics": "^1.2.0"
-  },
+  "dependencies": {},
   "peerDependencies": {
     "react": "0.14.x || 15.* || ^15.0.0 || ^16.0.0-alpha"
   },
   "optionalDependencies": {},
   "devDependencies": {
-    "@types/jest": "^19.2.3",
+    "@types/jest": "^20.0.2",
     "@types/node": "^8.0.7",
     "@types/react": "^15.0.28",
     "@types/react-dom": "^15.5.0",
     "@types/react-test-renderer": "^15.5.0",
-    "@types/webpack-env": "^1.13.0",
     "husky": "^0.14.2",
     "jest": "^20.0.4",
     "lint-staged": "^4.0.0",
+    "lodash.camelcase": "^4.3.0",
     "prettier": "^1.5.2",
     "react": "^15.5.4",
     "react-dom": "^15.5.4",
     "react-test-renderer": "^15.5.4",
     "rimraf": "^2.6.1",
+    "rollup": "^0.45.1",
+    "rollup-plugin-commonjs": "^8.0.2",
+    "rollup-plugin-filesize": "^1.4.2",
+    "rollup-plugin-node-resolve": "^3.0.0",
+    "rollup-plugin-replace": "^1.1.1",
+    "rollup-plugin-sourcemaps": "^0.4.2",
+    "rollup-plugin-uglify": "^2.0.1",
     "ts-jest": "^20.0.6",
-    "ts-loader": "^2.1.0",
+    "tsc-watch": "^1.0.7",
     "tslint": "^5.3.2",
     "tslint-react": "^3.0.0",
     "typescript": "2.3.4",
-    "webpack": "^3.0.0",
     "yup": "^0.21.3"
   },
   "lint-staged": {
-    "*.(ts|tsx)": [
-      "prettier --trailing-comma es5 --single-quote --write",
-      "git add"
-    ]
+    "*.(ts|tsx)": ["prettier --trailing-comma es5 --single-quote --write", "git add"]
   },
   "jest": {
-    "collectCoverageFrom": [
-      "src/**/*.{ts,tsx}"
-    ],
+    "collectCoverageFrom": ["src/**/*.{ts,tsx}"],
     "transform": {
       ".(ts|tsx)": "<rootDir>/node_modules/ts-jest/preprocessor.js"
     },
-    "testMatch": [
-      "<rootDir>/src/**/__tests__/**/*.ts?(x)",
-      "<rootDir>/src/**/?(*.)(spec|test).ts?(x)"
-    ],
-    "transformIgnorePatterns": [
-      "[/\\\\]node_modules[/\\\\].+\\.(js|jsx)$"
-    ],
-    "moduleFileExtensions": [
-      "ts",
-      "tsx",
-      "js",
-      "json"
-    ]
+    "testMatch": ["<rootDir>/test/**/*.ts?(x)", "<rootDir>/test/**/?(*.)(spec|test).ts?(x)"],
+    "transformIgnorePatterns": ["[/\\\\]node_modules[/\\\\].+\\.(js|jsx)$"],
+    "moduleFileExtensions": ["ts", "tsx", "js", "json"]
   }
 }

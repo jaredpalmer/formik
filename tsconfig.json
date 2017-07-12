@@ -1,28 +1,29 @@
 {
   "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
     "declaration": true,
-    "jsx": "react",
+    "declarationDir": "dist/types",
+    "emitDecoratorMetadata": false,
+    "experimentalDecorators": false,
     "importHelpers": true,
+    "jsx": "react",
+    "lib": ["es2015", "dom"],
+    "module": "es2015",
     "moduleResolution": "node",
     "noFallthroughCasesInSwitch": true,
     "noImplicitAny": true,
     "noImplicitReturns": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "sourceMap": false,
+    "outDir": "compiled",
+    "removeComments": true,
+    "sourceMap": true,
+    "pretty": true,
+    "strict": true,
     "stripInternal": true,
     "target": "es5",
-    "lib": ["es2015", "dom"],
-    "outDir": "."
+    "typeRoots": ["node_modules/@types"]
   },
-  "include": ["src/**/*"],
-  "exclude": [
-    "node_modules",
-    "es6",
-    "lib",
-    "umd",
-    "example",
-    "src/__tests__/**/*"
-  ],
-  "types": ["node", "webpack-env"]
+  "include": ["src", "./typings.d.ts"],
+  "exclude": ["node_modules", "dist"]
 }

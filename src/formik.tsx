@@ -1,5 +1,6 @@
 import * as React from 'react';
-const hoistNonReactStatics = require('hoist-non-react-statics');
+
+import { hoistNonReactStatics } from './hoistStatics';
 
 /**
  * Transform Yup ValidationError to a more usable object
@@ -32,8 +33,7 @@ export function validateFormData<T>(data: T, schema: any): Promise<void> {
   for (let k in data) {
     if (data.hasOwnProperty(k)) {
       const key = String(k);
-      validateData[key] =
-        (data as any)[key] !== '' ? (data as any)[key] : undefined;
+      validateData[key] = (data as any)[key] !== '' ? (data as any)[key] : undefined;
     }
   }
   return schema.validate(validateData, { abortEarly: false });
@@ -132,14 +132,10 @@ export type InjectedFormikProps<Props, Values> = Props &
  */
 export type FormikBag<P, V> = { props: P } & FormikActions<P, V>;
 
-export type CompositeComponent<P> =
-  | React.ComponentClass<P>
-  | React.StatelessComponent<P>;
+export type CompositeComponent<P> = React.ComponentClass<P> | React.StatelessComponent<P>;
 
 export interface ComponentDecorator<TOwnProps, TMergedProps> {
-  (component: CompositeComponent<TMergedProps>): React.ComponentClass<
-    TOwnProps
-  >;
+  (component: CompositeComponent<TMergedProps>): React.ComponentClass<TOwnProps>;
 }
 
 export interface InferableComponentDecorator<TOwnProps> {
@@ -151,10 +147,7 @@ export function Formik<Props, Values extends FormikValues, Payload>({
   mapPropsToValues = vanillaProps => {
     let values: Values = {} as Values;
     for (let k in vanillaProps) {
-      if (
-        vanillaProps.hasOwnProperty(k) &&
-        typeof vanillaProps[k] !== 'function'
-      ) {
+      if (vanillaProps.hasOwnProperty(k) && typeof vanillaProps[k] !== 'function') {
         values[k] = vanillaProps[k];
       }
     }
@@ -167,13 +160,8 @@ export function Formik<Props, Values extends FormikValues, Payload>({
   },
   validationSchema,
   handleSubmit,
-}: FormikConfig<Props, Values, Payload>): ComponentDecorator<
-  Props,
-  InjectedFormikProps<Props, Values>
-> {
-  return function wrapWithFormik(
-    WrappedComponent: CompositeComponent<InjectedFormikProps<Props, Values>>
-  ): any {
+}: FormikConfig<Props, Values, Payload>): ComponentDecorator<Props, InjectedFormikProps<Props, Values>> {
+  return function wrapWithFormik(WrappedComponent: CompositeComponent<InjectedFormikProps<Props, Values>>): any {
     class Formik extends React.Component<Props, FormikState<Values>> {
       public static displayName = `Formik(${displayName ||
         WrappedComponent.displayName ||
@@ -216,9 +204,7 @@ export function Formik<Props, Values extends FormikValues, Payload>({
         e.persist();
         const { type, name, id, value, checked, outerHTML } = e.target;
         const field = name ? name : id;
-        const val = /number|range/.test(type)
-          ? parseFloat(value)
-          : /checkbox/.test(type) ? checked : value;
+        const val = /number|range/.test(type) ? parseFloat(value) : /checkbox/.test(type) ? checked : value;
 
         if (!field && process.env.NODE_ENV !== 'production') {
           console.error(
@@ -241,10 +227,7 @@ Formik cannot determine which value to update. See docs for more information: ht
           },
         }));
         // Validate against schema
-        validateFormData<Values>(
-          { ...values as any, [field]: val },
-          validationSchema
-        ).then(
+        validateFormData<Values>({ ...values as any, [field]: val }, validationSchema).then(
           () => this.setState({ errors: {} }),
           (err: any) => this.setState({ errors: yupToFormErrors(err) })
         );
@@ -273,8 +256,7 @@ Formik cannot determine which value to update. See docs for more information: ht
               props: this.props,
             });
           },
-          (err: any) =>
-            this.setState({ isSubmitting: false, errors: yupToFormErrors(err) })
+          (err: any) => this.setState({ isSubmitting: false, errors: yupToFormErrors(err) })
         );
       };
 
@@ -300,10 +282,7 @@ Formik cannot determine which value to update. See docs for more information: ht
           },
         }));
         // Validate against schema
-        validateFormData<Values>(
-          { ...values as any, [field]: value },
-          validationSchema
-        ).then(
+        validateFormData<Values>({ ...values as any, [field]: value }, validationSchema).then(
           () => this.setState({ errors: {} }),
           (err: any) => this.setState({ errors: yupToFormErrors(err) })
         );
@@ -315,9 +294,7 @@ Formik cannot determine which value to update. See docs for more information: ht
           errors: {},
           touched: {},
           error: undefined,
-          values: nextProps
-            ? mapPropsToValues(nextProps)
-            : mapPropsToValues(this.props),
+          values: nextProps ? mapPropsToValues(nextProps) : mapPropsToValues(this.props),
         });
       };
 
@@ -353,6 +330,7 @@ Formik cannot determine which value to update. See docs for more information: ht
     }
     // Make sure we preserve any custom statics on the original component.
     // @see https://github.com/apollographql/react-apollo/blob/master/src/graphql.tsx
-    return hoistNonReactStatics(Formik, WrappedComponent);
+    const FinalComponent = hoistNonReactStatics(Formik, WrappedComponent as React.ComponentClass<any>);
+    return FinalComponent as React.ComponentClass<InjectedFormikProps<Props, Values>>;
   };
 }

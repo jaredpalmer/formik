@@ -1,15 +1,26 @@
 {
   "name": "formik",
   "description": "Forms in React, without tears",
-  "version": "0.7.2",
+  "version": "0.7.3-rc1",
   "license": "MIT",
   "author": "Jared Palmer <jared@palmer.net>",
   "repository": "jaredpalmer/formik",
-  "keywords": ["formik", "react", "react-dom", "form", "validation", "forms", "higher order component", "hoc"],
+  "keywords": [
+    "formik",
+    "react",
+    "react-dom",
+    "form",
+    "validation",
+    "forms",
+    "higher order component",
+    "hoc"
+  ],
   "main": "dist/formik.js",
   "module": "dist/formik.es6.js",
   "typings": "dist/types/formik.d.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "test": "jest",
     "test:watch": "jest --watch",
@@ -55,15 +66,30 @@
     "yup": "^0.21.3"
   },
   "lint-staged": {
-    "*.(ts|tsx)": ["prettier --trailing-comma es5 --single-quote --write", "git add"]
+    "*.(ts|tsx)": [
+      "prettier --trailing-comma es5 --single-quote --write",
+      "git add"
+    ]
   },
   "jest": {
-    "collectCoverageFrom": ["src/**/*.{ts,tsx}"],
+    "collectCoverageFrom": [
+      "src/**/*.{ts,tsx}"
+    ],
     "transform": {
       ".(ts|tsx)": "<rootDir>/node_modules/ts-jest/preprocessor.js"
     },
-    "testMatch": ["<rootDir>/test/**/*.ts?(x)", "<rootDir>/test/**/?(*.)(spec|test).ts?(x)"],
-    "transformIgnorePatterns": ["[/\\\\]node_modules[/\\\\].+\\.(js|jsx)$"],
-    "moduleFileExtensions": ["ts", "tsx", "js", "json"]
+    "testMatch": [
+      "<rootDir>/test/**/*.ts?(x)",
+      "<rootDir>/test/**/?(*.)(spec|test).ts?(x)"
+    ],
+    "transformIgnorePatterns": [
+      "[/\\\\]node_modules[/\\\\].+\\.(js|jsx)$"
+    ],
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "json"
+    ]
   }
 }

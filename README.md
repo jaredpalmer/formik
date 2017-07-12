@@ -14,7 +14,7 @@ Lastly, Formik helps you stay organized by colocating all of the above plus your
 
 ## Installation
 
-Add Formik and Yup to your project. Formik uses [Yup](https://github.com/jquense/yup) (which is like [Joi](https://github.com/hapijs/joi), but for the browser) for schema validation. 
+Add Formik and Yup to your project. Formik uses [Yup](https://github.com/jquense/yup) (which is like [Joi](https://github.com/hapijs/joi), but for the browser) for object schema validation. 
 
 ```bash
 npm i formik yup --save

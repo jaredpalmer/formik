@@ -114,9 +114,8 @@ describe('Formik', () => {
           name: Yup.string().required(),
         }),
         mapPropsToValues: ({ user }) => ({ ...user }),
-        handleSubmit: payload => {
-          expect(payload).toEqual({ name: 'jared' });
-        },
+        // tslint:disable-next-line:no-empty
+        handleSubmit: () => {},
       })(Form);
       const hoc = shallow(<EnhancedForm user={{ name: 'jared' }} />);
 
@@ -127,6 +126,28 @@ describe('Formik', () => {
         preventDefault() {},
       });
       expect(hoc.find(Form).dive().find('#submitting')).toHaveLength(1);
+    });
+
+    it('can map values to payload', async () => {
+      interface Payload {
+        user: { name: string };
+      }
+      const EnhancedForm = Formik<Props, Values, Payload>({
+        validationSchema: Yup.object().shape({
+          name: Yup.string().required(),
+        }),
+        mapPropsToValues: ({ user }) => ({ ...user }),
+        mapValuesToPayload: ({ name }) => ({ user: { name } }),
+        handleSubmit: payload => {
+          expect(payload).toEqual({ user: { name: 'jared' } });
+          expect(payload).not.toEqual({ name: 'jared' });
+        },
+      })(Form);
+      const hoc = shallow(<EnhancedForm user={{ name: 'jared' }} />);
+      hoc.find(Form).dive().find('form').simulate('submit', {
+        // tslint:disable-next-line:no-empty
+        preventDefault() {},
+      });
     });
   });
 

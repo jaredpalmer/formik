@@ -272,7 +272,7 @@ Formik cannot determine which value to update. See docs for more information: ht
       handleChangeValue = (field: string, value: any) => {
         if (process.env.NODE_ENV !== 'production') {
           console.warn(`
-          Warning: Formik\'s handleChangeValue will be deprecated in future releases. Please use Formik's setFieldValue(field, value) together with setTouched(field, isTouched) instead.
+          Warning: Formik\'s handleChangeValue is deprecated and may be removed in future releases. Please use Formik's setFieldValue(field, value) together with setTouched(field, isTouched) instead.
           `);
         }
         // Set touched and form fields by name
@@ -410,7 +410,7 @@ Formik cannot determine which value to update. See docs for more information: ht
             setTouched={this.setTouched}
             setFieldTouched={this.setFieldTouched}
             setValues={this.setValues}
-            setFieldValues={this.setFieldValue}
+            setFieldValue={this.setFieldValue}
             resetForm={this.resetForm}
             handleReset={this.handleReset}
             handleSubmit={this.handleSubmit}

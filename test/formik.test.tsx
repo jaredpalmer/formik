@@ -33,7 +33,7 @@ describe('Formik', () => {
           onChange={handleChange}
           onBlur={handleBlur}
           value={values.name}
-          name="thing"
+          name="name"
         />
         {errors.name &&
           <div id="feedback">

@@ -5,7 +5,7 @@ exports[`Formik renders Formik correctly 1`] = `
   onSubmit={[Function]}
 >
   <input
-    name="thing"
+    name="name"
     onBlur={[Function]}
     onChange={[Function]}
     type="text"

@@ -48,22 +48,6 @@ describe('Formik', () => {
     );
   };
 
-  it('renders Formik correctly', () => {
-    const EnhancedForm = Formik<Props, Values, Values>({
-      validationSchema: Yup.object().shape({
-        name: Yup.string(),
-      }),
-      mapPropsToValues: ({ user }) => ({ ...user }),
-      // tslint:disable-next-line:no-empty
-      handleSubmit: () => {},
-    })(Form);
-
-    const tree = renderer
-      .create(<EnhancedForm user={{ name: 'jared' }} />)
-      .toJSON();
-    expect(tree).toMatchSnapshot();
-  });
-
   it('initializes Formik state', () => {
     const EnhancedForm = Formik<Props, Values, Values>({
       validationSchema: Yup.object().shape({

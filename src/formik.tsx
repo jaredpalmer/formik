@@ -61,23 +61,25 @@ export interface FormikTouched {
  */
 export interface FormikConfig<Props, Values, Payload> {
   displayName?: string;
-  /* Map props to the form values */
+  /** Map props to the form values */
   mapPropsToValues?: (props: Props) => Values;
-  /* Map form values to submission payload */
+  /** Map form values to submission payload */
   mapValuesToPayload?: (values: Values) => Payload;
-  /*  Yup Schema */
+  /**  Yup Schema */
   validationSchema: any;
-  /* Submission handler */
+  /** Submission handler */
   handleSubmit: (payload: Payload, formikBag: FormikBag<Props, Values>) => void;
+  /** Tells Formik to validate the form on each input's onChange event (default is onBlur event) */
+  validateOnChange?: boolean;
 }
 
 /**
  * Formik state tree
  */
 export interface FormikState<V> {
-  /* Form values */
+  /** Form values */
   values: V;
-  /* Top level error, in case you need it */
+  /** Top level error, in case you need it */
   error?: any;
   /** map of field names to specific error for that field */
   errors: FormikErrors;
@@ -175,6 +177,7 @@ export function Formik<Props, Values extends FormikValues, Payload>({
   },
   validationSchema,
   handleSubmit,
+  validateOnChange = false,
 }: FormikConfig<Props, Values, Payload>): ComponentDecorator<
   Props,
   InjectedFormikProps<Props, Values>
@@ -220,6 +223,13 @@ export function Formik<Props, Values extends FormikValues, Payload>({
         this.setState({ isSubmitting });
       };
 
+      validateFormik = (values: Values) => {
+        validateFormData<Values>(values, validationSchema).then(
+          () => this.setState({ errors: {} }),
+          (err: any) => this.setState({ errors: yupToFormErrors(err) })
+        );
+      };
+
       handleChange = (e: React.ChangeEvent<any>) => {
         if (isReactNative) {
           console.error(
@@ -253,6 +263,49 @@ Formik cannot determine which value to update. See docs for more information: ht
             [field]: val,
           },
         }));
+
+        if (validateOnChange) {
+          this.validateFormik({ ...this.state.values as any, [field]: value });
+        }
+      };
+
+      handleChangeValue = (field: string, value: any) => {
+        if (process.env.NODE_ENV !== 'production') {
+          console.warn(`
+          Warning: Formik\'s handleChangeValue will be deprecated in future releases. Please use Formik's setFieldValue(field, value) together with setTouched(field, isTouched) instead.
+          `);
+        }
+        // Set touched and form fields by name
+        this.setState(prevState => ({
+          ...prevState,
+          values: {
+            ...prevState.values as object,
+            [field]: value,
+          },
+          touched: {
+            ...prevState.touched as object,
+            [field]: true,
+          },
+        }));
+
+        if (validateOnChange) {
+          this.validateFormik({ ...this.state.values as any, [field]: value });
+        }
+      };
+
+      setFieldValue = (field: string, value: any) => {
+        // Set form field by name
+        this.setState(prevState => ({
+          ...prevState,
+          values: {
+            ...prevState.values as object,
+            [field]: value,
+          },
+        }));
+
+        if (validateOnChange) {
+          this.validateFormik({ ...this.state.values as any, [field]: value });
+        }
       };
 
       handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -261,7 +314,7 @@ Formik cannot determine which value to update. See docs for more information: ht
           touched: touchAllFields(this.state.values),
           isSubmitting: true,
         });
-        // Validate against schema
+
         validateFormData<Values>(this.state.values, validationSchema).then(
           () => {
             this.setState({ errors: {} });
@@ -290,50 +343,10 @@ Formik cannot determine which value to update. See docs for more information: ht
         this.setState(prevState => ({
           touched: { ...prevState.touched, [field]: true },
         }));
-        // Validate against schema
-        validateFormData<Values>(this.state.values, validationSchema).then(
-          () => this.setState({ errors: {} }),
-          (err: any) => this.setState({ errors: yupToFormErrors(err) })
-        );
-      };
 
-      handleChangeValue = (field: string, value: any) => {
-        if (process.env.NODE_ENV !== 'production') {
-          console.warn(`
-          Warning: Formik\'s handleChangeValue will be deprecated in future releases. Please use Formik's setFieldValue(field, value) together with setTouched(field, isTouched) instead.
-          `);
+        if (!validateOnChange) {
+          this.validateFormik(this.state.values);
         }
-        // Set touched and form fields by name
-        this.setState(prevState => ({
-          ...prevState,
-          values: {
-            ...prevState.values as object,
-            [field]: value,
-          },
-          touched: {
-            ...prevState.touched as object,
-            [field]: true,
-          },
-        }));
-        // Validate against schema
-        validateFormData<Values>(
-          { ...this.state.values as any, [field]: value },
-          validationSchema
-        ).then(
-          () => this.setState({ errors: {} }),
-          (err: any) => this.setState({ errors: yupToFormErrors(err) })
-        );
-      };
-
-      setFieldValue = (field: string, value: any) => {
-        // Set form field by name
-        this.setState(prevState => ({
-          ...prevState,
-          values: {
-            ...prevState.values as object,
-            [field]: value,
-          },
-        }));
       };
 
       setFieldTouched = (field: string, touched: boolean = true) => {
@@ -347,10 +360,9 @@ Formik cannot determine which value to update. See docs for more information: ht
         }));
 
         // Async validate
-        validateFormData<Values>(this.state.values, validationSchema).then(
-          () => this.setState({ errors: {} }),
-          (err: any) => this.setState({ errors: yupToFormErrors(err) })
-        );
+        if (!validateOnChange) {
+          this.validateFormik(this.state.values);
+        }
       };
 
       setFieldError = (field: string, message: string) => {

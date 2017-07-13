@@ -42,7 +42,10 @@ export function hoistNonReactStatics(
       let key: string = keys[i];
       if (!REACT_STATICS[key] && (!blacklist || !blacklist[key])) {
         // Only hoist enumerables and non-enumerable functions
-        if (propIsEnumerable.call(sourceComponent, key) || typeof (targetComponent as any)[key] === 'function') {
+        if (
+          propIsEnumerable.call(sourceComponent, key) ||
+          typeof (targetComponent as any)[key] === 'function'
+        ) {
           try {
             // Avoid failures from read-only properties
             (targetComponent as any)[key] = (targetComponent as any)[key];

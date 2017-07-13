@@ -1,6 +1,7 @@
 import * as React from 'react';
 
 import { hoistNonReactStatics } from './hoistStatics';
+import { isReactNative } from './isReactNative';
 
 /**
  * Transform Yup ValidationError to a more usable object
@@ -33,7 +34,8 @@ export function validateFormData<T>(data: T, schema: any): Promise<void> {
   for (let k in data) {
     if (data.hasOwnProperty(k)) {
       const key = String(k);
-      validateData[key] = (data as any)[key] !== '' ? (data as any)[key] : undefined;
+      validateData[key] =
+        (data as any)[key] !== '' ? (data as any)[key] : undefined;
     }
   }
   return schema.validate(validateData, { abortEarly: false });
@@ -91,14 +93,20 @@ export interface FormikState<V> {
 export interface FormikActions<P, V> {
   /* Manually set top level error */
   setError: (e: any) => void;
-  /* Manually set Errors */
+  /* Manually set errors object */
   setErrors: (errors: FormikErrors) => void;
   /* Manually set isSubmitting */
   setSubmitting: (isSubmitting: boolean) => void;
-  /* Manually set touched fields */
+  /* Manually set touched object */
   setTouched: (touched: FormikTouched) => void;
-  /* Manually set values  */
+  /* Manually set values object  */
   setValues: (values: V) => void;
+  /* Set value of form field directly */
+  setFieldValue: (field: string, value: any) => void;
+  /* Set error message of a form field directly */
+  setFieldError: (field: string, message: string) => void;
+  /* Set whether field has been touched directly */
+  setFieldTouched: (field: string, isTouched?: boolean) => void;
   /* Reset form */
   resetForm: (nextProps?: P) => void;
 }
@@ -132,10 +140,14 @@ export type InjectedFormikProps<Props, Values> = Props &
  */
 export type FormikBag<P, V> = { props: P } & FormikActions<P, V>;
 
-export type CompositeComponent<P> = React.ComponentClass<P> | React.StatelessComponent<P>;
+export type CompositeComponent<P> =
+  | React.ComponentClass<P>
+  | React.StatelessComponent<P>;
 
 export interface ComponentDecorator<TOwnProps, TMergedProps> {
-  (component: CompositeComponent<TMergedProps>): React.ComponentClass<TOwnProps>;
+  (component: CompositeComponent<TMergedProps>): React.ComponentClass<
+    TOwnProps
+  >;
 }
 
 export interface InferableComponentDecorator<TOwnProps> {
@@ -147,7 +159,10 @@ export function Formik<Props, Values extends FormikValues, Payload>({
   mapPropsToValues = vanillaProps => {
     let values: Values = {} as Values;
     for (let k in vanillaProps) {
-      if (vanillaProps.hasOwnProperty(k) && typeof vanillaProps[k] !== 'function') {
+      if (
+        vanillaProps.hasOwnProperty(k) &&
+        typeof vanillaProps[k] !== 'function'
+      ) {
         values[k] = vanillaProps[k];
       }
     }
@@ -160,8 +175,13 @@ export function Formik<Props, Values extends FormikValues, Payload>({
   },
   validationSchema,
   handleSubmit,
-}: FormikConfig<Props, Values, Payload>): ComponentDecorator<Props, InjectedFormikProps<Props, Values>> {
-  return function wrapWithFormik(WrappedComponent: CompositeComponent<InjectedFormikProps<Props, Values>>): any {
+}: FormikConfig<Props, Values, Payload>): ComponentDecorator<
+  Props,
+  InjectedFormikProps<Props, Values>
+> {
+  return function wrapWithFormik(
+    WrappedComponent: CompositeComponent<InjectedFormikProps<Props, Values>>
+  ): any {
     class Formik extends React.Component<Props, FormikState<Values>> {
       public static displayName = `Formik(${displayName ||
         WrappedComponent.displayName ||
@@ -201,10 +221,18 @@ export function Formik<Props, Values extends FormikValues, Payload>({
       };
 
       handleChange = (e: React.ChangeEvent<any>) => {
+        if (isReactNative) {
+          console.error(
+            `Warning: Formik's handleChange does not work with React Native. You should use \`setFieldValue(field, value)\` and within a callback instead. See docs for more information: https://github.com/jaredpalmer/formikhttps://github.com/jaredpalmer/formik#react-native`
+          );
+          return;
+        }
         e.persist();
         const { type, name, id, value, checked, outerHTML } = e.target;
         const field = name ? name : id;
-        const val = /number|range/.test(type) ? parseFloat(value) : /checkbox/.test(type) ? checked : value;
+        const val = /number|range/.test(type)
+          ? parseFloat(value)
+          : /checkbox/.test(type) ? checked : value;
 
         if (!field && process.env.NODE_ENV !== 'production') {
           console.error(
@@ -217,46 +245,41 @@ Formik cannot determine which value to update. See docs for more information: ht
           );
         }
 
-        const { values } = this.state;
         // Set form fields by name
-        this.setState(state => ({
-          ...state,
+        this.setState(prevState => ({
+          ...prevState,
           values: {
-            ...values as object,
+            ...prevState.values as object,
             [field]: val,
           },
         }));
-        // Validate against schema
-        validateFormData<Values>({ ...values as any, [field]: val }, validationSchema).then(
-          () => this.setState({ errors: {} }),
-          (err: any) => this.setState({ errors: yupToFormErrors(err) })
-        );
       };
 
       handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        // setTouched();
-        // setSubmitting(true);
         this.setState({
           touched: touchAllFields(this.state.values),
           isSubmitting: true,
         });
-        const { values } = this.state;
         // Validate against schema
-        validateFormData<Values>(values, validationSchema).then(
+        validateFormData<Values>(this.state.values, validationSchema).then(
           () => {
             this.setState({ errors: {} });
             handleSubmit(mapValuesToPayload(this.state.values), {
               setTouched: this.setTouched,
               setErrors: this.setErrors,
               setError: this.setError,
-              setSubmitting: this.setSubmitting,
               setValues: this.setValues,
+              setFieldError: this.setFieldError,
+              setFieldValue: this.setFieldValue,
+              setFieldTouched: this.setFieldTouched,
+              setSubmitting: this.setSubmitting,
               resetForm: this.resetForm,
               props: this.props,
             });
           },
-          (err: any) => this.setState({ isSubmitting: false, errors: yupToFormErrors(err) })
+          (err: any) =>
+            this.setState({ isSubmitting: false, errors: yupToFormErrors(err) })
         );
       };
 
@@ -264,28 +287,81 @@ Formik cannot determine which value to update. See docs for more information: ht
         e.persist();
         const { name, id } = e.target;
         const field = name ? name : id;
-        this.setState(state => ({ touched: { ...state.touched, [field]: true } }));
+        this.setState(prevState => ({
+          touched: { ...prevState.touched, [field]: true },
+        }));
+        // Validate against schema
+        validateFormData<Values>(this.state.values, validationSchema).then(
+          () => this.setState({ errors: {} }),
+          (err: any) => this.setState({ errors: yupToFormErrors(err) })
+        );
       };
 
       handleChangeValue = (field: string, value: any) => {
-        const { touched, values } = this.state;
+        if (process.env.NODE_ENV !== 'production') {
+          console.warn(`
+          Warning: Formik\'s handleChangeValue will be deprecated in future releases. Please use Formik's setFieldValue(field, value) together with setTouched(field, isTouched) instead.
+          `);
+        }
         // Set touched and form fields by name
-        this.setState(state => ({
-          ...state,
+        this.setState(prevState => ({
+          ...prevState,
           values: {
-            ...values as object,
+            ...prevState.values as object,
             [field]: value,
           },
           touched: {
-            ...touched as object,
+            ...prevState.touched as object,
             [field]: true,
           },
         }));
         // Validate against schema
-        validateFormData<Values>({ ...values as any, [field]: value }, validationSchema).then(
+        validateFormData<Values>(
+          { ...this.state.values as any, [field]: value },
+          validationSchema
+        ).then(
           () => this.setState({ errors: {} }),
           (err: any) => this.setState({ errors: yupToFormErrors(err) })
         );
+      };
+
+      setFieldValue = (field: string, value: any) => {
+        // Set form field by name
+        this.setState(prevState => ({
+          ...prevState,
+          values: {
+            ...prevState.values as object,
+            [field]: value,
+          },
+        }));
+      };
+
+      setFieldTouched = (field: string, touched: boolean = true) => {
+        // Set touched field by name
+        this.setState(prevState => ({
+          ...prevState,
+          touched: {
+            ...prevState.touched,
+            [field]: touched,
+          },
+        }));
+
+        // Async validate
+        validateFormData<Values>(this.state.values, validationSchema).then(
+          () => this.setState({ errors: {} }),
+          (err: any) => this.setState({ errors: yupToFormErrors(err) })
+        );
+      };
+
+      setFieldError = (field: string, message: string) => {
+        // Set form field by name
+        this.setState(prevState => ({
+          ...prevState,
+          errors: {
+            ...prevState.errors as object,
+            [field]: message,
+          },
+        }));
       };
 
       resetForm = (nextProps?: Props) => {
@@ -294,7 +370,9 @@ Formik cannot determine which value to update. See docs for more information: ht
           errors: {},
           touched: {},
           error: undefined,
-          values: nextProps ? mapPropsToValues(nextProps) : mapPropsToValues(this.props),
+          values: nextProps
+            ? mapPropsToValues(nextProps)
+            : mapPropsToValues(this.props),
         });
       };
 
@@ -314,10 +392,13 @@ Formik cannot determine which value to update. See docs for more information: ht
             {...this.props as any}
             {...this.state as any}
             setError={this.setError}
+            setFieldError={this.setFieldError}
             setErrors={this.setErrors}
             setSubmitting={this.setSubmitting}
             setTouched={this.setTouched}
+            setFieldTouched={this.setFieldTouched}
             setValues={this.setValues}
+            setFieldValues={this.setFieldValue}
             resetForm={this.resetForm}
             handleReset={this.handleReset}
             handleSubmit={this.handleSubmit}
@@ -330,7 +411,12 @@ Formik cannot determine which value to update. See docs for more information: ht
     }
     // Make sure we preserve any custom statics on the original component.
     // @see https://github.com/apollographql/react-apollo/blob/master/src/graphql.tsx
-    const FinalComponent = hoistNonReactStatics(Formik, WrappedComponent as React.ComponentClass<any>);
-    return FinalComponent as React.ComponentClass<InjectedFormikProps<Props, Values>>;
+    const FinalComponent = hoistNonReactStatics(
+      Formik,
+      WrappedComponent as React.ComponentClass<any>
+    );
+    return FinalComponent as React.ComponentClass<
+      InjectedFormikProps<Props, Values>
+    >;
   };
 }

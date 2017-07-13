@@ -6,6 +6,9 @@ import { mount, shallow } from 'enzyme';
 
 const Yup = require('yup');
 
+// tslint:disable-next-line:no-empty
+const noop = () => {};
+
 describe('Formik', () => {
   interface Props {
     user: {
@@ -67,8 +70,7 @@ describe('Formik', () => {
         name: Yup.string(),
       }),
       mapPropsToValues: ({ user }) => ({ ...user }),
-      // tslint:disable-next-line:no-empty
-      handleSubmit: () => {},
+      handleSubmit: noop,
     })(Form);
     const hoc = mount(<EnhancedForm user={{ name: 'jared' }} />);
     expect(hoc.state().isSubmitting).toBe(false);
@@ -84,8 +86,7 @@ describe('Formik', () => {
           name: Yup.string(),
         }),
         mapPropsToValues: ({ user }) => ({ ...user }),
-        // tslint:disable-next-line:no-empty
-        handleSubmit: () => {},
+        handleSubmit: noop,
       })(Form);
       const hoc = mount(<EnhancedForm user={{ name: 'jared' }} />);
       const preventDefault = jest.fn();
@@ -99,8 +100,7 @@ describe('Formik', () => {
           name: Yup.string(),
         }),
         mapPropsToValues: ({ user }) => ({ ...user }),
-        // tslint:disable-next-line:no-empty
-        handleSubmit: () => {},
+        handleSubmit: noop,
       })(Form);
       const hoc = mount(<EnhancedForm user={{ name: 'jared' }} />);
       hoc.find('form').simulate('submit');
@@ -114,8 +114,7 @@ describe('Formik', () => {
           name: Yup.string().required(),
         }),
         mapPropsToValues: ({ user }) => ({ ...user }),
-        // tslint:disable-next-line:no-empty
-        handleSubmit: () => {},
+        handleSubmit: noop,
       })(Form);
       const hoc = shallow(<EnhancedForm user={{ name: 'jared' }} />);
 
@@ -167,8 +166,7 @@ describe('Formik', () => {
 
       // Simulate a blur event in the inner Form component's input
       hoc.find(Form).dive().find('input').simulate('blur', {
-        // tslint:disable-next-line:no-empty
-        persist() {},
+        persist: noop,
         target: {
           name: 'name',
         },
@@ -191,8 +189,7 @@ describe('Formik', () => {
 
       // Simulate a change event in the inner Form component's input
       hoc.find(Form).dive().find('input').simulate('change', {
-        // tslint:disable-next-line:no-empty
-        persist() {},
+        persist: noop,
         target: {
           name: 'name',
           value: 'ian',
@@ -203,6 +200,34 @@ describe('Formik', () => {
       expect(
         hoc.update().find(Form).dive().find('input').props().value
       ).toEqual('ian');
+    });
+
+    it('setValues sets values', async () => {
+      const EnhancedForm = Formik<Props, Values, Values>({
+        validationSchema: Yup.object().shape({
+          name: Yup.string().required(),
+        }),
+        mapPropsToValues: ({ user }) => ({ ...user }),
+        handleSubmit: noop,
+      })(Form);
+
+      const hoc = mount(<EnhancedForm user={{ name: 'jared' }} />);
+      hoc.find(Form).props().setValues({ name: 'ian' });
+      expect(hoc.find('input').props().value).toEqual('ian');
+    });
+
+    it('setErrors sets error object', async () => {
+      const EnhancedForm = Formik<Props, Values, Values>({
+        validationSchema: Yup.object().shape({
+          name: Yup.string().required(),
+        }),
+        mapPropsToValues: ({ user }) => ({ ...user }),
+        handleSubmit: noop,
+      })(Form);
+
+      const hoc = mount(<EnhancedForm user={{ name: 'jared' }} />);
+      hoc.find(Form).props().setErrors({ name: 'Required' });
+      expect(hoc.find('#feedback').text()).toEqual('Required');
     });
   });
 });

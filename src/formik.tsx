@@ -252,7 +252,7 @@ export function Formik<Props, Values extends FormikValues, Payload>({
       handleChange = (e: React.ChangeEvent<any>) => {
         if (isReactNative) {
           console.error(
-            `Warning: Formik's handleChange does not work with React Native. You should use \`setFieldValue(field, value)\` and within a callback instead. See docs for more information: https://github.com/jaredpalmer/formikhttps://github.com/jaredpalmer/formik#react-native`
+            `Warning: Formik's \`handleChange\` does not work with React Native. You should use \`setFieldValue(field, value)\` and within a callback instead. See docs for more information: https://github.com/jaredpalmer/formikhttps://github.com/jaredpalmer/formik#react-native`
           );
           return;
         }
@@ -290,9 +290,9 @@ Formik cannot determine which value to update. See docs for more information: ht
 
       handleChangeValue = (field: string, value: any) => {
         if (process.env.NODE_ENV !== 'production') {
-          console.warn(`
-          Warning: Formik\'s handleChangeValue is deprecated and may be removed in future releases. Please use Formik's setFieldValue(field, value) together with setTouched(field, isTouched) instead.
-          `);
+          console.warn(
+            `Warning: Formik\'s \`handleChangeValue\` is deprecated and may be removed in future releases. Please use Formik's \`setFieldValue(field, value)\` together with \`setFieldTouched(field, isTouched)\` instead. See docs for more information: https://github.com/jaredpalmer/formik#setfieldvalue-field-string-value-any--void`
+          );
         }
         // Set touched and form fields by name
         this.setState(prevState => ({

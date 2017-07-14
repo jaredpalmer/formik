@@ -194,7 +194,7 @@ export function Formik<Props, Values extends FormikValues, Payload>({
 > {
   return function wrapWithFormik(
     WrappedComponent: CompositeComponent<InjectedFormikProps<Props, Values>>
-  ): any {
+  ) {
     class Formik extends React.Component<Props, FormikState<Values>> {
       public static displayName = `Formik(${displayName ||
         WrappedComponent.displayName ||
@@ -421,8 +421,8 @@ Formik cannot determine which value to update. See docs for more information: ht
       render() {
         return (
           <WrappedComponent
-            {...this.props as any}
-            {...this.state as any}
+            {...this.props}
+            {...this.state}
             setStatus={this.setStatus}
             setError={this.setError}
             setFieldError={this.setFieldError}
@@ -442,14 +442,11 @@ Formik cannot determine which value to update. See docs for more information: ht
         );
       }
     }
-    // Make sure we preserve any custom statics on the original component.
-    // @see https://github.com/apollographql/react-apollo/blob/master/src/graphql.tsx
-    const FinalComponent = hoistNonReactStatics(
+    return hoistNonReactStatics<Props>(
       Formik,
-      WrappedComponent as React.ComponentClass<any>
-    );
-    return FinalComponent as React.ComponentClass<
-      InjectedFormikProps<Props, Values>
-    >;
+      WrappedComponent as React.ComponentClass<
+        InjectedFormikProps<Props, Values>
+      > // cast type to ComponentClass (even if SFC)
+    ) as React.ComponentClass<Props>;
   };
 }

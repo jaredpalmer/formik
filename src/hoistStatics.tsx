@@ -17,11 +17,11 @@ const getPrototypeOf = Object.getPrototypeOf;
 const objectPrototype = getPrototypeOf && getPrototypeOf(Object);
 const getOwnPropertyNames = Object.getOwnPropertyNames;
 
-export function hoistNonReactStatics(
-  targetComponent: ComponentClass<any>,
+export function hoistNonReactStatics<P>(
+  targetComponent: ComponentClass<P>,
   sourceComponent: ComponentClass<any>,
   blacklist?: { [name: string]: boolean }
-) {
+): ComponentClass<P> {
   if (typeof sourceComponent !== 'string') {
     // don't hoist over string (html) components
 

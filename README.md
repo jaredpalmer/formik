@@ -47,28 +47,30 @@ You can also try before you buy with this **[demo on CodeSandbox.io](https://cod
       - [`mapValuesToPayload?: (values) => payload`](#mapvaluestopayload-values--payload)
       - [`validationSchema: Schema`](#validationschema-schema)
     - [Injected props and methods](#injected-props-and-methods)
-      - [`error?: any`](#error-any)
       - [`errors: { [field: string]: string }`](#errors--field-string-string-)
       - [`handleBlur: (e: any) => void`](#handleblur-e-any--void)
       - [`handleChange: (e: React.ChangeEvent<any>) => void`](#handlechange-e-reactchangeeventany--void)
-      - [`handleChangeValue: (name: string, value: any) => void`](#handlechangevalue-name-string-value-any--void)
       - [`handleReset: () => void`](#handlereset---void)
       - [`handleSubmit: (e: React.FormEvent<HTMLFormEvent>) => void`](#handlesubmit-e-reactformeventhtmlformevent--void)
       - [`isSubmitting: boolean`](#issubmitting-boolean)
       - [`resetForm: (nextProps?: Props) => void`](#resetform-nextprops-props--void)
       - [`setErrors: (fields: { [field: string]: string }) => void`](#seterrors-fields--field-string-string---void)
+      - [`setFieldError: (field: string, errorMsg: string) => void`](#setfielderror-field-string-errormsg-string--void)
+      - [`setFieldTouched: (field: string, isTouched: boolean) => void`](#setfieldtouched-field-string-istouched-boolean--void)
+      - [`setFieldValue: (field: string, value: any) => void`](#setfieldvalue-field-string-value-any--void)
       - [`setStatus: (status?: any) => void`](#setstatus-status-any--void)
       - [`setSubmitting: (boolean) => void`](#setsubmitting-boolean--void)
       - [`setTouched: (fields: { [field: string]: boolean }) => void`](#settouched-fields--field-string-boolean---void)
       - [`setValues: (fields: { [field: string]: any }) => void`](#setvalues-fields--field-string-any---void)
-      - [`touched: { [field: string]: boolean}`](#touched--field-string-boolean)
+      - [`status?: any`](#status-any)
+      - [`touched: { [field: string]: boolean }`](#touched--field-string-boolean-)
       - [`values: { [field: string]: any }`](#values--field-string-any-)
 - [Recipes](#recipes)
   - [Ways to call `Formik`](#ways-to-call-formik)
   - [Accessing React Component Lifecycle Functions](#accessing-react-component-lifecycle-functions)
     - [Example: Resetting a form when props change](#example-resetting-a-form-when-props-change)
   - [React Native](#react-native)
-    - [Why use `handleChangeValue` instead of `handleChange`?](#why-use-handlechangevalue-instead-of-handlechange)
+    - [Why use `setFieldValue` instead of `handleChange`?](#why-use-setfieldvalue-instead-of-handlechange)
     - [Avoiding a Render Callback](#avoiding-a-render-callback)
 - [Authors](#authors)
 
@@ -115,7 +117,7 @@ import { Formik } from 'formik';
 import Yup from 'yup';
 
 // Formik is a Higher Order Component that wraps a React Form. Mutable form values 
-// are injected into a prop called `values`. Additionally, Formik injects
+// are injected into a prop called [`values`]. Additionally, Formik injects
 // an onChange handler that you can use on every input. You also get
 // handleSubmit, errors, and isSubmitting for free. This makes building custom
 // inputs easy.
@@ -174,7 +176,7 @@ export default Formik({
     facebook: Yup.string(),
   }),
 
-  // We now map React props to form values. These will be injected as `values` into
+  // We now map React props to form values. These will be injected as [`values`] into
   // our form. (Note: in the real world, you would destructure props, but for clarity this is
   // not shown)
   mapPropsToValues: props => ({
@@ -184,7 +186,7 @@ export default Formik({
   }),
 
   // Sometimes your API needs a different object shape than your form. Formik lets 
-  // you map `values` back into a `payload` before they are
+  // you map [`values`] back into a `payload` before they are
   // passed to handleSubmit.
   mapValuesToPayload: values => ({
     email: values.email,
@@ -232,68 +234,80 @@ Create a higher-order React component class that passes props and form handlers 
 When your inner form component is a stateless functional component, you can use the `displayName` option to give the component a proper name so you can more easily find it in [React DevTools](https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi?hl=en). If specified, your wrapped form will show up as `Formik(displayName)`. If omitted, it will show up as `Formik(Component)`. This option is not required for class components (e.g. `class XXXXX extends React.Component {..}`).
 
 ##### `handleSubmit: (payload, FormikBag) => void`
-Your form submission handler. It is passed the result of `mapValuesToPayload` (if specified), or the result of `mapPropsToValues`, or all props that are not functions (in that order of precedence) and the "`FormikBag`".
+Your form submission handler. It is passed the result of [`mapValuesToPayload`] (if specified), or the result of `mapPropsToValues`, or all props that are not functions (in that order of precedence) and the "`FormikBag`".
 
 ##### `mapPropsToValues?: (props) => props`
-If this option is specified, then Formik will transfer its results into updatable form state and make these values available to the new component as `props.values`. If `mapPropsToValues` is not specified, then Formik will map all props that are not functions to the new component's `props.values`. That is, if you omit it, Formik will only pass `props` where `typeof props[k] !== 'function'`, where `k` is some key.
+If this option is specified, then Formik will transfer its results into updatable form state and make these values available to the new component as [`props.values`][`values`]. If `mapPropsToValues` is not specified, then Formik will map all props that are not functions to the new component's [`props.values`][`values`]. That is, if you omit it, Formik will only pass `props` where `typeof props[k] !== 'function'`, where `k` is some key.
 
 ##### `mapValuesToPayload?: (values) => payload`
-If this option is specified, then Formik will run this function just before calling `handleSubmit`. Use it to transform your form's `values` back into a shape that's consumable for other parts of your application or API. If `mapValuesToPayload` **is not** specified, then Formik will map all `values` directly to `payload` (which will be passed to `handleSubmit`). While this transformation can be moved into `handleSubmit`, consistently defining it in `mapValuesToPayload` separates concerns and helps you stay organized.
+If this option is specified, then Formik will run this function just before calling [`handleSubmit`]. Use it to transform your form's [`values`] back into a shape that's consumable for other parts of your application or API. If [`mapValuesToPayload`] **is not** specified, then Formik will map all [`values`] directly to `payload` (which will be passed to [`handleSubmit`]). While this transformation can be moved into [`handleSubmit`], consistently defining it in [`mapValuesToPayload`] separates concerns and helps you stay organized.
 
 ##### `validationSchema: Schema`
-[A Yup schema](https://github.com/jquense/yup). This is used for validation on each onChange event. Errors are mapped by key to the `WrappedComponent`'s `props.errors`. Its keys should almost always match those of `WrappedComponent's` `props.values`. 
+[A Yup schema](https://github.com/jquense/yup). This is used for validation on each onChange event. Errors are mapped by key to the `WrappedComponent`'s [`props.errors`][`errors`]. Its keys should almost always match those of `WrappedComponent's` `[`props.values`][`values`]. 
 
 #### Injected props and methods
 
 The following props and methods will be injected into the `WrappedComponent` (i.e. your form):
 
-##### `error?: any`
-A top-level error object, can be whatever you need.
-
 ##### `errors: { [field: string]: string }`
-Form validation errors. Keys match the shape of the `validationSchema` defined in Formik options. This should therefore also map to your `values` object as well. Internally, Formik transforms raw [Yup validation errors](https://github.com/jquense/yup#validationerrorerrors-string--arraystring-value-any-path-string) on your behalf. 
+Form validation errors. Keys match the shape of the [`validationSchema`] defined in Formik options. This should therefore also map to your [`values`] object as well. Internally, Formik transforms raw [Yup validation errors](https://github.com/jquense/yup#validationerrorerrors-string--arraystring-value-any-path-string) on your behalf. 
 
 ##### `handleBlur: (e: any) => void`
-`onBlur` event handler. Useful for when you need to track whether an input has been `touched` or not. This should be passed to `<input onBlur={handleBlur} ... />`
+`onBlur` event handler. Useful for when you need to track whether an input has been [`touched`] or not. This should be passed to `<input onBlur={handleBlur} ... />`
+
+DOM-only. Use [`setFieldTouched`] in React Native.
 
 ##### `handleChange: (e: React.ChangeEvent<any>) => void`
-General input change event handler. This will update the form value according to an input's `name` attribute. If `name` is not present, `handleChange` will look for an input's `id` attribute. Note: "input" here means all HTML inputs.
+General input change event handler. This will update the `values[key]` where `key` is the event-emitting input's `name` attribute. If the `name` attribute is not present, `handleChange` will look for an input's `id` attribute. Note: "input" here means all HTML inputs.
 
-##### `handleChangeValue: (name: string, value: any) => void`
-Custom input change handler. Use this when you have custom inputs. `name` should match the key of form value you wish to update.
+DOM-only. User [`setFieldValue`] in React Native. 
 
 ##### `handleReset: () => void`
-Reset handler. This should be passed to `<button onClick={handleReset}>...</button>`
+Reset handler. Will reset the form to its initial state. This should be passed to `<button onClick={handleReset}>...</button>`
 
 ##### `handleSubmit: (e: React.FormEvent<HTMLFormEvent>) => void`
 Submit handler. This should be passed to `<form onSubmit={handleSubmit}>...</form>`
 
 ##### `isSubmitting: boolean`
-Submitting state. Either `true` or `false`. Formik will set this to `true` on your behalf before calling `handleSubmit` to reduce boilerplate.
+Submitting state. Either `true` or `false`. Formik will set this to `true` on your behalf before calling [`handleSubmit`] to reduce boilerplate.
 
 ##### `resetForm: (nextProps?: Props) => void`
-Imperatively reset the form. This will clear `errors` and `touched`, set `isSubmitting` to `false` and rerun `mapPropsToValues` with the current `WrappedComponent`'s `props` or what's passed as an argument. That latter is useful for calling `resetForm` within `componentWillReceiveProps`.
+Imperatively reset the form. This will clear [`errors`] and [`touched`], set [`isSubmitting`] to `false` and rerun `mapPropsToValues` with the current `WrappedComponent`'s `props` or what's passed as an argument. That latter is useful for calling `resetForm` within `componentWillReceiveProps`.
 
 ##### `setErrors: (fields: { [field: string]: string }) => void`
-Set `errors` manually.
+Set `errors` imperatively.
+
+##### `setFieldError: (field: string, errorMsg: string) => void`
+Set the error message of a field imperatively. `field` should match the key of [`errors`] you wish to update.  Useful for creating custom input error handlers.
+
+##### `setFieldTouched: (field: string, isTouched: boolean) => void`
+Set the touched state of a field imperatively. `field` should match the key of [`touched`] you wish to update.  Useful for creating custom input blur handlers.
+
+##### `setFieldValue: (field: string, value: any) => void`
+Set the value of a field imperatively. `field` should match the key of [`values`] you wish to update.  Useful for creating custom input change handlers.
 
 ##### `setStatus: (status?: any) => void`
-Set a top-level `status` to anything you want manually. Useful for controlling arbitrary top-level state related to your form. For example, you can use it to pass API responses back into your component in `handleSubmit`.
+Set a top-level [`status`] to anything you want imperatively. Useful for controlling arbitrary top-level state related to your form. For example, you can use it to pass API responses back into your component in [`handleSubmit`].
 
 ##### `setSubmitting: (boolean) => void`
-Set `isSubmitting` manually.
+Set [`isSubmitting`] imperatively.
 
 ##### `setTouched: (fields: { [field: string]: boolean }) => void`
-Set `touched` manually.
+Set [`touched`] imperatively.
 
 ##### `setValues: (fields: { [field: string]: any }) => void`
-Set `values` manually.
+Set [`values`] imperatively.
+
+##### `status?: any`
+A top-level status object that you can use to represent form state that can't otherwised be expressed/stored with other methods. This is useful for capturing and passing through API responses to your inner component. 
+
+`status` should only be modifed by calling [`setStatus: (status?: any) => void`](#setstatus-status-any--void)
 
 ##### `touched: { [field: string]: boolean }`
-Touched fields. Use this to keep track of which fields have been visited. Use `handleBlur` to toggle on a given input. Keys work like `errors` and `values`.
+Touched fields. Each key corresponds to a field that has been touched/visited.
 
 ##### `values: { [field: string]: any }`
-Your form's values, the result of `mapPropsToValues` (if specified) or all props that are not functions passed to your `WrappedComponent`.
+Your form's values. Will have the shape of the result of [`mapPropsToValues`] (if specified) or all props that are not functions passed to your `WrappedComponent`.
 
 ## Recipes
 
@@ -302,6 +316,7 @@ Your form's values, the result of `mapPropsToValues` (if specified) or all props
 Formik is a Higher Order Component factory; you can use it exactly like React Redux's `connect` or Apollo's `graphql`. There are three ways to call Formik on your component:
 
 You can assign the HoC returned by Formik to a variable (i.e. `withFormik`) for later use.
+
 ```js
 import React from 'react';
 import { Formik } from 'formik';
@@ -419,7 +434,7 @@ const withFormik = Formik({...})
 const MyReactNativeForm = (props) => (
   <View>
     <TextInput 
-      onChangeText={text => props.handleChangeValue('email', text)} 
+      onChangeText={text => props.setFieldValue('email', text)} 
       value={props.values.email}
     />
    <Button onPress={props.handleSubmit} title="Submit" /> // 
@@ -432,12 +447,12 @@ export default withFormik(MyReactNativeForm)
 As you can see above, the notable differences between using Formik with React DOM and React Native are:
 
 1. Formik's `props.handleSubmit` is passed to a `<Button onPress={...}/>` instead of HTML `<form onSubmit={...}/>` component (since there is no `<form/>` element in React Native).
-2. `<TextInput />` uses Formik's `props.handleChangeValue` instead of `props.handleChange`. To understand why, see the discussion below.
+2. `<TextInput />` uses Formik's `props.setFieldValue` instead of `props.handleChange`. To understand why, see the discussion below.
 
 
-#### Why use `handleChangeValue` instead of `handleChange`?
+#### Why use `setFieldValue` instead of `handleChange`?
 
-'cuz `handleChange` will not work in React Native...
+'cuz [`handleChange`] will not work in React Native...
 
 ```js
 import { Button, TextInput, View } from 'react-native'
@@ -460,7 +475,7 @@ const MyReactNativeForm = (props) => (
 export default withFormik(MyReactNativeForm)
 ```
 
-The reason is that Formik's `props.handleChange` function expects its first argument to be synthetic DOM event where the `event.target` is the DOM input element and `event.target.id` or `event.target.name` matches the field to be updated. Without this, `props.handleChange` will do nothing. 
+The reason is that Formik's [`handleChange`] function expects its first argument to be synthetic DOM event where the `event.target` is the DOM input element and `event.target.id` or `event.target.name` matches the field to be updated. Without this, [`handleChange`] will do nothing. 
 
 In React Native, neither [`<TextInput />`](https://facebook.github.io/react-native/docs/textinput.html)'s [`onChange`](https://facebook.github.io/react-native/docs/textinput.html#onchange) nor [`onChangeText`](https://facebook.github.io/react-native/docs/textinput.html#onchange) callbacks pass such an event or one like it to its callback. Instead, they do the following *(emphasis added)*:
 
@@ -471,7 +486,7 @@ In React Native, neither [`<TextInput />`](https://facebook.github.io/react-nati
 > Callback that is called when the text input's text changes. **Changed text is passed as an argument to the callback handler.**
 
 
-However, Formik works just fine if you use `props.handleChangeValue`! Philisophically, just treat React Native's `<TextInput/>` the same way you would any other 3rd party custom input element.
+However, Formik works just fine if you use `props.setFieldValue`! Philisophically, just treat React Native's `<TextInput/>` the same way you would any other 3rd party custom input element.
 
 In conclusion, the following WILL work in React Native:
 
@@ -481,7 +496,7 @@ In conclusion, the following WILL work in React Native:
 export const MyReactNativeForm = (props) => (
   <View>
     <TextInput 
-      onChangeText={text => props.handleChangeValue('email', text) } 
+      onChangeText={text => props.setFieldValue('email', text) } 
       value={props.values.email} 
     />
     <Button onPress={props.handleSubmit} />
@@ -495,8 +510,8 @@ export const MyReactNativeForm = (props) => (
 If you are like me and do not like render callbacks, I suggest treating React Native's `<TextInput/>` as if it were another 3rd party custom input element:
  
   - Write your own class wrapper around the custom input element
-  - Pass the custom component `props.handleChangeValue` instead of `props.handleChange`
-  - Use a custom change handler callback that calls whatever you passed-in `handleChangeValue` as (in this case we'll match the React Native TextInput API and call it `this.props.onChangeText` for parity).
+  - Pass the custom component [`props.setFieldValue`][`setFieldValue`] instead of [`props.handleChange`][`handleChange`]
+  - Use a custom change handler callback that calls whatever you passed-in `setFieldValue` as (in this case we'll match the React Native TextInput API and call it `this.props.onChangeText` for parity).
 
 ```tsx
 // FormikReactNativeTextInput.tsx
@@ -506,7 +521,7 @@ import { TextInput } from 'react-native'
 interface FormikReactNativeTextInputProps {
   /** Current value of the input */
   value: string;
-  /** Change handler (this will be Formik's handleChangeValue ;) ) */
+  /** Change handler (this will be Formik's setFieldValue ;) ) */
   onChangeText: (value: string) => void;
   /** The name of the Formik field to be updated upon change */
   name: string;
@@ -516,7 +531,7 @@ interface FormikReactNativeTextInputProps {
 
 export default class FormikReactNativeTextInput extends React.Component<FormikReactNativeTextInputProps, {}> {
     handleChange = (value: string) => {
-       // remember that onChangeText will be Formik's handleChangeValue
+       // remember that onChangeText will be Formik's setFieldValue
        this.props.onChangeText(this.props.name, value)
     }
     
@@ -550,7 +565,7 @@ export const MyReactNativeForm: React.SFC<InjectedFormikProps<Props, Values>> = 
   <View>
     <TextInput 
       name="email"
-      onChangeText={props.handleChangeValue} 
+      onChangeText={props.setFieldValue} 
       value={props.values.email} 
     />
     <Button onPress={props.handleSubmit} />
@@ -568,3 +583,31 @@ export default Formik<Props, Values, Payload>({ ... })(MyReactNativeForm)
 - Ian White [@eonwhite](https://twitter.com/eonwhite)
 
 MIT License. 
+
+
+[`displayName`]: #displayname-string
+[`handleSubmit`]: #handlesubmit-payload-formikbag--void
+[`mapPropsToValues`]: #mappropstovalues-props--props
+[`mapValuesToPayload`]: #mapvaluestopayload-values--payload
+[`validationSchema`]: #validationschema-schema
+[Injected props and methods]: #injected-props-and-methods
+
+
+[`errors`]: #errors--field-string-string-
+[`handleBlur`]: #handleblur-e-any--void
+[`handleChange`]: #handlechange-e-reactchangeeventany--void
+[`handleReset`]: #handlereset---void
+[`handleSubmit`]: #handlesubmit-e-reactformeventhtmlformevent--void
+[`isSubmitting`]: #issubmitting-boolean
+[`resetForm`]: #resetform-nextprops-props--void
+[`setErrors`]: #seterrors-fields--field-string-string---void
+[`setFieldError`]: setfielderror-field-string-errormsg-string--void
+[`setFieldTouched`]: setfieldtouched-field-string-istouched-boolean--void
+[`setFieldValue`]: setfieldvalue-field-string-value-any--void
+[`setStatus`]: #setstatus-status-any--void
+[`setSubmitting`]: #setsubmitting-boolean--void
+[`setTouched`]: #settouched-fields--field-string-boolean---void
+[`setValues`]: #setvalues-fields--field-string-any---void
+[`status`]: #status-any
+[`touched`]: #touched--field-string-boolean
+[`values`]: #values--field-string-any-

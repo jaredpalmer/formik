@@ -289,7 +289,7 @@ Set `touched` manually.
 ##### `setValues: (fields: { [field: string]: any }) => void`
 Set `values` manually.
 
-##### `touched: { [field: string]: boolean}`
+##### `touched: { [field: string]: boolean }`
 Touched fields. Use this to keep track of which fields have been visited. Use `handleBlur` to toggle on a given input. Keys work like `errors` and `values`.
 
 ##### `values: { [field: string]: any }`

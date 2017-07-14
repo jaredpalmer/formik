@@ -79,7 +79,10 @@ export interface FormikConfig<Props, Values, Payload> {
 export interface FormikState<V> {
   /** Form values */
   values: V;
-  /** Top level error, in case you need it */
+  /** 
+   * Top level error, in case you need it 
+   * @deprecated since 0.8.0
+   */
   error?: any;
   /** map of field names to specific error for that field */
   errors: FormikErrors;
@@ -87,13 +90,20 @@ export interface FormikState<V> {
   touched: FormikTouched;
   /** whether the form is currently submitting */
   isSubmitting: boolean;
+  /** Top level status state, in case you need it */
+  status?: any;
 }
 
 /**
  * Formik state helpers
  */
 export interface FormikActions<P, V> {
-  /* Manually set top level error */
+  /** Manually set top level status. */
+  setStatus: (status?: any) => void;
+  /** 
+   * Manually set top level error 
+   * @deprecated since 0.8.0
+   */
   setError: (e: any) => void;
   /* Manually set errors object */
   setErrors: (errors: FormikErrors) => void;
@@ -204,6 +214,11 @@ export function Formik<Props, Values extends FormikValues, Payload>({
       }
 
       setErrors = (errors: FormikErrors) => {
+        if (process.env.NODE_ENV !== 'production') {
+          console.warn(
+            `Warning: Formik\'s setError(error) is deprecated and may be removed in future releases. Please use Formik\'s setStatus(status) instead. It works identically. See docs for more information: https://github.com/jaredpalmer/formik#setstatus-status-any--void`
+          );
+        }
         this.setState({ errors });
       };
 
@@ -213,6 +228,10 @@ export function Formik<Props, Values extends FormikValues, Payload>({
 
       setValues = (values: Values) => {
         this.setState({ values });
+      };
+
+      setStatus = (status?: any) => {
+        this.setState({ status });
       };
 
       setError = (error: any) => {
@@ -319,6 +338,7 @@ Formik cannot determine which value to update. See docs for more information: ht
           () => {
             this.setState({ errors: {} });
             handleSubmit(mapValuesToPayload(this.state.values), {
+              setStatus: this.setStatus,
               setTouched: this.setTouched,
               setErrors: this.setErrors,
               setError: this.setError,
@@ -403,6 +423,7 @@ Formik cannot determine which value to update. See docs for more information: ht
           <WrappedComponent
             {...this.props as any}
             {...this.state as any}
+            setStatus={this.setStatus}
             setError={this.setError}
             setFieldError={this.setFieldError}
             setErrors={this.setErrors}

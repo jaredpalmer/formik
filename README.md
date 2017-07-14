@@ -56,8 +56,8 @@ You can also try before you buy with this **[demo on CodeSandbox.io](https://cod
       - [`handleSubmit: (e: React.FormEvent<HTMLFormEvent>) => void`](#handlesubmit-e-reactformeventhtmlformevent--void)
       - [`isSubmitting: boolean`](#issubmitting-boolean)
       - [`resetForm: (nextProps?: Props) => void`](#resetform-nextprops-props--void)
-      - [`setError(err: any) => void`](#seterrorerr-any--void)
       - [`setErrors(fields: { [field: string]: string }) => void`](#seterrorsfields--field-string-string---void)
+      - [`setStatus: (status?: any) => void`](#setstatus-status-any--void)
       - [`setSubmitting(boolean) => void`](#setsubmittingboolean--void)
       - [`setTouched(fields: { [field: string]: boolean }) => void`](#settouchedfields--field-string-boolean---void)
       - [`setValues(fields: { [field: string]: any }) => void`](#setvaluesfields--field-string-any---void)
@@ -68,7 +68,7 @@ You can also try before you buy with this **[demo on CodeSandbox.io](https://cod
   - [Accessing React Component Lifecycle Functions](#accessing-react-component-lifecycle-functions)
     - [Example: Resetting a form when props change](#example-resetting-a-form-when-props-change)
   - [React Native](#react-native)
-    - [Why `handleChangeValue` instead of `handleChange`?](#why-handlechangevalue-instead-of-handlechange)
+    - [Why use `handleChangeValue` instead of `handleChange`?](#why-use-handlechangevalue-instead-of-handlechange)
     - [Avoiding a Render Callback](#avoiding-a-render-callback)
 - [Authors](#authors)
 
@@ -274,11 +274,11 @@ Submitting state. Either `true` or `false`. Formik will set this to `true` on yo
 ##### `resetForm: (nextProps?: Props) => void`
 Imperatively reset the form. This will clear `errors` and `touched`, set `isSubmitting` to `false` and rerun `mapPropsToValues` with the current `WrappedComponent`'s `props` or what's passed as an argument. That latter is useful for calling `resetForm` within `componentWillReceiveProps`.
 
-##### `setError(err: any) => void`
-Set a top-level `error` object. This can only be done manually. It is an escape hatch.
-
 ##### `setErrors(fields: { [field: string]: string }) => void`
 Set `errors` manually.
+
+##### `setStatus: (status?: any) => void`
+Set a top-level `status` to anything you want manually. Useful for controlling arbitrary top-level state related to your form. For example, you can use it to pass API responses back into your component in `handleSubmit`.
 
 ##### `setSubmitting(boolean) => void`
 Set `isSubmitting` manually.

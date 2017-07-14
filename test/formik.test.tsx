@@ -26,6 +26,8 @@ describe('Formik', () => {
     handleSubmit,
     handleChange,
     handleBlur,
+    setStatus,
+    status,
     errors,
     isSubmitting,
   }) => {
@@ -43,6 +45,17 @@ describe('Formik', () => {
             {errors.name}
           </div>}
         {isSubmitting && <div id="submitting">Submitting</div>}
+        <button
+          id="statusButton"
+          onClick={() => setStatus({ myStatusMessage: 'True' })}
+        >
+          Call setStatus
+        </button>
+        {status &&
+          !!status.myStatusMessage &&
+          <div id="statusMessage">
+            {status.myStatusMessage}
+          </div>}
         <button type="submit">Submit</button>
       </form>
     );
@@ -212,6 +225,20 @@ describe('Formik', () => {
       const hoc = mount(<EnhancedForm user={{ name: 'jared' }} />);
       hoc.find(Form).props().setErrors({ name: 'Required' });
       expect(hoc.find('#feedback').text()).toEqual('Required');
+    });
+
+    it('setStatus sets status object', async () => {
+      const EnhancedForm = Formik<Props, Values, Values>({
+        validationSchema: Yup.object().shape({
+          name: Yup.string().required(),
+        }),
+        mapPropsToValues: ({ user }) => ({ ...user }),
+        handleSubmit: noop,
+      })(Form);
+
+      const hoc = shallow(<EnhancedForm user={{ name: 'jared' }} />);
+      hoc.find(Form).dive().find('#statusButton').simulate('click');
+      expect(hoc.find(Form).dive().find('#statusMessage')).toHaveLength(1);
     });
   });
 });

@@ -357,6 +357,12 @@ Formik cannot determine which value to update. See docs for more information: ht
       };
 
       handleBlur = (e: any) => {
+        if (isReactNative) {
+          console.error(
+            `Warning: Formik's \`handleBlur\` does not work with React Native. You should use \`setFieldTouched(field, isTouched)\` and within a callback instead. See docs for more information: https://github.com/jaredpalmer/formik#setfieldtouched-field-string-istouched-boolean--void`
+          );
+          return;
+        }
         e.persist();
         const { name, id } = e.target;
         const field = name ? name : id;

@@ -101,10 +101,12 @@ export interface FormikActions<P, V> {
   setValues: (values: V) => void;
   /* Reset form */
   resetForm: (nextProps?: P) => void;
+  /* Submit form */
+  submitForm: () => void;
 }
 
 /**
- * Formik form event handlers 
+ * Formik form event handlers
  */
 export interface FormikHandlers {
   /* Form submit handler */
@@ -164,9 +166,9 @@ export function Formik<Props, Values extends FormikValues, Payload>({
   return function wrapWithFormik(WrappedComponent: CompositeComponent<InjectedFormikProps<Props, Values>>): any {
     class Formik extends React.Component<Props, FormikState<Values>> {
       public static displayName = `Formik(${displayName ||
-        WrappedComponent.displayName ||
-        WrappedComponent.name ||
-        'Component'})`;
+      WrappedComponent.displayName ||
+      WrappedComponent.name ||
+      'Component'})`;
       public static WrappedComponent = WrappedComponent;
       public props: Props;
 
@@ -230,13 +232,10 @@ Formik cannot determine which value to update. See docs for more information: ht
         validateFormData<Values>({ ...values as any, [field]: val }, validationSchema).then(
           () => this.setState({ errors: {} }),
           (err: any) => this.setState({ errors: yupToFormErrors(err) })
-        );
+          );
       };
 
-      handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        // setTouched();
-        // setSubmitting(true);
+      submitForm = () => {
         this.setState({
           touched: touchAllFields(this.state.values),
           isSubmitting: true,
@@ -253,11 +252,17 @@ Formik cannot determine which value to update. See docs for more information: ht
               setSubmitting: this.setSubmitting,
               setValues: this.setValues,
               resetForm: this.resetForm,
+              submitForm: this.submitForm,
               props: this.props,
             });
           },
           (err: any) => this.setState({ isSubmitting: false, errors: yupToFormErrors(err) })
         );
+      }
+
+      handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        this.submitForm();
       };
 
       handleBlur = (e: any) => {
@@ -285,7 +290,7 @@ Formik cannot determine which value to update. See docs for more information: ht
         validateFormData<Values>({ ...values as any, [field]: value }, validationSchema).then(
           () => this.setState({ errors: {} }),
           (err: any) => this.setState({ errors: yupToFormErrors(err) })
-        );
+          );
       };
 
       resetForm = (nextProps?: Props) => {
@@ -320,6 +325,7 @@ Formik cannot determine which value to update. See docs for more information: ht
             setValues={this.setValues}
             resetForm={this.resetForm}
             handleReset={this.handleReset}
+            submitForm={this.submitForm}
             handleSubmit={this.handleSubmit}
             handleChange={this.handleChange}
             handleBlur={this.handleBlur}

@@ -1,59 +1,31 @@
 {
-  "extends": [
-    "tslint-react"
-  ],
+  "extends": ["tslint-react"],
   "rules": {
     "jsx-wrap-multiline": false,
-    "align": [
-      true,
-      "parameters",
-      //            "arguments",
-      "statements"
-    ],
+    "align": [true, "parameters", "statements"],
     "ban": false,
     "class-name": true,
-    "comment-format": [
-      true,
-      "check-space"
-    ],
+    "comment-format": [true, "check-space"],
     "curly": true,
     "eofline": false,
     "forin": true,
-    "indent": [
-      true,
-      "spaces"
-    ],
-    "interface-name": [
-      true,
-      "never-prefix"
-    ],
+    "indent": [true, "spaces"],
+    "interface-name": [true, "never-prefix"],
     "jsdoc-format": true,
     "jsx-no-lambda": false,
     "jsx-no-multiline-js": false,
     "label-position": true,
-    "max-line-length": [
-      false,
-      120
-    ],
+    "max-line-length": [false, 120],
     "member-ordering": [
       true,
       "public-before-private",
       "static-before-instance",
       "variables-before-functions"
     ],
-    //        "no-any": true,
+
     "no-arg": true,
     "no-bitwise": true,
-    "no-console": [
-      true,
-      // "log",
-      "error",
-      "debug",
-      "info",
-      "time",
-      "timeEnd",
-      "trace"
-    ],
+    "no-console": [true, "debug", "info", "time", "timeEnd", "trace"],
     "no-consecutive-blank-lines": true,
     "no-construct": true,
     "no-debugger": true,
@@ -73,27 +45,13 @@
       "check-open-brace",
       "check-whitespace"
     ],
-    "quotemark": [
-      true,
-      "single",
-      "jsx-double"
-    ],
+    "quotemark": [true, "single", "jsx-double"],
     "radix": true,
-    "semicolon": [
-      false,
-      "always"
-    ],
+    "semicolon": [false, "always"],
     "switch-default": true,
     "trailing-comma": false,
-    "triple-equals": [
-      true,
-      "allow-null-check"
-    ],
-    "typedef": [
-      true,
-      "parameter",
-      "property-declaration"
-    ],
+    "triple-equals": [true, "allow-null-check"],
+    "typedef": [true, "parameter", "property-declaration"],
     "typedef-whitespace": [
       true,
       {

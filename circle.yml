@@ -1,0 +1,11 @@
+machine:
+  node:
+    version: 8
+
+dependencies:
+  override:
+    - yarn
+
+test:
+  override:
+    - yarn test -- --runInBand --no-cache --coverage

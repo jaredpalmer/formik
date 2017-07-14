@@ -1,6 +1,9 @@
 ![](https://user-images.githubusercontent.com/4060187/27243721-3b5219d0-52b1-11e7-96f1-dae8391a3ef6.png)
 
-#### Forms in React, *without tears.*
+[![gzip size](http://img.badgesize.io/https://unpkg.com/formik@0.7.3-rc1/dist/formik.umd.min.js?compression=gzip)](https://unpkg.com/formik@0.7.3-rc1/dist/formik.umd.min.js)
+[![npm](https://img.shields.io/npm/v/formik.svg)](https://npm.im/formik)
+[![license](http://img.shields.io/npm/l/formik.svg)](./LICENSE)
+[![CircleCI](https://circleci.com/gh/jaredpalmer/formik.svg?style=svg)](https://circleci.com/gh/jaredpalmer/formik)
 
 Let's face it, forms are really verbose in React. To make matters worse, most form helpers do wayyyy too much magic and often have a significant performance cost associated with them. Formik is a minimal Higher Order Component that helps you with the 3 most annoying parts:
 
@@ -12,13 +15,22 @@ Lastly, Formik helps you stay organized by colocating all of the above plus your
 
 ## Installation
 
-Add Formik and Yup to your project. Formik uses [Yup](https://github.com/jquense/yup) (which is like [Joi](https://github.com/hapijs/joi), but for the browser) for schema validation.
+Add Formik and Yup to your project. Formik uses [Yup](https://github.com/jquense/yup) (which is like [Joi](https://github.com/hapijs/joi), but for the browser) for object schema validation.
 
 ```bash
 npm i formik yup --save
 ```
 
 You can also try before you buy with this **[demo on CodeSandbox.io](https://codesandbox.io/s/zKrK5YLDZ)**
+
+## Demos
+
+- [Basic](https://codesandbox.io/s/zKrK5YLDZ)
+- [Building your own input primitives](https://codesandbox.io/s/qJR4ykJk)
+- [Working with 3rd party input components](https://codesandbox.io/s/jRzE53pqR)
+- [Accessing React lifecycle functions](https://codesandbox.io/s/pgD4DLypy)
+
+---
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
@@ -56,6 +68,9 @@ You can also try before you buy with this **[demo on CodeSandbox.io](https://cod
   - [Ways to call `Formik`](#ways-to-call-formik)
   - [Accessing React Component Lifecycle Functions](#accessing-react-component-lifecycle-functions)
     - [Example: Resetting a form when props change](#example-resetting-a-form-when-props-change)
+  - [React Native](#react-native)
+    - [Why `handleChangeValue` instead of `handleChange`?](#why-handlechangevalue-instead-of-handlechange)
+    - [Avoiding a Render Callback](#avoiding-a-render-callback)
 - [Authors](#authors)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -105,32 +120,45 @@ import Yup from 'yup';
 // an onChange handler that you can use on every input. You also get
 // handleSubmit, errors, and isSubmitting for free. This makes building custom
 // inputs easy.
-const SimpleForm = ({ values, handleChange, handleSubmit, handleReset, errors, error, isSubmitting }) =>
+const SimpleForm = ({
+  values,
+  touched,
+  errors,
+  error,
+  handleChange,
+  handleSubmit,
+  handleBlur,
+  handleReset,
+  isSubmitting
+ }) =>
   <form onSubmit={handleSubmit}>
     <input
       type="text"
       name="email"
       value={values.email}
       onChange={handleChange}
+      onBlur={handleBlur}
       placeholder="john@apple.com"
     />
-    {errors.email && <div>{errors.email}</div>}
+    {errors.email && touched.email && <div>{errors.email}</div>}
     <input
       type="text"
       name="facebook"
       value={values.facebook}
       onChange={handleChange}
+      onBlur={handleBlur}
       placeholder="facebook username"
     />
-    {errors.facebook && <div>{errors.facebook}</div>}
+    {errors.facebook && touched.facebook && <div>{errors.facebook}</div>}
     <input
       type="text"
       name="twitter"
       value={values.twitter}
       onChange={handleChange}
+      onBlur={handleBlur}
       placeholder="twitter username"
     />
-    {errors.twitter && <div>{errors.twitter}</div>}
+    {errors.twitter && touched.twitter && <div>{errors.twitter}</div>}
     {error && error.message && <div style={{color: 'red'}}>Top Level Error: {error.message}</div>}
     <button onClick={handleReset}>Reset</button>
     <button type="submit" disabled={isSubmitting}>Submit</button>
@@ -275,12 +303,12 @@ Your form's values, the result of `mapPropsToValues` (if specified) or all props
 
 ### Ways to call `Formik`
 
-Formik is a Higher Order Component factory or "Monad" in functional programming lingo. In practice, you use it exactly like React Redux's `connect` or Apollo's `graphql`. There are basically three ways to call Formik on your component:
+Formik is a Higher Order Component factory; you can use it exactly like React Redux's `connect` or Apollo's `graphql`. There are three ways to call Formik on your component:
 
 You can assign the HoC returned by Formik to a variable (i.e. `withFormik`) for later use.
 ```js
 import React from 'react';
-import Formik from 'formik';
+import { Formik } from 'formik';
 
 // Assign the HoC returned by Formik to a variable
 const withFormik = Formik({...});
@@ -297,11 +325,11 @@ const MyForm = (props) => (
 export default withFormik(MyForm);
 ```
 
-You can also skip a step and immediately invoke (i.e. "curry") Formik instead of assigning it to a variable. This method has been popularized by React Redux. One downside is that when you read the file containing your form, its props seem to come out of nowhere.
+You can also skip a step and immediately invoke Formik instead of assigning it to a variable. This method has been popularized by React Redux. One downside is that when you read the file containing your form, its props seem to come out of nowhere.
 
 ```js
 import React from 'react';
-import Formik from 'formik';
+import { Formik } from 'formik';
 
 // Your form
 const MyForm = (props) => (
@@ -319,7 +347,7 @@ Lastly, you can define your form component anonymously:
 
 ```js
 import React from 'react';
-import Formik from 'formik';
+import { Formik } from 'formik';
 
 // Configure and call Formik immediately
 export default Formik({...})((props) => (
@@ -346,7 +374,7 @@ There isn't a hard rule whether one is better than the other. The decision comes
 ```js
 // Reset form when a certain prop changes
 import React from 'react';
-import Formik from 'formik'
+import { Formik } from 'formik'
 
 const withFormik = Formik({...});
 
@@ -377,6 +405,165 @@ export default withFormik(MyForm);
 ```
 
 As for colocating a React lifecycle method with your form, imagine a situation where you want to use if you have a modal that's only job is to display a form based on the presence of props or not.
+
+### React Native
+
+**Formik is 100% compatible with React Native and React Native Web.** However, because of differences between ReactDOM's and React Native's handling of forms and text input, there are two differences to be aware of. This section will walk you through them and what I consider to be best practices.
+
+Before going any further, here's a super minimal gist of how to use Formik with React Native that demonstrates the key differences:
+
+```js
+// Formik x React Native example
+import React from 'react'
+import { Button, TextInput, View } from 'react-native'
+import { Formik } from 'formik'
+
+const withFormik = Formik({...})
+
+const MyReactNativeForm = (props) => (
+  <View>
+    <TextInput
+      onChangeText={text => props.handleChangeValue('email', text)}
+      value={props.values.email}
+    />
+   <Button onPress={props.handleSubmit} title="Submit" /> //
+  </View>
+)
+
+export default withFormik(MyReactNativeForm)
+```
+
+As you can see above, the notable differences between using Formik with React DOM and React Native are:
+
+1. Formik's `props.handleSubmit` is passed to a `<Button onPress={...}/>` instead of HTML `<form onSubmit={...}/>` component (since there is no `<form/>` element in React Native).
+2. `<TextInput />` uses Formik's `props.handleChangeValue` instead of `props.handleChange`. To understand why, see the discussion below.
+
+
+#### Why use `handleChangeValue` instead of `handleChange`?
+
+'cuz `handleChange` will not work in React Native...
+
+```js
+import { Button, TextInput, View } from 'react-native'
+import { Formik } from 'formik'
+
+const withFormik = Formik({...})
+
+// This will NOT update the TextInput when the user types
+const MyReactNativeForm = (props) => (
+  <View>
+    <TextInput
+      name="email"
+      onChangeText={props.handleChange}
+      value={props.values.email}
+    />
+   <Button onPress={props.handleSubmit} title="submit" />
+ </View>
+)
+
+export default withFormik(MyReactNativeForm)
+```
+
+The reason is that Formik's `props.handleChange` function expects its first argument to be synthetic DOM event where the `event.target` is the DOM input element and `event.target.id` or `event.target.name` matches the field to be updated. Without this, `props.handleChange` will do nothing.
+
+In React Native, neither [`<TextInput />`](https://facebook.github.io/react-native/docs/textinput.html)'s [`onChange`](https://facebook.github.io/react-native/docs/textinput.html#onchange) nor [`onChangeText`](https://facebook.github.io/react-native/docs/textinput.html#onchange) callbacks pass such an event or one like it to its callback. Instead, they do the following *(emphasis added)*:
+
+> [`onChange?: function`](https://facebook.github.io/react-native/docs/textinput.html#onchange)  
+> Callback that is called when the text input's text changes.
+>
+> [`onChangeText?: function`](https://facebook.github.io/react-native/docs/textinput.html#onchangetext)  
+> Callback that is called when the text input's text changes. **Changed text is passed as an argument to the callback handler.**
+
+
+However, Formik works just fine if you use `props.handleChangeValue`! Philisophically, just treat React Native's `<TextInput/>` the same way you would any other 3rd party custom input element.
+
+In conclusion, the following WILL work in React Native:
+
+```js
+...
+// this works.
+export const MyReactNativeForm = (props) => (
+  <View>
+    <TextInput
+      onChangeText={text => props.handleChangeValue('email', text) }
+      value={props.values.email}
+    />
+    <Button onPress={props.handleSubmit} />
+  </View>
+)
+...
+```
+
+#### Avoiding a Render Callback
+
+If you are like me and do not like render callbacks, I suggest treating React Native's `<TextInput/>` as if it were another 3rd party custom input element:
+
+  - Write your own class wrapper around the custom input element
+  - Pass the custom component `props.handleChangeValue` instead of `props.handleChange`
+  - Use a custom change handler callback that calls whatever you passed-in `handleChangeValue` as (in this case we'll match the React Native TextInput API and call it `this.props.onChangeText` for parity).
+
+```tsx
+// FormikReactNativeTextInput.tsx
+import * as React from 'react'
+import { TextInput } from 'react-native'
+
+interface FormikReactNativeTextInputProps {
+  /** Current value of the input */
+  value: string;
+  /** Change handler (this will be Formik's handleChangeValue ;) ) */
+  onChangeText: (value: string) => void;
+  /** The name of the Formik field to be updated upon change */
+  name: string;
+  ...
+  // the rest of the React Native's `TextInput` props
+}
+
+export default class FormikReactNativeTextInput extends React.Component<FormikReactNativeTextInputProps, {}> {
+    handleChange = (value: string) => {
+       // remember that onChangeText will be Formik's handleChangeValue
+       this.props.onChangeText(this.props.name, value)
+    }
+
+    render() {
+     // we want to pass through all the props except for onChangeText
+      const { onChangeText, ...otherProps } = this.props
+      return (
+        <TextInput
+          onChangeText={this.handleChange}
+          {...otherProps} // IRL, you should be more explicit when using TS
+        />
+      );
+    }
+}
+```
+
+Then you could just use this custom input as follows:
+
+```tsx
+// MyReactNativeForm.tsx
+import { View } from 'react-native'
+import Button from './MyButton' // Assume this just exists
+import { FormikReactNativeTextInput as TextInput } from './FormikReactNativeTextInput'
+import { Formik, InjectedFormikProps } from 'formik'
+
+interface Props {...}
+interface Values {...}
+interface Payload {...}
+
+export const MyReactNativeForm: React.SFC<InjectedFormikProps<Props, Values>> = (props) => (
+  <View>
+    <TextInput
+      name="email"
+      onChangeText={props.handleChangeValue}
+      value={props.values.email}
+    />
+    <Button onPress={props.handleSubmit} />
+  </View>
+)
+
+export default Formik<Props, Values, Payload>({ ... })(MyReactNativeForm)
+```
+
 
 
 ## Authors

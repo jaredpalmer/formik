@@ -553,8 +553,7 @@ Then you could just use this custom input as follows:
 
 ```tsx
 // MyReactNativeForm.tsx
-import { View } from 'react-native'
-import Button from './MyButton' // Assume this just exists
+import { View, Button } from 'react-native'
 import { FormikReactNativeTextInput as TextInput } from './FormikReactNativeTextInput'
 import { Formik, InjectedFormikProps } from 'formik'
 

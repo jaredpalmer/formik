@@ -65,8 +65,12 @@ export interface FormikConfig<Props, Values, Payload> {
   mapPropsToValues?: (props: Props) => Values;
   /** Map form values to submission payload */
   mapValuesToPayload?: (values: Values) => Payload;
+  /** Synchronous validation function. must return an error object */
+  validate: (values: Values) => FormikErrors;
+  /** Asynchronous validation function. Error must be in shape of a Formik error object */
+  validateAsync: (values: Values, props: Props) => Promise<any>;
   /**  Yup Schema */
-  validationSchema: any;
+  validationSchema?: any;
   /** Submission handler */
   handleSubmit: (payload: Payload, formikBag: FormikBag<Props, Values>) => void;
   /** Tells Formik to validate the form on each input's onChange event (default is onBlur event) */
@@ -185,6 +189,8 @@ export function Formik<Props, Values extends FormikValues, Payload>({
     const payload = (values as any) as Payload;
     return payload;
   },
+  validate,
+  validateAsync,
   validationSchema,
   handleSubmit,
   validateOnChange = false,
@@ -214,11 +220,6 @@ export function Formik<Props, Values extends FormikValues, Payload>({
       }
 
       setErrors = (errors: FormikErrors) => {
-        if (process.env.NODE_ENV !== 'production') {
-          console.warn(
-            `Warning: Formik\'s setError(error) is deprecated and may be removed in future releases. Please use Formik\'s setStatus(status) instead. It works identically. See docs for more information: https://github.com/jaredpalmer/formik#setstatus-status-any--void`
-          );
-        }
         this.setState({ errors });
       };
 
@@ -235,6 +236,11 @@ export function Formik<Props, Values extends FormikValues, Payload>({
       };
 
       setError = (error: any) => {
+        if (process.env.NODE_ENV !== 'production') {
+          console.warn(
+            `Warning: Formik\'s setError(error) is deprecated and may be removed in future releases. Please use Formik\'s setStatus(status) instead. It works identically. See docs for more information: https://github.com/jaredpalmer/formik#setstatus-status-any--void`
+          );
+        }
         this.setState({ error });
       };
 
@@ -242,11 +248,45 @@ export function Formik<Props, Values extends FormikValues, Payload>({
         this.setState({ isSubmitting });
       };
 
-      validateFormik = (values: Values) => {
+      runValidationSchema = (values: Values, cb?: Function) => {
         validateFormData<Values>(values, validationSchema).then(
-          () => this.setState({ errors: {} }),
-          (err: any) => this.setState({ errors: yupToFormErrors(err) })
+          () => {
+            this.setState({ errors: {} });
+            if (cb) {
+              cb();
+            }
+          },
+          (err: any) =>
+            this.setState({ errors: yupToFormErrors(err), isSubmitting: false })
         );
+      };
+
+      runValidationAsync = (values: Values, cb?: Function) => {
+        validateAsync(values, this.props).then(
+          () => {
+            this.setState({ errors: {} });
+            if (cb) {
+              cb();
+            }
+          },
+          errors => this.setState({ errors, isSubmitting: false })
+        );
+      };
+
+      runValidationSync = (values: Values) => {
+        this.setErrors(validate(values));
+      };
+
+      runValidations = (values: Values) => {
+        if (validate) {
+          this.runValidationSync(values);
+        }
+        if (validateAsync) {
+          this.runValidationAsync(values);
+        }
+        if (validationSchema) {
+          this.runValidationSchema(values);
+        }
       };
 
       handleChange = (e: React.ChangeEvent<any>) => {
@@ -284,7 +324,12 @@ Formik cannot determine which value to update. See docs for more information: ht
         }));
 
         if (validateOnChange) {
-          this.validateFormik({ ...this.state.values as any, [field]: value });
+          this.runValidations(
+            {
+              ...this.state.values as object,
+              [field]: value,
+            } as Values
+          );
         }
       };
 
@@ -302,14 +347,17 @@ Formik cannot determine which value to update. See docs for more information: ht
             [field]: value,
           },
           touched: {
-            ...prevState.touched as object,
+            ...prevState.touched,
             [field]: true,
           },
         }));
 
-        if (validateOnChange) {
-          this.validateFormik({ ...this.state.values as any, [field]: value });
-        }
+        this.runValidationSchema(
+          {
+            ...this.state.values as object,
+            [field]: value,
+          } as Values
+        );
       };
 
       setFieldValue = (field: string, value: any) => {
@@ -323,7 +371,12 @@ Formik cannot determine which value to update. See docs for more information: ht
         }));
 
         if (validateOnChange) {
-          this.validateFormik({ ...this.state.values as any, [field]: value });
+          this.runValidations(
+            {
+              ...this.state.values as object,
+              [field]: value,
+            } as Values
+          );
         }
       };
 
@@ -334,26 +387,42 @@ Formik cannot determine which value to update. See docs for more information: ht
           isSubmitting: true,
         });
 
-        validateFormData<Values>(this.state.values, validationSchema).then(
-          () => {
-            this.setState({ errors: {} });
-            handleSubmit(mapValuesToPayload(this.state.values), {
-              setStatus: this.setStatus,
-              setTouched: this.setTouched,
-              setErrors: this.setErrors,
-              setError: this.setError,
-              setValues: this.setValues,
-              setFieldError: this.setFieldError,
-              setFieldValue: this.setFieldValue,
-              setFieldTouched: this.setFieldTouched,
-              setSubmitting: this.setSubmitting,
-              resetForm: this.resetForm,
-              props: this.props,
-            });
-          },
-          (err: any) =>
-            this.setState({ isSubmitting: false, errors: yupToFormErrors(err) })
-        );
+        if (validate) {
+          const errors = validate(this.state.values);
+          this.setState({ errors, isSubmitting: errors.keys.length > 0 });
+
+          // only call if there are no errors errors
+          if (errors.keys.length === 0) {
+            this.submitForm();
+          }
+          return;
+        }
+
+        if (validateAsync) {
+          this.runValidationAsync(this.state.values, this.submitForm);
+          return;
+        }
+
+        if (validationSchema) {
+          this.runValidationSchema(this.state.values, this.submitForm);
+          return;
+        }
+      };
+
+      submitForm = () => {
+        handleSubmit(mapValuesToPayload(this.state.values), {
+          setStatus: this.setStatus,
+          setTouched: this.setTouched,
+          setErrors: this.setErrors,
+          setError: this.setError,
+          setValues: this.setValues,
+          setFieldError: this.setFieldError,
+          setFieldValue: this.setFieldValue,
+          setFieldTouched: this.setFieldTouched,
+          setSubmitting: this.setSubmitting,
+          resetForm: this.resetForm,
+          props: this.props,
+        });
       };
 
       handleBlur = (e: any) => {
@@ -371,7 +440,7 @@ Formik cannot determine which value to update. See docs for more information: ht
         }));
 
         if (!validateOnChange) {
-          this.validateFormik(this.state.values);
+          this.runValidations(this.state.values);
         }
       };
 
@@ -385,9 +454,8 @@ Formik cannot determine which value to update. See docs for more information: ht
           },
         }));
 
-        // Async validate
         if (!validateOnChange) {
-          this.validateFormik(this.state.values);
+          this.runValidations(this.state.values);
         }
       };
 

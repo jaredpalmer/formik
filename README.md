@@ -260,7 +260,7 @@ DOM-only. Use [`setFieldTouched`] in React Native.
 ##### `handleChange: (e: React.ChangeEvent<any>) => void`
 General input change event handler. This will update the `values[key]` where `key` is the event-emitting input's `name` attribute. If the `name` attribute is not present, `handleChange` will look for an input's `id` attribute. Note: "input" here means all HTML inputs.
 
-DOM-only. User [`setFieldValue`] in React Native. 
+DOM-only. Use [`setFieldValue`] in React Native. 
 
 ##### `handleReset: () => void`
 Reset handler. Will reset the form to its initial state. This should be passed to `<button onClick={handleReset}>...</button>`

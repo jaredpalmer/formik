@@ -243,7 +243,7 @@ If this option is specified, then Formik will transfer its results into updatabl
 If this option is specified, then Formik will run this function just before calling [`handleSubmit`]. Use it to transform your form's [`values`] back into a shape that's consumable for other parts of your application or API. If [`mapValuesToPayload`] **is not** specified, then Formik will map all [`values`] directly to `payload` (which will be passed to [`handleSubmit`]). While this transformation can be moved into [`handleSubmit`], consistently defining it in [`mapValuesToPayload`] separates concerns and helps you stay organized.
 
 ##### `validationSchema: Schema`
-[A Yup schema](https://github.com/jquense/yup). This is used for validation on each onChange event. Errors are mapped by key to the `WrappedComponent`'s [`props.errors`][`errors`]. Its keys should almost always match those of `WrappedComponent's` `[`props.values`][`values`]. 
+[A Yup schema](https://github.com/jquense/yup). This is used for validation on each onChange event. Errors are mapped by key to the `WrappedComponent`'s [`props.errors`][`errors`]. Its keys should almost always match those of `WrappedComponent's` [`props.values`][`values`]. 
 
 #### Injected props and methods
 
@@ -548,6 +548,7 @@ export default class FormikReactNativeTextInput extends React.Component<FormikRe
 }
 ```
 
+
 Then you could just use this custom input as follows: 
 
 ```tsx
@@ -601,13 +602,13 @@ MIT License.
 [`isSubmitting`]: #issubmitting-boolean
 [`resetForm`]: #resetform-nextprops-props--void
 [`setErrors`]: #seterrors-fields--field-string-string---void
-[`setFieldError`]: setfielderror-field-string-errormsg-string--void
-[`setFieldTouched`]: setfieldtouched-field-string-istouched-boolean--void
-[`setFieldValue`]: setfieldvalue-field-string-value-any--void
+[`setFieldError`]: #setfielderror-field-string-errormsg-string--void
+[`setFieldTouched`]: #setfieldtouched-field-string-istouched-boolean--void
+[`setFieldValue`]: #setfieldvalue-field-string-value-any--void
 [`setStatus`]: #setstatus-status-any--void
 [`setSubmitting`]: #setsubmitting-boolean--void
 [`setTouched`]: #settouched-fields--field-string-boolean---void
 [`setValues`]: #setvalues-fields--field-string-any---void
 [`status`]: #status-any
-[`touched`]: #touched--field-string-boolean
+[`touched`]: #touched--field-string-boolean-
 [`values`]: #values--field-string-any-

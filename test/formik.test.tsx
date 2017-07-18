@@ -202,7 +202,7 @@ describe('Formik', () => {
           expect(handleSubmit).toHaveBeenCalled();
         });
 
-        it('should not submit the form if validation errors are present', () => {
+        it('should not submit the form if invalid', () => {
           const validate = jest.fn().mockReturnValue({ name: 'Error!' });
           const handleSubmit = jest.fn();
 
@@ -236,7 +236,7 @@ describe('Formik', () => {
           expect(validate).toHaveBeenCalled();
         });
 
-        it('should not submit the form if valid', async () => {
+        it('should submit the form if valid', async () => {
           const handleSubmit = jest.fn();
 
           const ValidateForm = Formik<Props, Values, Values>({

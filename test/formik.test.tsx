@@ -63,9 +63,6 @@ const Form: React.SFC<InjectedFormikProps<Props, Values>> = ({
 };
 
 const BasicForm = Formik<Props, Values, Values>({
-  validationSchema: Yup.object().shape({
-    name: Yup.string().required(),
-  }),
   mapPropsToValues: ({ user }) => ({ ...user }),
   handleSubmit: noop,
 })(Form);
@@ -80,19 +77,9 @@ describe('Formik', () => {
   });
 
   describe('FormikHandlers', () => {
-    const CustomConfigForm = Formik<Props, Values, Values>({
-      validationSchema: Yup.object().shape({
-        name: Yup.string().required(),
-      }),
-      mapPropsToValues: ({ user }) => ({ ...user }),
-      handleSubmit: payload => {
-        expect(payload).toEqual({ name: 'jared' });
-      },
-    })(Form);
-
     describe('handleChange', () => {
       it('sets values, and updates inputs', async () => {
-        const hoc = shallow(<CustomConfigForm user={{ name: 'jared' }} />);
+        const hoc = shallow(<BasicForm user={{ name: 'jared' }} />);
 
         // Simulate a change event in the inner Form component's input
         hoc.find(Form).dive().find('input').simulate('change', {
@@ -112,7 +99,7 @@ describe('Formik', () => {
 
     describe('handleBlur', () => {
       it('handleBlur sets touched', async () => {
-        const hoc = shallow(<CustomConfigForm user={{ name: 'jared' }} />);
+        const hoc = shallow(<BasicForm user={{ name: 'jared' }} />);
 
         // Simulate a blur event in the inner Form component's input
         hoc.find(Form).dive().find('input').simulate('blur', {

@@ -1,7 +1,8 @@
 import * as React from 'react';
 
+import { isPromise, isReactNative, touchAllFields } from './utils';
+
 import { hoistNonReactStatics } from './hoistStatics';
-import { isReactNative } from './isReactNative';
 
 /**
  * Transform Yup ValidationError to a more usable object
@@ -17,19 +18,9 @@ export function yupToFormErrors(yupError: any): FormikErrors {
 }
 
 /**
- * Given an object, map keys to boolean
- */
-export function touchAllFields<T>(fields: T): { [field: string]: boolean } {
-  let touched: { [field: string]: boolean } = {};
-  for (let k of Object.keys(fields)) {
-    touched[k] = true;
-  }
-  return touched;
-}
-/**
  * Validate a yup schema.
  */
-export function validateFormData<T>(data: T, schema: any): Promise<void> {
+export function validateYupSchema<T>(data: T, schema: any): Promise<void> {
   let validateData: any = {};
   for (let k in data) {
     if (data.hasOwnProperty(k)) {
@@ -41,18 +32,28 @@ export function validateFormData<T>(data: T, schema: any): Promise<void> {
   return schema.validate(validateData, { abortEarly: false });
 }
 
+/**
+ * Values of fields in the form
+ */
 export interface FormikValues {
   [field: string]: any;
 }
 
-// @todo make this limited to keys of values
+/**
+ * An object containing error messages whose keys ideally correspond to FormikValues.
+ * 
+ * @todo make this limited to keys of values in typescript
+ */
 export interface FormikErrors {
   [field: string]: string;
 }
 
-// @todo make this limited to keys of values
-// interfact FormikTouched<Values, Field extends keyof Values> ??
+/**
+ * An objectg containing touched state of the form whose keys ideally correspond to FormikValues.
+ * @todo make this limited to keys of valuesField extends keyof Values> ??
+ */
 export interface FormikTouched {
+  // interface FormikTouched<Values,
   [field: string]: boolean;
 }
 
@@ -65,11 +66,15 @@ export interface FormikConfig<Props, Values, Payload> {
   mapPropsToValues?: (props: Props) => Values;
   /** Map form values to submission payload */
   mapValuesToPayload?: (values: Values) => Payload;
-  /** Synchronous validation function. must return an error object */
-  validate: (values: Values) => FormikErrors;
-  /** Asynchronous validation function. Error must be in shape of a Formik error object */
-  validateAsync: (values: Values, props: Props) => Promise<any>;
-  /**  Yup Schema */
+  /** 
+   * Validation function. Must return an error object or promise that 
+   * throws an error object where that object keys map to corresponding value.
+   */
+  validate?: (
+    values: Values,
+    props: Props
+  ) => void | FormikErrors | Promise<any>;
+  /** A Yup Schema */
   validationSchema?: any;
   /** Submission handler */
   handleSubmit: (payload: Payload, formikBag: FormikBag<Props, Values>) => void;
@@ -125,6 +130,8 @@ export interface FormikActions<P, V> {
   setFieldTouched: (field: string, isTouched?: boolean) => void;
   /* Reset form */
   resetForm: (nextProps?: P) => void;
+  /* Submit the form imperatively */
+  submitForm: () => void;
 }
 
 /**
@@ -190,7 +197,6 @@ export function Formik<Props, Values extends FormikValues, Payload>({
     return payload;
   },
   validate,
-  validateAsync,
   validationSchema,
   handleSubmit,
   validateOnChange = false,
@@ -248,12 +254,15 @@ export function Formik<Props, Values extends FormikValues, Payload>({
         this.setState({ isSubmitting });
       };
 
-      runValidationSchema = (values: Values, cb?: Function) => {
-        validateFormData<Values>(values, validationSchema).then(
+      /**
+       * Run validation against a Yup schema and optionally run a function if successful
+       */
+      runValidationSchema = (values: Values, onSuccess?: Function) => {
+        validateYupSchema<Values>(values, validationSchema).then(
           () => {
             this.setState({ errors: {} });
-            if (cb) {
-              cb();
+            if (onSuccess) {
+              onSuccess();
             }
           },
           (err: any) =>
@@ -261,29 +270,24 @@ export function Formik<Props, Values extends FormikValues, Payload>({
         );
       };
 
-      runValidationAsync = (values: Values, cb?: Function) => {
-        validateAsync(values, this.props).then(
-          () => {
-            this.setState({ errors: {} });
-            if (cb) {
-              cb();
-            }
-          },
-          errors => this.setState({ errors, isSubmitting: false })
-        );
-      };
-
-      runValidationSync = (values: Values) => {
-        this.setErrors(validate(values));
-      };
-
+      /**
+       * Run validations and update state accordingly
+       */
       runValidations = (values: Values) => {
         if (validate) {
-          this.runValidationSync(values);
+          const maybePromisedErrors = validate(values, this.props);
+          if (isPromise(maybePromisedErrors)) {
+            (validate(values, this.props) as Promise<any>).then(
+              () => {
+                this.setState({ errors: {} });
+              },
+              errors => this.setState({ errors, isSubmitting: false })
+            );
+          } else {
+            this.setErrors(maybePromisedErrors as FormikErrors);
+          }
         }
-        if (validateAsync) {
-          this.runValidationAsync(values);
-        }
+
         if (validationSchema) {
           this.runValidationSchema(values);
         }
@@ -382,34 +386,46 @@ Formik cannot determine which value to update. See docs for more information: ht
 
       handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        this.submitForm();
+      };
+
+      submitForm = () => {
         this.setState({
           touched: touchAllFields(this.state.values),
           isSubmitting: true,
         });
 
         if (validate) {
-          const errors = validate(this.state.values);
-          this.setState({ errors, isSubmitting: errors.keys.length > 0 });
+          const maybePromisedErrors =
+            validate(this.state.values, this.props) || {};
+          if (isPromise(maybePromisedErrors)) {
+            (validate(this.state.values, this.props) as Promise<any>).then(
+              () => {
+                this.setState({ errors: {} });
+                this.executeSubmit();
+              },
+              errors => this.setState({ errors, isSubmitting: false })
+            );
+            return;
+          } else {
+            this.setState({
+              errors: maybePromisedErrors as FormikErrors,
+              isSubmitting: Object.keys(maybePromisedErrors).length > 0,
+            });
 
-          // only call if there are no errors errors
-          if (errors.keys.length === 0) {
-            this.submitForm();
+            // only submit if there are no errors
+            if (Object.keys(maybePromisedErrors).length === 0) {
+              this.executeSubmit();
+            }
           }
-          return;
-        }
-
-        if (validateAsync) {
-          this.runValidationAsync(this.state.values, this.submitForm);
-          return;
-        }
-
-        if (validationSchema) {
-          this.runValidationSchema(this.state.values, this.submitForm);
-          return;
+        } else if (validationSchema) {
+          this.runValidationSchema(this.state.values, this.executeSubmit);
+        } else {
+          this.executeSubmit();
         }
       };
 
-      submitForm = () => {
+      executeSubmit = () => {
         handleSubmit(mapValuesToPayload(this.state.values), {
           setStatus: this.setStatus,
           setTouched: this.setTouched,
@@ -421,6 +437,7 @@ Formik cannot determine which value to update. See docs for more information: ht
           setFieldTouched: this.setFieldTouched,
           setSubmitting: this.setSubmitting,
           resetForm: this.resetForm,
+          submitForm: this.submitForm,
           props: this.props,
         });
       };
@@ -507,6 +524,7 @@ Formik cannot determine which value to update. See docs for more information: ht
             setValues={this.setValues}
             setFieldValue={this.setFieldValue}
             resetForm={this.resetForm}
+            submitForm={this.submitForm}
             handleReset={this.handleReset}
             handleSubmit={this.handleSubmit}
             handleChange={this.handleChange}

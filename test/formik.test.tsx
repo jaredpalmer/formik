@@ -78,56 +78,6 @@ describe('Formik', () => {
   });
 
   describe('FormikHandlers', () => {
-    describe('handleSubmit', () => {
-      it('should call preventDefault()', () => {
-        const hoc = mount(<BasicForm user={{ name: 'jared' }} />);
-        const preventDefault = jest.fn();
-        hoc.find('form').simulate('submit', { preventDefault });
-        expect(preventDefault).toHaveBeenCalled();
-      });
-
-      it('should touch all fields', () => {
-        const hoc = mount(<BasicForm user={{ name: 'jared' }} />);
-        hoc.find('form').simulate('submit');
-        expect(hoc.state().isSubmitting).toBe(true);
-        expect(hoc.state().touched).toEqual({ name: true });
-      });
-
-      it('should push submission state changes to child component', async () => {
-        const hoc = shallow(<BasicForm user={{ name: 'jared' }} />);
-
-        expect(hoc.find(Form).dive().find('#submitting')).toHaveLength(0);
-
-        hoc.find(Form).dive().find('form').simulate('submit', {
-          // tslint:disable-next-line:no-empty
-          preventDefault() {},
-        });
-        expect(hoc.find(Form).dive().find('#submitting')).toHaveLength(1);
-      });
-
-      it('should correctly map form values to payload', async () => {
-        interface Payload {
-          user: { name: string };
-        }
-        const CustomPayloadForm = Formik<Props, Values, Payload>({
-          validationSchema: Yup.object().shape({
-            name: Yup.string().required(),
-          }),
-          mapPropsToValues: ({ user }) => ({ ...user }),
-          mapValuesToPayload: ({ name }) => ({ user: { name } }),
-          handleSubmit: payload => {
-            expect(payload).toEqual({ user: { name: 'jared' } });
-            expect(payload).not.toEqual({ name: 'jared' });
-          },
-        })(Form);
-        const hoc = shallow(<CustomPayloadForm user={{ name: 'jared' }} />);
-        hoc.find(Form).dive().find('form').simulate('submit', {
-          // tslint:disable-next-line:no-empty
-          preventDefault() {},
-        });
-      });
-    });
-
     const CustomConfigForm = Formik<Props, Values, Values>({
       validationSchema: Yup.object().shape({
         name: Yup.string().required(),
@@ -138,35 +88,182 @@ describe('Formik', () => {
       },
     })(Form);
 
-    it('handleBlur sets touched', async () => {
-      const hoc = shallow(<CustomConfigForm user={{ name: 'jared' }} />);
+    describe('handleChange', () => {
+      it('sets values, and updates inputs', async () => {
+        const hoc = shallow(<CustomConfigForm user={{ name: 'jared' }} />);
 
-      // Simulate a blur event in the inner Form component's input
-      hoc.find(Form).dive().find('input').simulate('blur', {
-        persist: noop,
-        target: {
-          name: 'name',
-        },
+        // Simulate a change event in the inner Form component's input
+        hoc.find(Form).dive().find('input').simulate('change', {
+          persist: noop,
+          target: {
+            name: 'name',
+            value: 'ian',
+          },
+        });
+
+        expect(hoc.update().state().values).toEqual({ name: 'ian' });
+        expect(
+          hoc.update().find(Form).dive().find('input').props().value
+        ).toEqual('ian');
       });
-      expect(hoc.update().state().touched).toEqual({ name: true });
     });
 
-    it('handleChange sets values, and updates inputs', async () => {
-      const hoc = shallow(<CustomConfigForm user={{ name: 'jared' }} />);
+    describe('handleBlur', () => {
+      it('handleBlur sets touched', async () => {
+        const hoc = shallow(<CustomConfigForm user={{ name: 'jared' }} />);
 
-      // Simulate a change event in the inner Form component's input
-      hoc.find(Form).dive().find('input').simulate('change', {
-        persist: noop,
-        target: {
-          name: 'name',
-          value: 'ian',
-        },
+        // Simulate a blur event in the inner Form component's input
+        hoc.find(Form).dive().find('input').simulate('blur', {
+          persist: noop,
+          target: {
+            name: 'name',
+          },
+        });
+        expect(hoc.update().state().touched).toEqual({ name: true });
+      });
+    });
+
+    describe('handleSubmit', () => {
+      it('should call preventDefault()', () => {
+        const hoc = shallow(<BasicForm user={{ name: 'jared' }} />);
+        const preventDefault = jest.fn();
+        hoc.find(Form).dive().find('form').simulate('submit', {
+          preventDefault,
+        });
+        expect(preventDefault).toHaveBeenCalled();
       });
 
-      expect(hoc.update().state().values).toEqual({ name: 'ian' });
-      expect(
-        hoc.update().find(Form).dive().find('input').props().value
-      ).toEqual('ian');
+      it('should touch all fields', () => {
+        const hoc = shallow(<BasicForm user={{ name: 'jared' }} />);
+        hoc.find(Form).dive().find('form').simulate('submit', {
+          preventDefault: noop,
+        });
+        expect(hoc.update().state().touched).toEqual({ name: true });
+      });
+
+      it('should push submission state changes to child component', () => {
+        const hoc = shallow(<BasicForm user={{ name: 'jared' }} />);
+
+        expect(hoc.find(Form).dive().find('#submitting')).toHaveLength(0);
+
+        hoc.find(Form).dive().find('form').simulate('submit', {
+          preventDefault: noop,
+        });
+
+        expect(hoc.find(Form).dive().find('#submitting')).toHaveLength(1);
+      });
+
+      it('should correctly map form values to payload', () => {
+        interface Payload {
+          user: { name: string };
+        }
+        const CustomPayloadForm = Formik<Props, Values, Payload>({
+          mapPropsToValues: ({ user }) => ({ ...user }),
+          mapValuesToPayload: ({ name }) => ({ user: { name } }),
+          handleSubmit: payload => {
+            expect(payload).toEqual({ user: { name: 'jared' } });
+            expect(payload).not.toEqual({ name: 'jared' });
+          },
+        })(Form);
+        const hoc = shallow(<CustomPayloadForm user={{ name: 'jared' }} />);
+        hoc.find(Form).dive().find('form').simulate('submit', {
+          preventDefault: noop,
+        });
+      });
+
+      describe('validate (sync)', () => {
+        it('should call validate (sync) if present', () => {
+          const validate = jest.fn().mockReturnValue({});
+          const ValidateForm = Formik<Props, Values, Values>({
+            validate,
+            mapPropsToValues: ({ user }) => ({ ...user }),
+            handleSubmit: noop,
+          })(Form);
+          const hoc = shallow(<ValidateForm user={{ name: 'jared' }} />);
+          hoc.find(Form).dive().find('form').simulate('submit', {
+            preventDefault: noop,
+          });
+          expect(validate).toHaveBeenCalled();
+        });
+
+        it('should call handleSubmit if no validation errors exist', () => {
+          const handleSubmit = jest.fn();
+          const ValidateForm = Formik<Props, Values, Values>({
+            validate: noop,
+            mapPropsToValues: ({ user }) => ({ ...user }),
+            handleSubmit,
+          })(Form);
+          const hoc = shallow(<ValidateForm user={{ name: 'jared' }} />);
+          hoc.find(Form).dive().find('form').simulate('submit', {
+            preventDefault: noop,
+          });
+          expect(handleSubmit).toHaveBeenCalled();
+        });
+      });
+
+      it('should not submit the form if validation errors are present', () => {
+        const validate = jest.fn().mockReturnValue({ name: 'Error!' });
+        const handleSubmit = jest.fn();
+
+        const ValidateForm = Formik<Props, Values, Values>({
+          validate,
+          mapPropsToValues: ({ user }) => ({ ...user }),
+          handleSubmit,
+        })(Form);
+
+        const hoc = shallow(<ValidateForm user={{ name: '' }} />);
+        hoc.find(Form).dive().find('form').simulate('submit', {
+          preventDefault: noop,
+        });
+        expect(validate).toHaveBeenCalled();
+        expect(handleSubmit).not.toHaveBeenCalled();
+      });
+    });
+
+    describe('validate (async)', () => {
+      it('should call validate (async) if present', () => {
+        const validate = jest.fn().mockReturnValue(Promise.resolve({}));
+        const ValidateForm = Formik<Props, Values, Values>({
+          validate,
+          mapPropsToValues: ({ user }) => ({ ...user }),
+          handleSubmit: noop,
+        })(Form);
+        const hoc = shallow(<ValidateForm user={{ name: 'jared' }} />);
+        hoc.find(Form).dive().find('form').simulate('submit', {
+          preventDefault: noop,
+        });
+        expect(validate).toHaveBeenCalled();
+      });
+
+      it('should call handleSubmit if no validation (async) errors exist', () => {
+        const handleSubmit = jest.fn();
+        const ValidateForm = Formik<Props, Values, Values>({
+          validate: jest.fn().mockReturnValue(Promise.resolve({})),
+          mapPropsToValues: ({ user }) => ({ ...user }),
+          handleSubmit,
+        })(Form);
+        const hoc = shallow(<ValidateForm user={{ name: 'jared' }} />);
+        hoc.find(Form).dive().find('form').simulate('submit', {
+          preventDefault: noop,
+        });
+        expect(handleSubmit).toHaveBeenCalled();
+      });
+    });
+
+    it('should not submit the form if validation  (async) errors are present', () => {
+      const handleSubmit = jest.fn();
+
+      const ValidateForm = Formik<Props, Values, Values>({
+        validate: () => Promise.reject({ name: 'Error!' }),
+        mapPropsToValues: ({ user }) => ({ ...user }),
+        handleSubmit,
+      })(Form);
+
+      const hoc = shallow(<ValidateForm user={{ name: '' }} />);
+      hoc.find(Form).dive().find('form').simulate('submit', {
+        preventDefault: noop,
+      });
+      expect(handleSubmit).not.toHaveBeenCalled();
     });
   });
 
@@ -177,9 +274,21 @@ describe('Formik', () => {
       expect(hoc.find('input').props().value).toEqual('ian');
     });
 
+    it('setFieldValue sets value by key', async () => {
+      const hoc = mount(<BasicForm user={{ name: 'jared' }} />);
+      hoc.find(Form).props().setFieldValue('name', 'ian');
+      expect(hoc.find('input').props().value).toEqual('ian');
+    });
+
     it('setErrors sets error object', async () => {
       const hoc = mount(<BasicForm user={{ name: 'jared' }} />);
       hoc.find(Form).props().setErrors({ name: 'Required' });
+      expect(hoc.find('#feedback').text()).toEqual('Required');
+    });
+
+    it('setFieldError sets error by key', async () => {
+      const hoc = mount(<BasicForm user={{ name: 'jared' }} />);
+      hoc.find(Form).props().setFieldError('name', 'Required');
       expect(hoc.find('#feedback').text()).toEqual('Required');
     });
 

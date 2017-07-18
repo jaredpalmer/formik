@@ -130,6 +130,8 @@ export interface FormikActions<P, V> {
   setFieldTouched: (field: string, isTouched?: boolean) => void;
   /* Reset form */
   resetForm: (nextProps?: P) => void;
+  /* Submit the form imperatively */
+  submitForm: () => void;
 }
 
 /**
@@ -252,12 +254,15 @@ export function Formik<Props, Values extends FormikValues, Payload>({
         this.setState({ isSubmitting });
       };
 
-      runValidationSchema = (values: Values, cb?: Function) => {
+      /**
+       * Run validation against a Yup schema and optionally run a function if successful
+       */
+      runValidationSchema = (values: Values, onSuccess?: Function) => {
         validateYupSchema<Values>(values, validationSchema).then(
           () => {
             this.setState({ errors: {} });
-            if (cb) {
-              cb();
+            if (onSuccess) {
+              onSuccess();
             }
           },
           (err: any) =>
@@ -265,6 +270,9 @@ export function Formik<Props, Values extends FormikValues, Payload>({
         );
       };
 
+      /**
+       * Run validations and update state accordingly
+       */
       runValidations = (values: Values) => {
         if (validate) {
           const maybePromisedErrors = validate(values, this.props);
@@ -378,6 +386,10 @@ Formik cannot determine which value to update. See docs for more information: ht
 
       handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        this.submitForm();
+      };
+
+      submitForm = () => {
         this.setState({
           touched: touchAllFields(this.state.values),
           isSubmitting: true,
@@ -387,13 +399,13 @@ Formik cannot determine which value to update. See docs for more information: ht
           const maybePromisedErrors =
             validate(this.state.values, this.props) || {};
           if (isPromise(maybePromisedErrors)) {
-            (validate(this.state.values, this.props) as Promise<
-              any
-            >).then(() => {
-              this.setState({ errors: {} });
-              console.log('submitting');
-              this.submitForm();
-            }, errors => console.log(errors) || this.setState({ errors, isSubmitting: false }));
+            (validate(this.state.values, this.props) as Promise<any>).then(
+              () => {
+                this.setState({ errors: {} });
+                this.executeSubmit();
+              },
+              errors => this.setState({ errors, isSubmitting: false })
+            );
             return;
           } else {
             this.setState({
@@ -403,17 +415,17 @@ Formik cannot determine which value to update. See docs for more information: ht
 
             // only submit if there are no errors
             if (Object.keys(maybePromisedErrors).length === 0) {
-              this.submitForm();
+              this.executeSubmit();
             }
           }
         } else if (validationSchema) {
-          this.runValidationSchema(this.state.values, this.submitForm);
+          this.runValidationSchema(this.state.values, this.executeSubmit);
         } else {
-          this.submitForm();
+          this.executeSubmit();
         }
       };
 
-      submitForm = () => {
+      executeSubmit = () => {
         handleSubmit(mapValuesToPayload(this.state.values), {
           setStatus: this.setStatus,
           setTouched: this.setTouched,
@@ -425,6 +437,7 @@ Formik cannot determine which value to update. See docs for more information: ht
           setFieldTouched: this.setFieldTouched,
           setSubmitting: this.setSubmitting,
           resetForm: this.resetForm,
+          submitForm: this.submitForm,
           props: this.props,
         });
       };
@@ -511,6 +524,7 @@ Formik cannot determine which value to update. See docs for more information: ht
             setValues={this.setValues}
             setFieldValue={this.setFieldValue}
             resetForm={this.resetForm}
+            submitForm={this.submitForm}
             handleReset={this.handleReset}
             handleSubmit={this.handleSubmit}
             handleChange={this.handleChange}

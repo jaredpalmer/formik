@@ -9,6 +9,8 @@ const Yup = require('yup');
 // tslint:disable-next-line:no-empty
 const noop = () => {};
 
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+
 interface Props {
   user: {
     name: string;
@@ -171,8 +173,8 @@ describe('Formik', () => {
         });
       });
 
-      describe('validate (sync)', () => {
-        it('should call validate (sync) if present', () => {
+      describe('with validate (SYNC)', () => {
+        it('should call validate if present', () => {
           const validate = jest.fn().mockReturnValue({});
           const ValidateForm = Formik<Props, Values, Values>({
             validate,
@@ -186,7 +188,7 @@ describe('Formik', () => {
           expect(validate).toHaveBeenCalled();
         });
 
-        it('should call handleSubmit if no validation errors exist', () => {
+        it('should submit the form if valid', () => {
           const handleSubmit = jest.fn();
           const ValidateForm = Formik<Props, Values, Values>({
             validate: noop,
@@ -199,71 +201,74 @@ describe('Formik', () => {
           });
           expect(handleSubmit).toHaveBeenCalled();
         });
-      });
 
-      it('should not submit the form if validation errors are present', () => {
-        const validate = jest.fn().mockReturnValue({ name: 'Error!' });
-        const handleSubmit = jest.fn();
+        it('should not submit the form if validation errors are present', () => {
+          const validate = jest.fn().mockReturnValue({ name: 'Error!' });
+          const handleSubmit = jest.fn();
 
-        const ValidateForm = Formik<Props, Values, Values>({
-          validate,
-          mapPropsToValues: ({ user }) => ({ ...user }),
-          handleSubmit,
-        })(Form);
+          const ValidateForm = Formik<Props, Values, Values>({
+            validate,
+            mapPropsToValues: ({ user }) => ({ ...user }),
+            handleSubmit,
+          })(Form);
 
-        const hoc = shallow(<ValidateForm user={{ name: '' }} />);
-        hoc.find(Form).dive().find('form').simulate('submit', {
-          preventDefault: noop,
+          const hoc = shallow(<ValidateForm user={{ name: '' }} />);
+          hoc.find(Form).dive().find('form').simulate('submit', {
+            preventDefault: noop,
+          });
+          expect(validate).toHaveBeenCalled();
+          expect(handleSubmit).not.toHaveBeenCalled();
         });
-        expect(validate).toHaveBeenCalled();
-        expect(handleSubmit).not.toHaveBeenCalled();
       });
-    });
 
-    describe('validate (async)', () => {
-      it('should call validate (async) if present', () => {
-        const validate = jest.fn().mockReturnValue(Promise.resolve({}));
-        const ValidateForm = Formik<Props, Values, Values>({
-          validate,
-          mapPropsToValues: ({ user }) => ({ ...user }),
-          handleSubmit: noop,
-        })(Form);
-        const hoc = shallow(<ValidateForm user={{ name: 'jared' }} />);
-        hoc.find(Form).dive().find('form').simulate('submit', {
-          preventDefault: noop,
+      describe('with validate (ASYNC)', () => {
+        it('should call validate if present', () => {
+          const validate = jest.fn(() => Promise.resolve({}));
+          const ValidateForm = Formik<Props, Values, Values>({
+            validate,
+            mapPropsToValues: ({ user }) => ({ ...user }),
+            handleSubmit: noop,
+          })(Form);
+          const hoc = shallow(<ValidateForm user={{ name: 'jared' }} />);
+          hoc.find(Form).dive().find('form').simulate('submit', {
+            preventDefault: noop,
+          });
+          expect(validate).toHaveBeenCalled();
         });
-        expect(validate).toHaveBeenCalled();
-      });
 
-      it('should call handleSubmit if no validation (async) errors exist', () => {
-        const handleSubmit = jest.fn();
-        const ValidateForm = Formik<Props, Values, Values>({
-          validate: jest.fn().mockReturnValue(Promise.resolve({})),
-          mapPropsToValues: ({ user }) => ({ ...user }),
-          handleSubmit,
-        })(Form);
-        const hoc = shallow(<ValidateForm user={{ name: 'jared' }} />);
-        hoc.find(Form).dive().find('form').simulate('submit', {
-          preventDefault: noop,
+        it('should not submit the form if valid', async () => {
+          const handleSubmit = jest.fn();
+
+          const ValidateForm = Formik<Props, Values, Values>({
+            validate: () => Promise.resolve({}),
+            mapPropsToValues: ({ user }) => ({ ...user }),
+            handleSubmit,
+          })(Form);
+
+          const hoc = mount(<ValidateForm user={{ name: '' }} />);
+          await hoc.find(Form).props().submitForm();
+
+          expect(handleSubmit).toHaveBeenCalled();
         });
-        expect(handleSubmit).toHaveBeenCalled();
+
+        it('should not submit the form if invalid', async () => {
+          const handleSubmit = jest.fn();
+
+          const ValidateForm = Formik<Props, Values, Values>({
+            validate: () =>
+              sleep(25).then(() => {
+                throw { name: 'error!' };
+              }),
+            mapPropsToValues: ({ user }) => ({ ...user }),
+            handleSubmit,
+          })(Form);
+
+          const hoc = mount(<ValidateForm user={{ name: '' }} />);
+          await hoc.find(Form).props().submitForm();
+
+          expect(handleSubmit).not.toHaveBeenCalled();
+        });
       });
-    });
-
-    it('should not submit the form if validation  (async) errors are present', () => {
-      const handleSubmit = jest.fn();
-
-      const ValidateForm = Formik<Props, Values, Values>({
-        validate: () => Promise.reject({ name: 'Error!' }),
-        mapPropsToValues: ({ user }) => ({ ...user }),
-        handleSubmit,
-      })(Form);
-
-      const hoc = shallow(<ValidateForm user={{ name: '' }} />);
-      hoc.find(Form).dive().find('form').simulate('submit', {
-        preventDefault: noop,
-      });
-      expect(handleSubmit).not.toHaveBeenCalled();
     });
   });
 

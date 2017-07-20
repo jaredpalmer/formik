@@ -69,20 +69,20 @@ const BasicForm = Formik<Props, Values, Values>({
 
 describe('Formik', () => {
   it('should initialize Formik state', () => {
-    const hoc = mount(<BasicForm user={{ name: 'jared' }} />);
-    expect(hoc.state().isSubmitting).toBe(false);
-    expect(hoc.state().touched).toEqual({});
-    expect(hoc.state().values).toEqual({ name: 'jared' });
-    expect(hoc.state().errors).toEqual({});
+    const tree = mount(<BasicForm user={{ name: 'jared' }} />);
+    expect(tree.state().isSubmitting).toBe(false);
+    expect(tree.state().touched).toEqual({});
+    expect(tree.state().values).toEqual({ name: 'jared' });
+    expect(tree.state().errors).toEqual({});
   });
 
   describe('FormikHandlers', () => {
     describe('handleChange', () => {
       it('sets values, and updates inputs', async () => {
-        const hoc = shallow(<BasicForm user={{ name: 'jared' }} />);
+        const tree = shallow(<BasicForm user={{ name: 'jared' }} />);
 
         // Simulate a change event in the inner Form component's input
-        hoc.find(Form).dive().find('input').simulate('change', {
+        tree.find(Form).dive().find('input').simulate('change', {
           persist: noop,
           target: {
             name: 'name',
@@ -90,56 +90,56 @@ describe('Formik', () => {
           },
         });
 
-        expect(hoc.update().state().values).toEqual({ name: 'ian' });
+        expect(tree.update().state().values).toEqual({ name: 'ian' });
         expect(
-          hoc.update().find(Form).dive().find('input').props().value
+          tree.update().find(Form).dive().find('input').props().value
         ).toEqual('ian');
       });
     });
 
     describe('handleBlur', () => {
       it('handleBlur sets touched', async () => {
-        const hoc = shallow(<BasicForm user={{ name: 'jared' }} />);
+        const tree = shallow(<BasicForm user={{ name: 'jared' }} />);
 
         // Simulate a blur event in the inner Form component's input
-        hoc.find(Form).dive().find('input').simulate('blur', {
+        tree.find(Form).dive().find('input').simulate('blur', {
           persist: noop,
           target: {
             name: 'name',
           },
         });
-        expect(hoc.update().state().touched).toEqual({ name: true });
+        expect(tree.update().state().touched).toEqual({ name: true });
       });
     });
 
     describe('handleSubmit', () => {
       it('should call preventDefault()', () => {
-        const hoc = shallow(<BasicForm user={{ name: 'jared' }} />);
+        const tree = shallow(<BasicForm user={{ name: 'jared' }} />);
         const preventDefault = jest.fn();
-        hoc.find(Form).dive().find('form').simulate('submit', {
+        tree.find(Form).dive().find('form').simulate('submit', {
           preventDefault,
         });
         expect(preventDefault).toHaveBeenCalled();
       });
 
       it('should touch all fields', () => {
-        const hoc = shallow(<BasicForm user={{ name: 'jared' }} />);
-        hoc.find(Form).dive().find('form').simulate('submit', {
+        const tree = shallow(<BasicForm user={{ name: 'jared' }} />);
+        tree.find(Form).dive().find('form').simulate('submit', {
           preventDefault: noop,
         });
-        expect(hoc.update().state().touched).toEqual({ name: true });
+        expect(tree.update().state().touched).toEqual({ name: true });
       });
 
       it('should push submission state changes to child component', () => {
-        const hoc = shallow(<BasicForm user={{ name: 'jared' }} />);
+        const tree = shallow(<BasicForm user={{ name: 'jared' }} />);
 
-        expect(hoc.find(Form).dive().find('#submitting')).toHaveLength(0);
+        expect(tree.find(Form).dive().find('#submitting')).toHaveLength(0);
 
-        hoc.find(Form).dive().find('form').simulate('submit', {
+        tree.find(Form).dive().find('form').simulate('submit', {
           preventDefault: noop,
         });
 
-        expect(hoc.find(Form).dive().find('#submitting')).toHaveLength(1);
+        expect(tree.find(Form).dive().find('#submitting')).toHaveLength(1);
       });
 
       it('should correctly map form values to payload', () => {
@@ -154,8 +154,8 @@ describe('Formik', () => {
             expect(payload).not.toEqual({ name: 'jared' });
           },
         })(Form);
-        const hoc = shallow(<CustomPayloadForm user={{ name: 'jared' }} />);
-        hoc.find(Form).dive().find('form').simulate('submit', {
+        const tree = shallow(<CustomPayloadForm user={{ name: 'jared' }} />);
+        tree.find(Form).dive().find('form').simulate('submit', {
           preventDefault: noop,
         });
       });
@@ -168,8 +168,8 @@ describe('Formik', () => {
             mapPropsToValues: ({ user }) => ({ ...user }),
             handleSubmit: noop,
           })(Form);
-          const hoc = shallow(<ValidateForm user={{ name: 'jared' }} />);
-          hoc.find(Form).dive().find('form').simulate('submit', {
+          const tree = shallow(<ValidateForm user={{ name: 'jared' }} />);
+          tree.find(Form).dive().find('form').simulate('submit', {
             preventDefault: noop,
           });
           expect(validate).toHaveBeenCalled();
@@ -182,8 +182,8 @@ describe('Formik', () => {
             mapPropsToValues: ({ user }) => ({ ...user }),
             handleSubmit,
           })(Form);
-          const hoc = shallow(<ValidateForm user={{ name: 'jared' }} />);
-          hoc.find(Form).dive().find('form').simulate('submit', {
+          const tree = shallow(<ValidateForm user={{ name: 'jared' }} />);
+          tree.find(Form).dive().find('form').simulate('submit', {
             preventDefault: noop,
           });
           expect(handleSubmit).toHaveBeenCalled();
@@ -199,8 +199,8 @@ describe('Formik', () => {
             handleSubmit,
           })(Form);
 
-          const hoc = shallow(<ValidateForm user={{ name: '' }} />);
-          hoc.find(Form).dive().find('form').simulate('submit', {
+          const tree = shallow(<ValidateForm user={{ name: '' }} />);
+          tree.find(Form).dive().find('form').simulate('submit', {
             preventDefault: noop,
           });
           expect(validate).toHaveBeenCalled();
@@ -216,8 +216,8 @@ describe('Formik', () => {
             mapPropsToValues: ({ user }) => ({ ...user }),
             handleSubmit: noop,
           })(Form);
-          const hoc = shallow(<ValidateForm user={{ name: 'jared' }} />);
-          hoc.find(Form).dive().find('form').simulate('submit', {
+          const tree = shallow(<ValidateForm user={{ name: 'jared' }} />);
+          tree.find(Form).dive().find('form').simulate('submit', {
             preventDefault: noop,
           });
           expect(validate).toHaveBeenCalled();
@@ -232,8 +232,8 @@ describe('Formik', () => {
             handleSubmit,
           })(Form);
 
-          const hoc = mount(<ValidateForm user={{ name: '' }} />);
-          await hoc.find(Form).props().submitForm();
+          const tree = mount(<ValidateForm user={{ name: '' }} />);
+          await tree.find(Form).props().submitForm();
 
           expect(handleSubmit).toHaveBeenCalled();
         });
@@ -250,8 +250,8 @@ describe('Formik', () => {
             handleSubmit,
           })(Form);
 
-          const hoc = mount(<ValidateForm user={{ name: '' }} />);
-          await hoc.find(Form).props().submitForm();
+          const tree = mount(<ValidateForm user={{ name: '' }} />);
+          await tree.find(Form).props().submitForm();
 
           expect(handleSubmit).not.toHaveBeenCalled();
         });
@@ -261,45 +261,45 @@ describe('Formik', () => {
 
   describe('FormikActions', () => {
     it('setValues sets values', async () => {
-      const hoc = mount(<BasicForm user={{ name: 'jared' }} />);
-      hoc.find(Form).props().setValues({ name: 'ian' });
-      expect(hoc.find('input').props().value).toEqual('ian');
+      const tree = mount(<BasicForm user={{ name: 'jared' }} />);
+      tree.find(Form).props().setValues({ name: 'ian' });
+      expect(tree.find('input').props().value).toEqual('ian');
     });
 
     it('setFieldValue sets value by key', async () => {
-      const hoc = mount(<BasicForm user={{ name: 'jared' }} />);
-      hoc.find(Form).props().setFieldValue('name', 'ian');
-      expect(hoc.find('input').props().value).toEqual('ian');
+      const tree = mount(<BasicForm user={{ name: 'jared' }} />);
+      tree.find(Form).props().setFieldValue('name', 'ian');
+      expect(tree.find('input').props().value).toEqual('ian');
     });
 
     it('setErrors sets error object', async () => {
-      const hoc = mount(<BasicForm user={{ name: 'jared' }} />);
-      hoc.find(Form).props().setErrors({ name: 'Required' });
-      expect(hoc.find('#feedback').text()).toEqual('Required');
+      const tree = mount(<BasicForm user={{ name: 'jared' }} />);
+      tree.find(Form).props().setErrors({ name: 'Required' });
+      expect(tree.find('#feedback').text()).toEqual('Required');
     });
 
     it('setFieldError sets error by key', async () => {
-      const hoc = mount(<BasicForm user={{ name: 'jared' }} />);
-      hoc.find(Form).props().setFieldError('name', 'Required');
-      expect(hoc.find('#feedback').text()).toEqual('Required');
+      const tree = mount(<BasicForm user={{ name: 'jared' }} />);
+      tree.find(Form).props().setFieldError('name', 'Required');
+      expect(tree.find('#feedback').text()).toEqual('Required');
     });
 
     it('setStatus sets status object', async () => {
-      const hoc = shallow(<BasicForm user={{ name: 'jared' }} />);
-      hoc.find(Form).dive().find('#statusButton').simulate('click');
-      expect(hoc.find(Form).dive().find('#statusMessage')).toHaveLength(1);
+      const tree = shallow(<BasicForm user={{ name: 'jared' }} />);
+      tree.find(Form).dive().find('#statusButton').simulate('click');
+      expect(tree.find(Form).dive().find('#statusMessage')).toHaveLength(1);
     });
   });
 
   describe('FormikComputedProps', () => {
     it('dirty, should update as soon as any input is touched', () => {
-      const hoc = mount(<BasicForm user={{ name: 'jared' }} />);
+      const tree = mount(<BasicForm user={{ name: 'jared' }} />);
 
-      expect(hoc.find(Form).props().dirty).toBe(false);
+      expect(tree.find(Form).props().dirty).toBe(false);
 
-      hoc.setState({ touched: { name: true } });
+      tree.setState({ touched: { name: true } });
 
-      expect(hoc.update().find(Form).props().dirty).toBe(true);
+      expect(tree.update().find(Form).props().dirty).toBe(true);
     });
   });
 });

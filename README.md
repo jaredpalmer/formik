@@ -47,6 +47,7 @@ You can also try before you buy with this **[demo on CodeSandbox.io](https://cod
       - [`mapValuesToPayload?: (values) => payload`](#mapvaluestopayload-values--payload)
       - [`validationSchema: Schema`](#validationschema-schema)
     - [Injected props and methods](#injected-props-and-methods)
+      - [`dirty: boolean`](#dirty-boolean)
       - [`errors: { [field: string]: string }`](#errors--field-string-string-)
       - [`handleBlur: (e: any) => void`](#handleblur-e-any--void)
       - [`handleChange: (e: React.ChangeEvent<any>) => void`](#handlechange-e-reactchangeeventany--void)
@@ -248,6 +249,10 @@ If this option is specified, then Formik will run this function just before call
 #### Injected props and methods
 
 The following props and methods will be injected into the `WrappedComponent` (i.e. your form):
+
+##### `dirty: boolean`
+
+Returns `true` if any field has been touched by any means, `false` otherwise. `dirty` is a readonly computed property and should not be mutated directly.
 
 ##### `errors: { [field: string]: string }`
 Form validation errors. Keys match the shape of the [`validationSchema`] defined in Formik options. This should therefore also map to your [`values`] object as well. Internally, Formik transforms raw [Yup validation errors](https://github.com/jquense/yup#validationerrorerrors-string--arraystring-value-any-path-string) on your behalf. 
@@ -592,7 +597,7 @@ MIT License.
 [`validationSchema`]: #validationschema-schema
 [Injected props and methods]: #injected-props-and-methods
 
-
+[`dirty`]: #dirty-boolean
 [`errors`]: #errors--field-string-string-
 [`handleBlur`]: #handleblur-e-any--void
 [`handleChange`]: #handlechange-e-reactchangeeventany--void

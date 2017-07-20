@@ -290,4 +290,16 @@ describe('Formik', () => {
       expect(hoc.find(Form).dive().find('#statusMessage')).toHaveLength(1);
     });
   });
+
+  describe('FormikComputedProps', () => {
+    it('dirty, should update as soon as any input is touched', () => {
+      const hoc = mount(<BasicForm user={{ name: 'jared' }} />);
+
+      expect(hoc.find(Form).props().dirty).toBe(false);
+
+      hoc.setState({ touched: { name: true } });
+
+      expect(hoc.update().find(Form).props().dirty).toBe(true);
+    });
+  });
 });

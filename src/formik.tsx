@@ -104,6 +104,14 @@ export interface FormikState<V> {
 }
 
 /**
+ * Formik computed properties. These are read-only.
+ */
+export interface FormikComputedProps {
+  /** True if any input has been touched. False otherwise. */
+  readonly dirty: boolean;
+}
+
+/**
  * Formik state helpers
  */
 export interface FormikActions<P, V> {
@@ -156,7 +164,8 @@ export interface FormikHandlers {
 export type InjectedFormikProps<Props, Values> = Props &
   FormikState<Values> &
   FormikActions<Props, Values> &
-  FormikHandlers;
+  FormikHandlers &
+  FormikComputedProps;
 
 /**
  * Formik actions + { props }
@@ -514,6 +523,7 @@ Formik cannot determine which value to update. See docs for more information: ht
           <WrappedComponent
             {...this.props}
             {...this.state}
+            dirty={Object.keys(this.state.touched).length > 0}
             setStatus={this.setStatus}
             setError={this.setError}
             setFieldError={this.setFieldError}

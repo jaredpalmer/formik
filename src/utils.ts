@@ -20,14 +20,3 @@ export const isReactNative =
   window.navigator &&
   window.navigator.product &&
   window.navigator.product === 'ReactNative';
-
-/**
- * Given an object, map keys to boolean
- */
-export function touchAllFields<T>(fields: T): { [field: string]: boolean } {
-  let touched: { [field: string]: boolean } = {};
-  for (let k of Object.keys(fields)) {
-    touched[k] = true;
-  }
-  return touched;
-}

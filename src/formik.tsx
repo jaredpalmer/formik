@@ -78,8 +78,10 @@ export interface FormikConfig<Props, Values, Payload> {
   validationSchema?: any;
   /** Submission handler */
   handleSubmit: (payload: Payload, formikBag: FormikBag<Props, Values>) => void;
-  /** Tells Formik to validate the form on each input's onChange event (default is onBlur event) */
+  /** Tells Formik to validate the form on each input's onChange event */
   validateOnChange?: boolean;
+  /** Tells Formik to validate the form on each input's onBlur event */
+  validateOnBlur?: boolean;
 }
 
 /**
@@ -209,6 +211,7 @@ export function Formik<Props, Values extends FormikValues, Payload>({
   validationSchema,
   handleSubmit,
   validateOnChange = false,
+  validateOnBlur = true,
 }: FormikConfig<Props, Values, Payload>): ComponentDecorator<
   Props,
   InjectedFormikProps<Props, Values>
@@ -240,10 +243,16 @@ export function Formik<Props, Values extends FormikValues, Payload>({
 
       setTouched = (touched: FormikTouched) => {
         this.setState({ touched });
+        if (validateOnBlur) {
+          this.runValidations(this.state.values);
+        }
       };
 
       setValues = (values: Values) => {
         this.setState({ values });
+        if (validateOnChange) {
+          this.runValidations(values);
+        }
       };
 
       setStatus = (status?: any) => {
@@ -465,7 +474,7 @@ Formik cannot determine which value to update. See docs for more information: ht
           touched: { ...prevState.touched, [field]: true },
         }));
 
-        if (!validateOnChange) {
+        if (validateOnBlur) {
           this.runValidations(this.state.values);
         }
       };
@@ -480,7 +489,7 @@ Formik cannot determine which value to update. See docs for more information: ht
           },
         }));
 
-        if (!validateOnChange) {
+        if (validateOnBlur) {
           this.runValidations(this.state.values);
         }
       };
@@ -523,7 +532,7 @@ Formik cannot determine which value to update. See docs for more information: ht
           <WrappedComponent
             {...this.props}
             {...this.state}
-            dirty={Object.keys(this.state.touched).length > 0}
+            dirty={Object.values(this.state.touched).filter(Boolean).length > 0}
             setStatus={this.setStatus}
             setError={this.setError}
             setFieldError={this.setFieldError}

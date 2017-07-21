@@ -243,6 +243,55 @@ If this option is specified, then Formik will transfer its results into updatabl
 ##### `mapValuesToPayload?: (values) => payload`
 If this option is specified, then Formik will run this function just before calling [`handleSubmit`]. Use it to transform your form's [`values`] back into a shape that's consumable for other parts of your application or API. If [`mapValuesToPayload`] **is not** specified, then Formik will map all [`values`] directly to `payload` (which will be passed to [`handleSubmit`]). While this transformation can be moved into [`handleSubmit`], consistently defining it in [`mapValuesToPayload`] separates concerns and helps you stay organized.
 
+#### `validate?: (values: Values, props: Props) => { [field: string]: string } | Promise<any, FormikError>`
+Validate the form's [`values`] with function. This function must either be:
+
+1. Synchronous and return an [`errors`] object. [Example](/examples/sync-validation)
+
+```js
+// Synchronous validation
+const validate = (values, props) => {
+  let errors = {}
+
+  if (!values.email) {
+    errors.email = 'Required'
+  } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)) {
+    errors.email = 'Invalid email address'
+  }
+   
+  //... 
+
+  return errors
+}
+```
+- Asynchronous and return a Promise that's error is an [`errors`] object
+
+```js
+// Async Validation
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
+
+const validate = (values, props) => {
+  return sleep(2000).then(() => {
+    let errors = {}
+    if (['admin', 'null', 'god']).includes(values.username) {
+      errors.username = 'Nice try'
+    }
+    // ...
+    if (Object.keys(errors).length) {
+      throw errors
+    }
+  })
+}
+```
+
+#### `validateOnBlur?: boolean`
+
+Default is `true`. Use this option to run validations on `blur` events. More specifically, when either [`handleBlur`], [`setFieldTouched`], or [`setTouched`] are called.
+
+#### `validateOnChange?: boolean`
+
+Default is `false`. Use this option to tell Formik to run validations on `change` events and `change`-related methods. More specifically, when either [`handleChange`], [`setFieldValue`], or [`setValues`] are called.
+
 ##### `validationSchema: Schema`
 [A Yup schema](https://github.com/jquense/yup). This is used for validation on each onChange event. Errors are mapped by key to the `WrappedComponent`'s [`props.errors`][`errors`]. Its keys should almost always match those of `WrappedComponent's` [`props.values`][`values`]. 
 

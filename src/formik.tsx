@@ -122,23 +122,23 @@ export interface FormikActions<P, V> {
    * @deprecated since 0.8.0
    */
   setError: (e: any) => void;
-  /* Manually set errors object */
+  /** Manually set errors object */
   setErrors: (errors: FormikErrors) => void;
-  /* Manually set isSubmitting */
+  /** Manually set isSubmitting */
   setSubmitting: (isSubmitting: boolean) => void;
-  /* Manually set touched object */
+  /** Manually set touched object */
   setTouched: (touched: FormikTouched) => void;
-  /* Manually set values object  */
+  /** Manually set values object  */
   setValues: (values: V) => void;
-  /* Set value of form field directly */
+  /** Set value of form field directly */
   setFieldValue: (field: string, value: any) => void;
-  /* Set error message of a form field directly */
+  /** Set error message of a form field directly */
   setFieldError: (field: string, message: string) => void;
-  /* Set whether field has been touched directly */
+  /** Set whether field has been touched directly */
   setFieldTouched: (field: string, isTouched?: boolean) => void;
-  /* Reset form */
+  /** Reset form */
   resetForm: (nextProps?: P) => void;
-  /* Submit the form imperatively */
+  /** Submit the form imperatively */
   submitForm: () => void;
 }
 
@@ -146,15 +146,15 @@ export interface FormikActions<P, V> {
  * Formik form event handlers 
  */
 export interface FormikHandlers {
-  /* Form submit handler */
+  /** Form submit handler */
   handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
-  /* Classic React change handler, keyed by input name */
+  /** Classic React change handler, keyed by input name */
   handleChange: (e: React.ChangeEvent<any>) => void;
-  /* Mark input as touched */
+  /** Mark input as touched */
   handleBlur: (e: any) => void;
-  /* Change value of form field directly */
+  /** Change value of form field directly */
   handleChangeValue: (name: string, value: any) => void;
-  /* Reset form event handler  */
+  /** Reset form event handler  */
   handleReset: () => void;
 }
 

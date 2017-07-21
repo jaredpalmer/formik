@@ -19,7 +19,7 @@ export type FormikErrors<Values extends FormikValues> = {
 };
 
 /**
- * An objectg containing touched state of the form whose keys correspond to FormikValues.
+ * An object containing touched state of the form whose keys correspond to FormikValues.
  */
 export type FormikTouched<Values extends FormikValues> = {
   [Key in keyof Values]?: boolean

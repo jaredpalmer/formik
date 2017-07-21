@@ -1,36 +1,8 @@
 import * as React from 'react';
 
-import { isPromise, isReactNative, touchAllFields } from './utils';
+import { isPromise, isReactNative } from './utils';
 
 import { hoistNonReactStatics } from './hoistStatics';
-
-/**
- * Transform Yup ValidationError to a more usable object
- */
-export function yupToFormErrors(yupError: any): FormikErrors {
-  let errors: FormikErrors = {};
-  for (let err of yupError.inner) {
-    if (!errors[err.path]) {
-      errors[err.path] = err.message;
-    }
-  }
-  return errors;
-}
-
-/**
- * Validate a yup schema.
- */
-export function validateYupSchema<T>(data: T, schema: any): Promise<void> {
-  let validateData: any = {};
-  for (let k in data) {
-    if (data.hasOwnProperty(k)) {
-      const key = String(k);
-      validateData[key] =
-        (data as any)[key] !== '' ? (data as any)[key] : undefined;
-    }
-  }
-  return schema.validate(validateData, { abortEarly: false });
-}
 
 /**
  * Values of fields in the form
@@ -40,31 +12,30 @@ export interface FormikValues {
 }
 
 /**
- * An object containing error messages whose keys ideally correspond to FormikValues.
- * 
- * @todo make this limited to keys of values in typescript
+ * An object containing error messages whose keys correspond to FormikValues.
  */
-export interface FormikErrors {
-  [field: string]: string;
-}
+export type FormikErrors<Values extends FormikValues> = {
+  [Key in keyof Values]?: string
+};
 
 /**
- * An objectg containing touched state of the form whose keys ideally correspond to FormikValues.
- * @todo make this limited to keys of valuesField extends keyof Values> ??
+ * An object containing touched state of the form whose keys correspond to FormikValues.
  */
-export interface FormikTouched {
-  // interface FormikTouched<Values,
-  [field: string]: boolean;
-}
+export type FormikTouched<Values extends FormikValues> = {
+  [Key in keyof Values]?: boolean
+};
 
 /**
  * Formik configuration options
  */
-export interface FormikConfig<Props, Values, Payload> {
+export interface FormikConfig<Props, Values extends FormikValues, Payload> {
   displayName?: string;
   /** Map props to the form values */
   mapPropsToValues?: (props: Props) => Values;
-  /** Map form values to submission payload */
+  /** 
+   * Map form values to submission payload 
+   * @deprecated since 0.8.0
+   */
   mapValuesToPayload?: (values: Values) => Payload;
   /** 
    * Validation function. Must return an error object or promise that 
@@ -73,11 +44,11 @@ export interface FormikConfig<Props, Values, Payload> {
   validate?: (
     values: Values,
     props: Props
-  ) => void | FormikErrors | Promise<any>;
+  ) => void | FormikErrors<Values> | Promise<any>;
   /** A Yup Schema */
   validationSchema?: any;
   /** Submission handler */
-  handleSubmit: (payload: Payload, formikBag: FormikBag<Props, Values>) => void;
+  handleSubmit: (values: Payload, formikBag: FormikBag<Props, Values>) => void;
   /** Tells Formik to validate the form on each input's onChange event */
   validateOnChange?: boolean;
   /** Tells Formik to validate the form on each input's onBlur event */
@@ -87,18 +58,18 @@ export interface FormikConfig<Props, Values, Payload> {
 /**
  * Formik state tree
  */
-export interface FormikState<V> {
+export interface FormikState<Values> {
   /** Form values */
-  values: V;
+  values: Values;
   /** 
    * Top level error, in case you need it 
    * @deprecated since 0.8.0
    */
   error?: any;
   /** map of field names to specific error for that field */
-  errors: FormikErrors;
+  errors: FormikErrors<Values>;
   /** map of field names to whether the field has been touched */
-  touched: FormikTouched;
+  touched: FormikTouched<Values>;
   /** whether the form is currently submitting */
   isSubmitting: boolean;
   /** Top level status state, in case you need it */
@@ -116,7 +87,7 @@ export interface FormikComputedProps {
 /**
  * Formik state helpers
  */
-export interface FormikActions<P, V> {
+export interface FormikActions<Props, Values> {
   /** Manually set top level status. */
   setStatus: (status?: any) => void;
   /** 
@@ -125,21 +96,21 @@ export interface FormikActions<P, V> {
    */
   setError: (e: any) => void;
   /** Manually set errors object */
-  setErrors: (errors: FormikErrors) => void;
+  setErrors: (errors: FormikErrors<Values>) => void;
   /** Manually set isSubmitting */
   setSubmitting: (isSubmitting: boolean) => void;
   /** Manually set touched object */
-  setTouched: (touched: FormikTouched) => void;
+  setTouched: (touched: FormikTouched<Values>) => void;
   /** Manually set values object  */
-  setValues: (values: V) => void;
+  setValues: (values: Values) => void;
   /** Set value of form field directly */
-  setFieldValue: (field: string, value: any) => void;
+  setFieldValue: (field: keyof Values, value: any) => void;
   /** Set error message of a form field directly */
-  setFieldError: (field: string, message: string) => void;
+  setFieldError: (field: keyof Values, message: string) => void;
   /** Set whether field has been touched directly */
-  setFieldTouched: (field: string, isTouched?: boolean) => void;
+  setFieldTouched: (field: keyof Values, isTouched?: boolean) => void;
   /** Reset form */
-  resetForm: (nextProps?: P) => void;
+  resetForm: (nextProps?: Props) => void;
   /** Submit the form imperatively */
   submitForm: () => void;
 }
@@ -237,11 +208,11 @@ export function Formik<Props, Values extends FormikValues, Payload>({
         };
       }
 
-      setErrors = (errors: FormikErrors) => {
+      setErrors = (errors: FormikErrors<Values>) => {
         this.setState({ errors });
       };
 
-      setTouched = (touched: FormikTouched) => {
+      setTouched = (touched: FormikTouched<Values>) => {
         this.setState({ touched });
         if (validateOnBlur) {
           this.runValidations(this.state.values);
@@ -302,7 +273,7 @@ export function Formik<Props, Values extends FormikValues, Payload>({
               errors => this.setState({ errors, isSubmitting: false })
             );
           } else {
-            this.setErrors(maybePromisedErrors as FormikErrors);
+            this.setErrors(maybePromisedErrors as FormikErrors<Values>);
           }
         }
 
@@ -369,7 +340,7 @@ Formik cannot determine which value to update. See docs for more information: ht
             [field]: value,
           },
           touched: {
-            ...prevState.touched,
+            ...prevState.touched as object,
             [field]: true,
           },
         }));
@@ -382,7 +353,7 @@ Formik cannot determine which value to update. See docs for more information: ht
         );
       };
 
-      setFieldValue = (field: string, value: any) => {
+      setFieldValue = (field: keyof Values, value: any) => {
         // Set form field by name
         this.setState(prevState => ({
           ...prevState,
@@ -409,7 +380,7 @@ Formik cannot determine which value to update. See docs for more information: ht
 
       submitForm = () => {
         this.setState({
-          touched: touchAllFields(this.state.values),
+          touched: touchAllFields<FormikTouched<Values>>(this.state.values),
           isSubmitting: true,
         });
 
@@ -427,7 +398,7 @@ Formik cannot determine which value to update. See docs for more information: ht
             return;
           } else {
             this.setState({
-              errors: maybePromisedErrors as FormikErrors,
+              errors: maybePromisedErrors as FormikErrors<Values>,
               isSubmitting: Object.keys(maybePromisedErrors).length > 0,
             });
 
@@ -471,7 +442,7 @@ Formik cannot determine which value to update. See docs for more information: ht
         const { name, id } = e.target;
         const field = name ? name : id;
         this.setState(prevState => ({
-          touched: { ...prevState.touched, [field]: true },
+          touched: { ...prevState.touched as object, [field]: true },
         }));
 
         if (validateOnBlur) {
@@ -479,12 +450,12 @@ Formik cannot determine which value to update. See docs for more information: ht
         }
       };
 
-      setFieldTouched = (field: string, touched: boolean = true) => {
+      setFieldTouched = (field: keyof Values, touched: boolean = true) => {
         // Set touched field by name
         this.setState(prevState => ({
           ...prevState,
           touched: {
-            ...prevState.touched,
+            ...prevState.touched as object,
             [field]: touched,
           },
         }));
@@ -494,7 +465,7 @@ Formik cannot determine which value to update. See docs for more information: ht
         }
       };
 
-      setFieldError = (field: string, message: string) => {
+      setFieldError = (field: keyof Values, message: string) => {
         // Set form field by name
         this.setState(prevState => ({
           ...prevState,
@@ -560,4 +531,40 @@ Formik cannot determine which value to update. See docs for more information: ht
       > // cast type to ComponentClass (even if SFC)
     ) as React.ComponentClass<Props>;
   };
+}
+
+/**
+ * Transform Yup ValidationError to a more usable object
+ */
+export function yupToFormErrors<Values>(yupError: any): FormikErrors<Values> {
+  let errors: FormikErrors<Values> = {};
+  for (let err of yupError.inner) {
+    if (!errors[err.path]) {
+      errors[err.path] = err.message;
+    }
+  }
+  return errors;
+}
+
+/**
+ * Validate a yup schema.
+ */
+export function validateYupSchema<T>(data: T, schema: any): Promise<void> {
+  let validateData: any = {};
+  for (let k in data) {
+    if (data.hasOwnProperty(k)) {
+      const key = String(k);
+      validateData[key] =
+        (data as any)[key] !== '' ? (data as any)[key] : undefined;
+    }
+  }
+  return schema.validate(validateData, { abortEarly: false });
+}
+
+export function touchAllFields<T>(fields: T): FormikTouched<T> {
+  let touched = {} as FormikTouched<T>;
+  for (let k of Object.keys(fields)) {
+    touched[k] = true;
+  }
+  return touched;
 }

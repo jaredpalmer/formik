@@ -67,7 +67,7 @@ const MyForm: React.SFC<InjectedFormikProps<Props, Values>> = props => {
         type="button"
         className="outline"
         onClick={handleReset}
-        disabled={dirty || isSubmitting}
+        disabled={!dirty || isSubmitting}
       >
         Reset
       </button>

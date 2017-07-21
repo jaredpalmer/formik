@@ -1,90 +1,81 @@
 import * as React from 'react';
 import * as yup from 'yup';
 
-import { Formik, FormikBag, InjectedFormikProps } from '../src/formik';
+import { Formik, InjectedFormikProps } from '../src/formik';
 
 export interface Props {
-  email: string;
-  firstName: string;
-  social: {
-    facebook: string;
+  user: {
+    email: string;
   };
 }
 
 interface Values {
   email: string;
-  firstName: string;
-  facebook: string;
 }
 
-interface Payload {
-  data: Values;
-}
-
-const FormikEnhancer = Formik<Props, Values, Payload>({
-  mapPropsToValues: ({ email, firstName, social }) => ({
-    email,
-    firstName,
-    ...social,
+const formikEnhancer = Formik<Props, Values>({
+  mapPropsToValues: props => ({ email: props.user.email }),
+  validationSchema: Yup.object().shape({
+    email: Yup.string()
+      .email('Invalid email address')
+      .required('Email is required!'),
   }),
-  mapValuesToPayload: values => ({ data: values }),
-  validationSchema: yup.object().shape({
-    email: yup.string().email().min(5).required(),
-    firstName: yup.string().min(5).required(),
-    facebook: yup.string(),
-  }),
-  handleSubmit: (
-    payload: Payload,
-    { setSubmitting }: FormikBag<Props, Values>
-  ) => {
-    callMyApi(payload).then(
-      res => {
-        setSubmitting(false);
-        MyToast.show({
-          message: 'Success!',
-        });
-      },
-      err => {
-        setSubmitting(false);
-        MyToast.show({
-          message: 'Error!',
-        });
-      }
-    );
+  handleSubmit: (values, { setSubmitting }) => {
+    setTimeout(() => {
+      alert(JSON.stringify(values, null, 2));
+      setSubmitting(false);
+    }, 1000);
   },
+  displayName: 'MyForm', // helps with React DevTools
 });
 
-function MyForm({
-  handleSubmit,
-  values: { email, firstName, facebook },
-  handleChange,
-}: InjectedFormikProps<Props, Values>) {
+const MyForm: React.SFC<InjectedFormikProps<Props, Values>> = props => {
+  const {
+    values,
+    touched,
+    errors,
+    dirty,
+    isSubmitting,
+    handleChange,
+    handleBlur,
+    handleSubmit,
+    handleReset,
+  } = props;
   return (
     <form onSubmit={handleSubmit}>
+      <label htmlFor="email" style={{ display: 'block' }}>
+        Email
+      </label>
       <input
+        id="email"
+        placeholder="Enter your email"
         type="text"
-        name="email"
-        value={email}
+        value={values.email}
         onChange={handleChange}
-        placeholder="john@apple.com"
+        onBlur={handleBlur}
+        className={
+          errors.email && touched.email ? 'text-input error' : 'text-input'
+        }
       />
-      <input
-        type="text"
-        name="firstName"
-        value={firstName}
-        onChange={handleChange}
-        placeholder="John"
-      />
-      <input
-        type="text"
-        name="facebook"
-        value={facebook}
-        onChange={handleChange}
-        placeholder="facebook username"
-      />
-      <button type="submit">Submit</button>
+      {errors.email &&
+        touched.email &&
+        <div className="input-feedback">
+          {errors.email}
+        </div>}
+
+      <button
+        type="button"
+        className="outline"
+        onClick={handleReset}
+        disabled={dirty || isSubmitting}
+      >
+        Reset
+      </button>
+      <button type="submit" disabled={isSubmitting}>
+        Submit
+      </button>
     </form>
   );
-}
+};
 
-export default FormikEnhancer(MyForm);
+export default formikEnhancer(MyForm);

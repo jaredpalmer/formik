@@ -44,7 +44,7 @@ export interface FormikConfig<Props, Values extends FormikValues, Payload> {
   validate?: (
     values: Values,
     props: Props
-  ) => FormikErrors<Values> | Promise<any>;
+  ) => void | FormikErrors<Values> | Promise<any>;
   /** A Yup Schema */
   validationSchema?: any;
   /** Submission handler */

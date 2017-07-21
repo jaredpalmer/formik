@@ -1,4 +1,4 @@
-import { validateFormData, yupToFormErrors } from '../src/formik';
+import { validateYupSchema, yupToFormErrors } from '../src/formik';
 
 const Yup = require('yup');
 const schema = Yup.object().shape({
@@ -18,10 +18,10 @@ describe('helpers', () => {
     });
   });
 
-  describe('validateFormData()', () => {
+  describe('validateYupSchema()', () => {
     it('should validate', async () => {
       try {
-        await validateFormData({}, schema);
+        await validateYupSchema({}, schema);
       } catch (e) {
         expect(e.name).toEqual('ValidationError');
         expect(e.errors).toEqual(['required']);
@@ -30,7 +30,7 @@ describe('helpers', () => {
 
     it('should stringify all values', async () => {
       try {
-        const result = await validateFormData({ name: 1 }, schema);
+        const result = await validateYupSchema({ name: 1 }, schema);
         expect(result).not.toEqual({ name: 1 });
         expect(result).toEqual({ name: '1' });
       } catch (e) {

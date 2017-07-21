@@ -28,7 +28,12 @@ export type FormikTouched<Values extends FormikValues> = {
 /**
  * Formik configuration options
  */
-export interface FormikConfig<Props, Values extends FormikValues, Payload> {
+export interface FormikConfig<
+  Props,
+  Values extends FormikValues,
+  DeprecatedPayload = Values
+  // tslint:disable-next-line:one-line
+> {
   displayName?: string;
   /** Map props to the form values */
   mapPropsToValues?: (props: Props) => Values;
@@ -36,7 +41,7 @@ export interface FormikConfig<Props, Values extends FormikValues, Payload> {
    * Map form values to submission payload 
    * @deprecated since 0.8.0
    */
-  mapValuesToPayload?: (values: Values) => Payload;
+  mapValuesToPayload?: (values: Values) => DeprecatedPayload;
   /** 
    * Validation function. Must return an error object or promise that 
    * throws an error object where that object keys map to corresponding value.
@@ -48,7 +53,10 @@ export interface FormikConfig<Props, Values extends FormikValues, Payload> {
   /** A Yup Schema */
   validationSchema?: any;
   /** Submission handler */
-  handleSubmit: (values: Payload, formikBag: FormikBag<Props, Values>) => void;
+  handleSubmit: (
+    values: Values | DeprecatedPayload,
+    formikBag: FormikBag<Props, Values>
+  ) => void;
   /** Tells Formik to validate the form on each input's onChange event */
   validateOnChange?: boolean;
   /** Tells Formik to validate the form on each input's onBlur event */
@@ -159,7 +167,7 @@ export interface InferableComponentDecorator<TOwnProps> {
   <T extends CompositeComponent<TOwnProps>>(component: T): T;
 }
 
-export function Formik<Props, Values extends FormikValues, Payload>({
+export function Formik<Props, Values extends FormikValues, Payload = Values>({
   displayName,
   mapPropsToValues = vanillaProps => {
     let values: Values = {} as Values;
@@ -173,11 +181,7 @@ export function Formik<Props, Values extends FormikValues, Payload>({
     }
     return values;
   },
-  mapValuesToPayload = values => {
-    // in this case Values and Payload are the same.
-    const payload = (values as any) as Payload;
-    return payload;
-  },
+  mapValuesToPayload,
   validate,
   validationSchema,
   handleSubmit,
@@ -206,6 +210,12 @@ export function Formik<Props, Values extends FormikValues, Payload>({
           touched: {},
           isSubmitting: false,
         };
+
+        if (mapValuesToPayload) {
+          console.warn(
+            `Warning: Formik\'s mapValuesToPayload is deprecated and may be removed in future releases. Move that function to the first line of \`handleSubmit\` instead.`
+          );
+        }
       }
 
       setErrors = (errors: FormikErrors<Values>) => {
@@ -233,7 +243,7 @@ export function Formik<Props, Values extends FormikValues, Payload>({
       setError = (error: any) => {
         if (process.env.NODE_ENV !== 'production') {
           console.warn(
-            `Warning: Formik\'s setError(error) is deprecated and may be removed in future releases. Please use Formik\'s setStatus(status) instead. It works identically. See docs for more information: https://github.com/jaredpalmer/formik#setstatus-status-any--void`
+            `Warning: Formik\'s setError(error) is deprecated and may be removed in future releases. Please use Formik\'s setStatus(status) instead. It works identically. For more info see https://github.com/jaredpalmer/formik#setstatus-status-any--void`
           );
         }
         this.setState({ error });
@@ -285,7 +295,7 @@ export function Formik<Props, Values extends FormikValues, Payload>({
       handleChange = (e: React.ChangeEvent<any>) => {
         if (isReactNative) {
           console.error(
-            `Warning: Formik's \`handleChange\` does not work with React Native. You should use \`setFieldValue(field, value)\` and within a callback instead. See docs for more information: https://github.com/jaredpalmer/formikhttps://github.com/jaredpalmer/formik#react-native`
+            `Warning: Formik's handleChange does not work with React Native. Use setFieldValue and within a callback instead. For more info see https://github.com/jaredpalmer/formikhttps://github.com/jaredpalmer/formik#react-native`
           );
           return;
         }
@@ -302,7 +312,7 @@ export function Formik<Props, Values extends FormikValues, Payload>({
 
   ${outerHTML}
 
-Formik cannot determine which value to update. See docs for more information: https://github.com/jaredpalmer/formik#handlechange-e-reactchangeeventany--void
+Formik cannot determine which value to update. For more info see https://github.com/jaredpalmer/formik#handlechange-e-reactchangeeventany--void
 `
           );
         }
@@ -329,7 +339,7 @@ Formik cannot determine which value to update. See docs for more information: ht
       handleChangeValue = (field: string, value: any) => {
         if (process.env.NODE_ENV !== 'production') {
           console.warn(
-            `Warning: Formik\'s \`handleChangeValue\` is deprecated and may be removed in future releases. Please use Formik's \`setFieldValue(field, value)\` together with \`setFieldTouched(field, isTouched)\` instead. See docs for more information: https://github.com/jaredpalmer/formik#setfieldvalue-field-string-value-any--void`
+            `Warning: Formik\'s handleChangeValue is deprecated and may be removed in future releases. Use Formik's setFieldValue(field, value) and setFieldTouched(field, isTouched) instead. React will merge the updates under the hood and avoid a double render. For more info see https://github.com/jaredpalmer/formik#setfieldvalue-field-string-value-any--void`
           );
         }
         // Set touched and form fields by name
@@ -415,7 +425,10 @@ Formik cannot determine which value to update. See docs for more information: ht
       };
 
       executeSubmit = () => {
-        handleSubmit(mapValuesToPayload(this.state.values), {
+        const values = mapValuesToPayload
+          ? mapValuesToPayload(this.state.values)
+          : this.state.values;
+        handleSubmit(values, {
           setStatus: this.setStatus,
           setTouched: this.setTouched,
           setErrors: this.setErrors,
@@ -434,7 +447,7 @@ Formik cannot determine which value to update. See docs for more information: ht
       handleBlur = (e: any) => {
         if (isReactNative) {
           console.error(
-            `Warning: Formik's \`handleBlur\` does not work with React Native. You should use \`setFieldTouched(field, isTouched)\` and within a callback instead. See docs for more information: https://github.com/jaredpalmer/formik#setfieldtouched-field-string-istouched-boolean--void`
+            `Warning: Formik's handleBlur does not work with React Native. Use setFieldTouched(field, isTouched) within a callback instead. For more info see https://github.com/jaredpalmer/formik#setfieldtouched-field-string-istouched-boolean--void`
           );
           return;
         }

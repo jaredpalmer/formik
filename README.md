@@ -7,19 +7,20 @@
 
 Let's face it, forms are really verbose in React. To make matters worse, most form helpers do wayyyy too much magic and often have a significant performance cost associated with them. Formik is a minimal Higher Order Component that helps you with the 3 most annoying parts: 
 
- 1. Transforming props to a flat React state
+ 1. Transforming props to form state
  2. Validation and error messages
- 3. Transforming a flat React state back into a consumable payload for your API
+ 3. Handling form submission
 
-Lastly, Formik helps you stay organized by colocating all of the above plus your submission handler in one place. This makes testing, refactoring, and reasoning about your forms a breeze.
+By colocating all of the above in one place, Formik will keep things organized--making testing, refactoring, and reasoning about your forms a breeze.
 
 ## Installation
 
-Add Formik and Yup to your project. Formik uses [Yup](https://github.com/jquense/yup) (which is like [Joi](https://github.com/hapijs/joi), but for the browser) for object schema validation. 
+Add Formik and Yup to your project. Formik supports [Yup](https://github.com/jquense/yup) (which is like [Joi](https://github.com/hapijs/joi), but for the browser) for object schema validation.
 
 ```bash
 npm i formik yup --save
 ```
+Note: Yup is 100% optional. You are free to [write your own validators][`validate`].
 
 You can also try before you buy with this **[demo on CodeSandbox.io](https://codesandbox.io/s/zKrK5YLDZ)**
 
@@ -42,10 +43,13 @@ You can also try before you buy with this **[demo on CodeSandbox.io](https://cod
   - [`Formik(options)`](#formikoptions)
     - [`options`](#options)
       - [`displayName?: string`](#displayname-string)
-      - [`handleSubmit: (payload, FormikBag) => void`](#handlesubmit-payload-formikbag--void)
-      - [`mapPropsToValues?: (props) => props`](#mappropstovalues-props--props)
-      - [`mapValuesToPayload?: (values) => payload`](#mapvaluestopayload-values--payload)
-      - [`validationSchema: Schema`](#validationschema-schema)
+      - [`handleSubmit: (values: Values, formikBag: FormikBag) => void`](#handlesubmit-values-values-formikbag-formikbag--void)
+        - [The "FormikBag":](#the-formikbag)
+      - [`mapPropsToValues?: (props: Props) => Values`](#mappropstovalues-props-props--values)
+      - [`validate?: (values: Values, props: Props) => FormikError<Values> | Promise<any>`](#validate-values-values-props-props--formikerrorvalues--promiseany)
+      - [`validateOnBlur?: boolean`](#validateonblur-boolean)
+      - [`validateOnChange?: boolean`](#validateonchange-boolean)
+      - [`validationSchema?: Schema`](#validationschema-schema)
     - [Injected props and methods](#injected-props-and-methods)
       - [`dirty: boolean`](#dirty-boolean)
       - [`errors: { [field: string]: string }`](#errors--field-string-string-)
@@ -234,19 +238,37 @@ Create a higher-order React component class that passes props and form handlers 
 ##### `displayName?: string` 
 When your inner form component is a stateless functional component, you can use the `displayName` option to give the component a proper name so you can more easily find it in [React DevTools](https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi?hl=en). If specified, your wrapped form will show up as `Formik(displayName)`. If omitted, it will show up as `Formik(Component)`. This option is not required for class components (e.g. `class XXXXX extends React.Component {..}`).
 
-##### `handleSubmit: (payload, FormikBag) => void`
-Your form submission handler. It is passed the result of [`mapValuesToPayload`] (if specified), or the result of `mapPropsToValues`, or all props that are not functions (in that order of precedence) and the "`FormikBag`".
+##### `handleSubmit: (values: Values, formikBag: FormikBag) => void`
+Your form submission handler. It is passed your forms [`values`] and the "FormikBag", which includes an object containing a subset of the [injected props and methods](/#injected-props-and-methods) (i.e. all the methods with names that start with `set<Thing>` + `resetForm`) and any props that were passed to the the wrapped component.
 
-##### `mapPropsToValues?: (props) => props`
-If this option is specified, then Formik will transfer its results into updatable form state and make these values available to the new component as [`props.values`][`values`]. If `mapPropsToValues` is not specified, then Formik will map all props that are not functions to the new component's [`props.values`][`values`]. That is, if you omit it, Formik will only pass `props` where `typeof props[k] !== 'function'`, where `k` is some key.
+###### The "FormikBag":
 
-##### `mapValuesToPayload?: (values) => payload`
-If this option is specified, then Formik will run this function just before calling [`handleSubmit`]. Use it to transform your form's [`values`] back into a shape that's consumable for other parts of your application or API. If [`mapValuesToPayload`] **is not** specified, then Formik will map all [`values`] directly to `payload` (which will be passed to [`handleSubmit`]). While this transformation can be moved into [`handleSubmit`], consistently defining it in [`mapValuesToPayload`] separates concerns and helps you stay organized.
+- `props` (props passed to the wrapped component)
+- [`resetForm`]
+- [`setErrors`]
+- [`setFieldError`]
+- [`setFieldTouched`]
+- [`setFieldValue`]
+- [`setStatus`]
+- [`setSubmitting`]
+- [`setTouched`]
+- [`setValues`]
 
-#### `validate?: (values: Values, props: Props) => { [field: string]: string } | Promise<any, FormikError>`
-Validate the form's [`values`] with function. This function must either be:
+Note: [`errors`], [`touched`], [`status`] and all event handlers are NOT included in the `FormikBag`.
 
-1. Synchronous and return an [`errors`] object. [Example](/examples/sync-validation)
+##### `mapPropsToValues?: (props: Props) => Values`
+
+If this option is specified, then Formik will transfer its results into updatable form state and make these values available to the new component as [`props.values`][`values`]. If `mapPropsToValues` is not specified, then Formik will map all props that are not functions to the inner component's [`props.values`][`values`]. That is, if you omit it, Formik will only pass `props` where `typeof props[k] !== 'function'`, where `k` is some key. 
+
+Even if your form is not receiving any props from its parent, use `mapPropsToValues` to initialize your forms empty state.
+
+##### `validate?: (values: Values, props: Props) => FormikError<Values> | Promise<any>`
+
+_Note: I suggest using [`validateSchema`] and Yup for validation. However, `validate` is a dependency-free, straightforward way to validate your forms._
+
+Validate the form's [`values`] with function. This function can either be:
+
+1. Synchronous and return an [`errors`] object. 
 
 ```js
 // Synchronous validation
@@ -284,27 +306,34 @@ const validate = (values, props) => {
 }
 ```
 
-#### `validateOnBlur?: boolean`
+##### `validateOnBlur?: boolean`
 
 Default is `true`. Use this option to run validations on `blur` events. More specifically, when either [`handleBlur`], [`setFieldTouched`], or [`setTouched`] are called.
 
-#### `validateOnChange?: boolean`
+##### `validateOnChange?: boolean`
 
 Default is `false`. Use this option to tell Formik to run validations on `change` events and `change`-related methods. More specifically, when either [`handleChange`], [`setFieldValue`], or [`setValues`] are called.
 
-##### `validationSchema: Schema`
-[A Yup schema](https://github.com/jquense/yup). This is used for validation on each onChange event. Errors are mapped by key to the `WrappedComponent`'s [`props.errors`][`errors`]. Its keys should almost always match those of `WrappedComponent's` [`props.values`][`values`]. 
+##### `validationSchema?: Schema`
+
+[A Yup schema](https://github.com/jquense/yup). This is used for validation. Errors are mapped by key to the inner component's [`errors`][`errors`]. Its keys should match those of [`values`]. 
 
 #### Injected props and methods
 
-The following props and methods will be injected into the `WrappedComponent` (i.e. your form):
+The following list of properties and methods will be injected into the your inner form component as React props after you "enhance"/wrap it with the Formik HoC. 
+
+- If your inner form component is a stateless function, then each item will be made available as `props.xxxx`. 
+- If your inner form component is an ES6 class, then each item below will be made available as `this.props.xxxx`. 
+
+Any additional props you pass to your wrapped component (including those props you do not map to form state via [`mapPropsToVales`]) are passed directly down untouched.
 
 ##### `dirty: boolean`
 
 Returns `true` if any field has been touched by any means, `false` otherwise. `dirty` is a readonly computed property and should not be mutated directly.
 
 ##### `errors: { [field: string]: string }`
-Form validation errors. Keys match the shape of the [`validationSchema`] defined in Formik options. This should therefore also map to your [`values`] object as well. Internally, Formik transforms raw [Yup validation errors](https://github.com/jquense/yup#validationerrorerrors-string--arraystring-value-any-path-string) on your behalf. 
+
+Form validation errors. Should match the shape of your form's [`values`] defined in Formik options. If you are using [`validationSchema`] (which you should be), keys and shape will match your schema exactly. Internally, Formik transforms raw [Yup validation errors](https://github.com/jquense/yup#validationerrorerrors-string--arraystring-value-any-path-string) on your behalf. If you are using [`validate`], then that function will determine the `errors` objects shape. 
 
 ##### `handleBlur: (e: any) => void`
 `onBlur` event handler. Useful for when you need to track whether an input has been [`touched`] or not. This should be passed to `<input onBlur={handleBlur} ... />`
@@ -361,7 +390,7 @@ A top-level status object that you can use to represent form state that can't ot
 Touched fields. Each key corresponds to a field that has been touched/visited.
 
 ##### `values: { [field: string]: any }`
-Your form's values. Will have the shape of the result of [`mapPropsToValues`] (if specified) or all props that are not functions passed to your `WrappedComponent`.
+Your form's values. Will have the shape of the result of [`mapPropsToValues`] (if specified) or all props that are not functions passed to your wrapped component.
 
 ## Recipes
 
@@ -641,9 +670,13 @@ MIT License.
 
 [`displayName`]: #displayname-string
 [`handleSubmit`]: #handlesubmit-payload-formikbag--void
+[`FormikBag`]: #the-formikbag
 [`mapPropsToValues`]: #mappropstovalues-props--props
-[`mapValuesToPayload`]: #mapvaluestopayload-values--payload
+[`validate`]: #validate-values-values-props-props--formikerrorvalues--promiseany
+[`validateOnBlur`]: #validateonblur-boolean
+[`validateOnChange`]: #validateonchange-boolean
 [`validationSchema`]: #validationschema-schema
+  
 [Injected props and methods]: #injected-props-and-methods
 
 [`dirty`]: #dirty-boolean

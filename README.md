@@ -5,7 +5,7 @@
 [![license](http://img.shields.io/npm/l/formik.svg)](./LICENSE)
 [![CircleCI](https://circleci.com/gh/jaredpalmer/formik.svg?style=svg)](https://circleci.com/gh/jaredpalmer/formik) 
 
-Let's face it, forms are really verbose in React. To make matters worse, most form helpers do wayyyy too much magic and often have a significant performance cost associated with them. Formik is a minimal Higher Order Component that helps you with the 3 most annoying parts: 
+Let's face it, forms are really verbose in [React](https://github.com/facebook/react). To make matters worse, most form helpers do wayyyy too much magic and often have a significant performance cost associated with them. Formik is a minimal Higher Order Component that helps you with the 3 most annoying parts: 
 
  1. Transforming props to form state
  2. Validation and error messages
@@ -15,7 +15,7 @@ By colocating all of the above in one place, Formik will keep things organized--
 
 ## Installation
 
-Add Formik and Yup to your project. Formik supports [Yup](https://github.com/jquense/yup) (which is like [Joi](https://github.com/hapijs/joi), but for the browser) for object schema validation.
+Add Formik (and optionally Yup to your project). Formik supports/recommends [Yup](https://github.com/jquense/yup) (which is like [Joi](https://github.com/hapijs/joi), but for the browser) for object schema validation.
 
 ```bash
 npm i formik yup --save

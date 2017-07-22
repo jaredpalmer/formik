@@ -643,7 +643,6 @@ import { Formik, InjectedFormikProps } from 'formik'
 
 interface Props {...}
 interface Values {...}
-interface Payload {...}
 
 export const MyReactNativeForm: React.SFC<InjectedFormikProps<Props, Values>> = (props) => (
   <View>
@@ -656,7 +655,7 @@ export const MyReactNativeForm: React.SFC<InjectedFormikProps<Props, Values>> = 
   </View>
 )
 
-export default Formik<Props, Values, Payload>({ ... })(MyReactNativeForm)
+export default Formik<Props, Values>({ ... })(MyReactNativeForm)
 ```
 
 

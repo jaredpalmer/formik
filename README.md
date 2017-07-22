@@ -1,6 +1,6 @@
 ![](https://user-images.githubusercontent.com/4060187/27243721-3b5219d0-52b1-11e7-96f1-dae8391a3ef6.png)
 
-[![gzip size](http://img.badgesize.io/https://unpkg.com/formik@0.7.3-rc1/dist/formik.umd.min.js?compression=gzip)](https://unpkg.com/formik@0.7.3-rc1/dist/formik.umd.min.js)
+[![gzip size](http://img.badgesize.io/https://unpkg.com/formik/dist/formik.umd.min.js?compression=gzip)](https://unpkg.com/formik/dist/formik.umd.min.js)
 [![npm](https://img.shields.io/npm/v/formik.svg)](https://npm.im/formik)
 [![license](http://img.shields.io/npm/l/formik.svg)](./LICENSE)
 [![CircleCI](https://circleci.com/gh/jaredpalmer/formik.svg?style=svg)](https://circleci.com/gh/jaredpalmer/formik) 
@@ -22,11 +22,12 @@ npm i formik yup --save
 ```
 Note: Yup is 100% optional. You are free to [write your own validators][`validate`].
 
-You can also try before you buy with this **[demo on CodeSandbox.io](https://codesandbox.io/s/zKrK5YLDZ)**
+You can also try before you buy with this **[demo of Formik on CodeSandbox.io](https://codesandbox.io/s/zKrK5YLDZ)**
 
 ## Demos
 
 - [Basic](https://codesandbox.io/s/zKrK5YLDZ)
+- [Sync Validation](https://codesandbox.io/s/q8yRqQMp)
 - [Building your own input primitives](https://codesandbox.io/s/qJR4ykJk)
 - [Working with 3rd party input components](https://codesandbox.io/s/jRzE53pqR)
 - [Accessing React lifecycle functions](https://codesandbox.io/s/pgD4DLypy)

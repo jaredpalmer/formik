@@ -122,30 +122,33 @@ import React from 'react';
 import { Formik } from 'formik';
 import Yup from 'yup';
 
-// Formik is a Higher Order Component that wraps a React Form. Mutable form values 
+// Formik is a Higher Order Component that wraps a React form. Mutable form values 
 // are injected into a prop called [`values`]. Additionally, Formik injects
-// an onChange handler that you can use on every input. You also get
-// handleSubmit, errors, and isSubmitting for free. This makes building custom
+// onChange and an onBlur handler that you can use on every input. You also get
+// handleSubmit, handleReset, errors, touched, and isSubmitting for free. This makes building custom
 // inputs easy.
-const SimpleForm = ({ 
-  values, 
+const MyForm = ({
+  values,
   touched,
   errors,
-  error, 
-  handleChange, 
-  handleSubmit, 
-  handleBlur, 
-  handleReset, 
-  isSubmitting 
- }) =>
+  dirty,
+  isSubmitting,
+  handleChange,
+  handleBlur,
+  handleSubmit,
+  handleReset,
+}) =>
   <form onSubmit={handleSubmit}>
+    <label htmlFor="email">
+      Email
+    </label>
     <input
+      id="email"
+      placeholder="Enter your email"
       type="text"
-      name="email"
       value={values.email}
       onChange={handleChange}
       onBlur={handleBlur}
-      placeholder="john@apple.com"
     />
     {errors.email && touched.email && <div>{errors.email}</div>}
     <input
@@ -166,22 +169,22 @@ const SimpleForm = ({
       placeholder="twitter username"
     />
     {errors.twitter && touched.twitter && <div>{errors.twitter}</div>}
-    {error && error.message && <div style={{color: 'red'}}>Top Level Error: {error.message}</div>}
-    <button onClick={handleReset}>Reset</button>
-    <button type="submit" disabled={isSubmitting}>Submit</button>
+    <button
+      type="button"
+      onClick={handleReset}
+      disabled={!dirty || isSubmitting}
+    >
+      Reset
+    </button>
+    <button type="submit" disabled={isSubmitting}>
+      Submit
+    </button>
   </form>;
+
 
 // Now for the fun part. We need to tell Formik how we want to validate,
 // transform props/state, and submit our form.
 export default Formik({
-  // Define our form's validation schema with Yup. It's like Joi, but for
-  // the browser.
-  validationSchema: Yup.object().shape({
-    email: Yup.string().email().required(),
-    twitter: Yup.string(),
-    facebook: Yup.string(),
-  }),
-
   // We now map React props to form values. These will be injected as [`values`] into
   // our form. (Note: in the real world, you would destructure props, but for clarity this is
   // not shown)
@@ -190,27 +193,22 @@ export default Formik({
     twitter: props.user.social.twitter,
     facebook: props.user.social.facebook,
   }),
-
-  // Sometimes your API needs a different object shape than your form. Formik lets 
-  // you map [`values`] back into a `payload` before they are
-  // passed to handleSubmit.
-  mapValuesToPayload: values => ({
-    email: values.email,
-    social: { 
-      twitter: values.twitter, 
-      facebook: values.facebook,
-    },
+  // We can optionally define our a validation schema with Yup. It's like Joi, but for
+  // the browser. Errors from Yup will be injected as `errors` into the form.
+  validationSchema: Yup.object().shape({
+    email: Yup.string().email().required('Bruh, email is required'),
+    twitter: Yup.string(),
+    facebook: Yup.string(),
   }),
-
   // Formik lets you colocate your submission handler with your form.
-  // In addition to the payload (the result of mapValuesToPayload), you have
+  // In addition to your from `values`, you have
   // access to all props and some stateful helpers.
-  handleSubmit: (payload, { props, setError, setSubmitting }) => {
+  handleSubmit: (values, { props, setErrors, setSubmitting }) => {
     // do stuff with your payload
     // e.preventDefault(), setSubmitting, setError(undefined) are 
     // called before handleSubmit is. So you don't have to do repeat this.
-    // handleSubmit will only be executed if form values pass Yup validation.
-    CallMyApi(props.user.id, payload)
+    // handleSubmit will only be executed if form values pass validation (if you specify it).
+    CallMyApi(props.user.id, value)
       .then(
         res => {
           setSubmitting(false)
@@ -219,7 +217,7 @@ export default Formik({
         },
         err => {
           setSubmitting(false)
-          setError(err)
+          setErrors(transformMyAPIErrorToAnObject(err))
           // do something to show a rejected api submission
           // MyToaster.showError({ message: 'Shit!', error: err })
         }

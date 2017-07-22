@@ -44,11 +44,11 @@ export function hoistNonReactStatics<P>(
         // Only hoist enumerables and non-enumerable functions
         if (
           propIsEnumerable.call(sourceComponent, key) ||
-          typeof (targetComponent as any)[key] === 'function'
+          typeof (sourceComponent as any)[key] === 'function'
         ) {
           try {
             // Avoid failures from read-only properties
-            (targetComponent as any)[key] = (targetComponent as any)[key];
+            (targetComponent as any)[key] = (sourceComponent as any)[key];
             // tslint:disable-next-line:no-empty
           } catch (e) {}
         }

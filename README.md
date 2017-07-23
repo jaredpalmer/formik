@@ -208,7 +208,7 @@ export default Formik({
     // e.preventDefault(), setSubmitting, setError(undefined) are 
     // called before handleSubmit is. So you don't have to do repeat this.
     // handleSubmit will only be executed if form values pass validation (if you specify it).
-    CallMyApi(props.user.id, value)
+    CallMyApi(props.user.id, values)
       .then(
         res => {
           setSubmitting(false)

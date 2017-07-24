@@ -7,7 +7,7 @@
     "experimentalDecorators": false,
     "importHelpers": true,
     "jsx": "react",
-    "lib": ["es2015", "es2017.object", "dom"],
+    "lib": ["es2015", "dom"],
     "module": "es2015",
     "moduleResolution": "node",
     "noFallthroughCasesInSwitch": true,

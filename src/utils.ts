@@ -20,3 +20,17 @@ export const isReactNative =
   window.navigator &&
   window.navigator.product &&
   window.navigator.product === 'ReactNative';
+
+/**
+ * Returns values object in a new array
+ * @param obj any object
+ */
+export function values<T>(obj: any): T[] {
+  const vals = [];
+  for (var key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      vals.push(obj[key]);
+    }
+  }
+  return vals;
+}

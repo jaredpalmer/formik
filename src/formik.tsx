@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { isPromise, isReactNative } from './utils';
+import { isPromise, isReactNative, values } from './utils';
 
 import { hoistNonReactStatics } from './hoistStatics';
 
@@ -516,7 +516,9 @@ Formik cannot determine which value to update. For more info see https://github.
           <WrappedComponent
             {...this.props}
             {...this.state}
-            dirty={Object.values(this.state.touched).filter(Boolean).length > 0}
+            dirty={
+              values<boolean>(this.state.touched).filter(Boolean).length > 0
+            }
             setStatus={this.setStatus}
             setError={this.setError}
             setFieldError={this.setFieldError}

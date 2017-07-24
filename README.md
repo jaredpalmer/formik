@@ -127,7 +127,7 @@ import Yup from 'yup';
 // onChange and an onBlur handler that you can use on every input. You also get
 // handleSubmit, handleReset, errors, touched, and isSubmitting for free. This makes building custom
 // inputs easy.
-const MyForm = ({
+const EditUserForm = ({
   values,
   touched,
   errors,
@@ -223,7 +223,7 @@ export default Formik({
         }
       )
   },
-})(SimpleForm);
+})(EditUserForm);
 ```
 
 ## API

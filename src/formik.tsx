@@ -273,6 +273,10 @@ export function Formik<Props, Values extends FormikValues, Payload = Values>({
        * Run validations and update state accordingly
        */
       runValidations = (values: Values) => {
+        if (validationSchema) {
+          this.runValidationSchema(values);
+        }
+
         if (validate) {
           const maybePromisedErrors = validate(values, this.props);
           if (isPromise(maybePromisedErrors)) {
@@ -285,10 +289,6 @@ export function Formik<Props, Values extends FormikValues, Payload = Values>({
           } else {
             this.setErrors(maybePromisedErrors as FormikErrors<Values>);
           }
-        }
-
-        if (validationSchema) {
-          this.runValidationSchema(values);
         }
       };
 
@@ -407,13 +407,14 @@ Formik cannot determine which value to update. For more info see https://github.
             );
             return;
           } else {
+            const isValid = Object.keys(maybePromisedErrors).length === 0;
             this.setState({
               errors: maybePromisedErrors as FormikErrors<Values>,
-              isSubmitting: Object.keys(maybePromisedErrors).length > 0,
+              isSubmitting: isValid,
             });
 
             // only submit if there are no errors
-            if (Object.keys(maybePromisedErrors).length === 0) {
+            if (isValid) {
               this.executeSubmit();
             }
           }

@@ -496,6 +496,7 @@ Formik cannot determine which value to update. For more info see https://github.
           errors: {},
           touched: {},
           error: undefined,
+          status: undefined,
           values: nextProps
             ? mapPropsToValues(nextProps)
             : mapPropsToValues(this.props),
@@ -508,6 +509,7 @@ Formik cannot determine which value to update. For more info see https://github.
           errors: {},
           touched: {},
           error: undefined,
+          status: undefined,
           values: mapPropsToValues(this.props),
         });
       };

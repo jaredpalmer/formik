@@ -79,6 +79,14 @@ describe('Formik', () => {
     expect(tree.find(Form).props().values).toEqual({ name: 'jared' });
     expect(tree.find(Form).props().errors).toEqual({});
     expect(tree.find(Form).props().dirty).toBe(false);
+    expect(tree.find(Form).props().isValid).toBe(false);
+  });
+
+  it('should compute isValid if isInitialValid is present', () => {
+    const InvalidForm = FormFactory({ isInitialValid: props => true });
+    const tree = shallow(<InvalidForm user={{ name: 'jared' }} />);
+    expect(tree.find(Form).props().dirty).toBe(false);
+    expect(tree.find(Form).props().isValid).toBe(true);
   });
 
   describe('FormikHandlers', () => {

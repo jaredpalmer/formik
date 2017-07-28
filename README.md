@@ -46,7 +46,7 @@ You can also try before you buy with this **[demo of Formik on CodeSandbox.io](h
       - [`displayName?: string`](#displayname-string)
       - [`handleSubmit: (values: Values, formikBag: FormikBag) => void`](#handlesubmit-values-values-formikbag-formikbag--void)
         - [The "FormikBag":](#the-formikbag)
-      - [`isInitialValid?: (props: Props) => boolean`](#isinitialvalid-props-props--boolean)
+      - [`isInitialValid?: boolean | (props: Props) => boolean`](#isinitialvalid-boolean--props-props--boolean)
       - [`mapPropsToValues?: (props: Props) => Values`](#mappropstovalues-props-props--values)
       - [`validate?: (values: Values, props: Props) => FormikError<Values> | Promise<any>`](#validate-values-values-props-props--formikerrorvalues--promiseany)
       - [`validateOnBlur?: boolean`](#validateonblur-boolean)
@@ -257,9 +257,9 @@ Your form submission handler. It is passed your forms [`values`] and the "Formik
 
 Note: [`errors`], [`touched`], [`status`] and all event handlers are NOT included in the `FormikBag`.
 
-##### `isInitialValid?: (props: Props) => boolean`
+##### `isInitialValid?: boolean | (props: Props) => boolean`
 
-A function that's sets the initial value of [`isValid`] prop prior to mount. Useful for situations when you want to disable a submit button until the form is valid.
+Default is `false`. Control the initial value of [`isValid`] prop prior to mount. You can also pass a function. Useful for situations when you want to enable/disable a submit and reset buttons on initial mount.
 
 ##### `mapPropsToValues?: (props: Props) => Values`
 
@@ -679,7 +679,7 @@ MIT License.
 [`displayName`]: #displayname-string
 [`handleSubmit`]: #handlesubmit-payload-formikbag--void
 [`FormikBag`]: #the-formikbag
-[`isInitialValid`]: #isinitialvalid-props-props--boolean
+[`isInitialValid`]: #isinitialvalid-boolean--props-props--boolean
 [`mapPropsToValues`]: #mappropstovalues-props--props
 [`validate`]: #validate-values-values-props-props--formikerrorvalues--promiseany
 [`validateOnBlur`]: #validateonblur-boolean

@@ -82,11 +82,32 @@ describe('Formik', () => {
     expect(tree.find(Form).props().isValid).toBe(false);
   });
 
-  it('should compute isValid if isInitialValid is present', () => {
+  it('should compute isValid if isInitialValid is present and returns true', () => {
     const InvalidForm = FormFactory({ isInitialValid: props => true });
     const tree = shallow(<InvalidForm user={{ name: 'jared' }} />);
     expect(tree.find(Form).props().dirty).toBe(false);
     expect(tree.find(Form).props().isValid).toBe(true);
+  });
+
+  it('should compute isValid if isInitialValid is present and returns false', () => {
+    const InvalidForm = FormFactory({ isInitialValid: props => false });
+    const tree = shallow(<InvalidForm user={{ name: 'jared' }} />);
+    expect(tree.find(Form).props().dirty).toBe(false);
+    expect(tree.find(Form).props().isValid).toBe(false);
+  });
+
+  it('should compute isValid if isInitialValid boolean is present and set to true', () => {
+    const InvalidForm = FormFactory({ isInitialValid: true });
+    const tree = shallow(<InvalidForm user={{ name: 'jared' }} />);
+    expect(tree.find(Form).props().dirty).toBe(false);
+    expect(tree.find(Form).props().isValid).toBe(true);
+  });
+
+  it('should compute isValid if isInitialValid is present and set to false', () => {
+    const InvalidForm = FormFactory({ isInitialValid: false });
+    const tree = shallow(<InvalidForm user={{ name: 'jared' }} />);
+    expect(tree.find(Form).props().dirty).toBe(false);
+    expect(tree.find(Form).props().isValid).toBe(false);
   });
 
   describe('FormikHandlers', () => {

@@ -1,9 +1,4 @@
-/**
- * Returns whether something is a Promise or not.
- * @param value anything
- * 
- * @see https://github.com/pburtchaell/redux-promise-middleware/blob/master/src/isPromise.js
- */
+/** @private is the given object/value a promise? */
 export function isPromise(value: any): boolean {
   if (value !== null && typeof value === 'object') {
     return value && typeof value.then === 'function';
@@ -12,19 +7,14 @@ export function isPromise(value: any): boolean {
   return false;
 }
 
-/**
- * True if running in React Native. 
- */
+/** @private is running React Native?  */
 export const isReactNative =
   typeof window !== 'undefined' &&
   window.navigator &&
   window.navigator.product &&
   window.navigator.product === 'ReactNative';
 
-/**
- * Returns values object in a new array
- * @param obj any object
- */
+/** @private Returns values of an object in a new array */
 export function values<T>(obj: any): T[] {
   const vals = [];
   for (var key in obj) {
@@ -34,3 +24,6 @@ export function values<T>(obj: any): T[] {
   }
   return vals;
 }
+
+/** @private is the given object a Function? */
+export const isFunction = (obj: any) => 'function' === typeof obj;

@@ -80,6 +80,10 @@ You can also try before you buy with this **[demo of Formik on CodeSandbox.io](h
   - [React Native](#react-native)
     - [Why use `setFieldValue` instead of `handleChange`?](#why-use-setfieldvalue-instead-of-handlechange)
     - [Avoiding a Render Callback](#avoiding-a-render-callback)
+  - [Testing Formik](#testing-formik)
+    - [Dummy Form](#dummy-form)
+    - [Simulating input](#simulating-input)
+    - [Simulating form submission](#simulating-form-submission)
 - [Authors](#authors)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -666,7 +670,170 @@ export const MyReactNativeForm: React.SFC<InjectedFormikProps<Props, Values>> = 
 export default Formik<Props, Values>({ ... })(MyReactNativeForm)
 ```
 
+### Testing Formik
 
+_This section is a work in progress._
+
+The suggested approach to testing Formik forms is with Airbnb's [Enzyme](https://github.com/airbnb/enzyme) test utility library.
+
+The documentation and examples in this guide use Facebook's [Jest](https://facebook.github.io/jest) test runner. However, feel free to use [mocha](https://mochajs.org/) and [chai](http://chaijs.com/) if you prefer that.
+
+To get started with Enzyme, you can simply install it with npm:
+
+```bash
+npm i  enzyme --save-dev
+```
+
+If you are using React >=15.5, in addition to enzyme, you will have to ensure that you also have the following npm modules installed if they were not already:
+
+```bash
+npm i react-test-renderer react-dom  --save-dev
+```
+
+####  Dummy Form
+Imagine we have a basic form with one field `name`.
+
+```js
+// MyForm.js
+import { Formik, yupToFormError } from 'formik'
+import Yup from 'yup'
+
+export const validationSchema = Yup.object().shape({
+	name: Yup
+		.string()
+		.min(2, 'Must be longer than 2 characters')
+		.max(30, 'No one\'s name is that long')
+		.required('Required')
+})
+
+export const handleSubmit(values, { setSubmitting }) => {
+	 setTimeout(() => {
+      setSubmitting(false)
+    }, 1000)
+}
+
+export const mapPropsToValues =  props => ({ name: '' })
+
+
+export const MyFormInner = ({
+  values,
+  handleSubmit,
+  handleChange,
+  handleBlur,
+  setStatus,
+  status,
+  errors,
+  isSubmitting,
+}) => {
+  return (
+    <form onSubmit={handleSubmit}>
+      <input
+        type="text"
+        onChange={handleChange}
+        onBlur={handleBlur}
+        value={values.name}
+        name="name"
+      />
+      {errors.name &&
+        <div id="feedback">
+          {errors.name}
+        </div>}
+      {isSubmitting && <div id="submitting">Submitting</div>}
+      {status &&
+        !!status.myStatusMessage &&
+        <div id="status">
+          {status.myStatusMessage}
+        </div>}
+      <button type="submit">Submit</button>
+    </form>
+  );
+};
+
+export default Formik({
+  mapPropsToValues,
+  validationSchema,
+  handleSubmit
+})(MyFormInner)
+```
+
+#### Simulating input
+
+We can test that our UI is updating properly by using Enzyme's `shallow` renderer in addition to its `dive()` and `simulate()` methods. This lets us render the Formik-enhanced form, but then jump down and run simulations and assertions from the perspective of your inner form. 
+
+```js
+// MyForm.test.js
+import MyForm, { MyInnerForm } from './MyForm'
+
+describe('MyForm', () => {
+  test('should update an input when it is changed', () => {
+    const tree = shallow(<MyForm />);
+
+    tree.find(MyInnerForm).dive().find('input').simulate('change', {
+      // you must add this next line as (Formik calls e.persist() internally)
+      persist: () => {},
+      // simulate changing e.target.name and e.target.value
+      target: {
+        name: 'name',
+        value: 'ian',
+      },
+    });
+
+    const newValue = tree.find(MyInnerForm).dive().find('input').props().value;
+
+    expect(newValue).toEqual('ian');
+  });
+});
+
+```
+
+#### Simulating form submission
+
+```js
+// MyForm.test.js
+import MyForm, { MyInnerForm, validationSchema } from './MyForm'
+
+describe('MyForm', () => {
+	
+	test('submits the form', () => {
+	   const tree = shallow(<MyForm />)
+	   expect(tree.find(MyInnerForm).dive().find('#submitting')).toHaveLength(0);      
+	    
+		// simulate submit event. this is always sync! async calls to setState are swallowed. 
+		// be careful of false positives
+		tree.find(MyInnerForm).dive().find('form').simulate('submit', {
+		  preventDefault: () => {} // no op 
+		});
+		
+    // Because the simulated event is 100% sync, we can use it to test the synchronous changes
+    // here. Any async stuff you do inside handleSubmit will be swallowed. Thus our UI
+    // will see the following changes:
+    // - isSubmitting -> true (even if you set it to false asynchronously in your handleSubmit)
+    // - touched: all fields
+		expect(tree.find(Form).dive().find('#submitting')).toHaveLength(1);
+		expect(tree.find(Form).dive().find('button[type="submit"]').props().disabled).toBe(true)
+	})
+	
+	test('what happens when the form is submitted', async () => {
+	   const tree = shallow(<MyForm />)
+	   
+	   expect(tree.find(MyInnerForm).dive().find('#submitting')).toHaveLength(0);      
+	   
+	   await mockCallsToMyApi()
+	   await tree.find(MyInnerForm).props().submitForm()
+		
+		// check that ui has completely updated
+		expect(tree.find(MyInnerForm).update().dive().find('#submitting')).toHaveLength(0);
+		expect(tree.find(MyInnerForm).update().dive().find('#status').text).toEqual('Success!')
+		expect(tree.find(MyInnerForm).update().dive().find('button[type="submit"]').props().disabled).toBe(false)
+		
+		// check that props have updated
+		expect(tree.find(MyInnerForm).props().status).toEqual({ myStatusMessage: 'Success!' })
+		expect(tree.find(MyInnerForm).props().errors).toEqual({})
+		expect(tree.find(MyInnerForm).props().touched).toEqual({ name: true }) // submit will touch all fields
+	})
+
+})
+```
 
 ## Authors
 

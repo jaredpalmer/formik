@@ -280,7 +280,7 @@ export function Formik<Props, Values extends FormikValues, Payload = Values>({
         if (validate) {
           const maybePromisedErrors = validate(values, this.props);
           if (isPromise(maybePromisedErrors)) {
-            (validate(values, this.props) as Promise<any>).then(
+            (maybePromisedErrors as Promise<any>).then(
               () => {
                 this.setState({ errors: {} });
               },
@@ -398,7 +398,7 @@ Formik cannot determine which value to update. For more info see https://github.
           const maybePromisedErrors =
             validate(this.state.values, this.props) || {};
           if (isPromise(maybePromisedErrors)) {
-            (validate(this.state.values, this.props) as Promise<any>).then(
+            (maybePromisedErrors as Promise<any>).then(
               () => {
                 this.setState({ errors: {} });
                 this.executeSubmit();

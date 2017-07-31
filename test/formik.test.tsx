@@ -79,6 +79,7 @@ describe('Formik', () => {
     expect(tree.find(Form).props().values).toEqual({ name: 'jared' });
     expect(tree.find(Form).props().errors).toEqual({});
     expect(tree.find(Form).props().dirty).toBe(false);
+    expect(tree.find(Form).props().isValid).toBe(false);
   });
 
   describe('FormikHandlers', () => {
@@ -346,6 +347,32 @@ describe('Formik', () => {
           expect(handleSubmit).not.toHaveBeenCalled();
         });
       });
+
+      describe('with validationSchema (ASYNC)', () => {
+        it('should run validationSchema if present', () => {
+          const validate = jest.fn(() => Promise.resolve({}));
+          const ValidateForm = FormFactory({ validationSchema: { validate } });
+          const tree = shallow(<ValidateForm user={{ name: 'jared' }} />);
+          tree.find(Form).dive().find('form').simulate('submit', {
+            preventDefault: noop,
+          });
+          expect(validate).toHaveBeenCalled();
+        });
+
+        it('should call validationSchema if it is a function and present', () => {
+          const validate = jest.fn(() => Promise.resolve({}));
+          const ValidateForm = FormFactory({
+            validationSchema: () => ({
+              validate,
+            }),
+          });
+          const tree = shallow(<ValidateForm user={{ name: 'jared' }} />);
+          tree.find(Form).dive().find('form').simulate('submit', {
+            preventDefault: noop,
+          });
+          expect(validate).toHaveBeenCalled();
+        });
+      });
     });
   });
 
@@ -483,14 +510,56 @@ describe('Formik', () => {
   });
 
   describe('FormikComputedProps', () => {
-    it('dirty, should update as soon as any input is touched', () => {
-      const tree = mount(<BasicForm user={{ name: 'jared' }} />);
-
+    it('should compute dirty as soon as any input is touched', () => {
+      const ValidForm = FormFactory();
+      const tree = shallow(<ValidForm user={{ name: 'jared' }} />);
       expect(tree.find(Form).props().dirty).toBe(false);
-
       tree.setState({ touched: { name: true } });
+      expect(tree.find(Form).props().dirty).toBe(true);
+    });
 
-      expect(tree.update().find(Form).props().dirty).toBe(true);
+    it('should compute isValid if isInitialValid is present and returns true', () => {
+      const InvalidForm = FormFactory({ isInitialValid: props => true });
+      const tree = shallow(<InvalidForm user={{ name: 'jared' }} />);
+      expect(tree.find(Form).props().dirty).toBe(false);
+      expect(tree.find(Form).props().isValid).toBe(true);
+    });
+
+    it('should compute isValid if isInitialValid is present and returns false', () => {
+      const InvalidForm = FormFactory({ isInitialValid: props => false });
+      const tree = shallow(<InvalidForm user={{ name: 'jared' }} />);
+      expect(tree.find(Form).props().dirty).toBe(false);
+      expect(tree.find(Form).props().isValid).toBe(false);
+    });
+
+    it('should compute isValid if isInitialValid boolean is present and set to true', () => {
+      const InvalidForm = FormFactory({ isInitialValid: true });
+      const tree = shallow(<InvalidForm user={{ name: 'jared' }} />);
+      expect(tree.find(Form).props().dirty).toBe(false);
+      expect(tree.find(Form).props().isValid).toBe(true);
+    });
+
+    it('should compute isValid if isInitialValid is present and set to false', () => {
+      const InvalidForm = FormFactory({ isInitialValid: false });
+      const tree = shallow(<InvalidForm user={{ name: 'jared' }} />);
+      expect(tree.find(Form).props().dirty).toBe(false);
+      expect(tree.find(Form).props().isValid).toBe(false);
+    });
+
+    it('should compute isValid if the form is dirty and there are errors', () => {
+      const ValidForm = FormFactory();
+      const tree = shallow(<ValidForm user={{ name: 'jared' }} />);
+      tree.setState({ touched: { name: true }, errors: { name: 'Required!' } });
+      expect(tree.find(Form).props().dirty).toBe(true);
+      expect(tree.find(Form).props().isValid).toBe(false);
+    });
+
+    it('should compute isValid if the form is dirty and there are not errors', () => {
+      const ValidForm = FormFactory();
+      const tree = shallow(<ValidForm user={{ name: 'jared' }} />);
+      tree.setState({ touched: { name: true } });
+      expect(tree.find(Form).props().dirty).toBe(true);
+      expect(tree.find(Form).props().isValid).toBe(true);
     });
   });
 });

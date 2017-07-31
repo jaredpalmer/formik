@@ -29,7 +29,8 @@ You can also try before you buy with this **[demo of Formik on CodeSandbox.io](h
 - [Basic](https://codesandbox.io/s/zKrK5YLDZ)
 - [Sync Validation](https://codesandbox.io/s/q8yRqQMp)
 - [Building your own input primitives](https://codesandbox.io/s/qJR4ykJk)
-- [Working with 3rd party input components](https://codesandbox.io/s/jRzE53pqR)
+- [Working with 3rd-party inputs #1: react-select](https://codesandbox.io/s/jRzE53pqR)
+- [Working with 3rd-party inputs #2: Draft.js](https://codesandbox.io/s/QW1rqjBLl)
 - [Accessing React lifecycle functions](https://codesandbox.io/s/pgD4DLypy)
 
 ---
@@ -46,11 +47,12 @@ You can also try before you buy with this **[demo of Formik on CodeSandbox.io](h
       - [`displayName?: string`](#displayname-string)
       - [`handleSubmit: (values: Values, formikBag: FormikBag) => void`](#handlesubmit-values-values-formikbag-formikbag--void)
         - [The "FormikBag":](#the-formikbag)
+      - [`isInitialValid?: boolean | (props: Props) => boolean`](#isinitialvalid-boolean--props-props--boolean)
       - [`mapPropsToValues?: (props: Props) => Values`](#mappropstovalues-props-props--values)
       - [`validate?: (values: Values, props: Props) => FormikError<Values> | Promise<any>`](#validate-values-values-props-props--formikerrorvalues--promiseany)
       - [`validateOnBlur?: boolean`](#validateonblur-boolean)
       - [`validateOnChange?: boolean`](#validateonchange-boolean)
-      - [`validationSchema?: Schema`](#validationschema-schema)
+      - [`validationSchema?: Schema | ((props: Props) => Schema)`](#validationschema-schema--props-props--schema)
     - [Injected props and methods](#injected-props-and-methods)
       - [`dirty: boolean`](#dirty-boolean)
       - [`errors: { [field: string]: string }`](#errors--field-string-string-)
@@ -59,6 +61,7 @@ You can also try before you buy with this **[demo of Formik on CodeSandbox.io](h
       - [`handleReset: () => void`](#handlereset---void)
       - [`handleSubmit: (e: React.FormEvent<HTMLFormEvent>) => void`](#handlesubmit-e-reactformeventhtmlformevent--void)
       - [`isSubmitting: boolean`](#issubmitting-boolean)
+      - [`isValid: boolean`](#isvalid-boolean)
       - [`resetForm: (nextProps?: Props) => void`](#resetform-nextprops-props--void)
       - [`setErrors: (fields: { [field: string]: string }) => void`](#seterrors-fields--field-string-string---void)
       - [`setFieldError: (field: string, errorMsg: string) => void`](#setfielderror-field-string-errormsg-string--void)
@@ -78,6 +81,10 @@ You can also try before you buy with this **[demo of Formik on CodeSandbox.io](h
   - [React Native](#react-native)
     - [Why use `setFieldValue` instead of `handleChange`?](#why-use-setfieldvalue-instead-of-handlechange)
     - [Avoiding a Render Callback](#avoiding-a-render-callback)
+  - [Testing Formik](#testing-formik)
+    - [Dummy Form](#dummy-form)
+    - [Simulating input](#simulating-input)
+    - [Simulating form submission](#simulating-form-submission)
 - [Authors](#authors)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -255,6 +262,10 @@ Your form submission handler. It is passed your forms [`values`] and the "Formik
 
 Note: [`errors`], [`touched`], [`status`] and all event handlers are NOT included in the `FormikBag`.
 
+##### `isInitialValid?: boolean | (props: Props) => boolean`
+
+Default is `false`. Control the initial value of [`isValid`] prop prior to mount. You can also pass a function. Useful for situations when you want to enable/disable a submit and reset buttons on initial mount.
+
 ##### `mapPropsToValues?: (props: Props) => Values`
 
 If this option is specified, then Formik will transfer its results into updatable form state and make these values available to the new component as [`props.values`][`values`]. If `mapPropsToValues` is not specified, then Formik will map all props that are not functions to the inner component's [`props.values`][`values`]. That is, if you omit it, Formik will only pass `props` where `typeof props[k] !== 'function'`, where `k` is some key. 
@@ -313,9 +324,9 @@ Default is `true`. Use this option to run validations on `blur` events. More spe
 
 Default is `false`. Use this option to tell Formik to run validations on `change` events and `change`-related methods. More specifically, when either [`handleChange`], [`setFieldValue`], or [`setValues`] are called.
 
-##### `validationSchema?: Schema`
+##### `validationSchema?: Schema | ((props: Props) => Schema)`
 
-[A Yup schema](https://github.com/jquense/yup). This is used for validation. Errors are mapped by key to the inner component's [`errors`][`errors`]. Its keys should match those of [`values`]. 
+[A Yup schema](https://github.com/jquense/yup) or a function that returns a Yup schema. This is used for validation. Errors are mapped by key to the inner component's [`errors`]. Its keys should match those of [`values`]. 
 
 #### Injected props and methods
 
@@ -352,6 +363,10 @@ Submit handler. This should be passed to `<form onSubmit={handleSubmit}>...</for
 
 ##### `isSubmitting: boolean`
 Submitting state. Either `true` or `false`. Formik will set this to `true` on your behalf before calling [`handleSubmit`] to reduce boilerplate.
+
+##### `isValid: boolean` 
+
+Returns `true` if the there are no [`errors`], or the result of [`isInitialValid`] the form if is in "pristine" condition (i.e. not [`dirty`])).
 
 ##### `resetForm: (nextProps?: Props) => void`
 Imperatively reset the form. This will clear [`errors`] and [`touched`], set [`isSubmitting`] to `false` and rerun `mapPropsToValues` with the current `WrappedComponent`'s `props` or what's passed as an argument. That latter is useful for calling `resetForm` within `componentWillReceiveProps`.
@@ -656,7 +671,170 @@ export const MyReactNativeForm: React.SFC<InjectedFormikProps<Props, Values>> = 
 export default Formik<Props, Values>({ ... })(MyReactNativeForm)
 ```
 
+### Testing Formik
 
+_This section is a work in progress._
+
+The suggested approach to testing Formik forms is with Airbnb's [Enzyme](https://github.com/airbnb/enzyme) test utility library.
+
+The documentation and examples in this guide use Facebook's [Jest](https://facebook.github.io/jest) test runner. However, feel free to use [mocha](https://mochajs.org/) and [chai](http://chaijs.com/) if you prefer that.
+
+To get started with Enzyme, you can simply install it with npm:
+
+```bash
+npm i  enzyme --save-dev
+```
+
+If you are using React >=15.5, in addition to enzyme, you will have to ensure that you also have the following npm modules installed if they were not already:
+
+```bash
+npm i react-test-renderer react-dom  --save-dev
+```
+
+####  Dummy Form
+Imagine we have a basic form with one field `name`.
+
+```js
+// MyForm.js
+import { Formik, yupToFormError } from 'formik'
+import Yup from 'yup'
+
+export const validationSchema = Yup.object().shape({
+	name: Yup
+		.string()
+		.min(2, 'Must be longer than 2 characters')
+		.max(30, 'No one\'s name is that long')
+		.required('Required')
+})
+
+export const handleSubmit(values, { setSubmitting }) => {
+	 setTimeout(() => {
+      setSubmitting(false)
+    }, 1000)
+}
+
+export const mapPropsToValues =  props => ({ name: '' })
+
+
+export const MyFormInner = ({
+  values,
+  handleSubmit,
+  handleChange,
+  handleBlur,
+  setStatus,
+  status,
+  errors,
+  isSubmitting,
+}) => {
+  return (
+    <form onSubmit={handleSubmit}>
+      <input
+        type="text"
+        onChange={handleChange}
+        onBlur={handleBlur}
+        value={values.name}
+        name="name"
+      />
+      {errors.name &&
+        <div id="feedback">
+          {errors.name}
+        </div>}
+      {isSubmitting && <div id="submitting">Submitting</div>}
+      {status &&
+        !!status.myStatusMessage &&
+        <div id="status">
+          {status.myStatusMessage}
+        </div>}
+      <button type="submit">Submit</button>
+    </form>
+  );
+};
+
+export default Formik({
+  mapPropsToValues,
+  validationSchema,
+  handleSubmit
+})(MyFormInner)
+```
+
+#### Simulating input
+
+We can test that our UI is updating properly by using Enzyme's `shallow` renderer in addition to its `dive()` and `simulate()` methods. This lets us render the Formik-enhanced form, but then jump down and run simulations and assertions from the perspective of your inner form. 
+
+```js
+// MyForm.test.js
+import MyForm, { MyInnerForm } from './MyForm'
+
+describe('MyForm', () => {
+  test('should update an input when it is changed', () => {
+    const tree = shallow(<MyForm />);
+
+    tree.find(MyInnerForm).dive().find('input').simulate('change', {
+      // you must add this next line as (Formik calls e.persist() internally)
+      persist: () => {},
+      // simulate changing e.target.name and e.target.value
+      target: {
+        name: 'name',
+        value: 'ian',
+      },
+    });
+
+    const newValue = tree.find(MyInnerForm).dive().find('input').props().value;
+
+    expect(newValue).toEqual('ian');
+  });
+});
+
+```
+
+#### Simulating form submission
+
+```js
+// MyForm.test.js
+import MyForm, { MyInnerForm, validationSchema } from './MyForm'
+
+describe('MyForm', () => {
+	
+	test('submits the form', () => {
+	   const tree = shallow(<MyForm />)
+	   expect(tree.find(MyInnerForm).dive().find('#submitting')).toHaveLength(0);      
+	    
+		// simulate submit event. this is always sync! async calls to setState are swallowed. 
+		// be careful of false positives
+		tree.find(MyInnerForm).dive().find('form').simulate('submit', {
+		  preventDefault: () => {} // no op 
+		});
+		
+    // Because the simulated event is 100% sync, we can use it to test the synchronous changes
+    // here. Any async stuff you do inside handleSubmit will be swallowed. Thus our UI
+    // will see the following changes:
+    // - isSubmitting -> true (even if you set it to false asynchronously in your handleSubmit)
+    // - touched: all fields
+		expect(tree.find(Form).dive().find('#submitting')).toHaveLength(1);
+		expect(tree.find(Form).dive().find('button[type="submit"]').props().disabled).toBe(true)
+	})
+	
+	test('what happens when the form is submitted', async () => {
+	   const tree = shallow(<MyForm />)
+	   
+	   expect(tree.find(MyInnerForm).dive().find('#submitting')).toHaveLength(0);      
+	   
+	   await mockCallsToMyApi()
+	   await tree.find(MyInnerForm).props().submitForm()
+		
+		// check that ui has completely updated
+		expect(tree.find(MyInnerForm).update().dive().find('#submitting')).toHaveLength(0);
+		expect(tree.find(MyInnerForm).update().dive().find('#status').text).toEqual('Success!')
+		expect(tree.find(MyInnerForm).update().dive().find('button[type="submit"]').props().disabled).toBe(false)
+		
+		// check that props have updated
+		expect(tree.find(MyInnerForm).props().status).toEqual({ myStatusMessage: 'Success!' })
+		expect(tree.find(MyInnerForm).props().errors).toEqual({})
+		expect(tree.find(MyInnerForm).props().touched).toEqual({ name: true }) // submit will touch all fields
+	})
+
+})
+```
 
 ## Authors
 
@@ -669,11 +847,12 @@ MIT License.
 [`displayName`]: #displayname-string
 [`handleSubmit`]: #handlesubmit-payload-formikbag--void
 [`FormikBag`]: #the-formikbag
+[`isInitialValid`]: #isinitialvalid-boolean--props-props--boolean
 [`mapPropsToValues`]: #mappropstovalues-props--props
 [`validate`]: #validate-values-values-props-props--formikerrorvalues--promiseany
 [`validateOnBlur`]: #validateonblur-boolean
 [`validateOnChange`]: #validateonchange-boolean
-[`validationSchema`]: #validationschema-schema
+[`validationSchema`]: #validationschema-schema--props-props--schema
   
 [Injected props and methods]: #injected-props-and-methods
 
@@ -684,6 +863,7 @@ MIT License.
 [`handleReset`]: #handlereset---void
 [`handleSubmit`]: #handlesubmit-e-reactformeventhtmlformevent--void
 [`isSubmitting`]: #issubmitting-boolean
+[`isValid`]: #isvalid-boolean
 [`resetForm`]: #resetform-nextprops-props--void
 [`setErrors`]: #seterrors-fields--field-string-string---void
 [`setFieldError`]: #setfielderror-field-string-errormsg-string--void

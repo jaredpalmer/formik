@@ -51,7 +51,7 @@ export interface FormikConfig<
     props: Props
   ) => void | FormikErrors<Values> | Promise<any>;
   /** A Yup Schema */
-  validationSchema?: any;
+  validationSchema?: ((props: Props) => any) | any;
   /** Submission handler */
   handleSubmit: (
     values: Values | DeprecatedPayload,
@@ -262,7 +262,10 @@ export function Formik<Props, Values extends FormikValues, Payload = Values>({
        * Run validation against a Yup schema and optionally run a function if successful
        */
       runValidationSchema = (values: Values, onSuccess?: Function) => {
-        validateYupSchema<Values>(values, validationSchema).then(
+        const schema = isFunction(validationSchema)
+          ? validationSchema(this.props)
+          : validationSchema;
+        validateYupSchema<Values>(values, schema).then(
           () => {
             this.setState({ errors: {} });
             if (onSuccess) {

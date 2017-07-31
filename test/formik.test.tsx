@@ -375,6 +375,32 @@ describe('Formik', () => {
           expect(handleSubmit).not.toHaveBeenCalled();
         });
       });
+
+      describe('with validationSchema (ASYNC)', () => {
+        it('should run validationSchema if present', () => {
+          const validate = jest.fn(() => Promise.resolve({}));
+          const ValidateForm = FormFactory({ validationSchema: { validate } });
+          const tree = shallow(<ValidateForm user={{ name: 'jared' }} />);
+          tree.find(Form).dive().find('form').simulate('submit', {
+            preventDefault: noop,
+          });
+          expect(validate).toHaveBeenCalled();
+        });
+
+        it('should call validationSchema if it is a function and present', () => {
+          const validate = jest.fn(() => Promise.resolve({}));
+          const ValidateForm = FormFactory({
+            validationSchema: () => ({
+              validate,
+            }),
+          });
+          const tree = shallow(<ValidateForm user={{ name: 'jared' }} />);
+          tree.find(Form).dive().find('form').simulate('submit', {
+            preventDefault: noop,
+          });
+          expect(validate).toHaveBeenCalled();
+        });
+      });
     });
   });
 

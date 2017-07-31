@@ -110,6 +110,23 @@ describe('Formik', () => {
     expect(tree.find(Form).props().isValid).toBe(false);
   });
 
+  it('should compute isValid if the form is dirty and there are errors', () => {
+    const ValidForm = FormFactory({ isInitialValid: false });
+    const tree = shallow(<ValidForm user={{ name: 'jared' }} />);
+    tree.find(Form).props().setFieldError('name', 'Required');
+    tree.find(Form).props().setFieldTouched('name', true);
+    expect(tree.find(Form).props().dirty).toBe(true);
+    expect(tree.find(Form).props().isValid).toBe(false);
+  });
+
+  it('should compute isValid if the form is dirty and there are not errors', () => {
+    const ValidForm = FormFactory();
+    const tree = shallow(<ValidForm user={{ name: 'jared' }} />);
+    tree.find(Form).props().setFieldTouched('name', true);
+    expect(tree.find(Form).props().dirty).toBe(true);
+    expect(tree.find(Form).props().isValid).toBe(true);
+  });
+
   describe('FormikHandlers', () => {
     describe('handleChange', () => {
       it('sets values state', async () => {

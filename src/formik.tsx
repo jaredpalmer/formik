@@ -302,9 +302,11 @@ export function Formik<Props, Values extends FormikValues, Payload = Values>({
 
       handleChange = (e: React.ChangeEvent<any>) => {
         if (isReactNative) {
-          console.error(
-            `Warning: Formik's handleChange does not work with React Native. Use setFieldValue and within a callback instead. For more info see https://github.com/jaredpalmer/formikhttps://github.com/jaredpalmer/formik#react-native`
-          );
+          if (process.env.NODE_ENV !== 'production') {
+            console.error(
+              `Warning: Formik's handleChange does not work with React Native. Use setFieldValue and within a callback instead. For more info see https://github.com/jaredpalmer/formikhttps://github.com/jaredpalmer/formik#react-native`
+            );
+          }
           return;
         }
         e.persist();
@@ -455,9 +457,11 @@ Formik cannot determine which value to update. For more info see https://github.
 
       handleBlur = (e: any) => {
         if (isReactNative) {
-          console.error(
-            `Warning: Formik's handleBlur does not work with React Native. Use setFieldTouched(field, isTouched) within a callback instead. For more info see https://github.com/jaredpalmer/formik#setfieldtouched-field-string-istouched-boolean--void`
-          );
+          if (process.env.NODE_ENV !== 'production') {
+            console.error(
+              `Warning: Formik's handleBlur does not work with React Native. Use setFieldTouched(field, isTouched) within a callback instead. For more info see https://github.com/jaredpalmer/formik#setfieldtouched-field-string-istouched-boolean--void`
+            );
+          }
           return;
         }
         e.persist();

@@ -532,7 +532,8 @@ Formik cannot determine which value to update. For more info see https://github.
             dirty={dirty}
             isValid={
               dirty
-                ? this.state.errors && Object.keys(this.state.errors).length > 0
+                ? this.state.errors &&
+                  Object.keys(this.state.errors).length === 0
                 : isInitialValid !== false && isFunction(isInitialValid)
                   ? (isInitialValid as (props: Props) => boolean)(this.props)
                   : isInitialValid as boolean

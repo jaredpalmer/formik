@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { isPromise, isReactNative, values } from './utils';
+import { isFunction, isPromise, isReactNative, values } from './utils';
 
 import { hoistNonReactStatics } from './hoistStatics';
 
@@ -61,6 +61,8 @@ export interface FormikConfig<
   validateOnChange?: boolean;
   /** Tells Formik to validate the form on each input's onBlur event */
   validateOnBlur?: boolean;
+  /** Tell Formik if initial form values are valid or not on first render */
+  isInitialValid?: boolean | ((props: Props) => boolean | undefined);
 }
 
 /**
@@ -90,6 +92,8 @@ export interface FormikState<Values> {
 export interface FormikComputedProps {
   /** True if any input has been touched. False otherwise. */
   readonly dirty: boolean;
+  /** Result of isInitiallyValid on mount, then whether true values pass validation. */
+  readonly isValid: boolean;
 }
 
 /**
@@ -187,6 +191,7 @@ export function Formik<Props, Values extends FormikValues, Payload = Values>({
   handleSubmit,
   validateOnChange = false,
   validateOnBlur = true,
+  isInitialValid = false,
 }: FormikConfig<Props, Values, Payload>): ComponentDecorator<
   Props,
   InjectedFormikProps<Props, Values>
@@ -515,12 +520,19 @@ Formik cannot determine which value to update. For more info see https://github.
       };
 
       render() {
+        const dirty =
+          values<boolean>(this.state.touched).filter(Boolean).length > 0;
         return (
           <WrappedComponent
             {...this.props}
             {...this.state}
-            dirty={
-              values<boolean>(this.state.touched).filter(Boolean).length > 0
+            dirty={dirty}
+            isValid={
+              dirty
+                ? this.state.errors && Object.keys(this.state.errors).length > 0
+                : isInitialValid !== false && isFunction(isInitialValid)
+                  ? (isInitialValid as (props: Props) => boolean)(this.props)
+                  : isInitialValid as boolean
             }
             setStatus={this.setStatus}
             setError={this.setError}

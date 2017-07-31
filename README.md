@@ -46,6 +46,7 @@ You can also try before you buy with this **[demo of Formik on CodeSandbox.io](h
       - [`displayName?: string`](#displayname-string)
       - [`handleSubmit: (values: Values, formikBag: FormikBag) => void`](#handlesubmit-values-values-formikbag-formikbag--void)
         - [The "FormikBag":](#the-formikbag)
+      - [`isInitialValid?: boolean | (props: Props) => boolean`](#isinitialvalid-boolean--props-props--boolean)
       - [`mapPropsToValues?: (props: Props) => Values`](#mappropstovalues-props-props--values)
       - [`validate?: (values: Values, props: Props) => FormikError<Values> | Promise<any>`](#validate-values-values-props-props--formikerrorvalues--promiseany)
       - [`validateOnBlur?: boolean`](#validateonblur-boolean)
@@ -59,6 +60,7 @@ You can also try before you buy with this **[demo of Formik on CodeSandbox.io](h
       - [`handleReset: () => void`](#handlereset---void)
       - [`handleSubmit: (e: React.FormEvent<HTMLFormEvent>) => void`](#handlesubmit-e-reactformeventhtmlformevent--void)
       - [`isSubmitting: boolean`](#issubmitting-boolean)
+      - [`isValid: boolean`](#isvalid-boolean)
       - [`resetForm: (nextProps?: Props) => void`](#resetform-nextprops-props--void)
       - [`setErrors: (fields: { [field: string]: string }) => void`](#seterrors-fields--field-string-string---void)
       - [`setFieldError: (field: string, errorMsg: string) => void`](#setfielderror-field-string-errormsg-string--void)
@@ -255,6 +257,10 @@ Your form submission handler. It is passed your forms [`values`] and the "Formik
 
 Note: [`errors`], [`touched`], [`status`] and all event handlers are NOT included in the `FormikBag`.
 
+##### `isInitialValid?: boolean | (props: Props) => boolean`
+
+Default is `false`. Control the initial value of [`isValid`] prop prior to mount. You can also pass a function. Useful for situations when you want to enable/disable a submit and reset buttons on initial mount.
+
 ##### `mapPropsToValues?: (props: Props) => Values`
 
 If this option is specified, then Formik will transfer its results into updatable form state and make these values available to the new component as [`props.values`][`values`]. If `mapPropsToValues` is not specified, then Formik will map all props that are not functions to the inner component's [`props.values`][`values`]. That is, if you omit it, Formik will only pass `props` where `typeof props[k] !== 'function'`, where `k` is some key. 
@@ -352,6 +358,10 @@ Submit handler. This should be passed to `<form onSubmit={handleSubmit}>...</for
 
 ##### `isSubmitting: boolean`
 Submitting state. Either `true` or `false`. Formik will set this to `true` on your behalf before calling [`handleSubmit`] to reduce boilerplate.
+
+##### `isValid: boolean` 
+
+Returns `true` if the there are no [`errors`], or the result of [`isInitialValid`] the form if is in "pristine" condition (i.e. not [`dirty`])).
 
 ##### `resetForm: (nextProps?: Props) => void`
 Imperatively reset the form. This will clear [`errors`] and [`touched`], set [`isSubmitting`] to `false` and rerun `mapPropsToValues` with the current `WrappedComponent`'s `props` or what's passed as an argument. That latter is useful for calling `resetForm` within `componentWillReceiveProps`.
@@ -669,6 +679,7 @@ MIT License.
 [`displayName`]: #displayname-string
 [`handleSubmit`]: #handlesubmit-payload-formikbag--void
 [`FormikBag`]: #the-formikbag
+[`isInitialValid`]: #isinitialvalid-boolean--props-props--boolean
 [`mapPropsToValues`]: #mappropstovalues-props--props
 [`validate`]: #validate-values-values-props-props--formikerrorvalues--promiseany
 [`validateOnBlur`]: #validateonblur-boolean
@@ -684,6 +695,7 @@ MIT License.
 [`handleReset`]: #handlereset---void
 [`handleSubmit`]: #handlesubmit-e-reactformeventhtmlformevent--void
 [`isSubmitting`]: #issubmitting-boolean
+[`isValid`]: #isvalid-boolean
 [`resetForm`]: #resetform-nextprops-props--void
 [`setErrors`]: #seterrors-fields--field-string-string---void
 [`setFieldError`]: #setfielderror-field-string-errormsg-string--void

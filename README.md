@@ -51,7 +51,7 @@ You can also try before you buy with this **[demo of Formik on CodeSandbox.io](h
       - [`validate?: (values: Values, props: Props) => FormikError<Values> | Promise<any>`](#validate-values-values-props-props--formikerrorvalues--promiseany)
       - [`validateOnBlur?: boolean`](#validateonblur-boolean)
       - [`validateOnChange?: boolean`](#validateonchange-boolean)
-      - [`validationSchema?: Schema`](#validationschema-schema)
+      - [`validationSchema?: Schema | ((props: Props) => Schema)`](#validationschema-schema--props-props--schema)
     - [Injected props and methods](#injected-props-and-methods)
       - [`dirty: boolean`](#dirty-boolean)
       - [`errors: { [field: string]: string }`](#errors--field-string-string-)
@@ -323,9 +323,9 @@ Default is `true`. Use this option to run validations on `blur` events. More spe
 
 Default is `false`. Use this option to tell Formik to run validations on `change` events and `change`-related methods. More specifically, when either [`handleChange`], [`setFieldValue`], or [`setValues`] are called.
 
-##### `validationSchema?: Schema`
+##### `validationSchema?: Schema | ((props: Props) => Schema)`
 
-[A Yup schema](https://github.com/jquense/yup). This is used for validation. Errors are mapped by key to the inner component's [`errors`][`errors`]. Its keys should match those of [`values`]. 
+[A Yup schema](https://github.com/jquense/yup) or a function that returns a Yup schema. This is used for validation. Errors are mapped by key to the inner component's [`errors`]. Its keys should match those of [`values`]. 
 
 #### Injected props and methods
 
@@ -851,7 +851,7 @@ MIT License.
 [`validate`]: #validate-values-values-props-props--formikerrorvalues--promiseany
 [`validateOnBlur`]: #validateonblur-boolean
 [`validateOnChange`]: #validateonchange-boolean
-[`validationSchema`]: #validationschema-schema
+[`validationSchema`]: #validationschema-schema--props-props--schema
   
 [Injected props and methods]: #injected-props-and-methods
 

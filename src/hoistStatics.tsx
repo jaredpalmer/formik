@@ -11,7 +11,7 @@ const REACT_STATICS: any = {
   type: true,
 };
 
-var KNOWN_STATICS: any = {
+const KNOWN_STATICS: any = {
   name: true,
   length: true,
   prototype: true,

@@ -1,0 +1,9 @@
+language: node_js
+cache:
+  yarn: false
+node_js:
+  - '8'
+before_script:
+  - yarn cache clean
+script:
+  - yarn build && yarn test -- --runInBand --no-cache --coverage

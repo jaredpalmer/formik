@@ -33,20 +33,26 @@ You can also try before you buy with this **[demo of Formik on CodeSandbox.io](h
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**
 
-- [Basics](#basics)
+- [`<Formik />`](#formik-)
+  - [Formik Render Methods](#formik-render-methods)
+    - [Formik props](#formik-props)
+    - [`component`](#component)
+    - [`render: (props: FormComponentProps<Values>) => ReactNode`](#render-props-formcomponentpropsvalues--reactnode)
+    - [`children: func`](#children-func)
 - [`<Field />`](#field-)
-- [Formik Render Methods](#formik-render-methods)
-  - [Formik props](#formik-props)
-  - [`component`](#component)
-  - [`render: (props: FormComponentProps<Values>) => ReactNode`](#render-props-formcomponentpropsvalues--reactnode)
-  - [`children: func`](#children-func)
-  - [FormikFactory (working title)](#formikfactory-working-title)
+- [`FormikFactory(options)`](#formikfactoryoptions)
 - [Authors](#authors)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 
-## Basics
+## `<Formik />`
+
+Formik is now a component that uses render props!
+
+API change from master: `mapValuesToProps` doesn't exist. Just pass an object to `getInitialValues` instead. 
+
+Aside from that, `<Formik />` = `Formik()` except with a lot less ceremony...
 
 ```tsx
 import { Formik } from 'formik/next'
@@ -135,6 +141,116 @@ const ContactForm: React.SFC<FormComponentProps<Values>> = ({
 }
 ```
 
+### Formik Render Methods
+
+There are now three ways to render things with Formik
+
+- `<Formik component>`
+- `<Formik render>`
+- `<Formik children>`
+
+#### Formik props
+
+All three render methods will be passed the same three route props:
+
+- dirty
+- errors
+- handleBlur
+- handleChange
+- handleReset
+- handleSubmit
+- isSubmitting
+- isValid
+- resetForm
+- setErrors
+- setFieldError
+- setFieldTouched
+- setFieldValue
+- setStatus
+- setSubmitting
+- setTouched
+- setValues
+- status
+- touched
+- values
+
+#### `component`
+
+```tsx
+<Formik component={ContactForm} />
+
+const ContactForm = ({ handleSubmit, handleChange, handleBlur, values, errors }) => {
+  return
+    <form onSubmit={props.handleSubmit}>
+      <input
+        type="text"
+        onChange={props.handleChange}
+        onBlur={props.handleBlur}
+        value={props.values.name}
+        name="name"
+      />
+      {props.errors.name &&
+        <div>
+          {props.errors.name}
+        </div>}
+      <button type="submit">Submit</button>
+  </form>
+}
+```
+Warning: <Route component> takes precendence over <Route render> so don’t use both in the same <Route>.
+
+#### `render: (props: FormComponentProps<Values>) => ReactNode`
+
+```tsx
+<Formik render={props => <ContactForm {...props} />}/>
+
+<Formik 
+  render={({ handleSubmit, handleChange, handleBlur, values, errors }) => ( 
+    <form onSubmit={props.handleSubmit}>
+      <input
+        type="text"
+        onChange={props.handleChange}
+        onBlur={props.handleBlur}
+        value={props.values.name}
+        name="name"
+      />
+      {props.errors.name &&
+        <div>
+          {props.errors.name}
+        </div>}
+      <button type="submit">Submit</button>
+    </form>
+  )} 
+/>
+```
+
+#### `children: func`
+
+```tsx
+<Formik children={props => <ContactForm {...props} />}/>
+
+// or...
+
+<Formik>
+  {({ handleSubmit, handleChange, handleBlur, values, errors }) => ( 
+    <form onSubmit={props.handleSubmit}>
+      <input
+        type="text"
+        onChange={props.handleChange}
+        onBlur={props.handleBlur}
+        value={props.values.name}
+        name="name"
+      />
+      {props.errors.name &&
+        <div>
+          {props.errors.name}
+        </div>}
+      <button type="submit">Submit</button>
+    </form>
+  )} 
+</Formik>
+```
+
 ## `<Field />`
 
 **(Much Experimental. Very magic )**
@@ -197,117 +313,8 @@ const CustomInputComponent: React.SFC<FormComponentProps<Values> & CustomInputPr
 )
 ```
 
-## Formik Render Methods
 
-There are now three ways to render things with Formik
-
-- `<Formik component>`
-- `<Formik render>`
-- `<Formik children>`
-
-### Formik props
-
-All three render methods will be passed the same three route props:
-
-- dirty
-- errors
-- handleBlur
-- handleChange
-- handleReset
-- handleSubmit
-- isSubmitting
-- isValid
-- resetForm
-- setErrors
-- setFieldError
-- setFieldTouched
-- setFieldValue
-- setStatus
-- setSubmitting
-- setTouched
-- setValues
-- status
-- touched
-- values
-
-### `component`
-
-```tsx
-<Formik component={ContactForm} />
-
-const ContactForm = ({ handleSubmit, handleChange, handleBlur, values, errors }) => {
-  return
-    <form onSubmit={props.handleSubmit}>
-      <input
-        type="text"
-        onChange={props.handleChange}
-        onBlur={props.handleBlur}
-        value={props.values.name}
-        name="name"
-      />
-      {props.errors.name &&
-        <div>
-          {props.errors.name}
-        </div>}
-      <button type="submit">Submit</button>
-  </form>
-}
-```
-Warning: <Route component> takes precendence over <Route render> so don’t use both in the same <Route>.
-
-### `render: (props: FormComponentProps<Values>) => ReactNode`
-
-```tsx
-<Formik render={props => <ContactForm {...props} />}/>
-
-<Formik 
-  render={({ handleSubmit, handleChange, handleBlur, values, errors }) => ( 
-    <form onSubmit={props.handleSubmit}>
-      <input
-        type="text"
-        onChange={props.handleChange}
-        onBlur={props.handleBlur}
-        value={props.values.name}
-        name="name"
-      />
-      {props.errors.name &&
-        <div>
-          {props.errors.name}
-        </div>}
-      <button type="submit">Submit</button>
-    </form>
-  )} 
-/>
-```
-
-### `children: func`
-
-```tsx
-<Formik children={props => <ContactForm {...props} />}/>
-
-// or...
-
-<Formik>
-  {({ handleSubmit, handleChange, handleBlur, values, errors }) => ( 
-    <form onSubmit={props.handleSubmit}>
-      <input
-        type="text"
-        onChange={props.handleChange}
-        onBlur={props.handleBlur}
-        value={props.values.name}
-        name="name"
-      />
-      {props.errors.name &&
-        <div>
-          {props.errors.name}
-        </div>}
-      <button type="submit">Submit</button>
-    </form>
-  )} 
-</Formik>
-```
-
-### FormikFactory (working title)
+## `FormikFactory(options)`
 
 **not implemented yet**
 
@@ -326,6 +333,8 @@ const Form = props => (
 
 export default withFormik(Form)
 ```
+
+
 
 
 ## Authors

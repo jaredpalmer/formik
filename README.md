@@ -197,7 +197,7 @@ const ContactForm = ({ handleSubmit, handleChange, handleBlur, values, errors })
   </form>
 }
 ```
-Warning: <Route component> takes precendence over <Route render> so don’t use both in the same <Route>.
+**Warning:** `<Formik component>` takes precendence over `<Formik render>` so don’t use both in the same `<Formik>`.
 
 #### `render: (props: FormComponentProps<Values>) => ReactNode`
 

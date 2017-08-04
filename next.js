@@ -1,1 +1,1 @@
-module.exports = './dist/next';
+module.exports = require('./dist/next');

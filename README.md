@@ -29,6 +29,23 @@ Note: Yup is 100% optional. You are free to [write your own validators][`validat
 
 You can also try before you buy with this **[demo of Formik on CodeSandbox.io](https://codesandbox.io/s/zKrK5YLDZ)**
 
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**
+
+- [Basics](#basics)
+- [`<Field />`](#field-)
+- [Formik Render Methods](#formik-render-methods)
+  - [Formik props](#formik-props)
+  - [`component`](#component)
+  - [`render: (props: FormComponentProps<Values>) => ReactNode`](#render-props-formcomponentpropsvalues--reactnode)
+  - [`children: func`](#children-func)
+  - [FormikFactory (working title)](#formikfactory-working-title)
+- [Authors](#authors)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+
 ## Basics
 
 ```tsx

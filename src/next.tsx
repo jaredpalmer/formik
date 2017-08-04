@@ -525,22 +525,21 @@ Formik cannot determine which value to update. For more info see https://github.
 }
 
 export const Field: React.SFC<any> = (
-  { component, name, ...props },
+  { component = 'input', name, ...props },
   context
 ) => {
-  if (component) {
-    return React.createElement(component as string, {
-      ...props,
-      name,
-      ...context.formik,
-    });
-  }
-  return React.createElement('input', {
+  const bag =
+    typeof component === 'string'
+      ? {
+          value: context.formik.values[name],
+          onChange: context.formik.handleChange,
+          onBlur: context.formik.handleBlur,
+        }
+      : context.formik;
+  return React.createElement(component, {
     ...props,
     name,
-    value: context.formik.values[name],
-    onChange: context.formik.handleChange,
-    onBlur: context.formik.handleBlur,
+    ...bag,
   });
 };
 

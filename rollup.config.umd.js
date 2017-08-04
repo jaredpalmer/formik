@@ -4,21 +4,20 @@ import resolve from 'rollup-plugin-node-resolve';
 import sourceMaps from 'rollup-plugin-sourcemaps';
 import uglify from 'rollup-plugin-uglify';
 
-const pkg = require('./package.json');
-const camelCase = require('lodash.camelcase');
-
-const libraryName = 'formik';
-
 export default {
-  entry: `compiled/${libraryName}.js`,
+  entry: `compiled/formik.js`,
   moduleName: 'Formik',
   format: 'umd',
-  dest: process.env.NODE_ENV === 'production' ? './dist/formik.umd.min.js' : './dist/formik.umd.js',
+  dest:
+    process.env.NODE_ENV === 'production'
+      ? './dist/formik.umd.min.js'
+      : './dist/formik.umd.js',
   sourceMap: true,
   // Indicate here external modules you don't wanna include in your bundle (i.e.: 'lodash')
-  external: ['react'],
+  external: ['react', 'prop-types'],
   globals: {
     react: 'React',
+    'prop-types': 'PropTypes',
   },
   exports: 'named',
   plugins: [
@@ -28,7 +27,9 @@ export default {
     resolve(),
     replace({
       exclude: 'node_modules/**',
-      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
+      'process.env.NODE_ENV': JSON.stringify(
+        process.env.NODE_ENV || 'development'
+      ),
     }),
     // Resolve source maps to the original source
     sourceMaps(),

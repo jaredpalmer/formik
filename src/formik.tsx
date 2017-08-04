@@ -174,16 +174,16 @@ export interface InferableComponentDecorator<TOwnProps> {
 export function Formik<Props, Values extends FormikValues, Payload = Values>({
   displayName,
   mapPropsToValues = vanillaProps => {
-    let values: Values = {} as Values;
+    let val: Values = {} as Values;
     for (let k in vanillaProps) {
       if (
         vanillaProps.hasOwnProperty(k) &&
         typeof vanillaProps[k] !== 'function'
       ) {
-        values[k] = vanillaProps[k];
+        val[k] = vanillaProps[k];
       }
     }
-    return values;
+    return val;
   },
   mapValuesToPayload,
   validate,

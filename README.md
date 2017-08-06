@@ -697,25 +697,23 @@ Imagine we have a basic form with one field `name`.
 
 ```js
 // MyForm.js
-import { Formik, yupToFormError } from 'formik'
-import Yup from 'yup'
+import { Formik } from 'formik';
+import Yup from 'yup';
 
 export const validationSchema = Yup.object().shape({
-	name: Yup
-		.string()
-		.min(2, 'Must be longer than 2 characters')
-		.max(30, 'No one\'s name is that long')
-		.required('Required')
-})
+  name: Yup.string()
+    .min(2, 'Must be longer than 2 characters')
+    .max(30, "No one's name is that long")
+    .required('Required')
+});
 
-export const handleSubmit(values, { setSubmitting }) => {
-	 setTimeout(() => {
-      setSubmitting(false)
-    }, 1000)
-}
+export const handleSubmit = (values, { setSubmitting }) => {
+  setTimeout(() => {
+    setSubmitting(false);
+  }, 1000);
+};
 
-export const mapPropsToValues =  props => ({ name: '' })
-
+export const mapPropsToValues = props => ({ name: '' });
 
 export const MyFormInner = ({
   values,
@@ -725,7 +723,7 @@ export const MyFormInner = ({
   setStatus,
   status,
   errors,
-  isSubmitting,
+  isSubmitting
 }) => {
   return (
     <form onSubmit={handleSubmit}>
@@ -755,7 +753,7 @@ export default Formik({
   mapPropsToValues,
   validationSchema,
   handleSubmit
-})(MyFormInner)
+})(MyFormInner);
 ```
 
 #### Simulating input

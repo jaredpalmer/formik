@@ -401,7 +401,6 @@ Formik cannot determine which value to update. For more info see https://github.
       submitForm = () => {
         this.setState({
           touched: touchAllFields<FormikTouched<Values>>(this.state.values),
-          isSubmitting: true,
         });
 
         if (validate) {
@@ -436,6 +435,10 @@ Formik cannot determine which value to update. For more info see https://github.
       };
 
       executeSubmit = () => {
+        this.setState({
+          isSubmitting: true,
+        });
+
         const values = mapValuesToPayload
           ? mapValuesToPayload(this.state.values)
           : this.state.values;

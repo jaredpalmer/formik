@@ -1,6 +1,8 @@
 ## Formik Next
 
-Experimental features. There will be tears. If you are not Jared or Ian, use at your own risk.
+Experimental features. Subject to change.
+
+The goal here is to experiment with render props.
 
 ![](https://user-images.githubusercontent.com/4060187/27243721-3b5219d0-52b1-11e7-96f1-dae8391a3ef6.png)
 

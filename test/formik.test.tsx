@@ -102,6 +102,28 @@ describe('Formik', () => {
         ).toEqual('ian');
       });
 
+      it('sets values and touched state if touchOnChange is true', async () => {
+        const TouchOnChangeForm = FormFactory({ touchOnChange: true });
+        const tree = shallow(<TouchOnChangeForm user={{ name: 'jared' }} />);
+
+        // Simulate a change event in the inner Form component's input
+        tree.find(Form).dive().find('input').simulate('change', {
+          persist: noop,
+          target: {
+            id: 'name',
+            value: 'ian',
+          },
+        });
+
+        expect(tree.update().state().values).toEqual({ name: 'ian' });
+        expect(
+          tree.update().find(Form).dive().find('input').props().value
+        ).toEqual('ian');
+        expect(tree.update().find(Form).props().touched).toEqual({
+          name: true,
+        });
+      });
+
       it('updates values state via `name` instead of `id` attribute when both are present', async () => {
         const tree = shallow(<BasicForm user={{ name: 'jared' }} />);
 
@@ -154,7 +176,7 @@ describe('Formik', () => {
     });
 
     describe('handleBlur', () => {
-      it('sets touched state', () => {
+      it('sets touched state by default', () => {
         const tree = shallow(<BasicForm user={{ name: 'jared' }} />);
 
         // Simulate a blur event in the inner Form component's input
@@ -165,6 +187,20 @@ describe('Formik', () => {
           },
         });
         expect(tree.update().state().touched).toEqual({ name: true });
+      });
+
+      it('does not set touched state if touchOnBlur is false', () => {
+        const NeverTouch = FormFactory({ touchOnBlur: false });
+        const tree = shallow(<NeverTouch user={{ name: 'jared' }} />);
+
+        // Simulate a blur event in the inner Form component's input
+        tree.find(Form).dive().find('input').simulate('blur', {
+          persist: noop,
+          target: {
+            id: 'name',
+          },
+        });
+        expect(tree.update().state().touched).toEqual({});
       });
 
       it('updates touched state via `name` instead of `id` attribute when both are present', () => {
@@ -425,6 +461,16 @@ describe('Formik', () => {
       const tree = shallow(<ValidateOnBlurForm user={{ name: 'jared' }} />);
       tree.find(Form).props().setFieldValue('name', 'ian');
       expect(validate).not.toHaveBeenCalled();
+    });
+
+    it('setFieldValue should touch field if touchOnChange is set to true', () => {
+      const validate = jest.fn();
+      const ValidateOnBlurForm = FormFactory({ validate, touchOnChange: true });
+      const tree = shallow(<ValidateOnBlurForm user={{ name: 'jared' }} />);
+      tree.find(Form).props().setFieldValue('name', 'ian');
+      expect(tree.find(Form).props().dirty).toBe(true);
+      expect(tree.find(Form).props().touched).toEqual({ name: true });
+      expect(tree.find(Form).props().values).toEqual({ name: 'ian' });
     });
 
     it('setTouched sets touched', async () => {

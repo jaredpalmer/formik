@@ -57,10 +57,14 @@ export interface FormikConfig<
     values: Values | DeprecatedPayload,
     formikBag: FormikBag<Props, Values>
   ) => void;
-  /** Tells Formik to validate the form on each input's onChange event */
+  /** Tells Formik to validate the form on each input's on change events */
   validateOnChange?: boolean;
-  /** Tells Formik to validate the form on each input's onBlur event */
+  /** Tells Formik to validate the form on each input's on blur events */
   validateOnBlur?: boolean;
+  /** Tells Formik to mark fields as touched on change events */
+  touchOnChange?: boolean;
+  /** Tells Formik to mark fields as touched on blur events */
+  touchOnBlur?: boolean;
   /** Tell Formik if initial form values are valid or not on first render */
   isInitialValid?: boolean | ((props: Props) => boolean | undefined);
 }
@@ -189,6 +193,8 @@ export function Formik<Props, Values extends FormikValues, Payload = Values>({
   validate,
   validationSchema,
   handleSubmit,
+  touchOnChange = false,
+  touchOnBlur = true,
   validateOnChange = false,
   validateOnBlur = true,
   isInitialValid = false,
@@ -334,6 +340,12 @@ Formik cannot determine which value to update. For more info see https://github.
             ...prevState.values as object,
             [field]: val,
           },
+          touched: touchOnChange
+            ? {
+                ...prevState.touched as object,
+                [field]: true,
+              }
+            : prevState.touched,
         }));
 
         if (validateOnChange) {
@@ -381,6 +393,12 @@ Formik cannot determine which value to update. For more info see https://github.
             ...prevState.values as object,
             [field]: value,
           },
+          touched: touchOnChange
+            ? {
+                ...prevState.touched as object,
+                [field]: true,
+              }
+            : prevState.touched,
         }));
 
         if (validateOnChange) {
@@ -467,9 +485,12 @@ Formik cannot determine which value to update. For more info see https://github.
         e.persist();
         const { name, id } = e.target;
         const field = name ? name : id;
-        this.setState(prevState => ({
-          touched: { ...prevState.touched as object, [field]: true },
-        }));
+
+        if (touchOnBlur) {
+          this.setState(prevState => ({
+            touched: { ...prevState.touched as object, [field]: true },
+          }));
+        }
 
         if (validateOnBlur) {
           this.runValidations(this.state.values);

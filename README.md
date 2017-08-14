@@ -50,6 +50,8 @@ You can also try before you buy with this **[demo of Formik on CodeSandbox.io](h
         - [The "FormikBag":](#the-formikbag)
       - [`isInitialValid?: boolean | (props: Props) => boolean`](#isinitialvalid-boolean--props-props--boolean)
       - [`mapPropsToValues?: (props: Props) => Values`](#mappropstovalues-props-props--values)
+      - [`touchOnBlur?: boolean`](#touchonblur-boolean)
+      - [`touchOnChange?: boolean`](#touchonchange-boolean)
       - [`validate?: (values: Values, props: Props) => FormikError<Values> | Promise<any>`](#validate-values-values-props-props--formikerrorvalues--promiseany)
       - [`validateOnBlur?: boolean`](#validateonblur-boolean)
       - [`validateOnChange?: boolean`](#validateonchange-boolean)
@@ -272,6 +274,14 @@ Default is `false`. Control the initial value of [`isValid`] prop prior to mount
 If this option is specified, then Formik will transfer its results into updatable form state and make these values available to the new component as [`props.values`][`values`]. If `mapPropsToValues` is not specified, then Formik will map all props that are not functions to the inner component's [`props.values`][`values`]. That is, if you omit it, Formik will only pass `props` where `typeof props[k] !== 'function'`, where `k` is some key. 
 
 Even if your form is not receiving any props from its parent, use `mapPropsToValues` to initialize your forms empty state.
+
+##### `touchOnBlur?: boolean`
+
+Default is `true`. If `true`, Formik will mark fields as `touched` on `blur` events and blur related functions. Thus, `handleBlur` and `setFieldTouched` will automatically mark fields as touched.
+
+##### `touchOnChange?: boolean`
+
+Default is `false`. If `true`, Formik will mark fields as `touched` on `change` events and change-related functions. Thus, `handleChange` and `setFieldValue` will automatically mark fields as `touched` when called.
 
 ##### `validate?: (values: Values, props: Props) => FormikError<Values> | Promise<any>`
 

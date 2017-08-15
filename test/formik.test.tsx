@@ -31,6 +31,7 @@ const Form: React.SFC<InjectedFormikProps<Props, Values>> = ({
   status,
   errors,
   isSubmitting,
+  isValidating,
 }) => {
   return (
     <form onSubmit={handleSubmit}>
@@ -41,6 +42,7 @@ const Form: React.SFC<InjectedFormikProps<Props, Values>> = ({
         value={values.name}
         name="name"
       />
+      {isValidating && <div id="validating">Validating</div>}
       {errors.name &&
         <div id="feedback">
           {errors.name}
@@ -313,6 +315,24 @@ describe('Formik', () => {
           });
           expect(validate).toHaveBeenCalled();
         });
+
+        it('should push validating state changes to child component', async () => {
+          const validate = jest.fn(() => Promise.resolve({}));
+          const ValidateForm = Formik<Props, Values, Values>({
+            validate,
+            mapPropsToValues: ({ user }) => ({ ...user }),
+            handleSubmit: noop,
+          })(Form);
+          const tree = shallow(<ValidateForm user={{ name: 'jared' }} />);
+
+          expect(tree.find(Form).dive().find('#validating')).toHaveLength(0);
+
+          tree.find(Form).dive().find('form').simulate('submit', {
+            preventDefault: noop,
+          });
+
+          expect(tree.find(Form).dive().find('#validating')).toHaveLength(1);
+        })
 
         it('should submit the form if valid', async () => {
           const handleSubmit = jest.fn();

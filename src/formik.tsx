@@ -37,13 +37,13 @@ export interface FormikConfig<
   displayName?: string;
   /** Map props to the form values */
   mapPropsToValues?: (props: Props) => Values;
-  /** 
-   * Map form values to submission payload 
+  /**
+   * Map form values to submission payload
    * @deprecated since 0.8.0
    */
   mapValuesToPayload?: (values: Values) => DeprecatedPayload;
-  /** 
-   * Validation function. Must return an error object or promise that 
+  /**
+   * Validation function. Must return an error object or promise that
    * throws an error object where that object keys map to corresponding value.
    */
   validate?: (
@@ -71,8 +71,8 @@ export interface FormikConfig<
 export interface FormikState<Values> {
   /** Form values */
   values: Values;
-  /** 
-   * Top level error, in case you need it 
+  /**
+   * Top level error, in case you need it
    * @deprecated since 0.8.0
    */
   error?: any;
@@ -82,6 +82,8 @@ export interface FormikState<Values> {
   touched: FormikTouched<Values>;
   /** whether the form is currently submitting */
   isSubmitting: boolean;
+  /** whether the form is currently validating */
+  isValidating: boolean;
   /** Top level status state, in case you need it */
   status?: any;
 }
@@ -102,8 +104,8 @@ export interface FormikComputedProps {
 export interface FormikActions<Props, Values> {
   /** Manually set top level status. */
   setStatus: (status?: any) => void;
-  /** 
-   * Manually set top level error 
+  /**
+   * Manually set top level error
    * @deprecated since 0.8.0
    */
   setError: (e: any) => void;
@@ -111,6 +113,8 @@ export interface FormikActions<Props, Values> {
   setErrors: (errors: FormikErrors<Values>) => void;
   /** Manually set isSubmitting */
   setSubmitting: (isSubmitting: boolean) => void;
+  /** Manually set isValidating */
+  setValidating: (isValidating: boolean) => void;
   /** Manually set touched object */
   setTouched: (touched: FormikTouched<Values>) => void;
   /** Manually set values object  */
@@ -128,7 +132,7 @@ export interface FormikActions<Props, Values> {
 }
 
 /**
- * Formik form event handlers 
+ * Formik form event handlers
  */
 export interface FormikHandlers {
   /** Form submit handler */
@@ -214,6 +218,7 @@ export function Formik<Props, Values extends FormikValues, Payload = Values>({
           errors: {},
           touched: {},
           isSubmitting: false,
+          isValidating: false,
         };
 
         if (mapValuesToPayload) {
@@ -258,6 +263,10 @@ export function Formik<Props, Values extends FormikValues, Payload = Values>({
         this.setState({ isSubmitting });
       };
 
+      setValidating = (isValidating: boolean) => {
+        this.setState({ isValidating });
+      };
+
       /**
        * Run validation against a Yup schema and optionally run a function if successful
        */
@@ -288,11 +297,16 @@ export function Formik<Props, Values extends FormikValues, Payload = Values>({
         if (validate) {
           const maybePromisedErrors = validate(values, this.props);
           if (isPromise(maybePromisedErrors)) {
+            this.setState({ isValidating: true });
             (maybePromisedErrors as Promise<any>).then(
               () => {
-                this.setState({ errors: {} });
+                this.setState({ errors: {}, isValidating: false });
               },
-              errors => this.setState({ errors, isSubmitting: false })
+              errors => this.setState({
+                errors,
+                isSubmitting: false,
+                isValidating: false,
+              })
             );
           } else {
             this.setErrors(maybePromisedErrors as FormikErrors<Values>);
@@ -408,12 +422,17 @@ Formik cannot determine which value to update. For more info see https://github.
           const maybePromisedErrors =
             validate(this.state.values, this.props) || {};
           if (isPromise(maybePromisedErrors)) {
+            this.setState({ isValidating: true });
             (maybePromisedErrors as Promise<any>).then(
               () => {
-                this.setState({ errors: {} });
+                this.setState({ errors: {}, isValidating: false });
                 this.executeSubmit();
               },
-              errors => this.setState({ errors, isSubmitting: false })
+              errors => this.setState({
+                errors,
+                isSubmitting: false,
+                isValidating: false
+              })
             );
             return;
           } else {
@@ -448,6 +467,7 @@ Formik cannot determine which value to update. For more info see https://github.
           setFieldError: this.setFieldError,
           setFieldValue: this.setFieldValue,
           setFieldTouched: this.setFieldTouched,
+          setValidating: this.setValidating,
           setSubmitting: this.setSubmitting,
           resetForm: this.resetForm,
           submitForm: this.submitForm,
@@ -547,6 +567,7 @@ Formik cannot determine which value to update. For more info see https://github.
             setFieldError={this.setFieldError}
             setErrors={this.setErrors}
             setSubmitting={this.setSubmitting}
+            setValidating={this.setValidating}
             setTouched={this.setTouched}
             setFieldTouched={this.setFieldTouched}
             setValues={this.setValues}

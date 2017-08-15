@@ -24,9 +24,9 @@
   "scripts": {
     "test": "jest --env=jsdom",
     "test:watch": "npm run test -- --watch",
-    "start": "NODE_ENV=development tsc-watch --onSuccess \"rollup -c\"",
+    "start": "cross-env NODE_ENV=development tsc-watch --onSuccess \"rollup -c\"",
     "prebuild": "rimraf dist",
-    "build": "tsc && NODE_ENV=production rollup -c && NODE_ENV=production rollup -c rollup.config.umd.js && NODE_ENV=development rollup -c rollup.config.umd.js && rimraf compiled",
+    "build": "tsc && cross-env NODE_ENV=production rollup -c && cross-env NODE_ENV=production rollup -c rollup.config.umd.js && cross-env NODE_ENV=development rollup -c rollup.config.umd.js && rimraf compiled",
     "prepublish": "npm run build",
     "format": "prettier --trailing-comma es5 --single-quote --write 'src/**/*' 'test/**/*'",
     "precommit": "lint-staged"
@@ -43,6 +43,7 @@
     "@types/react": "^15.0.28",
     "@types/react-dom": "^15.5.0",
     "@types/react-test-renderer": "^15.5.1",
+    "cross-env": "^5.0.5",
     "enzyme": "^2.9.1",
     "husky": "^0.14.2",
     "jest": "^20.0.4",

@@ -137,8 +137,8 @@ export class Formik<
   Props extends FormikProps = FormikProps
 > extends React.Component<Props, FormikState<any>> {
   static defaultProps = {
-    validateOnChange: false,
-    validateOnBlur: true,
+    validateOnChange: true,
+    validateOnBlur: false,
     isInitialValid: false,
   };
 
@@ -544,6 +544,13 @@ export const Field: React.SFC<any> = (
 };
 
 Field.contextTypes = {
+  formik: PropTypes.object,
+};
+
+export const Form: React.SFC<any> = (props, context) =>
+  <form onSubmit={context.formik.handleSubmit} {...props} />;
+
+Form.contextTypes = {
   formik: PropTypes.object,
 };
 

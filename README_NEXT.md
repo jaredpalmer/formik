@@ -1,8 +1,4 @@
-## Formik Next
-
-Experimental features. Subject to change.
-
-The goal here is to experiment with render props.
+## Formik
 
 ![](https://user-images.githubusercontent.com/4060187/27243721-3b5219d0-52b1-11e7-96f1-dae8391a3ef6.png)
 
@@ -42,6 +38,7 @@ You can also try before you buy with this **[demo of Formik on CodeSandbox.io](h
     - [`render: (props: FormComponentProps<Values>) => ReactNode`](#render-props-formcomponentpropsvalues--reactnode)
     - [`children: func`](#children-func)
 - [`<Field />`](#field-)
+- [`<Form />`](#form-)
 - [`FormikFactory(options)`](#formikfactoryoptions)
 - [Authors](#authors)
 
@@ -255,8 +252,6 @@ const ContactForm = ({ handleSubmit, handleChange, handleBlur, values, errors })
 
 ## `<Field />`
 
-**(Much Experimental. Very magic )**
-
 `<Field />` will automagically hook up inputs to Formik. It uses the `name` attribute to match up with Formik state. `<Field/>` will default to and `<input/>` element. To change the underlying element of `<Field/>`, specify a `component` prop. It can either be a string like `select` or another React component.
 
 ```tsx
@@ -315,6 +310,45 @@ const CustomInputComponent: React.SFC<FormComponentProps<Values> & CustomInputPr
 )
 ```
 
+## `<Form />`
+
+Like `<Field/>`, `<Form/>` is a helper component you can use to save time. It is tiny wrapper around `<form onSubmit={context.formik.handleSubmit} />`. this means you don't need to explictly type out `<form onSubmit={props.handleSubmit}/>` if you don't want to.
+
+**ReactDOM only**
+
+```jsx
+import * as React from 'react';
+import { Formik, Field, Form, FormComponentProps  } from 'formik/next';
+
+interface Values {
+  email: string;
+  color: string;
+}
+ 
+const FormExample: React.SFC<{}> = () => (
+  <div>
+    <h1>My Form</h1>
+    <Formik
+      getInitialValues={{ email: '', color: 'red' }}
+      handleSubmit={(values: Values) => {
+        setTimeout(() => alert(JSON.stringify(values, null, 2)), 1000);
+      }}
+      component={MyForm}
+    />
+  </div>
+);
+
+const MyForm: React.SFC<{}> = () => 
+  <Form>
+    <Field type="email" name="email" placeholder="Email" />
+    <Field component="select" name="color">
+      <option value="red">Red</option>
+      <option value="green">Green</option>
+      <option value="blue">Blue</option>
+    </Field> 
+    <button type="submit">Submit</button>
+  </Form>;
+```
 
 ## `FormikFactory(options)`
 

@@ -18,13 +18,16 @@
   "main": "dist/formik.js",
   "module": "dist/formik.es6.js",
   "typings": "dist/formik.d.ts",
-  "files": ["dist", "next.js"],
+  "files": [
+    "dist",
+    "next.js"
+  ],
   "scripts": {
     "test": "jest --env=jsdom",
     "test:watch": "npm run test -- --watch",
-    "start": "NODE_ENV=development tsc-watch --onSuccess \"rollup -c\"",
+    "start": "cross-env NODE_ENV=development tsc-watch --onSuccess \"rollup -c\"",
     "prebuild": "rimraf dist",
-    "build": "tsc && NODE_ENV=production rollup -c &&  NODE_ENV=development rollup -c && rimraf compiled && cp dist/next.d.ts next.d.ts",
+    "build": "tsc && cross-env NODE_ENV=production rollup -c && cross-env NODE_ENV=development rollup -c && rimraf compiled && cp dist/next.d.ts next.d.ts",
     "prepublish": "npm run build",
     "format": "prettier --trailing-comma es5 --single-quote --write 'src/**/*' 'test/**/*'",
     "precommit": "lint-staged"
@@ -42,12 +45,13 @@
     "@types/react": "16.0.0",
     "@types/react-dom": "15.5.1",
     "@types/react-test-renderer": "15.5.2",
+    "cross-env": "5.0.5",
     "enzyme": "2.9.1",
     "husky": "0.14.3",
     "jest": "20.0.4",
     "lint-staged": "4.0.2",
     "prettier": "1.5.3",
-    "prop-types": "^15.5.10",
+    "prop-types": "15.5.10",
     "react": "15.6.1",
     "react-dom": "15.6.1",
     "react-test-renderer": "15.6.1",
@@ -73,7 +77,9 @@
     ]
   },
   "jest": {
-    "collectCoverageFrom": ["src/**/*.{ts,tsx}"],
+    "collectCoverageFrom": [
+      "src/**/*.{ts,tsx}"
+    ],
     "transform": {
       ".(ts|tsx)": "<rootDir>/node_modules/ts-jest/preprocessor.js"
     },
@@ -81,7 +87,14 @@
       "<rootDir>/test/**/*.ts?(x)",
       "<rootDir>/test/**/?(*.)(spec|test).ts?(x)"
     ],
-    "transformIgnorePatterns": ["[/\\\\]node_modules[/\\\\].+\\.(js|jsx)$"],
-    "moduleFileExtensions": ["ts", "tsx", "js", "json"]
+    "transformIgnorePatterns": [
+      "[/\\\\]node_modules[/\\\\].+\\.(js|jsx)$"
+    ],
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "json"
+    ]
   }
 }

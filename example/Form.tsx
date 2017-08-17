@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as yup from 'yup';
+import * as Yup from 'yup';
 
 import { Formik, InjectedFormikProps } from '../src/formik';
 

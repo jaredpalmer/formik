@@ -1,5 +1,6 @@
 import * as React from 'react';
 
+import { ComponentDecorator, CompositeComponent } from './types';
 import { isFunction, isPromise, isReactNative, values } from './utils';
 
 import { hoistNonReactStatics } from './hoistStatics';
@@ -156,20 +157,6 @@ export type InjectedFormikProps<Props, Values> = Props &
  * Formik actions + { props }
  */
 export type FormikBag<P, V> = { props: P } & FormikActions<P, V>;
-
-export type CompositeComponent<P> =
-  | React.ComponentClass<P>
-  | React.StatelessComponent<P>;
-
-export interface ComponentDecorator<TOwnProps, TMergedProps> {
-  (component: CompositeComponent<TMergedProps>): React.ComponentClass<
-    TOwnProps
-  >;
-}
-
-export interface InferableComponentDecorator<TOwnProps> {
-  <T extends CompositeComponent<TOwnProps>>(component: T): T;
-}
 
 export function Formik<Props, Values extends FormikValues, Payload = Values>({
   displayName,

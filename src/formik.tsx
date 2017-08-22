@@ -44,6 +44,7 @@ export interface FormikState<Values> {
   /** Top level status state, in case you need it */
   status?: any;
 }
+
 /**
  * Formik computed properties. These are read-only.
  */
@@ -101,7 +102,7 @@ export interface FormikHandlers {
   handleReset: () => void;
 }
 
-export interface FormikProps {
+export interface FormikConfig {
   getInitialValues: object;
   /** 
    * Validation function. Must return an error object or promise that 
@@ -111,7 +112,7 @@ export interface FormikProps {
   /** A Yup Schema */
   validationSchema?: any;
   /** Submission handler */
-  handleSubmit: (values: object, props: object) => void;
+  handleSubmit: (values: object, formikActions: FormikActions<any>) => void;
   /** Tells Formik to validate the form on each input's onChange event */
   validateOnChange?: boolean;
   /** Tells Formik to validate the form on each input's onBlur event */
@@ -119,14 +120,12 @@ export interface FormikProps {
   /** Tell Formik if initial form values are valid or not on first render */
   isInitialValid?: boolean | ((props: object) => boolean | undefined);
 
-  component?: React.ComponentType<FormComponentProps<any> | void>;
-  render?: ((props: FormComponentProps<any>) => React.ReactNode);
-  children?:
-    | ((props: FormComponentProps<any>) => React.ReactNode)
-    | React.ReactNode;
+  component?: React.ComponentType<FormikProps<any> | void>;
+  render?: ((props: FormikProps<any>) => React.ReactNode);
+  children?: ((props: FormikProps<any>) => React.ReactNode) | React.ReactNode;
 }
 
-export type FormComponentProps<Values> = FormikState<Values> &
+export type FormikProps<Values> = FormikState<Values> &
   FormikActions<Values> &
   FormikHandlers &
   FormikComputedProps;
@@ -134,7 +133,7 @@ export type FormComponentProps<Values> = FormikState<Values> &
 const isEmptyChildren = (children: any) => React.Children.count(children) === 0;
 
 export class Formik<
-  Props extends FormikProps = FormikProps
+  Props extends FormikConfig = FormikConfig
 > extends React.Component<Props, FormikState<any>> {
   static defaultProps = {
     validateOnChange: true,
@@ -416,7 +415,6 @@ Formik cannot determine which value to update. For more info see https://github.
       setSubmitting: this.setSubmitting,
       resetForm: this.resetForm,
       submitForm: this.submitForm,
-      props: this.props,
     });
   };
 
@@ -516,47 +514,13 @@ Formik cannot determine which value to update. For more info see https://github.
         ? (render as any)(props)
         : children // children come last, always called
           ? typeof children === 'function'
-            ? (children as (props: FormComponentProps<any>) => React.ReactNode)(
-                props as FormComponentProps<any>
+            ? (children as (props: FormikProps<any>) => React.ReactNode)(
+                props as FormikProps<any>
               )
             : !isEmptyChildren(children) ? React.Children.only(children) : null
           : null;
   }
 }
-
-export const Field: React.SFC<any> = (
-  { component = 'input', name, ...props },
-  context
-) => {
-  const field = {
-    value: context.formik.values[name],
-    name,
-    onChange: context.formik.handleChange,
-    onBlur: context.formik.handleBlur,
-  };
-  const bag =
-    typeof component === 'string'
-      ? field
-      : {
-          field,
-          form: context.formik,
-        };
-  return React.createElement(component, {
-    ...props,
-    ...bag,
-  });
-};
-
-Field.contextTypes = {
-  formik: PropTypes.object,
-};
-
-export const Form: React.SFC<any> = (props, context) =>
-  <form onSubmit={context.formik.handleSubmit} {...props} />;
-
-Form.contextTypes = {
-  formik: PropTypes.object,
-};
 
 /**
  * Transform Yup ValidationError to a more usable object
@@ -593,3 +557,6 @@ export function touchAllFields<T>(fields: T): FormikTouched {
   }
   return touched;
 }
+
+export * from './Field';
+export * from './Form';

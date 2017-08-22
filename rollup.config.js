@@ -8,10 +8,9 @@ import uglify from 'rollup-plugin-uglify';
 const shared = {
   entry: `compiled/formik.js`,
   sourceMap: true,
-  external: ['react', 'prop-types'],
+  external: ['react'],
   globals: {
     react: 'React',
-    'prop-types': 'PropTypes',
   },
   exports: 'named',
 };
@@ -32,7 +31,40 @@ export default [
           process.env.NODE_ENV || 'development'
         ),
       }),
-      commonjs(),
+      resolve(),
+      commonjs({
+        include: /node_modules/,
+      }),
+
+      sourceMaps(),
+      process.env.NODE_ENV === 'production' && filesize(),
+      process.env.NODE_ENV === 'production' && uglify(),
+    ],
+  }),
+  Object.assign({}, shared, {
+    moduleName: 'Formik',
+    format: 'umd',
+    entry: `compiled/next.js`,
+    dest:
+      process.env.NODE_ENV === 'production'
+        ? './dist/next.umd.min.js'
+        : './dist/next.umd.js',
+    plugins: [
+      resolve(),
+      replace({
+        exclude: 'node_modules/**',
+        'process.env.NODE_ENV': JSON.stringify(
+          process.env.NODE_ENV || 'development'
+        ),
+      }),
+      resolve(),
+      commonjs({
+        include: /node_modules/,
+        namedExports: {
+          'node_modules/prop-types/index.js': ['object'],
+        },
+      }),
+
       sourceMaps(),
       process.env.NODE_ENV === 'production' && filesize(),
       process.env.NODE_ENV === 'production' && uglify(),
@@ -43,7 +75,14 @@ export default [
       { dest: 'dist/formik.es6.js', format: 'es' },
       { dest: 'dist/formik.js', format: 'cjs' },
     ],
-    plugins: [resolve(), sourceMaps()],
+    plugins: [
+      resolve(),
+      commonjs({
+        include: /node_modules/,
+      }),
+      ,
+      sourceMaps(),
+    ],
   }),
   Object.assign({}, shared, {
     entry: `compiled/next.js`,
@@ -51,6 +90,16 @@ export default [
       { dest: 'dist/next.es6.js', format: 'es' },
       { dest: 'dist/next.js', format: 'cjs' },
     ],
-    plugins: [resolve(), sourceMaps()],
+    plugins: [
+      resolve(),
+      commonjs({
+        include: /node_modules/,
+        namedExports: {
+          'node_modules/prop-types/index.js': ['object'],
+        },
+      }),
+      ,
+      sourceMaps(),
+    ],
   }),
 ];

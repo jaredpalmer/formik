@@ -288,22 +288,15 @@ const Example: React.SFC<...> = () => (
 );
 
 const CustomInputComponent: React.SFC<FormComponentProps<Values> & CustomInputProps> => ({
-  name,
-  placeholder,
-  values,
-  errors,
-  handleBlur,
-  handleChange,
+  field, // { name, value, onChange, onBlur }
+  form: { touched, errors } // also values, setXXXX, handleXXXX, isDirty, isValid, status, etc.
   ...props
 }) => (
   <div>
-    <input 
-      className="custom" 
+    <input
       type="text"
-      value={values[name]} 
-      placeholder={placeholder}
-      onChange={handleChange}
-      onBlur={handlerBlur}
+      {...field}
+      {...props}
     />
     {touched[name] && errors[name] && <div className="error">{errors[name]}</div>}
   </div>

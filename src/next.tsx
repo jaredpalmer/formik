@@ -528,17 +528,21 @@ export const Field: React.SFC<any> = (
   { component = 'input', name, ...props },
   context
 ) => {
+  const field = {
+    value: context.formik.values[name],
+    name,
+    onChange: context.formik.handleChange,
+    onBlur: context.formik.handleBlur,
+  };
   const bag =
     typeof component === 'string'
-      ? {
-          value: context.formik.values[name],
-          onChange: context.formik.handleChange,
-          onBlur: context.formik.handleBlur,
-        }
-      : context.formik;
+      ? field
+      : {
+          field,
+          form: context.formik,
+        };
   return React.createElement(component, {
     ...props,
-    name,
     ...bag,
   });
 };

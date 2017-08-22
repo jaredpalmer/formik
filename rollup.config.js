@@ -8,9 +8,10 @@ import uglify from 'rollup-plugin-uglify';
 const shared = {
   entry: `compiled/formik.js`,
   sourceMap: true,
-  external: ['react'],
+  external: ['react', 'react-native'],
   globals: {
     react: 'React',
+    'react-native': 'ReactNative',
   },
   exports: 'named',
 };
@@ -34,21 +35,56 @@ export default [
       resolve(),
       commonjs({
         include: /node_modules/,
+        namedExports: {
+          'node_modules/prop-types/index.js': ['object'],
+        },
       }),
-
       sourceMaps(),
       process.env.NODE_ENV === 'production' && filesize(),
       process.env.NODE_ENV === 'production' && uglify(),
     ],
   }),
+
+  Object.assign({}, shared, {
+    targets: [
+      { dest: 'dist/formik.es6.js', format: 'es' },
+      { dest: 'dist/formik.js', format: 'cjs' },
+    ],
+    plugins: [
+      resolve(),
+      commonjs({
+        include: /node_modules/,
+        namedExports: {
+          'node_modules/prop-types/index.js': ['object'],
+        },
+      }),
+      ,
+      sourceMaps(),
+    ],
+  }),
+  Object.assign({}, shared, {
+    entry: `compiled/legacy.js`,
+    targets: [
+      { dest: 'dist/legacy.es6.js', format: 'es' },
+      { dest: 'dist/legacy.js', format: 'cjs' },
+    ],
+    plugins: [
+      resolve(),
+      commonjs({
+        include: /node_modules/,
+      }),
+      ,
+      sourceMaps(),
+    ],
+  }),
   Object.assign({}, shared, {
     moduleName: 'Formik',
     format: 'umd',
-    entry: `compiled/next.js`,
+    entry: `compiled/legacy.js`,
     dest:
       process.env.NODE_ENV === 'production'
-        ? './dist/next.umd.min.js'
-        : './dist/next.umd.js',
+        ? './dist/legacy.umd.min.js'
+        : './dist/legacy.umd.js',
     plugins: [
       resolve(),
       replace({
@@ -60,46 +96,10 @@ export default [
       resolve(),
       commonjs({
         include: /node_modules/,
-        namedExports: {
-          'node_modules/prop-types/index.js': ['object'],
-        },
       }),
-
       sourceMaps(),
       process.env.NODE_ENV === 'production' && filesize(),
       process.env.NODE_ENV === 'production' && uglify(),
-    ],
-  }),
-  Object.assign({}, shared, {
-    targets: [
-      { dest: 'dist/formik.es6.js', format: 'es' },
-      { dest: 'dist/formik.js', format: 'cjs' },
-    ],
-    plugins: [
-      resolve(),
-      commonjs({
-        include: /node_modules/,
-      }),
-      ,
-      sourceMaps(),
-    ],
-  }),
-  Object.assign({}, shared, {
-    entry: `compiled/next.js`,
-    targets: [
-      { dest: 'dist/next.es6.js', format: 'es' },
-      { dest: 'dist/next.js', format: 'cjs' },
-    ],
-    plugins: [
-      resolve(),
-      commonjs({
-        include: /node_modules/,
-        namedExports: {
-          'node_modules/prop-types/index.js': ['object'],
-        },
-      }),
-      ,
-      sourceMaps(),
     ],
   }),
 ];

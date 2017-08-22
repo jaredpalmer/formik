@@ -141,7 +141,7 @@ describe('Formik Next', () => {
         expect(validate).toHaveBeenCalled();
       });
 
-      it('does NOT run validations by default or if validateOnChange is set to false', async () => {
+      it('does NOT run validations if validateOnChange is set to false', async () => {
         const validate = jest.fn(noop);
 
         const tree = shallow(
@@ -150,6 +150,7 @@ describe('Formik Next', () => {
             handleSubmit={noop}
             component={Form}
             validate={validate}
+            validateOnChange={false}
           />
         );
         tree.find(Form).dive().find('input').simulate('change', {
@@ -191,18 +192,10 @@ describe('Formik Next', () => {
         expect(tree.update().state().touched).toEqual({ name: true });
       });
 
-      it('runs validations by default or if validateOnBlur is set to true ', async () => {
+      it('runs validations if validateOnBlur is set to true ', async () => {
         const validate = jest.fn(noop);
 
         const tree = shallow(
-          <Formik
-            getInitialValues={{ name: 'jared' }}
-            handleSubmit={noop}
-            component={Form}
-            validate={validate}
-          />
-        );
-        const tree2 = shallow(
           <Formik
             getInitialValues={{ name: 'jared' }}
             handleSubmit={noop}
@@ -218,13 +211,7 @@ describe('Formik Next', () => {
             name: 'name',
           },
         });
-        tree2.find(Form).dive().find('input').simulate('blur', {
-          persist: noop,
-          target: {
-            name: 'name',
-          },
-        });
-        expect(validate).toHaveBeenCalledTimes(2);
+        expect(validate).toHaveBeenCalledTimes(1);
       });
     });
 
@@ -447,7 +434,7 @@ describe('Formik Next', () => {
       expect(validate).toHaveBeenCalled();
     });
 
-    it('setValues should NOT run validations when validateOnChange is false or undefined', () => {
+    it('setValues should NOT run validations when validateOnChange is false', () => {
       const validate = jest.fn();
       const tree = shallow(
         <Formik
@@ -455,6 +442,7 @@ describe('Formik Next', () => {
           handleSubmit={noop}
           component={Form}
           validate={validate}
+          validateOnChange={false}
         />
       );
       tree.find(Form).props().setValues({ name: 'ian' });
@@ -483,7 +471,7 @@ describe('Formik Next', () => {
       expect(validate).toHaveBeenCalled();
     });
 
-    it('setFieldValue should NOT run validations when validateOnChange is false or undefined', () => {
+    it('setFieldValue should NOT run validations when validateOnChange is false', () => {
       const validate = jest.fn();
 
       const tree = shallow(
@@ -492,6 +480,7 @@ describe('Formik Next', () => {
           handleSubmit={noop}
           component={Form}
           validate={validate}
+          validateOnChange={false}
         />
       );
       tree.find(Form).props().setFieldValue('name', 'ian');
@@ -504,7 +493,7 @@ describe('Formik Next', () => {
       expect(tree.find(Form).props().touched).toEqual({ name: true });
     });
 
-    it('setTouched should run validations by default, or when validateOnBlur is true', async () => {
+    it('setTouched should NOT run validations by default', async () => {
       const validate = jest.fn().mockReturnValue({});
       const tree = shallow(
         <Formik
@@ -515,10 +504,10 @@ describe('Formik Next', () => {
         />
       );
       tree.find(Form).props().setTouched({ name: true });
-      expect(validate).toHaveBeenCalled();
+      expect(validate).not.toHaveBeenCalled();
     });
 
-    it('setTouched should NOT run validations when validateOnBlur is false', () => {
+    it('setTouched should run validations when validateOnBlur is true', () => {
       const validate = jest.fn();
 
       const tree = shallow(
@@ -527,11 +516,11 @@ describe('Formik Next', () => {
           handleSubmit={noop}
           component={Form}
           validate={validate}
-          validateOnBlur={false}
+          validateOnBlur={true}
         />
       );
       tree.find(Form).props().setTouched({ name: true });
-      expect(validate).not.toHaveBeenCalled();
+      expect(validate).toHaveBeenCalled();
     });
 
     it('setFieldTouched sets touched by key', async () => {

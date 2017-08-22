@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as renderer from 'react-test-renderer';
 
-import { FormComponentProps, Formik, FormikProps } from '../src/next';
+import { Formik, FormikProps } from '../src/next';
 import { mount, shallow } from 'enzyme';
 
 const Yup = require('yup');
@@ -22,7 +22,7 @@ interface Values {
   name: string;
 }
 
-const Form: React.SFC<FormComponentProps<Values>> = ({
+const Form: React.SFC<FormikProps<Values>> = ({
   values,
   handleSubmit,
   handleChange,

@@ -13,17 +13,16 @@ export interface FormikValues {
 /**
  * An object containing error messages whose keys correspond to FormikValues.
  */
-export type FormikErrors = {
-  [field: string]: string;
+export type FormikErrors<Values extends FormikValues = FormikValues> = {
+  [Key in keyof Values]?: string
 };
 
 /**
  * An object containing touched state of the form whose keys correspond to FormikValues.
  */
-export type FormikTouched = {
-  [field: string]: boolean;
+export type FormikTouched<Values extends FormikValues = FormikValues> = {
+  [Key in keyof Values]?: boolean
 };
-
 /**
  * Formik state tree
  */
@@ -101,17 +100,39 @@ export interface FormikHandlers {
   handleReset: () => void;
 }
 
-export interface FormikProps {
-  getInitialValues: object;
+export interface FormikConfig<
+  Props = any,
+  Values extends FormikValues = FormikValues,
+  DeprecatedPayload = Values
+  // tslint:disable-next-line:one-line
+> {
+  displayName?: string;
+  /** Map props to the form values */
+  mapPropsToValues?: (props: Props) => Values;
+  /** 
+   * Map form values to submission payload 
+   * @deprecated since 0.8.0
+   */
+  mapValuesToPayload?: (values: Values) => DeprecatedPayload;
+  /** 
+   * Set form's initial values
+   */
+  getInitialValues?: object;
   /** 
    * Validation function. Must return an error object or promise that 
    * throws an error object where that object keys map to corresponding value.
    */
-  validate?: ((values: any) => void | object | Promise<any>);
+  validate?: (
+    values: Values,
+    props: Props
+  ) => void | FormikErrors<Values | object> | Promise<any>;
   /** A Yup Schema */
-  validationSchema?: any;
+  validationSchema?: ((props: Props) => any) | any;
   /** Submission handler */
-  handleSubmit: (values: object, props: object) => void;
+  handleSubmit: (
+    values: Values | DeprecatedPayload,
+    formikBag: FormikBag<Props, Values>
+  ) => void;
   /** Tells Formik to validate the form on each input's onChange event */
   validateOnChange?: boolean;
   /** Tells Formik to validate the form on each input's onBlur event */
@@ -119,22 +140,27 @@ export interface FormikProps {
   /** Tell Formik if initial form values are valid or not on first render */
   isInitialValid?: boolean | ((props: object) => boolean | undefined);
 
-  component?: React.ComponentType<FormComponentProps<any> | void>;
-  render?: ((props: FormComponentProps<any>) => React.ReactNode);
-  children?:
-    | ((props: FormComponentProps<any>) => React.ReactNode)
-    | React.ReactNode;
+  component?: React.ComponentType<FormikProps<any> | void>;
+  render?: ((props: FormikProps<any>) => React.ReactNode);
+  children?: ((props: FormikProps<any>) => React.ReactNode) | React.ReactNode;
 }
 
-export type FormComponentProps<Values> = FormikState<Values> &
+/**
+ * Formik actions + { props }
+ */
+export type FormikBag<P, V> = { props: P } & FormikActions<V>;
+
+export type FormikProps<Values> = FormikState<Values> &
   FormikActions<Values> &
   FormikHandlers &
   FormikComputedProps;
 
+export type InjectedFormikProps<Props, Values> = Props & FormikProps<Values>;
+
 const isEmptyChildren = (children: any) => React.Children.count(children) === 0;
 
 export class Formik<
-  Props extends FormikProps = FormikProps
+  Props extends FormikConfig = FormikConfig
 > extends React.Component<Props, FormikState<any>> {
   static defaultProps = {
     validateOnChange: true,
@@ -516,8 +542,8 @@ Formik cannot determine which value to update. For more info see https://github.
         ? (render as any)(props)
         : children // children come last, always called
           ? typeof children === 'function'
-            ? (children as (props: FormComponentProps<any>) => React.ReactNode)(
-                props as FormComponentProps<any>
+            ? (children as (props: FormikProps<any>) => React.ReactNode)(
+                props as FormikProps<any>
               )
             : !isEmptyChildren(children) ? React.Children.only(children) : null
           : null;
@@ -593,3 +619,5 @@ export function touchAllFields<T>(fields: T): FormikTouched {
   }
   return touched;
 }
+
+export * from './withFormik';

@@ -3,6 +3,8 @@ import * as React from 'react';
 
 import { isFunction, isPromise, isReactNative, values } from './utils';
 
+import warning from 'warning';
+
 /**
  * Values of fields in the form
  */
@@ -102,8 +104,10 @@ export interface FormikHandlers {
   handleReset: () => void;
 }
 
-export interface FormikConfig {
-  getInitialValues: object;
+/**
+ * Base formik configuration/props shared between the HoC and Component.
+ */
+export interface FormikSharedConfig {
   /** 
    * Validation function. Must return an error object or promise that 
    * throws an error object where that object keys map to corresponding value.
@@ -111,20 +115,45 @@ export interface FormikConfig {
   validate?: ((values: any) => void | object | Promise<any>);
   /** A Yup Schema */
   validationSchema?: any;
-  /** Submission handler */
-  handleSubmit: (values: object, formikActions: FormikActions<any>) => void;
+
   /** Tells Formik to validate the form on each input's onChange event */
   validateOnChange?: boolean;
   /** Tells Formik to validate the form on each input's onBlur event */
   validateOnBlur?: boolean;
   /** Tell Formik if initial form values are valid or not on first render */
   isInitialValid?: boolean | ((props: object) => boolean | undefined);
+}
 
+/**
+ * <Formik /> props
+ */
+export interface FormikConfig extends FormikSharedConfig {
+  getInitialValues: object;
+  /** 
+   * Submission handler 
+   */
+  handleSubmit: (values: object, formikActions: FormikActions<any>) => void;
+
+  /**
+   * Form component to render
+   */
   component?: React.ComponentType<FormikProps<any> | void>;
+
+  /**
+   * Render prop (works like React router's <ROute render={props =>} />)
+   */
   render?: ((props: FormikProps<any>) => React.ReactNode);
+
+  /**
+   * React children or child render callback
+   */
   children?: ((props: FormikProps<any>) => React.ReactNode) | React.ReactNode;
 }
 
+/**
+ * State, handlers, and helpers made available to form component or render prop
+ * of <Formik/>.
+ */
 export type FormikProps<Values> = FormikState<Values> &
   FormikActions<Values> &
   FormikHandlers &
@@ -139,6 +168,19 @@ export class Formik<
     validateOnChange: true,
     validateOnBlur: false,
     isInitialValid: false,
+  };
+
+  static propTypes = {
+    validateOnChange: PropTypes.bool,
+    validateOnBlur: PropTypes.bool,
+    isInitialValid: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
+    getInitialValues: PropTypes.object,
+    handleSubmit: PropTypes.func.isRequired,
+    validationSchema: PropTypes.oneOfType([PropTypes.func, PropTypes.object]),
+    validate: PropTypes.func,
+    component: PropTypes.func,
+    render: PropTypes.func,
+    children: PropTypes.oneOfType([PropTypes.func, PropTypes.node]),
   };
 
   static childContextTypes = {
@@ -187,6 +229,31 @@ export class Formik<
       touched: {},
       isSubmitting: false,
     };
+  }
+
+  componentWillMount() {
+    warning(
+      !(this.props.component && this.props.render),
+      'You should not use <Formik component> and <Formik render> in the same <Formik> component; <Formik render> will be ignored'
+    );
+
+    warning(
+      !(
+        this.props.component &&
+        this.props.children &&
+        !isEmptyChildren(this.props.children)
+      ),
+      'You should not use <Formik component> and <Formik children> in the same <Formik> component; <Formik children> will be ignored'
+    );
+
+    warning(
+      !(
+        this.props.render &&
+        this.props.children &&
+        !isEmptyChildren(this.props.children)
+      ),
+      'You should not use <Formik render> and <Formik children> in the same <Formik> component; <Formik children> will be ignored'
+    );
   }
 
   setErrors = (errors: FormikErrors) => {
@@ -560,3 +627,4 @@ export function touchAllFields<T>(fields: T): FormikTouched {
 
 export * from './Field';
 export * from './Form';
+export * from './withFormik';

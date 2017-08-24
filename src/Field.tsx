@@ -1,7 +1,7 @@
 import * as PropTypes from 'prop-types';
 import * as React from 'react';
 
-import { FormikProps } from './Formik';
+import { FormikProps } from './formik';
 
 /**
  * Custom Field component for quickly hooking into Formik

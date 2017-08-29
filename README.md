@@ -115,7 +115,7 @@ export default Basic
 
 - [`<Formik />`](#formik-)
   - [Formik Render Methods](#formik-render-methods)
-  - [Formik (#formik-props)
+  - [Formik](#formik-props)
     - [`dirty: boolean`](#dirty-boolean)
     - [`errors: { [field: string]: string }`](#errors--field-string-string-)
     - [`handleBlur: (e: any) => void`](#handleblur-e-any--void)

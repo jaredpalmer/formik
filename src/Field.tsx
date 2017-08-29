@@ -12,7 +12,9 @@ export const Field: React.SFC<any> = (
   context
 ) => {
   const field = {
-    [component === 'radio' ? 'checked' : 'value']: context.formik.values[name],
+    [props.type === 'checkbox' ? 'checked' : 'value']: context.formik.values[
+      name
+    ],
     name,
     onChange: context.formik.handleChange,
     onBlur: context.formik.handleBlur,

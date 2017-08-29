@@ -53,7 +53,7 @@ You can also try before you buy with this **[demo of Formik on CodeSandbox.io](h
     - [`touched: { [field: string]: boolean }`](#touched--field-string-boolean-)
     - [`values: { [field: string]: any }`](#values--field-string-any-)
   - [`component`](#component)
-  - [`render: (props: FormComponentProps<Values>) => ReactNode`](#render-props-formcomponentpropsvalues--reactnode)
+  - [`render: (props: FormikProps<Values>) => ReactNode`](#render-props-formikpropsvalues--reactnode)
   - [`children: func`](#children-func)
   - [`handleSubmit: (values: Values, formikBag: FormikBag) => void`](#handlesubmit-values-values-formikbag-formikbag--void)
   - [`isInitialValid?: boolean`](#isinitialvalid-boolean)
@@ -103,7 +103,7 @@ const BasicExample: React.SFC<...> = () =>
       handleSubmit={(values: Values) => {
         setTimeout(() => alert(JSON.stringify(values, null, 2)), 1000);
       }}
-      render={(props: FormComponentProps<Values>) =>
+      render={(props: FormikProps<Values>) =>
         <form onSubmit={props.handleSubmit}>
           <input
             type="text"
@@ -229,7 +229,7 @@ const ContactForm = ({ handleSubmit, handleChange, handleBlur, values, errors })
 ```
 **Warning:** `<Formik component>` takes precendence over `<Formik render>` so don’t use both in the same `<Formik>`.
 
-### `render: (props: FormComponentProps<Values>) => ReactNode`
+### `render: (props: FormikProps<Values>) => ReactNode`
 
 ```tsx
 <Formik render={props => <ContactForm {...props} />}/>
@@ -360,7 +360,7 @@ Default is `false`. Use this option to tell Formik to run validations on `change
 
 ```tsx
 import * as React from 'react';
-import { Formik, Field,  FormComponentProps  } from 'formik';
+import { Formik, Field,  FormikProps  } from 'formik';
 
 interface Values {
   email: string;
@@ -376,7 +376,7 @@ const Example: React.SFC<...> = () => (
       handleSubmit={(values: Values) => {
         setTimeout(() => alert(JSON.stringify(values, null, 2)), 1000);
       }}
-      render={(props: FormComponentProps<Values>) =>
+      render={(props: FormikProps<Values>) =>
         <form onSubmit={props.handleSubmit}>
           <Field type="email" name="email" placeholder="Email" />
           <Field component="select" name="color" >
@@ -391,7 +391,7 @@ const Example: React.SFC<...> = () => (
   </div>
 );
 
-const CustomInputComponent: React.SFC<FormComponentProps<Values> & CustomInputProps> => ({
+const CustomInputComponent: React.SFC<FormikProps<Values> & CustomInputProps> => ({
   field, // { name, value, onChange, onBlur }
   form: { touched, errors } // also values, setXXXX, handleXXXX, isDirty, isValid, status, etc.
   ...props
@@ -415,7 +415,7 @@ Like `<Field/>`, `<Form/>` is a helper component you can use to save time. It is
 
 ```jsx
 import * as React from 'react';
-import { Formik, Field, Form, FormComponentProps  } from 'formik';
+import { Formik, Field, Form, FormikProps  } from 'formik';
 
 interface Values {
   email: string;

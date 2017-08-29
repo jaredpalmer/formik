@@ -562,3 +562,37 @@ Default is `false`. Use this option to tell Formik to run validations on `change
 - Ian White [@eonwhite](https://twitter.com/eonwhite)
 
 MIT License. 
+
+
+[`displayName`]: #displayname-string
+[`handleSubmit`]: #handlesubmit-payload-formikbag--void
+[`FormikBag`]: #the-formikbag
+[`isInitialValid`]: #isinitialvalid-boolean--props-props--boolean
+[`mapPropsToValues`]: #mappropstovalues-props--props
+[`validate`]: #validate-values-values-props-props--formikerrorvalues--promiseany
+[`validateOnBlur`]: #validateonblur-boolean
+[`validateOnChange`]: #validateonchange-boolean
+[`validationSchema`]: #validationschema-schema--props-props--schema
+  
+[Injected props and methods]: #injected-props-and-methods
+
+[`dirty`]: #dirty-boolean
+[`errors`]: #errors--field-string-string-
+[`handleBlur`]: #handleblur-e-any--void
+[`handleChange`]: #handlechange-e-reactchangeeventany--void
+[`handleReset`]: #handlereset---void
+[`handleSubmit`]: #handlesubmit-e-reactformeventhtmlformevent--void
+[`isSubmitting`]: #issubmitting-boolean
+[`isValid`]: #isvalid-boolean
+[`resetForm`]: #resetform-nextprops-props--void
+[`setErrors`]: #seterrors-fields--field-string-string---void
+[`setFieldError`]: #setfielderror-field-string-errormsg-string--void
+[`setFieldTouched`]: #setfieldtouched-field-string-istouched-boolean--void
+[`setFieldValue`]: #setfieldvalue-field-string-value-any--void
+[`setStatus`]: #setstatus-status-any--void
+[`setSubmitting`]: #setsubmitting-boolean--void
+[`setTouched`]: #settouched-fields--field-string-boolean---void
+[`setValues`]: #setvalues-fields--field-string-any---void
+[`status`]: #status-any
+[`touched`]: #touched--field-string-boolean-
+[`values`]: #values--field-string-any-

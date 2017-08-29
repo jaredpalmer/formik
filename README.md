@@ -25,13 +25,97 @@ Note: Yup is 100% optional. You are free to [write your own validators][`validat
 
 You can also try before you buy with this **[demo of Formik on CodeSandbox.io](https://codesandbox.io/s/zKrK5YLDZ)**
 
+## Quick start
+
+```js
+import { Formik } from 'formik'
+import Yup from 'yup'
+
+const Basic = () => 
+  <div>
+    <h1>My Form</h1>
+    <Formik
+      getInitialValues={{
+        email: ''
+      }}
+      validationSchema={Yup.object().shape({
+         email: Yup.string().email('Invalid email').required('Required!')
+      })}
+      handleSubmit={(values) => {
+        setTimeout(() => alert(JSON.stringify(values, null, 2)), 1000);
+      }}
+      render={({ values, touched, errors, handleChange, handleBlur, handleSubmit }) =>
+        <form onSubmit={handleSubmit}>
+          <input
+            type="email"
+            onChange={handleChange}
+            onBlur={handleBlur}
+            value={values.email}
+            name="email"
+          />
+          {touched.email &&
+            errors.email &&
+            <div id="feedback">
+              {errors.email}
+            </div>}
+          <button type="submit">Submit</button>
+        </form>}
+    />
+  </div>
+
+export default Basic
+```
+
+To make writing forms less verbose. Formik comes with a few helpers to save you key strokes.
+
+- `<Field>` 
+- `<Form/>`
+
+
+This is the **exact** same form as before, but written with `<Form/>` and `<Field/>`:
+
+```js
+import { Formik, Field, Form } from 'formik'
+import Yup from 'yup'
+
+const Basic = () => 
+  <div>
+    <h1>My Form</h1>
+    <Formik
+      getInitialValues={{
+        email: ''
+      }}
+      validationSchema={Yup.object().shape({
+         email: Yup.string().email('Invalid email').required('Required!')
+      })}
+      handleSubmit={(values) => {
+        setTimeout(() => alert(JSON.stringify(values, null, 2)), 1000);
+      }}
+      render={({ touched, errors }) =>
+        <Form>
+          <Field name="email" type="email" />
+          {touched.email &&
+            errors.email &&
+            <div id="feedback">
+              {errors.email}
+            </div>}
+          <button type="submit">Submit</button>
+        </Form>}
+    />
+  </div>
+
+export default Basic
+```
+
+
+
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-**Table of Contents**
+**API Reference**
 
 - [`<Formik />`](#formik-)
   - [Formik Render Methods](#formik-render-methods)
-  - [Formik props](#formik-props)
+  - [Formik (#formik-props)
     - [`dirty: boolean`](#dirty-boolean)
     - [`errors: { [field: string]: string }`](#errors--field-string-string-)
     - [`handleBlur: (e: any) => void`](#handleblur-e-any--void)

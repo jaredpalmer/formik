@@ -36,7 +36,15 @@ export default [
       commonjs({
         include: /node_modules/,
         namedExports: {
-          'node_modules/prop-types/index.js': ['object'],
+          'node_modules/prop-types/index.js': [
+            'object',
+            'oneOfType',
+            'string',
+            'node',
+            'func',
+            'bool',
+            'element',
+          ],
         },
       }),
       sourceMaps(),
@@ -55,7 +63,15 @@ export default [
       commonjs({
         include: /node_modules/,
         namedExports: {
-          'node_modules/prop-types/index.js': ['object'],
+          'node_modules/prop-types/index.js': [
+            'object',
+            'oneOfType',
+            'string',
+            'node',
+            'func',
+            'bool',
+            'element',
+          ],
         },
       }),
       ,

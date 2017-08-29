@@ -28,6 +28,7 @@ You can also try before you buy with this **[demo of Formik on CodeSandbox.io](h
 ## Quick start
 
 ```js
+import React from 'react'
 import { Formik } from 'formik'
 import Yup from 'yup'
 
@@ -75,6 +76,7 @@ To make writing forms less verbose. Formik comes with a few helpers to save you 
 This is the **exact** same form as before, but written with `<Form/>` and `<Field/>`:
 
 ```js
+import React from 'react'
 import { Formik, Field, Form } from 'formik'
 import Yup from 'yup'
 

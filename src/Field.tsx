@@ -39,7 +39,7 @@ Field.contextTypes = {
 
 Field.propTypes = {
   name: PropTypes.string.isRequired,
-  component: PropTypes.oneOfType([PropTypes.string, PropTypes.element]),
+  component: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
 };
 
 /**

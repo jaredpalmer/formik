@@ -44,7 +44,7 @@ export interface WithFormikConfig<
   /** 
    * Submission handler 
    */
-  handleSubmit: (values: object, formikBag: FormikBag<Props, Values>) => void;
+  handleSubmit: (values: Values, formikBag: FormikBag<Props, Values>) => void;
 
   /** 
    * Map props to the form values 

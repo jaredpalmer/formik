@@ -26,7 +26,7 @@ export type InjectedFormikProps<Props, Values> = Props &
 /**
  * Formik actions + { props }
  */
-export type FormikBag<P, V> = { props: P } & FormikActions<P>;
+export type FormikBag<P, V> = { props: P } & FormikActions<V>;
 
 /**
  * withFormik() configuration options. Backwards compatible.

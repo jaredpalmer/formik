@@ -12,7 +12,7 @@ export const BasicExample: React.SFC<{}> = () => {
       <h1>My Cool Form</h1>
       <Formik
         handleSubmit={(values: Values) => console.log(values)}
-        getInitialValues={{ email: '' }}
+        initialValues={{ email: '' }}
         component={MyForm}
       />
     </div>

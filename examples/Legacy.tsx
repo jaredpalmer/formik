@@ -1,7 +1,7 @@
 import * as React from 'react';
-import * as yup from 'yup';
+import * as Yup from 'yup';
 
-import { Formik, InjectedFormikProps } from '../src/formik';
+import { InjectedFormikProps, withFormik } from '../src/formik';
 
 export interface Props {
   user: {
@@ -13,7 +13,7 @@ interface Values {
   email: string;
 }
 
-const formikEnhancer = Formik<Props, Values>({
+const formikEnhancer = withFormik<Props, Values>({
   mapPropsToValues: props => ({ email: props.user.email }),
   validationSchema: Yup.object().shape({
     email: Yup.string()

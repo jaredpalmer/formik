@@ -10,7 +10,7 @@ export const BasicComponentPropExample = () =>
     <h1>My Cool Form</h1>
     <Formik
       handleSubmit={values => console.log(values)}
-      getInitialValues={{ firstName: '', lastName: '', email: '' }}
+      initialValues={{ firstName: '', lastName: '', email: '' }}
       component={MyFormHelpers}
     />
   </div>;
@@ -58,7 +58,7 @@ export const BasicRenderPropExample = () =>
     <h1>My Cool Form</h1>
     <Formik
       handleSubmit={values => console.log(values)}
-      getInitialValues={{ firstName: '', lastName: '', email: '' }}
+      initialValues={{ firstName: '', lastName: '', email: '' }}
       render={props =>
         <Form className="whatever">
           <Field name="firstName" placeholder="First Name" />
@@ -75,7 +75,7 @@ export const BasicChildrenPropExample = () =>
     <h1>My Cool Form</h1>
     <Formik
       handleSubmit={values => console.log(values)}
-      getInitialValues={{ firstName: '', lastName: '', email: '' }}
+      initialValues={{ firstName: '', lastName: '', email: '' }}
     >
       {props =>
         <Form className="whatever">

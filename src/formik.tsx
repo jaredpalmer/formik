@@ -140,7 +140,7 @@ export interface FormikConfig extends FormikSharedConfig {
   component?: React.ComponentType<FormikProps<any> | void>;
 
   /**
-   * Render prop (works like React router's <ROute render={props =>} />)
+   * Render prop (works like React router's <Route render={props =>} />)
    */
   render?: ((props: FormikProps<any>) => React.ReactNode);
 

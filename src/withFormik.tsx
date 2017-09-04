@@ -99,7 +99,7 @@ export function withFormik<
         <Formik
           {...props}
           {...config}
-          getInitialValues={mapPropsToValues(props)}
+          initialValues={mapPropsToValues(props)}
           render={(formikProps: FormikProps<Values>) =>
             <Component {...props} {...formikProps} />}
         />

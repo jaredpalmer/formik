@@ -128,7 +128,7 @@ export interface FormikSharedConfig {
  * <Formik /> props
  */
 export interface FormikConfig extends FormikSharedConfig {
-  getInitialValues: object;
+  initialValues: object;
   /** 
    * Submission handler 
    */
@@ -174,7 +174,7 @@ export class Formik<
     validateOnChange: PropTypes.bool,
     validateOnBlur: PropTypes.bool,
     isInitialValid: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
-    getInitialValues: PropTypes.object,
+    initialValues: PropTypes.object,
     handleSubmit: PropTypes.func.isRequired,
     validationSchema: PropTypes.oneOfType([PropTypes.func, PropTypes.object]),
     validate: PropTypes.func,
@@ -224,7 +224,7 @@ export class Formik<
   constructor(props: Props) {
     super(props);
     this.state = {
-      values: props.getInitialValues || ({} as any),
+      values: props.initialValues || ({} as any),
       errors: {},
       touched: {},
       isSubmitting: false,
@@ -539,7 +539,7 @@ Formik cannot determine which value to update. For more info see https://github.
       touched: {},
       error: undefined,
       status: undefined,
-      values: nextProps ? nextProps : this.props.getInitialValues,
+      values: nextProps ? nextProps : this.props.initialValues,
     });
   };
 

@@ -83,7 +83,7 @@ export interface FormikActions<Values> {
   /** Set whether field has been touched directly */
   setFieldTouched: (field: keyof Values, isTouched?: boolean) => void;
   /** Reset form */
-  resetForm: (nextProps?: any) => void;
+  resetForm: (nextValues?: any) => void;
   /** Submit the form imperatively */
   submitForm: () => void;
 }
@@ -229,6 +229,13 @@ export class Formik<
       touched: {},
       isSubmitting: false,
     };
+  }
+
+  componentWillReceiveProps(nextProps: Props) {
+    // If the initialValues change, reset the form
+    if (nextProps.initialValues !== this.props.initialValues) {
+      this.resetForm(nextProps.initialValues);
+    }
   }
 
   componentWillMount() {
@@ -532,14 +539,14 @@ Formik cannot determine which value to update. For more info see https://github.
     }));
   };
 
-  resetForm = (nextProps?: Props) => {
+  resetForm = (nextValues?: any) => {
     this.setState({
       isSubmitting: false,
       errors: {},
       touched: {},
       error: undefined,
       status: undefined,
-      values: nextProps ? nextProps : this.props.initialValues,
+      values: nextValues ? nextValues : this.props.initialValues,
     });
   };
 

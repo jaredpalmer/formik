@@ -65,7 +65,7 @@ const Form: React.SFC<FormikProps<Values>> = ({
 const BasicForm = (
   <Formik
     initialValues={{ name: 'jared' }}
-    handleSubmit={noop}
+    onSubmit={noop}
     component={Form}
   />
 );
@@ -125,7 +125,7 @@ describe('Formik Next', () => {
         const tree = shallow(
           <Formik
             initialValues={{ name: 'jared' }}
-            handleSubmit={noop}
+            onSubmit={noop}
             component={Form}
             validate={validate}
             validateOnChange={true}
@@ -147,7 +147,7 @@ describe('Formik Next', () => {
         const tree = shallow(
           <Formik
             initialValues={{ name: 'jared' }}
-            handleSubmit={noop}
+            onSubmit={noop}
             component={Form}
             validate={validate}
             validateOnChange={false}
@@ -198,7 +198,7 @@ describe('Formik Next', () => {
         const tree = shallow(
           <Formik
             initialValues={{ name: 'jared' }}
-            handleSubmit={noop}
+            onSubmit={noop}
             component={Form}
             validate={validate}
             validateOnBlur={true}
@@ -252,7 +252,7 @@ describe('Formik Next', () => {
       //   const CustomPayloadForm = Formik<Props, Values, Payload>({
       //     mapPropsToValues: ({ user }) => ({ ...user }),
       //     mapValuesToPayload: ({ name }) => ({ user: { name } }),
-      //     handleSubmit: payload => {
+      //     onSubmit: payload => {
       //       expect(payload).toEqual({ user: { name: 'jared' } });
       //       expect(payload).not.toEqual({ name: 'jared' });
       //     },
@@ -269,7 +269,7 @@ describe('Formik Next', () => {
           const tree = shallow(
             <Formik
               initialValues={{ name: 'jared' }}
-              handleSubmit={noop}
+              onSubmit={noop}
               component={Form}
               validate={validate}
             />
@@ -281,11 +281,11 @@ describe('Formik Next', () => {
         });
 
         it('should submit the form if valid', () => {
-          const handleSubmit = jest.fn();
+          const onSubmit = jest.fn();
           const tree = shallow(
             <Formik
               initialValues={{ name: 'jared' }}
-              handleSubmit={handleSubmit}
+              onSubmit={onSubmit}
               component={Form}
               validate={noop}
             />
@@ -293,17 +293,17 @@ describe('Formik Next', () => {
           tree.find(Form).dive().find('form').simulate('submit', {
             preventDefault: noop,
           });
-          expect(handleSubmit).toHaveBeenCalled();
+          expect(onSubmit).toHaveBeenCalled();
         });
 
         it('should not submit the form if invalid', () => {
           const validate = jest.fn().mockReturnValue({ name: 'Error!' });
-          const handleSubmit = jest.fn();
+          const onSubmit = jest.fn();
 
           const tree = shallow(
             <Formik
               initialValues={{ name: 'jared' }}
-              handleSubmit={handleSubmit}
+              onSubmit={onSubmit}
               component={Form}
               validate={validate}
             />
@@ -312,7 +312,7 @@ describe('Formik Next', () => {
             preventDefault: noop,
           });
           expect(validate).toHaveBeenCalled();
-          expect(handleSubmit).not.toHaveBeenCalled();
+          expect(onSubmit).not.toHaveBeenCalled();
         });
       });
 
@@ -323,7 +323,7 @@ describe('Formik Next', () => {
           const tree = shallow(
             <Formik
               initialValues={{ name: 'jared' }}
-              handleSubmit={noop}
+              onSubmit={noop}
               component={Form}
               validate={validate}
             />
@@ -335,28 +335,28 @@ describe('Formik Next', () => {
         });
 
         it('should submit the form if valid', async () => {
-          const handleSubmit = jest.fn();
+          const onSubmit = jest.fn();
 
           const tree = shallow(
             <Formik
               initialValues={{ name: 'jared' }}
-              handleSubmit={handleSubmit}
+              onSubmit={onSubmit}
               component={Form}
               validate={() => Promise.resolve({})}
             />
           );
           await tree.find(Form).props().submitForm();
 
-          expect(handleSubmit).toHaveBeenCalled();
+          expect(onSubmit).toHaveBeenCalled();
         });
 
         it('should not submit the form if invalid', async () => {
-          const handleSubmit = jest.fn();
+          const onSubmit = jest.fn();
 
           const tree = shallow(
             <Formik
               initialValues={{ name: 'jared' }}
-              handleSubmit={handleSubmit}
+              onSubmit={onSubmit}
               component={Form}
               validate={() =>
                 sleep(25).then(() => {
@@ -366,7 +366,7 @@ describe('Formik Next', () => {
           );
           await tree.find(Form).props().submitForm();
 
-          expect(handleSubmit).not.toHaveBeenCalled();
+          expect(onSubmit).not.toHaveBeenCalled();
         });
       });
 
@@ -376,7 +376,7 @@ describe('Formik Next', () => {
           const tree = shallow(
             <Formik
               initialValues={{ name: 'jared' }}
-              handleSubmit={noop}
+              onSubmit={noop}
               component={Form}
               validate={validate}
               validationSchema={{
@@ -395,7 +395,7 @@ describe('Formik Next', () => {
           const tree = shallow(
             <Formik
               initialValues={{ name: 'jared' }}
-              handleSubmit={noop}
+              onSubmit={noop}
               component={Form}
               validate={validate}
               validationSchema={() => ({
@@ -424,7 +424,7 @@ describe('Formik Next', () => {
       const tree = shallow(
         <Formik
           initialValues={{ name: 'jared' }}
-          handleSubmit={noop}
+          onSubmit={noop}
           component={Form}
           validate={validate}
           validateOnChange={true}
@@ -439,7 +439,7 @@ describe('Formik Next', () => {
       const tree = shallow(
         <Formik
           initialValues={{ name: 'jared' }}
-          handleSubmit={noop}
+          onSubmit={noop}
           component={Form}
           validate={validate}
           validateOnChange={false}
@@ -461,7 +461,7 @@ describe('Formik Next', () => {
       const tree = shallow(
         <Formik
           initialValues={{ name: 'jared' }}
-          handleSubmit={noop}
+          onSubmit={noop}
           component={Form}
           validate={validate}
           validateOnChange={true}
@@ -477,7 +477,7 @@ describe('Formik Next', () => {
       const tree = shallow(
         <Formik
           initialValues={{ name: 'jared' }}
-          handleSubmit={noop}
+          onSubmit={noop}
           component={Form}
           validate={validate}
           validateOnChange={false}
@@ -498,7 +498,7 @@ describe('Formik Next', () => {
       const tree = shallow(
         <Formik
           initialValues={{ name: 'jared' }}
-          handleSubmit={noop}
+          onSubmit={noop}
           component={Form}
           validate={validate}
         />
@@ -513,7 +513,7 @@ describe('Formik Next', () => {
       const tree = shallow(
         <Formik
           initialValues={{ name: 'jared' }}
-          handleSubmit={noop}
+          onSubmit={noop}
           component={Form}
           validate={validate}
           validateOnBlur={true}
@@ -538,7 +538,7 @@ describe('Formik Next', () => {
       const tree = shallow(
         <Formik
           initialValues={{ name: 'jared' }}
-          handleSubmit={noop}
+          onSubmit={noop}
           component={Form}
           validate={validate}
           validateOnBlur={true}
@@ -554,7 +554,7 @@ describe('Formik Next', () => {
       const tree = shallow(
         <Formik
           initialValues={{ name: 'jared' }}
-          handleSubmit={noop}
+          onSubmit={noop}
           component={Form}
           validate={validate}
           validateOnBlur={false}
@@ -599,7 +599,7 @@ describe('Formik Next', () => {
       const tree = shallow(
         <Formik
           initialValues={{ name: 'jared' }}
-          handleSubmit={noop}
+          onSubmit={noop}
           component={Form}
           isInitialValid={props => true}
         />
@@ -612,7 +612,7 @@ describe('Formik Next', () => {
       const tree = shallow(
         <Formik
           initialValues={{ name: 'jared' }}
-          handleSubmit={noop}
+          onSubmit={noop}
           component={Form}
           isInitialValid={props => false}
         />
@@ -625,7 +625,7 @@ describe('Formik Next', () => {
       const tree = shallow(
         <Formik
           initialValues={{ name: 'jared' }}
-          handleSubmit={noop}
+          onSubmit={noop}
           component={Form}
           isInitialValid={true}
         />
@@ -638,7 +638,7 @@ describe('Formik Next', () => {
       const tree = shallow(
         <Formik
           initialValues={{ name: 'jared' }}
-          handleSubmit={noop}
+          onSubmit={noop}
           component={Form}
           isInitialValid={false}
         />

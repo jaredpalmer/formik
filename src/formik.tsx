@@ -132,7 +132,7 @@ export interface FormikConfig extends FormikSharedConfig {
   /** 
    * Submission handler 
    */
-  handleSubmit: (values: object, formikActions: FormikActions<any>) => void;
+  onSubmit: (values: object, formikActions: FormikActions<any>) => void;
 
   /**
    * Form component to render
@@ -175,7 +175,7 @@ export class Formik<
     validateOnBlur: PropTypes.bool,
     isInitialValid: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
     initialValues: PropTypes.object,
-    handleSubmit: PropTypes.func.isRequired,
+    onSubmit: PropTypes.func.isRequired,
     validationSchema: PropTypes.oneOfType([PropTypes.func, PropTypes.object]),
     validate: PropTypes.func,
     component: PropTypes.func,
@@ -477,7 +477,7 @@ Formik cannot determine which value to update. For more info see https://github.
   };
 
   executeSubmit = () => {
-    this.props.handleSubmit(this.state.values, {
+    this.props.onSubmit(this.state.values, {
       setStatus: this.setStatus,
       setTouched: this.setTouched,
       setErrors: this.setErrors,

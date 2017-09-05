@@ -1,7 +1,7 @@
 {
   "name": "formik",
   "description": "Forms in React, without tears",
-  "version": "0.9.0-beta.2",
+  "version": "0.9.0-beta.3",
   "license": "MIT",
   "author": "Jared Palmer <jared@palmer.net>",
   "repository": "jaredpalmer/formik",
@@ -18,11 +18,7 @@
   "main": "dist/formik.js",
   "module": "dist/formik.es6.js",
   "typings": "dist/formik.d.ts",
-  "files": [
-    "dist",
-    "legacy.js",
-    "legacy.d.ts"
-  ],
+  "files": ["dist", "legacy.js", "legacy.d.ts"],
   "scripts": {
     "test": "jest --env=jsdom",
     "test:watch": "npm run test -- --watch",
@@ -31,7 +27,9 @@
     "build": "tsc && cross-env NODE_ENV=production rollup -c && cross-env NODE_ENV=development rollup -c && rimraf compiled && cp dist/legacy.d.ts legacy.d.ts",
     "prepublish": "npm run build",
     "format": "prettier --trailing-comma es5 --single-quote --write 'src/**/*' 'test/**/*'",
-    "precommit": "lint-staged"
+    "precommit": "lint-staged",
+    "addc": "all-contributors add",
+    "gen-docs": "all-contributors generate && doctoc README.md"
   },
   "dependencies": {
     "prop-types": "^15.5.10",
@@ -50,7 +48,9 @@
     "@types/react-dom": "15.5.1",
     "@types/react-test-renderer": "15.5.2",
     "@types/warning": "^3.0.0",
+    "all-contributors-cli": "^4.4.0",
     "cross-env": "5.0.5",
+    "doctoc": "^1.3.0",
     "enzyme": "2.9.1",
     "husky": "0.14.3",
     "jest": "20.0.4",
@@ -81,9 +81,7 @@
     ]
   },
   "jest": {
-    "collectCoverageFrom": [
-      "src/**/*.{ts,tsx}"
-    ],
+    "collectCoverageFrom": ["src/**/*.{ts,tsx}"],
     "transform": {
       ".(ts|tsx)": "<rootDir>/node_modules/ts-jest/preprocessor.js"
     },
@@ -91,14 +89,7 @@
       "<rootDir>/test/**/*.ts?(x)",
       "<rootDir>/test/**/?(*.)(spec|test).ts?(x)"
     ],
-    "transformIgnorePatterns": [
-      "[/\\\\]node_modules[/\\\\].+\\.(js|jsx)$"
-    ],
-    "moduleFileExtensions": [
-      "ts",
-      "tsx",
-      "js",
-      "json"
-    ]
+    "transformIgnorePatterns": ["[/\\\\]node_modules[/\\\\].+\\.(js|jsx)$"],
+    "moduleFileExtensions": ["ts", "tsx", "js", "json"]
   }
 }

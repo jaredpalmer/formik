@@ -100,6 +100,9 @@ export function withFormik<
           {...props}
           {...config}
           initialValues={mapPropsToValues(props)}
+          onSubmit={(values, actions) => {
+            config.handleSubmit(values as Values, { ...actions, props })
+          }}
           render={(formikProps: FormikProps<Values>) =>
             <Component {...props} {...formikProps} />}
         />

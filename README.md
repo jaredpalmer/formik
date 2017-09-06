@@ -36,13 +36,13 @@ const Basic = () =>
   <div>
     <h1>My Form</h1>
     <Formik
-      getInitialValues={{
+      initialValues={{
         email: ''
       }}
       validationSchema={Yup.object().shape({
          email: Yup.string().email('Invalid email').required('Required!')
       })}
-      handleSubmit={(values) => {
+      onSubmit={(values) => {
         setTimeout(() => alert(JSON.stringify(values, null, 2)), 1000);
       }}
       render={({ values, touched, errors, handleChange, handleBlur, handleSubmit }) =>
@@ -84,13 +84,13 @@ const Basic = () =>
   <div>
     <h1>My Form</h1>
     <Formik
-      getInitialValues={{
+      initialValues={{
         email: ''
       }}
       validationSchema={Yup.object().shape({
          email: Yup.string().email('Invalid email').required('Required!')
       })}
-      handleSubmit={(values) => {
+      onSubmit={(values) => {
         setTimeout(() => alert(JSON.stringify(values, null, 2)), 1000);
       }}
       render={({ touched, errors }) =>
@@ -187,8 +187,8 @@ const BasicExample: React.SFC<...> = () =>
   <div>
     <h1>My Form</h1>
     <Formik
-      getInitialValues={{ name: 'jared' }}
-      handleSubmit={(values: Values) => {
+      initialValues={{ name: 'jared' }}
+      onSubmit={(values: Values) => {
         setTimeout(() => alert(JSON.stringify(values, null, 2)), 1000);
       }}
       render={(props: FormikProps<Values>) =>
@@ -460,8 +460,8 @@ const Example: React.SFC<...> = () => (
   <div>
     <h1>My Form</h1>
     <Formik
-      getInitialValues={{ email: '', color: 'red', firstName: ''  }}
-      handleSubmit={(values: Values) => {
+      initialValues={{ email: '', color: 'red', firstName: ''  }}
+      onSubmit={(values: Values) => {
         setTimeout(() => alert(JSON.stringify(values, null, 2)), 1000);
       }}
       render={(props: FormikProps<Values>) =>
@@ -514,8 +514,8 @@ const FormExample: React.SFC<{}> = () => (
   <div>
     <h1>My Form</h1>
     <Formik
-      getInitialValues={{ email: '', color: 'red' }}
-      handleSubmit={(values: Values) => {
+      initialValues={{ email: '', color: 'red' }}
+      onSubmit={(values: Values) => {
         setTimeout(() => alert(JSON.stringify(values, null, 2)), 1000);
       }}
       component={MyForm}
@@ -537,12 +537,35 @@ const MyForm: React.SFC<{}> = () =>
 
 ## `withFormik(options)`
 
+Differences between the `withFormik(options)` and `<Formik />`'s props.
+
+- `displayName?: string`: Set display name (useful for React Devtools).
+- `handleSubmit: (values: Values, FormikBag<Props, Values>) => void`: Submit handler. The `FormikBag` includes all outer `props` AND all `FormikActions` such as [`setSubmitting`], [`setStatus`], [`setErrors`], `setXXXX`, etc.
+- `mapPropsToValues?: (props: Props) => Values`: Map outer props to Formik's internal `values`. This is instead of `initialValues`.
+
 ```tsx
 import { withFormik, InjectedFormikProps } from 'formik';
 
 // backwards compatible API 
 
-const enhancer = withFormik<InjectedFormikProps<Props, Values>>({ ... })
+const enhancer = withFormik<InjectedFormikProps<Props, Values>>({ 
+  displayName: 'MyForm', // useful for React DevTools
+  mapPropsToValues: (props) => ({  }), // transform outer props to values
+  handleSubmit: (values, formikBag /* { props, setSubmitting, setErrors, SetStatus, etc. } */ ) => {
+     CallMyApi(values)
+      .then(
+        () => {
+          formikBag.setSubmitting(false)
+          // do stuff 
+        },
+        error => {
+         formikBag.setSubmitting(false)
+         // do stuff 
+        }
+      )
+  }
+  // other config options are identical to <Formik />'s
+})
 
 const Form = props => (
   <form onSubmit={props.handleSubmit}>

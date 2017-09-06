@@ -537,11 +537,7 @@ const MyForm: React.SFC<{}> = () =>
 
 ## `withFormik(options)`
 
-Differences between the `withFormik(options)` and `<Formik />`'s props.
-
-- `displayName?: string`: Set display name (useful for React Devtools).
-- `handleSubmit: (values: Values, FormikBag<Props, Values>) => void`: Submit handler. The `FormikBag` includes all outer `props` AND all `FormikActions` such as [`setSubmitting`], [`setStatus`], [`setErrors`], `setXXXX`, etc.
-- `mapPropsToValues?: (props: Props) => Values`: Map outer props to Formik's internal `values`. This is instead of `initialValues`.
+If you're not into render props, Formik also exports a higher-order component `withFormik()`. It works a lot like Redux's `connect` or Apollo's `graphql`. You simply wrap your inner form component with an enhancer...
 
 ```tsx
 import { withFormik, InjectedFormikProps } from 'formik';
@@ -564,7 +560,7 @@ const enhancer = withFormik<InjectedFormikProps<Props, Values>>({
         }
       )
   }
-  // other config options are identical to <Formik />'s
+  // other config options are identical to <Formik />'s props
 })
 
 const Form = props => (

@@ -54,7 +54,7 @@ You can also try before you buy with this **[demo of Formik on CodeSandbox.io](h
       - [`handleSubmit: (e: React.FormEvent<HTMLFormEvent>) => void`](#handlesubmit-e-reactformeventhtmlformevent--void)
       - [`isSubmitting: boolean`](#issubmitting-boolean)
       - [`isValid: boolean`](#isvalid-boolean)
-      - [`resetForm: (nextProps?: Props) => void`](#resetform-nextprops-props--void)
+      - [`resetForm: (nextValues?: Values) => void`](#resetform-nextvalues-values--void)
       - [`setErrors: (fields: { [field: string]: string }) => void`](#seterrors-fields--field-string-string---void)
       - [`setFieldError: (field: string, errorMsg: string) => void`](#setfielderror-field-string-errormsg-string--void)
       - [`setFieldTouched: (field: string, isTouched: boolean) => void`](#setfieldtouched-field-string-istouched-boolean--void)
@@ -339,7 +339,7 @@ Submitting state. Either `true` or `false`. Formik will set this to `true` on yo
 
 Returns `true` if the there are no [`errors`], or the result of [`isInitialValid`] the form if is in "pristine" condition (i.e. not [`dirty`])).
 
-##### `resetForm: (nextProps?: Props) => void`
+##### `resetForm: (nextValues?: Values) => void`
 Imperatively reset the form. This will clear [`errors`] and [`touched`], set [`isSubmitting`] to `false` and rerun `mapPropsToValues` with the current `WrappedComponent`'s `props` or what's passed as an argument. That latter is useful for calling `resetForm` within `componentWillReceiveProps`.
 
 ##### `setErrors: (fields: { [field: string]: string }) => void`

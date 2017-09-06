@@ -51,7 +51,7 @@ You can also try before you buy with this **[demo of Formik on CodeSandbox.io](h
       - [`handleBlur: (e: any) => void`](#handleblur-e-any--void)
       - [`handleChange: (e: React.ChangeEvent<any>) => void`](#handlechange-e-reactchangeeventany--void)
       - [`handleReset: () => void`](#handlereset---void)
-      - [`onSubmit: (e: React.FormEvent<HTMLFormEvent>) => void`](#onsubmit-e-reactformeventhtmlformevent--void)
+      - [`handleSubmit: (e: React.FormEvent<HTMLFormEvent>) => void`](#handlesubmit-e-reactformeventhtmlformevent--void)
       - [`isSubmitting: boolean`](#issubmitting-boolean)
       - [`isValid: boolean`](#isvalid-boolean)
       - [`resetForm: (nextProps?: Props) => void`](#resetform-nextprops-props--void)
@@ -329,7 +329,7 @@ DOM-only. Use [`setFieldValue`] in React Native.
 ##### `handleReset: () => void`
 Reset handler. Will reset the form to its initial state. This should be passed to `<button onClick={handleReset}>...</button>`
 
-##### `onSubmit: (e: React.FormEvent<HTMLFormEvent>) => void`
+##### `handleSubmit: (e: React.FormEvent<HTMLFormEvent>) => void`
 Submit handler. This should be passed to `<form onSubmit={props.handleSubmit}>...</form>`
 
 ##### `isSubmitting: boolean`

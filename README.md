@@ -371,7 +371,7 @@ const ContactForm = ({ handleSubmit, handleChange, handleBlur, values, errors })
 
 
 
-### `handleSubmit: (values: Values, formikBag: FormikBag) => void`
+### `onSubmit: (values: Values, formikBag: FormikBag) => void`
 Your form submission handler. It is passed your forms [`values`] and the "FormikBag", which includes an object containing a subset of the [injected props and methods](/#injected-props-and-methods) (i.e. all the methods with names that start with `set<Thing>` + `resetForm`) and any props that were passed to the the wrapped component.
 
 Note: [`errors`], [`touched`], [`status`] and all event handlers are NOT included in the `FormikBag`.
@@ -380,7 +380,7 @@ Note: [`errors`], [`touched`], [`status`] and all event handlers are NOT include
 
 Default is `false`. Control the initial value of [`isValid`] prop prior to mount. You can also pass a function. Useful for situations when you want to enable/disable a submit and reset buttons on initial mount.
 
-### `getInitialValues?: Values`
+### `initialValues?: Values`
 
 If this option is specified, then Formik will transfer its results into updatable form state and make these values available to the new component as [`props.values`][`values`]. If `mapPropsToValues` is not specified, then Formik will map all props that are not functions to the inner component's [`props.values`][`values`]. That is, if you omit it, Formik will only pass `props` where `typeof props[k] !== 'function'`, where `k` is some key. 
 
@@ -388,7 +388,7 @@ Even if your form is not receiving any props from its parent, use `mapPropsToVal
 
 ### `validate?: (values: Values, props: Props) => FormikError<Values> | Promise<any>`
 
-_Note: I suggest using [`validateSchema`] and Yup for validation. However, `validate` is a dependency-free, straightforward way to validate your forms._
+_Note: I suggest using [`validatationSchema`] and Yup for validation. However, `validate` is a dependency-free, straightforward way to validate your forms._
 
 Validate the form's [`values`] with function. This function can either be:
 

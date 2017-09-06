@@ -1,19 +1,8 @@
-import * as React from 'react';
-import * as Yup from 'yup';
+import React from 'react';
+import Yup from 'yup';
+import { withFormik } from '../src/formik';
 
-import { InjectedFormikProps, withFormik } from '../src/formik';
-
-export interface Props {
-  user: {
-    email: string;
-  };
-}
-
-interface Values {
-  email: string;
-}
-
-const formikEnhancer = withFormik<Props, Values>({
+const formikEnhancer = withFormik({
   mapPropsToValues: props => ({ email: props.user.email }),
   validationSchema: Yup.object().shape({
     email: Yup.string()
@@ -29,7 +18,7 @@ const formikEnhancer = withFormik<Props, Values>({
   displayName: 'MyForm', // helps with React DevTools
 });
 
-const MyForm: React.SFC<InjectedFormikProps<Props, Values>> = props => {
+const MyForm = props => {
   const {
     values,
     touched,

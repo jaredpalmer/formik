@@ -8,7 +8,7 @@
 
 Let's face it, forms are really verbose in [React](https://github.com/facebook/react). To make matters worse, most form helpers do wayyyy too much magic and often have a significant performance cost associated with them. Formik is a small library that helps you with the 3 most annoying parts:
 
- 1. Getting values into to form state
+ 1. Getting values into and out of form state
  2. Validation and error messages
  3. Handling form submission
 

@@ -6,9 +6,9 @@
 [![license](http://img.shields.io/npm/l/formik.svg)](./LICENSE)
 [![Join the chat at on Slack](https://palmer.chat/badge.svg)](https://palmer.chat/)
 
-Let's face it, forms are really verbose in [React](https://github.com/facebook/react). To make matters worse, most form helpers do wayyyy too much magic and often have a significant performance cost associated with them. Formik is a minimal Higher Order Component that helps you with the 3 most annoying parts:
+Let's face it, forms are really verbose in [React](https://github.com/facebook/react). To make matters worse, most form helpers do wayyyy too much magic and often have a significant performance cost associated with them. Formik is a small library that helps you with the 3 most annoying parts:
 
- 1. Transforming props to form state
+ 1. Getting values into to form state
  2. Validation and error messages
  3. Handling form submission
 
@@ -16,14 +16,46 @@ By colocating all of the above in one place, Formik will keep things organized--
 
 ## Installation
 
-Add Formik (and optionally [Yup](https://github.com/jquense/yup) to your project). Formik supports/recommends [Yup](https://github.com/jquense/yup) (which is like [Joi](https://github.com/hapijs/joi), but for the browser) for object schema validation.
+Add Formik to your project.
 
 ```bash
-npm i formik yup --save
+npm i formik --save
 ```
-Note: Yup is 100% optional. You are free to [write your own validators][`validate`].
 
 You can also try before you buy with this **[demo of Formik on CodeSandbox.io](https://codesandbox.io/s/zKrK5YLDZ)**
+
+## The gist
+
+```js
+import React from 'react'
+import { Formik } from 'formik'
+
+const Basic = () => 
+  <div>
+    <h1>My Form</h1>
+    <p>This can be anywhere in your application</p>
+    <Formik
+      initialValues={{ email: '' }}
+      onSubmit={(values) => {
+        setTimeout(() => {
+          alert(JSON.stringify(values, null, 2))
+        }, 1000);
+      }}
+      render={({ values, handleChange, handleSubmit }) =>
+        <form onSubmit={handleSubmit}>
+          <input
+            type="email"
+            name="email"
+            onChange={handleChange}
+            value={values.email}
+          />
+          <button type="submit">Submit</button>
+        </form>}
+    />
+  </div>
+
+export default Basic
+```
 
 ## Demos
 
@@ -34,7 +66,6 @@ You can also try before you buy with this **[demo of Formik on CodeSandbox.io](h
 - [Working with 3rd-party inputs #2: Draft.js](https://codesandbox.io/s/QW1rqjBLl)
 - [Accessing React lifecycle functions](https://codesandbox.io/s/pgD4DLypy)
 
----
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->

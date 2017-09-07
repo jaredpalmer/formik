@@ -153,138 +153,145 @@ Imagine you want to build a form that lets you edit user data. However, your use
 }
 ```
 
-When we are done we want our form to accept just a `user` prop and that's it.   
+When we are done we want our dialog to accept just a `user`, `updateUser`, and `onClose` props.
 
 ```js
 // User.js
 import React from 'react';
 import Dialog from 'MySuperDialog';
 import EditUserForm from './EditUserForm';
+import { Formik } from 'formik'
 
-const EditUserDialog = ({ user }) =>
-  <Dialog>
-    <EditUserForm user={user} />
-  </Dialog>;
+const EditUserDialog = ({ user, updateUser, onClose }) => {
+  const { email, social } = user
+  return (
+    <Dialog onClose={onClose}>
+      <h1>Edit User</h1>
+      <Formik
+        initialValues={{ email, ...social }}
+        onSubmit={(values, actions) => {
+          CallMyApi(user.id, values)
+          .then(
+            updatedUser => {
+              actions.setSubmitting(false)
+              updateUser(updatedUser),
+              onClose()
+            },
+            error => {
+              actions.setSubmitting(false)
+              actions.setErrors(transformMyAPIErrorToAnObject(error));
+            }
+          )
+        }}
+        render={({ values, errors, touched, handleBlur, handleChange, handleSubmit, isSubmitting }) =>
+          <form onSubmit={handleSubmit}>
+            <input
+              type="email"
+              name="email"
+              onChange={handleChange}
+              value={values.email}
+            />
+            {errors.email &&
+              touched.email &&
+              <div>
+                {errors.email}
+              </div>}
+            <input
+              type="text"
+              name="facebook"
+              onChange={handleChange}
+              value={values.facebook}
+            />
+            {errors.facebook &&
+              touched.facebook &&
+              <div>
+                {errors.facebook}
+              </div>}
+            <input
+              type="text"
+              name="twitter"
+              onChange={handleChange}
+              value={values.twitter}
+            />
+            {errors.twitter &&
+              touched.twitter &&
+              <div>
+                {errors.twitter}
+              </div>}          
+            <button type="submit" disabled={isSubmitting}>
+              Submit
+            </button>
+          </form>}
+      />
+  </Dialog>
+  )
+}
 ```
 
-Enter Formik.
+To make writing forms less verbose. Formik comes with a few helpers to save you key strokes.
+
+- `<Field>` 
+- `<Form/>`
+
+
+This is the **exact** same form as before, but written with `<Form/>` and `<Field/>`:
 
 ```js
-// EditUserForm.js
+// EditUserDialog.js
 import React from 'react';
-import { withFormik } from 'formik';
-import Yup from 'yup';
+import Dialog from 'MySuperDialog';
+import EditUserForm from './EditUserForm';
+import { Formik, Field, Form } from 'formik'
 
-// Formik is a Higher Order Component that wraps a React form. Mutable form values
-// are injected into a prop called [`values`]. Additionally, Formik injects
-// onChange and an onBlur handler that you can use on every input. You also get
-// handleSubmit, handleReset, errors, touched, and isSubmitting for free. This makes building custom
-// inputs easy.
-const EditUserForm = ({
-  values,
-  touched,
-  errors,
-  dirty,
-  isSubmitting,
-  handleChange,
-  handleBlur,
-  handleSubmit,
-  handleReset,
-}) =>
-  <form onSubmit={handleSubmit}>
-    <label htmlFor="email">Email</label>
-    <input
-      id="email"
-      placeholder="Enter your email"
-      type="text"
-      value={values.email}
-      onChange={handleChange}
-      onBlur={handleBlur}
-    />
-    {errors.email &&
-      touched.email &&
-      <div>
-        {errors.email}
-      </div>}
-    <input
-      type="text"
-      name="facebook"
-      value={values.facebook}
-      onChange={handleChange}
-      onBlur={handleBlur}
-      placeholder="facebook username"
-    />
-    {errors.facebook &&
-      touched.facebook &&
-      <div>
-        {errors.facebook}
-      </div>}
-    <input
-      type="text"
-      name="twitter"
-      value={values.twitter}
-      onChange={handleChange}
-      onBlur={handleBlur}
-      placeholder="twitter username"
-    />
-    {errors.twitter &&
-      touched.twitter &&
-      <div>
-        {errors.twitter}
-      </div>}
-    <button
-      type="button"
-      onClick={handleReset}
-      disabled={!dirty || isSubmitting}
-    >
-      Reset
-    </button>
-    <button type="submit" disabled={isSubmitting}>
-      Submit
-    </button>
-  </form>;
-
-// Now for the fun part. We need to tell Formik how we want to validate,
-// transform props/state, and submit our form.
-export default withFormik({
-  // We now map React props to form values. These will be injected as [`values`] into
-  // our form. (Note: in the real world, you would destructure props, but for clarity this is
-  // not shown)
-  mapPropsToValues: props => ({
-    email: props.user.email,
-    twitter: props.user.social.twitter,
-    facebook: props.user.social.facebook,
-  }),
-  // We can optionally define our a validation schema with Yup. It's like Joi, but for
-  // the browser. Errors from Yup will be injected as `errors` into the form.
-  validationSchema: Yup.object().shape({
-    email: Yup.string().email().required('Bruh, email is required'),
-    twitter: Yup.string(),
-    facebook: Yup.string(),
-  }),
-  // Formik lets you colocate your submission handler with your form.
-  // In addition to your from `values`, you have
-  // access to all props and some stateful helpers.
-  handleSubmit: (values, { props, setErrors, setSubmitting }) => {
-    // do stuff with your payload
-    // e.preventDefault(), setSubmitting, setError(undefined) are
-    // called before handleSubmit is. So you don't have to do repeat this.
-    // handleSubmit will only be executed if form values pass validation (if you specify it).
-    CallMyApi(props.user.id, values).then(
-      res => {
-        setSubmitting(false);
-        // do something to show success
-        // MyToaster.showSuccess({ message: 'Success!' })
-      },
-      err => {
-        setSubmitting(false);
-        setErrors(transformMyAPIErrorToAnObject(err));
-        // do something to show a rejected api submission
-        // MyToaster.showError({ message: 'Shit!', error: err })
-      }
-    );
-  },
-})(EditUserForm);
+const EditUserDialog = ({ user, updateUser, onClose }) => {
+  const { email, social } = user
+  return (
+    <Dialog onClose={onClose}>
+      <h1>Edit User</h1>
+      <Formik
+        initialValues={{ email, ...social }}
+        onSubmit={(values, actions) => {
+          CallMyApi(user.id, values)
+          .then(
+            updatedUser => {
+              actions.setSubmitting(false)
+              updateUser(updatedUser),
+              onClose()
+            },
+            error => {
+              actions.setSubmitting(false)
+              actions.setErrors(transformMyAPIErrorToAnObject(error));
+            }
+          )
+        }}
+        render={({ errors, touched, isSubmitting }) =>
+          <Form>
+            <Field type="email" name="email" />
+            {errors.email &&
+              touched.email &&
+              <div>
+                {errors.email}
+              </div>}
+            <Field type="text" name="facebook" />
+            {errors.facebook &&
+              touched.facebook &&
+              <div>
+                {errors.facebook}
+              </div>}
+            <Field type="text" name="twitter" />
+            {errors.twitter &&
+              touched.twitter &&
+              <div>
+                {errors.twitter}
+              </div>}          
+            <button type="submit" disabled={isSubmitting}>
+              Submit
+            </button>
+          </Form>}
+      />
+  </Dialog>
+  )
+}
 ```
 
 ## API

@@ -26,7 +26,15 @@ You can also try before you buy with this **[demo of Formik on CodeSandbox.io](h
 
 ## The gist
 
+There are two ways to use Formik:
+
+- `<Formik />`: A React component with a `render` prop
+- `withFormik()`: A Higher-order Component (HoC) that accepts a configuration object
+
+**Both do exactly the same thing**, but differ in their respective style and approach. 
+
 ```js
+// Render Prop
 import React from 'react'
 import { Formik } from 'formik'
 
@@ -52,6 +60,42 @@ const Basic = () =>
           <button type="submit">Submit</button>
         </form>}
     />
+  </div>
+
+export default Basic
+```
+
+
+```js
+// Higher Order Component
+import React from 'react'
+import { withFormik } from 'formik'
+
+const InnerForm = ({ values, handleChange, handleSubmit }) =>
+  <form onSubmit={handleSubmit}>
+    <input
+      type="email"
+      name="email"
+      onChange={handleChange}
+      value={values.email}
+    />
+    <button type="submit">Submit</button>
+  </form>
+
+const MyForm = withFormik({
+  mapPropsToValues: props => ({email: ''}),
+  handleSubmit: (values) => {
+    setTimeout(() => {
+      alert(JSON.stringify(values, null, 2))
+    }, 1000);
+  }
+})(InnerForm)
+
+const Basic = () => 
+  <div>
+    <h1>My Form</h1>
+    <p>This can be anywhere in your application</p>
+    <MyForm />
   </div>
 
 export default Basic

@@ -40,6 +40,15 @@ npm i formik --save
 
 You can also try before you buy with this **[demo of Formik on CodeSandbox.io](https://codesandbox.io/s/zKrK5YLDZ)**
 
+## Demos
+
+- [Basics](https://codesandbox.io/s/zKrK5YLDZ)
+- [Sync Validation](https://codesandbox.io/s/q8yRqQMp)
+- [Building your own input primitives](https://codesandbox.io/s/qJR4ykJk)
+- [Working with 3rd-party inputs #1: react-select](https://codesandbox.io/s/jRzE53pqR)
+- [Working with 3rd-party inputs #2: Draft.js](https://codesandbox.io/s/QW1rqjBLl)
+- [Accessing React lifecycle functions](https://codesandbox.io/s/pgD4DLypy)
+
 
 ## The gist
 
@@ -203,14 +212,6 @@ As you can see above, validation is left up to you. Feel free to write your own 
 npm install yup --save
 ```
 
-## Demos
-
-- [Basics](https://codesandbox.io/s/zKrK5YLDZ)
-- [Sync Validation](https://codesandbox.io/s/q8yRqQMp)
-- [Building your own input primitives](https://codesandbox.io/s/qJR4ykJk)
-- [Working with 3rd-party inputs #1: react-select](https://codesandbox.io/s/jRzE53pqR)
-- [Working with 3rd-party inputs #2: Draft.js](https://codesandbox.io/s/QW1rqjBLl)
-- [Accessing React lifecycle functions](https://codesandbox.io/s/pgD4DLypy)
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->

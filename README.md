@@ -26,12 +26,83 @@ You can also try before you buy with this **[demo of Formik on CodeSandbox.io](h
 
 ## The gist
 
+Formik keeps track of your form's state (`values`, `errors`, `touched`, and `isSubmitting`) and then exposes this internal state plus some reusable methods / event handlers (`handleChange`, `handleBlur`, and `handleSubmit`) to your form via `props`. `handleChange` and `handleBlur` work exactly  as expected--they use an HTML `name` or `id` attribute to figure out which field in `values`, `errors`, and `touched` should be updated.
+
 There are two ways to use Formik:
 
-- `<Formik />`: A React component with a `render` prop
 - `withFormik()`: A Higher-order Component (HoC) that accepts a configuration object
+- `<Formik />`: A React component with a `render` prop
 
-**Both do exactly the same thing**, but differ in their respective style and approach. 
+**Both do exactly the same thing** and share the same internal implementation, but differ in their respective style. 
+
+
+```js
+// Higher Order Component
+import React from 'react'
+import { withFormik } from 'formik'
+
+// Our inner form component which receives our form's state and updater methods as props
+const InnerForm = ({ values, errors, touched, handleChange, handleSubmit, isSubmitting }) =>
+  <form onSubmit={handleSubmit}>
+    <input
+      type="email"
+      name="email"
+      onChange={handleChange}
+      value={values.email}
+    />
+    {touched.email && errors.email && <div>{errors.email}</div>}
+    <input
+      type="password"
+      name="password"
+      onChange={handleChange}
+      value={values.password}
+    />
+    {touched.password && errors.password && <div>{errors.password}</div>}
+    <button type="submit" disabled={isSubmitting}>Submit</button>
+  </form>
+
+// Wrap our form with the using withFormik HoC
+const MyForm = withFormik({
+  // Transform outer props into form values
+  mapPropsToValues: props => ({ email: '', password: '' }), 
+  // Add a custom validation function (this can be async too!)
+  validate: (values, props) => {
+    let errors = {}
+    if (!values.email) {
+     errors.email = 'Required'
+    } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)) {
+     errors.email = 'Invalid email address'
+    }
+    return errors
+  },
+  // Submission handler
+  handleSubmit: (values, { props, setSubmitting, setErrors, /* setValues, setStatus, and other goodies */ }) => {
+    LoginToMyApp(values)
+      .then(
+        user => {
+          setSubmitting(false)
+          // do whatevs...
+          // props.updateUser(user) 
+        },
+        errors => {
+          setSubmitting(false)
+          // transform your API's errors into the same shape as Formik's!
+          setErrors(transformMyApiErrors(errors)) 
+        }
+      )
+  }
+})(InnerForm)
+
+// Use <MyForm /> anywhere
+const Basic = () => 
+  <div>
+    <h1>My Form</h1>
+    <p>This can be anywhere in your application</p>
+    <MyForm />
+  </div>
+
+export default Basic
+```
 
 ```js
 // Render Prop
@@ -42,14 +113,49 @@ const Basic = () =>
   <div>
     <h1>My Form</h1>
     <p>This can be anywhere in your application</p>
+    {/* 
+      The benefit of the render prop approach is that you have full access to React's
+      state, props, and composition model. Thus there is no need to map outer props
+      to values...you can just set the initial values, and if they depend on props / state, 
+      well then, boom, you have direct access to props.
+
+      To access Formik's methods/state, you use a render prop that accepts your inner form component.
+      You can define this inner component separately or inline...totally up to you:
+      - `<Formik render={props => <form>...</form>}>`
+      - `<Formik component={InnerForm}>` 
+      - `<Formik>{props => <form>...</form>}</Formik>`: same as render, just different style. 
+    */}
     <Formik
-      initialValues={{ email: '' }}
-      onSubmit={(values) => {
-        setTimeout(() => {
-          alert(JSON.stringify(values, null, 2))
-        }, 1000);
+      initialValues={{ 
+        email: '', 
+        password: '' 
+      }} 
+      validate={values => {
+        // same as above, but feel free to move this into a class method now.
+        let errors = {}
+        if (!values.email) {
+         errors.email = 'Required'
+        } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)) {
+         errors.email = 'Invalid email address'
+        }
+        return errors
       }}
-      render={({ values, handleChange, handleSubmit }) =>
+      onSubmit={(values, { setSubmitting,  setErrors, /* setValues and other goodies */ }) => { 
+        LoginToMyApp(values)
+          .then(
+            user => {
+              setSubmitting(false)
+              // do whatevs...
+              // props.updateUser(user)
+            },
+            errors => {
+              setSubmitting(false)
+              // transform your API's errors into the same shape as Formik's
+              setErrors(transformMyApiErrors(errors)) 
+            }
+          )
+      }}
+      render={({ values, errors, touched, handleChange, handleSubmit, isSubmitting }) =>
         <form onSubmit={handleSubmit}>
           <input
             type="email"
@@ -57,7 +163,15 @@ const Basic = () =>
             onChange={handleChange}
             value={values.email}
           />
-          <button type="submit">Submit</button>
+          {touched.email && errors.email && <div>{errors.email}</div>}
+          <input
+            type="password"
+            name="password"
+            onChange={handleChange}
+            value={values.password}
+          />
+          {touched.password && errors.password && <div>{errors.password}</div>}
+          <button type="submit" disabled={isSubmitting}>Submit</button>
         </form>}
     />
   </div>
@@ -65,41 +179,6 @@ const Basic = () =>
 export default Basic
 ```
 
-
-```js
-// Higher Order Component
-import React from 'react'
-import { withFormik } from 'formik'
-
-const InnerForm = ({ values, handleChange, handleSubmit }) =>
-  <form onSubmit={handleSubmit}>
-    <input
-      type="email"
-      name="email"
-      onChange={handleChange}
-      value={values.email}
-    />
-    <button type="submit">Submit</button>
-  </form>
-
-const MyForm = withFormik({
-  mapPropsToValues: props => ({email: ''}),
-  handleSubmit: (values) => {
-    setTimeout(() => {
-      alert(JSON.stringify(values, null, 2))
-    }, 1000);
-  }
-})(InnerForm)
-
-const Basic = () => 
-  <div>
-    <h1>My Form</h1>
-    <p>This can be anywhere in your application</p>
-    <MyForm />
-  </div>
-
-export default Basic
-```
 
 ## Demos
 
@@ -396,7 +475,7 @@ Returns `true` if any field has been touched by any means, `false` otherwise. `d
 
 ##### `errors: { [field: string]: string }`
 
-Form validation errors. Should match the shape of your form's [`values`] defined in Formik options. If you are using [`validationSchema`] (which you should be), keys and shape will match your schema exactly. Internally, Formik transforms raw [Yup validation errors](https://github.com/jquense/yup#validationerrorerrors-string--arraystring-value-any-path-string) on your behalf. If you are using [`validate`], then that function will determine the `errors` objects shape. 
+Form validation errors. Should match the shape of your form's [`values`] defined in `initialValues`. If you are using [`validationSchema`] (which you should be), keys and shape will match your schema exactly. Internally, Formik transforms raw [Yup validation errors](https://github.com/jquense/yup#validationerrorerrors-string--arraystring-value-any-path-string) on your behalf. If you are using [`validate`], then that function will determine the `errors` objects shape. 
 
 ##### `handleBlur: (e: any) => void`
 `onBlur` event handler. Useful for when you need to track whether an input has been [`touched`] or not. This should be passed to `<input onBlur={handleBlur} ... />`

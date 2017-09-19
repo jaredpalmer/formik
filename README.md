@@ -24,6 +24,15 @@ npm i formik --save
 
 You can also try before you buy with this **[demo of Formik on CodeSandbox.io](https://codesandbox.io/s/zKrK5YLDZ)**
 
+## Demos
+
+- [Basic](https://codesandbox.io/s/zKrK5YLDZ)
+- [Sync Validation](https://codesandbox.io/s/q8yRqQMp)
+- [Building your own input primitives](https://codesandbox.io/s/qJR4ykJk)
+- [Working with 3rd-party inputs #1: react-select](https://codesandbox.io/s/jRzE53pqR)
+- [Working with 3rd-party inputs #2: Draft.js](https://codesandbox.io/s/QW1rqjBLl)
+- [Accessing React lifecycle functions](https://codesandbox.io/s/pgD4DLypy)
+
 ## The gist
 
 Formik keeps track of your form's state and then exposes this internal state plus some reusable methods / event handlers (`handleChange`, `handleBlur`, and `handleSubmit`) to your form via `props`. `handleChange` and `handleBlur` work exactly  as expected--they use a `name` or `id` attribute to figure out which field to update.
@@ -115,11 +124,11 @@ const Basic = () =>
     {/* 
       The benefit of the render prop approach is that you have full access to React's
       state, props, and composition model. Thus there is no need to map outer props
-      to values...you can just set the initial values, and if they depend on props / state, 
-      well then, boom, you have direct access to props / state.
+      to values...you can just set the initial values, and if they depend on props / state 
+      then--boom--you can directly access to props / state.
 
-      To access Formik's methods/state, you use a render prop that accepts your inner form component.
-      You can define this inner component separately or inline...totally up to you:
+      The render prop accepts your inner form component, which you can define separately or inline
+      totally up to you:
       - `<Formik render={props => <form>...</form>}>`
       - `<Formik component={InnerForm}>` 
       - `<Formik>{props => <form>...</form>}</Formik>` (identical to as render, just written differently) 
@@ -178,15 +187,6 @@ const Basic = () =>
 export default Basic
 ```
 
-
-## Demos
-
-- [Basic](https://codesandbox.io/s/zKrK5YLDZ)
-- [Sync Validation](https://codesandbox.io/s/q8yRqQMp)
-- [Building your own input primitives](https://codesandbox.io/s/qJR4ykJk)
-- [Working with 3rd-party inputs #1: react-select](https://codesandbox.io/s/jRzE53pqR)
-- [Working with 3rd-party inputs #2: Draft.js](https://codesandbox.io/s/QW1rqjBLl)
-- [Accessing React lifecycle functions](https://codesandbox.io/s/pgD4DLypy)
 
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->

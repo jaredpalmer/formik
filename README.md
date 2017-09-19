@@ -18,7 +18,7 @@ By colocating all of the above in one place, Formik will keep things organized--
 
 I wrote Formik while building a large internal administrative dashboard with [Ian White](https://github.com/eonwhite). With around ~30 unique forms, it quickly became obvious that we could benefit by standardizing not just our input components but also the way in which data flowed through our forms. 
 
-By now, you might be thinking, "Why didn't you just use [Redux-Form](https://github.com/erikas/redux-form)?" Good question. 
+By now, you might be thinking, "Why didn't you just use [Redux-Form](https://github.com/erikras/redux-form)?" Good question. 
 
  1. According to our prophet Dan Abramov, [**form state is inherently emphemeral and local**, so tracking it in Redux is  unecessary](https://github.com/reactjs/redux/issues/1287#issuecomment-175351978)
  2. Redux-Form calls your entire top-level reducer multiple times ON EVERY KEYSTROKE. This is fine for small apps, but as your Redux app grows, input latency will continue increase if you use Redux-Form

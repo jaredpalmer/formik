@@ -26,15 +26,14 @@ You can also try before you buy with this **[demo of Formik on CodeSandbox.io](h
 
 ## The gist
 
-Formik keeps track of your form's state (`values`, `errors`, `touched`, and `isSubmitting`) and then exposes this internal state plus some reusable methods / event handlers (`handleChange`, `handleBlur`, and `handleSubmit`) to your form via `props`. `handleChange` and `handleBlur` work exactly  as expected--they use an HTML `name` or `id` attribute to figure out which field in `values`, `errors`, and `touched` should be updated.
+Formik keeps track of your form's state and then exposes this internal state plus some reusable methods / event handlers (`handleChange`, `handleBlur`, and `handleSubmit`) to your form via `props`. `handleChange` and `handleBlur` work exactly  as expected--they use a `name` or `id` attribute to figure out which field to update.
 
 There are two ways to use Formik:
 
 - `withFormik()`: A Higher-order Component (HoC) that accepts a configuration object
 - `<Formik />`: A React component with a `render` prop
 
-**Both do exactly the same thing** and share the same internal implementation, but differ in their respective style. 
-
+**Both do exactly the same thing** and share the same internal implementation. They just differ in their respective style....
 
 ```js
 // Higher Order Component
@@ -86,7 +85,7 @@ const MyForm = withFormik({
         },
         errors => {
           setSubmitting(false)
-          // transform your API's errors into the same shape as Formik's!
+          // Maybe even transform your API's errors into the same shape as Formik's!
           setErrors(transformMyApiErrors(errors)) 
         }
       )
@@ -117,13 +116,13 @@ const Basic = () =>
       The benefit of the render prop approach is that you have full access to React's
       state, props, and composition model. Thus there is no need to map outer props
       to values...you can just set the initial values, and if they depend on props / state, 
-      well then, boom, you have direct access to props.
+      well then, boom, you have direct access to props / state.
 
       To access Formik's methods/state, you use a render prop that accepts your inner form component.
       You can define this inner component separately or inline...totally up to you:
       - `<Formik render={props => <form>...</form>}>`
       - `<Formik component={InnerForm}>` 
-      - `<Formik>{props => <form>...</form>}</Formik>`: same as render, just different style. 
+      - `<Formik>{props => <form>...</form>}</Formik>` (identical to as render, just written differently) 
     */}
     <Formik
       initialValues={{ 
@@ -150,7 +149,7 @@ const Basic = () =>
             },
             errors => {
               setSubmitting(false)
-              // transform your API's errors into the same shape as Formik's
+              // Maybe transform your API's errors into the same shape as Formik's
               setErrors(transformMyApiErrors(errors)) 
             }
           )

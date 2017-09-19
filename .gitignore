@@ -4,3 +4,5 @@ compiled
 *.log
 coverage
 .DS_Store
+next.d.ts
+legacy.d.ts

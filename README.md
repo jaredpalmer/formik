@@ -28,7 +28,7 @@ My goal with Formik was to create a scalable, performant, form helper with a min
 
 ## Influences
 
-Formik started by expanding on [this little higher order component](https://github.com/jxnblk/rebass-recomposed/blob/master/src/withForm.js) by [Brent Jackson](https://github.com/jxnblk), some naming conventions from Redux-Form, and (most recently) the render props approach popularized by [React-Motion](https://github.com/chenglou/react-motion) and [React-Router 4](https://github.com/ReactTraining/react-router). Whether you any of the above or not, Formik only takes a few minutes to get started with.
+Formik started by expanding on [this little higher order component](https://github.com/jxnblk/rebass-recomposed/blob/master/src/withForm.js) by [Brent Jackson](https://github.com/jxnblk), some naming conventions from Redux-Form, and (most recently) the render props approach popularized by [React-Motion](https://github.com/chenglou/react-motion) and [React-Router 4](https://github.com/ReactTraining/react-router). Whether you have used any of the above or not, Formik only takes a few minutes to get started with.
 
 ## Installation
 

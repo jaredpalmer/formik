@@ -6,6 +6,8 @@
 [![license](http://img.shields.io/npm/l/formik.svg)](./LICENSE)
 [![Join the chat at on Slack](https://palmer.chat/badge.svg)](https://palmer.chat/)
 
+## Overview
+
 Let's face it, forms are really verbose in [React](https://github.com/facebook/react). To make matters worse, most form helpers do wayyyy too much magic and often have a significant performance cost associated with them. Formik is a small library that helps you with the 3 most annoying parts:
 
  1. Getting values in and out of form state
@@ -49,6 +51,9 @@ You can also try before you buy with this **[demo of Formik on CodeSandbox.io](h
 - [Working with 3rd-party inputs #2: Draft.js](https://codesandbox.io/s/QW1rqjBLl)
 - [Accessing React lifecycle functions](https://codesandbox.io/s/pgD4DLypy)
 
+## Talks
+
+- [An Introduction to Formik](https://youtu.be/-tDy7ds0dag?t=33s) by [Jared Palmer](https://twitter.com/jaredpalmer) @ Spotify NYC. August 15th, 2017.
 
 ## The gist
 

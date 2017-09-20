@@ -18,14 +18,14 @@ By colocating all of the above in one place, Formik will keep things organized--
 
 ## Developer Experience
 
-I wrote Formik while building a large internal administrative dashboard with [Ian White](https://github.com/eonwhite). With around ~30 unique forms, it quickly became obvious that we could benefit by standardizing not just our input components but also the way in which data flowed through our forms. 
+I wrote Formik while building a large internal administrative dashboard with [Ian White](https://github.com/eonwhite). With around ~30 unique forms, it quickly became obvious that we could benefit by standardizing not just our input components but also the way in which data flowed through our forms.
 
-By now, you might be thinking, "Why didn't you just use [Redux-Form](https://github.com/erikras/redux-form)?" Good question. 
+By now, you might be thinking, "Why didn't you just use [Redux-Form](https://github.com/erikras/redux-form)?" Good question.
 
  1. According to our prophet Dan Abramov, [**form state is inherently emphemeral and local**, so tracking it in Redux is  unecessary](https://github.com/reactjs/redux/issues/1287#issuecomment-175351978)
  2. Redux-Form calls your entire top-level reducer multiple times ON EVERY KEYSTROKE. This is fine for small apps, but as your Redux app grows, input latency will continue increase if you use Redux-Form
- 3. I no longer use [Redux](https://github.com/reactjs/redux) or [MobX](https://mobx.js.org/), just React's setState. 
- 
+ 3. I no longer use [Redux](https://github.com/reactjs/redux) or [MobX](https://mobx.js.org/), just React's setState.
+
 My goal with Formik was to create a scalable, performant, form helper with a minimal API that does the really really annoying stuff, and leaves the rest up to you.
 
 ## Influences
@@ -94,7 +94,7 @@ const InnerForm = ({ values, errors, touched, handleChange, handleSubmit, isSubm
 // Wrap our form with the using withFormik HoC
 const MyForm = withFormik({
   // Transform outer props into form values
-  mapPropsToValues: props => ({ email: '', password: '' }), 
+  mapPropsToValues: props => ({ email: '', password: '' }),
   // Add a custom validation function (this can be async too!)
   validate: (values, props) => {
     let errors = {}
@@ -112,19 +112,19 @@ const MyForm = withFormik({
         user => {
           setSubmitting(false)
           // do whatevs...
-          // props.updateUser(user) 
+          // props.updateUser(user)
         },
         errors => {
           setSubmitting(false)
           // Maybe even transform your API's errors into the same shape as Formik's!
-          setErrors(transformMyApiErrors(errors)) 
+          setErrors(transformMyApiErrors(errors))
         }
       )
   }
 })(InnerForm)
 
 // Use <MyForm /> anywhere
-const Basic = () => 
+const Basic = () =>
   <div>
     <h1>My Form</h1>
     <p>This can be anywhere in your application</p>
@@ -139,27 +139,27 @@ export default Basic
 import React from 'react'
 import { Formik } from 'formik'
 
-const Basic = () => 
+const Basic = () =>
   <div>
     <h1>My Form</h1>
     <p>This can be anywhere in your application</p>
-    {/* 
+    {/*
       The benefit of the render prop approach is that you have full access to React's
       state, props, and composition model. Thus there is no need to map outer props
-      to values...you can just set the initial values, and if they depend on props / state 
+      to values...you can just set the initial values, and if they depend on props / state
       then--boom--you can directly access to props / state.
 
       The render prop accepts your inner form component, which you can define separately or inline
       totally up to you:
       - `<Formik render={props => <form>...</form>}>`
-      - `<Formik component={InnerForm}>` 
-      - `<Formik>{props => <form>...</form>}</Formik>` (identical to as render, just written differently) 
+      - `<Formik component={InnerForm}>`
+      - `<Formik>{props => <form>...</form>}</Formik>` (identical to as render, just written differently)
     */}
     <Formik
-      initialValues={{ 
-        email: '', 
-        password: '' 
-      }} 
+      initialValues={{
+        email: '',
+        password: ''
+      }}
       validate={values => {
         // same as above, but feel free to move this into a class method now.
         let errors = {}
@@ -170,7 +170,7 @@ const Basic = () =>
         }
         return errors
       }}
-      onSubmit={(values, { setSubmitting,  setErrors, /* setValues and other goodies */ }) => { 
+      onSubmit={(values, { setSubmitting,  setErrors, /* setValues and other goodies */ }) => {
         LoginToMyApp(values)
           .then(
             user => {
@@ -181,7 +181,7 @@ const Basic = () =>
             errors => {
               setSubmitting(false)
               // Maybe transform your API's errors into the same shape as Formik's
-              setErrors(transformMyApiErrors(errors)) 
+              setErrors(transformMyApiErrors(errors))
             }
           )
       }}
@@ -211,7 +211,7 @@ export default Basic
 
 ### Complementary Packages
 
-As you can see above, validation is left up to you. Feel free to write your own validators or use a 3rd party library. Personally, I use [Yup](https://github.com/jquense/yup) for object schema validation. It has an API that's pretty similar [Joi](https://github.com/hapijs/joi) / React.PropTypes but is small enough for the browser and fast enough for runtime usage. Because I :heart: Yup sooo much, Formik has a special config option / prop for Yup called [`validationSchema`] which will automatically transform Yup's validation errors into a pretty object whose keys match [`values`] and [`touched`]. Anyways, you can install Yup from npm...
+As you can see above, validation is left up to you. Feel free to write your own validators or use a 3rd party library. Personally, I use [Yup](https://github.com/jquense/yup) for object schema validation. It has an API that's pretty similar [Joi](https://github.com/hapijs/joi) / [React PropTypes](https://github.com/facebook/prop-types) but is small enough for the browser and fast enough for runtime usage. Because I :heart: Yup sooo much, Formik has a special config option / prop for Yup called [`validationSchema`] which will automatically transform Yup's validation errors into a pretty object whose keys match [`values`] and [`touched`]. Anyways, you can install Yup from npm...
 
 ```
 npm install yup --save
@@ -381,7 +381,7 @@ const EditUserDialog = ({ user, updateUser, onClose }) => {
 
 To make writing forms less verbose. Formik comes with a few helpers to save you key strokes.
 
-- `<Field>` 
+- `<Field>`
 - `<Form/>`
 
 
@@ -455,7 +455,7 @@ const EditUserDialog = ({ user, updateUser, onClose }) => {
 import React from 'react'
 import { Formik } from 'formik'
 
-const BasicExample = () => 
+const BasicExample = () =>
   <div>
     <h1>My Form</h1>
     <Formik
@@ -503,7 +503,7 @@ Returns `true` if any field has been touched by any means, `false` otherwise. `d
 
 ##### `errors: { [field: string]: string }`
 
-Form validation errors. Should match the shape of your form's [`values`] defined in `initialValues`. If you are using [`validationSchema`] (which you should be), keys and shape will match your schema exactly. Internally, Formik transforms raw [Yup validation errors](https://github.com/jquense/yup#validationerrorerrors-string--arraystring-value-any-path-string) on your behalf. If you are using [`validate`], then that function will determine the `errors` objects shape. 
+Form validation errors. Should match the shape of your form's [`values`] defined in `initialValues`. If you are using [`validationSchema`] (which you should be), keys and shape will match your schema exactly. Internally, Formik transforms raw [Yup validation errors](https://github.com/jquense/yup#validationerrorerrors-string--arraystring-value-any-path-string) on your behalf. If you are using [`validate`], then that function will determine the `errors` objects shape.
 
 ##### `handleBlur: (e: any) => void`
 `onBlur` event handler. Useful for when you need to track whether an input has been [`touched`] or not. This should be passed to `<input onBlur={handleBlur} ... />`
@@ -513,7 +513,7 @@ DOM-only. Use [`setFieldTouched`] in React Native.
 ##### `handleChange: (e: React.ChangeEvent<any>) => void`
 General input change event handler. This will update the `values[key]` where `key` is the event-emitting input's `name` attribute. If the `name` attribute is not present, `handleChange` will look for an input's `id` attribute. Note: "input" here means all HTML inputs.
 
-DOM-only. Use [`setFieldValue`] in React Native. 
+DOM-only. Use [`setFieldValue`] in React Native.
 
 ##### `handleReset: () => void`
 Reset handler. Will reset the form to its initial state. This should be passed to `<button onClick={handleReset}>...</button>`
@@ -524,7 +524,7 @@ Submit handler. This should be passed to `<form onSubmit={props.handleSubmit}>..
 ##### `isSubmitting: boolean`
 Submitting state. Either `true` or `false`. Formik will set this to `true` on your behalf before calling [`handleSubmit`] to reduce boilerplate.
 
-##### `isValid: boolean` 
+##### `isValid: boolean`
 
 Returns `true` if the there are no [`errors`], or the result of [`isInitialValid`] the form if is in "pristine" condition (i.e. not [`dirty`])).
 
@@ -556,7 +556,7 @@ Set [`touched`] imperatively.
 Set [`values`] imperatively.
 
 ##### `status?: any`
-A top-level status object that you can use to represent form state that can't otherwised be expressed/stored with other methods. This is useful for capturing and passing through API responses to your inner component. 
+A top-level status object that you can use to represent form state that can't otherwised be expressed/stored with other methods. This is useful for capturing and passing through API responses to your inner component.
 
 `status` should only be modifed by calling [`setStatus: (status?: any) => void`](#setstatus-status-any--void)
 
@@ -597,8 +597,8 @@ const ContactForm = ({ handleSubmit, handleChange, handleBlur, values, errors })
 ```tsx
 <Formik render={props => <ContactForm {...props} />}/>
 
-<Formik 
-  render={({ handleSubmit, handleChange, handleBlur, values, errors }) => ( 
+<Formik
+  render={({ handleSubmit, handleChange, handleBlur, values, errors }) => (
     <form onSubmit={props.handleSubmit}>
       <input
         type="text"
@@ -613,7 +613,7 @@ const ContactForm = ({ handleSubmit, handleChange, handleBlur, values, errors })
         </div>}
       <button type="submit">Submit</button>
     </form>
-  )} 
+  )}
 />
 ```
 
@@ -625,7 +625,7 @@ const ContactForm = ({ handleSubmit, handleChange, handleBlur, values, errors })
 // or...
 
 <Formik>
-  {({ handleSubmit, handleChange, handleBlur, values, errors }) => ( 
+  {({ handleSubmit, handleChange, handleBlur, values, errors }) => (
     <form onSubmit={props.handleSubmit}>
       <input
         type="text"
@@ -640,7 +640,7 @@ const ContactForm = ({ handleSubmit, handleChange, handleBlur, values, errors })
         </div>}
       <button type="submit">Submit</button>
     </form>
-  )} 
+  )}
 </Formik>
 ```
 
@@ -657,7 +657,7 @@ Default is `false`. Control the initial value of [`isValid`] prop prior to mount
 
 #### `initialValues?: Values`
 
-If this option is specified, then Formik will transfer its results into updatable form state and make these values available to the new component as [`props.values`][`values`]. If `mapPropsToValues` is not specified, then Formik will map all props that are not functions to the inner component's [`props.values`][`values`]. That is, if you omit it, Formik will only pass `props` where `typeof props[k] !== 'function'`, where `k` is some key. 
+If this option is specified, then Formik will transfer its results into updatable form state and make these values available to the new component as [`props.values`][`values`]. If `mapPropsToValues` is not specified, then Formik will map all props that are not functions to the inner component's [`props.values`][`values`]. That is, if you omit it, Formik will only pass `props` where `typeof props[k] !== 'function'`, where `k` is some key.
 
 Even if your form is not receiving any props from its parent, use `mapPropsToValues` to initialize your forms empty state.
 
@@ -667,7 +667,7 @@ _Note: I suggest using [`validationSchema`] and Yup for validation. However, `va
 
 Validate the form's [`values`] with function. This function can either be:
 
-1. Synchronous and return an [`errors`] object. 
+1. Synchronous and return an [`errors`] object.
 
 ```js
 // Synchronous validation
@@ -679,8 +679,8 @@ const validate = (values, props) => {
   } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)) {
     errors.email = 'Invalid email address'
   }
-   
-  //... 
+
+  //...
 
   return errors
 }
@@ -715,7 +715,7 @@ Default is `true`. Use this option to tell Formik to run validations on `change`
 
 #### `validationSchema?: Schema | ((props: Props) => Schema)`
 
-[A Yup schema](https://github.com/jquense/yup) or a function that returns a Yup schema. This is used for validation. Errors are mapped by key to the inner component's [`errors`]. Its keys should match those of [`values`]. 
+[A Yup schema](https://github.com/jquense/yup) or a function that returns a Yup schema. This is used for validation. Errors are mapped by key to the inner component's [`errors`]. Its keys should match those of [`values`].
 
 ### `<Field />`
 
@@ -793,14 +793,14 @@ const Example = () => (
   </div>
 );
 
-const MyForm = () => 
+const MyForm = () =>
   <Form>
     <Field type="email" name="email" placeholder="Email" />
     <Field component="select" name="color">
       <option value="red">Red</option>
       <option value="green">Green</option>
       <option value="blue">Blue</option>
-    </Field> 
+    </Field>
     <button type="submit">Submit</button>
   </Form>;
 ```
@@ -957,7 +957,7 @@ const MyReactNativeForm = props => (
           actions.setSubmitting(false)
         }, 1000);
       }}
-      render={props => 
+      render={props =>
         <View>
           <TextInput
             name="email"
@@ -1051,7 +1051,7 @@ const MyReactNativeForm = props => (
           actions.setSubmitting(false)
         }, 1000);
       }}
-      render={props => 
+      render={props =>
         <View>
           <TextInput
             name="email"

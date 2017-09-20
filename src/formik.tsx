@@ -166,7 +166,7 @@ export class Formik<
 > extends React.Component<Props, FormikState<any>> {
   static defaultProps = {
     validateOnChange: true,
-    validateOnBlur: false,
+    validateOnBlur: true,
     isInitialValid: false,
   };
 

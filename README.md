@@ -707,7 +707,7 @@ const validate = (values, props) => {
 
 #### `validateOnBlur?: boolean`
 
-Default is `false`. Use this option to run validations on `blur` events. More specifically, when either [`handleBlur`], [`setFieldTouched`], or [`setTouched`] are called.
+Default is `true`. Use this option to run validations on `blur` events. More specifically, when either [`handleBlur`], [`setFieldTouched`], or [`setTouched`] are called.
 
 #### `validateOnChange?: boolean`
 
@@ -888,7 +888,7 @@ const validate = (values, props) => {
 
 ##### `validateOnBlur?: boolean`
 
-Default is `false`. Use this option to run validations on `blur` events. More specifically, when either [`handleBlur`], [`setFieldTouched`], or [`setTouched`] are called.
+Default is `true`. Use this option to run validations on `blur` events. More specifically, when either [`handleBlur`], [`setFieldTouched`], or [`setTouched`] are called.
 
 ##### `validateOnChange?: boolean`
 

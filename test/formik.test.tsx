@@ -63,11 +63,7 @@ const Form: React.SFC<FormikProps<Values>> = ({
 };
 
 const BasicForm = (
-  <Formik
-    initialValues={{ name: 'jared' }}
-    onSubmit={noop}
-    component={Form}
-  />
+  <Formik initialValues={{ name: 'jared' }} onSubmit={noop} component={Form} />
 );
 
 describe('Formik Next', () => {
@@ -504,7 +500,7 @@ describe('Formik Next', () => {
         />
       );
       tree.find(Form).props().setTouched({ name: true });
-      expect(validate).not.toHaveBeenCalled();
+      expect(validate).toHaveBeenCalled();
     });
 
     it('setTouched should run validations when validateOnBlur is true', () => {

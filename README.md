@@ -702,11 +702,11 @@ const validate = (values, props) => {
 
 #### `validateOnBlur?: boolean`
 
-Default is `true`. Use this option to run validations on `blur` events. More specifically, when either [`handleBlur`], [`setFieldTouched`], or [`setTouched`] are called.
+Default is `false`. Use this option to run validations on `blur` events. More specifically, when either [`handleBlur`], [`setFieldTouched`], or [`setTouched`] are called.
 
 #### `validateOnChange?: boolean`
 
-Default is `false`. Use this option to tell Formik to run validations on `change` events and `change`-related methods. More specifically, when either [`handleChange`], [`setFieldValue`], or [`setValues`] are called.
+Default is `true`. Use this option to tell Formik to run validations on `change` events and `change`-related methods. More specifically, when either [`handleChange`], [`setFieldValue`], or [`setValues`] are called.
 
 #### `validationSchema?: Schema | ((props: Props) => Schema)`
 
@@ -883,11 +883,11 @@ const validate = (values, props) => {
 
 ##### `validateOnBlur?: boolean`
 
-Default is `true`. Use this option to run validations on `blur` events. More specifically, when either [`handleBlur`], [`setFieldTouched`], or [`setTouched`] are called.
+Default is `false`. Use this option to run validations on `blur` events. More specifically, when either [`handleBlur`], [`setFieldTouched`], or [`setTouched`] are called.
 
 ##### `validateOnChange?: boolean`
 
-Default is `false`. Use this option to tell Formik to run validations on `change` events and `change`-related methods. More specifically, when either [`handleChange`], [`setFieldValue`], or [`setValues`] are called.
+Default is `true`. Use this option to tell Formik to run validations on `change` events and `change`-related methods. More specifically, when either [`handleChange`], [`setFieldValue`], or [`setValues`] are called.
 
 ##### `validationSchema?: Schema | ((props: Props) => Schema)`
 

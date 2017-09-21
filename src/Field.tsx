@@ -12,24 +12,25 @@ export const Field: React.SFC<any> = (
   context
 ) => {
   const field = {
-    value:
-      props.type === 'radio' || props.type === 'checkbox'
-        ? props.value
-        : context.formik.values[name],
-    name,
-    onChange: context.formik.handleChange,
-    onBlur: context.formik.handleBlur,
-  };
-  const meta = {
-    touched: context.formik.touched[name],
-    error: context.formik.errors[name],
+    input: {
+      value:
+        props.type === 'radio' || props.type === 'checkbox'
+          ? props.value
+          : context.formik.values[name],
+      name,
+      onChange: context.formik.handleChange,
+      onBlur: context.formik.handleBlur,
+    },
+    meta: {
+      touched: context.formik.touched[name],
+      error: context.formik.errors[name],
+    },
   };
   const bag =
     typeof component === 'string'
-      ? field
+      ? field.input
       : {
           field,
-          meta,
           form: context.formik,
         };
   return React.createElement(component, {

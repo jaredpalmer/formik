@@ -25,6 +25,7 @@ By now, you might be thinking, "Why didn't you just use [Redux-Form](https://git
  1. According to our prophet Dan Abramov, [**form state is inherently emphemeral and local**, so tracking it in Redux is  unecessary](https://github.com/reactjs/redux/issues/1287#issuecomment-175351978)
  2. Redux-Form calls your entire top-level reducer multiple times ON EVERY KEYSTROKE. This is fine for small apps, but as your Redux app grows, input latency will continue increase if you use Redux-Form
  3. I no longer use [Redux](https://github.com/reactjs/redux) or [MobX](https://mobx.js.org/), just React's setState.
+ 4. Redux-Form is 22.5 kB minified gzipped (Formik is 5.65 kB)
 
 My goal with Formik was to create a scalable, performant, form helper with a minimal API that does the really really annoying stuff, and leaves the rest up to you.
 

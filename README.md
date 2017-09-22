@@ -599,11 +599,11 @@ const ContactForm = ({ handleSubmit, handleChange, handleBlur, values, errors })
 
 <Formik
   render={({ handleSubmit, handleChange, handleBlur, values, errors }) => (
-    <form onSubmit={props.handleSubmit}>
+    <form onSubmit={handleSubmit}>
       <input
         type="text"
-        onChange={props.handleChange}
-        onBlur={props.handleBlur}
+        onChange={handleChange}
+        onBlur={handleBlur}
         value={props.values.name}
         name="name"
       />
@@ -626,11 +626,11 @@ const ContactForm = ({ handleSubmit, handleChange, handleBlur, values, errors })
 
 <Formik>
   {({ handleSubmit, handleChange, handleBlur, values, errors }) => (
-    <form onSubmit={props.handleSubmit}>
+    <form onSubmit={handleSubmit}>
       <input
         type="text"
-        onChange={props.handleChange}
-        onBlur={props.handleBlur}
+        onChange={handleChange}
+        onBlur={handleBlur}
         value={props.values.name}
         name="name"
       />

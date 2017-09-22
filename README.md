@@ -574,17 +574,17 @@ Your form's values. Will have the shape of the result of [`mapPropsToValues`] (i
 
 const ContactForm = ({ handleSubmit, handleChange, handleBlur, values, errors }) => {
   return
-    <form onSubmit={props.handleSubmit}>
+    <form onSubmit={handleSubmit}>
       <input
         type="text"
-        onChange={props.handleChange}
-        onBlur={props.handleBlur}
-        value={props.values.name}
+        onChange={handleChange}
+        onBlur={handleBlur}
+        value={values.name}
         name="name"
       />
-      {props.errors.name &&
+      {errors.name &&
         <div>
-          {props.errors.name}
+          {errors.name}
         </div>}
       <button type="submit">Submit</button>
   </form>
@@ -604,12 +604,12 @@ const ContactForm = ({ handleSubmit, handleChange, handleBlur, values, errors })
         type="text"
         onChange={handleChange}
         onBlur={handleBlur}
-        value={props.values.name}
+        value={values.name}
         name="name"
       />
-      {props.errors.name &&
+      {errors.name &&
         <div>
-          {props.errors.name}
+          {errors.name}
         </div>}
       <button type="submit">Submit</button>
     </form>
@@ -631,12 +631,12 @@ const ContactForm = ({ handleSubmit, handleChange, handleBlur, values, errors })
         type="text"
         onChange={handleChange}
         onBlur={handleBlur}
-        value={props.values.name}
+        value={values.name}
         name="name"
       />
-      {props.errors.name &&
+      {errors.name &&
         <div>
-          {props.errors.name}
+          {errors.name}
         </div>}
       <button type="submit">Submit</button>
     </form>

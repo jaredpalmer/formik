@@ -19,7 +19,7 @@ import { hoistNonReactStatics } from './hoistStatics';
  */
 export type InjectedFormikProps<Props, Values> = Props &
   FormikState<Values> &
-  FormikActions<Props> &
+  FormikActions<Values> &
   FormikHandlers &
   FormikComputedProps;
 
@@ -101,7 +101,7 @@ export function withFormik<
           {...config}
           initialValues={mapPropsToValues(props)}
           onSubmit={(values, actions) => {
-            config.handleSubmit(values as Values, { ...actions, props })
+            config.handleSubmit(values as Values, { ...actions, props });
           }}
           render={(formikProps: FormikProps<Values>) =>
             <Component {...props} {...formikProps} />}

@@ -268,17 +268,19 @@ export class Formik<
   };
 
   setTouched = (touched: FormikTouched) => {
-    this.setState({ touched });
-    if (this.props.validateOnBlur) {
-      this.runValidations(this.state.values);
-    }
+    this.setState({ touched }, () => {
+      if (this.props.validateOnBlur) {
+        this.runValidations(this.state.values);
+      }
+    });
   };
 
   setValues = (values: FormikValues) => {
-    this.setState({ values });
-    if (this.props.validateOnChange) {
-      this.runValidations(values);
-    }
+    this.setState({ values }, () => {
+      if (this.props.validateOnChange) {
+        this.runValidations(values);
+      }
+    });
   };
 
   setStatus = (status?: any) => {
@@ -422,16 +424,17 @@ Formik cannot determine which value to update. For more info see https://github.
         ...prevState.values as object,
         [field]: value,
       },
-    }));
+    }), () => {
 
-    if (this.props.validateOnChange) {
-      this.runValidations(
-        {
-          ...this.state.values as object,
-          [field]: value,
-        } as object
-      );
-    }
+      if (this.props.validateOnChange) {
+        this.runValidations(
+          {
+            ...this.state.values as object,
+            [field]: value,
+          } as object
+        );
+      }
+    });
   };
 
   handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -521,11 +524,11 @@ Formik cannot determine which value to update. For more info see https://github.
         ...prevState.touched as object,
         [field]: touched,
       },
-    }));
-
-    if (this.props.validateOnBlur) {
-      this.runValidations(this.state.values);
-    }
+    }), () => {
+      if (this.props.validateOnBlur) {
+        this.runValidations(this.state.values);
+      }
+    });
   };
 
   setFieldError = (field: string, message: string) => {

@@ -108,11 +108,6 @@ export interface FormikHandlers {
  * Base formik configuration/props shared between the HoC and Component.
  */
 export interface FormikSharedConfig {
-  /** 
-   * Validation function. Must return an error object or promise that 
-   * throws an error object where that object keys map to corresponding value.
-   */
-  validate?: ((values: any) => void | object | Promise<any>);
   /** A Yup Schema */
   validationSchema?: any;
 
@@ -143,6 +138,12 @@ export interface FormikConfig extends FormikSharedConfig {
    * Render prop (works like React router's <Route render={props =>} />)
    */
   render?: ((props: FormikProps<any>) => React.ReactNode);
+
+  /** 
+   * Validation function. Must return an error object or promise that 
+   * throws an error object where that object keys map to corresponding value.
+   */
+  validate?: ((values: any) => void | object | Promise<any>);
 
   /**
    * React children or child render callback

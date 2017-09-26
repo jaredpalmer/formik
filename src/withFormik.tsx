@@ -12,6 +12,7 @@ import {
 } from './formik';
 
 import { hoistNonReactStatics } from './hoistStatics';
+import { isFunction } from './utils';
 
 /**
  * State, handlers, and helpers injected as props into the wrapped form component.
@@ -118,7 +119,9 @@ export function withFormik<
       };
 
       validationSchema = () => {
-        return config.validationSchema!(this.props);
+        return isFunction(config.validationSchema)
+          ? config.validationSchema!(this.props)
+          : config.validationSchema;
       };
 
       handleSubmit = (values: Values, actions: FormikActions<Values>) => {

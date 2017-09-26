@@ -426,23 +426,25 @@ Formik cannot determine which value to update. For more info see https://github.
 
   setFieldValue = (field: string, value: any) => {
     // Set form field by name
-    this.setState(prevState => ({
-      ...prevState,
-      values: {
-        ...prevState.values as object,
-        [field]: value,
-      },
-    }), () => {
-
-      if (this.props.validateOnChange) {
-        this.runValidations(
-          {
-            ...this.state.values as object,
-            [field]: value,
-          } as object
-        );
+    this.setState(
+      prevState => ({
+        ...prevState,
+        values: {
+          ...prevState.values as object,
+          [field]: value,
+        },
+      }),
+      () => {
+        if (this.props.validateOnChange) {
+          this.runValidations(
+            {
+              ...this.state.values as object,
+              [field]: value,
+            } as object
+          );
+        }
       }
-    });
+    );
   };
 
   handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -526,17 +528,20 @@ Formik cannot determine which value to update. For more info see https://github.
 
   setFieldTouched = (field: string, touched: boolean = true) => {
     // Set touched field by name
-    this.setState(prevState => ({
-      ...prevState,
-      touched: {
-        ...prevState.touched as object,
-        [field]: touched,
-      },
-    }), () => {
-      if (this.props.validateOnBlur) {
-        this.runValidations(this.state.values);
+    this.setState(
+      prevState => ({
+        ...prevState,
+        touched: {
+          ...prevState.touched as object,
+          [field]: touched,
+        },
+      }),
+      () => {
+        if (this.props.validateOnBlur) {
+          this.runValidations(this.state.values);
+        }
       }
-    });
+    );
   };
 
   setFieldError = (field: string, message: string) => {

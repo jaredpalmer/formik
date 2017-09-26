@@ -57,6 +57,11 @@ export interface WithFormikConfig<
   mapValuesToPayload?: (values: Values) => DeprecatedPayload;
 
   /** 
+   * A Yup Schema or a function that returns a Yup schema 
+   */
+  validationSchema?: any | ((props: Props) => any);
+
+  /** 
    * Validation function. Must return an error object or promise that 
    * throws an error object where that object keys map to corresponding value.
    */
@@ -112,8 +117,8 @@ export function withFormik<
         config.validate!(values, this.props);
       };
 
-      validationSchema = (values: Values) => {
-        config.validationSchema!(values, this.props);
+      validationSchema = () => {
+        config.validationSchema!(this.props);
       };
 
       handleSubmit = (values: Values, actions: FormikActions<Values>) => {

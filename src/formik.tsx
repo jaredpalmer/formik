@@ -108,9 +108,6 @@ export interface FormikHandlers {
  * Base formik configuration/props shared between the HoC and Component.
  */
 export interface FormikSharedConfig {
-  /** A Yup Schema */
-  validationSchema?: any;
-
   /** Tells Formik to validate the form on each input's onChange event */
   validateOnChange?: boolean;
   /** Tells Formik to validate the form on each input's onBlur event */
@@ -123,7 +120,11 @@ export interface FormikSharedConfig {
  * <Formik /> props
  */
 export interface FormikConfig extends FormikSharedConfig {
+  /** 
+   * Initial values of the form
+   */
   initialValues: object;
+
   /** 
    * Submission handler 
    */
@@ -138,6 +139,11 @@ export interface FormikConfig extends FormikSharedConfig {
    * Render prop (works like React router's <Route render={props =>} />)
    */
   render?: ((props: FormikProps<any>) => React.ReactNode);
+
+  /** 
+   * A Yup Schema or a function that returns a Yup schema 
+   */
+  validationSchema?: any | (() => any);
 
   /** 
    * Validation function. Must return an error object or promise that 

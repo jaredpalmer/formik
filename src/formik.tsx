@@ -305,7 +305,7 @@ export class Formik<
   runValidationSchema = (values: FormikValues, onSuccess?: Function) => {
     const { validationSchema } = this.props;
     const schema = isFunction(validationSchema)
-      ? validationSchema(this.props)
+      ? validationSchema()
       : validationSchema;
     validateYupSchema(values, schema).then(
       () => {

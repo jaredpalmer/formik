@@ -108,14 +108,6 @@ export interface FormikHandlers {
  * Base formik configuration/props shared between the HoC and Component.
  */
 export interface FormikSharedConfig {
-  /** 
-   * Validation function. Must return an error object or promise that 
-   * throws an error object where that object keys map to corresponding value.
-   */
-  validate?: ((values: any) => void | object | Promise<any>);
-  /** A Yup Schema */
-  validationSchema?: any;
-
   /** Tells Formik to validate the form on each input's onChange event */
   validateOnChange?: boolean;
   /** Tells Formik to validate the form on each input's onBlur event */
@@ -128,7 +120,11 @@ export interface FormikSharedConfig {
  * <Formik /> props
  */
 export interface FormikConfig extends FormikSharedConfig {
+  /** 
+   * Initial values of the form
+   */
   initialValues: object;
+
   /** 
    * Submission handler 
    */
@@ -143,6 +139,17 @@ export interface FormikConfig extends FormikSharedConfig {
    * Render prop (works like React router's <Route render={props =>} />)
    */
   render?: ((props: FormikProps<any>) => React.ReactNode);
+
+  /** 
+   * A Yup Schema or a function that returns a Yup schema 
+   */
+  validationSchema?: any | (() => any);
+
+  /** 
+   * Validation function. Must return an error object or promise that 
+   * throws an error object where that object keys map to corresponding value.
+   */
+  validate?: ((values: any) => void | object | Promise<any>);
 
   /**
    * React children or child render callback
@@ -306,7 +313,7 @@ export class Formik<
   runValidationSchema = (values: FormikValues, onSuccess?: Function) => {
     const { validationSchema } = this.props;
     const schema = isFunction(validationSchema)
-      ? validationSchema(this.props)
+      ? validationSchema()
       : validationSchema;
     validateYupSchema(values, schema).then(
       () => {

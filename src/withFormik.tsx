@@ -115,12 +115,12 @@ export function withFormik<
      */
     class C extends React.Component<Props, {}> {
       validate = (values: Values): void | object | Promise<any> => {
-        return config.validate && config.validate(values, this.props);
+        return config.validate!(values, this.props);
       };
 
       validationSchema = () => {
-        return config.validationSchema && isFunction(config.validationSchema)
-          ? config.validationSchema(this.props)
+        return isFunction(config.validationSchema)
+          ? config.validationSchema!(this.props)
           : config.validationSchema;
       };
 
@@ -143,8 +143,8 @@ export function withFormik<
           <Formik
             {...this.props}
             {...config}
-            validate={this.validate}
-            validationSchema={this.validationSchema}
+            validate={config.validate && this.validate}
+            validationSchema={config.validationSchema && this.validationSchema}
             initialValues={mapPropsToValues(this.props)}
             onSubmit={this.handleSubmit}
             render={this.renderFormComponent}

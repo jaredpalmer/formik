@@ -657,4 +657,30 @@ describe('Formik Next', () => {
       expect(tree.find(Form).props().isValid).toBe(true);
     });
   });
+
+  describe('componentWillReceiveProps', () => {
+    let form, initialValues
+    beforeEach(() => {
+      initialValues = { name: 'formik', github: { repoUrl: 'https://github.com/jaredpalmer/formik' }, watchers: ['ian', 'sam'] }
+      form = new Formik({ initialValues, onSubmit: jest.fn()})
+      form.resetForm = jest.fn()
+    })
+    it('should not resetForm if new initialValues are the same as previous', () => {
+      const newInitialValues = Object.assign({}, initialValues)
+      form.componentWillReceiveProps({ initialValues: newInitialValues, onSubmit: jest.fn() })
+      expect(form.resetForm).not.toHaveBeenCalled()
+    })
+
+    it('should resetForm if new initialValues are different than previous', () => {
+      const newInitialValues = Object.assign({}, initialValues, { watchers: ['jared', 'ian', 'sam'] })
+      form.componentWillReceiveProps({ initialValues: newInitialValues, onSubmit: jest.fn() })
+      expect(form.resetForm).toHaveBeenCalled()
+    })
+
+    it('should resetForm if new initialValues are deeply different than previous', () => {
+      const newInitialValues = Object.assign({}, initialValues, { github: { repoUrl: 'different' } })
+      form.componentWillReceiveProps({ initialValues: newInitialValues, onSubmit: jest.fn() })
+      expect(form.resetForm).toHaveBeenCalled()
+    })
+  })
 });

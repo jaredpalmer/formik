@@ -1,5 +1,6 @@
 import * as PropTypes from 'prop-types';
 import * as React from 'react';
+import isEqual from 'lodash.isequal';
 
 import { isFunction, isPromise, isReactNative, values } from './utils';
 
@@ -240,7 +241,7 @@ export class Formik<
 
   componentWillReceiveProps(nextProps: Props) {
     // If the initialValues change, reset the form
-    if (nextProps.initialValues !== this.props.initialValues) {
+    if (!isEqual(nextProps.initialValues, this.props.initialValues)) {
       this.resetForm(nextProps.initialValues);
     }
   }

@@ -34,6 +34,7 @@
     "gen-docs": "all-contributors generate && doctoc README.md"
   },
   "dependencies": {
+    "lodash.isequal": "4.5.0",
     "prop-types": "^15.5.10",
     "warning": "^3.0.0"
   },
@@ -44,6 +45,7 @@
   "devDependencies": {
     "@types/enzyme": "2.8.4",
     "@types/jest": "20.0.6",
+    "@types/lodash.isequal": "4.5.2",
     "@types/node": "8.0.19",
     "@types/prop-types": "15.5.1",
     "@types/react": "16.0.0",

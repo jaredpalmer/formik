@@ -27,10 +27,14 @@ export const Field: React.SFC<any> = (
           field,
           form: context.formik,
         };
-  return React.createElement(component, {
+  const componentProps = {
     ...props,
     ...bag,
-  });
+  };
+  if (typeof component === 'function') {
+    return component(componentProps);
+  }
+  return React.createElement(component, componentProps);
 };
 
 Field.contextTypes = {

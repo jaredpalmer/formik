@@ -51,11 +51,13 @@ export interface FormikState<Values> {
 /**
  * Formik computed properties. These are read-only.
  */
-export interface FormikComputedProps {
+export interface FormikComputedProps<Values> {
   /** True if any input has been touched. False otherwise. */
   readonly dirty: boolean;
   /** Result of isInitiallyValid on mount, then whether true values pass validation. */
   readonly isValid: boolean;
+  /** initialValues */
+  readonly initialValues: Values;
 }
 
 /**
@@ -115,6 +117,10 @@ export interface FormikSharedConfig {
   validateOnBlur?: boolean;
   /** Tell Formik if initial form values are valid or not on first render */
   isInitialValid?: boolean | ((props: object) => boolean | undefined);
+  /** Reinitialize when new initial va */
+  enableReinitialize?: boolean;
+  /** Keep dirty values on reinitialize */
+  keepDirtyOnReinitalize?: boolean;
 }
 
 /**
@@ -165,7 +171,7 @@ export interface FormikConfig extends FormikSharedConfig {
 export type FormikProps<Values> = FormikState<Values> &
   FormikActions<Values> &
   FormikHandlers &
-  FormikComputedProps;
+  FormikComputedProps<Values>;
 
 const isEmptyChildren = (children: any) => React.Children.count(children) === 0;
 
@@ -176,6 +182,8 @@ export class Formik<
     validateOnChange: true,
     validateOnBlur: true,
     isInitialValid: false,
+    enableReinitialize: false,
+    keepDirtyOnReinitialize: false,
   };
 
   static propTypes = {
@@ -194,6 +202,8 @@ export class Formik<
   static childContextTypes = {
     formik: PropTypes.object,
   };
+
+  initialValues: any;
 
   getChildContext() {
     const dirty =
@@ -237,13 +247,34 @@ export class Formik<
       touched: {},
       isSubmitting: false,
     };
+
+    this.initialValues = props.initialValues || ({} as any);
   }
 
   componentWillReceiveProps(nextProps: Props) {
     // If the initialValues change, reset the form
-    if (!isEqual(nextProps.initialValues, this.props.initialValues)) {
-      this.resetForm(nextProps.initialValues);
+    if (
+      this.props.enableReinitialize &&
+      !isEqual(nextProps.initialValues, this.props.initialValues)
+    ) {
+      if (this.props.keepDirtyOnReinitalize) {
+        const values = keepKeys(
+          nextProps.initialValues,
+          this.state.values,
+          this.state.touched
+        );
+        this.initialValues = values;
+        this.setState({ values });
+      } else {
+        this.initialValues = nextProps.initialValues;
+        this.resetForm(nextProps.initialValues);
+      }
     }
+    // if (this.props.enableReinitialize) {
+    //   if (!isEqual(nextProps.initialValues, this.props.initialValues)) {
+    //     this.resetForm(nextProps.initialValues);
+    //   }
+    // }
   }
 
   componentWillMount() {
@@ -582,6 +613,7 @@ Formik cannot determine which value to update. For more info see https://github.
         : isInitialValid !== false && isFunction(isInitialValid)
           ? (isInitialValid as (props: Props) => boolean)(this.props)
           : isInitialValid as boolean,
+      initialValues: this.initialValues,
       handleSubmit: this.handleSubmit,
       handleChange: this.handleChange,
       handleBlur: this.handleBlur,
@@ -646,6 +678,20 @@ export function touchAllFields<T>(fields: T): FormikTouched {
     touched[k] = true;
   }
   return touched;
+}
+
+export function keepKeys(
+  fresh: any,
+  old: any,
+  keys: { [field: string]: boolean }
+) {
+  const override = Object.keys(keys).reduce((prev: any, curr: string) => {
+    if (keys[curr]) {
+      prev[curr] = old[curr];
+    }
+    return prev;
+  }, {});
+  return { ...fresh, ...override };
 }
 
 export * from './Field';

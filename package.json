@@ -18,9 +18,7 @@
   "main": "dist/formik.js",
   "module": "dist/formik.es6.js",
   "typings": "dist/formik.d.ts",
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "scripts": {
     "test": "jest --env=jsdom",
     "test:watch": "npm run test -- --watch",
@@ -79,15 +77,18 @@
     "yup": "0.21.3"
   },
   "lint-staged": {
-    "*.(ts|tsx)": [
+    "**/*.{ts,tsx}": [
       "prettier --trailing-comma es5 --single-quote --write",
       "git add"
     ]
   },
+  "prettier": {
+    "trailingComma": "es5",
+    "singleQuote": true,
+    "semi": true
+  },
   "jest": {
-    "collectCoverageFrom": [
-      "src/**/*.{ts,tsx}"
-    ],
+    "collectCoverageFrom": ["src/**/*.{ts,tsx}"],
     "transform": {
       ".(ts|tsx)": "<rootDir>/node_modules/ts-jest/preprocessor.js"
     },
@@ -95,14 +96,7 @@
       "<rootDir>/test/**/*.ts?(x)",
       "<rootDir>/test/**/?(*.)(spec|test).ts?(x)"
     ],
-    "transformIgnorePatterns": [
-      "[/\\\\]node_modules[/\\\\].+\\.(js|jsx)$"
-    ],
-    "moduleFileExtensions": [
-      "ts",
-      "tsx",
-      "js",
-      "json"
-    ]
+    "transformIgnorePatterns": ["[/\\\\]node_modules[/\\\\].+\\.(js|jsx)$"],
+    "moduleFileExtensions": ["ts", "tsx", "js", "json"]
   }
 }

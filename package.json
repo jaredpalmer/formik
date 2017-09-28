@@ -79,10 +79,15 @@
     "yup": "0.21.3"
   },
   "lint-staged": {
-    "*.(ts|tsx)": [
+    "**/*.{ts,tsx}": [
       "prettier --trailing-comma es5 --single-quote --write",
       "git add"
     ]
+  },
+  "prettier": {
+    "trailingComma": "es5",
+    "singleQuote": true,
+    "semi": true
   },
   "jest": {
     "collectCoverageFrom": [

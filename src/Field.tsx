@@ -76,7 +76,7 @@ Field.contextTypes = {
  *     {form.touched[field.name] && form.errors[field.name]}
  *   </div>
  */
-export interface FieldComponentProps {
+export interface FieldComponentProps<Values = any> {
   field: InputProps;
-  form: FormikProps<any>;
+  form: FormikProps<Values>;
 }

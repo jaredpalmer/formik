@@ -117,10 +117,8 @@ export interface FormikSharedConfig {
   validateOnBlur?: boolean;
   /** Tell Formik if initial form values are valid or not on first render */
   isInitialValid?: boolean | ((props: object) => boolean | undefined);
-  /** Reinitialize when new initial va */
+  /** Should Formik reset the form when new initialValues change */
   enableReinitialize?: boolean;
-  /** Keep dirty values on reinitialize */
-  keepDirtyOnReinitalize?: boolean;
 }
 
 /**
@@ -183,7 +181,6 @@ export class Formik<
     validateOnBlur: true,
     isInitialValid: false,
     enableReinitialize: false,
-    keepDirtyOnReinitialize: false,
   };
 
   static propTypes = {
@@ -197,6 +194,7 @@ export class Formik<
     component: PropTypes.func,
     render: PropTypes.func,
     children: PropTypes.oneOfType([PropTypes.func, PropTypes.node]),
+    enableReinitialize: PropTypes.bool,
   };
 
   static childContextTypes = {
@@ -235,6 +233,7 @@ export class Formik<
         setSubmitting: this.setSubmitting,
         resetForm: this.resetForm,
         submitForm: this.submitForm,
+        initialValues: this.initialValues,
       },
     };
   }
@@ -257,24 +256,9 @@ export class Formik<
       this.props.enableReinitialize &&
       !isEqual(nextProps.initialValues, this.props.initialValues)
     ) {
-      if (this.props.keepDirtyOnReinitalize) {
-        const values = keepKeys(
-          nextProps.initialValues,
-          this.state.values,
-          this.state.touched
-        );
-        this.initialValues = values;
-        this.setState({ values });
-      } else {
-        this.initialValues = nextProps.initialValues;
-        this.resetForm(nextProps.initialValues);
-      }
+      this.initialValues = nextProps.initialValues;
+      this.resetForm(nextProps.initialValues);
     }
-    // if (this.props.enableReinitialize) {
-    //   if (!isEqual(nextProps.initialValues, this.props.initialValues)) {
-    //     this.resetForm(nextProps.initialValues);
-    //   }
-    // }
   }
 
   componentWillMount() {
@@ -522,16 +506,16 @@ Formik cannot determine which value to update. For more info see https://github.
 
   executeSubmit = () => {
     this.props.onSubmit(this.state.values, {
-      setStatus: this.setStatus,
-      setTouched: this.setTouched,
-      setErrors: this.setErrors,
-      setError: this.setError,
-      setValues: this.setValues,
-      setFieldError: this.setFieldError,
-      setFieldValue: this.setFieldValue,
-      setFieldTouched: this.setFieldTouched,
-      setSubmitting: this.setSubmitting,
       resetForm: this.resetForm,
+      setError: this.setError,
+      setErrors: this.setErrors,
+      setFieldError: this.setFieldError,
+      setFieldTouched: this.setFieldTouched,
+      setFieldValue: this.setFieldValue,
+      setStatus: this.setStatus,
+      setSubmitting: this.setSubmitting,
+      setTouched: this.setTouched,
+      setValues: this.setValues,
       submitForm: this.submitForm,
     });
   };
@@ -613,21 +597,21 @@ Formik cannot determine which value to update. For more info see https://github.
         : isInitialValid !== false && isFunction(isInitialValid)
           ? (isInitialValid as (props: Props) => boolean)(this.props)
           : isInitialValid as boolean,
-      initialValues: this.initialValues,
-      handleSubmit: this.handleSubmit,
-      handleChange: this.handleChange,
       handleBlur: this.handleBlur,
+      handleChange: this.handleChange,
       handleReset: this.handleReset,
-      setStatus: this.setStatus,
-      setTouched: this.setTouched,
-      setErrors: this.setErrors,
-      setError: this.setError,
-      setValues: this.setValues,
-      setFieldError: this.setFieldError,
-      setFieldValue: this.setFieldValue,
-      setFieldTouched: this.setFieldTouched,
-      setSubmitting: this.setSubmitting,
+      handleSubmit: this.handleSubmit,
+      initialValues: this.initialValues,
       resetForm: this.resetForm,
+      setError: this.setError,
+      setErrors: this.setErrors,
+      setFieldError: this.setFieldError,
+      setFieldTouched: this.setFieldTouched,
+      setFieldValue: this.setFieldValue,
+      setStatus: this.setStatus,
+      setSubmitting: this.setSubmitting,
+      setTouched: this.setTouched,
+      setValues: this.setValues,
       submitForm: this.submitForm,
     };
     return component
@@ -678,20 +662,6 @@ export function touchAllFields<T>(fields: T): FormikTouched {
     touched[k] = true;
   }
   return touched;
-}
-
-export function keepKeys(
-  fresh: any,
-  old: any,
-  keys: { [field: string]: boolean }
-) {
-  const override = Object.keys(keys).reduce((prev: any, curr: string) => {
-    if (keys[curr]) {
-      prev[curr] = old[curr];
-    }
-    return prev;
-  }, {});
-  return { ...fresh, ...override };
 }
 
 export * from './Field';

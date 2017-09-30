@@ -1,4 +1,4 @@
-import { validateYupSchema, yupToFormErrors, keepKeys } from '../src/formik';
+import { validateYupSchema, yupToFormErrors } from '../src/formik';
 
 const Yup = require('yup');
 const schema = Yup.object().shape({
@@ -36,31 +36,6 @@ describe('helpers', () => {
       } catch (e) {
         throw e;
       }
-    });
-
-    it('should reinitialize', () => {
-      const initialValues = {
-        name: 'formik',
-        github: { repoUrl: 'https://github.com/jaredpalmer/formik' },
-        watchers: ['ian', 'sam'],
-      };
-
-      const touched = {
-        watchers: true,
-        github: true,
-      };
-
-      const newValues = {
-        name: 'jared',
-        github: { repoUrl: 'https://github.com/jaredpalmer/formiksss' },
-        watchers: ['ianddd', 'samddd'],
-      };
-
-      expect(keepKeys(newValues, initialValues, touched)).toEqual({
-        name: 'jared',
-        github: { repoUrl: 'https://github.com/jaredpalmer/formik' },
-        watchers: ['ian', 'sam'],
-      });
     });
   });
 });

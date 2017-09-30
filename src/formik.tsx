@@ -51,11 +51,13 @@ export interface FormikState<Values> {
 /**
  * Formik computed properties. These are read-only.
  */
-export interface FormikComputedProps {
+export interface FormikComputedProps<Values> {
   /** True if any input has been touched. False otherwise. */
   readonly dirty: boolean;
   /** Result of isInitiallyValid on mount, then whether true values pass validation. */
   readonly isValid: boolean;
+  /** initialValues */
+  readonly initialValues: Values;
 }
 
 /**
@@ -115,6 +117,8 @@ export interface FormikSharedConfig {
   validateOnBlur?: boolean;
   /** Tell Formik if initial form values are valid or not on first render */
   isInitialValid?: boolean | ((props: object) => boolean | undefined);
+  /** Should Formik reset the form when new initialValues change */
+  enableReinitialize?: boolean;
 }
 
 /**
@@ -165,7 +169,7 @@ export interface FormikConfig extends FormikSharedConfig {
 export type FormikProps<Values> = FormikState<Values> &
   FormikActions<Values> &
   FormikHandlers &
-  FormikComputedProps;
+  FormikComputedProps<Values>;
 
 const isEmptyChildren = (children: any) => React.Children.count(children) === 0;
 
@@ -176,6 +180,7 @@ export class Formik<
     validateOnChange: true,
     validateOnBlur: true,
     isInitialValid: false,
+    enableReinitialize: false,
   };
 
   static propTypes = {
@@ -189,11 +194,14 @@ export class Formik<
     component: PropTypes.func,
     render: PropTypes.func,
     children: PropTypes.oneOfType([PropTypes.func, PropTypes.node]),
+    enableReinitialize: PropTypes.bool,
   };
 
   static childContextTypes = {
     formik: PropTypes.object,
   };
+
+  initialValues: any;
 
   getChildContext() {
     const dirty =
@@ -225,6 +233,7 @@ export class Formik<
         setSubmitting: this.setSubmitting,
         resetForm: this.resetForm,
         submitForm: this.submitForm,
+        initialValues: this.initialValues,
       },
     };
   }
@@ -237,11 +246,17 @@ export class Formik<
       touched: {},
       isSubmitting: false,
     };
+
+    this.initialValues = props.initialValues || ({} as any);
   }
 
   componentWillReceiveProps(nextProps: Props) {
     // If the initialValues change, reset the form
-    if (!isEqual(nextProps.initialValues, this.props.initialValues)) {
+    if (
+      this.props.enableReinitialize &&
+      !isEqual(nextProps.initialValues, this.props.initialValues)
+    ) {
+      this.initialValues = nextProps.initialValues;
       this.resetForm(nextProps.initialValues);
     }
   }
@@ -491,16 +506,16 @@ Formik cannot determine which value to update. For more info see https://github.
 
   executeSubmit = () => {
     this.props.onSubmit(this.state.values, {
-      setStatus: this.setStatus,
-      setTouched: this.setTouched,
-      setErrors: this.setErrors,
-      setError: this.setError,
-      setValues: this.setValues,
-      setFieldError: this.setFieldError,
-      setFieldValue: this.setFieldValue,
-      setFieldTouched: this.setFieldTouched,
-      setSubmitting: this.setSubmitting,
       resetForm: this.resetForm,
+      setError: this.setError,
+      setErrors: this.setErrors,
+      setFieldError: this.setFieldError,
+      setFieldTouched: this.setFieldTouched,
+      setFieldValue: this.setFieldValue,
+      setStatus: this.setStatus,
+      setSubmitting: this.setSubmitting,
+      setTouched: this.setTouched,
+      setValues: this.setValues,
       submitForm: this.submitForm,
     });
   };
@@ -582,20 +597,21 @@ Formik cannot determine which value to update. For more info see https://github.
         : isInitialValid !== false && isFunction(isInitialValid)
           ? (isInitialValid as (props: Props) => boolean)(this.props)
           : isInitialValid as boolean,
-      handleSubmit: this.handleSubmit,
-      handleChange: this.handleChange,
       handleBlur: this.handleBlur,
+      handleChange: this.handleChange,
       handleReset: this.handleReset,
-      setStatus: this.setStatus,
-      setTouched: this.setTouched,
-      setErrors: this.setErrors,
-      setError: this.setError,
-      setValues: this.setValues,
-      setFieldError: this.setFieldError,
-      setFieldValue: this.setFieldValue,
-      setFieldTouched: this.setFieldTouched,
-      setSubmitting: this.setSubmitting,
+      handleSubmit: this.handleSubmit,
+      initialValues: this.initialValues,
       resetForm: this.resetForm,
+      setError: this.setError,
+      setErrors: this.setErrors,
+      setFieldError: this.setFieldError,
+      setFieldTouched: this.setFieldTouched,
+      setFieldValue: this.setFieldValue,
+      setStatus: this.setStatus,
+      setSubmitting: this.setSubmitting,
+      setTouched: this.setTouched,
+      setValues: this.setValues,
       submitForm: this.submitForm,
     };
     return component

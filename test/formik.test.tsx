@@ -659,16 +659,21 @@ describe('Formik Next', () => {
   });
 
   describe('componentWillReceiveProps', () => {
-    let form, initialValues;
+    let form, defaultForm, initialValues;
     beforeEach(() => {
       initialValues = {
         name: 'formik',
         github: { repoUrl: 'https://github.com/jaredpalmer/formik' },
         watchers: ['ian', 'sam'],
       };
-      form = new Formik({ initialValues, onSubmit: jest.fn() });
+      form = new Formik({
+        initialValues,
+        onSubmit: jest.fn(),
+        enableReinitialize: true,
+      });
       form.resetForm = jest.fn();
     });
+
     it('should not resetForm if new initialValues are the same as previous', () => {
       const newInitialValues = Object.assign({}, initialValues);
       form.componentWillReceiveProps({
@@ -679,9 +684,10 @@ describe('Formik Next', () => {
     });
 
     it('should resetForm if new initialValues are different than previous', () => {
-      const newInitialValues = Object.assign({}, initialValues, {
+      const newInitialValues = {
+        ...initialValues,
         watchers: ['jared', 'ian', 'sam'],
-      });
+      };
       form.componentWillReceiveProps({
         initialValues: newInitialValues,
         onSubmit: jest.fn(),
@@ -690,14 +696,32 @@ describe('Formik Next', () => {
     });
 
     it('should resetForm if new initialValues are deeply different than previous', () => {
-      const newInitialValues = Object.assign({}, initialValues, {
+      const newInitialValues = {
+        ...initialValues,
         github: { repoUrl: 'different' },
-      });
+      };
       form.componentWillReceiveProps({
         initialValues: newInitialValues,
         onSubmit: jest.fn(),
       });
       expect(form.resetForm).toHaveBeenCalled();
+    });
+
+    it('should NOT resetForm without enableReinitialize flag', () => {
+      form = new Formik({
+        initialValues,
+        onSubmit: jest.fn(),
+      });
+      form.resetForm = jest.fn();
+      const newInitialValues = {
+        ...initialValues,
+        watchers: ['jared', 'ian', 'sam'],
+      };
+      form.componentWillReceiveProps({
+        initialValues: newInitialValues,
+        onSubmit: jest.fn(),
+      });
+      expect(form.resetForm).not.toHaveBeenCalled();
     });
   });
 });

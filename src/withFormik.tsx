@@ -22,7 +22,7 @@ export type InjectedFormikProps<Props, Values> = Props &
   FormikState<Values> &
   FormikActions<Values> &
   FormikHandlers &
-  FormikComputedProps;
+  FormikComputedProps<Values>;
 
 /**
  * Formik actions + { props }

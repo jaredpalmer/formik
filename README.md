@@ -252,26 +252,28 @@ npm install yup --save
     - [`component`](#component)
     - [`render: (props: FormikProps<Values>) => ReactNode`](#render-props-formikpropsvalues--reactnode)
     - [`children: func`](#children-func)
-    - [`onSubmit: (values: Values, formikBag: FormikBag) => void`](#onsubmit-values-values-formikbag-formikbag--void)
+    - [`enableReinitialize?: boolean`](#enablereinitialize-boolean)
     - [`isInitialValid?: boolean`](#isinitialvalid-boolean)
     - [`initialValues?: Values`](#initialvalues-values)
-    - [`validate?: (values: Values, props: Props) => FormikError<Values> | Promise<any>`](#validate-values-values-props-props--formikerrorvalues--promiseany)
+    - [`onSubmit: (values: Values, formikBag: FormikBag) => void`](#onsubmit-values-values-formikbag-formikbag--void)
+    - [`validate?: (values: Values) => FormikError<Values> | Promise<any>`](#validate-values-values--formikerrorvalues--promiseany)
     - [`validateOnBlur?: boolean`](#validateonblur-boolean)
     - [`validateOnChange?: boolean`](#validateonchange-boolean)
-    - [`validationSchema?: Schema | ((props: Props) => Schema)`](#validationschema-schema--props-props--schema)
+    - [`validationSchema?: Schema | (() => Schema)`](#validationschema-schema----schema)
   - [`<Field />`](#field-)
   - [`<Form />`](#form-)
   - [`withFormik(options)`](#withformikoptions)
     - [`options`](#options)
       - [`displayName?: string`](#displayname-string)
+      - [`enableReinitialize?: boolean`](#enablereinitialize-boolean-1)
       - [`handleSubmit: (values: Values, formikBag: FormikBag) => void`](#handlesubmit-values-values-formikbag-formikbag--void)
         - [The "FormikBag":](#the-formikbag)
       - [`isInitialValid?: boolean | (props: Props) => boolean`](#isinitialvalid-boolean--props-props--boolean)
       - [`mapPropsToValues?: (props: Props) => Values`](#mappropstovalues-props-props--values)
-      - [`validate?: (values: Values, props: Props) => FormikError<Values> | Promise<any>`](#validate-values-values-props-props--formikerrorvalues--promiseany-1)
+      - [`validate?: (values: Values, props: Props) => FormikError<Values> | Promise<any>`](#validate-values-values-props-props--formikerrorvalues--promiseany)
       - [`validateOnBlur?: boolean`](#validateonblur-boolean-1)
       - [`validateOnChange?: boolean`](#validateonchange-boolean-1)
-      - [`validationSchema?: Schema | ((props: Props) => Schema)`](#validationschema-schema--props-props--schema-1)
+      - [`validationSchema?: Schema | ((props: Props) => Schema)`](#validationschema-schema--props-props--schema)
     - [Injected props and methods](#injected-props-and-methods)
 - [Guides](#guides)
   - [React Native](#react-native)
@@ -642,11 +644,9 @@ const ContactForm = ({ handleSubmit, handleChange, handleBlur, values, errors })
 ```
 
 
+#### `enableReinitialize?: boolean`
 
-#### `onSubmit: (values: Values, formikBag: FormikBag) => void`
-Your form submission handler. It is passed your forms [`values`] and the "FormikBag", which includes an object containing a subset of the [injected props and methods](/#injected-props-and-methods) (i.e. all the methods with names that start with `set<Thing>` + `resetForm`) and any props that were passed to the the wrapped component.
-
-Note: [`errors`], [`touched`], [`status`] and all event handlers are NOT included in the `FormikBag`.
+Default is `false`. Control whether Formik should reset the form if [`initialValues`] changes (using deep equality).
 
 #### `isInitialValid?: boolean`
 
@@ -654,11 +654,18 @@ Default is `false`. Control the initial value of [`isValid`] prop prior to mount
 
 #### `initialValues?: Values`
 
-If this option is specified, then Formik will transfer its results into updatable form state and make these values available to the new component as [`props.values`][`values`]. If `mapPropsToValues` is not specified, then Formik will map all props that are not functions to the inner component's [`props.values`][`values`]. That is, if you omit it, Formik will only pass `props` where `typeof props[k] !== 'function'`, where `k` is some key.
+Initial field values of the form, Formik will make these values available to render methods component as [`props.values`][`values`]. 
 
-Even if your form is not receiving any props from its parent, use `mapPropsToValues` to initialize your forms empty state.
+Even if your form is empty by default, you must initialize all fields with initial values otherwise React will throw an error saying that you have changed an input from uncontrolled to controlled.
 
-#### `validate?: (values: Values, props: Props) => FormikError<Values> | Promise<any>`
+Note: `initialValues` not available to the higher-order component, use [`mapPropsToValues`] instead.
+
+#### `onSubmit: (values: Values, formikBag: FormikBag) => void`
+Your form submission handler. It is passed your forms [`values`] and the "FormikBag", which includes an object containing a subset of the [injected props and methods](/#injected-props-and-methods) (i.e. all the methods with names that start with `set<Thing>` + `resetForm`) and any props that were passed to the the wrapped component.
+
+Note: [`errors`], [`touched`], [`status`] and all event handlers are NOT included in the `FormikBag`.
+
+#### `validate?: (values: Values) => FormikError<Values> | Promise<any>`
 
 _Note: I suggest using [`validationSchema`] and Yup for validation. However, `validate` is a dependency-free, straightforward way to validate your forms._
 
@@ -710,7 +717,7 @@ Default is `true`. Use this option to run validations on `blur` events. More spe
 
 Default is `true`. Use this option to tell Formik to run validations on `change` events and `change`-related methods. More specifically, when either [`handleChange`], [`setFieldValue`], or [`setValues`] are called.
 
-#### `validationSchema?: Schema | ((props: Props) => Schema)`
+#### `validationSchema?: Schema | (() => Schema)`
 
 [A Yup schema](https://github.com/jquense/yup) or a function that returns a Yup schema. This is used for validation. Errors are mapped by key to the inner component's [`errors`]. Its keys should match those of [`values`].
 
@@ -810,6 +817,10 @@ Create a higher-order React component class that passes props and form handlers 
 
 ##### `displayName?: string`
 When your inner form component is a stateless functional component, you can use the `displayName` option to give the component a proper name so you can more easily find it in [React DevTools](https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi?hl=en). If specified, your wrapped form will show up as `Formik(displayName)`. If omitted, it will show up as `Formik(Component)`. This option is not required for class components (e.g. `class XXXXX extends React.Component {..}`).
+
+##### `enableReinitialize?: boolean`
+
+Default is `false`. Control whether Formik should reset the form if the wrapped component props change (using deep equality).
 
 ##### `handleSubmit: (values: Values, formikBag: FormikBag) => void`
 Your form submission handler. It is passed your forms [`values`] and the "FormikBag", which includes an object containing a subset of the [injected props and methods](/#injected-props-and-methods) (i.e. all the methods with names that start with `set<Thing>` + `resetForm`) and any props that were passed to the the wrapped component.

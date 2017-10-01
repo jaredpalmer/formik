@@ -11,20 +11,25 @@ export const Field: React.SFC<any> = (
   { component = 'input', name, ...props },
   context
 ) => {
+  const fieldValue =
+    props.type === 'radio' || props.type === 'checkbox'
+      ? props.value
+      : context.formik.values[name];
+  const fieldInitialValue = context.formik.initialValues[name];
+  const fieldIsPristine = fieldValue === fieldInitialValue;
   const field = {
     input: {
-      value:
-        props.type === 'radio' || props.type === 'checkbox'
-          ? props.value
-          : context.formik.values[name],
+      value: fieldValue,
       name,
       onChange: context.formik.handleChange,
       onBlur: context.formik.handleBlur,
     },
     meta: {
-      touched: context.formik.touched[name],
+      dirty: !fieldIsPristine,
       error: context.formik.errors[name],
-      initialValue: context.formik.initialValues[name],
+      initialValue: fieldInitialValue,
+      pristine: fieldIsPristine,
+      touched: context.formik.touched[name],
     },
   };
   const bag =

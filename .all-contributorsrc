@@ -80,6 +80,27 @@
         "bug",
         "doc"
       ]
+    },
+    {
+      "login": "skvale",
+      "name": "Sam Kvale",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/5314713?v=4",
+      "profile": "http://skvale.github.io",
+      "contributions": [
+        "bug",
+        "code",
+        "test"
+      ]
+    },
+    {
+      "login": "jontansey",
+      "name": "Jon Tansey",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/13765558?v=4",
+      "profile": "http://jon.tansey.info",
+      "contributions": [
+        "bug",
+        "code"
+      ]
     }
   ]
 }

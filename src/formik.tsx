@@ -1,5 +1,6 @@
 import * as PropTypes from 'prop-types';
 import * as React from 'react';
+import isEqual from 'lodash.isequal';
 
 import { isFunction, isPromise, isReactNative, values } from './utils';
 
@@ -50,11 +51,13 @@ export interface FormikState<Values> {
 /**
  * Formik computed properties. These are read-only.
  */
-export interface FormikComputedProps {
+export interface FormikComputedProps<Values> {
   /** True if any input has been touched. False otherwise. */
   readonly dirty: boolean;
   /** Result of isInitiallyValid on mount, then whether true values pass validation. */
   readonly isValid: boolean;
+  /** initialValues */
+  readonly initialValues: Values;
 }
 
 /**
@@ -108,27 +111,25 @@ export interface FormikHandlers {
  * Base formik configuration/props shared between the HoC and Component.
  */
 export interface FormikSharedConfig {
-  /** 
-   * Validation function. Must return an error object or promise that 
-   * throws an error object where that object keys map to corresponding value.
-   */
-  validate?: ((values: any) => void | object | Promise<any>);
-  /** A Yup Schema */
-  validationSchema?: any;
-
   /** Tells Formik to validate the form on each input's onChange event */
   validateOnChange?: boolean;
   /** Tells Formik to validate the form on each input's onBlur event */
   validateOnBlur?: boolean;
   /** Tell Formik if initial form values are valid or not on first render */
   isInitialValid?: boolean | ((props: object) => boolean | undefined);
+  /** Should Formik reset the form when new initialValues change */
+  enableReinitialize?: boolean;
 }
 
 /**
  * <Formik /> props
  */
 export interface FormikConfig extends FormikSharedConfig {
+  /** 
+   * Initial values of the form
+   */
   initialValues: object;
+
   /** 
    * Submission handler 
    */
@@ -144,6 +145,17 @@ export interface FormikConfig extends FormikSharedConfig {
    */
   render?: ((props: FormikProps<any>) => React.ReactNode);
 
+  /** 
+   * A Yup Schema or a function that returns a Yup schema 
+   */
+  validationSchema?: any | (() => any);
+
+  /** 
+   * Validation function. Must return an error object or promise that 
+   * throws an error object where that object keys map to corresponding value.
+   */
+  validate?: ((values: any) => void | object | Promise<any>);
+
   /**
    * React children or child render callback
    */
@@ -157,7 +169,7 @@ export interface FormikConfig extends FormikSharedConfig {
 export type FormikProps<Values> = FormikState<Values> &
   FormikActions<Values> &
   FormikHandlers &
-  FormikComputedProps;
+  FormikComputedProps<Values>;
 
 const isEmptyChildren = (children: any) => React.Children.count(children) === 0;
 
@@ -168,6 +180,7 @@ export class Formik<
     validateOnChange: true,
     validateOnBlur: true,
     isInitialValid: false,
+    enableReinitialize: false,
   };
 
   static propTypes = {
@@ -181,11 +194,14 @@ export class Formik<
     component: PropTypes.func,
     render: PropTypes.func,
     children: PropTypes.oneOfType([PropTypes.func, PropTypes.node]),
+    enableReinitialize: PropTypes.bool,
   };
 
   static childContextTypes = {
     formik: PropTypes.object,
   };
+
+  initialValues: any;
 
   getChildContext() {
     const dirty =
@@ -217,6 +233,7 @@ export class Formik<
         setSubmitting: this.setSubmitting,
         resetForm: this.resetForm,
         submitForm: this.submitForm,
+        initialValues: this.initialValues,
       },
     };
   }
@@ -229,11 +246,17 @@ export class Formik<
       touched: {},
       isSubmitting: false,
     };
+
+    this.initialValues = props.initialValues || ({} as any);
   }
 
   componentWillReceiveProps(nextProps: Props) {
     // If the initialValues change, reset the form
-    if (nextProps.initialValues !== this.props.initialValues) {
+    if (
+      this.props.enableReinitialize &&
+      !isEqual(nextProps.initialValues, this.props.initialValues)
+    ) {
+      this.initialValues = nextProps.initialValues;
       this.resetForm(nextProps.initialValues);
     }
   }
@@ -268,17 +291,19 @@ export class Formik<
   };
 
   setTouched = (touched: FormikTouched) => {
-    this.setState({ touched });
-    if (this.props.validateOnBlur) {
-      this.runValidations(this.state.values);
-    }
+    this.setState({ touched }, () => {
+      if (this.props.validateOnBlur) {
+        this.runValidations(this.state.values);
+      }
+    });
   };
 
   setValues = (values: FormikValues) => {
-    this.setState({ values });
-    if (this.props.validateOnChange) {
-      this.runValidations(values);
-    }
+    this.setState({ values }, () => {
+      if (this.props.validateOnChange) {
+        this.runValidations(values);
+      }
+    });
   };
 
   setStatus = (status?: any) => {
@@ -304,7 +329,7 @@ export class Formik<
   runValidationSchema = (values: FormikValues, onSuccess?: Function) => {
     const { validationSchema } = this.props;
     const schema = isFunction(validationSchema)
-      ? validationSchema(this.props)
+      ? validationSchema()
       : validationSchema;
     validateYupSchema(values, schema).then(
       () => {
@@ -416,22 +441,25 @@ Formik cannot determine which value to update. For more info see https://github.
 
   setFieldValue = (field: string, value: any) => {
     // Set form field by name
-    this.setState(prevState => ({
-      ...prevState,
-      values: {
-        ...prevState.values as object,
-        [field]: value,
-      },
-    }));
-
-    if (this.props.validateOnChange) {
-      this.runValidations(
-        {
-          ...this.state.values as object,
+    this.setState(
+      prevState => ({
+        ...prevState,
+        values: {
+          ...prevState.values as object,
           [field]: value,
-        } as object
-      );
-    }
+        },
+      }),
+      () => {
+        if (this.props.validateOnChange) {
+          this.runValidations(
+            {
+              ...this.state.values as object,
+              [field]: value,
+            } as object
+          );
+        }
+      }
+    );
   };
 
   handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -478,16 +506,16 @@ Formik cannot determine which value to update. For more info see https://github.
 
   executeSubmit = () => {
     this.props.onSubmit(this.state.values, {
-      setStatus: this.setStatus,
-      setTouched: this.setTouched,
-      setErrors: this.setErrors,
-      setError: this.setError,
-      setValues: this.setValues,
-      setFieldError: this.setFieldError,
-      setFieldValue: this.setFieldValue,
-      setFieldTouched: this.setFieldTouched,
-      setSubmitting: this.setSubmitting,
       resetForm: this.resetForm,
+      setError: this.setError,
+      setErrors: this.setErrors,
+      setFieldError: this.setFieldError,
+      setFieldTouched: this.setFieldTouched,
+      setFieldValue: this.setFieldValue,
+      setStatus: this.setStatus,
+      setSubmitting: this.setSubmitting,
+      setTouched: this.setTouched,
+      setValues: this.setValues,
       submitForm: this.submitForm,
     });
   };
@@ -515,17 +543,20 @@ Formik cannot determine which value to update. For more info see https://github.
 
   setFieldTouched = (field: string, touched: boolean = true) => {
     // Set touched field by name
-    this.setState(prevState => ({
-      ...prevState,
-      touched: {
-        ...prevState.touched as object,
-        [field]: touched,
-      },
-    }));
-
-    if (this.props.validateOnBlur) {
-      this.runValidations(this.state.values);
-    }
+    this.setState(
+      prevState => ({
+        ...prevState,
+        touched: {
+          ...prevState.touched as object,
+          [field]: touched,
+        },
+      }),
+      () => {
+        if (this.props.validateOnBlur) {
+          this.runValidations(this.state.values);
+        }
+      }
+    );
   };
 
   setFieldError = (field: string, message: string) => {
@@ -566,20 +597,21 @@ Formik cannot determine which value to update. For more info see https://github.
         : isInitialValid !== false && isFunction(isInitialValid)
           ? (isInitialValid as (props: Props) => boolean)(this.props)
           : isInitialValid as boolean,
-      handleSubmit: this.handleSubmit,
-      handleChange: this.handleChange,
       handleBlur: this.handleBlur,
+      handleChange: this.handleChange,
       handleReset: this.handleReset,
-      setStatus: this.setStatus,
-      setTouched: this.setTouched,
-      setErrors: this.setErrors,
-      setError: this.setError,
-      setValues: this.setValues,
-      setFieldError: this.setFieldError,
-      setFieldValue: this.setFieldValue,
-      setFieldTouched: this.setFieldTouched,
-      setSubmitting: this.setSubmitting,
+      handleSubmit: this.handleSubmit,
+      initialValues: this.initialValues,
       resetForm: this.resetForm,
+      setError: this.setError,
+      setErrors: this.setErrors,
+      setFieldError: this.setFieldError,
+      setFieldTouched: this.setFieldTouched,
+      setFieldValue: this.setFieldValue,
+      setStatus: this.setStatus,
+      setSubmitting: this.setSubmitting,
+      setTouched: this.setTouched,
+      setValues: this.setValues,
       submitForm: this.submitForm,
     };
     return component

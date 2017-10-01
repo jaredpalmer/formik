@@ -25,6 +25,7 @@ By now, you might be thinking, "Why didn't you just use [Redux-Form](https://git
  1. According to our prophet Dan Abramov, [**form state is inherently emphemeral and local**, so tracking it in Redux is  unecessary](https://github.com/reactjs/redux/issues/1287#issuecomment-175351978)
  2. Redux-Form calls your entire top-level reducer multiple times ON EVERY KEYSTROKE. This is fine for small apps, but as your Redux app grows, input latency will continue increase if you use Redux-Form
  3. I no longer use [Redux](https://github.com/reactjs/redux) or [MobX](https://mobx.js.org/), just React's setState.
+ 4. Redux-Form is 22.5 kB minified gzipped (Formik is 9.2 kB)
 
 My goal with Formik was to create a scalable, performant, form helper with a minimal API that does the really really annoying stuff, and leaves the rest up to you.
 
@@ -251,35 +252,33 @@ npm install yup --save
     - [`component`](#component)
     - [`render: (props: FormikProps<Values>) => ReactNode`](#render-props-formikpropsvalues--reactnode)
     - [`children: func`](#children-func)
-    - [`onSubmit: (values: Values, formikBag: FormikBag) => void`](#onsubmit-values-values-formikbag-formikbag--void)
+    - [`enableReinitialize?: boolean`](#enablereinitialize-boolean)
     - [`isInitialValid?: boolean`](#isinitialvalid-boolean)
     - [`initialValues?: Values`](#initialvalues-values)
-    - [`validate?: (values: Values, props: Props) => FormikError<Values> | Promise<any>`](#validate-values-values-props-props--formikerrorvalues--promiseany)
+    - [`onSubmit: (values: Values, formikBag: FormikBag) => void`](#onsubmit-values-values-formikbag-formikbag--void)
+    - [`validate?: (values: Values) => FormikError<Values> | Promise<any>`](#validate-values-values--formikerrorvalues--promiseany)
     - [`validateOnBlur?: boolean`](#validateonblur-boolean)
     - [`validateOnChange?: boolean`](#validateonchange-boolean)
-    - [`validationSchema?: Schema | ((props: Props) => Schema)`](#validationschema-schema--props-props--schema)
+    - [`validationSchema?: Schema | (() => Schema)`](#validationschema-schema----schema)
   - [`<Field />`](#field-)
   - [`<Form />`](#form-)
   - [`withFormik(options)`](#withformikoptions)
     - [`options`](#options)
       - [`displayName?: string`](#displayname-string)
+      - [`enableReinitialize?: boolean`](#enablereinitialize-boolean-1)
       - [`handleSubmit: (values: Values, formikBag: FormikBag) => void`](#handlesubmit-values-values-formikbag-formikbag--void)
         - [The "FormikBag":](#the-formikbag)
       - [`isInitialValid?: boolean | (props: Props) => boolean`](#isinitialvalid-boolean--props-props--boolean)
       - [`mapPropsToValues?: (props: Props) => Values`](#mappropstovalues-props-props--values)
-      - [`validate?: (values: Values, props: Props) => FormikError<Values> | Promise<any>`](#validate-values-values-props-props--formikerrorvalues--promiseany-1)
+      - [`validate?: (values: Values, props: Props) => FormikError<Values> | Promise<any>`](#validate-values-values-props-props--formikerrorvalues--promiseany)
       - [`validateOnBlur?: boolean`](#validateonblur-boolean-1)
       - [`validateOnChange?: boolean`](#validateonchange-boolean-1)
-      - [`validationSchema?: Schema | ((props: Props) => Schema)`](#validationschema-schema--props-props--schema-1)
+      - [`validationSchema?: Schema | ((props: Props) => Schema)`](#validationschema-schema--props-props--schema)
     - [Injected props and methods](#injected-props-and-methods)
 - [Guides](#guides)
   - [React Native](#react-native)
     - [Why use `setFieldValue` instead of `handleChange`?](#why-use-setfieldvalue-instead-of-handlechange)
     - [Avoiding a Render Callback](#avoiding-a-render-callback)
-  - [Testing Formik](#testing-formik)
-    - [Dummy Form](#dummy-form)
-    - [Simulating input](#simulating-input)
-    - [Simulating form submission](#simulating-form-submission)
 - [Organizations and projects using Formik](#organizations-and-projects-using-formik)
 - [Authors](#authors)
 - [Contributors](#contributors)
@@ -574,17 +573,17 @@ Your form's values. Will have the shape of the result of [`mapPropsToValues`] (i
 
 const ContactForm = ({ handleSubmit, handleChange, handleBlur, values, errors }) => {
   return
-    <form onSubmit={props.handleSubmit}>
+    <form onSubmit={handleSubmit}>
       <input
         type="text"
-        onChange={props.handleChange}
-        onBlur={props.handleBlur}
-        value={props.values.name}
+        onChange={handleChange}
+        onBlur={handleBlur}
+        value={values.name}
         name="name"
       />
-      {props.errors.name &&
+      {errors.name &&
         <div>
-          {props.errors.name}
+          {errors.name}
         </div>}
       <button type="submit">Submit</button>
   </form>
@@ -599,17 +598,17 @@ const ContactForm = ({ handleSubmit, handleChange, handleBlur, values, errors })
 
 <Formik
   render={({ handleSubmit, handleChange, handleBlur, values, errors }) => (
-    <form onSubmit={props.handleSubmit}>
+    <form onSubmit={handleSubmit}>
       <input
         type="text"
-        onChange={props.handleChange}
-        onBlur={props.handleBlur}
-        value={props.values.name}
+        onChange={handleChange}
+        onBlur={handleBlur}
+        value={values.name}
         name="name"
       />
-      {props.errors.name &&
+      {errors.name &&
         <div>
-          {props.errors.name}
+          {errors.name}
         </div>}
       <button type="submit">Submit</button>
     </form>
@@ -626,17 +625,17 @@ const ContactForm = ({ handleSubmit, handleChange, handleBlur, values, errors })
 
 <Formik>
   {({ handleSubmit, handleChange, handleBlur, values, errors }) => (
-    <form onSubmit={props.handleSubmit}>
+    <form onSubmit={handleSubmit}>
       <input
         type="text"
-        onChange={props.handleChange}
-        onBlur={props.handleBlur}
-        value={props.values.name}
+        onChange={handleChange}
+        onBlur={handleBlur}
+        value={values.name}
         name="name"
       />
-      {props.errors.name &&
+      {errors.name &&
         <div>
-          {props.errors.name}
+          {errors.name}
         </div>}
       <button type="submit">Submit</button>
     </form>
@@ -645,11 +644,9 @@ const ContactForm = ({ handleSubmit, handleChange, handleBlur, values, errors })
 ```
 
 
+#### `enableReinitialize?: boolean`
 
-#### `onSubmit: (values: Values, formikBag: FormikBag) => void`
-Your form submission handler. It is passed your forms [`values`] and the "FormikBag", which includes an object containing a subset of the [injected props and methods](/#injected-props-and-methods) (i.e. all the methods with names that start with `set<Thing>` + `resetForm`) and any props that were passed to the the wrapped component.
-
-Note: [`errors`], [`touched`], [`status`] and all event handlers are NOT included in the `FormikBag`.
+Default is `false`. Control whether Formik should reset the form if [`initialValues`] changes (using deep equality).
 
 #### `isInitialValid?: boolean`
 
@@ -657,11 +654,18 @@ Default is `false`. Control the initial value of [`isValid`] prop prior to mount
 
 #### `initialValues?: Values`
 
-If this option is specified, then Formik will transfer its results into updatable form state and make these values available to the new component as [`props.values`][`values`]. If `mapPropsToValues` is not specified, then Formik will map all props that are not functions to the inner component's [`props.values`][`values`]. That is, if you omit it, Formik will only pass `props` where `typeof props[k] !== 'function'`, where `k` is some key.
+Initial field values of the form, Formik will make these values available to render methods component as [`props.values`][`values`]. 
 
-Even if your form is not receiving any props from its parent, use `mapPropsToValues` to initialize your forms empty state.
+Even if your form is empty by default, you must initialize all fields with initial values otherwise React will throw an error saying that you have changed an input from uncontrolled to controlled.
 
-#### `validate?: (values: Values, props: Props) => FormikError<Values> | Promise<any>`
+Note: `initialValues` not available to the higher-order component, use [`mapPropsToValues`] instead.
+
+#### `onSubmit: (values: Values, formikBag: FormikBag) => void`
+Your form submission handler. It is passed your forms [`values`] and the "FormikBag", which includes an object containing a subset of the [injected props and methods](/#injected-props-and-methods) (i.e. all the methods with names that start with `set<Thing>` + `resetForm`) and any props that were passed to the the wrapped component.
+
+Note: [`errors`], [`touched`], [`status`] and all event handlers are NOT included in the `FormikBag`.
+
+#### `validate?: (values: Values) => FormikError<Values> | Promise<any>`
 
 _Note: I suggest using [`validationSchema`] and Yup for validation. However, `validate` is a dependency-free, straightforward way to validate your forms._
 
@@ -713,7 +717,7 @@ Default is `true`. Use this option to run validations on `blur` events. More spe
 
 Default is `true`. Use this option to tell Formik to run validations on `change` events and `change`-related methods. More specifically, when either [`handleChange`], [`setFieldValue`], or [`setValues`] are called.
 
-#### `validationSchema?: Schema | ((props: Props) => Schema)`
+#### `validationSchema?: Schema | (() => Schema)`
 
 [A Yup schema](https://github.com/jquense/yup) or a function that returns a Yup schema. This is used for validation. Errors are mapped by key to the inner component's [`errors`]. Its keys should match those of [`values`].
 
@@ -813,6 +817,10 @@ Create a higher-order React component class that passes props and form handlers 
 
 ##### `displayName?: string`
 When your inner form component is a stateless functional component, you can use the `displayName` option to give the component a proper name so you can more easily find it in [React DevTools](https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi?hl=en). If specified, your wrapped form will show up as `Formik(displayName)`. If omitted, it will show up as `Formik(Component)`. This option is not required for class components (e.g. `class XXXXX extends React.Component {..}`).
+
+##### `enableReinitialize?: boolean`
+
+Default is `false`. Control whether Formik should reset the form if the wrapped component props change (using deep equality).
 
 ##### `handleSubmit: (values: Values, formikBag: FormikBag) => void`
 Your form submission handler. It is passed your forms [`values`] and the "FormikBag", which includes an object containing a subset of the [injected props and methods](/#injected-props-and-methods) (i.e. all the methods with names that start with `set<Thing>` + `resetForm`) and any props that were passed to the the wrapped component.
@@ -1068,182 +1076,6 @@ const MyReactNativeForm = props => (
 export default MyReactNativeForm
 ```
 
-### Testing Formik
-
-_This section is a work in progress._
-
-The suggested approach to testing Formik forms is with Airbnb's [Enzyme](https://github.com/airbnb/enzyme) test utility library.
-
-The documentation and examples in this guide use Facebook's [Jest](https://facebook.github.io/jest) test runner. However, feel free to use [mocha](https://mochajs.org/) and [chai](http://chaijs.com/) if you prefer that.
-
-To get started with Enzyme, you can simply install it with npm:
-
-```bash
-npm i  enzyme --save-dev
-```
-
-If you are using React >=15.5, in addition to enzyme, you will have to ensure that you also have the following npm modules installed if they were not already:
-
-```bash
-npm i react-test-renderer react-dom  --save-dev
-```
-
-####  Dummy Form
-Imagine we have a basic form with one field `name`.
-
-```js
-// MyForm.js
-import { Formik } from 'formik';
-import Yup from 'yup';
-
-export const validationSchema = Yup.object().shape({
-  name: Yup.string()
-    .min(2, 'Must be longer than 2 characters')
-    .max(30, "No one's name is that long")
-    .required('Required'),
-});
-
-export const handleSubmit = (values, { setSubmitting }) => {
-  setTimeout(() => {
-    setSubmitting(false);
-  }, 1000);
-};
-
-export const mapPropsToValues = props => ({ name: '' });
-
-export const MyFormInner = ({
-  values,
-  handleSubmit,
-  handleChange,
-  handleBlur,
-  setStatus,
-  status,
-  errors,
-  isSubmitting,
-}) => {
-  return (
-    <form onSubmit={handleSubmit}>
-      <input
-        type="text"
-        onChange={handleChange}
-        onBlur={handleBlur}
-        value={values.name}
-        name="name"
-      />
-      {errors.name &&
-        <div id="feedback">
-          {errors.name}
-        </div>}
-      {isSubmitting && <div id="submitting">Submitting</div>}
-      {status &&
-        !!status.myStatusMessage &&
-        <div id="status">
-          {status.myStatusMessage}
-        </div>}
-      <button type="submit">Submit</button>
-    </form>
-  );
-};
-
-export default Formik({
-  mapPropsToValues,
-  validationSchema,
-  handleSubmit,
-})(MyFormInner);
-```
-
-#### Simulating input
-
-We can test that our UI is updating properly by using Enzyme's `shallow` renderer in addition to its `dive()` and `simulate()` methods. This lets us render the Formik-enhanced form, but then jump down and run simulations and assertions from the perspective of your inner form.
-
-```js
-// MyForm.test.js
-import MyForm, { MyInnerForm } from './MyForm';
-
-describe('MyForm', () => {
-  test('should update an input when it is changed', () => {
-    const tree = shallow(<MyForm />);
-
-    tree.find(MyInnerForm).dive().find('input').simulate('change', {
-      // you must add this next line as (Formik calls e.persist() internally)
-      persist: () => {},
-      // simulate changing e.target.name and e.target.value
-      target: {
-        name: 'name',
-        value: 'ian',
-      },
-    });
-
-    const newValue = tree.find(MyInnerForm).dive().find('input').props().value;
-
-    expect(newValue).toEqual('ian');
-  });
-});
-
-```
-
-#### Simulating form submission
-
-```js
-// MyForm.test.js
-import MyForm, { MyInnerForm, validationSchema } from './MyForm';
-
-describe('MyForm', () => {
-  test('submits the form', () => {
-    const tree = shallow(<MyForm />);
-    expect(tree.find(MyInnerForm).dive().find('#submitting')).toHaveLength(0);
-
-    // simulate submit event. this is always sync! async calls to setState are swallowed.
-    // be careful of false positives
-    tree.find(MyInnerForm).dive().find('form').simulate('submit', {
-      preventDefault: () => {}, // no op
-    });
-
-    // Because the simulated event is 100% sync, we can use it to test the synchronous changes
-    // here. Any async stuff you do inside handleSubmit will be swallowed. Thus our UI
-    // will see the following changes:
-    // - isSubmitting -> true (even if you set it to false asynchronously in your handleSubmit)
-    // - touched: all fields
-    expect(tree.find(Form).dive().find('#submitting')).toHaveLength(1);
-    expect(
-      tree.find(Form).dive().find('button[type="submit"]').props().disabled
-    ).toBe(true);
-  });
-
-  test('what happens when the form is submitted', async () => {
-    const tree = shallow(<MyForm />);
-
-    expect(tree.find(MyInnerForm).dive().find('#submitting')).toHaveLength(0);
-
-    await mockCallsToMyApi();
-    await tree.find(MyInnerForm).props().submitForm();
-
-    // check that ui has completely updated
-    expect(
-      tree.find(MyInnerForm).update().dive().find('#submitting')
-    ).toHaveLength(0);
-    expect(tree.find(MyInnerForm).update().dive().find('#status').text).toEqual(
-      'Success!'
-    );
-    expect(
-      tree
-        .find(MyInnerForm)
-        .update()
-        .dive()
-        .find('button[type="submit"]')
-        .props().disabled
-    ).toBe(false);
-
-    // check that props have updated
-    expect(tree.find(MyInnerForm).props().status).toEqual({
-      myStatusMessage: 'Success!',
-    });
-    expect(tree.find(MyInnerForm).props().errors).toEqual({});
-    expect(tree.find(MyInnerForm).props().touched).toEqual({ name: true }); // submit will touch all fields
-  });
-});
-```
-
 ## Organizations and projects using Formik
 
 [List of organizations and projects using Formik](https://github.com/jaredpalmer/formik/issues/87)
@@ -1258,8 +1090,9 @@ describe('MyForm', () => {
 Formik is made with <3 thanks to these wonderful people ([emoji key](https://github.com/kentcdodds/all-contributors#emoji-key)):
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
-| [<img src="https://avatars2.githubusercontent.com/u/4060187?v=4" width="100px;"/><br /><sub>Jared Palmer</sub>](http://jaredpalmer.com)<br />[💬](#question-jaredpalmer "Answering Questions") [💻](https://github.com/jaredpalmer/formik/commits?author=jaredpalmer "Code") [🎨](#design-jaredpalmer "Design") [📖](https://github.com/jaredpalmer/formik/commits?author=jaredpalmer "Documentation") [💡](#example-jaredpalmer "Examples") [🤔](#ideas-jaredpalmer "Ideas, Planning, & Feedback") [👀](#review-jaredpalmer "Reviewed Pull Requests") [⚠️](https://github.com/jaredpalmer/formik/commits?author=jaredpalmer "Tests") | [<img src="https://avatars0.githubusercontent.com/u/109324?v=4" width="100px;"/><br /><sub>Ian White</sub>](https://www.stardog.io)<br />[💬](#question-eonwhite "Answering Questions") [🐛](https://github.com/jaredpalmer/formik/issues?q=author%3Aeonwhite "Bug reports") [💻](https://github.com/jaredpalmer/formik/commits?author=eonwhite "Code") [📖](https://github.com/jaredpalmer/formik/commits?author=eonwhite "Documentation") [🤔](#ideas-eonwhite "Ideas, Planning, & Feedback") [👀](#review-eonwhite "Reviewed Pull Requests") | [<img src="https://avatars0.githubusercontent.com/u/829963?v=4" width="100px;"/><br /><sub>Andrej Badin</sub>](http://andrejbadin.com)<br />[💬](#question-Andreyco "Answering Questions") [🐛](https://github.com/jaredpalmer/formik/issues?q=author%3AAndreyco "Bug reports") [📖](https://github.com/jaredpalmer/formik/commits?author=Andreyco "Documentation") | [<img src="https://avatars2.githubusercontent.com/u/91115?v=4" width="100px;"/><br /><sub>Adam Howard</sub>](http://adz.co.de)<br />[💬](#question-skattyadz "Answering Questions") [🐛](https://github.com/jaredpalmer/formik/issues?q=author%3Askattyadz "Bug reports") [🤔](#ideas-skattyadz "Ideas, Planning, & Feedback") [👀](#review-skattyadz "Reviewed Pull Requests") | [<img src="https://avatars1.githubusercontent.com/u/6711845?v=4" width="100px;"/><br /><sub>Vlad Shcherbin</sub>](https://github.com/VladShcherbin)<br />[💬](#question-VladShcherbin "Answering Questions") [🐛](https://github.com/jaredpalmer/formik/issues?q=author%3AVladShcherbin "Bug reports") [🤔](#ideas-VladShcherbin "Ideas, Planning, & Feedback") | [<img src="https://avatars3.githubusercontent.com/u/383212?v=4" width="100px;"/><br /><sub>Brikou CARRE</sub>](https://github.com/brikou)<br />[🐛](https://github.com/jaredpalmer/formik/issues?q=author%3Abrikou "Bug reports") [📖](https://github.com/jaredpalmer/formik/commits?author=brikou "Documentation") |
-| :---: | :---: | :---: | :---: | :---: | :---: |
+| [<img src="https://avatars2.githubusercontent.com/u/4060187?v=4" width="100px;"/><br /><sub>Jared Palmer</sub>](http://jaredpalmer.com)<br />[💬](#question-jaredpalmer "Answering Questions") [💻](https://github.com/jaredpalmer/formik/commits?author=jaredpalmer "Code") [🎨](#design-jaredpalmer "Design") [📖](https://github.com/jaredpalmer/formik/commits?author=jaredpalmer "Documentation") [💡](#example-jaredpalmer "Examples") [🤔](#ideas-jaredpalmer "Ideas, Planning, & Feedback") [👀](#review-jaredpalmer "Reviewed Pull Requests") [⚠️](https://github.com/jaredpalmer/formik/commits?author=jaredpalmer "Tests") | [<img src="https://avatars0.githubusercontent.com/u/109324?v=4" width="100px;"/><br /><sub>Ian White</sub>](https://www.stardog.io)<br />[💬](#question-eonwhite "Answering Questions") [🐛](https://github.com/jaredpalmer/formik/issues?q=author%3Aeonwhite "Bug reports") [💻](https://github.com/jaredpalmer/formik/commits?author=eonwhite "Code") [📖](https://github.com/jaredpalmer/formik/commits?author=eonwhite "Documentation") [🤔](#ideas-eonwhite "Ideas, Planning, & Feedback") [👀](#review-eonwhite "Reviewed Pull Requests") | [<img src="https://avatars0.githubusercontent.com/u/829963?v=4" width="100px;"/><br /><sub>Andrej Badin</sub>](http://andrejbadin.com)<br />[💬](#question-Andreyco "Answering Questions") [🐛](https://github.com/jaredpalmer/formik/issues?q=author%3AAndreyco "Bug reports") [📖](https://github.com/jaredpalmer/formik/commits?author=Andreyco "Documentation") | [<img src="https://avatars2.githubusercontent.com/u/91115?v=4" width="100px;"/><br /><sub>Adam Howard</sub>](http://adz.co.de)<br />[💬](#question-skattyadz "Answering Questions") [🐛](https://github.com/jaredpalmer/formik/issues?q=author%3Askattyadz "Bug reports") [🤔](#ideas-skattyadz "Ideas, Planning, & Feedback") [👀](#review-skattyadz "Reviewed Pull Requests") | [<img src="https://avatars1.githubusercontent.com/u/6711845?v=4" width="100px;"/><br /><sub>Vlad Shcherbin</sub>](https://github.com/VladShcherbin)<br />[💬](#question-VladShcherbin "Answering Questions") [🐛](https://github.com/jaredpalmer/formik/issues?q=author%3AVladShcherbin "Bug reports") [🤔](#ideas-VladShcherbin "Ideas, Planning, & Feedback") | [<img src="https://avatars3.githubusercontent.com/u/383212?v=4" width="100px;"/><br /><sub>Brikou CARRE</sub>](https://github.com/brikou)<br />[🐛](https://github.com/jaredpalmer/formik/issues?q=author%3Abrikou "Bug reports") [📖](https://github.com/jaredpalmer/formik/commits?author=brikou "Documentation") | [<img src="https://avatars0.githubusercontent.com/u/5314713?v=4" width="100px;"/><br /><sub>Sam Kvale</sub>](http://skvale.github.io)<br />[🐛](https://github.com/jaredpalmer/formik/issues?q=author%3Askvale "Bug reports") [💻](https://github.com/jaredpalmer/formik/commits?author=skvale "Code") [⚠️](https://github.com/jaredpalmer/formik/commits?author=skvale "Tests") |
+| :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| [<img src="https://avatars0.githubusercontent.com/u/13765558?v=4" width="100px;"/><br /><sub>Jon Tansey</sub>](http://jon.tansey.info)<br />[🐛](https://github.com/jaredpalmer/formik/issues?q=author%3Ajontansey "Bug reports") [💻](https://github.com/jaredpalmer/formik/commits?author=jontansey "Code") |
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 This project follows the [all-contributors](https://github.com/kentcdodds/all-contributors) specification. Contributions of any kind welcome!

@@ -24,6 +24,7 @@ export const Field: React.SFC<any> = (
     meta: {
       touched: context.formik.touched[name],
       error: context.formik.errors[name],
+      initialValue: context.formik.initialValues[name],
     },
   };
   const bag =

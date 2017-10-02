@@ -269,7 +269,7 @@ npm install yup --save
         - [`input.onChange: void`](#inputonchange-void)
       - [Meta props](#meta-props)
         - [`meta.dirty: boolean`](#metadirty-boolean)
-        - [`meta.error: any`](#metaerror-any)
+        - [`meta.error?: string`](#metaerror-string)
         - [`meta.initialValue: any`](#metainitialvalue-any)
         - [`meta.pristine: boolean`](#metapristine-boolean)
         - [`meta.touched: boolean`](#metatouched-boolean)
@@ -765,7 +765,7 @@ A function to call when value of the field is changed.
 
 `true` if the field value is not the same as field initial value. Opposite of `pristine`.
 
-###### `meta.error: any`
+###### `meta.error?: string`
 
 Validation error of the field.
 

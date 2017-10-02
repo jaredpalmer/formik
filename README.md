@@ -261,6 +261,18 @@ npm install yup --save
     - [`validateOnChange?: boolean`](#validateonchange-boolean)
     - [`validationSchema?: Schema | (() => Schema)`](#validationschema-schema----schema)
   - [`<Field />`](#field-)
+    - [Field props](#field-props)
+      - [Input props](#input-props)
+        - [`input.name: string`](#inputname-string)
+        - [`input.value: any`](#inputvalue-any)
+        - [`input.onBlur: void`](#inputonblur-void)
+        - [`input.onChange: void`](#inputonchange-void)
+      - [Meta props](#meta-props)
+        - [`meta.dirty: boolean`](#metadirty-boolean)
+        - [`meta.error: any`](#metaerror-any)
+        - [`meta.initialValue: any`](#metainitialvalue-any)
+        - [`meta.pristine: boolean`](#metapristine-boolean)
+        - [`meta.touched: boolean`](#metatouched-boolean)
   - [`<Form />`](#form-)
   - [`withFormik(options)`](#withformikoptions)
     - [`options`](#options)
@@ -654,7 +666,7 @@ Default is `false`. Control the initial value of [`isValid`] prop prior to mount
 
 #### `initialValues?: Values`
 
-Initial field values of the form, Formik will make these values available to render methods component as [`props.values`][`values`]. 
+Initial field values of the form, Formik will make these values available to render methods component as [`props.values`][`values`].
 
 Even if your form is empty by default, you must initialize all fields with initial values otherwise React will throw an error saying that you have changed an input from uncontrolled to controlled.
 
@@ -723,7 +735,51 @@ Default is `true`. Use this option to tell Formik to run validations on `change`
 
 ### `<Field />`
 
-`<Field />` will automagically hook up inputs to Formik. It uses the `name` attribute to match up with Formik state. `<Field/>` will default to and `<input/>` element. To change the underlying element of `<Field/>`, specify a `component` prop. It can either be a string like `select` or another React component.
+`<Field />` will automagically hook up inputs to Formik. It uses the `name` attribute to match up with Formik state. `<Field/>` will default to an `<input/>` element. To change the underlying element of `<Field/>`, specify a `component` prop. It can either be a string like `select` or another React component.
+
+#### Field props
+
+Props are divided into `input` and `meta` props.
+
+##### Input props
+
+###### `input.name: string`
+
+The `name` prop you passed to the field.
+
+###### `input.value: any`
+
+Current value of the field.
+
+###### `input.onBlur: void`
+
+A function to call when the field loses focus.
+
+###### `input.onChange: void`
+
+A function to call when value of the field is changed.
+
+##### Meta props
+
+###### `meta.dirty: boolean`
+
+`true` if the field value is not the same as field initial value. Opposite of `pristine`.
+
+###### `meta.error: any`
+
+Validation error of the field.
+
+###### `meta.initialValue: any`
+
+Initial value of the field.
+
+###### `meta.pristine: boolean`
+
+`true` if the field value is the same as field initial value. Opposite of `dirty`.
+
+###### `meta.touched: boolean`
+
+`true` if the field has been touched.
 
 ```js
 import  React from 'react';
@@ -756,17 +812,16 @@ const Example = () => (
 );
 
 const CustomInputComponent: React.SFC<FormikProps<Values> & CustomInputProps> => ({
-  field, // { name, value, onChange, onBlur }
-  form: { touched, errors } // also values, setXXXX, handleXXXX, isDirty, isValid, status, etc.
+  field: { input, meta },
   ...props
 }) => (
   <div>
     <input
       type="text"
-      {...field}
+      {...input}
       {...props}
     />
-    {touched[name] && errors[name] && <div className="error">{errors[name]}</div>}
+    {meta.touched && meta.error && <div className="error">{meta.error}</div>}
   </div>
 )
 ```

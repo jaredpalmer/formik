@@ -88,10 +88,10 @@ export const BasicChildrenPropExample = () =>
   </div>;
 
 // Custom Field Example
-const CustomInput = ({ field: { input, meta }, label, name, type }) => (
+const CustomInput = ({ field: { input, meta }, label, type }) => (
   <div className="form-group">
-    <label htmlFor={name}>{label}</label>
-    <input type={type} id={name} {...input} />
+    <label htmlFor={input.name}>{label}</label>
+    <input type={type} id={input.name} {...input} />
     {meta.touched && meta.error && (
       <p className="field-error">{meta.error}</p>
     )}

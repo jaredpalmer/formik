@@ -19,10 +19,10 @@ export const Field: React.SFC<any> = (
   const fieldIsPristine = fieldValue === fieldInitialValue;
   const field = {
     input: {
-      value: fieldValue,
       name,
-      onChange: context.formik.handleChange,
+      value: fieldValue,
       onBlur: context.formik.handleBlur,
+      onChange: context.formik.handleChange,
     },
     meta: {
       dirty: !fieldIsPristine,
@@ -65,22 +65,37 @@ Field.propTypes = {
  *
  * export const MyInput: React.SFC<MyProps & FieldProps> = ({
  *   field,
- *   form,
  *   ...props
  * }) =>
  *   <div>
- *     <input {...field} {...props}/>
- *     {form.touched[field.name] && form.errors[field.name]}
+ *     <input {...field.input} {...props}/>
+ *     {field.meta.touched && field.meta.error}
  *   </div>
  */
 export interface FieldProps {
   field: {
-    /** Classic React change handler, keyed by input name */
-    onChange: (e: React.ChangeEvent<any>) => void;
-    /** Mark input as touched */
-    onBlur: (e: any) => void;
-    /** Value of the input */
-    value: any;
+    input: {
+      /** Name of the input */
+      name: string;
+      /** Value of the input */
+      value: any;
+      /** Mark input as touched */
+      onBlur: (e: any) => void;
+      /** Classic React change handler, keyed by input name */
+      onChange: (e: React.ChangeEvent<any>) => void;
+    };
+    meta: {
+      /** True if field value is not the same as field initial value */
+      dirty: boolean;
+      /** Validation error of the field */
+      error?: string;
+      /** Initial value of the field */
+      initialValue: any;
+      /** True if field value is the same as field initial value */
+      pristine: boolean;
+      /** True if the field has been touched */
+      touched: boolean;
+    };
   };
   form: FormikProps<any>;
 }

@@ -86,3 +86,22 @@ export const BasicChildrenPropExample = () =>
         </Form>}
     </Formik>
   </div>;
+
+// Custom Field Example
+const CustomInput = ({ field: { input, meta }, label, name, type }) => (
+  <div className="form-group">
+    <label htmlFor={name}>{label}</label>
+    <input type={type} id={name} {...input} />
+    {meta.touched && meta.error && (
+      <p className="field-error">{meta.error}</p>
+    )}
+  </div>
+)
+
+const MyForm = props => (
+  <Form className="whatever">
+    <Field name="firstName" label="First Name" component={CustomInput} />
+    <Field name="lastName" label="Last Name" component={CustomInput} />
+    <button type="submit">Submit</button>
+  </Form>
+)

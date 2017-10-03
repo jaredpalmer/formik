@@ -265,8 +265,8 @@ npm install yup --save
       - [Input props](#input-props)
         - [`input.name: string`](#inputname-string)
         - [`input.value: any`](#inputvalue-any)
-        - [`input.onBlur: void`](#inputonblur-void)
-        - [`input.onChange: void`](#inputonchange-void)
+        - [`input.onBlur: (e: any) => void`](#inputonblur-e-any--void)
+        - [`input.onChange: (e: React.ChangeEvent<any>) => void`](#inputonchange-e-reactchangeeventany--void)
       - [Meta props](#meta-props)
         - [`meta.dirty: boolean`](#metadirty-boolean)
         - [`meta.error?: string`](#metaerror-string)
@@ -751,11 +751,11 @@ The `name` prop you passed to the field.
 
 Current value of the field.
 
-###### `input.onBlur: void`
+###### `input.onBlur: (e: any) => void`
 
 A function to call when the field loses focus.
 
-###### `input.onChange: void`
+###### `input.onChange: (e: React.ChangeEvent<any>) => void`
 
 A function to call when value of the field is changed.
 

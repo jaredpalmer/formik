@@ -2,7 +2,13 @@ import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import isEqual from 'lodash.isequal';
 
-import { isFunction, isPromise, isReactNative, values } from './utils';
+import { isFunction, isReactNative, values } from './utils';
+import {
+  FormikErrors,
+  createValidator,
+  validateYupSchema,
+  yupToFormErrors,
+} from './validation';
 
 import warning from 'warning';
 
@@ -12,13 +18,6 @@ import warning from 'warning';
 export interface FormikValues {
   [field: string]: any;
 }
-
-/**
- * An object containing error messages whose keys correspond to FormikValues.
- */
-export type FormikErrors = {
-  [field: string]: string;
-};
 
 /**
  * An object containing touched state of the form whose keys correspond to FormikValues.
@@ -33,8 +32,8 @@ export type FormikTouched = {
 export interface FormikState<Values> {
   /** Form values */
   values: Values;
-  /** 
-   * Top level error, in case you need it 
+  /**
+   * Top level error, in case you need it
    * @deprecated since 0.8.0
    */
   error?: any;
@@ -66,8 +65,8 @@ export interface FormikComputedProps<Values> {
 export interface FormikActions<Values> {
   /** Manually set top level status. */
   setStatus: (status?: any) => void;
-  /** 
-   * Manually set top level error 
+  /**
+   * Manually set top level error
    * @deprecated since 0.8.0
    */
   setError: (e: any) => void;
@@ -92,7 +91,7 @@ export interface FormikActions<Values> {
 }
 
 /**
- * Formik form event handlers 
+ * Formik form event handlers
  */
 export interface FormikHandlers {
   /** Form submit handler */
@@ -125,13 +124,13 @@ export interface FormikSharedConfig {
  * <Formik /> props
  */
 export interface FormikConfig extends FormikSharedConfig {
-  /** 
+  /**
    * Initial values of the form
    */
   initialValues: object;
 
-  /** 
-   * Submission handler 
+  /**
+   * Submission handler
    */
   onSubmit: (values: object, formikActions: FormikActions<any>) => void;
 
@@ -145,13 +144,13 @@ export interface FormikConfig extends FormikSharedConfig {
    */
   render?: ((props: FormikProps<any>) => React.ReactNode);
 
-  /** 
-   * A Yup Schema or a function that returns a Yup schema 
+  /**
+   * A Yup Schema or a function that returns a Yup schema
    */
   validationSchema?: any | (() => any);
 
-  /** 
-   * Validation function. Must return an error object or promise that 
+  /**
+   * Validation function. Must return an error object or promise that
    * throws an error object where that object keys map to corresponding value.
    */
   validate?: ((values: any) => void | object | Promise<any>);
@@ -203,6 +202,8 @@ export class Formik<
 
   initialValues: any;
 
+  validator: Function;
+
   getChildContext() {
     const dirty =
       values<boolean>(this.state.touched).filter(Boolean).length > 0;
@@ -248,6 +249,7 @@ export class Formik<
     };
 
     this.initialValues = props.initialValues || ({} as any);
+    this.validator = createValidator(props.validate, props.validationSchema);
   }
 
   componentWillReceiveProps(nextProps: Props) {
@@ -347,23 +349,12 @@ export class Formik<
    * Run validations and update state accordingly
    */
   runValidations = (values: FormikValues) => {
-    if (this.props.validationSchema) {
-      this.runValidationSchema(values);
-    }
-
-    if (this.props.validate) {
-      const maybePromisedErrors = (this.props.validate as any)(values);
-      if (isPromise(maybePromisedErrors)) {
-        (maybePromisedErrors as Promise<any>).then(
-          () => {
-            this.setState({ errors: {} });
-          },
-          errors => this.setState({ errors, isSubmitting: false })
-        );
-      } else {
-        this.setErrors(maybePromisedErrors as FormikErrors);
-      }
-    }
+    let validationResult = this.validator(values);
+    validationResult.then(
+      () => this.setErrors({}),
+      (errors: FormikErrors) => this.setErrors(errors)
+    );
+    return validationResult;
   };
 
   handleChange = (e: React.ChangeEvent<any>) => {
@@ -473,35 +464,10 @@ Formik cannot determine which value to update. For more info see https://github.
       isSubmitting: true,
     });
 
-    if (this.props.validate) {
-      const maybePromisedErrors =
-        (this.props.validate as any)(this.state.values) || {};
-      if (isPromise(maybePromisedErrors)) {
-        (maybePromisedErrors as Promise<any>).then(
-          () => {
-            this.setState({ errors: {} });
-            this.executeSubmit();
-          },
-          errors => this.setState({ errors, isSubmitting: false })
-        );
-        return;
-      } else {
-        const isValid = Object.keys(maybePromisedErrors).length === 0;
-        this.setState({
-          errors: maybePromisedErrors as FormikErrors,
-          isSubmitting: isValid,
-        });
-
-        // only submit if there are no errors
-        if (isValid) {
-          this.executeSubmit();
-        }
-      }
-    } else if (this.props.validationSchema) {
-      this.runValidationSchema(this.state.values, this.executeSubmit);
-    } else {
-      this.executeSubmit();
-    }
+    return this.runValidations(values).then(
+      () => this.executeSubmit(),
+      () => this.setState({ isSubmitting: false })
+    );
   };
 
   executeSubmit = () => {
@@ -628,34 +594,6 @@ Formik cannot determine which value to update. For more info see https://github.
   }
 }
 
-/**
- * Transform Yup ValidationError to a more usable object
- */
-export function yupToFormErrors(yupError: any): FormikErrors {
-  let errors: FormikErrors = {};
-  for (let err of yupError.inner) {
-    if (!errors[err.path]) {
-      errors[err.path] = err.message;
-    }
-  }
-  return errors;
-}
-
-/**
- * Validate a yup schema.
- */
-export function validateYupSchema<T>(data: T, schema: any): Promise<void> {
-  let validateData: any = {};
-  for (let k in data) {
-    if (data.hasOwnProperty(k)) {
-      const key = String(k);
-      validateData[key] =
-        (data as any)[key] !== '' ? (data as any)[key] : undefined;
-    }
-  }
-  return schema.validate(validateData, { abortEarly: false });
-}
-
 export function touchAllFields<T>(fields: T): FormikTouched {
   let touched = {} as FormikTouched;
   for (let k of Object.keys(fields)) {
@@ -667,3 +605,4 @@ export function touchAllFields<T>(fields: T): FormikTouched {
 export * from './Field';
 export * from './Form';
 export * from './withFormik';
+export * from './validation';

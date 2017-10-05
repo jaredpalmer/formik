@@ -101,6 +101,16 @@
         "bug",
         "code"
       ]
+    },
+    {
+      "login": "slightlytyler",
+      "name": "Tyler Martinez",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/6819171?v=4",
+      "profile": "http://slightlytyler.com",
+      "contributions": [
+        "bug",
+        "doc"
+      ]
     }
   ]
 }

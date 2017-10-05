@@ -571,6 +571,10 @@ Formik cannot determine which value to update. For more info see https://github.
   };
 
   resetForm = (nextValues?: any) => {
+    if (nextValues) {
+      this.initialValues = nextValues
+    }
+  
     this.setState({
       isSubmitting: false,
       errors: {},

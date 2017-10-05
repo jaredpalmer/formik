@@ -758,7 +758,7 @@ const Example = () => (
 
 const CustomInputComponent: React.SFC<FormikProps<Values> & CustomInputProps> => ({
   field, // { name, value, onChange, onBlur }
-  form: { touched, errors } // also values, setXXXX, handleXXXX, isDirty, isValid, status, etc.
+  form: { touched, errors } // also values, setXXXX, handleXXXX, dirty, isValid, status, etc.
   ...props
 }) => (
   <div>

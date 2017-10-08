@@ -375,7 +375,7 @@ export class Formik<
       }
       return;
     }
-    e.persist();
+    if (typeof e.persist === 'function') e.persist();
     const { type, name, id, value, checked, outerHTML } = e.target;
     const field = name ? name : id;
     const val = /number|range/.test(type)
@@ -529,7 +529,7 @@ Formik cannot determine which value to update. For more info see https://github.
       }
       return;
     }
-    e.persist();
+    if (typeof e.persist === 'function') e.persist();
     const { name, id } = e.target;
     const field = name ? name : id;
     this.setState(prevState => ({

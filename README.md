@@ -74,12 +74,13 @@ import React from 'react'
 import { withFormik } from 'formik'
 
 // Our inner form component which receives our form's state and updater methods as props
-const InnerForm = ({ values, errors, touched, handleChange, handleSubmit, isSubmitting }) =>
+const InnerForm = ({ values, errors, touched, handleChange, handleBlur, handleSubmit, isSubmitting }) =>
   <form onSubmit={handleSubmit}>
     <input
       type="email"
       name="email"
       onChange={handleChange}
+      onBlur={handleBlur}
       value={values.email}
     />
     {touched.email && errors.email && <div>{errors.email}</div>}
@@ -87,6 +88,7 @@ const InnerForm = ({ values, errors, touched, handleChange, handleSubmit, isSubm
       type="password"
       name="password"
       onChange={handleChange}
+      onBlur={handleBlur}
       value={values.password}
     />
     {touched.password && errors.password && <div>{errors.password}</div>}
@@ -187,12 +189,13 @@ const Basic = () =>
             }
           )
       }}
-      render={({ values, errors, touched, handleChange, handleSubmit, isSubmitting }) =>
+      render={({ values, errors, touched, handleChange, handleBlur, handleSubmit, isSubmitting }) =>
         <form onSubmit={handleSubmit}>
           <input
             type="email"
             name="email"
             onChange={handleChange}
+            onBlur={handleBlur}
             value={values.email}
           />
           {touched.email && errors.email && <div>{errors.email}</div>}
@@ -200,6 +203,7 @@ const Basic = () =>
             type="password"
             name="password"
             onChange={handleChange}
+            onBlur={handleBlur}
             value={values.password}
           />
           {touched.password && errors.password && <div>{errors.password}</div>}
@@ -340,6 +344,7 @@ const EditUserDialog = ({ user, updateUser, onClose }) => {
               type="email"
               name="email"
               onChange={handleChange}
+              onBlur={handleBlur}
               value={values.email}
             />
             {errors.email &&
@@ -351,6 +356,7 @@ const EditUserDialog = ({ user, updateUser, onClose }) => {
               type="text"
               name="facebook"
               onChange={handleChange}
+              onBlur={handleBlur}
               value={values.facebook}
             />
             {errors.facebook &&
@@ -362,6 +368,7 @@ const EditUserDialog = ({ user, updateUser, onClose }) => {
               type="text"
               name="twitter"
               onChange={handleChange}
+              onBlur={handleBlur}
               value={values.twitter}
             />
             {errors.twitter &&

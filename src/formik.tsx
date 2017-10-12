@@ -1,6 +1,8 @@
 import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import isEqual from 'lodash.isequal';
+import set from 'lodash/set';
+import cloneDeep from 'lodash/cloneDeep';
 
 import { isFunction, isPromise, isReactNative, values } from './utils';
 
@@ -396,19 +398,11 @@ Formik cannot determine which value to update. For more info see https://github.
     // Set form fields by name
     this.setState(prevState => ({
       ...prevState,
-      values: {
-        ...prevState.values as object,
-        [field]: val,
-      },
+      values: set(cloneDeep(prevState.values), field, val),
     }));
 
     if (this.props.validateOnChange) {
-      this.runValidations(
-        {
-          ...this.state.values as object,
-          [field]: value,
-        } as Object
-      );
+      this.runValidations(set(cloneDeep(this.state.values), field, value));
     }
   };
 
@@ -421,22 +415,11 @@ Formik cannot determine which value to update. For more info see https://github.
     // Set touched and form fields by name
     this.setState(prevState => ({
       ...prevState,
-      values: {
-        ...prevState.values as object,
-        [field]: value,
-      },
-      touched: {
-        ...prevState.touched as object,
-        [field]: true,
-      },
+      values: set(cloneDeep(prevState.values), field, value),
+      touched: set(cloneDeep(prevState.touched), field, true),
     }));
 
-    this.runValidationSchema(
-      {
-        ...this.state.values as object,
-        [field]: value,
-      } as object
-    );
+    this.runValidationSchema(set(cloneDeep(this.state.values), field, value));
   };
 
   setFieldValue = (field: string, value: any) => {
@@ -444,19 +427,11 @@ Formik cannot determine which value to update. For more info see https://github.
     this.setState(
       prevState => ({
         ...prevState,
-        values: {
-          ...prevState.values as object,
-          [field]: value,
-        },
+        values: set(cloneDeep(prevState.values), field, value),
       }),
       () => {
         if (this.props.validateOnChange) {
-          this.runValidations(
-            {
-              ...this.state.values as object,
-              [field]: value,
-            } as object
-          );
+          this.runValidations(set(cloneDeep(this.state.values), field, value));
         }
       }
     );
@@ -533,7 +508,7 @@ Formik cannot determine which value to update. For more info see https://github.
     const { name, id } = e.target;
     const field = name ? name : id;
     this.setState(prevState => ({
-      touched: { ...prevState.touched as object, [field]: true },
+      touched: set(cloneDeep(prevState.touched), field, true),
     }));
 
     if (this.props.validateOnBlur) {
@@ -546,10 +521,7 @@ Formik cannot determine which value to update. For more info see https://github.
     this.setState(
       prevState => ({
         ...prevState,
-        touched: {
-          ...prevState.touched as object,
-          [field]: touched,
-        },
+        touched: set(cloneDeep(prevState.touched), field, touched),
       }),
       () => {
         if (this.props.validateOnBlur) {
@@ -563,10 +535,7 @@ Formik cannot determine which value to update. For more info see https://github.
     // Set form field by name
     this.setState(prevState => ({
       ...prevState,
-      errors: {
-        ...prevState.errors as object,
-        [field]: message,
-      },
+      errors: set(cloneDeep(prevState.errors), field, message),
     }));
   };
 
@@ -639,7 +608,7 @@ export function yupToFormErrors(yupError: any): FormikErrors {
   let errors: FormikErrors = {};
   for (let err of yupError.inner) {
     if (!errors[err.path]) {
-      errors[err.path] = err.message;
+      set(errors, err.path, err.message);
     }
   }
   return errors;
@@ -660,12 +629,22 @@ export function validateYupSchema<T>(data: T, schema: any): Promise<void> {
   return schema.validate(validateData, { abortEarly: false });
 }
 
-export function touchAllFields<T>(fields: T): FormikTouched {
-  let touched = {} as FormikTouched;
-  for (let k of Object.keys(fields)) {
-    touched[k] = true;
+function setNestedObjectValues(object: any, value: any, response: any = {}) {
+  for (let k of Object.keys(object)) {
+    const val = object[k];
+    if (typeof val === 'object') {
+      response[k] = {};
+      setNestedObjectValues(val, value, response[k]);
+    } else {
+      response[k] = value;
+    }
   }
-  return touched;
+
+  return response;
+}
+
+export function touchAllFields<T>(fields: T): FormikTouched {
+  return setNestedObjectValues(cloneDeep(fields), true);
 }
 
 export * from './Field';

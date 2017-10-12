@@ -629,7 +629,9 @@ export function validateYupSchema<T>(data: T, schema: any): Promise<void> {
   return schema.validate(validateData, { abortEarly: false });
 }
 
-function setNestedObjectValues(object: any, value: any, response: any = {}) {
+function setNestedObjectValues(object: any, value: any, response: any = null) {
+  response = response === null ? {} : response;
+
   for (let k of Object.keys(object)) {
     const val = object[k];
     if (typeof val === 'object') {

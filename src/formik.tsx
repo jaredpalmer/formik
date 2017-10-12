@@ -33,8 +33,8 @@ export type FormikTouched = {
 export interface FormikState<Values> {
   /** Form values */
   values: Values;
-  /** 
-   * Top level error, in case you need it 
+  /**
+   * Top level error, in case you need it
    * @deprecated since 0.8.0
    */
   error?: any;
@@ -66,8 +66,8 @@ export interface FormikComputedProps<Values> {
 export interface FormikActions<Values> {
   /** Manually set top level status. */
   setStatus: (status?: any) => void;
-  /** 
-   * Manually set top level error 
+  /**
+   * Manually set top level error
    * @deprecated since 0.8.0
    */
   setError: (e: any) => void;
@@ -92,7 +92,7 @@ export interface FormikActions<Values> {
 }
 
 /**
- * Formik form event handlers 
+ * Formik form event handlers
  */
 export interface FormikHandlers {
   /** Form submit handler */
@@ -125,13 +125,13 @@ export interface FormikSharedConfig {
  * <Formik /> props
  */
 export interface FormikConfig extends FormikSharedConfig {
-  /** 
+  /**
    * Initial values of the form
    */
   initialValues: object;
 
-  /** 
-   * Submission handler 
+  /**
+   * Submission handler
    */
   onSubmit: (values: object, formikActions: FormikActions<any>) => void;
 
@@ -145,16 +145,21 @@ export interface FormikConfig extends FormikSharedConfig {
    */
   render?: ((props: FormikProps<any>) => React.ReactNode);
 
-  /** 
-   * A Yup Schema or a function that returns a Yup schema 
+  /**
+   * A Yup Schema or a function that returns a Yup schema
    */
   validationSchema?: any | (() => any);
 
-  /** 
-   * Validation function. Must return an error object or promise that 
+  /**
+   * Validation function. Must return an error object or promise that
    * throws an error object where that object keys map to corresponding value.
    */
   validate?: ((values: any) => void | object | Promise<any>);
+
+  /**
+   *  Transform values fuunction. Must return a values object that represents the form values
+   */
+  transformValues?: ((values: FormikValues) => FormikValues);
 
   /**
    * React children or child render callback
@@ -191,6 +196,7 @@ export class Formik<
     onSubmit: PropTypes.func.isRequired,
     validationSchema: PropTypes.oneOfType([PropTypes.func, PropTypes.object]),
     validate: PropTypes.func,
+    transformValues: PropTypes.func,
     component: PropTypes.func,
     render: PropTypes.func,
     children: PropTypes.oneOfType([PropTypes.func, PropTypes.node]),
@@ -241,13 +247,14 @@ export class Formik<
   constructor(props: Props) {
     super(props);
     this.state = {
-      values: props.initialValues || ({} as any),
+      values: this.getTransformedValues(props.initialValues) || ({} as any),
       errors: {},
       touched: {},
       isSubmitting: false,
     };
 
-    this.initialValues = props.initialValues || ({} as any);
+    this.initialValues =
+      this.getTransformedValues(props.initialValues) || ({} as any);
   }
 
   componentWillReceiveProps(nextProps: Props) {
@@ -299,9 +306,10 @@ export class Formik<
   };
 
   setValues = (values: FormikValues) => {
-    this.setState({ values }, () => {
+    const newValues = this.getTransformedValues(values);
+    this.setState({ values: newValues }, () => {
       if (this.props.validateOnChange) {
-        this.runValidations(values);
+        this.runValidations(newValues);
       }
     });
   };
@@ -321,6 +329,13 @@ export class Formik<
 
   setSubmitting = (isSubmitting: boolean) => {
     this.setState({ isSubmitting });
+  };
+
+  getTransformedValues = (values: FormikValues) => {
+    if (this.props.transformValues) {
+      return this.props.transformValues(values);
+    }
+    return values;
   };
 
   /**
@@ -393,22 +408,19 @@ Formik cannot determine which value to update. For more info see https://github.
       );
     }
 
+    const newValues = this.getTransformedValues({
+      ...this.state.values as object,
+      [field]: val,
+    });
+
     // Set form fields by name
     this.setState(prevState => ({
       ...prevState,
-      values: {
-        ...prevState.values as object,
-        [field]: val,
-      },
+      values: newValues,
     }));
 
     if (this.props.validateOnChange) {
-      this.runValidations(
-        {
-          ...this.state.values as object,
-          [field]: value,
-        } as Object
-      );
+      this.runValidations(newValues as Object);
     }
   };
 

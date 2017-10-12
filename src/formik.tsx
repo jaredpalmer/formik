@@ -191,6 +191,7 @@ export class Formik<
     onSubmit: PropTypes.func.isRequired,
     validationSchema: PropTypes.oneOfType([PropTypes.func, PropTypes.object]),
     validate: PropTypes.func,
+    transformValues: PropTypes.func,
     component: PropTypes.func,
     render: PropTypes.func,
     children: PropTypes.oneOfType([PropTypes.func, PropTypes.node]),
@@ -241,13 +242,14 @@ export class Formik<
   constructor(props: Props) {
     super(props);
     this.state = {
-      values: props.initialValues || ({} as any),
+      values: this.getTransformedValues(props.initialValues) || ({} as any),
       errors: {},
       touched: {},
       isSubmitting: false,
     };
 
-    this.initialValues = props.initialValues || ({} as any);
+    this.initialValues =
+      this.getTransformedValues(props.initialValues) || ({} as any);
   }
 
   componentWillReceiveProps(nextProps: Props) {
@@ -299,9 +301,10 @@ export class Formik<
   };
 
   setValues = (values: FormikValues) => {
-    this.setState({ values }, () => {
+    const newValues = this.getTransformedValues(values);
+    this.setState({ values: newValues }, () => {
       if (this.props.validateOnChange) {
-        this.runValidations(values);
+        this.runValidations(newValues);
       }
     });
   };
@@ -321,6 +324,13 @@ export class Formik<
 
   setSubmitting = (isSubmitting: boolean) => {
     this.setState({ isSubmitting });
+  };
+
+  getTransformedValues = (values: FormikValues) => {
+    if (this.props.transformValues) {
+      return this.props.transformValues(values);
+    }
+    return values;
   };
 
   /**
@@ -393,22 +403,19 @@ Formik cannot determine which value to update. For more info see https://github.
       );
     }
 
+    const newValues = this.getTransformedValues({
+      ...this.state.values as object,
+      [field]: val,
+    });
+
     // Set form fields by name
     this.setState(prevState => ({
       ...prevState,
-      values: {
-        ...prevState.values as object,
-        [field]: val,
-      },
+      values: newValues,
     }));
 
     if (this.props.validateOnChange) {
-      this.runValidations(
-        {
-          ...this.state.values as object,
-          [field]: value,
-        } as Object
-      );
+      this.runValidations(newValues as Object);
     }
   };
 

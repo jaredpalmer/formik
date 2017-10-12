@@ -77,6 +77,20 @@ describe('Formik Next', () => {
     expect(tree.find(Form).props().isValid).toBe(false);
   });
 
+  it('should transform the initial values if transformValues is passed in', () => {
+    const transformValues = values => ({ ...values, name: values.name.trim() });
+    const tree = shallow(
+      <Formik
+        initialValues={{ name: '       jared   ' }}
+        onSubmit={noop}
+        component={Form}
+        transformValues={transformValues}
+      />
+    );
+    expect(tree.find(Form).props().values).toEqual({ name: 'jared' });
+    expect(tree.instance().initialValues).toEqual({ name: 'jared' });
+  });
+
   describe('FormikHandlers', () => {
     describe('handleChange', () => {
       it('sets values state', async () => {
@@ -116,6 +130,32 @@ describe('Formik Next', () => {
         ).toEqual('ian');
       });
 
+      it('transforms values if transformValues is passed in', () => {
+        const transformValues = values => ({
+          ...values,
+          name: values.name.trim(),
+        });
+        const tree = shallow(
+          <Formik
+            initialValues={{ name: 'jared' }}
+            onSubmit={noop}
+            component={Form}
+            transformValues={transformValues}
+          />
+        );
+        tree.find(Form).dive().find('input').simulate('change', {
+          persist: noop,
+          target: {
+            name: 'name',
+            value: '   ian   ',
+          },
+        });
+        expect(tree.update().state().values).toEqual({ name: 'ian' });
+        expect(
+          tree.update().find(Form).dive().find('input').props().value
+        ).toEqual('ian');
+      });
+
       it('runs validations if validateOnChange is set to true', async () => {
         const validate = jest.fn(noop);
         const tree = shallow(
@@ -135,6 +175,32 @@ describe('Formik Next', () => {
           },
         });
         expect(validate).toHaveBeenCalled();
+      });
+
+      it('runs validations with the transformed values if transformValues is passed', () => {
+        const validate = jest.fn(noop);
+        const transformValues = values => ({
+          ...values,
+          name: values.name.trim(),
+        });
+        const tree = shallow(
+          <Formik
+            initialValues={{ name: 'jared' }}
+            onSubmit={noop}
+            component={Form}
+            validate={validate}
+            validateOnChange={true}
+            transformValues={transformValues}
+          />
+        );
+        tree.find(Form).dive().find('input').simulate('change', {
+          persist: noop,
+          target: {
+            name: 'name',
+            value: '   ian    ',
+          },
+        });
+        expect(validate).toBeCalledWith({ name: 'ian' });
       });
 
       it('does NOT run validations if validateOnChange is set to false', async () => {
@@ -415,6 +481,24 @@ describe('Formik Next', () => {
       expect(tree.find(Form).dive().find('input').props().value).toEqual('ian');
     });
 
+    it('setValues transforms values if transformValues is passed in', () => {
+      const transformValues = values => ({
+        ...values,
+        name: values.name.trim(),
+      });
+      const tree = shallow(
+        <Formik
+          initialValues={{ name: 'jared' }}
+          onSubmit={noop}
+          component={Form}
+          transformValues={transformValues}
+        />
+      );
+
+      tree.find(Form).props().setValues({ name: '     ian    ' });
+      expect(tree.find(Form).dive().find('input').props().value).toEqual('ian');
+    });
+
     it('setValues should run validations when validateOnChange is true', async () => {
       const validate = jest.fn().mockReturnValue({});
       const tree = shallow(
@@ -428,6 +512,27 @@ describe('Formik Next', () => {
       );
       tree.find(Form).props().setValues({ name: 'ian' });
       expect(validate).toHaveBeenCalled();
+    });
+
+    it('setValues validate with transformed values if transformValues is passed in', () => {
+      const transformValues = values => ({
+        ...values,
+        name: values.name.trim(),
+      });
+      const validate = jest.fn().mockReturnValue({});
+      const tree = shallow(
+        <Formik
+          initialValues={{ name: 'jared' }}
+          onSubmit={noop}
+          component={Form}
+          validate={validate}
+          validateOnChange={true}
+          transformValues={transformValues}
+        />
+      );
+
+      tree.find(Form).props().setValues({ name: '     ian    ' });
+      expect(validate).toBeCalledWith({ name: 'ian' });
     });
 
     it('setValues should NOT run validations when validateOnChange is false', () => {

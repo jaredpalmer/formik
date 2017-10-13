@@ -634,7 +634,7 @@ function setNestedObjectValues(object: any, value: any, response: any = null) {
 
   for (let k of Object.keys(object)) {
     const val = object[k];
-    if (typeof val === 'object') {
+    if (val !== null && typeof val === 'object') {
       response[k] = {};
       setNestedObjectValues(val, value, response[k]);
     } else {

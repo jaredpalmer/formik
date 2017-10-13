@@ -1,6 +1,6 @@
 import * as PropTypes from 'prop-types';
 import * as React from 'react';
-import get from 'lodash/get';
+import dlv from 'dlv';
 
 import { FormikProps } from './formik';
 
@@ -16,7 +16,7 @@ export const Field: React.SFC<any> = (
     value:
       props.type === 'radio' || props.type === 'checkbox'
         ? props.value
-        : get(context.formik.values, name),
+        : dlv(context.formik.values, name),
     name,
     onChange: context.formik.handleChange,
     onBlur: context.formik.handleBlur,

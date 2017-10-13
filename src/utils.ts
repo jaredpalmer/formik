@@ -25,5 +25,23 @@ export function values<T>(obj: any): T[] {
   return vals;
 }
 
+/** @private Returns object with updated value at path */
+export function setDeep(path: string, value: any, obj: any): any {
+  let res: any = {};
+  let resVal: any = res;
+  let i = 0;
+  let pathArray = path.replace(/\]/g, '').split(/\.|\[/);
+  for (; i < pathArray.length - 1; i++) {
+    resVal =
+      resVal[pathArray[i]] ||
+      (resVal[pathArray[i]] = (!i && obj[pathArray[i]]) || {});
+  }
+  resVal[pathArray[i]] = value;
+  return { ...obj, ...res };
+}
+
 /** @private is the given object a Function? */
 export const isFunction = (obj: any) => 'function' === typeof obj;
+
+/** @private is the given object an Object? */
+export const isObject = (obj: any) => obj !== null && typeof obj === 'object';

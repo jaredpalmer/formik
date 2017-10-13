@@ -1,10 +1,15 @@
 import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import isEqual from 'lodash.isequal';
-import set from 'lodash/set';
-import cloneDeep from 'lodash/cloneDeep';
 
-import { isFunction, isPromise, isReactNative, values } from './utils';
+import {
+  isFunction,
+  isObject,
+  isPromise,
+  isReactNative,
+  values,
+  setDeep,
+} from './utils';
 
 import warning from 'warning';
 
@@ -398,11 +403,11 @@ Formik cannot determine which value to update. For more info see https://github.
     // Set form fields by name
     this.setState(prevState => ({
       ...prevState,
-      values: set(cloneDeep(prevState.values), field, val),
+      values: setDeep(field, val, prevState.values),
     }));
 
     if (this.props.validateOnChange) {
-      this.runValidations(set(cloneDeep(this.state.values), field, value));
+      this.runValidations(setDeep(field, value, this.state.values));
     }
   };
 
@@ -415,11 +420,11 @@ Formik cannot determine which value to update. For more info see https://github.
     // Set touched and form fields by name
     this.setState(prevState => ({
       ...prevState,
-      values: set(cloneDeep(prevState.values), field, value),
-      touched: set(cloneDeep(prevState.touched), field, true),
+      values: setDeep(field, value, prevState.values),
+      touched: setDeep(field, true, prevState.touched),
     }));
 
-    this.runValidationSchema(set(cloneDeep(this.state.values), field, value));
+    this.runValidationSchema(setDeep(field, value, this.state.values));
   };
 
   setFieldValue = (field: string, value: any) => {
@@ -427,11 +432,11 @@ Formik cannot determine which value to update. For more info see https://github.
     this.setState(
       prevState => ({
         ...prevState,
-        values: set(cloneDeep(prevState.values), field, value),
+        values: setDeep(field, value, prevState.values),
       }),
       () => {
         if (this.props.validateOnChange) {
-          this.runValidations(set(cloneDeep(this.state.values), field, value));
+          this.runValidations(this.state.values);
         }
       }
     );
@@ -508,7 +513,7 @@ Formik cannot determine which value to update. For more info see https://github.
     const { name, id } = e.target;
     const field = name ? name : id;
     this.setState(prevState => ({
-      touched: set(cloneDeep(prevState.touched), field, true),
+      touched: setDeep(field, true, prevState.touched),
     }));
 
     if (this.props.validateOnBlur) {
@@ -521,7 +526,7 @@ Formik cannot determine which value to update. For more info see https://github.
     this.setState(
       prevState => ({
         ...prevState,
-        touched: set(cloneDeep(prevState.touched), field, touched),
+        touched: setDeep(field, touched, prevState.touched),
       }),
       () => {
         if (this.props.validateOnBlur) {
@@ -535,7 +540,7 @@ Formik cannot determine which value to update. For more info see https://github.
     // Set form field by name
     this.setState(prevState => ({
       ...prevState,
-      errors: set(cloneDeep(prevState.errors), field, message),
+      errors: setDeep(field, message, prevState.errors),
     }));
   };
 
@@ -608,7 +613,7 @@ export function yupToFormErrors(yupError: any): FormikErrors {
   let errors: FormikErrors = {};
   for (let err of yupError.inner) {
     if (!errors[err.path]) {
-      set(errors, err.path, err.message);
+      errors = setDeep(err.path, err.message, errors);
     }
   }
   return errors;
@@ -634,7 +639,7 @@ function setNestedObjectValues(object: any, value: any, response: any = null) {
 
   for (let k of Object.keys(object)) {
     const val = object[k];
-    if (val !== null && typeof val === 'object') {
+    if (isObject(val)) {
       response[k] = {};
       setNestedObjectValues(val, value, response[k]);
     } else {
@@ -646,7 +651,7 @@ function setNestedObjectValues(object: any, value: any, response: any = null) {
 }
 
 export function touchAllFields<T>(fields: T): FormikTouched {
-  return setNestedObjectValues(cloneDeep(fields), true);
+  return setNestedObjectValues(fields, true);
 }
 
 export * from './Field';

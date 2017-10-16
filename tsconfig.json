@@ -24,8 +24,8 @@
     "strictNullChecks": true,
     "stripInternal": true,
     "target": "es5",
-    "typeRoots": ["node_modules/@types", "@types"]
+    "typeRoots": ["node_modules/@types"]
   },
-  "include": ["src"],
+  "include": ["src", "./typings.d.ts"],
   "exclude": ["node_modules", "dist"]
 }

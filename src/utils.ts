@@ -54,7 +54,7 @@ export function setDeep(path: string, value: any, obj: any): any {
   for (; i < pathArray.length - 1; i++) {
     resVal =
       resVal[pathArray[i]] ||
-      (resVal[pathArray[i]] = (!i && obj[pathArray[i]]) || {});
+      (resVal[pathArray[i]] = (!i && { ...obj[pathArray[i]] }) || {});
   }
   resVal[pathArray[i]] = value;
   return { ...obj, ...res };

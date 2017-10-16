@@ -25,7 +25,27 @@ export function values<T>(obj: any): T[] {
   return vals;
 }
 
-/** @private Returns object with updated value at path */
+/** 
+ * @private Deeply get a value from an object via it's dot path. 
+ * See https://github.com/developit/dlv/blob/master/index.js
+ */
+export function dlv(
+  obj: any,
+  key: string | string[],
+  def?: any,
+  p: number = 0
+) {
+  key = (key as string).split ? (key as string).split('.') : key;
+  while (obj && p < key.length) {
+    obj = obj[key[p++]];
+  }
+  return obj === undefined ? def : obj;
+}
+
+/** 
+ * @private Deeply set a value from in object via it's dot path. 
+ * See https://github.com/developit/linkstate
+ */
 export function setDeep(path: string, value: any, obj: any): any {
   let res: any = {};
   let resVal: any = res;

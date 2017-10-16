@@ -34,7 +34,6 @@
     "gen-docs": "all-contributors generate && doctoc README.md"
   },
   "dependencies": {
-    "dlv": "1.1.0",
     "lodash.isequal": "4.5.0",
     "prop-types": "^15.5.10",
     "warning": "^3.0.0"

@@ -1,6 +1,6 @@
 import * as PropTypes from 'prop-types';
 import * as React from 'react';
-import dlv from 'dlv';
+import { dlv } from './utils';
 
 import { FormikProps } from './formik';
 

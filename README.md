@@ -57,6 +57,11 @@ You can also try before you buy with this **[demo of Formik on CodeSandbox.io](h
 
 - [An Introduction to Formik](https://youtu.be/-tDy7ds0dag?t=33s) by [Jared Palmer](https://twitter.com/jaredpalmer) @ Spotify NYC. August 15th, 2017.
 
+## Community Articles / Tutorials
+
+- [The Joy of Forms with React and Formik](https://keyholesoftware.com/2017/10/23/the-joy-of-forms-with-react-and-formik/)
+- [Painless React Forms with Formik](https://hackernoon.com/painless-react-forms-with-formik-e61b70473c60)
+
 ## The gist
 
 Formik keeps track of your form's state and then exposes it plus a few reusable methods and event handlers (`handleChange`, `handleBlur`, and `handleSubmit`) to your form via `props`. `handleChange` and `handleBlur` work exactly  as expected--they use a `name` or `id` attribute to figure out which field to update.

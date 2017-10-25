@@ -288,7 +288,7 @@ npm install yup --save
 - [Guides](#guides)
   - [React Native](#react-native)
     - [Why use `setFieldValue` instead of `handleChange`?](#why-use-setfieldvalue-instead-of-handlechange)
-    - [Avoiding a Render Callback](#avoiding-a-render-callback)
+    - [Avoiding new functions in render](#avoiding-new-functions-in-render)
 - [Organizations and projects using Formik](#organizations-and-projects-using-formik)
 - [Authors](#authors)
 - [Contributors](#contributors)
@@ -1021,9 +1021,9 @@ export const MyReactNativeForm = props =>
 // ...
 ```
 
-#### Avoiding a Render Callback
+#### Avoiding new functions in render
 
-If you are like me and do not like render callbacks, I suggest treating React Native's `<TextInput/>` as if it were another 3rd party custom input element:
+If for a any reason you wish to avoid creating new functions on each render, I suggest treating React Native's `<TextInput/>` as if it were another 3rd party custom input element:
 
   - Write your own class wrapper around the custom input element
   - Pass the custom component [`props.setFieldValue`][`setFieldValue`] instead of [`props.handleChange`][`handleChange`]

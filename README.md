@@ -865,7 +865,7 @@ Even if your form is not receiving any props from its parent, use `mapPropsToVal
 
 ##### `validate?: (values: Values, props: Props) => FormikError<Values> | Promise<any>`
 
-_Note: I suggest using [`validateSchema`] and Yup for validation. However, `validate` is a dependency-free, straightforward way to validate your forms._
+_Note: I suggest using [`validationSchema`] and Yup for validation. However, `validate` is a dependency-free, straightforward way to validate your forms._
 
 Validate the form's [`values`] with function. This function can either be:
 

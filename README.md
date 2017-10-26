@@ -674,7 +674,7 @@ Even if your form is empty by default, you must initialize all fields with initi
 Note: `initialValues` not available to the higher-order component, use [`mapPropsToValues`] instead.
 
 #### `onSubmit: (values: Values, formikBag: FormikBag) => void`
-Your form submission handler. It is passed your forms [`values`] and the "FormikBag", which includes an object containing a subset of the [injected props and methods](/#injected-props-and-methods) (i.e. all the methods with names that start with `set<Thing>` + `resetForm`) and any props that were passed to the the wrapped component.
+Your form submission handler. It is passed your forms [`values`] and the "FormikBag", which includes an object containing a subset of the [injected props and methods](#injected-props-and-methods) (i.e. all the methods with names that start with `set<Thing>` + `resetForm`) and any props that were passed to the the wrapped component.
 
 Note: [`errors`], [`touched`], [`status`] and all event handlers are NOT included in the `FormikBag`.
 
@@ -836,7 +836,7 @@ When your inner form component is a stateless functional component, you can use 
 Default is `false`. Control whether Formik should reset the form if the wrapped component props change (using deep equality).
 
 ##### `handleSubmit: (values: Values, formikBag: FormikBag) => void`
-Your form submission handler. It is passed your forms [`values`] and the "FormikBag", which includes an object containing a subset of the [injected props and methods](/#injected-props-and-methods) (i.e. all the methods with names that start with `set<Thing>` + `resetForm`) and any props that were passed to the the wrapped component.
+Your form submission handler. It is passed your forms [`values`] and the "FormikBag", which includes an object containing a subset of the [injected props and methods](#injected-props-and-methods) (i.e. all the methods with names that start with `set<Thing>` + `resetForm`) and any props that were passed to the the wrapped component.
 
 ###### The "FormikBag":
 

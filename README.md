@@ -25,7 +25,7 @@ I wrote Formik while building a large internal administrative dashboard with [Ia
 By now, you might be thinking, "Why didn't you just use [Redux-Form](https://github.com/erikras/redux-form)?" Good question.
 
  1. According to our prophet Dan Abramov, [**form state is inherently emphemeral and local**, so tracking it in Redux (or any kind of Flux library) is unnecessary](https://github.com/reactjs/redux/issues/1287#issuecomment-175351978)
- 2. Redux-Form calls your entire top-level Redux reducer multiple times ON EVERY SINGLE KEYSTROKE. This is fine for small apps, but as your Redux app grows, input latency will continue increase if you use Redux-Form. 
+ 2. Redux-Form calls your entire top-level Redux reducer multiple times ON EVERY SINGLE KEYSTROKE. This is fine for small apps, but as your Redux app grows, input latency will continue increase if you use Redux-Form.
  3. Redux-Form is 22.5 kB minified gzipped (Formik is 9.2 kB)  
 
 **My goal with Formik was to create a scalable, performant, form helper with a minimal API that does the really really annoying stuff, and leaves the rest up to you.**
@@ -265,6 +265,7 @@ npm install yup --save
     - [`enableReinitialize?: boolean`](#enablereinitialize-boolean)
     - [`isInitialValid?: boolean`](#isinitialvalid-boolean)
     - [`initialValues?: Values`](#initialvalues-values)
+    - [`transformValues?: Values`](#transformvalues-values-values--values)
     - [`onSubmit: (values: Values, formikBag: FormikBag) => void`](#onsubmit-values-values-formikbag-formikbag--void)
     - [`validate?: (values: Values) => FormikError<Values> | Promise<any>`](#validate-values-values--formikerrorvalues--promiseany)
     - [`validateOnBlur?: boolean`](#validateonblur-boolean)
@@ -667,11 +668,17 @@ Default is `false`. Control the initial value of [`isValid`] prop prior to mount
 
 #### `initialValues?: Values`
 
-Initial field values of the form, Formik will make these values available to render methods component as [`props.values`][`values`]. 
+Initial field values of the form, Formik will make these values available to render methods component as [`props.values`][`values`].
 
 Even if your form is empty by default, you must initialize all fields with initial values otherwise React will throw an error saying that you have changed an input from uncontrolled to controlled.
 
 Note: `initialValues` not available to the higher-order component, use [`mapPropsToValues`] instead.
+
+#### `transformValues?: (values: Values) => Values`
+
+Transform the values before updating and validating the Form. The values passed to `handleChange` and `setValues` will be transformed with this function first and foremost.
+
+This is also called on the `initialValues` props.
 
 #### `onSubmit: (values: Values, formikBag: FormikBag) => void`
 Your form submission handler. It is passed your forms [`values`] and the "FormikBag", which includes an object containing a subset of the [injected props and methods](#injected-props-and-methods) (i.e. all the methods with names that start with `set<Thing>` + `resetForm`) and any props that were passed to the the wrapped component.

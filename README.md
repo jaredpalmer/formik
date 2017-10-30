@@ -380,7 +380,7 @@ const EditUserDialog = ({ user, updateUser, onClose }) => {
               touched.twitter &&
               <div>
                 {errors.twitter}
-              </div>}          
+              </div>}
             <button type="submit" disabled={isSubmitting}>
               Submit
             </button>
@@ -446,7 +446,7 @@ const EditUserDialog = ({ user, updateUser, onClose }) => {
               touched.twitter &&
               <div>
                 {errors.twitter}
-              </div>}          
+              </div>}
             <button type="submit" disabled={isSubmitting}>
               Submit
             </button>
@@ -738,9 +738,9 @@ Default is `true`. Use this option to tell Formik to run validations on `change`
 
 `<Field />` will automagically hook up inputs to Formik. It uses the `name` attribute to match up with Formik state. `<Field/>` will default to and `<input/>` element. To change the underlying element of `<Field/>`, specify a `component` prop. It can either be a string like `select` or another React component.
 
-```js
+```typescript
 import  React from 'react';
-import { Formik, Field } from 'formik';
+import { Field, FieldComponentProps, Formik } from 'formik';
 
 const Example = () => (
   <div>
@@ -753,7 +753,7 @@ const Example = () => (
           actions.setSubmitting(false)
         }, 1000);
       }}
-      render={(props: FormikProps<Values>) =>
+      render={props =>
         <form onSubmit={props.handleSubmit}>
           <Field type="email" name="email" placeholder="Email" />
           <Field component="select" name="color" >
@@ -768,7 +768,9 @@ const Example = () => (
   </div>
 );
 
-const CustomInputComponent: React.SFC<FormikProps<Values> & CustomInputProps> => ({
+type CustomInputProps = { customProp: any }
+
+const CustomInputComponent: React.SFC<CustomInputProps & FieldComponentProps> => ({
   field, // { name, value, onChange, onBlur }
   form: { touched, errors } // also values, setXXXX, handleXXXX, dirty, isValid, status, etc.
   ...props
@@ -779,7 +781,7 @@ const CustomInputComponent: React.SFC<FormikProps<Values> & CustomInputProps> =>
       {...field}
       {...props}
     />
-    {touched[name] && errors[name] && <div className="error">{errors[name]}</div>}
+    {touched[field.name] && errors[field.name] && <div className="error">{errors[field.name]}</div>}
   </div>
 )
 ```
@@ -997,10 +999,10 @@ The reason is that Formik's [`handleChange`] function expects its first argument
 
 In React Native, neither [`<TextInput />`](https://facebook.github.io/react-native/docs/textinput.html)'s [`onChange`](https://facebook.github.io/react-native/docs/textinput.html#onchange) nor [`onChangeText`](https://facebook.github.io/react-native/docs/textinput.html#onchange) callbacks pass such an event or one like it to its callback. Instead, they do the following *(emphasis added)*:
 
-> [`onChange?: function`](https://facebook.github.io/react-native/docs/textinput.html#onchange)  
+> [`onChange?: function`](https://facebook.github.io/react-native/docs/textinput.html#onchange)
 > Callback that is called when the text input's text changes.
 >
-> [`onChangeText?: function`](https://facebook.github.io/react-native/docs/textinput.html#onchangetext)  
+> [`onChangeText?: function`](https://facebook.github.io/react-native/docs/textinput.html#onchangetext)
 > Callback that is called when the text input's text changes. **Changed text is passed as an argument to the callback handler.**
 
 However, Formik works just fine if you use `props.setFieldValue`! Philisophically, just treat React Native's `<TextInput/>` the same way you would any other 3rd party custom input element.

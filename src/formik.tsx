@@ -406,7 +406,7 @@ Formik cannot determine which value to update. For more info see https://github.
       this.runValidations(
         {
           ...this.state.values as object,
-          [field]: value,
+          [field]: val,
         } as Object
       );
     }

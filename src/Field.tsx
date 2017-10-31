@@ -8,7 +8,7 @@ import { FormikProps } from './formik';
  * context and wiring up forms.
  */
 export const Field: React.SFC<any> = (
-  { component = 'input', name, ...props },
+  { component = 'input', render, children, name, ...props },
   context
 ) => {
   const field = {
@@ -27,10 +27,17 @@ export const Field: React.SFC<any> = (
           field,
           form: context.formik,
         };
-  return React.createElement(component, {
+  const componentProps = {
     ...props,
     ...bag,
-  });
+  };
+  if (typeof render === 'function') {
+    return render(componentProps);
+  }
+  if (typeof children === 'function') {
+    return children(componentProps);
+  }
+  return React.createElement(component, componentProps);
 };
 
 Field.contextTypes = {

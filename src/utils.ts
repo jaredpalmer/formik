@@ -1,3 +1,5 @@
+import * as React from 'react';
+
 /** @private is the given object/value a promise? */
 export function isPromise(value: any): boolean {
   if (value !== null && typeof value === 'object') {
@@ -27,3 +29,6 @@ export function values<T>(obj: any): T[] {
 
 /** @private is the given object a Function? */
 export const isFunction = (obj: any) => 'function' === typeof obj;
+
+export const isEmptyChildren = (children: any) =>
+  React.Children.count(children) === 0;

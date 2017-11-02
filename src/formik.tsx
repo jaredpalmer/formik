@@ -1,8 +1,13 @@
 import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import isEqual from 'lodash.isequal';
-
-import { isFunction, isPromise, isReactNative, values } from './utils';
+import {
+  isEmptyChildren,
+  isFunction,
+  isPromise,
+  isReactNative,
+  values,
+} from './utils';
 
 import warning from 'warning';
 
@@ -170,8 +175,6 @@ export type FormikProps<Values> = FormikState<Values> &
   FormikActions<Values> &
   FormikHandlers &
   FormikComputedProps<Values>;
-
-const isEmptyChildren = (children: any) => React.Children.count(children) === 0;
 
 export class Formik<
   Props extends FormikConfig = FormikConfig

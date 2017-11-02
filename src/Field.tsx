@@ -5,6 +5,11 @@ import { FormikProps } from './formik';
 import { isEmptyChildren } from './utils';
 import warning from 'warning';
 
+export type GenericFieldHTMLAttributes =
+  | React.InputHTMLAttributes<HTMLInputElement>
+  | React.SelectHTMLAttributes<HTMLSelectElement>
+  | React.TextareaHTMLAttributes<HTMLTextAreaElement>;
+
 /**
  * Note: These typings could be more restrictive, but then it would limit the
  * reusability of custom <Field/> components.
@@ -66,12 +71,15 @@ export interface FieldConfig {
   value?: any;
 }
 
+export type FieldAttributes = GenericFieldHTMLAttributes & FieldConfig;
+
 /**
  * Custom Field component for quickly hooking into Formik
  * context and wiring up forms.
  */
+
 export class Field<
-  Props extends FieldConfig = FieldConfig
+  Props extends FieldAttributes = FieldAttributes
 > extends React.Component<Props, {}> {
   static contextTypes = {
     formik: PropTypes.object,

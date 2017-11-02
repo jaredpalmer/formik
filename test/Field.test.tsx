@@ -186,7 +186,7 @@ describe('A <Field />', () => {
         <TestForm
           children={formikProps =>
             (injected = formikProps) &&
-            <Field name="name" component={Component} />}
+            <Field name="name" component={Component} placeholder="hello" />}
         />,
         node
       );

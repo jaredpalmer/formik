@@ -166,6 +166,109 @@ describe('A <Field />', () => {
         <TestForm
           render={() =>
             <Field name="name">
+              <option value="Jared">
+                {TEXT}
+              </option>
+            </Field>}
+        />,
+        node
+      );
+
+      expect(node.innerHTML).toContain(TEXT);
+    });
+
+    it('warns if both non-string component and children', () => {
+      let output = '';
+      let actual;
+      const Component = props => (actual = props) && null;
+
+      (global as any).console = {
+        error: jest.fn(input => (output += input)),
+      };
+
+      ReactDOM.render(
+        <TestForm
+          render={() =>
+            <Field component={Component} name="name">
+              <option value="Jared">
+                {TEXT}
+              </option>
+            </Field>}
+        />,
+        node
+      );
+
+      expect(output).toContain(
+        'You should not use a non-string <Field component> and <Field children> in the same <Field> component; <Field component> will be ignored.'
+      );
+    });
+
+    it('warns if both non-string component and render', () => {
+      let output = '';
+      let actual;
+      const Component = props => (actual = props) && null;
+
+      (global as any).console = {
+        error: jest.fn(input => (output += input)),
+      };
+
+      ReactDOM.render(
+        <TestForm
+          render={() =>
+            <Field
+              component={Component}
+              name="name"
+              render={() =>
+                <div>
+                  {TEXT}
+                </div>}
+            />}
+        />,
+        node
+      );
+
+      expect(output).toContain(
+        'You should not use <Field component> and <Field render> in the same <Field> component; <Field component> will be ignored'
+      );
+    });
+
+    it('warns if both children and render', () => {
+      let output = '';
+      let actual;
+      const Component = props => (actual = props) && null;
+
+      (global as any).console = {
+        error: jest.fn(input => (output += input)),
+      };
+
+      ReactDOM.render(
+        <TestForm
+          render={() =>
+            <Field
+              name="name"
+              render={() =>
+                <div>
+                  {TEXT}
+                </div>}
+            >
+              <div>
+                {TEXT}
+              </div>
+            </Field>}
+        />,
+        node
+      );
+
+      expect(output).toContain(
+        'You should not use <Field render> and <Field children> in the same <Field> component; <Field children> will be ignored'
+      );
+    });
+
+    it('renders a child function', () => {
+      ReactDOM.render(
+        <TestForm
+          render={() =>
+            <Field name="name">
               {() =>
                 <div>
                   {TEXT}

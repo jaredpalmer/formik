@@ -90,8 +90,14 @@ export class Field<Props extends FieldAttributes = any> extends React.Component<
     component: 'input',
   };
 
+  static propTypes = {
+    name: PropTypes.string.isRequired,
+    component: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
+    render: PropTypes.func,
+    children: PropTypes.oneOfType([PropTypes.func, PropTypes.node]),
+  };
+
   componentWillMount() {
-    warning(this.props.name, '<Field> requires a name prop');
     warning(
       !(typeof this.props.component !== 'string' && this.props.render),
       'You should not use <Field component> and <Field render> in the same <Field> component; <Field component> will be ignored'
@@ -103,7 +109,7 @@ export class Field<Props extends FieldAttributes = any> extends React.Component<
         this.props.children &&
         !isEmptyChildren(this.props.children)
       ),
-      'You should not use <Field component> and <Field children> in the same <Field> component; <Field component> will be ignored'
+      'You should not use a non-string <Field component> and <Field children> in the same <Field> component; <Field component> will be ignored.'
     );
 
     warning(
@@ -131,14 +137,22 @@ export class Field<Props extends FieldAttributes = any> extends React.Component<
     };
     const bag = { field, form: formik };
 
-    return render
-      ? (render as any)(bag)
-      : children
-        ? typeof children === 'function'
-          ? (children as (props: FieldProps<any>) => React.ReactNode)(bag)
-          : !isEmptyChildren(children) ? React.Children.only(children) : null
-        : typeof component === 'string'
-          ? React.createElement(component as any, { ...field, ...props })
-          : React.createElement(component as any, { ...bag, ...props });
+    if (render) {
+      return (render as any)(bag);
+    }
+
+    if (typeof children === 'function') {
+      return (children as (props: FieldProps<any>) => React.ReactNode)(bag);
+    }
+
+    if (children && !isEmptyChildren(children)) {
+      return React.Children.only(children);
+    }
+
+    if (typeof component === 'string') {
+      return React.createElement(component as any, { ...field, ...props });
+    }
+
+    return React.createElement(component as any, { ...bag, ...props });
   }
 }

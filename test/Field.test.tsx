@@ -116,6 +116,7 @@ describe('A <Field />', () => {
             <Field
               placeholder={placeholder}
               name="name"
+              leftIconNAme="thing"
               render={({ field, form }) => {
                 const { handleBlur, handleChange } = formikProps;
                 expect(field.name).toBe('name');

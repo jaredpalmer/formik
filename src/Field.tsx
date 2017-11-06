@@ -78,9 +78,10 @@ export type FieldAttributes = GenericFieldHTMLAttributes & FieldConfig;
  * context and wiring up forms.
  */
 
-export class Field<
-  Props extends FieldAttributes = FieldAttributes
-> extends React.Component<Props, {}> {
+export class Field<Props extends FieldAttributes = any> extends React.Component<
+  Props,
+  {}
+> {
   static contextTypes = {
     formik: PropTypes.object,
   };
@@ -90,6 +91,7 @@ export class Field<
   };
 
   componentWillMount() {
+    warning(!this.props.name, '<Field> requires a name prop');
     warning(
       !(typeof this.props.component !== 'string' && this.props.render),
       'You should not use <Field component> and <Field render> in the same <Field> component; <Field component> will be ignored'

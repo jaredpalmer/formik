@@ -132,7 +132,9 @@ export class Field<
     return render
       ? (render as any)(bag)
       : children
-        ? (children as (props: FieldProps<any>) => React.ReactNode)(bag)
+        ? typeof children === 'function'
+          ? (children as (props: FieldProps<any>) => React.ReactNode)(bag)
+          : !isEmptyChildren(children) ? React.Children.only(children) : null
         : typeof component === 'string'
           ? React.createElement(component as any, { ...field, ...props })
           : React.createElement(component as any, { ...bag, ...props });

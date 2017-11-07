@@ -736,7 +736,7 @@ Default is `true`. Use this option to tell Formik to run validations on `change`
 
 ### `<Field />`
 
-`<Field />` will automagically hook up inputs to Formik. It uses the `name` attribute to match up with Formik state. `<Field/>` will default to and `<input/>` element. To change the underlying element of `<Field/>`, specify a `component` prop. It can either be a string like `select` or another React component. `<Field/>` can also take a `render` prop.
+`<Field />` will automagically hook up inputs to Formik. It uses the `name` attribute to match up with Formik state. `<Field/>` will default to an `<input/>` element. To change the underlying element of `<Field/>`, specify a `component` prop. It can either be a string like `select` or another React component. `<Field/>` can also take a `render` prop.
 
 ```js
 import  React from 'react';

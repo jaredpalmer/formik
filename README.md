@@ -773,7 +773,7 @@ const Example = () => (
 
 const CustomInputComponent: React.SFC<FormikProps<Values> & CustomInputProps> => ({
   field, // { name, value, onChange, onBlur }
-  form: { touched, errors } // also values, setXXXX, handleXXXX, dirty, isValid, status, etc.
+  form: { touched, errors }, // also values, setXXXX, handleXXXX, dirty, isValid, status, etc.
   ...props
 }) => (
   <div>
@@ -782,7 +782,7 @@ const CustomInputComponent: React.SFC<FormikProps<Values> & CustomInputProps> =>
       {...field}
       {...props}
     />
-    {touched[name] && errors[name] && <div className="error">{errors[name]}</div>}
+    {touched[field.name] && errors[field.name] && <div className="error">{errors[field.name]}</div>}
   </div>
 )
 ```

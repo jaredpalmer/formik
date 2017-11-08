@@ -8,6 +8,8 @@
 
 ## Overview
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/jaredpalmer/formik.svg)](https://greenkeeper.io/)
+
 Let's face it, forms are really verbose in [React](https://github.com/facebook/react). To make matters worse, most form helpers do wayyyy too much magic and often have a significant performance cost associated with them. Formik is a small library that helps you with the 3 most annoying parts:
 
  1. Getting values in and out of form state

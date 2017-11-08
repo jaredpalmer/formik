@@ -89,6 +89,21 @@
     "singleQuote": true,
     "semi": true
   },
+  "greenkeeper": {
+    "ignore": [
+      "typescript",
+      "@types/enzyme",
+      "@types/jest",
+      "@types/node",
+      "@types/react",
+      "@types/react-dom",
+      "@types/react-test-renderer",
+      "enzyme",
+      "react-test-renderer",
+      "react",
+      "react-dom"
+    ]
+  },
   "jest": {
     "collectCoverageFrom": [
       "src/**/*.{ts,tsx}"

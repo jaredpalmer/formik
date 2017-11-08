@@ -403,6 +403,7 @@ Formik cannot determine which value to update. For more info see https://github.
         ...prevState.values as object,
         [field]: val,
       },
+      touched: { ...prevState.touched as object, [field]: true },
     }));
 
     if (this.props.validateOnChange) {

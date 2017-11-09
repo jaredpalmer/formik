@@ -22,11 +22,14 @@
   "scripts": {
     "test": "jest --env=jsdom",
     "test:watch": "npm run test -- --watch",
-    "start": "cross-env NODE_ENV=development tsc-watch --onSuccess \"rollup -c\"",
+    "start":
+      "cross-env NODE_ENV=development tsc-watch --onSuccess \"rollup -c\"",
     "prebuild": "rimraf dist",
-    "build": "tsc && cross-env NODE_ENV=production rollup -c && cross-env NODE_ENV=development rollup -c && rimraf compiled",
+    "build":
+      "tsc && cross-env NODE_ENV=production rollup -c && cross-env NODE_ENV=development rollup -c && rimraf compiled",
     "prepublish": "npm run build",
-    "format": "prettier --trailing-comma es5 --single-quote --write 'src/**/*' 'test/**/*'",
+    "format":
+      "prettier --trailing-comma es5 --single-quote --write 'src/**/*' 'test/**/*' 'README.md'",
     "precommit": "lint-staged",
     "addc": "all-contributors add",
     "gen-docs": "all-contributors generate && doctoc README.md"
@@ -57,7 +60,7 @@
     "husky": "0.14.3",
     "jest": "20.0.4",
     "lint-staged": "4.0.2",
-    "prettier": "1.5.3",
+    "prettier": "^1.8.2",
     "react": "15.6.1",
     "react-dom": "15.6.1",
     "react-test-renderer": "15.6.1",
@@ -87,7 +90,6 @@
     "singleQuote": true,
     "semi": true
   },
-
   "jest": {
     "collectCoverageFrom": ["src/**/*.{ts,tsx}"],
     "transform": {

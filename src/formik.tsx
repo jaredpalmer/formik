@@ -38,8 +38,8 @@ export type FormikTouched = {
 export interface FormikState<Values> {
   /** Form values */
   values: Values;
-  /** 
-   * Top level error, in case you need it 
+  /**
+   * Top level error, in case you need it
    * @deprecated since 0.8.0
    */
   error?: any;
@@ -71,8 +71,8 @@ export interface FormikComputedProps<Values> {
 export interface FormikActions<Values> {
   /** Manually set top level status. */
   setStatus: (status?: any) => void;
-  /** 
-   * Manually set top level error 
+  /**
+   * Manually set top level error
    * @deprecated since 0.8.0
    */
   setError: (e: any) => void;
@@ -97,7 +97,7 @@ export interface FormikActions<Values> {
 }
 
 /**
- * Formik form event handlers 
+ * Formik form event handlers
  */
 export interface FormikHandlers {
   /** Form submit handler */
@@ -130,13 +130,13 @@ export interface FormikSharedConfig {
  * <Formik /> props
  */
 export interface FormikConfig extends FormikSharedConfig {
-  /** 
+  /**
    * Initial values of the form
    */
   initialValues: object;
 
-  /** 
-   * Submission handler 
+  /**
+   * Submission handler
    */
   onSubmit: (values: object, formikActions: FormikActions<any>) => void;
 
@@ -150,13 +150,13 @@ export interface FormikConfig extends FormikSharedConfig {
    */
   render?: ((props: FormikProps<any>) => React.ReactNode);
 
-  /** 
-   * A Yup Schema or a function that returns a Yup schema 
+  /**
+   * A Yup Schema or a function that returns a Yup schema
    */
   validationSchema?: any | (() => any);
 
-  /** 
-   * Validation function. Must return an error object or promise that 
+  /**
+   * Validation function. Must return an error object or promise that
    * throws an error object where that object keys map to corresponding value.
    */
   validate?: ((values: any) => void | object | Promise<any>);
@@ -220,7 +220,7 @@ export class Formik<
             ? (this.props.isInitialValid as (props: Props) => boolean)(
                 this.props
               )
-            : this.props.isInitialValid as boolean,
+            : (this.props.isInitialValid as boolean),
         handleSubmit: this.handleSubmit,
         handleChange: this.handleChange,
         handleBlur: this.handleBlur,
@@ -400,18 +400,16 @@ Formik cannot determine which value to update. For more info see https://github.
     this.setState(prevState => ({
       ...prevState,
       values: {
-        ...prevState.values as object,
+        ...(prevState.values as object),
         [field]: val,
       },
     }));
 
     if (this.props.validateOnChange) {
-      this.runValidations(
-        {
-          ...this.state.values as object,
-          [field]: val,
-        } as Object
-      );
+      this.runValidations({
+        ...(this.state.values as object),
+        [field]: val,
+      } as Object);
     }
   };
 
@@ -425,21 +423,19 @@ Formik cannot determine which value to update. For more info see https://github.
     this.setState(prevState => ({
       ...prevState,
       values: {
-        ...prevState.values as object,
+        ...(prevState.values as object),
         [field]: value,
       },
       touched: {
-        ...prevState.touched as object,
+        ...(prevState.touched as object),
         [field]: true,
       },
     }));
 
-    this.runValidationSchema(
-      {
-        ...this.state.values as object,
-        [field]: value,
-      } as object
-    );
+    this.runValidationSchema({
+      ...(this.state.values as object),
+      [field]: value,
+    } as object);
   };
 
   setFieldValue = (field: string, value: any) => {
@@ -448,18 +444,16 @@ Formik cannot determine which value to update. For more info see https://github.
       prevState => ({
         ...prevState,
         values: {
-          ...prevState.values as object,
+          ...(prevState.values as object),
           [field]: value,
         },
       }),
       () => {
         if (this.props.validateOnChange) {
-          this.runValidations(
-            {
-              ...this.state.values as object,
-              [field]: value,
-            } as object
-          );
+          this.runValidations({
+            ...(this.state.values as object),
+            [field]: value,
+          } as object);
         }
       }
     );
@@ -536,7 +530,7 @@ Formik cannot determine which value to update. For more info see https://github.
     const { name, id } = e.target;
     const field = name ? name : id;
     this.setState(prevState => ({
-      touched: { ...prevState.touched as object, [field]: true },
+      touched: { ...(prevState.touched as object), [field]: true },
     }));
 
     if (this.props.validateOnBlur) {
@@ -550,7 +544,7 @@ Formik cannot determine which value to update. For more info see https://github.
       prevState => ({
         ...prevState,
         touched: {
-          ...prevState.touched as object,
+          ...(prevState.touched as object),
           [field]: touched,
         },
       }),
@@ -567,7 +561,7 @@ Formik cannot determine which value to update. For more info see https://github.
     this.setState(prevState => ({
       ...prevState,
       errors: {
-        ...prevState.errors as object,
+        ...(prevState.errors as object),
         [field]: message,
       },
     }));
@@ -603,7 +597,7 @@ Formik cannot determine which value to update. For more info see https://github.
         ? this.state.errors && Object.keys(this.state.errors).length === 0
         : isInitialValid !== false && isFunction(isInitialValid)
           ? (isInitialValid as (props: Props) => boolean)(this.props)
-          : isInitialValid as boolean,
+          : (isInitialValid as boolean),
       handleBlur: this.handleBlur,
       handleChange: this.handleChange,
       handleReset: this.handleReset,

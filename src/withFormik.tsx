@@ -42,13 +42,13 @@ export interface WithFormikConfig<
    */
   displayName?: string;
 
-  /** 
-   * Submission handler 
+  /**
+   * Submission handler
    */
   handleSubmit: (values: Values, formikBag: FormikBag<Props, Values>) => void;
 
-  /** 
-   * Map props to the form values 
+  /**
+   * Map props to the form values
    */
   mapPropsToValues?: (props: Props) => Values;
 
@@ -57,13 +57,13 @@ export interface WithFormikConfig<
    */
   mapValuesToPayload?: (values: Values) => DeprecatedPayload;
 
-  /** 
-   * A Yup Schema or a function that returns a Yup schema 
+  /**
+   * A Yup Schema or a function that returns a Yup schema
    */
   validationSchema?: any | ((props: Props) => any);
 
-  /** 
-   * Validation function. Must return an error object or promise that 
+  /**
+   * Validation function. Must return an error object or promise that
    * throws an error object where that object keys map to corresponding value.
    */
   validate?: (values: any, props: Props) => void | object | Promise<any>;
@@ -111,7 +111,7 @@ export function withFormik<
   return function createFormik(Component: CompositeComponent<Props>) {
     /**
      * We need to use closures here for to provide the wrapped component's props to
-     * the respective withFormik config methods. 
+     * the respective withFormik config methods.
      */
     class C extends React.Component<Props, {}> {
       validate = (values: Values): void | object | Promise<any> => {

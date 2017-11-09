@@ -8,12 +8,13 @@ const noop = () => {};
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-const TestForm: React.SFC<any> = p =>
+const TestForm: React.SFC<any> = p => (
   <Formik
     onSubmit={noop}
     initialValues={{ name: 'jared', email: 'hello@reason.nyc' }}
     {...p}
-  />;
+  />
+);
 
 describe('A <Field />', () => {
   describe('<Field component />', () => {
@@ -35,10 +36,7 @@ describe('A <Field />', () => {
     });
 
     it('renders the component', () => {
-      const SuperInput = () =>
-        <div>
-          {TEXT}
-        </div>;
+      const SuperInput = () => <div>{TEXT}</div>;
       ReactDOM.render(
         <TestForm
           render={formikProps => <Field name="name" component={SuperInput} />}
@@ -68,8 +66,10 @@ describe('A <Field />', () => {
       ReactDOM.render(
         <TestForm
           render={formikProps =>
-            (injected = formikProps) &&
-            <Field name="name" component={Component} />}
+            (injected = formikProps) && (
+              <Field name="name" component={Component} />
+            )
+          }
         />,
         node
       );
@@ -94,14 +94,9 @@ describe('A <Field />', () => {
     it('renders its return value', () => {
       ReactDOM.render(
         <TestForm
-          render={formikProps =>
-            <Field
-              name="name"
-              render={props =>
-                <div>
-                  {TEXT}
-                </div>}
-            />}
+          render={formikProps => (
+            <Field name="name" render={props => <div>{TEXT}</div>} />
+          )}
         />,
         node
       );
@@ -112,7 +107,7 @@ describe('A <Field />', () => {
     it('receives { field, form } props', () => {
       ReactDOM.render(
         <TestForm
-          render={formikProps =>
+          render={formikProps => (
             <Field
               placeholder={placeholder}
               name="name"
@@ -127,7 +122,8 @@ describe('A <Field />', () => {
 
                 return null;
               }}
-            />}
+            />
+          )}
         />,
         node
       );
@@ -146,14 +142,9 @@ describe('A <Field />', () => {
     it('renders a function', () => {
       ReactDOM.render(
         <TestForm
-          render={() =>
-            <Field
-              name="name"
-              children={() =>
-                <div>
-                  {TEXT}
-                </div>}
-            />}
+          render={() => (
+            <Field name="name" children={() => <div>{TEXT}</div>} />
+          )}
         />,
         node
       );
@@ -164,12 +155,11 @@ describe('A <Field />', () => {
     it('renders a child element', () => {
       ReactDOM.render(
         <TestForm
-          render={() =>
+          render={() => (
             <Field name="name">
-              <option value="Jared">
-                {TEXT}
-              </option>
-            </Field>}
+              <option value="Jared">{TEXT}</option>
+            </Field>
+          )}
         />,
         node
       );
@@ -188,12 +178,11 @@ describe('A <Field />', () => {
 
       ReactDOM.render(
         <TestForm
-          render={() =>
+          render={() => (
             <Field component={Component} name="name">
-              <option value="Jared">
-                {TEXT}
-              </option>
-            </Field>}
+              <option value="Jared">{TEXT}</option>
+            </Field>
+          )}
         />,
         node
       );
@@ -214,15 +203,13 @@ describe('A <Field />', () => {
 
       ReactDOM.render(
         <TestForm
-          render={() =>
+          render={() => (
             <Field
               component={Component}
               name="name"
-              render={() =>
-                <div>
-                  {TEXT}
-                </div>}
-            />}
+              render={() => <div>{TEXT}</div>}
+            />
+          )}
         />,
         node
       );
@@ -243,18 +230,11 @@ describe('A <Field />', () => {
 
       ReactDOM.render(
         <TestForm
-          render={() =>
-            <Field
-              name="name"
-              render={() =>
-                <div>
-                  {TEXT}
-                </div>}
-            >
-              <div>
-                {TEXT}
-              </div>
-            </Field>}
+          render={() => (
+            <Field name="name" render={() => <div>{TEXT}</div>}>
+              <div>{TEXT}</div>
+            </Field>
+          )}
         />,
         node
       );
@@ -267,13 +247,7 @@ describe('A <Field />', () => {
     it('renders a child function', () => {
       ReactDOM.render(
         <TestForm
-          render={() =>
-            <Field name="name">
-              {() =>
-                <div>
-                  {TEXT}
-                </div>}
-            </Field>}
+          render={() => <Field name="name">{() => <div>{TEXT}</div>}</Field>}
         />,
         node
       );
@@ -289,8 +263,10 @@ describe('A <Field />', () => {
       ReactDOM.render(
         <TestForm
           children={formikProps =>
-            (injected = formikProps) &&
-            <Field name="name" component={Component} placeholder="hello" />}
+            (injected = formikProps) && (
+              <Field name="name" component={Component} placeholder="hello" />
+            )
+          }
         />,
         node
       );

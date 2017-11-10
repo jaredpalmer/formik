@@ -129,26 +129,26 @@ export interface FormikSharedConfig {
 /**
  * <Formik /> props
  */
-export interface FormikConfig extends FormikSharedConfig {
+export interface FormikConfig<Values = object> extends FormikSharedConfig {
   /**
    * Initial values of the form
    */
-  initialValues: object;
+  initialValues: Values;
 
   /**
    * Submission handler
    */
-  onSubmit: (values: object, formikActions: FormikActions<any>) => void;
+  onSubmit: (values: Values, formikActions: FormikActions<Values>) => void;
 
   /**
    * Form component to render
    */
-  component?: React.ComponentType<FormikProps<any> | void>;
+  component?: React.ComponentType<FormikProps<Values> | void>;
 
   /**
    * Render prop (works like React router's <Route render={props =>} />)
    */
-  render?: ((props: FormikProps<any>) => React.ReactNode);
+  render?: ((props: FormikProps<Values>) => React.ReactNode);
 
   /**
    * A Yup Schema or a function that returns a Yup schema
@@ -159,12 +159,16 @@ export interface FormikConfig extends FormikSharedConfig {
    * Validation function. Must return an error object or promise that
    * throws an error object where that object keys map to corresponding value.
    */
-  validate?: ((values: any) => void | object | Promise<any>);
+  validate?: ((
+    values: Values
+  ) => void | object | Promise<{ [field: string]: string }>);
 
   /**
    * React children or child render callback
    */
-  children?: ((props: FormikProps<any>) => React.ReactNode) | React.ReactNode;
+  children?:
+    | ((props: FormikProps<Values>) => React.ReactNode)
+    | React.ReactNode;
 }
 
 /**

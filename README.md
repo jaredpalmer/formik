@@ -697,8 +697,7 @@ const ContactForm = ({
   handleBlur,
   values,
   errors,
-}) => {
-  return;
+}) => (
   <form onSubmit={handleSubmit}>
     <input
       type="text"
@@ -709,7 +708,7 @@ const ContactForm = ({
     />
     {errors.name && <div>{errors.name}</div>}
     <button type="submit">Submit</button>
-  </form>;
+  </form>
 };
 ```
 

@@ -390,14 +390,11 @@ export class Formik<
       : /checkbox/.test(type) ? checked : value;
 
     if (!field && process.env.NODE_ENV !== 'production') {
-      console.error(
-        `Warning: You forgot to pass an \`id\` or \`name\` attribute to your input:
-
-  ${outerHTML}
-
-Formik cannot determine which value to update. For more info see https://github.com/jaredpalmer/formik#handlechange-e-reactchangeeventany--void
-`
-      );
+      warnAboutMissingIdentifier({
+        htmlContent: outerHTML,
+        documentationAnchorLink: 'handlechange-e-reactchangeeventany--void',
+        handlerName: 'handleChange',
+      });
     }
 
     // Set form fields by name
@@ -531,8 +528,17 @@ Formik cannot determine which value to update. For more info see https://github.
       return;
     }
     e.persist();
-    const { name, id } = e.target;
+    const { name, id, outerHTML } = e.target;
     const field = name ? name : id;
+
+    if (!field && process.env.NODE_ENV !== 'production') {
+      warnAboutMissingIdentifier({
+        htmlContent: outerHTML,
+        documentationAnchorLink: 'handleblur-e-any--void',
+        handlerName: 'handleBlur',
+      });
+    }
+
     this.setState(prevState => ({
       touched: { ...(prevState.touched as object), [field]: true },
     }));
@@ -631,6 +637,29 @@ Formik cannot determine which value to update. For more info see https://github.
             : !isEmptyChildren(children) ? React.Children.only(children) : null
           : null;
   }
+}
+
+function warnAboutMissingIdentifier({
+  htmlContent,
+  documentationAnchorLink,
+  handlerName,
+}: {
+  htmlContent: string;
+  documentationAnchorLink: string;
+  handlerName: string;
+}) {
+  console.error(
+    `Warning: \`${
+      handlerName
+    }\` has triggered and you forgot to pass an \`id\` or \`name\` attribute to your input:
+  
+    ${htmlContent}
+  
+    Formik cannot determine which value to update. For more info see https://github.com/jaredpalmer/formik#${
+      documentationAnchorLink
+    }
+  `
+  );
 }
 
 /**

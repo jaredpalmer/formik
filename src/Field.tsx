@@ -145,14 +145,18 @@ export class Field<Props extends FieldAttributes = any> extends React.Component<
       return (children as (props: FieldProps<any>) => React.ReactNode)(bag);
     }
 
-    if (children && !isEmptyChildren(children)) {
-      return React.Children.only(children);
-    }
-
     if (typeof component === 'string') {
-      return React.createElement(component as any, { ...field, ...props });
+      return React.createElement(component as any, {
+        ...field,
+        ...props,
+        children,
+      });
     }
 
-    return React.createElement(component as any, { ...bag, ...props });
+    return React.createElement(component as any, {
+      ...bag,
+      ...props,
+      children,
+    });
   }
 }

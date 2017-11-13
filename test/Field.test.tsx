@@ -156,14 +156,15 @@ describe('A <Field />', () => {
       ReactDOM.render(
         <TestForm
           render={() => (
-            <Field name="name">
-              <option value="Jared">{TEXT}</option>
+            <Field name="name" component="select">
+              <option value="Jared" label={TEXT} />
+              <option value="Jared" label={TEXT} />
             </Field>
           )}
         />,
         node
       );
-
+      console.log(node.innerHTML);
       expect(node.innerHTML).toContain(TEXT);
     });
 

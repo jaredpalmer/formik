@@ -1,7 +1,7 @@
 {
   "name": "formik",
   "description": "Forms in React, without tears",
-  "version": "0.10.3",
+  "version": "0.10.4",
   "license": "MIT",
   "author": "Jared Palmer <jared@palmer.net>",
   "repository": "jaredpalmer/formik",
@@ -18,18 +18,17 @@
   "main": "dist/formik.js",
   "module": "dist/formik.es6.js",
   "typings": "dist/formik.d.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "test": "jest --env=jsdom",
     "test:watch": "npm run test -- --watch",
-    "start":
-      "cross-env NODE_ENV=development tsc-watch --onSuccess \"rollup -c\"",
+    "start": "cross-env NODE_ENV=development tsc-watch --onSuccess \"rollup -c\"",
     "prebuild": "rimraf dist",
-    "build":
-      "tsc && cross-env NODE_ENV=production rollup -c && cross-env NODE_ENV=development rollup -c && rimraf compiled",
+    "build": "tsc && cross-env NODE_ENV=production rollup -c && cross-env NODE_ENV=development rollup -c && rimraf compiled",
     "prepublish": "npm run build",
-    "format":
-      "prettier --trailing-comma es5 --single-quote --write 'src/**/*' 'test/**/*' 'README.md'",
+    "format": "prettier --trailing-comma es5 --single-quote --write 'src/**/*' 'test/**/*' 'README.md'",
     "precommit": "lint-staged",
     "addc": "all-contributors add",
     "gen-docs": "all-contributors generate && doctoc README.md"
@@ -91,7 +90,9 @@
     "semi": true
   },
   "jest": {
-    "collectCoverageFrom": ["src/**/*.{ts,tsx}"],
+    "collectCoverageFrom": [
+      "src/**/*.{ts,tsx}"
+    ],
     "transform": {
       ".(ts|tsx)": "<rootDir>/node_modules/ts-jest/preprocessor.js"
     },
@@ -99,7 +100,14 @@
       "<rootDir>/test/**/*.ts?(x)",
       "<rootDir>/test/**/?(*.)(spec|test).ts?(x)"
     ],
-    "transformIgnorePatterns": ["[/\\\\]node_modules[/\\\\].+\\.(js|jsx)$"],
-    "moduleFileExtensions": ["ts", "tsx", "js", "json"]
+    "transformIgnorePatterns": [
+      "[/\\\\]node_modules[/\\\\].+\\.(js|jsx)$"
+    ],
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "json"
+    ]
   }
 }

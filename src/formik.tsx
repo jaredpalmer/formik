@@ -678,7 +678,11 @@ export function yupToFormErrors(yupError: any): FormikErrors {
 /**
  * Validate a yup schema.
  */
-export function validateYupSchema<T>(data: T, schema: any): Promise<void> {
+export function validateYupSchema<T>(
+  data: T,
+  schema: any,
+  context = {}
+): Promise<void> {
   let validateData: any = {};
   for (let k in data) {
     if (data.hasOwnProperty(k)) {
@@ -687,7 +691,7 @@ export function validateYupSchema<T>(data: T, schema: any): Promise<void> {
         (data as any)[key] !== '' ? (data as any)[key] : undefined;
     }
   }
-  return schema.validate(validateData, { abortEarly: false });
+  return schema.validate(validateData, { abortEarly: false, context: context });
 }
 
 export function touchAllFields<T>(fields: T): FormikTouched {

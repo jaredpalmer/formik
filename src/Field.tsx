@@ -105,15 +105,6 @@ export class Field<Props extends FieldAttributes = any> extends React.Component<
 
     warning(
       !(
-        typeof this.props.component !== 'string' &&
-        this.props.children &&
-        !isEmptyChildren(this.props.children)
-      ),
-      'You should not use a non-string <Field component> and <Field children> in the same <Field> component; <Field component> will be ignored.'
-    );
-
-    warning(
-      !(
         this.props.render &&
         this.props.children &&
         !isEmptyChildren(this.props.children)

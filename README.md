@@ -4,7 +4,7 @@
 [![Build Status](https://travis-ci.org/jaredpalmer/formik.svg?branch=master)](https://travis-ci.org/jaredpalmer/formik)
 [![npm](https://img.shields.io/npm/v/formik.svg)](https://npm.im/formik)
 [![license](https://img.shields.io/npm/l/formik.svg)](./LICENSE)
-[![Join the chat at on Slack](https://palmer.chat/badge.svg)](https://palmer.chat/)
+[![Discord](https://img.shields.io/discord/102860784329052160.svg?style=flat-square)](https://discord.gg/cU6MCve)
 
 ## Overview
 
@@ -23,8 +23,8 @@ organized--making testing, refactoring, and reasoning about your forms a breeze.
 
 ## Developer Experience
 
-I wrote Formik while building a large internal administrative dashboard with
-[Ian White](https://github.com/eonwhite). With around ~30 unique forms, it
+I ([@jaredpalmer](https://twitter.com/eonwhite)) wrote Formik while building a large internal administrative dashboard with
+[@eonwhite](https://twitter.com/eonwhite). With around ~30 unique forms, it
 quickly became obvious that we could benefit by standardizing not just our input
 components but also the way in which data flowed through our forms.
 

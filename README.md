@@ -304,70 +304,69 @@ npm install yup --save
 ```
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
-
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-**Table of Contents**
-
-* [Usage](#usage)
-  * [Simple Example](#simple-example)
-* [API](#api)
-  * [`<Formik />`](#formik-)
-    * [Formik render methods](#formik-render-methods)
-    * [Formik props](#formik-props)
-      * [`dirty: boolean`](#dirty-boolean)
-      * [`errors: { [field: string]: string }`](#errors--field-string-string-)
-      * [`handleBlur: (e: any) => void`](#handleblur-e-any--void)
-      * [`handleChange: (e: React.ChangeEvent<any>) => void`](#handlechange-e-reactchangeeventany--void)
-      * [`handleReset: () => void`](#handlereset---void)
-      * [`handleSubmit: (e: React.FormEvent<HTMLFormEvent>) => void`](#handlesubmit-e-reactformeventhtmlformevent--void)
-      * [`isSubmitting: boolean`](#issubmitting-boolean)
-      * [`isValid: boolean`](#isvalid-boolean)
-      * [`resetForm: (nextValues?: Values) => void`](#resetform-nextvalues-values--void)
-      * [`setErrors: (fields: { [field: string]: string }) => void`](#seterrors-fields--field-string-string---void)
-      * [`setFieldError: (field: string, errorMsg: string) => void`](#setfielderror-field-string-errormsg-string--void)
-      * [`setFieldTouched: (field: string, isTouched: boolean) => void`](#setfieldtouched-field-string-istouched-boolean--void)
-      * [`setFieldValue: (field: string, value: any) => void`](#setfieldvalue-field-string-value-any--void)
-      * [`setStatus: (status?: any) => void`](#setstatus-status-any--void)
-      * [`setSubmitting: (boolean) => void`](#setsubmitting-boolean--void)
-      * [`setTouched: (fields: { [field: string]: boolean }) => void`](#settouched-fields--field-string-boolean---void)
-      * [`setValues: (fields: { [field: string]: any }) => void`](#setvalues-fields--field-string-any---void)
-      * [`status?: any`](#status-any)
-      * [`touched: { [field: string]: boolean }`](#touched--field-string-boolean-)
-      * [`values: { [field: string]: any }`](#values--field-string-any-)
-    * [`component`](#component)
-    * [`render: (props: FormikProps<Values>) => ReactNode`](#render-props-formikpropsvalues--reactnode)
-    * [`children: func`](#children-func)
-    * [`enableReinitialize?: boolean`](#enablereinitialize-boolean)
-    * [`isInitialValid?: boolean`](#isinitialvalid-boolean)
-    * [`initialValues?: Values`](#initialvalues-values)
-    * [`onSubmit: (values: Values, formikBag: FormikBag) => void`](#onsubmit-values-values-formikbag-formikbag--void)
-    * [`validate?: (values: Values) => FormikError<Values> | Promise<any>`](#validate-values-values--formikerrorvalues--promiseany)
-    * [`validateOnBlur?: boolean`](#validateonblur-boolean)
-    * [`validateOnChange?: boolean`](#validateonchange-boolean)
-    * [`validationSchema?: Schema | (() => Schema)`](#validationschema-schema----schema)
-  * [`<Field />`](#field-)
-  * [`<Form />`](#form-)
-  * [`withFormik(options)`](#withformikoptions)
-    * [`options`](#options)
-      * [`displayName?: string`](#displayname-string)
-      * [`enableReinitialize?: boolean`](#enablereinitialize-boolean-1)
-      * [`handleSubmit: (values: Values, formikBag: FormikBag) => void`](#handlesubmit-values-values-formikbag-formikbag--void)
-        * [The "FormikBag":](#the-formikbag)
-      * [`isInitialValid?: boolean | (props: Props) => boolean`](#isinitialvalid-boolean--props-props--boolean)
-      * [`mapPropsToValues?: (props: Props) => Values`](#mappropstovalues-props-props--values)
-      * [`validate?: (values: Values, props: Props) => FormikError<Values> | Promise<any>`](#validate-values-values-props-props--formikerrorvalues--promiseany)
-      * [`validateOnBlur?: boolean`](#validateonblur-boolean-1)
-      * [`validateOnChange?: boolean`](#validateonchange-boolean-1)
-      * [`validationSchema?: Schema | ((props: Props) => Schema)`](#validationschema-schema--props-props--schema)
-    * [Injected props and methods](#injected-props-and-methods)
-* [Guides](#guides)
-  * [React Native](#react-native)
-    * [Why use `setFieldValue` instead of `handleChange`?](#why-use-setfieldvalue-instead-of-handlechange)
-    * [Avoiding new functions in render](#avoiding-new-functions-in-render)
-* [Organizations and projects using Formik](#organizations-and-projects-using-formik)
-* [Authors](#authors)
-* [Contributors](#contributors)
+- [Usage](#usage)
+  - [Simple Example](#simple-example)
+- [API](#api)
+  - [`<Formik />`](#formik-)
+    - [Formik render methods](#formik-render-methods)
+    - [Formik props](#formik-props)
+      - [`dirty: boolean`](#dirty-boolean)
+      - [`errors: { [field: string]: string }`](#errors--field-string-string-)
+      - [`handleBlur: (e: any) => void`](#handleblur-e-any--void)
+      - [`handleChange: (e: React.ChangeEvent<any>) => void`](#handlechange-e-reactchangeeventany--void)
+      - [`handleReset: () => void`](#handlereset---void)
+      - [`handleSubmit: (e: React.FormEvent<HTMLFormEvent>) => void`](#handlesubmit-e-reactformeventhtmlformevent--void)
+      - [`isSubmitting: boolean`](#issubmitting-boolean)
+      - [`isValid: boolean`](#isvalid-boolean)
+      - [`resetForm: (nextValues?: Values) => void`](#resetform-nextvalues-values--void)
+      - [`setErrors: (fields: { [field: string]: string }) => void`](#seterrors-fields--field-string-string---void)
+      - [`setFieldError: (field: string, errorMsg: string) => void`](#setfielderror-field-string-errormsg-string--void)
+      - [`setFieldTouched: (field: string, isTouched: boolean) => void`](#setfieldtouched-field-string-istouched-boolean--void)
+      - [`setFieldValue: (field: string, value: any) => void`](#setfieldvalue-field-string-value-any--void)
+      - [`setStatus: (status?: any) => void`](#setstatus-status-any--void)
+      - [`setSubmitting: (boolean) => void`](#setsubmitting-boolean--void)
+      - [`setTouched: (fields: { [field: string]: boolean }) => void`](#settouched-fields--field-string-boolean---void)
+      - [`setValues: (fields: { [field: string]: any }) => void`](#setvalues-fields--field-string-any---void)
+      - [`status?: any`](#status-any)
+      - [`touched: { [field: string]: boolean }`](#touched--field-string-boolean-)
+      - [`values: { [field: string]: any }`](#values--field-string-any-)
+    - [`component`](#component)
+    - [`render: (props: FormikProps<Values>) => ReactNode`](#render-props-formikpropsvalues--reactnode)
+    - [`children: func`](#children-func)
+    - [`enableReinitialize?: boolean`](#enablereinitialize-boolean)
+    - [`isInitialValid?: boolean`](#isinitialvalid-boolean)
+    - [`initialValues?: Values`](#initialvalues-values)
+    - [`onSubmit: (values: Values, formikBag: FormikBag) => void`](#onsubmit-values-values-formikbag-formikbag--void)
+    - [`validate?: (values: Values) => FormikError<Values> | Promise<any>`](#validate-values-values--formikerrorvalues--promiseany)
+    - [`validateOnBlur?: boolean`](#validateonblur-boolean)
+    - [`validateOnChange?: boolean`](#validateonchange-boolean)
+    - [`validationSchema?: Schema | (() => Schema)`](#validationschema-schema----schema)
+  - [`<Field />`](#field-)
+  - [`<Form />`](#form-)
+  - [`withFormik(options)`](#withformikoptions)
+    - [`options`](#options)
+      - [`displayName?: string`](#displayname-string)
+      - [`enableReinitialize?: boolean`](#enablereinitialize-boolean-1)
+      - [`handleSubmit: (values: Values, formikBag: FormikBag) => void`](#handlesubmit-values-values-formikbag-formikbag--void)
+        - [The "FormikBag":](#the-formikbag)
+      - [`isInitialValid?: boolean | (props: Props) => boolean`](#isinitialvalid-boolean--props-props--boolean)
+      - [`mapPropsToValues?: (props: Props) => Values`](#mappropstovalues-props-props--values)
+      - [`validate?: (values: Values, props: Props) => FormikError<Values> | Promise<any>`](#validate-values-values-props-props--formikerrorvalues--promiseany)
+      - [`validateOnBlur?: boolean`](#validateonblur-boolean-1)
+      - [`validateOnChange?: boolean`](#validateonchange-boolean-1)
+      - [`validationSchema?: Schema | ((props: Props) => Schema)`](#validationschema-schema--props-props--schema)
+    - [Injected props and methods](#injected-props-and-methods)
+- [Guides](#guides)
+  - [React Native](#react-native)
+    - [Why use `setFieldValue` instead of `handleChange`?](#why-use-setfieldvalue-instead-of-handlechange)
+    - [Avoiding new functions in render](#avoiding-new-functions-in-render)
+    - [Usage with TypeScript](#usage-with-typescript)
+- [Organizations and projects using Formik](#organizations-and-projects-using-formik)
+- [Authors](#authors)
+- [Contributors](#contributors)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -1282,6 +1281,46 @@ const MyReactNativeForm = props => (
 );
 
 export default MyReactNativeForm;
+```
+
+#### Usage with TypeScript
+
+To create a typed instance of Formik, create an interface for the form's values,
+then create an empty class which extends `Formik`, using `FormikConfig` and the
+values interface as a generic, like so:
+
+```tsx
+import * as React from 'react'
+import { Formik, FormikConfig } from 'formik'
+
+interface LoginFormValues {
+  username: string
+  password: string
+}
+
+class LoginForm extends Formik<FormikConfig<LoginFormValues>> {}
+
+class LoginView extends React.Component {
+  render() {
+    return (
+      <LoginForm
+        initialValues={/* ... */}
+        onSubmit={/* ... */}
+        render={/* ... */}
+      />
+    )
+  }
+}
+```
+
+Doing this allows us to have static type checks for `initialValues` and other
+values props when using the component.
+
+```tsx
+<LoginForm
+  // Compiler error, misspelled "username"
+  initialValues={{ usename: '', password: '' }}
+/>
 ```
 
 ## Organizations and projects using Formik

@@ -164,11 +164,35 @@ describe('A <Field />', () => {
         />,
         node
       );
-      console.log(node.innerHTML);
+
       expect(node.innerHTML).toContain(TEXT);
     });
 
-    it('warns if both non-string component and children', () => {
+    it('warns if both string component and children as a function', () => {
+      let output = '';
+      let actual;
+
+      (global as any).console = {
+        error: jest.fn(input => (output += input)),
+      };
+
+      ReactDOM.render(
+        <TestForm
+          render={() => (
+            <Field name="name" component="select">
+              {() => <option value="Jared">{TEXT}</option>}
+            </Field>
+          )}
+        />,
+        node
+      );
+
+      expect(output).toContain(
+        'You should not use <Field component> and <Field children> as a function in the same <Field> component; <Field component> will be ignored.'
+      );
+    });
+
+    it('warns if both non-string component and children children as a function', () => {
       let output = '';
       let actual;
       const Component = props => (actual = props) && null;
@@ -181,7 +205,7 @@ describe('A <Field />', () => {
         <TestForm
           render={() => (
             <Field component={Component} name="name">
-              <option value="Jared">{TEXT}</option>
+              {() => <option value="Jared">{TEXT}</option>}
             </Field>
           )}
         />,
@@ -189,7 +213,33 @@ describe('A <Field />', () => {
       );
 
       expect(output).toContain(
-        'You should not use a non-string <Field component> and <Field children> in the same <Field> component; <Field component> will be ignored.'
+        'You should not use <Field component> and <Field children> as a function in the same <Field> component; <Field component> will be ignored.'
+      );
+    });
+
+    it('warns if both string component and render', () => {
+      let output = '';
+      let actual;
+
+      (global as any).console = {
+        error: jest.fn(input => (output += input)),
+      };
+
+      ReactDOM.render(
+        <TestForm
+          render={() => (
+            <Field
+              component="select"
+              name="name"
+              render={() => <div>{TEXT}</div>}
+            />
+          )}
+        />,
+        node
+      );
+
+      expect(output).toContain(
+        'You should not use <Field component> and <Field render> in the same <Field> component; <Field component> will be ignored'
       );
     });
 

@@ -113,7 +113,7 @@ export class Field<Props extends FieldAttributes = any> extends React.Component<
   }
 
   render() {
-    const { component = 'input', render, children, name, ...props } = this
+    const { name, render, children, component = 'input', ...props } = this
       .props as FieldConfig;
 
     const { formik } = this.context;

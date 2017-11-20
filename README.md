@@ -1323,6 +1323,79 @@ values props when using the component.
 />
 ```
 
+Here's an example using the `withFormik` HOC:
+
+```tsx
+import React from 'react';
+import Yup from 'yup';
+import { withFormik, FormikProps, FormikErrors, Form, Field } from 'formik';
+
+// Shape of form values
+interface FormValues {
+  email: string;
+  password: string;
+}
+
+const InnerForm = (props: FormikProps<FormValues>) => {
+  const { touched, errors, isSubmitting } = props;
+  return (
+    <Form>
+      <Field type="email" name="email" />
+      {touched.email && errors.email && <div>{errors.email}</div>}
+
+      <Field type="password" name="password" />
+      {touched.password && errors.password && <div>{errors.password}</div>}
+
+      <button type="submit" disabled={isSubmitting}>
+        Submit
+      </button>
+    </Form>
+  );
+};
+
+// The type of props MyForm receives
+interface MyFormProps {
+  initialEmail?: string;
+}
+
+// Wrap our form with the using withFormik HoC
+const MyForm = withFormik<MyFormProps, FormValues>({
+  // Transform outer props into form values
+  mapPropsToValues: props => {
+    return {
+      email: props.initialEmail || '',
+      password: '',
+    };
+  },
+
+  // Add a custom validation function (this can be async too!)
+  validate: (values: FormValues) => {
+    let errors: FormikErrors = {};
+    if (!values.email) {
+      errors.email = 'Required';
+    } else if (!isValidEmail(values.email)) {
+      errors.email = 'Invalid email address';
+    }
+    return errors;
+  },
+
+  handleSubmit: values => {
+    // do submitting things
+  },
+})(InnerForm);
+
+// Use <MyForm /> anywhere
+const Basic = () => (
+  <div>
+    <h1>My Form</h1>
+    <p>This can be anywhere in your application</p>
+    <MyForm />
+  </div>
+);
+
+export default Basic;
+```
+
 ## Organizations and projects using Formik
 
 [List of organizations and projects using Formik](https://github.com/jaredpalmer/formik/issues/87)

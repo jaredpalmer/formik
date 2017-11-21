@@ -2,7 +2,7 @@ import * as PropTypes from 'prop-types';
 import * as React from 'react';
 
 import { FormikProps } from './formik';
-import { isEmptyChildren } from './utils';
+import { isFunction, isEmptyChildren } from './utils';
 import warning from 'warning';
 
 export type GenericFieldHTMLAttributes =
@@ -86,10 +86,6 @@ export class Field<Props extends FieldAttributes = any> extends React.Component<
     formik: PropTypes.object,
   };
 
-  static defaultProps = {
-    component: 'input',
-  };
-
   static propTypes = {
     name: PropTypes.string.isRequired,
     component: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
@@ -98,33 +94,28 @@ export class Field<Props extends FieldAttributes = any> extends React.Component<
   };
 
   componentWillMount() {
+    const { render, children, component } = this.props;
+
     warning(
-      !(typeof this.props.component !== 'string' && this.props.render),
+      !(component && render),
       'You should not use <Field component> and <Field render> in the same <Field> component; <Field component> will be ignored'
     );
 
     warning(
-      !(
-        typeof this.props.component !== 'string' &&
-        this.props.children &&
-        !isEmptyChildren(this.props.children)
-      ),
-      'You should not use a non-string <Field component> and <Field children> in the same <Field> component; <Field component> will be ignored.'
+      !(component && children && isFunction(children)),
+      'You should not use <Field component> and <Field children> as a function in the same <Field> component; <Field component> will be ignored.'
     );
 
     warning(
-      !(
-        this.props.render &&
-        this.props.children &&
-        !isEmptyChildren(this.props.children)
-      ),
+      !(render && children && !isEmptyChildren(children)),
       'You should not use <Field render> and <Field children> in the same <Field> component; <Field children> will be ignored'
     );
   }
 
   render() {
-    const { component, render, children, name, ...props } = this
+    const { name, render, children, component = 'input', ...props } = this
       .props as FieldConfig;
+
     const { formik } = this.context;
     const field = {
       value:
@@ -141,7 +132,7 @@ export class Field<Props extends FieldAttributes = any> extends React.Component<
       return (render as any)(bag);
     }
 
-    if (typeof children === 'function') {
+    if (isFunction(children)) {
       return (children as (props: FieldProps<any>) => React.ReactNode)(bag);
     }
 

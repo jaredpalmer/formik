@@ -307,72 +307,73 @@ npm install yup --save
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**
 
-* [Usage](#usage)
-  * [Simple Example](#simple-example)
-* [API](#api)
-  * [`<Formik />`](#formik-)
-    * [Formik render methods](#formik-render-methods)
-    * [Formik props](#formik-props)
-      * [`dirty: boolean`](#dirty-boolean)
-      * [`errors: { [field: string]: string }`](#errors--field-string-string-)
-      * [`handleBlur: (e: any) => void`](#handleblur-e-any--void)
-      * [`handleChange: (e: React.ChangeEvent<any>) => void`](#handlechange-e-reactchangeeventany--void)
-      * [`handleReset: () => void`](#handlereset---void)
-      * [`handleSubmit: (e: React.FormEvent<HTMLFormEvent>) => void`](#handlesubmit-e-reactformeventhtmlformevent--void)
-      * [`isSubmitting: boolean`](#issubmitting-boolean)
-      * [`isValid: boolean`](#isvalid-boolean)
-      * [`resetForm: (nextValues?: Values) => void`](#resetform-nextvalues-values--void)
-      * [`setErrors: (fields: { [field: string]: string }) => void`](#seterrors-fields--field-string-string---void)
-      * [`setFieldError: (field: string, errorMsg: string) => void`](#setfielderror-field-string-errormsg-string--void)
-      * [`setFieldTouched: (field: string, isTouched: boolean) => void`](#setfieldtouched-field-string-istouched-boolean--void)
-      * [`setFieldValue: (field: string, value: any) => void`](#setfieldvalue-field-string-value-any--void)
-      * [`setStatus: (status?: any) => void`](#setstatus-status-any--void)
-      * [`setSubmitting: (boolean) => void`](#setsubmitting-boolean--void)
-      * [`setTouched: (fields: { [field: string]: boolean }) => void`](#settouched-fields--field-string-boolean---void)
-      * [`setValues: (fields: { [field: string]: any }) => void`](#setvalues-fields--field-string-any---void)
-      * [`status?: any`](#status-any)
-      * [`touched: { [field: string]: boolean }`](#touched--field-string-boolean-)
-      * [`values: { [field: string]: any }`](#values--field-string-any-)
-    * [`component`](#component)
-    * [`render: (props: FormikProps<Values>) => ReactNode`](#render-props-formikpropsvalues--reactnode)
-    * [`children: func`](#children-func)
-    * [`enableReinitialize?: boolean`](#enablereinitialize-boolean)
-    * [`isInitialValid?: boolean`](#isinitialvalid-boolean)
-    * [`initialValues?: Values`](#initialvalues-values)
-    * [`onSubmit: (values: Values, formikBag: FormikBag) => void`](#onsubmit-values-values-formikbag-formikbag--void)
-    * [`validate?: (values: Values) => FormikError<Values> | Promise<any>`](#validate-values-values--formikerrorvalues--promiseany)
-    * [`validateOnBlur?: boolean`](#validateonblur-boolean)
-    * [`validateOnChange?: boolean`](#validateonchange-boolean)
-    * [`validationSchema?: Schema | (() => Schema)`](#validationschema-schema----schema)
-  * [`<Field />`](#field-)
-  * [`<Form />`](#form-)
-  * [`withFormik(options)`](#withformikoptions)
-    * [`options`](#options)
-      * [`displayName?: string`](#displayname-string)
-      * [`enableReinitialize?: boolean`](#enablereinitialize-boolean-1)
-      * [`handleSubmit: (values: Values, formikBag: FormikBag) => void`](#handlesubmit-values-values-formikbag-formikbag--void)
-        * [The "FormikBag":](#the-formikbag)
-      * [`isInitialValid?: boolean | (props: Props) => boolean`](#isinitialvalid-boolean--props-props--boolean)
-      * [`mapPropsToValues?: (props: Props) => Values`](#mappropstovalues-props-props--values)
-      * [`validate?: (values: Values, props: Props) => FormikError<Values> | Promise<any>`](#validate-values-values-props-props--formikerrorvalues--promiseany)
-      * [`validateOnBlur?: boolean`](#validateonblur-boolean-1)
-      * [`validateOnChange?: boolean`](#validateonchange-boolean-1)
-      * [`validationSchema?: Schema | ((props: Props) => Schema)`](#validationschema-schema--props-props--schema)
-    * [Injected props and methods](#injected-props-and-methods)
-* [Guides](#guides)
-  * [React Native](#react-native)
-    * [Why use `setFieldValue` instead of `handleChange`?](#why-use-setfieldvalue-instead-of-handlechange)
-    * [Avoiding new functions in render](#avoiding-new-functions-in-render)
-    * [Usage with TypeScript](#usage-with-typescript)
-* [Organizations and projects using Formik](#organizations-and-projects-using-formik)
-* [Authors](#authors)
-* [Contributors](#contributors)
+- [Guides](#guides)
+  - [Basics](#basics)
+  - [React Native](#react-native)
+    - [Why use `setFieldValue` instead of `handleChange`?](#why-use-setfieldvalue-instead-of-handlechange)
+    - [Avoiding new functions in render](#avoiding-new-functions-in-render)
+  - [Using Formik with TypeScript](#using-formik-with-typescript)
+    - [Render props (`<Formik />` and `<Field/>`)](#render-props-formik--and-field)
+    - [`withFormik()`](#withformik)
+- [API](#api)
+  - [`<Formik />`](#formik-)
+    - [Formik render methods](#formik-render-methods)
+    - [Formik props](#formik-props)
+      - [`dirty: boolean`](#dirty-boolean)
+      - [`errors: { [field: string]: string }`](#errors--field-string-string-)
+      - [`handleBlur: (e: any) => void`](#handleblur-e-any--void)
+      - [`handleChange: (e: React.ChangeEvent<any>) => void`](#handlechange-e-reactchangeeventany--void)
+      - [`handleReset: () => void`](#handlereset---void)
+      - [`handleSubmit: (e: React.FormEvent<HTMLFormEvent>) => void`](#handlesubmit-e-reactformeventhtmlformevent--void)
+      - [`isSubmitting: boolean`](#issubmitting-boolean)
+      - [`isValid: boolean`](#isvalid-boolean)
+      - [`resetForm: (nextValues?: Values) => void`](#resetform-nextvalues-values--void)
+      - [`setErrors: (fields: { [field: string]: string }) => void`](#seterrors-fields--field-string-string---void)
+      - [`setFieldError: (field: string, errorMsg: string) => void`](#setfielderror-field-string-errormsg-string--void)
+      - [`setFieldTouched: (field: string, isTouched: boolean) => void`](#setfieldtouched-field-string-istouched-boolean--void)
+      - [`setFieldValue: (field: string, value: any) => void`](#setfieldvalue-field-string-value-any--void)
+      - [`setStatus: (status?: any) => void`](#setstatus-status-any--void)
+      - [`setSubmitting: (boolean) => void`](#setsubmitting-boolean--void)
+      - [`setTouched: (fields: { [field: string]: boolean }) => void`](#settouched-fields--field-string-boolean---void)
+      - [`setValues: (fields: { [field: string]: any }) => void`](#setvalues-fields--field-string-any---void)
+      - [`status?: any`](#status-any)
+      - [`touched: { [field: string]: boolean }`](#touched--field-string-boolean-)
+      - [`values: { [field: string]: any }`](#values--field-string-any-)
+    - [`component`](#component)
+    - [`render: (props: FormikProps<Values>) => ReactNode`](#render-props-formikpropsvalues--reactnode)
+    - [`children: func`](#children-func)
+    - [`enableReinitialize?: boolean`](#enablereinitialize-boolean)
+    - [`isInitialValid?: boolean`](#isinitialvalid-boolean)
+    - [`initialValues?: Values`](#initialvalues-values)
+    - [`onSubmit: (values: Values, formikBag: FormikBag) => void`](#onsubmit-values-values-formikbag-formikbag--void)
+    - [`validate?: (values: Values) => FormikError<Values> | Promise<any>`](#validate-values-values--formikerrorvalues--promiseany)
+    - [`validateOnBlur?: boolean`](#validateonblur-boolean)
+    - [`validateOnChange?: boolean`](#validateonchange-boolean)
+    - [`validationSchema?: Schema | (() => Schema)`](#validationschema-schema----schema)
+  - [`<Field />`](#field-)
+  - [`<Form />`](#form-)
+  - [`withFormik(options)`](#withformikoptions)
+    - [`options`](#options)
+      - [`displayName?: string`](#displayname-string)
+      - [`enableReinitialize?: boolean`](#enablereinitialize-boolean-1)
+      - [`handleSubmit: (values: Values, formikBag: FormikBag) => void`](#handlesubmit-values-values-formikbag-formikbag--void)
+        - [The "FormikBag":](#the-formikbag)
+      - [`isInitialValid?: boolean | (props: Props) => boolean`](#isinitialvalid-boolean--props-props--boolean)
+      - [`mapPropsToValues?: (props: Props) => Values`](#mappropstovalues-props-props--values)
+      - [`validate?: (values: Values, props: Props) => FormikError<Values> | Promise<any>`](#validate-values-values-props-props--formikerrorvalues--promiseany)
+      - [`validateOnBlur?: boolean`](#validateonblur-boolean-1)
+      - [`validateOnChange?: boolean`](#validateonchange-boolean-1)
+      - [`validationSchema?: Schema | ((props: Props) => Schema)`](#validationschema-schema--props-props--schema)
+    - [Injected props and methods](#injected-props-and-methods)
+- [Organizations and projects using Formik](#organizations-and-projects-using-formik)
+- [Authors](#authors)
+- [Contributors](#contributors)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-## Usage
+## Guides
 
-### Simple Example
+### Basics
 
 Imagine you want to build a form that lets you edit user data. However, your
 user API has nested objects like so.
@@ -517,6 +518,314 @@ const EditUserDialog = ({ user, updateUser, onClose }) => {
     </Dialog>
   );
 };
+```
+
+### React Native
+
+**Formik is 100% compatible with React Native and React Native Web.** However,
+because of differences between ReactDOM's and React Native's handling of forms
+and text input, there are two differences to be aware of. This section will walk
+you through them and what I consider to be best practices.
+
+Before going any further, here's a super minimal gist of how to use Formik with
+React Native that demonstrates the key differences:
+
+```js
+// Formik x React Native example
+import React from 'react';
+import { Button, TextInput, View } from 'react-native';
+import { withFormik } from 'formik';
+
+const enhancer = withFormik({
+  /*...*/
+});
+
+const MyReactNativeForm = props => (
+  <View>
+    <TextInput
+      onChangeText={text => props.setFieldValue('email', text)}
+      value={props.values.email}
+    />
+    <Button onPress={props.handleSubmit} title="Submit" /> //
+  </View>
+);
+
+export default enhancer(MyReactNativeForm);
+```
+
+As you can see above, the notable differences between using Formik with React
+DOM and React Native are:
+
+1. Formik's `props.handleSubmit` is passed to a `<Button onPress={...}/>`
+   instead of HTML `<form onSubmit={...}/>` component (since there is no
+   `<form/>` element in React Native).
+2. `<TextInput />` uses Formik's `props.setFieldValue` instead of
+   `props.handleChange`. To understand why, see the discussion below.
+
+#### Why use `setFieldValue` instead of `handleChange`?
+
+'cuz [`handleChange`] will not work in React Native...
+
+```js
+import { Button, TextInput, View } from 'react-native';
+import { Formik } from 'formik';
+
+const MyReactNativeForm = props => (
+  <View>
+    <Formik
+      onSubmit={(values, actions) => {
+        setTimeout(() => {
+          console.log(JSON.stringify(values, null, 2));
+          actions.setSubmitting(false);
+        }, 1000);
+      }}
+      render={props => (
+        <View>
+          <TextInput
+            name="email"
+            onChangeText={props.handleChange} // this WILL NOT WORK IN RN
+            value={props.values.email}
+          />
+          <Button onPress={props.handleSubmit} />
+        </View>
+      )}
+    />
+  </View>
+);
+```
+
+The reason is that Formik's [`handleChange`] function expects its first argument
+to be synthetic DOM event where the `event.target` is the DOM input element and
+`event.target.id` or `event.target.name` matches the field to be updated.
+Without this, [`handleChange`] will do nothing.
+
+In React Native, neither
+[`<TextInput />`](https://facebook.github.io/react-native/docs/textinput.html)'s
+[`onChange`](https://facebook.github.io/react-native/docs/textinput.html#onchange)
+nor
+[`onChangeText`](https://facebook.github.io/react-native/docs/textinput.html#onchange)
+callbacks pass such an event or one like it to its callback. Instead, they do
+the following _(emphasis added)_:
+
+> [`onChange?: function`](https://facebook.github.io/react-native/docs/textinput.html#onchange)\
+> Callback that is called when the text input's text changes.
+>
+> [`onChangeText?: function`](https://facebook.github.io/react-native/docs/textinput.html#onchangetext)\
+> Callback that is called when the text input's text changes. **Changed text is passed
+> as an argument to the callback handler.**
+
+However, Formik works just fine if you use `props.setFieldValue`!
+Philisophically, just treat React Native's `<TextInput/>` the same way you would
+any other 3rd party custom input element.
+
+In conclusion, the following WILL work in React Native:
+
+```js
+// ...
+// this works.
+export const MyReactNativeForm = props => (
+  <View>
+    <TextInput
+      onChangeText={text => props.setFieldValue('email', text)}
+      value={props.values.email}
+    />
+    <Button onPress={props.handleSubmit} />
+  </View>
+);
+// ...
+```
+
+#### Avoiding new functions in render
+
+If for a any reason you wish to avoid creating new functions on each render, I
+suggest treating React Native's `<TextInput/>` as if it were another 3rd party
+custom input element:
+
+* Write your own class wrapper around the custom input element
+* Pass the custom component [`props.setFieldValue`][`setfieldvalue`] instead of
+  [`props.handleChange`][`handlechange`]
+* Use a custom change handler callback that calls whatever you passed-in
+  `setFieldValue` as (in this case we'll match the React Native TextInput API
+  and call it `this.props.onChangeText` for parity).
+
+```js
+// FormikReactNativeTextInput.js
+import * as React from 'react';
+import { TextInput } from 'react-native';
+
+export default class FormikReactNativeTextInput extends React.Component {
+  handleChange = (value: string) => {
+    // remember that onChangeText will be Formik's setFieldValue
+    this.props.onChangeText(this.props.name, value);
+  };
+
+  render() {
+    // we want to pass through all the props except for onChangeText
+    const { onChangeText, ...otherProps } = this.props;
+    return (
+      <TextInput
+        onChangeText={this.handleChange}
+        {...otherProps} // IRL, you should be more explicit when using TS
+      />
+    );
+  }
+}
+```
+
+Then you could just use this custom input as follows:
+
+```tsx
+// MyReactNativeForm.js
+import { View, Button } from 'react-native';
+import { FormikReactNativeTextInput as TextInput } from './FormikReactNativeTextInput';
+import { Formik } from 'formik';
+
+const MyReactNativeForm = props => (
+  <View>
+    <Formik
+      onSubmit={(values, actions) => {
+        setTimeout(() => {
+          console.log(JSON.stringify(values, null, 2));
+          actions.setSubmitting(false);
+        }, 1000);
+      }}
+      render={props => (
+        <View>
+          <TextInput
+            name="email"
+            onChangeText={props.setFieldValue}
+            value={props.values.email}
+          />
+          <Button onPress={props.handleSubmit} />
+        </View>
+      )}
+    />
+  </View>
+);
+
+export default MyReactNativeForm;
+```
+
+### Using Formik with TypeScript
+
+The Formik source code is written in TypeScript, so you can rest assured that types will always be up to date. As a mental modelm Formik's types are very similar to React Router 4's `<Route>`. 
+
+
+#### Render props (`<Formik />` and `<Field/>`)
+
+```tsx
+import * as React from 'react';
+import { Formik, FormikProps, Form, Field, FieldProps } from 'formik';
+
+
+interface MyFormValues {
+  firstName: string;
+}
+
+export const MyApp: React.SFC<{} /* whatever */> = () => {
+  return (
+    <div>
+      <h1>My Example</h1>
+      <Formik
+        initialValues={{ firstName: '' }}
+        onSubmit={(values: MyFormValues) => alert(JSON.stringify(values))}
+        render={(formikBag: FormikProps<MyFormValues>) => 
+          <Form>
+            <Field
+              name="firstName"
+              render={({ field, form }: FieldProps<MyFormValues>) =>
+                <div>
+                  <input type="text" {...field} placeholder="First Name" />
+                  {form.touched.firstName &&
+                    form.errors.firstName &&
+                    form.errors.firstName}
+                </div>}
+            />
+          </Form>}
+      />
+    </div>
+  );
+};
+```
+
+#### `withFormik()`
+
+```tsx
+import React from 'react';
+import Yup from 'yup';
+import { withFormik, FormikProps, FormikErrors, Form, Field } from 'formik';
+
+// Shape of form values
+interface FormValues {
+  email: string;
+  password: string;
+}
+
+interface OtherProps {
+  message: string;
+}
+
+// You may see / user InjectedFormikProps<OtherProps, FormValues> instead of what comes below. They are the same--InjectedFormikProps was artifact of when Formik only exported an HOC. It is also less flexible as it MUST wrap all props (it passes them through).
+const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
+  const { touched, errors, isSubmitting, message } = props;
+  return (
+    <Form>
+      <h1>{message}</h1>
+      <Field type="email" name="email" />
+      {touched.email && errors.email && <div>{errors.email}</div>}
+
+      <Field type="password" name="password" />
+      {touched.password && errors.password && <div>{errors.password}</div>}
+
+      <button type="submit" disabled={isSubmitting}>
+        Submit
+      </button>
+    </Form>
+  );
+};
+
+// The type of props MyForm receives
+interface MyFormProps {
+  initialEmail?: string;
+  message: string; // if this passed all the way through you might do this or make a union type
+}
+
+// Wrap our form with the using withFormik HoC
+const MyForm = withFormik<MyFormProps, FormValues>({
+  // Transform outer props into form values
+  mapPropsToValues: props => {
+    return {
+      email: props.initialEmail || '',
+      password: '',
+    };
+  },
+
+  // Add a custom validation function (this can be async too!)
+  validate: (values: FormValues) => {
+    let errors: FormikErrors = {};
+    if (!values.email) {
+      errors.email = 'Required';
+    } else if (!isValidEmail(values.email)) {
+      errors.email = 'Invalid email address';
+    }
+    return errors;
+  },
+
+  handleSubmit: values => {
+    // do submitting things
+  },
+})(InnerForm);
+
+// Use <MyForm /> anywhere
+const Basic = () => (
+  <div>
+    <h1>My App</h1>
+    <p>This can be anywhere in your application</p>
+    <MyForm message="Sign up"/>
+  </div>
+);
+
+export default Basic;
 ```
 
 ## API
@@ -1095,306 +1404,8 @@ component's [`errors`]. Its keys should match those of [`values`].
 
 These are identical to the props of `<Formik render={props => ...} />`
 
-## Guides
 
-### React Native
 
-**Formik is 100% compatible with React Native and React Native Web.** However,
-because of differences between ReactDOM's and React Native's handling of forms
-and text input, there are two differences to be aware of. This section will walk
-you through them and what I consider to be best practices.
-
-Before going any further, here's a super minimal gist of how to use Formik with
-React Native that demonstrates the key differences:
-
-```js
-// Formik x React Native example
-import React from 'react';
-import { Button, TextInput, View } from 'react-native';
-import { withFormik } from 'formik';
-
-const enhancer = withFormik({
-  /*...*/
-});
-
-const MyReactNativeForm = props => (
-  <View>
-    <TextInput
-      onChangeText={text => props.setFieldValue('email', text)}
-      value={props.values.email}
-    />
-    <Button onPress={props.handleSubmit} title="Submit" /> //
-  </View>
-);
-
-export default enhancer(MyReactNativeForm);
-```
-
-As you can see above, the notable differences between using Formik with React
-DOM and React Native are:
-
-1. Formik's `props.handleSubmit` is passed to a `<Button onPress={...}/>`
-   instead of HTML `<form onSubmit={...}/>` component (since there is no
-   `<form/>` element in React Native).
-2. `<TextInput />` uses Formik's `props.setFieldValue` instead of
-   `props.handleChange`. To understand why, see the discussion below.
-
-#### Why use `setFieldValue` instead of `handleChange`?
-
-'cuz [`handleChange`] will not work in React Native...
-
-```js
-import { Button, TextInput, View } from 'react-native';
-import { Formik } from 'formik';
-
-const MyReactNativeForm = props => (
-  <View>
-    <Formik
-      onSubmit={(values, actions) => {
-        setTimeout(() => {
-          console.log(JSON.stringify(values, null, 2));
-          actions.setSubmitting(false);
-        }, 1000);
-      }}
-      render={props => (
-        <View>
-          <TextInput
-            name="email"
-            onChangeText={props.handleChange} // this WILL NOT WORK IN RN
-            value={props.values.email}
-          />
-          <Button onPress={props.handleSubmit} />
-        </View>
-      )}
-    />
-  </View>
-);
-```
-
-The reason is that Formik's [`handleChange`] function expects its first argument
-to be synthetic DOM event where the `event.target` is the DOM input element and
-`event.target.id` or `event.target.name` matches the field to be updated.
-Without this, [`handleChange`] will do nothing.
-
-In React Native, neither
-[`<TextInput />`](https://facebook.github.io/react-native/docs/textinput.html)'s
-[`onChange`](https://facebook.github.io/react-native/docs/textinput.html#onchange)
-nor
-[`onChangeText`](https://facebook.github.io/react-native/docs/textinput.html#onchange)
-callbacks pass such an event or one like it to its callback. Instead, they do
-the following _(emphasis added)_:
-
-> [`onChange?: function`](https://facebook.github.io/react-native/docs/textinput.html#onchange)\
-> Callback that is called when the text input's text changes.
->
-> [`onChangeText?: function`](https://facebook.github.io/react-native/docs/textinput.html#onchangetext)\
-> Callback that is called when the text input's text changes. **Changed text is passed
-> as an argument to the callback handler.**
-
-However, Formik works just fine if you use `props.setFieldValue`!
-Philisophically, just treat React Native's `<TextInput/>` the same way you would
-any other 3rd party custom input element.
-
-In conclusion, the following WILL work in React Native:
-
-```js
-// ...
-// this works.
-export const MyReactNativeForm = props => (
-  <View>
-    <TextInput
-      onChangeText={text => props.setFieldValue('email', text)}
-      value={props.values.email}
-    />
-    <Button onPress={props.handleSubmit} />
-  </View>
-);
-// ...
-```
-
-#### Avoiding new functions in render
-
-If for a any reason you wish to avoid creating new functions on each render, I
-suggest treating React Native's `<TextInput/>` as if it were another 3rd party
-custom input element:
-
-* Write your own class wrapper around the custom input element
-* Pass the custom component [`props.setFieldValue`][`setfieldvalue`] instead of
-  [`props.handleChange`][`handlechange`]
-* Use a custom change handler callback that calls whatever you passed-in
-  `setFieldValue` as (in this case we'll match the React Native TextInput API
-  and call it `this.props.onChangeText` for parity).
-
-```js
-// FormikReactNativeTextInput.js
-import * as React from 'react';
-import { TextInput } from 'react-native';
-
-export default class FormikReactNativeTextInput extends React.Component {
-  handleChange = (value: string) => {
-    // remember that onChangeText will be Formik's setFieldValue
-    this.props.onChangeText(this.props.name, value);
-  };
-
-  render() {
-    // we want to pass through all the props except for onChangeText
-    const { onChangeText, ...otherProps } = this.props;
-    return (
-      <TextInput
-        onChangeText={this.handleChange}
-        {...otherProps} // IRL, you should be more explicit when using TS
-      />
-    );
-  }
-}
-```
-
-Then you could just use this custom input as follows:
-
-```tsx
-// MyReactNativeForm.js
-import { View, Button } from 'react-native';
-import { FormikReactNativeTextInput as TextInput } from './FormikReactNativeTextInput';
-import { Formik } from 'formik';
-
-const MyReactNativeForm = props => (
-  <View>
-    <Formik
-      onSubmit={(values, actions) => {
-        setTimeout(() => {
-          console.log(JSON.stringify(values, null, 2));
-          actions.setSubmitting(false);
-        }, 1000);
-      }}
-      render={props => (
-        <View>
-          <TextInput
-            name="email"
-            onChangeText={props.setFieldValue}
-            value={props.values.email}
-          />
-          <Button onPress={props.handleSubmit} />
-        </View>
-      )}
-    />
-  </View>
-);
-
-export default MyReactNativeForm;
-```
-
-#### Usage with TypeScript
-
-To create a typed instance of Formik, create an interface for the form's values,
-then create an empty class which extends `Formik`, using `FormikConfig` and the
-values interface as a generic, like so:
-
-```tsx
-import * as React from 'react'
-import { Formik, FormikConfig } from 'formik'
-
-interface LoginFormValues {
-  username: string
-  password: string
-}
-
-class LoginForm extends Formik<FormikConfig<LoginFormValues>> {}
-
-class LoginView extends React.Component {
-  render() {
-    return (
-      <LoginForm
-        initialValues={/* ... */}
-        onSubmit={/* ... */}
-        render={/* ... */}
-      />
-    )
-  }
-}
-```
-
-Doing this allows us to have static type checks for `initialValues` and other
-values props when using the component.
-
-```tsx
-<LoginForm
-  // Compiler error, misspelled "username"
-  initialValues={{ usename: '', password: '' }}
-/>
-```
-
-Here's an example using the `withFormik` HOC:
-
-```tsx
-import React from 'react';
-import Yup from 'yup';
-import { withFormik, FormikProps, FormikErrors, Form, Field } from 'formik';
-
-// Shape of form values
-interface FormValues {
-  email: string;
-  password: string;
-}
-
-const InnerForm = (props: FormikProps<FormValues>) => {
-  const { touched, errors, isSubmitting } = props;
-  return (
-    <Form>
-      <Field type="email" name="email" />
-      {touched.email && errors.email && <div>{errors.email}</div>}
-
-      <Field type="password" name="password" />
-      {touched.password && errors.password && <div>{errors.password}</div>}
-
-      <button type="submit" disabled={isSubmitting}>
-        Submit
-      </button>
-    </Form>
-  );
-};
-
-// The type of props MyForm receives
-interface MyFormProps {
-  initialEmail?: string;
-}
-
-// Wrap our form with the using withFormik HoC
-const MyForm = withFormik<MyFormProps, FormValues>({
-  // Transform outer props into form values
-  mapPropsToValues: props => {
-    return {
-      email: props.initialEmail || '',
-      password: '',
-    };
-  },
-
-  // Add a custom validation function (this can be async too!)
-  validate: (values: FormValues) => {
-    let errors: FormikErrors = {};
-    if (!values.email) {
-      errors.email = 'Required';
-    } else if (!isValidEmail(values.email)) {
-      errors.email = 'Invalid email address';
-    }
-    return errors;
-  },
-
-  handleSubmit: values => {
-    // do submitting things
-  },
-})(InnerForm);
-
-// Use <MyForm /> anywhere
-const Basic = () => (
-  <div>
-    <h1>My Form</h1>
-    <p>This can be anywhere in your application</p>
-    <MyForm />
-  </div>
-);
-
-export default Basic;
-```
 
 ## Organizations and projects using Formik
 

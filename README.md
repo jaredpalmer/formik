@@ -304,9 +304,7 @@ npm install yup --save
 ```
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
-
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-
 **Table of Contents**
 
 * [Usage](#usage)
@@ -365,6 +363,7 @@ npm install yup --save
   * [React Native](#react-native)
     * [Why use `setFieldValue` instead of `handleChange`?](#why-use-setfieldvalue-instead-of-handlechange)
     * [Avoiding new functions in render](#avoiding-new-functions-in-render)
+    * [Usage with TypeScript](#usage-with-typescript)
 * [Organizations and projects using Formik](#organizations-and-projects-using-formik)
 * [Authors](#authors)
 * [Contributors](#contributors)
@@ -1282,6 +1281,119 @@ const MyReactNativeForm = props => (
 );
 
 export default MyReactNativeForm;
+```
+
+#### Usage with TypeScript
+
+To create a typed instance of Formik, create an interface for the form's values,
+then create an empty class which extends `Formik`, using `FormikConfig` and the
+values interface as a generic, like so:
+
+```tsx
+import * as React from 'react'
+import { Formik, FormikConfig } from 'formik'
+
+interface LoginFormValues {
+  username: string
+  password: string
+}
+
+class LoginForm extends Formik<FormikConfig<LoginFormValues>> {}
+
+class LoginView extends React.Component {
+  render() {
+    return (
+      <LoginForm
+        initialValues={/* ... */}
+        onSubmit={/* ... */}
+        render={/* ... */}
+      />
+    )
+  }
+}
+```
+
+Doing this allows us to have static type checks for `initialValues` and other
+values props when using the component.
+
+```tsx
+<LoginForm
+  // Compiler error, misspelled "username"
+  initialValues={{ usename: '', password: '' }}
+/>
+```
+
+Here's an example using the `withFormik` HOC:
+
+```tsx
+import React from 'react';
+import Yup from 'yup';
+import { withFormik, FormikProps, FormikErrors, Form, Field } from 'formik';
+
+// Shape of form values
+interface FormValues {
+  email: string;
+  password: string;
+}
+
+const InnerForm = (props: FormikProps<FormValues>) => {
+  const { touched, errors, isSubmitting } = props;
+  return (
+    <Form>
+      <Field type="email" name="email" />
+      {touched.email && errors.email && <div>{errors.email}</div>}
+
+      <Field type="password" name="password" />
+      {touched.password && errors.password && <div>{errors.password}</div>}
+
+      <button type="submit" disabled={isSubmitting}>
+        Submit
+      </button>
+    </Form>
+  );
+};
+
+// The type of props MyForm receives
+interface MyFormProps {
+  initialEmail?: string;
+}
+
+// Wrap our form with the using withFormik HoC
+const MyForm = withFormik<MyFormProps, FormValues>({
+  // Transform outer props into form values
+  mapPropsToValues: props => {
+    return {
+      email: props.initialEmail || '',
+      password: '',
+    };
+  },
+
+  // Add a custom validation function (this can be async too!)
+  validate: (values: FormValues) => {
+    let errors: FormikErrors = {};
+    if (!values.email) {
+      errors.email = 'Required';
+    } else if (!isValidEmail(values.email)) {
+      errors.email = 'Invalid email address';
+    }
+    return errors;
+  },
+
+  handleSubmit: values => {
+    // do submitting things
+  },
+})(InnerForm);
+
+// Use <MyForm /> anywhere
+const Basic = () => (
+  <div>
+    <h1>My Form</h1>
+    <p>This can be anywhere in your application</p>
+    <MyForm />
+  </div>
+);
+
+export default Basic;
 ```
 
 ## Organizations and projects using Formik

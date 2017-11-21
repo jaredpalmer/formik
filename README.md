@@ -708,7 +708,7 @@ export default MyReactNativeForm;
 
 ### Using Formik with TypeScript
 
-The Formik source code is written in TypeScript, so you can rest assured that types will always be up to date. As a mental modelm Formik's types are very similar to React Router 4's `<Route>`. 
+The Formik source code is written in TypeScript, so you can rest assured that types will always be up to date. As a mental model, Formik's types are very similar to React Router 4's `<Route>`. 
 
 
 #### Render props (`<Formik />` and `<Field/>`)

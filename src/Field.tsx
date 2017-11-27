@@ -122,7 +122,7 @@ export class Field<Props extends FieldAttributes = any> extends React.Component<
       value:
         props.type === 'radio' || props.type === 'checkbox'
           ? props.value
-          : dlv(=formik.values, name),
+          : dlv(formik.values, name),
       name,
       onChange: formik.handleChange,
       onBlur: formik.handleBlur,

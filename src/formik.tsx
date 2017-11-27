@@ -21,12 +21,12 @@ export interface FormikValues {
 /**
  * An object containing error messages whose keys correspond to FormikValues.
  */
-export type FormikErrors<TValues> = { [field in keyof TValues]: string };
+export type FormikErrors<Values> = { [field in keyof Values]: string };
 
 /**
  * An object containing touched state of the form whose keys correspond to FormikValues.
  */
-export type FormikTouched<TValues> = { [field in keyof TValues]: boolean };
+export type FormikTouched<Values> = { [field in keyof Values]: boolean };
 
 /**
  * Formik state tree
@@ -678,7 +678,7 @@ export function yupToFormErrors<Values>(yupError: any): FormikErrors<Values> {
 export function validateYupSchema<T>(
   data: T,
   schema: any,
-  context = {}
+  context: any = {}
 ): Promise<void> {
   let validateData: any = {};
   for (let k in data) {

@@ -1,14 +1,14 @@
 import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import isEqual from 'lodash.isequal';
-
 import {
   isFunction,
   isObject,
   isPromise,
   isReactNative,
+  isEmptyChildren,
   values,
-  setDeep,
+  setDeep
 } from './utils';
 
 import warning from 'warning';
@@ -22,17 +22,14 @@ export interface FormikValues {
 
 /**
  * An object containing error messages whose keys correspond to FormikValues.
+ * Should be always be and object of strings, but any is allowed to support i18n libraries.
  */
-export type FormikErrors = {
-  [field: string]: string;
-};
+export type FormikErrors<Values> = { [field in keyof Values]: any };
 
 /**
  * An object containing touched state of the form whose keys correspond to FormikValues.
  */
-export type FormikTouched = {
-  [field: string]: boolean;
-};
+export type FormikTouched<Values> = { [field in keyof Values]: boolean };
 
 /**
  * Formik state tree
@@ -40,15 +37,15 @@ export type FormikTouched = {
 export interface FormikState<Values> {
   /** Form values */
   values: Values;
-  /** 
-   * Top level error, in case you need it 
+  /**
+   * Top level error, in case you need it
    * @deprecated since 0.8.0
    */
   error?: any;
   /** map of field names to specific error for that field */
-  errors: FormikErrors;
+  errors: FormikErrors<Values>;
   /** map of field names to whether the field has been touched */
-  touched: FormikTouched;
+  touched: FormikTouched<Values>;
   /** whether the form is currently submitting */
   isSubmitting: boolean;
   /** Top level status state, in case you need it */
@@ -73,17 +70,17 @@ export interface FormikComputedProps<Values> {
 export interface FormikActions<Values> {
   /** Manually set top level status. */
   setStatus: (status?: any) => void;
-  /** 
-   * Manually set top level error 
+  /**
+   * Manually set top level error
    * @deprecated since 0.8.0
    */
   setError: (e: any) => void;
   /** Manually set errors object */
-  setErrors: (errors: FormikErrors) => void;
+  setErrors: (errors: FormikErrors<Values>) => void;
   /** Manually set isSubmitting */
   setSubmitting: (isSubmitting: boolean) => void;
   /** Manually set touched object */
-  setTouched: (touched: FormikTouched) => void;
+  setTouched: (touched: FormikTouched<Values>) => void;
   /** Manually set values object  */
   setValues: (values: Values) => void;
   /** Set value of form field directly */
@@ -99,7 +96,7 @@ export interface FormikActions<Values> {
 }
 
 /**
- * Formik form event handlers 
+ * Formik form event handlers
  */
 export interface FormikHandlers {
   /** Form submit handler */
@@ -131,42 +128,46 @@ export interface FormikSharedConfig {
 /**
  * <Formik /> props
  */
-export interface FormikConfig extends FormikSharedConfig {
-  /** 
+export interface FormikConfig<Values = object> extends FormikSharedConfig {
+  /**
    * Initial values of the form
    */
-  initialValues: object;
+  initialValues: Values;
 
-  /** 
-   * Submission handler 
+  /**
+   * Submission handler
    */
-  onSubmit: (values: object, formikActions: FormikActions<any>) => void;
+  onSubmit: (values: Values, formikActions: FormikActions<Values>) => void;
 
   /**
    * Form component to render
    */
-  component?: React.ComponentType<FormikProps<any> | void>;
+  component?: React.ComponentType<FormikProps<Values> | void>;
 
   /**
    * Render prop (works like React router's <Route render={props =>} />)
    */
-  render?: ((props: FormikProps<any>) => React.ReactNode);
+  render?: ((props: FormikProps<Values>) => React.ReactNode);
 
-  /** 
-   * A Yup Schema or a function that returns a Yup schema 
+  /**
+   * A Yup Schema or a function that returns a Yup schema
    */
   validationSchema?: any | (() => any);
 
-  /** 
-   * Validation function. Must return an error object or promise that 
+  /**
+   * Validation function. Must return an error object or promise that
    * throws an error object where that object keys map to corresponding value.
    */
-  validate?: ((values: any) => void | object | Promise<any>);
+  validate?: ((
+    values: Values
+  ) => void | object | Promise<FormikErrors<Values>>);
 
   /**
    * React children or child render callback
    */
-  children?: ((props: FormikProps<any>) => React.ReactNode) | React.ReactNode;
+  children?:
+    | ((props: FormikProps<Values>) => React.ReactNode)
+    | React.ReactNode;
 }
 
 /**
@@ -178,10 +179,9 @@ export type FormikProps<Values> = FormikState<Values> &
   FormikHandlers &
   FormikComputedProps<Values>;
 
-const isEmptyChildren = (children: any) => React.Children.count(children) === 0;
-
 export class Formik<
-  Props extends FormikConfig = FormikConfig
+  Props extends FormikConfig<Values> = FormikConfig<Values>,
+  Values = object
 > extends React.Component<Props, FormikState<any>> {
   static defaultProps = {
     validateOnChange: true,
@@ -208,7 +208,7 @@ export class Formik<
     formik: PropTypes.object,
   };
 
-  initialValues: any;
+  initialValues: Values;
 
   getChildContext() {
     const dirty =
@@ -224,7 +224,7 @@ export class Formik<
             ? (this.props.isInitialValid as (props: Props) => boolean)(
                 this.props
               )
-            : this.props.isInitialValid as boolean,
+            : (this.props.isInitialValid as boolean),
         handleSubmit: this.handleSubmit,
         handleChange: this.handleChange,
         handleBlur: this.handleBlur,
@@ -293,11 +293,11 @@ export class Formik<
     );
   }
 
-  setErrors = (errors: FormikErrors) => {
+  setErrors = (errors: FormikErrors<Values>) => {
     this.setState({ errors });
   };
 
-  setTouched = (touched: FormikTouched) => {
+  setTouched = (touched: FormikTouched<Values>) => {
     this.setState({ touched }, () => {
       if (this.props.validateOnBlur) {
         this.runValidations(this.state.values);
@@ -368,7 +368,7 @@ export class Formik<
           errors => this.setState({ errors, isSubmitting: false })
         );
       } else {
-        this.setErrors(maybePromisedErrors as FormikErrors);
+        this.setErrors(maybePromisedErrors as FormikErrors<Values>);
       }
     }
   };
@@ -390,14 +390,11 @@ export class Formik<
       : /checkbox/.test(type) ? checked : value;
 
     if (!field && process.env.NODE_ENV !== 'production') {
-      console.error(
-        `Warning: You forgot to pass an \`id\` or \`name\` attribute to your input:
-
-  ${outerHTML}
-
-Formik cannot determine which value to update. For more info see https://github.com/jaredpalmer/formik#handlechange-e-reactchangeeventany--void
-`
-      );
+      warnAboutMissingIdentifier({
+        htmlContent: outerHTML,
+        documentationAnchorLink: 'handlechange-e-reactchangeeventany--void',
+        handlerName: 'handleChange',
+      });
     }
 
     // Set form fields by name
@@ -449,7 +446,7 @@ Formik cannot determine which value to update. For more info see https://github.
 
   submitForm = () => {
     this.setState({
-      touched: touchAllFields<FormikTouched>(this.state.values),
+      touched: touchAllFields<FormikTouched<Values>>(this.state.values),
       isSubmitting: true,
     });
 
@@ -468,7 +465,7 @@ Formik cannot determine which value to update. For more info see https://github.
       } else {
         const isValid = Object.keys(maybePromisedErrors).length === 0;
         this.setState({
-          errors: maybePromisedErrors as FormikErrors,
+          errors: maybePromisedErrors as FormikErrors<Values>,
           isSubmitting: isValid,
         });
 
@@ -510,8 +507,17 @@ Formik cannot determine which value to update. For more info see https://github.
       return;
     }
     e.persist();
-    const { name, id } = e.target;
+    const { name, id, outerHTML } = e.target;
     const field = name ? name : id;
+
+    if (!field && process.env.NODE_ENV !== 'production') {
+      warnAboutMissingIdentifier({
+        htmlContent: outerHTML,
+        documentationAnchorLink: 'handleblur-e-any--void',
+        handlerName: 'handleBlur',
+      });
+    }
+
     this.setState(prevState => ({
       touched: setDeep(field, true, prevState.touched),
     }));
@@ -521,7 +527,7 @@ Formik cannot determine which value to update. For more info see https://github.
     }
   };
 
-  setFieldTouched = (field: string, touched: boolean = true) => {
+  setFieldTouched = (field: keyof Values, touched: boolean = true) => {
     // Set touched field by name
     this.setState(
       prevState => ({
@@ -536,7 +542,7 @@ Formik cannot determine which value to update. For more info see https://github.
     );
   };
 
-  setFieldError = (field: string, message: string) => {
+  setFieldError = (field: keyof Values, message: string) => {
     // Set form field by name
     this.setState(prevState => ({
       ...prevState,
@@ -544,7 +550,7 @@ Formik cannot determine which value to update. For more info see https://github.
     }));
   };
 
-  resetForm = (nextValues?: any) => {
+  resetForm = (nextValues?: Values) => {
     if (nextValues) {
       this.initialValues = nextValues;
     }
@@ -574,7 +580,7 @@ Formik cannot determine which value to update. For more info see https://github.
         ? this.state.errors && Object.keys(this.state.errors).length === 0
         : isInitialValid !== false && isFunction(isInitialValid)
           ? (isInitialValid as (props: Props) => boolean)(this.props)
-          : isInitialValid as boolean,
+          : (isInitialValid as boolean),
       handleBlur: this.handleBlur,
       handleChange: this.handleChange,
       handleReset: this.handleReset,
@@ -606,11 +612,34 @@ Formik cannot determine which value to update. For more info see https://github.
   }
 }
 
+function warnAboutMissingIdentifier({
+  htmlContent,
+  documentationAnchorLink,
+  handlerName,
+}: {
+  htmlContent: string;
+  documentationAnchorLink: string;
+  handlerName: string;
+}) {
+  console.error(
+    `Warning: \`${
+      handlerName
+    }\` has triggered and you forgot to pass an \`id\` or \`name\` attribute to your input:
+  
+    ${htmlContent}
+  
+    Formik cannot determine which value to update. For more info see https://github.com/jaredpalmer/formik#${
+      documentationAnchorLink
+    }
+  `
+  );
+}
+
 /**
  * Transform Yup ValidationError to a more usable object
  */
-export function yupToFormErrors(yupError: any): FormikErrors {
-  let errors: FormikErrors = {};
+export function yupToFormErrors<Values>(yupError: any): FormikErrors<Values> {
+  let errors = {} as FormikErrors<Values>;
   for (let err of yupError.inner) {
     if (!errors[err.path]) {
       errors = setDeep(err.path, err.message, errors);
@@ -622,7 +651,11 @@ export function yupToFormErrors(yupError: any): FormikErrors {
 /**
  * Validate a yup schema.
  */
-export function validateYupSchema<T>(data: T, schema: any): Promise<void> {
+export function validateYupSchema<T>(
+  data: T,
+  schema: any,
+  context: any = {}
+): Promise<void> {
   let validateData: any = {};
   for (let k in data) {
     if (data.hasOwnProperty(k)) {
@@ -631,7 +664,7 @@ export function validateYupSchema<T>(data: T, schema: any): Promise<void> {
         (data as any)[key] !== '' ? (data as any)[key] : undefined;
     }
   }
-  return schema.validate(validateData, { abortEarly: false });
+  return schema.validate(validateData, { abortEarly: false, context: context });
 }
 
 function setNestedObjectValues(object: any, value: any, response: any = null) {

@@ -44,11 +44,7 @@ const Form: React.SFC<InjectedFormikProps<Props, Values>> = ({
         value={values.name}
         name="name"
       />
-      {touched.name &&
-        errors.name &&
-        <div id="feedback">
-          {errors.name}
-        </div>}
+      {touched.name && errors.name && <div id="feedback">{errors.name}</div>}
       {isSubmitting && <div id="submitting">Submitting</div>}
       <button
         id="statusButton"
@@ -57,10 +53,9 @@ const Form: React.SFC<InjectedFormikProps<Props, Values>> = ({
         Call setStatus
       </button>
       {status &&
-        !!status.myStatusMessage &&
-        <div id="statusMessage">
-          {status.myStatusMessage}
-        </div>}
+        !!status.myStatusMessage && (
+          <div id="statusMessage">{status.myStatusMessage}</div>
+        )}
       <button type="submit">Submit</button>
     </form>
   );
@@ -92,31 +87,47 @@ describe('withFormik()', () => {
         const tree = mount(<BasicForm user={{ name: 'jared' }} />);
 
         // Simulate a change event in the inner Form component's input
-        tree.find(Form).find('input').simulate('change', {
-          persist: noop,
-          target: {
-            id: 'name',
-            value: 'ian',
-          },
-        });
-        expect(tree.find(Form).find('input').props().value).toEqual('ian');
+        tree
+          .find(Form)
+          .find('input')
+          .simulate('change', {
+            persist: noop,
+            target: {
+              id: 'name',
+              value: 'ian',
+            },
+          });
+        expect(
+          tree
+            .find(Form)
+            .find('input')
+            .props().value
+        ).toEqual('ian');
       });
 
       it('updates values state via `name` instead of `id` attribute when both are present', async () => {
         const tree = mount(<BasicForm user={{ name: 'jared' }} />);
 
         // Simulate a change event in the inner Form component's input
-        tree.find(Form).find('input').simulate('change', {
-          persist: noop,
-          target: {
-            id: 'person-1-thinger',
-            name: 'name',
-            value: 'ian',
-          },
-        });
+        tree
+          .find(Form)
+          .find('input')
+          .simulate('change', {
+            persist: noop,
+            target: {
+              id: 'person-1-thinger',
+              name: 'name',
+              value: 'ian',
+            },
+          });
 
         expect(tree.find(Form).props().values).toEqual({ name: 'ian' });
-        expect(tree.find(Form).find('input').props().value).toEqual('ian');
+        expect(
+          tree
+            .find(Form)
+            .find('input')
+            .props().value
+        ).toEqual('ian');
       });
 
       it('runs validations by default (validate)', async () => {
@@ -125,13 +136,18 @@ describe('withFormik()', () => {
           validate,
         });
         const tree = shallow(<ValidationForm user={{ name: 'jared' }} />);
-        tree.dive().find(Form).dive().find('input').simulate('change', {
-          persist: noop,
-          target: {
-            name: 'name',
-            value: 'ian',
-          },
-        });
+        tree
+          .dive()
+          .find(Form)
+          .dive()
+          .find('input')
+          .simulate('change', {
+            persist: noop,
+            target: {
+              name: 'name',
+              value: 'ian',
+            },
+          });
         expect(validate).toHaveBeenCalled();
       });
 
@@ -143,13 +159,18 @@ describe('withFormik()', () => {
         });
         const tree = shallow(<ValidationForm user={{ name: 'jared' }} />);
 
-        tree.dive().find(Form).dive().find('input').simulate('change', {
-          persist: noop,
-          target: {
-            name: 'name',
-            value: 'ian',
-          },
-        });
+        tree
+          .dive()
+          .find(Form)
+          .dive()
+          .find('input')
+          .simulate('change', {
+            persist: noop,
+            target: {
+              name: 'name',
+              value: 'ian',
+            },
+          });
         expect(validate).not.toHaveBeenCalled();
       });
 
@@ -159,13 +180,18 @@ describe('withFormik()', () => {
 
         const tree = shallow(<ValidationForm user={{ name: 'jared' }} />);
 
-        tree.dive().find(Form).dive().find('input').simulate('change', {
-          persist: noop,
-          target: {
-            name: 'name',
-            value: 'ian',
-          },
-        });
+        tree
+          .dive()
+          .find(Form)
+          .dive()
+          .find('input')
+          .simulate('change', {
+            persist: noop,
+            target: {
+              name: 'name',
+              value: 'ian',
+            },
+          });
         expect(validate).toHaveBeenCalled();
       });
 
@@ -178,13 +204,18 @@ describe('withFormik()', () => {
 
         const tree = shallow(<ValidationForm user={{ name: 'jared' }} />);
 
-        tree.dive().find(Form).dive().find('input').simulate('change', {
-          persist: noop,
-          target: {
-            name: 'name',
-            value: 'ian',
-          },
-        });
+        tree
+          .dive()
+          .find(Form)
+          .dive()
+          .find('input')
+          .simulate('change', {
+            persist: noop,
+            target: {
+              name: 'name',
+              value: 'ian',
+            },
+          });
         expect(validate).not.toHaveBeenCalled();
       });
     });
@@ -194,12 +225,15 @@ describe('withFormik()', () => {
         const tree = mount(<BasicForm user={{ name: 'jared' }} />);
 
         // Simulate a blur event in the inner Form component's input
-        tree.find(Form).find('input').simulate('blur', {
-          persist: noop,
-          target: {
-            id: 'name',
-          },
-        });
+        tree
+          .find(Form)
+          .find('input')
+          .simulate('blur', {
+            persist: noop,
+            target: {
+              id: 'name',
+            },
+          });
         expect(tree.find(Form).props().touched).toEqual({ name: true });
       });
 
@@ -207,13 +241,16 @@ describe('withFormik()', () => {
         const tree = mount(<BasicForm user={{ name: 'jared' }} />);
 
         // Simulate a blur event in the inner Form component's input
-        tree.find(Form).find('input').simulate('blur', {
-          persist: noop,
-          target: {
-            id: 'person-1-name-blah',
-            name: 'name',
-          },
-        });
+        tree
+          .find(Form)
+          .find('input')
+          .simulate('blur', {
+            persist: noop,
+            target: {
+              id: 'person-1-name-blah',
+              name: 'name',
+            },
+          });
         expect(tree.find(Form).props().touched).toEqual({ name: true });
       });
 
@@ -223,12 +260,17 @@ describe('withFormik()', () => {
 
         const tree = shallow(<ValidationForm user={{ name: 'jared' }} />);
 
-        tree.dive().find(Form).dive().find('input').simulate('blur', {
-          persist: noop,
-          target: {
-            name: 'name',
-          },
-        });
+        tree
+          .dive()
+          .find(Form)
+          .dive()
+          .find('input')
+          .simulate('blur', {
+            persist: noop,
+            target: {
+              name: 'name',
+            },
+          });
         expect(validate).toHaveBeenCalled();
       });
 
@@ -238,12 +280,17 @@ describe('withFormik()', () => {
 
         const tree = shallow(<ValidationForm user={{ name: 'jared' }} />);
 
-        tree.dive().find(Form).dive().find('input').simulate('blur', {
-          persist: noop,
-          target: {
-            name: 'name',
-          },
-        });
+        tree
+          .dive()
+          .find(Form)
+          .dive()
+          .find('input')
+          .simulate('blur', {
+            persist: noop,
+            target: {
+              name: 'name',
+            },
+          });
 
         expect(validate).toHaveBeenCalled();
       });
@@ -253,17 +300,23 @@ describe('withFormik()', () => {
       it('should call preventDefault()', () => {
         const tree = mount(<BasicForm user={{ name: 'jared' }} />);
         const preventDefault = jest.fn();
-        tree.find(Form).find('form').simulate('submit', {
-          preventDefault,
-        });
+        tree
+          .find(Form)
+          .find('form')
+          .simulate('submit', {
+            preventDefault,
+          });
         expect(preventDefault).toHaveBeenCalled();
       });
 
       it('should touch all fields', () => {
         const tree = mount(<BasicForm user={{ name: 'jared' }} />);
-        tree.find(Form).find('form').simulate('submit', {
-          preventDefault: noop,
-        });
+        tree
+          .find(Form)
+          .find('form')
+          .simulate('submit', {
+            preventDefault: noop,
+          });
         expect(tree.find(Form).props().touched).toEqual({
           name: true,
         });
@@ -274,9 +327,12 @@ describe('withFormik()', () => {
 
         expect(tree.find(Form).find('#submitting')).toHaveLength(0);
 
-        tree.find(Form).find('form').simulate('submit', {
-          preventDefault: noop,
-        });
+        tree
+          .find(Form)
+          .find('form')
+          .simulate('submit', {
+            preventDefault: noop,
+          });
 
         expect(tree.find(Form).find('#submitting')).toHaveLength(1);
       });
@@ -290,9 +346,12 @@ describe('withFormik()', () => {
             handleSubmit: noop,
           })(Form);
           const tree = mount(<ValidateForm user={{ name: 'jared' }} />);
-          tree.find(Form).find('form').simulate('submit', {
-            preventDefault: noop,
-          });
+          tree
+            .find(Form)
+            .find('form')
+            .simulate('submit', {
+              preventDefault: noop,
+            });
           expect(validate).toHaveBeenCalled();
         });
 
@@ -304,9 +363,12 @@ describe('withFormik()', () => {
             handleSubmit,
           })(Form);
           const tree = mount(<ValidateForm user={{ name: 'jared' }} />);
-          tree.find(Form).find('form').simulate('submit', {
-            preventDefault: noop,
-          });
+          tree
+            .find(Form)
+            .find('form')
+            .simulate('submit', {
+              preventDefault: noop,
+            });
           expect(handleSubmit).toHaveBeenCalled();
         });
 
@@ -321,9 +383,12 @@ describe('withFormik()', () => {
           })(Form);
 
           const tree = mount(<ValidateForm user={{ name: '' }} />);
-          tree.find(Form).find('form').simulate('submit', {
-            preventDefault: noop,
-          });
+          tree
+            .find(Form)
+            .find('form')
+            .simulate('submit', {
+              preventDefault: noop,
+            });
           expect(validate).toHaveBeenCalled();
           expect(handleSubmit).not.toHaveBeenCalled();
         });
@@ -338,9 +403,12 @@ describe('withFormik()', () => {
             handleSubmit: noop,
           })(Form);
           const tree = mount(<ValidateForm user={{ name: 'jared' }} />);
-          tree.find(Form).find('form').simulate('submit', {
-            preventDefault: noop,
-          });
+          tree
+            .find(Form)
+            .find('form')
+            .simulate('submit', {
+              preventDefault: noop,
+            });
           expect(validate).toHaveBeenCalled();
         });
 
@@ -354,7 +422,10 @@ describe('withFormik()', () => {
           })(Form);
 
           const tree = mount(<ValidateForm user={{ name: '' }} />);
-          await tree.find(Form).props().submitForm();
+          await tree
+            .find(Form)
+            .props()
+            .submitForm();
 
           expect(handleSubmit).toHaveBeenCalled();
         });
@@ -372,7 +443,10 @@ describe('withFormik()', () => {
           })(Form);
 
           const tree = mount(<ValidateForm user={{ name: '' }} />);
-          await tree.find(Form).props().submitForm();
+          await tree
+            .find(Form)
+            .props()
+            .submitForm();
 
           expect(handleSubmit).not.toHaveBeenCalled();
         });
@@ -383,9 +457,12 @@ describe('withFormik()', () => {
           const validate = jest.fn(() => Promise.resolve({}));
           const ValidateForm = FormFactory({ validationSchema: { validate } });
           const tree = mount(<ValidateForm user={{ name: 'jared' }} />);
-          tree.find(Form).find('form').simulate('submit', {
-            preventDefault: noop,
-          });
+          tree
+            .find(Form)
+            .find('form')
+            .simulate('submit', {
+              preventDefault: noop,
+            });
           expect(validate).toHaveBeenCalled();
         });
 
@@ -397,9 +474,12 @@ describe('withFormik()', () => {
             }),
           });
           const tree = mount(<ValidateForm user={{ name: 'jared' }} />);
-          tree.find(Form).find('form').simulate('submit', {
-            preventDefault: noop,
-          });
+          tree
+            .find(Form)
+            .find('form')
+            .simulate('submit', {
+              preventDefault: noop,
+            });
           expect(validate).toHaveBeenCalled();
         });
       });

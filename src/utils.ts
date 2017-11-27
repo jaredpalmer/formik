@@ -1,3 +1,5 @@
+import * as React from 'react';
+
 /** @private is the given object/value a promise? */
 export function isPromise(value: any): boolean {
   if (value !== null && typeof value === 'object') {
@@ -76,6 +78,7 @@ export function setDeep(path: string, value: any, obj: any): any {
 /** @private is the given object a Function? */
 export const isFunction = (obj: any) => 'function' === typeof obj;
 
+
 /** @private is the given object an Object? */
 export const isObject = (obj: any) => obj !== null && typeof obj === 'object';
 
@@ -84,3 +87,6 @@ export const isObject = (obj: any) => obj !== null && typeof obj === 'object';
  * see https://stackoverflow.com/questions/10834796/validate-that-a-string-is-a-positive-integer
 */
 export const isInteger = (obj: any) => String(Math.floor(Number(obj))) === obj;
+
+export const isEmptyChildren = (children: any) =>
+  React.Children.count(children) === 0;

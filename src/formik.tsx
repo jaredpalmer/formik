@@ -683,7 +683,7 @@ function setNestedObjectValues(object: any, value: any, response: any = null) {
   return response;
 }
 
-export function touchAllFields<T>(fields: T): FormikTouched {
+export function touchAllFields<T>(fields: T): FormikTouched<T> {
   return setNestedObjectValues(fields, true);
 }
 

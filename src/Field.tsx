@@ -1,5 +1,6 @@
 import * as PropTypes from 'prop-types';
 import * as React from 'react';
+import { dlv } from './utils';
 
 import { FormikProps } from './formik';
 import { isFunction, isEmptyChildren } from './utils';
@@ -121,7 +122,7 @@ export class Field<Props extends FieldAttributes = any> extends React.Component<
       value:
         props.type === 'radio' || props.type === 'checkbox'
           ? props.value
-          : formik.values[name],
+          : dlv(formik.values, name),
       name,
       onChange: formik.handleChange,
       onBlur: formik.handleBlur,

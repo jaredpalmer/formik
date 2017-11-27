@@ -2,11 +2,13 @@ import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import isEqual from 'lodash.isequal';
 import {
-  isEmptyChildren,
   isFunction,
+  isObject,
   isPromise,
   isReactNative,
+  isEmptyChildren,
   values,
+  setDeep
 } from './utils';
 
 import warning from 'warning';
@@ -398,17 +400,11 @@ export class Formik<
     // Set form fields by name
     this.setState(prevState => ({
       ...prevState,
-      values: {
-        ...(prevState.values as object),
-        [field]: val,
-      },
+      values: setDeep(field, val, prevState.values),
     }));
 
     if (this.props.validateOnChange) {
-      this.runValidations({
-        ...(this.state.values as object),
-        [field]: val,
-      } as Object);
+      this.runValidations(setDeep(field, value, this.state.values));
     }
   };
 
@@ -421,20 +417,11 @@ export class Formik<
     // Set touched and form fields by name
     this.setState(prevState => ({
       ...prevState,
-      values: {
-        ...(prevState.values as object),
-        [field]: value,
-      },
-      touched: {
-        ...(prevState.touched as object),
-        [field]: true,
-      },
+      values: setDeep(field, value, prevState.values),
+      touched: setDeep(field, true, prevState.touched),
     }));
 
-    this.runValidationSchema({
-      ...(this.state.values as object),
-      [field]: value,
-    } as object);
+    this.runValidationSchema(setDeep(field, value, this.state.values));
   };
 
   setFieldValue = (field: string, value: any) => {
@@ -442,17 +429,11 @@ export class Formik<
     this.setState(
       prevState => ({
         ...prevState,
-        values: {
-          ...(prevState.values as object),
-          [field]: value,
-        },
+        values: setDeep(field, value, prevState.values),
       }),
       () => {
         if (this.props.validateOnChange) {
-          this.runValidations({
-            ...(this.state.values as object),
-            [field]: value,
-          } as object);
+          this.runValidations(this.state.values);
         }
       }
     );
@@ -538,7 +519,7 @@ export class Formik<
     }
 
     this.setState(prevState => ({
-      touched: { ...(prevState.touched as object), [field]: true },
+      touched: setDeep(field, true, prevState.touched),
     }));
 
     if (this.props.validateOnBlur) {
@@ -551,10 +532,7 @@ export class Formik<
     this.setState(
       prevState => ({
         ...prevState,
-        touched: {
-          ...(prevState.touched as object),
-          [field]: touched,
-        },
+        touched: setDeep(field, touched, prevState.touched),
       }),
       () => {
         if (this.props.validateOnBlur) {
@@ -568,10 +546,7 @@ export class Formik<
     // Set form field by name
     this.setState(prevState => ({
       ...prevState,
-      errors: {
-        ...(prevState.errors as object),
-        [field]: message,
-      },
+      errors: setDeep(field, message, prevState.errors),
     }));
   };
 
@@ -667,7 +642,7 @@ export function yupToFormErrors<Values>(yupError: any): FormikErrors<Values> {
   let errors = {} as FormikErrors<Values>;
   for (let err of yupError.inner) {
     if (!errors[err.path]) {
-      errors[err.path] = err.message;
+      errors = setDeep(err.path, err.message, errors);
     }
   }
   return errors;
@@ -692,12 +667,24 @@ export function validateYupSchema<T>(
   return schema.validate(validateData, { abortEarly: false, context: context });
 }
 
-export function touchAllFields<Values>(fields: Values): FormikTouched<Values> {
-  const touched = {} as FormikTouched<Values>;
-  for (let k of Object.keys(fields)) {
-    touched[k] = true;
+function setNestedObjectValues(object: any, value: any, response: any = null) {
+  response = response === null ? {} : response;
+
+  for (let k of Object.keys(object)) {
+    const val = object[k];
+    if (isObject(val)) {
+      response[k] = {};
+      setNestedObjectValues(val, value, response[k]);
+    } else {
+      response[k] = value;
+    }
   }
-  return touched;
+
+  return response;
+}
+
+export function touchAllFields<T>(fields: T): FormikTouched<T> {
+  return setNestedObjectValues(fields, true);
 }
 
 export * from './Field';

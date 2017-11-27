@@ -34,7 +34,7 @@ By now, you might be thinking, "Why didn't you just use
 [Redux-Form](https://github.com/erikras/redux-form)?" Good question.
 
 1. According to our prophet Dan Abramov,
-   [**form state is inherently emphemeral and local**, so tracking it in Redux (or any kind of Flux library) is unnecessary](https://github.com/reactjs/redux/issues/1287#issuecomment-175351978)
+   [**form state is inherently ephemeral and local**, so tracking it in Redux (or any kind of Flux library) is unnecessary](https://github.com/reactjs/redux/issues/1287#issuecomment-175351978)
 2. Redux-Form calls your entire top-level Redux reducer multiple times ON EVERY
    SINGLE KEYSTROKE. This is fine for small apps, but as your Redux app grows,
    input latency will continue increase if you use Redux-Form.

@@ -11,7 +11,6 @@ export type GenericFieldHTMLAttributes =
   | React.SelectHTMLAttributes<HTMLSelectElement>
   | React.TextareaHTMLAttributes<HTMLTextAreaElement>;
 
-
 /**
  * Note: These typings could be more restrictive, but then it would limit the
  * reusability of custom <Field/> components.
@@ -123,7 +122,7 @@ export class Field<Props extends FieldAttributes = any> extends React.Component<
       value:
         props.type === 'radio' || props.type === 'checkbox'
           ? props.value
-          : formik.values[name],
+          : dlv(=formik.values, name),
       name,
       onChange: formik.handleChange,
       onBlur: formik.handleBlur,

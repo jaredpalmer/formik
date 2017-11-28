@@ -105,8 +105,6 @@ export interface FormikHandlers {
   handleChange: (e: React.ChangeEvent<any>) => void;
   /** Mark input as touched */
   handleBlur: (e: any) => void;
-  /** Change value of form field directly */
-  handleChangeValue: (name: string, value: any) => void;
   /** Reset form event handler  */
   handleReset: () => void;
 }
@@ -408,22 +406,6 @@ export class Formik<
     if (this.props.validateOnChange) {
       this.runValidations(setDeep(field, value, this.state.values));
     }
-  };
-
-  handleChangeValue = (field: string, value: any) => {
-    if (process.env.NODE_ENV !== 'production') {
-      console.warn(
-        `Warning: Formik\'s handleChangeValue is deprecated and may be removed in future releases. Use Formik's setFieldValue(field, value) and setFieldTouched(field, isTouched) instead. React will merge the updates under the hood and avoid a double render. For more info see https://github.com/jaredpalmer/formik#setfieldvalue-field-string-value-any--void`
-      );
-    }
-    // Set touched and form fields by name
-    this.setState(prevState => ({
-      ...prevState,
-      values: setDeep(field, value, prevState.values),
-      touched: setDeep(field, true, prevState.touched),
-    }));
-
-    this.runValidationSchema(setDeep(field, value, this.state.values));
   };
 
   setFieldValue = (field: string, value: any) => {

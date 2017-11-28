@@ -8,7 +8,7 @@ import {
   isReactNative,
   isEmptyChildren,
   values,
-  setDeep
+  setDeep,
 } from './utils';
 
 import warning from 'warning';
@@ -241,6 +241,8 @@ export class Formik<
         resetForm: this.resetForm,
         submitForm: this.submitForm,
         initialValues: this.initialValues,
+        validateOnChange: this.props.validateOnChange,
+        validateOnBlur: this.props.validateOnBlur,
       },
     };
   }
@@ -597,6 +599,8 @@ export class Formik<
       setTouched: this.setTouched,
       setValues: this.setValues,
       submitForm: this.submitForm,
+      validateOnChange: this.props.validateOnChange,
+      validateOnBlur: this.props.validateOnBlur,
     };
     return component
       ? React.createElement(component as any, props)

@@ -147,7 +147,7 @@ const MyForm = withFormik({
   mapPropsToValues: props => ({ email: '', password: '' }),
   // Add a custom validation function (this can be async too!)
   validate: (values, props) => {
-    let errors = {};
+    const errors = {};
     if (!values.email) {
       errors.email = 'Required';
     } else if (

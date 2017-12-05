@@ -8,7 +8,8 @@ import {
   isReactNative,
   isEmptyChildren,
   values,
-  setDeep
+  setDeep,
+  warnIfValidationSchemaHasMissingFields,
 } from './utils';
 
 import warning from 'warning';
@@ -255,6 +256,7 @@ export class Formik<
     };
 
     this.initialValues = props.initialValues || ({} as any);
+    warnIfValidationSchemaHasMissingFields(this.props);
   }
 
   componentWillReceiveProps(nextProps: Props) {

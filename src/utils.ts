@@ -27,8 +27,8 @@ export function values<T>(obj: any): T[] {
   return vals;
 }
 
-/** 
- * @private Deeply get a value from an object via it's dot path. 
+/**
+ * @private Deeply get a value from an object via it's dot path.
  * See https://github.com/developit/dlv/blob/master/index.js
  */
 export function dlv(
@@ -44,8 +44,8 @@ export function dlv(
   return obj === undefined ? def : obj;
 }
 
-/** 
- * @private Deeply set a value from in object via it's dot path. 
+/**
+ * @private Deeply set a value from in object via it's dot path.
  * See https://github.com/developit/linkstate
  */
 export function setDeep(path: string, value: any, obj: any): any {
@@ -78,15 +78,36 @@ export function setDeep(path: string, value: any, obj: any): any {
 /** @private is the given object a Function? */
 export const isFunction = (obj: any) => 'function' === typeof obj;
 
-
 /** @private is the given object an Object? */
 export const isObject = (obj: any) => obj !== null && typeof obj === 'object';
 
 /**
- * @private is the given object an Integer? 
+ * @private is the given object an Integer?
  * see https://stackoverflow.com/questions/10834796/validate-that-a-string-is-a-positive-integer
-*/
+ */
 export const isInteger = (obj: any) => String(Math.floor(Number(obj))) === obj;
 
 export const isEmptyChildren = (children: any) =>
   React.Children.count(children) === 0;
+
+export function warnIfValidationSchemaHasMissingFields(props: any): void {
+  if (!props.validationSchema) return;
+
+  const initialValuePropsStringified: string[] = Object.keys(
+    props.initialValues || []
+  );
+  const validationSchemaFieldsStringified: string[] = Object.keys(
+    props.validationSchema().fields
+  );
+
+  const missingFields: string[] = initialValuePropsStringified.filter(
+    field => validationSchemaFieldsStringified.indexOf(field) === -1
+  );
+  if (missingFields.length) {
+    console.warn(
+      `Warning: You have some missing fields in the validationSchema (${missingFields.join(
+        ', '
+      )}), which exist in the form's initialValues`
+    );
+  }
+}

@@ -148,7 +148,7 @@ export class Field<Props extends FieldAttributes = any> extends React.Component<
       );
     } else {
       // Otherwise set the error
-      setFieldError(maybePromise);
+      setFieldError(name, maybePromise);
     }
   };
 

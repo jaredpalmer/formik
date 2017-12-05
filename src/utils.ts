@@ -93,11 +93,15 @@ export const isEmptyChildren = (children: any) =>
 export function warnIfValidationSchemaHasMissingFields(props: any): void {
   if (!props.validationSchema) return;
 
+  const schema = isFunction(props.validationSchema)
+    ? props.validationSchema()
+    : props.validationSchema;
+
   const initialValuePropsStringified: string[] = Object.keys(
     props.initialValues || []
   );
   const validationSchemaFieldsStringified: string[] = Object.keys(
-    props.validationSchema().fields
+    schema.fields || []
   );
 
   const missingFields: string[] = initialValuePropsStringified.filter(

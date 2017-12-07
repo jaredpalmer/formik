@@ -1206,7 +1206,7 @@ const Example = () => (
           </Field>
           <Field name="firstName" component={CustomInputComponent}  />
           <Field name="lastName" render={({ field, /* _form */ }) =>
-             <input {...field} placholder="firstName" />
+             <input {...field} placeholder="firstName" />
           } />
           <button type="submit">Submit</button>
         </form>}

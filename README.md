@@ -708,7 +708,7 @@ export default MyReactNativeForm;
 
 ### Using Formik with TypeScript
 
-The Formik source code is written in TypeScript, so you can rest be assured that types will always be up to date. As a mental model, Formik's types are very similar to React Router 4's `<Route>`. 
+The Formik source code is written in TypeScript, so you can rest assured that types will always be up to date. As a mental model, Formik's types are very similar to React Router 4's `<Route>`. 
 
 
 #### Render props (`<Formik />` and `<Field/>`)
@@ -978,7 +978,7 @@ Set [`values`] imperatively.
 ##### `status?: any`
 
 A top-level status object that you can use to represent form state that can't
-otherwised be expressed/stored with other methods. This is useful for capturing
+otherwise be expressed/stored with other methods. This is useful for capturing
 and passing through API responses to your inner component.
 
 `status` should only be modifed by calling
@@ -1135,7 +1135,7 @@ const validate = (values, props) => {
 };
 ```
 
-* Asynchronous and return a Promise that's error is an [`errors`] object
+* Asynchronous and return a Promise that's error in an [`errors`] object
 
 ```js
 // Async Validation

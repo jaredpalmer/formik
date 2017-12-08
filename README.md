@@ -37,7 +37,7 @@ By now, you might be thinking, "Why didn't you just use
    [**form state is inherently ephemeral and local**, so tracking it in Redux (or any kind of Flux library) is unnecessary](https://github.com/reactjs/redux/issues/1287#issuecomment-175351978)
 2. Redux-Form calls your entire top-level Redux reducer multiple times ON EVERY
    SINGLE KEYSTROKE. This is fine for small apps, but as your Redux app grows,
-   input latency will continue increase if you use Redux-Form.
+   input latency will continue to increase if you use Redux-Form.
 3. Redux-Form is 22.5 kB minified gzipped (Formik is 9.2 kB)
 
 **My goal with Formik was to create a scalable, performant, form helper with a

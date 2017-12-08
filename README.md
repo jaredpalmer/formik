@@ -708,7 +708,7 @@ export default MyReactNativeForm;
 
 ### Using Formik with TypeScript
 
-The Formik source code is written in TypeScript, so you can rest assured that types will always be up to date. As a mental model, Formik's types are very similar to React Router 4's `<Route>`. 
+The Formik source code is written in TypeScript, so you can rest be assured that types will always be up to date. As a mental model, Formik's types are very similar to React Router 4's `<Route>`. 
 
 
 #### Render props (`<Formik />` and `<Field/>`)
@@ -832,7 +832,7 @@ export default Basic;
 
 ### `<Formik />`
 
-`<Formik>` is a component that helps you with building forms. In uses a render
+`<Formik>` is a component that helps you with building forms. It uses a render
 props pattern made popular by libraries like React Motion and React Router.
 
 ```js
@@ -935,7 +935,7 @@ Returns `true` if the there are no [`errors`], or the result of
 
 Imperatively reset the form. This will clear [`errors`] and [`touched`], set
 [`isSubmitting`] to `false` and rerun `mapPropsToValues` with the current
-`WrappedComponent`'s `props` or what's passed as an argument. That latter is
+`WrappedComponent`'s `props` or what's passed as an argument. The latter is
 useful for calling `resetForm` within `componentWillReceiveProps`.
 
 ##### `setErrors: (fields: { [field: string]: string }) => void`

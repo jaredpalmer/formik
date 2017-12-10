@@ -676,3 +676,4 @@ export function touchAllFields<T>(fields: T): FormikTouched<T> {
 export * from './Field';
 export * from './Form';
 export * from './withFormik';
+export * from './FieldArray';

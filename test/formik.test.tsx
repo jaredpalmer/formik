@@ -1,22 +1,12 @@
 import * as React from 'react';
-import * as renderer from 'react-test-renderer';
 
-import { Formik, FormikConfig, FormikProps } from '../src/formik';
-import { mount, shallow } from 'enzyme';
-
-const Yup = require('yup');
+import { Formik, FormikProps } from '../src/formik';
+import { shallow } from 'enzyme';
 
 // tslint:disable-next-line:no-empty
 const noop = () => {};
 
-const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
-
-interface Props {
-  user: {
-    name: string;
-  };
-  someFunction?: () => void;
-}
+const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 interface Values {
   name: string;
@@ -758,7 +748,7 @@ describe('Formik Next', () => {
           initialValues={{ name: 'jared' }}
           onSubmit={noop}
           component={Form}
-          isInitialValid={props => true}
+          isInitialValid={() => true}
         />
       );
       expect(tree.find(Form).props().dirty).toBe(false);
@@ -771,7 +761,7 @@ describe('Formik Next', () => {
           initialValues={{ name: 'jared' }}
           onSubmit={noop}
           component={Form}
-          isInitialValid={props => false}
+          isInitialValid={() => false}
         />
       );
       expect(tree.find(Form).props().dirty).toBe(false);
@@ -820,7 +810,7 @@ describe('Formik Next', () => {
   });
 
   describe('componentWillReceiveProps', () => {
-    let form, defaultForm, initialValues;
+    let form: any, initialValues: any;
     beforeEach(() => {
       initialValues = {
         name: 'formik',

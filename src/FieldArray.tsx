@@ -1,0 +1,103 @@
+import * as React from 'react';
+import { dlv } from './utils';
+import { SharedRenderProps } from './types';
+import * as PropTypes from 'prop-types';
+import { move, swap, insert } from './Mutators';
+
+export type FieldArrayConfig = {
+  /** Really the path to the array field to be updated */
+  name: string;
+} & SharedRenderProps<ArrayHelpers>;
+
+export interface ArrayHelpers {
+  /** Add a value to the end of an array */
+  push: (obj: any) => void;
+  /** Swap two values in an array */
+  swap: (indexA: number, indexB: number) => void;
+  /** Move an element in an array to another index */
+  move: (from: number, to: number) => void;
+  /** Insert an element at a given index into the array */
+  insert: (index: number, value: any) => void;
+  /** Add an element to the  beginning of an array and return its length */
+  unshift: (value: any) => number;
+  /** Remove and element at an index of an array */
+  remove<T>(index: number): T | undefined;
+  /** Remove and return value from the end of the array */
+  pop<T>(): T | undefined;
+}
+
+export interface FieldArrayState {}
+
+export class FieldArray extends React.Component<
+  FieldArrayConfig,
+  FieldArrayState
+> {
+  static contextTypes = {
+    formik: PropTypes.object,
+  };
+
+  changeValue = (fn: Function) => {
+    const { setFieldValue, setFieldTouched, values } = this.context.formik;
+    const { name } = this.props;
+    const val = fn(dlv(values, name));
+    setFieldValue(name, val);
+    setFieldTouched(name, true);
+  };
+
+  push = (value: any) => this.changeValue((array: any[]) => [...array, value]);
+
+  swap = (indexA: number, indexB: number) =>
+    this.changeValue((array: any[]) => swap(array, indexA, indexB));
+
+  move = (from: number, to: number) =>
+    this.changeValue((array: any[]) => move(array, from, to));
+
+  insert = (index: number, value: any) =>
+    this.changeValue((array: any[]) => insert(array, index, value));
+
+  unshift = (value: any) => {
+    let arr = [];
+    this.changeValue((array: any[]) => {
+      arr = array ? [value, ...array] : [value];
+      return array;
+    });
+    return arr.length;
+  };
+
+  remove = (index: number) => {
+    let result;
+    this.changeValue((array: any[]) => {
+      const copy = [...(array || [])];
+      result = copy[index];
+      copy.splice(index, 1);
+      return copy;
+    });
+    return result;
+  };
+
+  pop = () => {
+    let result;
+    this.changeValue((array: any[]) => {
+      const tmp = array;
+      result = tmp.pop();
+      return tmp;
+    });
+    return result;
+  };
+
+  render() {
+    const arrayHelpers: ArrayHelpers = {
+      push: this.push,
+      pop: this.pop,
+      swap: this.swap,
+      move: this.move,
+      insert: this.insert,
+      unshift: this.unshift,
+      remove: this.remove,
+    };
+    const { render } = this.props;
+    return render
+      ? (render as any)({ ...arrayHelpers, form: this.context.formik })
+      : null;
+  }
+}

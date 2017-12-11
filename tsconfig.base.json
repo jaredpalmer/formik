@@ -8,7 +8,7 @@
     "importHelpers": true,
     "jsx": "react",
     "lib": ["es2015", "dom"],
-    "module": "es2015",
+    "module": "esnext",
     "moduleResolution": "node",
     "noFallthroughCasesInSwitch": true,
     "noImplicitAny": true,

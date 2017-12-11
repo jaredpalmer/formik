@@ -1,22 +1,16 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { FieldArray, ArrayHelpers } from '../src/FieldArray';
+import { FieldArray } from '../src/FieldArray';
 import { Formik } from '../src/formik';
 import { isFunction } from '../src/utils';
-import { mount } from 'enzyme';
 
 // tslint:disable-next-line:no-empty
 const noop = () => {};
 
+const friends = ['jared', 'andrea', 'brent'];
 const TestForm: React.SFC<any> = p => (
-  <Formik
-    onSubmit={noop}
-    initialValues={{ friends: ['jared', 'andrea', 'brent'] }}
-    {...p}
-  />
+  <Formik onSubmit={noop} initialValues={{ friends }} {...p} />
 );
-
-const Target: React.SFC<ArrayHelpers> = () => null;
 
 describe('<FieldArray />', () => {
   const node = document.createElement('div');
@@ -43,70 +37,58 @@ describe('<FieldArray />', () => {
   });
 
   describe('props.push()', () => {
-    it('can add an object to a field array', () => {
-      const tree = mount(
+    it('should add a value to the end of the field array', () => {
+      let formikBag: any;
+      let arrayHelpers: any;
+      ReactDOM.render(
         <TestForm
-          render={() => (
-            <FieldArray
-              name="friends"
-              render={arrayProps => <Target {...arrayProps} />}
-            />
-          )}
-        />
+          render={(props: any) => {
+            formikBag = props;
+            return (
+              <FieldArray
+                name="friends"
+                render={arrayProps => {
+                  arrayHelpers = arrayProps;
+                  return null;
+                }}
+              />
+            );
+          }}
+        />,
+        node
       );
 
-      tree
-        .find(Target)
-        .props()
-        .push('jane');
-
-      expect(tree.find(Target).props().form.values.friends[3]).toEqual('jane');
+      arrayHelpers.push('jared');
+      expect(formikBag.values.friends).toEqual(friends.concat('jared'));
+      expect(formikBag.values.friends.length).toEqual(friends.length + 1);
     });
   });
 
   describe('props.pop()', () => {
-    it('should remove the last value from the field array', () => {
-      const tree = mount(
+    it('should remove and return the last value from the field array', () => {
+      let formikBag: any;
+      let arrayHelpers: any;
+      ReactDOM.render(
         <TestForm
-          render={() => (
-            <FieldArray
-              name="friends"
-              render={arrayProps => <Target {...arrayProps} />}
-            />
-          )}
-        />
+          render={(props: any) => {
+            formikBag = props;
+            return (
+              <FieldArray
+                name="friends"
+                render={arrayProps => {
+                  arrayHelpers = arrayProps;
+                  return null;
+                }}
+              />
+            );
+          }}
+        />,
+        node
       );
 
-      const friend = tree
-        .find(Target)
-        .props()
-        .pop();
-
-      expect(tree.find(Target).props().form.values.friends.length).toEqual(2);
-      expect(friend).toEqual('brent');
-    });
-  });
-
-  describe('props.pop()', () => {
-    it('should remove the last value from the field array', () => {
-      const tree = mount(
-        <TestForm
-          render={() => (
-            <FieldArray
-              name="friends"
-              render={arrayProps => <Target {...arrayProps} />}
-            />
-          )}
-        />
-      );
-
-      const friend = tree
-        .find(Target)
-        .props()
-        .pop();
-
-      expect(tree.find(Target).props().form.values.friends.length).toEqual(2);
-      expect(friend).toEqual('brent');
+      const el = arrayHelpers.pop();
+      expect(formikBag.values.friends).toEqual(['jared', 'andrea']);
+      expect(el).toEqual('brent');
     });
   });
 });

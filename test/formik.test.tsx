@@ -2,11 +2,7 @@ import * as React from 'react';
 
 import { Formik, FormikProps } from '../src/formik';
 import { shallow } from 'enzyme';
-
-// tslint:disable-next-line:no-empty
-const noop = () => {};
-
-const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+import { sleep, noop } from './testHelpers';
 
 interface Values {
   name: string;
@@ -17,7 +13,6 @@ const Form: React.SFC<FormikProps<Values>> = ({
   handleSubmit,
   handleChange,
   handleBlur,
-  setStatus,
   status,
   errors,
   isSubmitting,
@@ -33,12 +28,6 @@ const Form: React.SFC<FormikProps<Values>> = ({
       />
       {errors.name && <div id="feedback">{errors.name}</div>}
       {isSubmitting && <div id="submitting">Submitting</div>}
-      <button
-        id="statusButton"
-        onClick={() => setStatus({ myStatusMessage: 'True' })}
-      >
-        Call setStatus
-      </button>
       {status &&
         !!status.myStatusMessage && (
           <div id="statusMessage">{status.myStatusMessage}</div>
@@ -52,7 +41,7 @@ const BasicForm = (
   <Formik initialValues={{ name: 'jared' }} onSubmit={noop} component={Form} />
 );
 
-describe('Formik Next', () => {
+describe('<Formik>', () => {
   it('should initialize Formik state and pass down props', () => {
     const tree = shallow(BasicForm);
     expect(tree.find(Form).props().isSubmitting).toBe(false);
@@ -281,29 +270,12 @@ describe('Formik Next', () => {
 
         expect(
           tree
+            .update()
             .find(Form)
             .dive()
             .find('#submitting')
         ).toHaveLength(1);
       });
-
-      // it('should correctly map form values to payload', () => {
-      //   interface Payload {
-      //     user: { name: string };
-      //   }
-      //   const CustomPayloadForm = Formik<Props, Values, Payload>({
-      //     mapPropsToValues: ({ user }) => ({ ...user }),
-      //     mapValuesToPayload: ({ name }) => ({ user: { name } }),
-      //     onSubmit: payload => {
-      //       expect(payload).toEqual({ user: { name: 'jared' } });
-      //       expect(payload).not.toEqual({ name: 'jared' });
-      //     },
-      //   })(Form);
-      //   const tree = shallow(<CustomPayloadForm user={{ name: 'jared' }} />);
-      //   tree.find(Form).dive().find('form').simulate('submit', {
-      //     preventDefault: noop,
-      //   });
-      // });
 
       describe('with validate (SYNC)', () => {
         it('should call validate if present', () => {
@@ -494,10 +466,9 @@ describe('Formik Next', () => {
         .setValues({ name: 'ian' });
       expect(
         tree
+          .update()
           .find(Form)
-          .dive()
-          .find('input')
-          .props().value
+          .props().values.name
       ).toEqual('ian');
     });
 
@@ -545,10 +516,9 @@ describe('Formik Next', () => {
         .setFieldValue('name', 'ian');
       expect(
         tree
+          .update()
           .find(Form)
-          .dive()
-          .find('input')
-          .props().value
+          .props().values.name
       ).toEqual('ian');
     });
 
@@ -596,7 +566,12 @@ describe('Formik Next', () => {
         .find(Form)
         .props()
         .setTouched({ name: true });
-      expect(tree.find(Form).props().touched).toEqual({ name: true });
+      expect(
+        tree
+          .update()
+          .find(Form)
+          .props().touched
+      ).toEqual({ name: true });
     });
 
     it('setTouched should NOT run validations by default', async () => {
@@ -641,14 +616,34 @@ describe('Formik Next', () => {
         .find(Form)
         .props()
         .setFieldTouched('name', true);
-      expect(tree.find(Form).props().touched).toEqual({ name: true });
-      expect(tree.find(Form).props().dirty).toBe(true);
+      expect(
+        tree
+          .update()
+          .find(Form)
+          .props().touched
+      ).toEqual({ name: true });
+      expect(
+        tree
+          .update()
+          .find(Form)
+          .props().dirty
+      ).toBe(true);
       tree
         .find(Form)
         .props()
         .setFieldTouched('name', false);
-      expect(tree.find(Form).props().touched).toEqual({ name: false });
-      expect(tree.find(Form).props().dirty).toBe(false);
+      expect(
+        tree
+          .update()
+          .find(Form)
+          .props().touched
+      ).toEqual({ name: false });
+      expect(
+        tree
+          .update()
+          .find(Form)
+          .props().dirty
+      ).toBe(false);
     });
 
     it('setFieldTouched should run validations when validateOnBlur is true', async () => {
@@ -694,12 +689,12 @@ describe('Formik Next', () => {
         .find(Form)
         .props()
         .setErrors({ name: 'Required' });
+
       expect(
         tree
+          .update()
           .find(Form)
-          .dive()
-          .find('#feedback')
-          .text()
+          .props().errors.name
       ).toEqual('Required');
     });
 
@@ -711,26 +706,26 @@ describe('Formik Next', () => {
         .setFieldError('name', 'Required');
       expect(
         tree
+          .update()
           .find(Form)
-          .dive()
-          .find('#feedback')
-          .text()
+          .props().errors.name
       ).toEqual('Required');
     });
 
     it('setStatus sets status object', async () => {
       const tree = shallow(BasicForm);
+      const status = 'status';
       tree
         .find(Form)
-        .dive()
-        .find('#statusButton')
-        .simulate('click');
+        .props()
+        .setStatus(status);
+
       expect(
         tree
+          .update()
           .find(Form)
-          .dive()
-          .find('#statusMessage')
-      ).toHaveLength(1);
+          .props().status
+      ).toEqual(status);
     });
   });
 

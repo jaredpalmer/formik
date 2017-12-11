@@ -4,9 +4,7 @@ import { Field, FieldProps } from '../src/Field';
 import { Formik, FormikProps } from '../src/formik';
 
 import { shallow } from 'enzyme';
-
-// tslint:disable-next-line:no-empty
-const noop = () => {};
+import { noop } from './testHelpers';
 
 interface TestFormValues {
   name: string;

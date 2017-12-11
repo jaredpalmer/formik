@@ -109,7 +109,7 @@ export class Field<Props extends FieldAttributes = any> extends React.Component<
     );
 
     warning(
-      !(component && children && isFunction(children)),
+      !(this.props.component && children && isFunction(children)),
       'You should not use <Field component> and <Field children> as a function in the same <Field> component; <Field component> will be ignored.'
     );
 
@@ -159,7 +159,7 @@ export class Field<Props extends FieldAttributes = any> extends React.Component<
       render,
       children,
       component = 'input',
-      ...props,
+      ...props
     } = this.props as FieldConfig;
 
     const { formik } = this.context;

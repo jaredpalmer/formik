@@ -126,7 +126,7 @@ export interface FormikSharedConfig {
 /**
  * <Formik /> props
  */
-export interface FormikConfig<Values = object> extends FormikSharedConfig {
+export interface FormikConfig<Values> extends FormikSharedConfig {
   /**
    * Initial values of the form
    */
@@ -140,7 +140,7 @@ export interface FormikConfig<Values = object> extends FormikSharedConfig {
   /**
    * Form component to render
    */
-  component?: React.ComponentType<FormikProps<Values> | void>;
+  component?: React.ComponentType<FormikProps<Values>> | React.ReactNode;
 
   /**
    * Render prop (works like React router's <Route render={props =>} />)
@@ -179,7 +179,7 @@ export type FormikProps<Values> = FormikState<Values> &
 
 export class Formik<
   Props extends FormikConfig<Values> = FormikConfig<Values>,
-  Values = object
+  Values = FormikValues
 > extends React.Component<Props, FormikState<any>> {
   static defaultProps = {
     validateOnChange: true,
@@ -590,9 +590,7 @@ export class Formik<
         ? (render as any)(props)
         : children // children come last, always called
           ? typeof children === 'function'
-            ? (children as (props: FormikProps<any>) => React.ReactNode)(
-                props as FormikProps<any>
-              )
+            ? (children as any)(props)
             : !isEmptyChildren(children) ? React.Children.only(children) : null
           : null;
   }
@@ -608,15 +606,11 @@ function warnAboutMissingIdentifier({
   handlerName: string;
 }) {
   console.error(
-    `Warning: \`${
-      handlerName
-    }\` has triggered and you forgot to pass an \`id\` or \`name\` attribute to your input:
+    `Warning: \`${handlerName}\` has triggered and you forgot to pass an \`id\` or \`name\` attribute to your input:
   
     ${htmlContent}
   
-    Formik cannot determine which value to update. For more info see https://github.com/jaredpalmer/formik#${
-      documentationAnchorLink
-    }
+    Formik cannot determine which value to update. For more info see https://github.com/jaredpalmer/formik#${documentationAnchorLink}
   `
   );
 }
@@ -625,7 +619,7 @@ function warnAboutMissingIdentifier({
  * Transform Yup ValidationError to a more usable object
  */
 export function yupToFormErrors<Values>(yupError: any): FormikErrors<Values> {
-  let errors = {} as FormikErrors<Values>;
+  let errors: any = {} as FormikErrors<Values>;
   for (let err of yupError.inner) {
     if (!errors[err.path]) {
       errors = setDeep(err.path, err.message, errors);

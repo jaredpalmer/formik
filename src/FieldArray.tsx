@@ -3,11 +3,12 @@ import { dlv } from './utils';
 import { SharedRenderProps } from './types';
 import * as PropTypes from 'prop-types';
 import { move, swap, insert } from './Mutators';
+import { FormikProps } from './formik';
 
 export type FieldArrayConfig = {
   /** Really the path to the array field to be updated */
   name: string;
-} & SharedRenderProps<ArrayHelpers>;
+} & SharedRenderProps<ArrayHelpers & { form: FormikProps<any> }>;
 
 export interface ArrayHelpers {
   /** Add a value to the end of an array */

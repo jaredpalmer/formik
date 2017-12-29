@@ -8,7 +8,7 @@ import {
   isReactNative,
   isEmptyChildren,
   values,
-  setDeep
+  setDeep,
 } from './utils';
 
 import warning from 'warning';
@@ -625,9 +625,9 @@ function warnAboutMissingIdentifier({
     `Warning: \`${
       handlerName
     }\` has triggered and you forgot to pass an \`id\` or \`name\` attribute to your input:
-  
+
     ${htmlContent}
-  
+
     Formik cannot determine which value to update. For more info see https://github.com/jaredpalmer/formik#${
       documentationAnchorLink
     }
@@ -667,14 +667,23 @@ export function validateYupSchema<T>(
   return schema.validate(validateData, { abortEarly: false, context: context });
 }
 
-function setNestedObjectValues(object: any, value: any, response: any = null) {
+function setNestedObjectValues(
+  object: any,
+  value: any,
+  visited: any = null,
+  response: any = null
+) {
+  visited = visited === null ? new WeakMap() : visited;
   response = response === null ? {} : response;
 
   for (let k of Object.keys(object)) {
     const val = object[k];
     if (isObject(val)) {
-      response[k] = {};
-      setNestedObjectValues(val, value, response[k]);
+      if (!visited.get(val)) {
+        visited.set(val, true);
+        response[k] = {};
+        setNestedObjectValues(val, value, visited, response[k]);
+      }
     } else {
       response[k] = value;
     }

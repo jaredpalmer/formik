@@ -1278,6 +1278,95 @@ const validate = value => {
 Note: To allow for i18n libraries, the TypeScript typings for `validate` are
 slightly relaxed and allow you to return a `Function` (e.g. `i18n('invalid')`).
 
+### `<FieldArray/>`
+
+`<FieldArray />` is a component that helps with common array/list manipulations. You pass it a `name` property with the path or dot-path to the key within `values` that holds the relevant array. `<FieldArray />` will then give you access to array helper methods via render props. For convenience, calling these methods will trigger validation and also manage `touched` for you.
+
+```jsx
+import React from 'react';
+import { Formik, Form, Field, FieldArray } from 'formik'
+
+// Here is an example of a form with an editable list. 
+// Next to each input are buttons for insert and remove. 
+// If the list is empty, there is a button to add an item.
+export const FriendList = () => (
+  <div>
+    <h1>Friend List</h1>
+    <Formik
+      initialValues={{ friends: ['jared', 'ian', 'brent'] }}
+      onSubmit={values =>
+        setTimeout(() => {
+          alert(JSON.stringify(values, null, 2));
+        }, 500)
+      }
+      render={formikProps => (
+        <FieldArray
+          name="friends"
+          render={arrayHelpers => (
+            <Form>
+              {values.friends && values.friends.length > 0 ? (
+                values.friends.map((friend, index) => (
+                  <div>
+                    <Field name={`friend.${index}`} />
+                    <button
+                      type="button"
+                      onClick={() => arrayHelpers.remove(index) // remove a friend from the list}
+                    >
+                      -
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => arrayHelpers.insert(index, '') // insert an empty string at a position}
+                    >
+                      +
+                    </button>
+                  </div>
+                ))
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => arrayHelpers.push('')}
+                >
+                  {/** show this when user has removed all friends from the list */}
+                  Add a friend
+                </button>
+              )}
+              <div>
+                <button type="submit">Submit</button>
+              </div>
+            </Form>
+          )}
+        />
+      )}
+    />
+  </div>
+);
+```
+
+#### `name: string`
+
+The name or dot-path to the relevant key in [`values`]. 
+
+#### `render: (arrayHelpers: ArrayHelpers) => React.ReactNode`
+
+The following methods are made available via render props.
+
+- `push: (obj: any) => void`: Add a value to the end of an array
+- `swap: (indexA: number, indexB: number) => void`:  Swap two values in an array
+- `move: (from: number, to: number) => void`: Move an element in an array to another index
+- `insert: (index: number, value: any) => void`: Insert an element at a given index into the array
+- `unshift: (value: any) => number`: Add an element to the  beginning of an array and return its length
+- `remove<T>(index: number): T | undefined`: Remove an element at an index of an array and return it
+- `pop<T>(): T | undefined`: Remove and return value from the end of the array 
+
+#### `component: React.ReactNode`
+
+Same as above.
+
+#### `children: React.ReactNode`
+
+Same as above.
+
 ### `<Form />`
 
 Like `<Field/>`, `<Form/>` is a helper component you can use to save time. It is

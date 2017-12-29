@@ -6,6 +6,9 @@
 [![license](https://img.shields.io/npm/l/formik.svg)](./LICENSE)
 [![Discord](https://img.shields.io/discord/102860784329052160.svg?style=flat-square)](https://discord.gg/cU6MCve)
 
+
+> For `0.11.x-beta` docs, [go here](https://github.com/jaredpalmer/formik/blob/next/README.md), 
+
 ## Overview
 
 Let's face it, forms are really verbose in

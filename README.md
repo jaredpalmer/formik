@@ -79,8 +79,7 @@ You can also try before you buy with this
 ## Talks
 
 * [An Introduction to Formik](https://youtu.be/-tDy7ds0dag?t=33s) by
-  [Jared Palmer](https://twitter.com/jaredpalmer) @ Spotify NYC. August 15th,
-  2017.
+  [Jared Palmer](https://twitter.com/jaredpalmer) @ Spotify NYC. August 15th, 2017.
 
 ## Community Articles / Tutorials
 
@@ -353,6 +352,12 @@ npm install yup --save
     - [`validationSchema?: Schema | (() => Schema)`](#validationschema-schema----schema)
   - [`<Field />`](#field-)
     - [`validate?: (value: any) => undefined | string | Promise<any>`](#validate-value-any--undefined--string--promiseany)
+  - [`<FieldArray/>`](#fieldarray)
+      - [`name: string`](#name-string)
+    - [FieldArray Helpers](#fieldarray-helpers)
+    - [FieldArray render methods](#fieldarray-render-methods)
+      - [`render: (arrayHelpers: ArrayHelpers) => React.ReactNode`](#render-arrayhelpers-arrayhelpers--reactreactnode)
+      - [`component: React.ReactNode`](#component-reactreactnode)
   - [`<Form />`](#form-)
   - [`withFormik(options)`](#withformikoptions)
     - [`options`](#options)
@@ -901,8 +906,7 @@ the `errors` objects shape.
 ##### `handleBlur: (e: any) => void`
 
 `onBlur` event handler. Useful for when you need to track whether an input has
-been [`touched`] or not. This should be passed to `<input onBlur={handleBlur}
-... />`
+been [`touched`] or not. This should be passed to `<input onBlur={handleBlur} ... />`
 
 DOM-only. Use [`setFieldTouched`] in React Native.
 
@@ -922,8 +926,7 @@ to `<button onClick={handleReset}>...</button>`
 
 ##### `handleSubmit: (e: React.FormEvent<HTMLFormEvent>) => void`
 
-Submit handler. This should be passed to `<form
-onSubmit={props.handleSubmit}>...</form>`
+Submit handler. This should be passed to `<form onSubmit={props.handleSubmit}>...</form>`
 
 ##### `isSubmitting: boolean`
 
@@ -1286,8 +1289,8 @@ slightly relaxed and allow you to return a `Function` (e.g. `i18n('invalid')`).
 import React from 'react';
 import { Formik, Form, Field, FieldArray } from 'formik'
 
-// Here is an example of a form with an editable list. 
-// Next to each input are buttons for insert and remove. 
+// Here is an example of a form with an editable list.
+// Next to each input are buttons for insert and remove.
 // If the list is empty, there is a button to add an item.
 export const FriendList = () => (
   <div>
@@ -1303,7 +1306,7 @@ export const FriendList = () => (
         <FieldArray
           name="friends"
           render={arrayHelpers => (
-            <Form>
+          <Form>
               {values.friends && values.friends.length > 0 ? (
                 values.friends.map((friend, index) => (
                   <div>
@@ -1343,36 +1346,95 @@ export const FriendList = () => (
 );
 ```
 
-#### `name: string`
+##### `name: string`
 
-The name or dot-path to the relevant key in [`values`]. 
+The name or dot-path to the relevant key in [`values`].
 
-#### `render: (arrayHelpers: ArrayHelpers) => React.ReactNode`
+#### FieldArray Helpers
 
 The following methods are made available via render props.
 
-- `push: (obj: any) => void`: Add a value to the end of an array
-- `swap: (indexA: number, indexB: number) => void`:  Swap two values in an array
-- `move: (from: number, to: number) => void`: Move an element in an array to another index
-- `insert: (index: number, value: any) => void`: Insert an element at a given index into the array
-- `unshift: (value: any) => number`: Add an element to the  beginning of an array and return its length
-- `remove<T>(index: number): T | undefined`: Remove an element at an index of an array and return it
-- `pop<T>(): T | undefined`: Remove and return value from the end of the array 
+* `push: (obj: any) => void`: Add a value to the end of an array
+* `swap: (indexA: number, indexB: number) => void`: Swap two values in an array
+* `move: (from: number, to: number) => void`: Move an element in an array to another index
+* `insert: (index: number, value: any) => void`: Insert an element at a given index into the array
+* `unshift: (value: any) => number`: Add an element to the beginning of an array and return its length
+* `remove<T>(index: number): T | undefined`: Remove an element at an index of an array and return it
+* `pop<T>(): T | undefined`: Remove and return value from the end of the array
 
-#### `component: React.ReactNode`
+#### FieldArray render methods
 
-Same as above.
+There are three ways to render things with `<FieldArray/>`
 
-#### `children: React.ReactNode`
+* `<FieldArray name="..." component>`
+* `<FieldArray name="..." render>`
 
-Same as above.
+##### `render: (arrayHelpers: ArrayHelpers) => React.ReactNode`
+
+```jsx
+import React from 'react';
+import { Formik, Form, Field, FieldArray } from 'formik'
+
+export const FriendList = () => (
+  <div>
+    <h1>Friend List</h1>
+    <Formik
+      initialValues={{ friends: ['jared', 'ian', 'brent'] }}
+      onSubmit={...}
+      render={formikProps => (
+        <FieldArray
+          name="friends"
+          render={({ move, swap, push, insert, unshift, pop }) => (
+            <Form>
+              {/*... use these however you want */}
+            </Form>  
+          )}
+        />
+    />
+  </div>
+);
+```
+
+##### `component: React.ReactNode`
+
+```jsx
+import React from 'react';
+import { Formik, Form, Field, FieldArray } from 'formik'
+
+
+export const FriendList = () => (
+  <div>
+    <h1>Friend List</h1>
+    <Formik
+      initialValues={{ friends: ['jared', 'ian', 'brent'] }}
+      onSubmit={...}
+      render={formikProps => (
+        <FieldArray
+          name="friends"
+          component={MyDynamicForm}
+        />
+    />
+  </div>
+);
+
+
+// In addition to the array helpers, Formik state and helpers
+// (values, touched, setXXX, etc) are provided through a `form`
+// prop
+export const MyDynamicForm = ({
+  move, swap, push, insert, unshift, pop, form  
+}) => (
+ <Form>
+  {/**  whatever you need to do */}
+ </Form>
+);
+```
 
 ### `<Form />`
 
 Like `<Field/>`, `<Form/>` is a helper component you can use to save time. It is
 tiny wrapper around `<form onSubmit={context.formik.handleSubmit} />`. This
-means you don't need to explictly type out `<form
-onSubmit={props.handleSubmit}/>` if you don't want to.
+means you don't need to explictly type out `<form onSubmit={props.handleSubmit}/>` if you don't want to.
 
 **ReactDOM only**
 

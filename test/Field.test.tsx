@@ -425,5 +425,65 @@ describe('A <Field />', () => {
       expect(actual.field.value).toBe('jared');
       expect(actual.form).toEqual(injected);
     });
+
+    it('can resolve bracket paths', () => {
+      let actual: any;
+      let injected: any;
+      const Component: React.SFC<FieldProps> = props =>
+        (actual = props) && null;
+
+      ReactDOM.render(
+        <TestForm
+          initialValues={{ user: { superPowers: ['Surging', 'Binding'] } }}
+          children={(formikProps: FormikProps<TestFormValues>) =>
+            (injected = formikProps) && (
+              <Field name="user[superPowers][0]" component={Component} />
+            )
+          }
+        />,
+        node
+      );
+      expect(actual.field.value).toBe('Surging');
+    });
+
+    it('can resolve mixed dot and bracket paths', () => {
+      let actual: any;
+      let injected: any;
+      const Component: React.SFC<FieldProps> = props =>
+        (actual = props) && null;
+
+      ReactDOM.render(
+        <TestForm
+          initialValues={{ user: { superPowers: ['Surging', 'Binding'] } }}
+          children={(formikProps: FormikProps<TestFormValues>) =>
+            (injected = formikProps) && (
+              <Field name="user.superPowers[1]" component={Component} />
+            )
+          }
+        />,
+        node
+      );
+      expect(actual.field.value).toBe('Binding');
+    });
+
+    it('can resolve mixed dot and bracket paths II', () => {
+      let actual: any;
+      let injected: any;
+      const Component: React.SFC<FieldProps> = props =>
+        (actual = props) && null;
+
+      ReactDOM.render(
+        <TestForm
+          initialValues={{ user: { superPowers: ['Surging', 'Binding'] } }}
+          children={(formikProps: FormikProps<TestFormValues>) =>
+            (injected = formikProps) && (
+              <Field name="user[superPowers].1" component={Component} />
+            )
+          }
+        />,
+        node
+      );
+      expect(actual.field.value).toBe('Binding');
+    });
   });
 });

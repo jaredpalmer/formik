@@ -35,6 +35,7 @@
   },
   "dependencies": {
     "lodash.isequal": "4.5.0",
+    "lodash.topath": "^4.5.2",
     "prop-types": "^15.5.10",
     "warning": "^3.0.0"
   },

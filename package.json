@@ -35,7 +35,7 @@
   },
   "dependencies": {
     "lodash.isequal": "4.5.0",
-    "lodash.topath": "^4.5.2",
+    "lodash.topath": "4.5.2",
     "prop-types": "^15.5.10",
     "warning": "^3.0.0"
   },
@@ -48,6 +48,7 @@
     "@types/enzyme-adapter-react-16": "1.0.1",
     "@types/jest": "20.0.6",
     "@types/lodash.isequal": "4.5.2",
+    "@types/lodash.topath": "4.5.3",
     "@types/node": "8.0.19",
     "@types/prop-types": "15.5.1",
     "@types/react": "16.0.28",

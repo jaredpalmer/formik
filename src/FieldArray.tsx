@@ -19,7 +19,7 @@ export interface ArrayHelpers {
   move: (from: number, to: number) => void;
   /** Insert an element at a given index into the array */
   insert: (index: number, value: any) => void;
-  /** Add an element to the  beginning of an array and return its length */
+  /** Add an element to the beginning of an array and return its length */
   unshift: (value: any) => number;
   /** Remove and element at an index of an array */
   remove<T>(index: number): T | undefined;
@@ -60,7 +60,7 @@ export class FieldArray extends React.Component<
     let arr = [];
     this.changeValue((array: any[]) => {
       arr = array ? [value, ...array] : [value];
-      return array;
+      return arr;
     });
     return arr.length;
   };

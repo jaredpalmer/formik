@@ -29,6 +29,12 @@
   dependencies:
     "@types/lodash" "*"
 
+"@types/lodash.topath@4.5.3":
+  version "4.5.3"
+  resolved "https://registry.yarnpkg.com/@types/lodash.topath/-/lodash.topath-4.5.3.tgz#87de9823f4b8702a77ac927954c0dd4cafa496b5"
+  dependencies:
+    "@types/lodash" "*"
+
 "@types/lodash@*":
   version "4.14.88"
   resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.88.tgz#97eaf2dc668f33ed8e511a5b627035f4ea20b0f5"

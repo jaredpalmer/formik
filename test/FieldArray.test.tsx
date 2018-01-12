@@ -22,7 +22,23 @@ describe('<FieldArray />', () => {
     ReactDOM.unmountComponentAtNode(node);
   });
 
-  it('it passes down array helpers as props', () => {
+  it('it renders component with array helpers as props', () => {
+    const TestComponent = (arrayProps: any) => {
+      expect(isFunction(arrayProps.push)).toBeTruthy();
+      return null;
+    };
+
+    ReactDOM.render(
+      <TestForm
+        component={() => (
+          <FieldArray name="friends" component={TestComponent} />
+        )}
+      />,
+      node
+    );
+  });
+
+  it('it renders passes down array helpers as props', () => {
     ReactDOM.render(
       <TestForm
         render={() => (

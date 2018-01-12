@@ -22,7 +22,7 @@ describe('<FieldArray />', () => {
     ReactDOM.unmountComponentAtNode(node);
   });
 
-  it('it renders component with array helpers as props', () => {
+  it('renders component with array helpers as props', () => {
     const TestComponent = (arrayProps: any) => {
       expect(isFunction(arrayProps.push)).toBeTruthy();
       return null;
@@ -38,7 +38,7 @@ describe('<FieldArray />', () => {
     );
   });
 
-  it('it renders passes down array helpers as props', () => {
+  it('renders with render callback with array helpers as props', () => {
     ReactDOM.render(
       <TestForm
         render={() => (

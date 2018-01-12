@@ -96,9 +96,14 @@ export class FieldArray extends React.Component<
       unshift: this.unshift,
       remove: this.remove,
     };
-    const { render } = this.props;
-    return render
-      ? (render as any)({ ...arrayHelpers, form: this.context.formik })
-      : null;
+
+    const { component, render } = this.props;
+    const props = { ...arrayHelpers, form: this.context.formik };
+
+    if (component) {
+      return React.createElement(component as any, props);
+    }
+
+    return render ? (render as any)(props) : null;
   }
 }

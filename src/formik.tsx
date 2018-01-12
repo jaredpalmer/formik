@@ -377,7 +377,7 @@ export class Formik<
     if (isReactNative) {
       if (process.env.NODE_ENV !== 'production') {
         console.error(
-          `Warning: Formik's handleChange does not work with React Native. Use setFieldValue and within a callback instead. For more info see https://github.com/jaredpalmer/formikhttps://github.com/jaredpalmer/formik#react-native`
+          `Warning: Formik's handleChange does not work with React Native. Use setFieldValue and within a callback instead. For more info see https://github.com/jaredpalmer/formik#react-native`
         );
       }
       return;

@@ -111,6 +111,15 @@
         "bug",
         "doc"
       ]
+    },
+    {
+      "login": "alexboots",
+      "name": "Alex Hays",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/896214?v=4",
+      "profile": "http://www.alexhays.com",
+      "contributions": [
+        "code"
+      ]
     }
   ]
 }

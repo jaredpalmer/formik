@@ -21,6 +21,7 @@ describe('A <Field />', () => {
     const node = document.createElement('div');
     const placeholder = 'First name';
     const TEXT = 'Mrs. Kato';
+    const refMethod = () => {};
 
     afterEach(() => {
       ReactDOM.unmountComponentAtNode(node);
@@ -79,6 +80,25 @@ describe('A <Field />', () => {
       expect(actual.field.onChange).toBe(handleChange);
       expect(actual.field.onBlur).toBe(handleBlur);
       expect(actual.form).toEqual(injected);
+    });
+
+    it('can receive { inputref } props and set as ref', () => {
+      let actual;
+      let injected;
+      const Component = props => (actual = props) && null;
+
+      ReactDOM.render(
+        <TestForm
+          render={formikProps =>
+            (injected = formikProps) && (
+              <Field name="name" inputref={refMethod} component={Component} />
+            )
+          }
+        />,
+        node
+      );
+      const { inputref } = injected;
+      expect(actual.field.ref).toEqual(refMethod);
     });
   });
 

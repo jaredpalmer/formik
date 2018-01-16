@@ -70,6 +70,9 @@ export interface FieldConfig {
 
   /** Field value */
   value?: any;
+
+  /** Allow ref to be placed on input */
+  inputref?: ((input: HTMLInputElement) => void);
 }
 
 export type FieldAttributes = GenericFieldHTMLAttributes & FieldConfig;
@@ -92,6 +95,7 @@ export class Field<Props extends FieldAttributes = any> extends React.Component<
     component: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
     render: PropTypes.func,
     children: PropTypes.oneOfType([PropTypes.func, PropTypes.node]),
+    inputref: PropTypes.func,
   };
 
   componentWillMount() {
@@ -126,8 +130,11 @@ export class Field<Props extends FieldAttributes = any> extends React.Component<
       name,
       onChange: formik.handleChange,
       onBlur: formik.handleBlur,
+      ref: props.inputref,
     };
     const bag = { field, form: formik };
+
+    delete props.inputref;
 
     if (render) {
       return (render as any)(bag);

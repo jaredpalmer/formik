@@ -32,7 +32,7 @@ describe('helpers', () => {
 
     it('updates nested array value', () => {
       const obj = { x: 'y', nested: ['a'] };
-      const newObj = setDeep('nested.0', 'b', obj);
+      const newObj = setDeep('nested[0]', 'b', obj);
       expect(obj).toEqual({ x: 'y', nested: ['a'] });
       expect(newObj).toEqual({ x: 'y', nested: ['b'] });
     });

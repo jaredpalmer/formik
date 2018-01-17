@@ -1283,7 +1283,7 @@ slightly relaxed and allow you to return a `Function` (e.g. `i18n('invalid')`).
 
 ### `<FieldArray/>`
 
-`<FieldArray />` is a component that helps with common array/list manipulations. You pass it a `name` property with the path or dot-path to the key within `values` that holds the relevant array. `<FieldArray />` will then give you access to array helper methods via render props. For convenience, calling these methods will trigger validation and also manage `touched` for you.
+`<FieldArray />` is a component that helps with common array/list manipulations. You pass it a `name` property with the path to the key within `values` that holds the relevant array. `<FieldArray />` will then give you access to array helper methods via render props. For convenience, calling these methods will trigger validation and also manage `touched` for you.
 
 ```jsx
 import React from 'react';
@@ -1348,7 +1348,7 @@ export const FriendList = () => (
 
 ##### `name: string`
 
-The name or dot-path to the relevant key in [`values`].
+The name or path to the relevant key in [`values`].
 
 #### FieldArray Helpers
 
@@ -1387,7 +1387,7 @@ export const FriendList = () => (
           render={({ move, swap, push, insert, unshift, pop }) => (
             <Form>
               {/*... use these however you want */}
-            </Form>  
+            </Form>
           )}
         />
     />
@@ -1422,7 +1422,7 @@ export const FriendList = () => (
 // (values, touched, setXXX, etc) are provided through a `form`
 // prop
 export const MyDynamicForm = ({
-  move, swap, push, insert, unshift, pop, form  
+  move, swap, push, insert, unshift, pop, form
 }) => (
  <Form>
   {/**  whatever you need to do */}

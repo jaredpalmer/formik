@@ -133,6 +133,11 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
   initialValues: Values;
 
   /**
+   * Reset handler
+   */
+  onReset?: (values: Values, formikActions: FormikActions<Values>) => void;
+
+  /**
    * Submission handler
    */
   onSubmit: (values: Values, formikActions: FormikActions<Values>) => void;
@@ -193,6 +198,7 @@ export class Formik<
     validateOnBlur: PropTypes.bool,
     isInitialValid: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
     initialValues: PropTypes.object,
+    onReset: PropTypes.func,
     onSubmit: PropTypes.func.isRequired,
     validationSchema: PropTypes.oneOfType([PropTypes.func, PropTypes.object]),
     validate: PropTypes.func,
@@ -423,6 +429,22 @@ export class Formik<
     );
   };
 
+  getFormikActions = (): FormikActions<Values> => {
+    return {
+      resetForm: this.resetForm,
+      setError: this.setError,
+      setErrors: this.setErrors,
+      setFieldError: this.setFieldError,
+      setFieldTouched: this.setFieldTouched,
+      setFieldValue: this.setFieldValue,
+      setStatus: this.setStatus,
+      setSubmitting: this.setSubmitting,
+      setTouched: this.setTouched,
+      setValues: this.setValues,
+      submitForm: this.submitForm,
+    };
+  };
+
   handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     this.submitForm();
@@ -466,19 +488,7 @@ export class Formik<
   };
 
   executeSubmit = () => {
-    this.props.onSubmit(this.state.values, {
-      resetForm: this.resetForm,
-      setError: this.setError,
-      setErrors: this.setErrors,
-      setFieldError: this.setFieldError,
-      setFieldTouched: this.setFieldTouched,
-      setFieldValue: this.setFieldValue,
-      setStatus: this.setStatus,
-      setSubmitting: this.setSubmitting,
-      setTouched: this.setTouched,
-      setValues: this.setValues,
-      submitForm: this.submitForm,
-    });
+    this.props.onSubmit(this.state.values, this.getFormikActions());
   };
 
   handleBlur = (e: any) => {
@@ -550,6 +560,9 @@ export class Formik<
   };
 
   handleReset = () => {
+    if (this.props.onReset) {
+      this.props.onReset(this.state.values, this.getFormikActions());
+    }
     this.resetForm();
   };
 

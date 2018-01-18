@@ -10,6 +10,7 @@ interface Values {
 
 const Form: React.SFC<FormikProps<Values>> = ({
   values,
+  handleReset,
   handleSubmit,
   handleChange,
   handleBlur,
@@ -868,6 +869,61 @@ describe('<Formik>', () => {
         onSubmit: jest.fn(),
       });
       expect(form.resetForm).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('handleReset', () => {
+    it('should call onReset with values and actions when form is reset', async () => {
+      const onReset = jest.fn();
+
+      const tree = shallow(
+        <Formik
+          initialValues={{ foo: 'bar', bar: 'foo' }}
+          onSubmit={jest.fn()}
+          onReset={onReset}
+          component={Form}
+        />
+      );
+      await tree
+        .find(Form)
+        .props()
+        .handleReset();
+
+      expect(onReset).toHaveBeenCalledWith(
+        { foo: 'bar', bar: 'foo' },
+        expect.objectContaining({
+          resetForm: expect.any(Function),
+          setError: expect.any(Function),
+          setErrors: expect.any(Function),
+          setFieldError: expect.any(Function),
+          setFieldTouched: expect.any(Function),
+          setFieldValue: expect.any(Function),
+          setStatus: expect.any(Function),
+          setSubmitting: expect.any(Function),
+          setTouched: expect.any(Function),
+          setValues: expect.any(Function),
+          submitForm: expect.any(Function),
+        })
+      );
+    });
+
+    it('should not error resetting form if onReset is not a prop', async () => {
+      const onSubmit = jest.fn();
+      const onReset = jest.fn();
+
+      const tree = shallow(
+        <Formik
+          initialValues={{ foo: 'bar' }}
+          onSubmit={onSubmit}
+          component={Form}
+        />
+      );
+      await tree
+        .find(Form)
+        .props()
+        .handleReset();
+
+      expect(true);
     });
   });
 });

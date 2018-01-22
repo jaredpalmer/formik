@@ -38,11 +38,10 @@ export class FieldArray extends React.Component<
   };
 
   changeValue = (fn: Function) => {
-    const { setFieldValue, setFieldTouched, values } = this.context.formik;
+    const { setFieldValue, values } = this.context.formik;
     const { name } = this.props;
     const val = fn(dlv(values, name));
     setFieldValue(name, val);
-    setFieldTouched(name, true);
   };
 
   push = (value: any) => this.changeValue((array: any[]) => [...array, value]);

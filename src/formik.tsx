@@ -555,8 +555,7 @@ export class Formik<
 
   render() {
     const { component, render, children, isInitialValid } = this.props;
-    const dirty =
-      values<boolean>(this.state.touched).filter(Boolean).length > 0;
+    const dirty = !isEqual(this.initialValues, this.state.values);
     const props = {
       ...this.state,
       dirty,

@@ -438,6 +438,23 @@ export class Formik<
       }
     );
   };
+  
+  removeFieldError = (field: string) => {
+     // Completely remove a particular errors key
+     let res = Object.assign({}, this.state.errors);
+     delete res[field]
+     this.setState(
+      prevState => ({
+        ...prevState,
+        errors: res,
+      }),
+      () => {
+        if (this.props.validateOnChange) {
+          this.runValidations(this.state.errors);
+        }
+      }
+    );
+  }
 
   handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

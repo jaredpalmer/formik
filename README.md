@@ -1026,7 +1026,7 @@ const ContactForm = ({
     {errors.name && <div>{errors.name}</div>}
     <button type="submit">Submit</button>
   </form>
-};
+);
 ```
 
 **Warning:** `<Formik component>` takes precendence over `<Formik render>` so
@@ -1304,24 +1304,24 @@ export const FriendList = () => (
           alert(JSON.stringify(values, null, 2));
         }, 500)
       }
-      render={formikProps => (
+      render={({values}) => (
         <FieldArray
           name="friends"
           render={arrayHelpers => (
           <Form>
               {values.friends && values.friends.length > 0 ? (
                 values.friends.map((friend, index) => (
-                  <div>
-                    <Field name={`friend.${index}`} />
+                  <div key={index}>
+                    <Field name={`friends.${index}`} />
                     <button
                       type="button"
-                      onClick={() => arrayHelpers.remove(index) // remove a friend from the list}
+                      onClick={() => arrayHelpers.remove(index) /* remove a friend from the list */}
                     >
                       -
                     </button>
                     <button
                       type="button"
-                      onClick={() => arrayHelpers.insert(index, '') // insert an empty string at a position}
+                      onClick={() => arrayHelpers.insert(index, '') /* insert an empty string at a position */}
                     >
                       +
                     </button>

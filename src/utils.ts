@@ -1,5 +1,6 @@
 import * as React from 'react';
 import toPath from 'lodash.topath';
+import cloneDeep from 'lodash.clonedeep';
 
 /** @private is the given object/value a promise? */
 export function isPromise(value: any): boolean {
@@ -61,9 +62,7 @@ export function setDeep(path: string, value: any, obj: any): any {
     if (resVal[currentPath]) {
       resVal = resVal[currentPath];
     } else if (currentObj) {
-      resVal = resVal[currentPath] = Array.isArray(currentObj)
-        ? [...currentObj]
-        : { ...currentObj };
+      resVal = resVal[currentPath] = cloneDeep(currentObj);
     } else {
       const nextPath: string = pathArray[i + 1];
       resVal = resVal[currentPath] =

@@ -34,6 +34,7 @@
     "gen-docs": "all-contributors generate && doctoc README.md"
   },
   "dependencies": {
+    "lodash.clonedeep": "^4.5.0",
     "lodash.isequal": "4.5.0",
     "lodash.topath": "4.5.2",
     "prop-types": "^15.5.10",
@@ -47,6 +48,7 @@
     "@types/enzyme": "3.1.5",
     "@types/enzyme-adapter-react-16": "1.0.1",
     "@types/jest": "20.0.6",
+    "@types/lodash.clonedeep": "^4.5.3",
     "@types/lodash.isequal": "4.5.2",
     "@types/lodash.topath": "4.5.3",
     "@types/node": "8.0.19",

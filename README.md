@@ -1312,7 +1312,7 @@ export const FriendList = () => (
               {values.friends && values.friends.length > 0 ? (
                 values.friends.map((friend, index) => (
                   <div>
-                    <Field name={`friend.${index}`} />
+                    <Field name={`friends.${index}`} />
                     <button
                       type="button"
                       onClick={() => arrayHelpers.remove(index) // remove a friend from the list}

@@ -115,7 +115,7 @@ export function withFormik<
      */
     class C extends React.Component<Props, {}> {
 
-      component: Formik;
+      component?: Formik;
 
       validate = (values: Values): void | object | Promise<any> => {
         return config.validate!(values, this.props);

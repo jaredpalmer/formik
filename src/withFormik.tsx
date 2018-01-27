@@ -156,7 +156,7 @@ export function withFormik<
         );
       }
 
-      getComponent(): Formik? {
+      getComponent(): Formik | undefined {
         return this.component || null;
       }
     }

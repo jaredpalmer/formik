@@ -114,6 +114,9 @@ export function withFormik<
      * the respective withFormik config methods.
      */
     class C extends React.Component<Props, {}> {
+
+      component: any;
+
       validate = (values: Values): void | object | Promise<any> => {
         return config.validate!(values, this.props);
       };
@@ -141,6 +144,7 @@ export function withFormik<
       render() {
         return (
           <Formik
+            ref={(e) => {this.component = e;}}
             {...this.props}
             {...config}
             validate={config.validate && this.validate}
@@ -150,6 +154,10 @@ export function withFormik<
             render={this.renderFormComponent}
           />
         );
+      }
+
+      getComponent(): Formik | undefined {
+        return this.component || null;
       }
     }
 

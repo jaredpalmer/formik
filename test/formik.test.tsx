@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as renderer from 'react-test-renderer';
 
-import { Formik, FormikConfig, FormikProps } from '../src/formik';
+import { Formik, FormikConfig, FormikProps, FormikErrors } from '../src/formik';
 import { mount, shallow } from 'enzyme';
 
 const Yup = require('yup');
@@ -31,6 +31,7 @@ const Form: React.SFC<FormikProps<Values>> = ({
   status,
   errors,
   isSubmitting,
+  resetForm,
 }) => {
   return (
     <form onSubmit={handleSubmit}>
@@ -53,13 +54,31 @@ const Form: React.SFC<FormikProps<Values>> = ({
         !!status.myStatusMessage && (
           <div id="statusMessage">{status.myStatusMessage}</div>
         )}
+      <button id="clearButton" onClick={() => resetForm({ name: null })}>
+        Clear
+      </button>
       <button type="submit">Submit</button>
     </form>
   );
 };
 
+const validateName = (values: Values): FormikErrors<Values> => {
+  let errors: FormikErrors<Values> = {};
+
+  if (!values.name || values.name.length < 1) {
+    errors.name = 'must be present';
+  }
+
+  return errors;
+};
+
 const BasicForm = (
-  <Formik initialValues={{ name: 'jared' }} onSubmit={noop} component={Form} />
+  <Formik
+    initialValues={{ name: 'jared' }}
+    onSubmit={noop}
+    component={Form}
+    validate={validateName}
+  />
 );
 
 describe('Formik Next', () => {
@@ -741,6 +760,34 @@ describe('Formik Next', () => {
           .dive()
           .find('#statusMessage')
       ).toHaveLength(1);
+    });
+
+    it('validateForm forces a validation', async () => {
+      const tree = shallow(BasicForm);
+      tree
+        .find(Form)
+        .dive()
+        .find('#clearButton')
+        .simulate('click');
+
+      expect(tree.find(Form).props()).toEqual(
+        expect.objectContaining({
+          errors: {},
+        })
+      );
+
+      tree
+        .find(Form)
+        .props()
+        .validateForm();
+
+      expect(tree.find(Form).props()).toEqual(
+        expect.objectContaining({
+          errors: {
+            name: 'must be present',
+          },
+        })
+      );
     });
   });
 

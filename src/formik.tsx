@@ -93,6 +93,8 @@ export interface FormikActions<Values> {
   resetForm: (nextValues?: any) => void;
   /** Submit the form imperatively */
   submitForm: () => void;
+  /** Validate the form's current values */
+  validateForm: () => void;
 }
 
 /**
@@ -240,6 +242,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
         setSubmitting: this.setSubmitting,
         resetForm: this.resetForm,
         submitForm: this.submitForm,
+        validateForm: this.validateForm,
         initialValues: this.initialValues,
       },
     };
@@ -446,6 +449,10 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     this.submitForm();
   };
 
+  validateForm = () => {
+    this.runValidations(this.state.values);
+  };
+
   submitForm = () => {
     this.setState({
       touched: touchAllFields<FormikTouched<Values>>(this.state.values),
@@ -496,6 +503,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       setTouched: this.setTouched,
       setValues: this.setValues,
       submitForm: this.submitForm,
+      validateForm: this.validateForm,
     });
   };
 
@@ -599,6 +607,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       setTouched: this.setTouched,
       setValues: this.setValues,
       submitForm: this.submitForm,
+      validateForm: this.validateForm,
     };
     return component
       ? React.createElement(component as any, props)
@@ -624,11 +633,15 @@ function warnAboutMissingIdentifier({
   handlerName: string;
 }) {
   console.error(
-    `Warning: \`${handlerName}\` has triggered and you forgot to pass an \`id\` or \`name\` attribute to your input:
+    `Warning: \`${
+      handlerName
+    }\` has triggered and you forgot to pass an \`id\` or \`name\` attribute to your input:
 
     ${htmlContent}
 
-    Formik cannot determine which value to update. For more info see https://github.com/jaredpalmer/formik#${documentationAnchorLink}
+    Formik cannot determine which value to update. For more info see https://github.com/jaredpalmer/formik#${
+      documentationAnchorLink
+    }
   `
   );
 }

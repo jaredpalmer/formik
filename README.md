@@ -342,6 +342,7 @@ npm install yup --save
       - [`setValues: (fields: { [field: string]: any }) => void`](#setvalues-fields--field-string-any---void)
       - [`status?: any`](#status-any)
       - [`touched: { [field: string]: boolean }`](#touched--field-string-boolean-)
+      - [`validateForm: () => void`](#validateform---void)
       - [`values: { [field: string]: any }`](#values--field-string-any-)
     - [`component`](#component)
     - [`render: (props: FormikProps<Values>) => ReactNode`](#render-props-formikpropsvalues--reactnode)
@@ -991,6 +992,11 @@ and passing through API responses to your inner component.
 ##### `touched: { [field: string]: boolean }`
 
 Touched fields. Each key corresponds to a field that has been touched/visited.
+
+##### `validateForm: () => void`
+
+A convenience function for re-running the form's `validation` function or
+`validationSchema` on the form's current values.
 
 ##### `values: { [field: string]: any }`
 

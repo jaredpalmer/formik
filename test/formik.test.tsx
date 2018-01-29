@@ -628,7 +628,7 @@ describe('<Formik>', () => {
           .update()
           .find(Form)
           .props().dirty
-      ).toBe(true);
+      ).toBe(false);
       tree
         .find(Form)
         .props()
@@ -734,7 +734,7 @@ describe('<Formik>', () => {
     it('should compute dirty as soon as any input is touched', () => {
       const tree = shallow(BasicForm);
       expect(tree.find(Form).props().dirty).toBe(false);
-      tree.setState({ touched: { name: true } });
+      tree.setState({ values: { name: 'ian' } });
       expect(tree.find(Form).props().dirty).toBe(true);
     });
 
@@ -792,14 +792,14 @@ describe('<Formik>', () => {
 
     it('should compute isValid if the form is dirty and there are errors', () => {
       const tree = shallow(BasicForm);
-      tree.setState({ touched: { name: true }, errors: { name: 'Required!' } });
+      tree.setState({ values: { name: 'ian' }, errors: { name: 'Required!' } });
       expect(tree.find(Form).props().dirty).toBe(true);
       expect(tree.find(Form).props().isValid).toBe(false);
     });
 
     it('should compute isValid if the form is dirty and there are not errors', () => {
       const tree = shallow(BasicForm);
-      tree.setState({ touched: { name: true } });
+      tree.setState({ values: { name: 'ian' } });
       expect(tree.find(Form).props().dirty).toBe(true);
       expect(tree.find(Form).props().isValid).toBe(true);
     });

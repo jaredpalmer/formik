@@ -23,6 +23,14 @@ describe('helpers', () => {
       expect(newObj).toEqual({ x: 'y', nested: { value: 'b' } });
     });
 
+    it('updates deep nested value', () => {
+      const obj = { x: 'y', twofoldly: { nested: { value: 'a' } } };
+      const newObj = setDeep('twofoldly.nested.value', 'b', obj);
+      expect(obj.twofoldly.nested === newObj.twofoldly.nested).toEqual(false); // fails, same object still
+      expect(obj).toEqual({ x: 'y', twofoldly: { nested: { value: 'a' } } }); // fails, it's b here, too
+      expect(newObj).toEqual({ x: 'y', twofoldly: { nested: { value: 'b' } } }); // works ofc
+    });
+
     it('sets new array', () => {
       const obj = { x: 'y' };
       const newObj = setDeep('nested.0', 'value', obj);

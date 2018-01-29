@@ -2,7 +2,6 @@ import * as React from 'react';
 import { dlv } from './utils';
 import { SharedRenderProps } from './types';
 import * as PropTypes from 'prop-types';
-import { move, swap, insert } from './Mutators';
 import { FormikProps } from './formik';
 
 export type FieldArrayConfig = {
@@ -27,12 +26,32 @@ export interface ArrayHelpers {
   pop<T>(): T | undefined;
 }
 
-export interface FieldArrayState {}
+/**
+ * Some array helpers!
+ */
+export const move = (array: any[], from: number, to: number) => {
+  const copy = [...(array || [])];
+  const value = copy[from];
+  copy.splice(from, 1);
+  copy.splice(to, 0, value);
+  return copy;
+};
 
-export class FieldArray extends React.Component<
-  FieldArrayConfig,
-  FieldArrayState
-> {
+export const swap = (array: any[], indexA: number, indexB: number) => {
+  const copy = [...(array || [])];
+  const a = copy[indexA];
+  copy[indexA] = copy[indexB];
+  copy[indexB] = a;
+  return copy;
+};
+
+export const insert = (array: any[], index: number, value: any) => {
+  const copy = [...(array || [])];
+  copy.splice(index, 0, value);
+  return copy;
+};
+
+export class FieldArray extends React.Component<FieldArrayConfig, {}> {
   static contextTypes = {
     formik: PropTypes.object,
   };

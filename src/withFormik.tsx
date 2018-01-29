@@ -66,7 +66,7 @@ export interface WithFormikConfig<
    * Validation function. Must return an error object or promise that
    * throws an error object where that object keys map to corresponding value.
    */
-  validate?: (values: any, props: Props) => void | object | Promise<any>;
+  validate?: (values: Values, props: Props) => void | object | Promise<any>;
 }
 
 export type CompositeComponent<P> =

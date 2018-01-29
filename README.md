@@ -6,6 +6,9 @@
 [![license](https://img.shields.io/npm/l/formik.svg)](./LICENSE)
 [![Discord](https://img.shields.io/discord/102860784329052160.svg?style=flat-square)](https://discord.gg/cU6MCve)
 
+
+> For `0.11.x-beta` docs, [go here](https://github.com/jaredpalmer/formik/blob/next/README.md) 
+
 ## Overview
 
 Let's face it, forms are really verbose in
@@ -23,8 +26,7 @@ organized--making testing, refactoring, and reasoning about your forms a breeze.
 
 ## Developer Experience
 
-I ([@jaredpalmer](https://twitter.com/eonwhite)) wrote Formik while building a
-large internal administrative dashboard with
+I ([@jaredpalmer](https://twitter.com/jaredpalmer)) wrote Formik while building a large internal administrative dashboard with
 [@eonwhite](https://twitter.com/eonwhite). With around ~30 unique forms, it
 quickly became obvious that we could benefit by standardizing not just our input
 components but also the way in which data flowed through our forms.
@@ -38,7 +40,7 @@ By now, you might be thinking, "Why didn't you just use
    [**form state is inherently ephemeral and local**, so tracking it in Redux (or any kind of Flux library) is unnecessary](https://github.com/reactjs/redux/issues/1287#issuecomment-175351978)
 2. Redux-Form calls your entire top-level Redux reducer multiple times ON EVERY
    SINGLE KEYSTROKE. This is fine for small apps, but as your Redux app grows,
-   input latency will continue increase if you use Redux-Form.
+   input latency will continue to increase if you use Redux-Form.
 3. Redux-Form is 22.5 kB minified gzipped (Formik is 9.2 kB)
 
 **My goal with Formik was to create a scalable, performant, form helper with a
@@ -83,6 +85,7 @@ You can also try before you buy with this
 
 ## Community Articles / Tutorials
 
+* [Better React Forms with Formik](https://mead.io/formik/?utm_source=github&utm_campaign=formikrepo)
 * [The Joy of Forms with React and Formik](https://keyholesoftware.com/2017/10/23/the-joy-of-forms-with-react-and-formik/)
 * [Painless React Forms with Formik](https://hackernoon.com/painless-react-forms-with-formik-e61b70473c60)
 
@@ -147,7 +150,7 @@ const MyForm = withFormik({
   mapPropsToValues: props => ({ email: '', password: '' }),
   // Add a custom validation function (this can be async too!)
   validate: (values, props) => {
-    let errors = {};
+    const errors = {};
     if (!values.email) {
       errors.email = 'Required';
     } else if (
@@ -646,7 +649,7 @@ export const MyReactNativeForm = props => (
 
 #### Avoiding new functions in render
 
-If for a any reason you wish to avoid creating new functions on each render, I
+If for any reason you wish to avoid creating new functions on each render, I
 suggest treating React Native's `<TextInput/>` as if it were another 3rd party
 custom input element:
 
@@ -843,7 +846,7 @@ export default Basic;
 
 ### `<Formik />`
 
-`<Formik>` is a component that helps you with building forms. In uses a render
+`<Formik>` is a component that helps you with building forms. It uses a render
 props pattern made popular by libraries like React Motion and React Router.
 
 ```js
@@ -944,7 +947,7 @@ Returns `true` if the there are no [`errors`], or the result of
 
 Imperatively reset the form. This will clear [`errors`] and [`touched`], set
 [`isSubmitting`] to `false` and rerun `mapPropsToValues` with the current
-`WrappedComponent`'s `props` or what's passed as an argument. That latter is
+`WrappedComponent`'s `props` or what's passed as an argument. The latter is
 useful for calling `resetForm` within `componentWillReceiveProps`.
 
 ##### `setErrors: (fields: { [field: string]: string }) => void`
@@ -987,7 +990,7 @@ Set [`values`] imperatively.
 ##### `status?: any`
 
 A top-level status object that you can use to represent form state that can't
-otherwised be expressed/stored with other methods. This is useful for capturing
+otherwise be expressed/stored with other methods. This is useful for capturing
 and passing through API responses to your inner component.
 
 `status` should only be modifed by calling
@@ -1144,7 +1147,7 @@ const validate = (values, props) => {
 };
 ```
 
-* Asynchronous and return a Promise that's error is an [`errors`] object
+* Asynchronous and return a Promise that's error in an [`errors`] object
 
 ```js
 // Async Validation
@@ -1215,7 +1218,7 @@ const Example = () => (
           </Field>
           <Field name="firstName" component={CustomInputComponent}  />
           <Field name="lastName" render={({ field, /* _form */ }) =>
-             <input {...field} placholder="firstName" />
+             <input {...field} placeholder="firstName" />
           } />
           <button type="submit">Submit</button>
         </form>}
@@ -1223,7 +1226,7 @@ const Example = () => (
   </div>
 );
 
-const CustomInputComponent: React.SFC<FormikProps<Values> & CustomInputProps> => ({
+const CustomInputComponent: React.SFC<FieldProps<Values> & CustomInputProps> = ({
   field, // { name, value, onChange, onBlur }
   form: { touched, errors }, // also values, setXXXX, handleXXXX, dirty, isValid, status, etc.
   ...props

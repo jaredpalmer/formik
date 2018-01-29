@@ -177,10 +177,10 @@ export type FormikProps<Values> = FormikState<Values> &
   FormikHandlers &
   FormikComputedProps<Values>;
 
-export class Formik<
-  Props extends FormikConfig<Values> = FormikConfig<Values>,
-  Values = FormikValues
-> extends React.Component<Props, FormikState<any>> {
+export class Formik<ExtraProps = {}, Values = object> extends React.Component<
+  FormikConfig<Values> & ExtraProps,
+  FormikState<any>
+> {
   static defaultProps = {
     validateOnChange: true,
     validateOnBlur: true,
@@ -219,7 +219,7 @@ export class Formik<
           ? this.state.errors && Object.keys(this.state.errors).length === 0
           : this.props.isInitialValid !== false &&
             isFunction(this.props.isInitialValid)
-            ? (this.props.isInitialValid as (props: Props) => boolean)(
+            ? (this.props.isInitialValid as (props: this['props']) => boolean)(
                 this.props
               )
             : (this.props.isInitialValid as boolean),
@@ -245,7 +245,7 @@ export class Formik<
     };
   }
 
-  constructor(props: Props) {
+  constructor(props: FormikConfig<Values> & ExtraProps) {
     super(props);
     this.state = {
       values: props.initialValues || ({} as any),
@@ -257,7 +257,9 @@ export class Formik<
     this.initialValues = props.initialValues || ({} as any);
   }
 
-  componentWillReceiveProps(nextProps: Props) {
+  componentWillReceiveProps(
+    nextProps: Readonly<FormikConfig<Values> & ExtraProps>
+  ) {
     // If the initialValues change, reset the form
     if (
       this.props.enableReinitialize &&
@@ -377,7 +379,7 @@ export class Formik<
     if (isReactNative) {
       if (process.env.NODE_ENV !== 'production') {
         console.error(
-          `Warning: Formik's handleChange does not work with React Native. Use setFieldValue and within a callback instead. For more info see https://github.com/jaredpalmer/formikhttps://github.com/jaredpalmer/formik#react-native`
+          `Warning: Formik's handleChange does not work with React Native. Use setFieldValue and within a callback instead. For more info see https://github.com/jaredpalmer/formik#react-native`
         );
       }
       return;
@@ -562,7 +564,7 @@ export class Formik<
       isValid: dirty
         ? this.state.errors && Object.keys(this.state.errors).length === 0
         : isInitialValid !== false && isFunction(isInitialValid)
-          ? (isInitialValid as (props: Props) => boolean)(this.props)
+          ? (isInitialValid as (props: this['props']) => boolean)(this.props)
           : (isInitialValid as boolean),
       handleBlur: this.handleBlur,
       handleChange: this.handleChange,
@@ -606,9 +608,9 @@ function warnAboutMissingIdentifier({
 }) {
   console.error(
     `Warning: \`${handlerName}\` has triggered and you forgot to pass an \`id\` or \`name\` attribute to your input:
-  
+
     ${htmlContent}
-  
+
     Formik cannot determine which value to update. For more info see https://github.com/jaredpalmer/formik#${documentationAnchorLink}
   `
   );
@@ -646,14 +648,23 @@ export function validateYupSchema<T>(
   return schema.validate(validateData, { abortEarly: false, context: context });
 }
 
-function setNestedObjectValues(object: any, value: any, response: any = null) {
+function setNestedObjectValues(
+  object: any,
+  value: any,
+  visited: any = null,
+  response: any = null
+) {
+  visited = visited === null ? new WeakMap() : visited;
   response = response === null ? {} : response;
 
   for (let k of Object.keys(object)) {
     const val = object[k];
     if (isObject(val)) {
-      response[k] = {};
-      setNestedObjectValues(val, value, response[k]);
+      if (!visited.get(val)) {
+        visited.set(val, true);
+        response[k] = {};
+        setNestedObjectValues(val, value, visited, response[k]);
+      }
     } else {
       response[k] = value;
     }

@@ -179,10 +179,10 @@ export type FormikProps<Values> = FormikState<Values> &
   FormikHandlers &
   FormikComputedProps<Values>;
 
-export class Formik<ExtraProps = {}, Values = object> extends React.Component<
-  FormikConfig<Values> & ExtraProps,
-  FormikState<any>
-> {
+export class Formik<
+  Props extends FormikConfig<Values> = FormikConfig<Values>,
+  Values = object
+> extends React.Component<Props, FormikState<any>> {
   static defaultProps = {
     validateOnChange: true,
     validateOnBlur: true,
@@ -221,7 +221,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
           ? this.state.errors && Object.keys(this.state.errors).length === 0
           : this.props.isInitialValid !== false &&
             isFunction(this.props.isInitialValid)
-            ? (this.props.isInitialValid as (props: this['props']) => boolean)(
+            ? (this.props.isInitialValid as (props: Props) => boolean)(
                 this.props
               )
             : (this.props.isInitialValid as boolean),
@@ -245,7 +245,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     };
   }
 
-  constructor(props: FormikConfig<Values> & ExtraProps) {
+  constructor(props: Props) {
     super(props);
     this.state = {
       values: props.initialValues || ({} as any),
@@ -257,9 +257,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     this.initialValues = props.initialValues || ({} as any);
   }
 
-  componentWillReceiveProps(
-    nextProps: Readonly<FormikConfig<Values> & ExtraProps>
-  ) {
+  componentWillReceiveProps(nextProps: Props) {
     // If the initialValues change, reset the form
     if (
       this.props.enableReinitialize &&
@@ -581,7 +579,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       isValid: dirty
         ? this.state.errors && Object.keys(this.state.errors).length === 0
         : isInitialValid !== false && isFunction(isInitialValid)
-          ? (isInitialValid as (props: this['props']) => boolean)(this.props)
+          ? (isInitialValid as (props: Props) => boolean)(this.props)
           : (isInitialValid as boolean),
       handleBlur: this.handleBlur,
       handleChange: this.handleChange,
@@ -624,11 +622,15 @@ function warnAboutMissingIdentifier({
   handlerName: string;
 }) {
   console.error(
-    `Warning: \`${handlerName}\` has triggered and you forgot to pass an \`id\` or \`name\` attribute to your input:
+    `Warning: \`${
+      handlerName
+    }\` has triggered and you forgot to pass an \`id\` or \`name\` attribute to your input:
 
     ${htmlContent}
 
-    Formik cannot determine which value to update. For more info see https://github.com/jaredpalmer/formik#${documentationAnchorLink}
+    Formik cannot determine which value to update. For more info see https://github.com/jaredpalmer/formik#${
+      documentationAnchorLink
+    }
   `
   );
 }

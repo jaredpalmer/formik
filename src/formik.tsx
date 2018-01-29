@@ -624,11 +624,15 @@ function warnAboutMissingIdentifier({
   handlerName: string;
 }) {
   console.error(
-    `Warning: \`${handlerName}\` has triggered and you forgot to pass an \`id\` or \`name\` attribute to your input:
+    `Warning: \`${
+      handlerName
+    }\` has triggered and you forgot to pass an \`id\` or \`name\` attribute to your input:
 
     ${htmlContent}
 
-    Formik cannot determine which value to update. For more info see https://github.com/jaredpalmer/formik#${documentationAnchorLink}
+    Formik cannot determine which value to update. For more info see https://github.com/jaredpalmer/formik#${
+      documentationAnchorLink
+    }
   `
   );
 }
@@ -641,6 +645,10 @@ export function yupToFormErrors<Values>(yupError: any): FormikErrors<Values> {
   for (let err of yupError.inner) {
     if (!errors[err.path]) {
       errors = setDeep(err.path, err.message, errors);
+    } else if (Array.isArray(errors[err.path])) {
+      errors[err.path].push(err.message);
+    } else {
+      errors[err.path] = [errors[err.path], err.message];
     }
   }
   return errors;

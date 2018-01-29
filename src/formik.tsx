@@ -561,9 +561,17 @@ export class Formik<
 
   handleReset = () => {
     if (this.props.onReset) {
-      this.props.onReset(this.state.values, this.getFormikActions());
+      const maybePromisedOnReset = (this.props.onReset as any)(
+        this.state.values,
+        this.getFormikActions()
+      );
+
+      if (isPromise(maybePromisedOnReset)) {
+        (maybePromisedOnReset as Promise<any>).then(this.resetForm);
+      } else {
+        this.resetForm();
+      }
     }
-    this.resetForm();
   };
 
   render() {
@@ -619,9 +627,9 @@ function warnAboutMissingIdentifier({
 }) {
   console.error(
     `Warning: \`${handlerName}\` has triggered and you forgot to pass an \`id\` or \`name\` attribute to your input:
-  
+
     ${htmlContent}
-  
+
     Formik cannot determine which value to update. For more info see https://github.com/jaredpalmer/formik#${documentationAnchorLink}
   `
   );

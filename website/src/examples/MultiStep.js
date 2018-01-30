@@ -68,21 +68,23 @@ class Wizard extends React.Component {
         render={({ values, handleSubmit, isSubmitting, handleReset }) => (
           <form onSubmit={handleSubmit}>
             {activePage}
-            <div className="buttons">
-              {page > 0 && (
-                <button type="button" onClick={this.previous}>
-                  « Previous
-                </button>
-              )}
 
-              {!isLastPage && <button type="submit">Next »</button>}
-              {isLastPage && (
-                <button type="submit" disabled={isSubmitting}>
-                  Submit
-                </button>
-              )}
-            </div>
+            {page > 0 && (
+              <button
+                type="button"
+                className="secondary"
+                onClick={this.previous}
+              >
+                « Previous
+              </button>
+            )}
 
+            {!isLastPage && <button type="submit">Next »</button>}
+            {isLastPage && (
+              <button type="submit" disabled={isSubmitting}>
+                Submit
+              </button>
+            )}
             <pre>{JSON.stringify(values, null, 2)}</pre>
           </form>
         )}
@@ -91,7 +93,7 @@ class Wizard extends React.Component {
   }
 }
 
-const App = () => (
+export default () => (
   <div className="App">
     <h1>Multistep / Form Wizard </h1>
     <Wizard

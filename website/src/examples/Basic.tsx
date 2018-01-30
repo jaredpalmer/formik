@@ -1,30 +1,37 @@
-import React from 'react';
-import { Formik, Field, Form } from 'formik';
+import * as React from 'react';
+import { Formik, Field, Form, FormikActions } from 'formik';
 
-const Basic = () => (
+interface Values {
+  firstName: string;
+  lastName: string;
+  email: string;
+}
+
+const Basic: React.SFC<{}> = () => (
   <div>
-    <h1>Sign Up</h1>
+    <h1>Signup</h1>
     <Formik
       initialValues={{
         firstName: '',
         lastName: '',
         email: '',
       }}
-      onSubmit={values => {
+      onSubmit={(values: Values, { setSubmitting }: FormikActions<Values>) => {
         setTimeout(() => {
           alert(JSON.stringify(values, null, 2));
+          setSubmitting(false);
         }, 500);
       }}
       render={() => (
         <Form>
           <label htmlFor="firstName">First Name</label>
-          <Field name="firstName" placeholder="Jane" />
+          <Field id="firstName" placeholder="John" />
 
           <label htmlFor="lastName">Last Name</label>
-          <Field name="lastName" placeholder="Doe" />
+          <Field id="lastName" placeholder="Doe" />
 
           <label htmlFor="email">Email</label>
-          <Field name="email" placeholder="jane@acme.com" type="email" />
+          <Field id="email" placeholder="john@acme.com" type="email" />
 
           <button type="submit">Submit</button>
         </Form>

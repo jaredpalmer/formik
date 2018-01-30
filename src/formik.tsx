@@ -406,7 +406,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     }));
 
     if (this.props.validateOnChange) {
-      this.runValidations(setDeep(field, value, this.state.values));
+      this.runValidations(setDeep(field, val, this.state.values));
     }
   };
 

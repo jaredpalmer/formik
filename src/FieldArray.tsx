@@ -56,53 +56,113 @@ export class FieldArray extends React.Component<FieldArrayConfig, {}> {
     formik: PropTypes.object,
   };
 
-  changeValue = (fn: Function) => {
-    const { setFieldValue, values } = this.context.formik;
+  constructor(props: FieldArrayConfig) {
+    super(props);
+    // We need TypeScript generics on these, so we'll bind them in the constructor
+    this.remove = this.remove.bind(this);
+    this.pop = this.pop.bind(this);
+  }
+
+  updateArrayField = (
+    fn: Function,
+    alterTouched: boolean,
+    alterErrors: boolean
+  ) => {
+    const {
+      setFieldTouched,
+      setFieldValue,
+      setFieldError,
+      values,
+      touched,
+      errors,
+    } = this.context.formik;
     const { name } = this.props;
-    const val = fn(dlv(values, name));
-    setFieldValue(name, val);
+    setFieldValue(name, fn(dlv(values, name)));
+
+    if (alterErrors) {
+      setFieldError(name, fn(dlv(errors, name)));
+    }
+
+    if (alterTouched) {
+      setFieldTouched(name, fn(dlv(touched, name)));
+    }
   };
 
-  push = (value: any) => this.changeValue((array: any[]) => [...array, value]);
+  push = (value: any) =>
+    this.updateArrayField((array: any[]) => [...array, value], false, false);
 
   swap = (indexA: number, indexB: number) =>
-    this.changeValue((array: any[]) => swap(array, indexA, indexB));
+    this.updateArrayField(
+      (array: any[]) => swap(array, indexA, indexB),
+      false,
+      false
+    );
 
   move = (from: number, to: number) =>
-    this.changeValue((array: any[]) => move(array, from, to));
+    this.updateArrayField(
+      (array: any[]) => move(array, from, to),
+      false,
+      false
+    );
 
   insert = (index: number, value: any) =>
-    this.changeValue((array: any[]) => insert(array, index, value));
+    this.updateArrayField(
+      (array: any[]) => insert(array, index, value),
+      false,
+      false
+    );
 
   unshift = (value: any) => {
     let arr = [];
-    this.changeValue((array: any[]) => {
-      arr = array ? [value, ...array] : [value];
-      return arr;
-    });
+    this.updateArrayField(
+      (array: any[]) => {
+        arr = array ? [value, ...array] : [value];
+        return arr;
+      },
+      false,
+      false
+    );
     return arr.length;
   };
 
-  remove = (index: number) => {
-    let result;
-    this.changeValue((array: any[]) => {
-      const copy = [...(array || [])];
-      result = copy[index];
-      copy.splice(index, 1);
-      return copy;
-    });
-    return result;
-  };
+  remove<T>(index: number): T {
+    // We need to make sure we also remove relevant pieces of `touched` and `errors`
+    let result: any;
+    this.updateArrayField(
+      // so this gets call 3 times
+      (array: any[]) => {
+        const copy = [...(array || [])];
+        if (!result) {
+          result = copy[index];
+        }
+        copy.splice(index, 1);
+        return copy;
+      },
+      true,
+      true
+    );
 
-  pop = () => {
-    let result;
-    this.changeValue((array: any[]) => {
-      const tmp = array;
-      result = tmp.pop();
-      return tmp;
-    });
     return result;
-  };
+  }
+
+  pop<T>(): T {
+    // Remove relevant pieces of `touched` and `errors` too!
+    let result: any;
+    this.updateArrayField(
+      // so this gets call 3 times
+      (array: any[]) => {
+        const tmp = array;
+        if (!result) {
+          result = tmp && tmp.pop && tmp.pop();
+        }
+        return tmp;
+      },
+      true,
+      true
+    );
+
+    return result;
+  }
 
   render() {
     const arrayHelpers: ArrayHelpers = {

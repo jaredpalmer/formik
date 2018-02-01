@@ -573,6 +573,8 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       } else {
         this.resetForm();
       }
+    } else {
+      this.resetForm();
     }
   };
 

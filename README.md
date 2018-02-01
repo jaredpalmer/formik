@@ -687,7 +687,7 @@ Then you could just use this custom input as follows:
 ```tsx
 // MyReactNativeForm.js
 import { View, Button } from 'react-native';
-import { FormikReactNativeTextInput as TextInput } from './FormikReactNativeTextInput';
+import TextInput from './FormikReactNativeTextInput';
 import { Formik } from 'formik';
 
 const MyReactNativeForm = props => (
@@ -706,7 +706,7 @@ const MyReactNativeForm = props => (
             onChangeText={props.setFieldValue}
             value={props.values.email}
           />
-          <Button onPress={props.handleSubmit} />
+          <Button title="submit" onPress={props.handleSubmit} />
         </View>
       )}
     />

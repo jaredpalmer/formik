@@ -6,7 +6,6 @@
 [![license](https://img.shields.io/npm/l/formik.svg)](./LICENSE)
 [![Discord](https://img.shields.io/discord/102860784329052160.svg?style=flat-square)](https://discord.gg/cU6MCve)
 
-
 ## Overview
 
 Let's face it, forms are really verbose in
@@ -39,7 +38,7 @@ By now, you might be thinking, "Why didn't you just use
 2. Redux-Form calls your entire top-level Redux reducer multiple times ON EVERY
    SINGLE KEYSTROKE. This is fine for small apps, but as your Redux app grows,
    input latency will continue to increase if you use Redux-Form.
-3. Redux-Form is 22.5 kB minified gzipped (Formik is 9.2 kB)
+3. Redux-Form is 22.5 kB minified gzipped (Formik is 12.7 kB)
 
 **My goal with Formik was to create a scalable, performant, form helper with a
 minimal API that does the really really annoying stuff, and leaves the rest up
@@ -1198,52 +1197,55 @@ attribute to match up with Formik state. `<Field/>` will default to an
 component. `<Field/>` can also take a `render` prop.
 
 ```js
-import  React from 'react';
+import React from 'react';
 import { Formik, Field } from 'formik';
 
 const Example = () => (
   <div>
     <h1>My Form</h1>
     <Formik
-      initialValues={{ email: '', color: 'red', firstName: ''  }}
+      initialValues={{ email: '', color: 'red', firstName: '' }}
       onSubmit={(values, actions) => {
         setTimeout(() => {
-          alert(JSON.stringify(values, null, 2))
-          actions.setSubmitting(false)
+          alert(JSON.stringify(values, null, 2));
+          actions.setSubmitting(false);
         }, 1000);
       }}
-      render={(props: FormikProps<Values>) =>
+      render={(props: FormikProps<Values>) => (
         <form onSubmit={props.handleSubmit}>
           <Field type="email" name="email" placeholder="Email" />
-          <Field component="select" name="color" >
+          <Field component="select" name="color">
             <option value="red">Red</option>
             <option value="green">Green</option>
             <option value="blue">Blue</option>
           </Field>
-          <Field name="firstName" component={CustomInputComponent}  />
-          <Field name="lastName" render={({ field, /* _form */ }) =>
-             <input {...field} placeholder="firstName" />
-          } />
+          <Field name="firstName" component={CustomInputComponent} />
+          <Field
+            name="lastName"
+            render={({ field /* _form */ }) => (
+              <input {...field} placeholder="firstName" />
+            )}
+          />
           <button type="submit">Submit</button>
-        </form>}
+        </form>
+      )}
     />
   </div>
 );
 
-const CustomInputComponent: React.SFC<FieldProps<Values> & CustomInputProps> = ({
+const CustomInputComponent: React.SFC<
+  FieldProps<Values> & CustomInputProps
+> = ({
   field, // { name, value, onChange, onBlur }
   form: { touched, errors }, // also values, setXXXX, handleXXXX, dirty, isValid, status, etc.
   ...props
 }) => (
   <div>
-    <input
-      type="text"
-      {...field}
-      {...props}
-    />
-    {touched[field.name] && errors[field.name] && <div className="error">{errors[field.name]}</div>}
+    <input type="text" {...field} {...props} />
+    {touched[field.name] &&
+      errors[field.name] && <div className="error">{errors[field.name]}</div>}
   </div>
-)
+);
 ```
 
 #### `validate?: (value: any) => undefined | string | Promise<any>`

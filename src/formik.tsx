@@ -133,6 +133,11 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
   initialValues: Values;
 
   /**
+   * Reset handler
+   */
+  onReset?: (values: Values, formikActions: FormikActions<Values>) => void;
+
+  /**
    * Submission handler
    */
   onSubmit: (values: Values, formikActions: FormikActions<Values>) => void;
@@ -193,6 +198,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     validateOnBlur: PropTypes.bool,
     isInitialValid: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
     initialValues: PropTypes.object,
+    onReset: PropTypes.func,
     onSubmit: PropTypes.func.isRequired,
     validationSchema: PropTypes.oneOfType([PropTypes.func, PropTypes.object]),
     validate: PropTypes.func,
@@ -425,6 +431,22 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     );
   };
 
+  getFormikActions = (): FormikActions<Values> => {
+    return {
+      resetForm: this.resetForm,
+      setError: this.setError,
+      setErrors: this.setErrors,
+      setFieldError: this.setFieldError,
+      setFieldTouched: this.setFieldTouched,
+      setFieldValue: this.setFieldValue,
+      setStatus: this.setStatus,
+      setSubmitting: this.setSubmitting,
+      setTouched: this.setTouched,
+      setValues: this.setValues,
+      submitForm: this.submitForm,
+    };
+  };
+
   handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     this.submitForm();
@@ -468,19 +490,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
   };
 
   executeSubmit = () => {
-    this.props.onSubmit(this.state.values, {
-      resetForm: this.resetForm,
-      setError: this.setError,
-      setErrors: this.setErrors,
-      setFieldError: this.setFieldError,
-      setFieldTouched: this.setFieldTouched,
-      setFieldValue: this.setFieldValue,
-      setStatus: this.setStatus,
-      setSubmitting: this.setSubmitting,
-      setTouched: this.setTouched,
-      setValues: this.setValues,
-      submitForm: this.submitForm,
-    });
+    this.props.onSubmit(this.state.values, this.getFormikActions());
   };
 
   handleBlur = (e: any) => {
@@ -552,7 +562,18 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
   };
 
   handleReset = () => {
-    this.resetForm();
+    if (this.props.onReset) {
+      const maybePromisedOnReset = (this.props.onReset as any)(
+        this.state.values,
+        this.getFormikActions()
+      );
+
+      if (isPromise(maybePromisedOnReset)) {
+        (maybePromisedOnReset as Promise<any>).then(this.resetForm);
+      } else {
+        this.resetForm();
+      }
+    }
   };
 
   render() {

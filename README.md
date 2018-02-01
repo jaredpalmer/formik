@@ -350,6 +350,7 @@ npm install yup --save
     * [`enableReinitialize?: boolean`](#enablereinitialize-boolean)
     * [`isInitialValid?: boolean`](#isinitialvalid-boolean)
     * [`initialValues?: Values`](#initialvalues-values)
+    * [`onReset?: (values: Values, formikBag: FormikBag) => void`](#onreset-values-values-formikbag-formikbag--void)
     * [`onSubmit: (values: Values, formikBag: FormikBag) => void`](#onsubmit-values-values-formikbag-formikbag--void)
     * [`validate?: (values: Values) => FormikError<Values> | Promise<any>`](#validate-values-values--formikerrorvalues--promiseany)
     * [`validateOnBlur?: boolean`](#validateonblur-boolean)
@@ -1109,6 +1110,11 @@ an input from uncontrolled to controlled.
 
 Note: `initialValues` not available to the higher-order component, use
 [`mapPropsToValues`] instead.
+
+#### `onReset?: (values: Values, formikBag: FormikBag) => void`
+
+Your optional form reset handler. It is passed your forms [`values`] and the
+"FormikBag".
 
 #### `onSubmit: (values: Values, formikBag: FormikBag) => void`
 

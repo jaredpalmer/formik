@@ -685,7 +685,7 @@ function setNestedObjectValues(
     if (isObject(val)) {
       if (!visited.get(val)) {
         visited.set(val, true);
-        response[k] = {};
+        response[k] = Array.isArray(val) ? [] : {};
         setNestedObjectValues(val, value, visited, response[k]);
       }
     } else {

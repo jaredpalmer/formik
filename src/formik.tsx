@@ -3,12 +3,12 @@ import * as React from 'react';
 import isEqual from 'lodash.isequal';
 import {
   isFunction,
-  isObject,
   isPromise,
   isReactNative,
   isEmptyChildren,
   values,
   setDeep,
+  setNestedObjectValues,
 } from './utils';
 
 import warning from 'warning';
@@ -453,8 +453,12 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
   };
 
   submitForm = () => {
+    // Recursively set all values to `true`.
     this.setState({
-      touched: touchAllFields<FormikTouched<Values>>(this.state.values),
+      touched: setNestedObjectValues<FormikTouched<Values>>(
+        this.state.values,
+        true
+      ),
       isSubmitting: true,
     });
 
@@ -669,38 +673,6 @@ export function validateYupSchema<T>(
     }
   }
   return schema.validate(validateData, { abortEarly: false, context: context });
-}
-
-function setNestedObjectValues(
-  object: any,
-  value: any,
-  visited: any = null,
-  response: any = null
-) {
-  visited = visited === null ? new WeakMap() : visited;
-  response = response === null ? {} : response;
-
-  for (let k of Object.keys(object)) {
-    const val = object[k];
-    if (isObject(val)) {
-      if (!visited.get(val)) {
-        visited.set(val, true);
-        // In order to keep array values consistent for both dot path  and
-        // bracket syntax, we need to check if this is an array so that
-        // this will output  { friends: [true] } and not { friends: { "0": true } }
-        response[k] = Array.isArray(val) ? [] : {};
-        setNestedObjectValues(val, value, visited, response[k]);
-      }
-    } else {
-      response[k] = value;
-    }
-  }
-
-  return response;
-}
-
-export function touchAllFields<T>(fields: T): FormikTouched<T> {
-  return setNestedObjectValues(fields, true);
 }
 
 export * from './Field';

@@ -1,7 +1,7 @@
 {
   "name": "formik",
   "description": "Forms in React, without tears",
-  "version": "0.10.5",
+  "version": "0.11.0-rc.2",
   "license": "MIT",
   "author": "Jared Palmer <jared@palmer.net>",
   "repository": "jaredpalmer/formik",
@@ -24,9 +24,9 @@
   "scripts": {
     "test": "jest --env=jsdom",
     "test:watch": "npm run test -- --watch",
-    "start": "cross-env NODE_ENV=development tsc-watch --onSuccess \"rollup -c\"",
+    "start": "cross-env NODE_ENV=development tsc-watch --project tsconfig.base.json  --onSuccess \"rollup -c\"",
     "prebuild": "rimraf dist",
-    "build": "tsc && cross-env NODE_ENV=production rollup -c && cross-env NODE_ENV=development rollup -c && rimraf compiled",
+    "build": "tsc -p tsconfig.base.json  && cross-env NODE_ENV=production rollup -c && cross-env NODE_ENV=development rollup -c && rimraf compiled",
     "prepublish": "npm run build",
     "format": "prettier --trailing-comma es5 --single-quote --write 'src/**/*' 'test/**/*' 'README.md'",
     "precommit": "lint-staged",
@@ -34,7 +34,9 @@
     "gen-docs": "all-contributors generate && doctoc README.md"
   },
   "dependencies": {
+    "lodash.clonedeep": "^4.5.0",
     "lodash.isequal": "4.5.0",
+    "lodash.topath": "4.5.2",
     "prop-types": "^15.5.10",
     "warning": "^3.0.0"
   },
@@ -43,26 +45,30 @@
   },
   "optionalDependencies": {},
   "devDependencies": {
-    "@types/enzyme": "2.8.4",
+    "@types/enzyme": "3.1.5",
+    "@types/enzyme-adapter-react-16": "1.0.1",
     "@types/jest": "20.0.6",
+    "@types/lodash.clonedeep": "^4.5.3",
     "@types/lodash.isequal": "4.5.2",
+    "@types/lodash.topath": "4.5.3",
     "@types/node": "8.0.19",
     "@types/prop-types": "15.5.1",
-    "@types/react": "16.0.0",
-    "@types/react-dom": "15.5.1",
+    "@types/react": "16.0.28",
+    "@types/react-dom": "16.0.3",
     "@types/react-test-renderer": "15.5.2",
     "@types/warning": "^3.0.0",
     "all-contributors-cli": "^4.4.0",
     "cross-env": "5.0.5",
     "doctoc": "^1.3.0",
-    "enzyme": "2.9.1",
+    "enzyme": "3.2.0",
+    "enzyme-adapter-react-16": "^1.1.0",
     "husky": "0.14.3",
-    "jest": "20.0.4",
+    "jest": "^21.2.1",
+    "jest-cli": "^21.2.1",
     "lint-staged": "4.0.2",
     "prettier": "^1.8.2",
-    "react": "15.6.1",
-    "react-dom": "15.6.1",
-    "react-test-renderer": "15.6.1",
+    "react": "16.2.0",
+    "react-dom": "16.2.0",
     "rimraf": "2.6.1",
     "rollup": "0.45.2",
     "rollup-plugin-commonjs": "8.1.0",
@@ -71,11 +77,11 @@
     "rollup-plugin-replace": "1.1.1",
     "rollup-plugin-sourcemaps": "0.4.2",
     "rollup-plugin-uglify": "2.0.1",
-    "ts-jest": "20.0.9",
+    "ts-jest": "^21.2.4",
     "tsc-watch": "1.0.7",
     "tslint": "5.5.0",
     "tslint-react": "3.2.0",
-    "typescript": "2.4.2",
+    "typescript": "2.6.2",
     "yup": "0.21.3"
   },
   "lint-staged": {
@@ -90,6 +96,10 @@
     "semi": true
   },
   "jest": {
+    "setupFiles": [
+      "raf/polyfill",
+      "<rootDir>/test/setupTest.ts"
+    ],
     "collectCoverageFrom": [
       "src/**/*.{ts,tsx}"
     ],
@@ -97,7 +107,6 @@
       ".(ts|tsx)": "<rootDir>/node_modules/ts-jest/preprocessor.js"
     },
     "testMatch": [
-      "<rootDir>/test/**/*.ts?(x)",
       "<rootDir>/test/**/?(*.)(spec|test).ts?(x)"
     ],
     "transformIgnorePatterns": [

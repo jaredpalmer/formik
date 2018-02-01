@@ -32,7 +32,6 @@ export default [
           process.env.NODE_ENV || 'development'
         ),
       }),
-      resolve(),
       commonjs({
         include: /node_modules/,
         namedExports: {
@@ -74,7 +73,6 @@ export default [
           ],
         },
       }),
-      ,
       sourceMaps(),
     ],
   }),

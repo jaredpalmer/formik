@@ -1,6 +1,6 @@
 import * as PropTypes from 'prop-types';
 import * as React from 'react';
-import { dlv } from './utils';
+import { dlv, isPromise } from './utils';
 
 import { FormikProps } from './formik';
 import { isFunction, isEmptyChildren } from './utils';
@@ -61,6 +61,11 @@ export interface FieldConfig {
   children?: ((props: FieldProps<any>) => React.ReactNode);
 
   /**
+   * Validate a single field value independently
+   */
+  validate?: ((value: any) => string | Function | Promise<void> | undefined);
+
+  /**
    * Field name
    */
   name: string;
@@ -92,6 +97,7 @@ export class Field<Props extends FieldAttributes = any> extends React.Component<
     component: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
     render: PropTypes.func,
     children: PropTypes.oneOfType([PropTypes.func, PropTypes.node]),
+    validate: PropTypes.func,
   };
 
   componentWillMount() {
@@ -103,7 +109,7 @@ export class Field<Props extends FieldAttributes = any> extends React.Component<
     );
 
     warning(
-      !(component && children && isFunction(children)),
+      !(this.props.component && children && isFunction(children)),
       'You should not use <Field component> and <Field children> as a function in the same <Field> component; <Field component> will be ignored.'
     );
 
@@ -113,19 +119,58 @@ export class Field<Props extends FieldAttributes = any> extends React.Component<
     );
   }
 
+  handleChange = (e: React.ChangeEvent<any>) => {
+    const { handleChange, validateOnChange } = this.context.formik;
+    handleChange(e); // Call Formik's handleChange no matter what
+    if (!!validateOnChange && !!this.props.validate) {
+      this.runFieldValidations(e.target.value);
+    }
+  };
+
+  handleBlur = (e: any) => {
+    const { handleBlur, validateOnBlur } = this.context.formik;
+    handleBlur(e); // Call Formik's handleBlur no matter what
+    if (validateOnBlur && this.props.validate) {
+      this.runFieldValidations(e.target.value);
+    }
+  };
+
+  runFieldValidations = (value: any) => {
+    const { setFieldError } = this.context.formik;
+    const { name, validate } = this.props;
+    // Call validate fn
+    const maybePromise = (validate as any)(value);
+    // Check if validate it returns a Promise
+    if (isPromise(maybePromise)) {
+      (maybePromise as Promise<any>).then(
+        () => setFieldError(name, undefined),
+        error => setFieldError(name, error)
+      );
+    } else {
+      // Otherwise set the error
+      setFieldError(name, maybePromise);
+    }
+  };
+
   render() {
-    const { name, render, children, component = 'input', ...props } = this
-      .props as FieldConfig;
+    const {
+      validate,
+      name,
+      render,
+      children,
+      component = 'input',
+      ...props
+    } = this.props as FieldConfig;
 
     const { formik } = this.context;
     const field = {
       value:
         props.type === 'radio' || props.type === 'checkbox'
-          ? props.value
+          ? props.value // React uses checked={} for these inputs
           : dlv(formik.values, name),
       name,
-      onChange: formik.handleChange,
-      onBlur: formik.handleBlur,
+      onChange: validate ? this.handleChange : formik.handleChange,
+      onBlur: validate ? this.handleBlur : formik.handleBlur,
     };
     const bag = { field, form: formik };
 

@@ -127,12 +127,14 @@ export class FieldArray extends React.Component<FieldArrayConfig, {}> {
 
   remove<T>(index: number): T {
     // We need to make sure we also remove relevant pieces of `touched` and `errors`
-    let result: any = [];
+    let result: any;
     this.updateArrayField(
+      // so this gets call 3 times
       (array: any[]) => {
         const copy = [...(array || [])];
-        // this gets call three times
-        result.push(copy[index]);
+        if (!result) {
+          result = copy[index];
+        }
         copy.splice(index, 1);
         return copy;
       },
@@ -140,22 +142,26 @@ export class FieldArray extends React.Component<FieldArrayConfig, {}> {
       true
     );
 
-    return result[0];
+    return result;
   }
 
   pop<T>(): T {
-    // We need to make sure we also remove relevant pieces of `touched` and `errors`
-    let results: any = [];
+    // Remove relevant pieces of `touched` and `errors` too!
+    let result: any;
     this.updateArrayField(
+      // so this gets call 3 times
       (array: any[]) => {
         const tmp = array;
-        results.push(tmp.pop());
+        if (!result) {
+          result = tmp && tmp.pop && tmp.pop();
+        }
         return tmp;
       },
       true,
       true
     );
-    return results[0];
+
+    return result;
   }
 
   render() {

@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { dlv, setDeep } from './utils';
+import _get from 'lodash.get';
+import _set from 'lodash.set';
 import { SharedRenderProps } from './types';
 import * as PropTypes from 'prop-types';
 import { FormikProps, FormikState } from './formik';
@@ -72,12 +73,12 @@ export class FieldArray extends React.Component<FieldArrayConfig, {}> {
     const { name } = this.props;
     setFormikState((prevState: FormikState<any>) => ({
       ...prevState,
-      values: setDeep(name, fn(dlv(values, name)), prevState.values),
+      values: _set(prevState.values, name, fn(_get(values, name))),
       errors: alterErrors
-        ? setDeep(name, fn(dlv(errors, name)), prevState.errors)
+        ? _set(prevState.errors, name, fn(_get(errors, name)))
         : prevState.errors,
       touched: alterTouched
-        ? setDeep(name, fn(dlv(touched, name)), prevState.touched)
+        ? _set(prevState.touched, name, fn(_get(touched, name)))
         : prevState.touched,
     }));
   };

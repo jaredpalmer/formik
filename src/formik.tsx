@@ -1,14 +1,14 @@
 import * as PropTypes from 'prop-types';
 import * as React from 'react';
-import isEqual from 'lodash.isequal';
 import {
   isFunction,
   isPromise,
   isReactNative,
   isEmptyChildren,
-  setDeep,
   setNestedObjectValues,
 } from './utils';
+import isEqual from 'lodash.isequal';
+import set from 'lodash.set';
 
 import warning from 'warning';
 
@@ -401,11 +401,11 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     // Set form fields by name
     this.setState(prevState => ({
       ...prevState,
-      values: setDeep(field, val, prevState.values),
+      values: set(prevState.values, field, val),
     }));
 
     if (this.props.validateOnChange) {
-      this.runValidations(setDeep(field, val, this.state.values));
+      this.runValidations(set(this.state.values, field, val));
     }
   };
 
@@ -414,7 +414,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     this.setState(
       prevState => ({
         ...prevState,
-        values: setDeep(field, value, prevState.values),
+        values: set(prevState.values, field, value),
       }),
       () => {
         if (this.props.validateOnChange) {
@@ -496,7 +496,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     }
 
     this.setState(prevState => ({
-      touched: setDeep(field, true, prevState.touched),
+      touched: set(prevState.touched, field, true),
     }));
 
     if (this.props.validateOnBlur) {
@@ -509,7 +509,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     this.setState(
       prevState => ({
         ...prevState,
-        touched: setDeep(field, touched, prevState.touched),
+        touched: set(prevState.touched, field, touched),
       }),
       () => {
         if (this.props.validateOnBlur) {
@@ -523,7 +523,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     // Set form field by name
     this.setState(prevState => ({
       ...prevState,
-      errors: setDeep(field, message, prevState.errors),
+      errors: set(prevState.errors, field, message),
     }));
   };
 
@@ -649,7 +649,7 @@ export function yupToFormErrors<Values>(yupError: any): FormikErrors<Values> {
   let errors: any = {} as FormikErrors<Values>;
   for (let err of yupError.inner) {
     if (!errors[err.path]) {
-      errors = setDeep(err.path, err.message, errors);
+      errors = set(errors, err.path, err.message);
     }
   }
   return errors;

@@ -1,7 +1,7 @@
 import * as PropTypes from 'prop-types';
 import * as React from 'react';
-import { dlv, isPromise } from './utils';
-
+import { isPromise } from './utils';
+import get from 'lodash.get';
 import { FormikProps } from './formik';
 import { isFunction, isEmptyChildren } from './utils';
 import warning from 'warning';
@@ -167,7 +167,7 @@ export class Field<Props extends FieldAttributes = any> extends React.Component<
       value:
         props.type === 'radio' || props.type === 'checkbox'
           ? props.value // React uses checked={} for these inputs
-          : dlv(formik.values, name),
+          : get(formik.values, name),
       name,
       onChange: validate ? this.handleChange : formik.handleChange,
       onBlur: validate ? this.handleBlur : formik.handleBlur,

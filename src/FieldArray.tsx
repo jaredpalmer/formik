@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { dlv, setDeep } from './utils';
+import { dlv, setDeep, isEmptyChildren } from './utils';
 import { SharedRenderProps } from './types';
 import * as PropTypes from 'prop-types';
 import { FormikProps, FormikState } from './formik';
@@ -169,13 +169,17 @@ export class FieldArray extends React.Component<FieldArrayConfig, {}> {
       remove: this.remove,
     };
 
-    const { component, render } = this.props;
+    const { component, render, children } = this.props;
     const props = { ...arrayHelpers, form: this.context.formik };
 
-    if (component) {
-      return React.createElement(component as any, props);
-    }
-
-    return render ? (render as any)(props) : null;
+    return component
+      ? React.createElement(component as any, props)
+      : render
+        ? (render as any)(props)
+        : children // children come last, always called
+          ? typeof children === 'function'
+            ? (children as any)(props)
+            : !isEmptyChildren(children) ? React.Children.only(children) : null
+          : null;
   }
 }

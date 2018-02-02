@@ -55,6 +55,22 @@ describe('<FieldArray />', () => {
     );
   });
 
+  it('renders with "children as a function" with array helpers as props', () => {
+    ReactDOM.render(
+      <TestForm
+        render={() => (
+          <FieldArray name="friends">
+            {arrayProps => {
+              expect(isFunction(arrayProps.push)).toBeTruthy();
+              return null;
+            }}
+          </FieldArray>
+        )}
+      />,
+      node
+    );
+  });
+
   describe('props.push()', () => {
     it('should add a value to the end of the field array', () => {
       let formikBag: any;

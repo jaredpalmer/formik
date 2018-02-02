@@ -57,11 +57,11 @@ export function setDeep(path: string, value: any, obj: any): any {
 export function setNestedObjectValues<T>(
   object: any,
   value: any,
-  visited: any = null,
-  response: any = null
+  visited?: any,
+  response?: any
 ): T {
-  visited = visited === null ? new WeakMap() : visited;
-  response = response === null ? {} : response;
+  visited = visited || new WeakMap();
+  response = response || {};
 
   for (let k of Object.keys(object)) {
     const val = object[k];

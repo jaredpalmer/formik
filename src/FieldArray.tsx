@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { dlv } from './utils';
+import { dlv, setDeep } from './utils';
 import { SharedRenderProps } from './types';
 import * as PropTypes from 'prop-types';
-import { FormikProps } from './formik';
+import { FormikProps, FormikState } from './formik';
 
 export type FieldArrayConfig = {
   /** Really the path to the array field to be updated */
@@ -68,24 +68,18 @@ export class FieldArray extends React.Component<FieldArrayConfig, {}> {
     alterTouched: boolean,
     alterErrors: boolean
   ) => {
-    const {
-      setFieldTouched,
-      setFieldValue,
-      setFieldError,
-      values,
-      touched,
-      errors,
-    } = this.context.formik;
+    const { setFormikState, values, touched, errors } = this.context.formik;
     const { name } = this.props;
-    setFieldValue(name, fn(dlv(values, name)));
-
-    if (alterErrors) {
-      setFieldError(name, fn(dlv(errors, name)));
-    }
-
-    if (alterTouched) {
-      setFieldTouched(name, fn(dlv(touched, name)));
-    }
+    setFormikState((prevState: FormikState<any>) => ({
+      ...prevState,
+      values: setDeep(name, fn(dlv(values, name)), prevState.values),
+      errors: alterErrors
+        ? setDeep(name, fn(dlv(errors, name)), prevState.errors)
+        : prevState.errors,
+      touched: alterTouched
+        ? setDeep(name, fn(dlv(touched, name)), prevState.touched)
+        : prevState.touched,
+    }));
   };
 
   push = (value: any) =>

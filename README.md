@@ -973,7 +973,7 @@ Set a top-level [`status`] to anything you want imperatively. Useful for
 controlling arbitrary top-level state related to your form. For example, you can
 use it to pass API responses back into your component in [`handleSubmit`].
 
-##### `setSubmitting: (boolean) => void`
+##### `setSubmitting: (isSubmitting: boolean) => void`
 
 Set [`isSubmitting`] imperatively.
 
@@ -1003,6 +1003,10 @@ Touched fields. Each key corresponds to a field that has been touched/visited.
 Your form's values. Will have the shape of the result of [`mapPropsToValues`]
 (if specified) or all props that are not functions passed to your wrapped
 component.
+
+##### `validateForm: (values?: Values) => void`
+
+Imperatively call your [`validate`] or [`validateSchema`]. You can optionally pass values to validate against said values and modify Formik state accordingly, otherwise this will use the current `values`.
 
 #### `component`
 

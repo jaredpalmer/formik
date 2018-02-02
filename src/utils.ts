@@ -91,17 +91,6 @@ export const isReactNative =
   window.navigator.product &&
   window.navigator.product === 'ReactNative';
 
-/** @private Returns values of an object in a new array */
-export function values<T>(obj: any): T[] {
-  const vals = [];
-  for (var key in obj) {
-    if (obj.hasOwnProperty(key)) {
-      vals.push(obj[key]);
-    }
-  }
-  return vals;
-}
-
 /** @private is the given object a Function? */
 export const isFunction = (obj: any) => 'function' === typeof obj;
 

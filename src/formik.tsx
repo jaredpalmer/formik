@@ -6,7 +6,6 @@ import {
   isPromise,
   isReactNative,
   isEmptyChildren,
-  values,
   setDeep,
   setNestedObjectValues,
 } from './utils';
@@ -215,39 +214,8 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
   initialValues: Values;
 
   getChildContext() {
-    const dirty =
-      values<boolean>(this.state.touched).filter(Boolean).length > 0;
     return {
-      formik: {
-        ...this.state,
-        dirty,
-        isValid: dirty
-          ? this.state.errors && Object.keys(this.state.errors).length === 0
-          : this.props.isInitialValid !== false &&
-            isFunction(this.props.isInitialValid)
-            ? (this.props.isInitialValid as (props: this['props']) => boolean)(
-                this.props
-              )
-            : (this.props.isInitialValid as boolean),
-        handleSubmit: this.handleSubmit,
-        handleChange: this.handleChange,
-        handleBlur: this.handleBlur,
-        handleReset: this.handleReset,
-        setStatus: this.setStatus,
-        setTouched: this.setTouched,
-        setErrors: this.setErrors,
-        setError: this.setError,
-        setValues: this.setValues,
-        setFieldError: this.setFieldError,
-        setFieldValue: this.setFieldValue,
-        setFieldTouched: this.setFieldTouched,
-        setSubmitting: this.setSubmitting,
-        resetForm: this.resetForm,
-        submitForm: this.submitForm,
-        initialValues: this.initialValues,
-        validateOnChange: this.props.validateOnChange,
-        validateOnBlur: this.props.validateOnBlur,
-      },
+      formik: this.getFormikBag(),
     };
   }
 
@@ -431,22 +399,6 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     );
   };
 
-  getFormikActions = (): FormikActions<Values> => {
-    return {
-      resetForm: this.resetForm,
-      setError: this.setError,
-      setErrors: this.setErrors,
-      setFieldError: this.setFieldError,
-      setFieldTouched: this.setFieldTouched,
-      setFieldValue: this.setFieldValue,
-      setStatus: this.setStatus,
-      setSubmitting: this.setSubmitting,
-      setTouched: this.setTouched,
-      setValues: this.setValues,
-      submitForm: this.submitForm,
-    };
-  };
-
   handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     this.submitForm();
@@ -582,22 +534,8 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     }
   };
 
-  render() {
-    const { component, render, children, isInitialValid } = this.props;
-    const dirty = !isEqual(this.initialValues, this.state.values);
-    const props = {
-      ...this.state,
-      dirty,
-      isValid: dirty
-        ? this.state.errors && Object.keys(this.state.errors).length === 0
-        : isInitialValid !== false && isFunction(isInitialValid)
-          ? (isInitialValid as (props: this['props']) => boolean)(this.props)
-          : (isInitialValid as boolean),
-      handleBlur: this.handleBlur,
-      handleChange: this.handleChange,
-      handleReset: this.handleReset,
-      handleSubmit: this.handleSubmit,
-      initialValues: this.initialValues,
+  getFormikActions = (): FormikActions<Values> => {
+    return {
       resetForm: this.resetForm,
       setError: this.setError,
       setErrors: this.setErrors,
@@ -609,9 +547,40 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       setTouched: this.setTouched,
       setValues: this.setValues,
       submitForm: this.submitForm,
+    };
+  };
+
+  getFormikComputedProps = () => {
+    const { isInitialValid } = this.props;
+    const dirty = !isEqual(this.initialValues, this.state.values);
+    return {
+      dirty,
+      isValid: dirty
+        ? this.state.errors && Object.keys(this.state.errors).length === 0
+        : isInitialValid !== false && isFunction(isInitialValid)
+          ? (isInitialValid as (props: this['props']) => boolean)(this.props)
+          : (isInitialValid as boolean),
+      initialValues: this.initialValues,
+    };
+  };
+
+  getFormikBag = () => {
+    return {
+      ...this.state,
+      ...this.getFormikActions(),
+      ...this.getFormikComputedProps(),
+      handleBlur: this.handleBlur,
+      handleChange: this.handleChange,
+      handleReset: this.handleReset,
+      handleSubmit: this.handleSubmit,
       validateOnChange: this.props.validateOnChange,
       validateOnBlur: this.props.validateOnBlur,
     };
+  };
+
+  render() {
+    const { component, render, children } = this.props;
+    const props = this.getFormikBag();
     return component
       ? React.createElement(component as any, props)
       : render

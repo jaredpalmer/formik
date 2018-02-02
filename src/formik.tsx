@@ -68,30 +68,55 @@ export interface FormikComputedProps<Values> {
  */
 export interface FormikActions<Values> {
   /** Manually set top level status. */
-  setStatus: (status?: any) => void;
+  setStatus(status?: any): void;
   /**
    * Manually set top level error
    * @deprecated since 0.8.0
    */
-  setError: (e: any) => void;
+  setError(e: any): void;
   /** Manually set errors object */
-  setErrors: (errors: FormikErrors<Values>) => void;
+  setErrors(errors: FormikErrors<Values>): void;
   /** Manually set isSubmitting */
-  setSubmitting: (isSubmitting: boolean) => void;
+  setSubmitting(isSubmitting: boolean): void;
   /** Manually set touched object */
-  setTouched: (touched: FormikTouched<Values>) => void;
+  setTouched(touched: FormikTouched<Values>): void;
   /** Manually set values object  */
-  setValues: (values: Values) => void;
+  setValues(values: Values): void;
   /** Set value of form field directly */
-  setFieldValue: (field: keyof Values, value: any) => void;
+  setFieldValue(field: keyof Values, value: any): void;
   /** Set error message of a form field directly */
-  setFieldError: (field: keyof Values, message: string) => void;
+  setFieldError(field: keyof Values, message: string): void;
   /** Set whether field has been touched directly */
-  setFieldTouched: (field: keyof Values, isTouched?: boolean) => void;
+  setFieldTouched(field: keyof Values, isTouched?: boolean): void;
+  /** Validate form values */
+  validateForm(values?: any): void;
   /** Reset form */
-  resetForm: (nextValues?: any) => void;
+  resetForm(nextValues?: any): void;
   /** Submit the form imperatively */
-  submitForm: () => void;
+  submitForm(): void;
+  /** Set Formik state, careful! */
+  setFormikState<K extends keyof FormikState<Values>>(
+    f: (
+      prevState: Readonly<FormikState<Values>>,
+      props: any
+    ) => Pick<FormikState<Values>, K>,
+    callback?: () => any
+  ): void;
+}
+
+/** Overloded methods / types */
+export interface FormikActions<Values> {
+  /** Set value of form field directly */
+  setFieldValue(field: string, value: any): void;
+  /** Set error message of a form field directly */
+  setFieldError(field: string, message: string): void;
+  /** Set whether field has been touched directly */
+  setFieldTouched(field: string, isTouched?: boolean): void;
+  /** Set Formik state, careful! */
+  setFormikState<K extends keyof FormikState<Values>>(
+    state: Pick<FormikState<Values>, K>,
+    callback?: () => any
+  ): void;
 }
 
 /**
@@ -329,7 +354,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
   /**
    * Run validations and update state accordingly
    */
-  runValidations = (values: FormikValues) => {
+  runValidations = (values: FormikValues = this.state.values) => {
     if (this.props.validationSchema) {
       this.runValidationSchema(values);
     }
@@ -534,9 +559,14 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     }
   };
 
+  setFormikState = (s: any, callback?: (() => void)) =>
+    this.setState(s, callback);
+
   getFormikActions = (): FormikActions<Values> => {
     return {
       resetForm: this.resetForm,
+      submitForm: this.submitForm,
+      validateForm: this.runValidations,
       setError: this.setError,
       setErrors: this.setErrors,
       setFieldError: this.setFieldError,
@@ -546,7 +576,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       setSubmitting: this.setSubmitting,
       setTouched: this.setTouched,
       setValues: this.setValues,
-      submitForm: this.submitForm,
+      setFormikState: this.setFormikState,
     };
   };
 

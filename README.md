@@ -1260,7 +1260,7 @@ You can run independent field-level validations by passing a function to the
 
 ```js
 // Synchronous validation for Field
-const validate = value => {
+const validate = values => {
   let errorMessage;
   if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)) {
     errorMessage = 'Invalid email address';

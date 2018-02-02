@@ -303,6 +303,8 @@ can install Yup from npm...
 npm install yup --save
 ```
 
+** Table of Contents **
+
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
@@ -335,12 +337,13 @@ npm install yup --save
       * [`setFieldTouched: (field: string, isTouched: boolean) => void`](#setfieldtouched-field-string-istouched-boolean--void)
       * [`setFieldValue: (field: string, value: any) => void`](#setfieldvalue-field-string-value-any--void)
       * [`setStatus: (status?: any) => void`](#setstatus-status-any--void)
-      * [`setSubmitting: (boolean) => void`](#setsubmitting-boolean--void)
+      * [`setSubmitting: (isSubmitting: boolean) => void`](#setsubmitting-issubmitting-boolean--void)
       * [`setTouched: (fields: { [field: string]: boolean }) => void`](#settouched-fields--field-string-boolean---void)
       * [`setValues: (fields: { [field: string]: any }) => void`](#setvalues-fields--field-string-any---void)
       * [`status?: any`](#status-any)
       * [`touched: { [field: string]: boolean }`](#touched--field-string-boolean-)
       * [`values: { [field: string]: any }`](#values--field-string-any-)
+      * [`validateForm: (values?: any) => void`](#validateform-values-any--void)
     * [`component`](#component)
     * [`render: (props: FormikProps<Values>) => ReactNode`](#render-props-formikpropsvalues--reactnode)
     * [`children: func`](#children-func)

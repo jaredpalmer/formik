@@ -10,7 +10,6 @@ interface Values {
 
 const Form: React.SFC<FormikProps<Values>> = ({
   values,
-  handleReset,
   handleSubmit,
   handleChange,
   handleBlur,

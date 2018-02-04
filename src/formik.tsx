@@ -117,6 +117,8 @@ export interface FormikSharedConfig {
   validateOnChange?: boolean;
   /** Tells Formik to validate the form on each input's onBlur event */
   validateOnBlur?: boolean;
+  /** Tells Formik to validate the form in componentDidMount */
+  validateOnLoad?: boolean;
   /** Tell Formik if initial form values are valid or not on first render */
   isInitialValid?: boolean | ((props: object) => boolean | undefined);
   /** Should Formik reset the form when new initialValues change */
@@ -166,6 +168,11 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
   ) => void | object | Promise<FormikErrors<Values>>);
 
   /**
+   * Change callback.
+   */
+  onChange?: ((values: Values) => void);
+
+  /**
    * React children or child render callback
    */
   children?:
@@ -189,6 +196,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
   static defaultProps = {
     validateOnChange: true,
     validateOnBlur: true,
+    validateOnLoad: false,
     isInitialValid: false,
     enableReinitialize: false,
   };
@@ -196,12 +204,14 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
   static propTypes = {
     validateOnChange: PropTypes.bool,
     validateOnBlur: PropTypes.bool,
+    validateOnLoad: PropTypes.bool,
     isInitialValid: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
     initialValues: PropTypes.object,
     onReset: PropTypes.func,
     onSubmit: PropTypes.func.isRequired,
     validationSchema: PropTypes.oneOfType([PropTypes.func, PropTypes.object]),
     validate: PropTypes.func,
+    onChange: PropTypes.func,
     component: PropTypes.func,
     render: PropTypes.func,
     children: PropTypes.oneOfType([PropTypes.func, PropTypes.node]),
@@ -247,6 +257,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
         initialValues: this.initialValues,
         validateOnChange: this.props.validateOnChange,
         validateOnBlur: this.props.validateOnBlur,
+        validateOnLoad: this.props.validateOnLoad,
       },
     };
   }
@@ -273,6 +284,29 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     ) {
       this.initialValues = nextProps.initialValues;
       this.resetForm(nextProps.initialValues);
+    }
+  }
+
+  componentWillUpdate(
+    nextProps: Readonly<FormikConfig<Values> & ExtraProps>,
+    nextState: Readonly<FormikState<Values>>
+  ) {
+    const prevState = this.state;
+    const { initialValues } = nextProps;
+    if (
+      this.props.onChange &&
+      nextState.values !== prevState.values &&
+      !isEqual(nextState.values, initialValues)
+    ) {
+      this.props.onChange(nextState.values);
+    }
+  }
+
+  componentDidMount() {
+    if (this.props.validateOnLoad) {
+      this.setState({}, () => {
+        this.runValidations(this.state.values);
+      });
     }
   }
 
@@ -582,11 +616,15 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     const props = {
       ...this.state,
       dirty,
-      isValid: dirty
-        ? this.state.errors && Object.keys(this.state.errors).length === 0
-        : isInitialValid !== false && isFunction(isInitialValid)
-          ? (isInitialValid as (props: this['props']) => boolean)(this.props)
-          : (isInitialValid as boolean),
+      /**
+       * If validateOnLoad provided, then respect state.errors also
+       */
+      isValid:
+        dirty || this.props.validateOnLoad
+          ? this.state.errors && Object.keys(this.state.errors).length === 0
+          : isInitialValid !== false && isFunction(isInitialValid)
+            ? (isInitialValid as (props: this['props']) => boolean)(this.props)
+            : (isInitialValid as boolean),
       handleBlur: this.handleBlur,
       handleChange: this.handleChange,
       handleReset: this.handleReset,
@@ -605,6 +643,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       submitForm: this.submitForm,
       validateOnChange: this.props.validateOnChange,
       validateOnBlur: this.props.validateOnBlur,
+      validateOnLoad: this.props.validateOnLoad,
     };
     return component
       ? React.createElement(component as any, props)

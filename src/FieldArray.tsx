@@ -169,8 +169,8 @@ export class FieldArray extends React.Component<FieldArrayConfig, {}> {
       remove: this.remove,
     };
 
-    const { component, render, children } = this.props;
-    const props = { ...arrayHelpers, form: this.context.formik };
+    const { component, render, children, name } = this.props;
+    const props = { ...arrayHelpers, form: this.context.formik, name };
 
     return component
       ? React.createElement(component as any, props)

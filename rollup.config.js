@@ -6,24 +6,27 @@ import sourceMaps from 'rollup-plugin-sourcemaps';
 import uglify from 'rollup-plugin-uglify';
 
 const shared = {
-  entry: `compiled/formik.js`,
-  sourceMap: true,
+  input: `compiled/formik.js`,
   external: ['react', 'react-native'],
-  globals: {
-    react: 'React',
-    'react-native': 'ReactNative',
-  },
-  exports: 'named',
 };
 
 export default [
   Object.assign({}, shared, {
-    moduleName: 'Formik',
-    format: 'umd',
-    dest:
-      process.env.NODE_ENV === 'production'
-        ? './dist/formik.umd.min.js'
-        : './dist/formik.umd.js',
+    output: {
+      name: 'Formik',
+      format: 'umd',
+      sourcemap: true,
+      file:
+        process.env.NODE_ENV === 'production'
+          ? './dist/formik.umd.min.js'
+          : './dist/formik.umd.js',
+      exports: 'named',
+      globals: {
+        react: 'React',
+        'react-native': 'ReactNative',
+      },
+    },
+
     plugins: [
       resolve(),
       replace({
@@ -48,14 +51,42 @@ export default [
       }),
       sourceMaps(),
       process.env.NODE_ENV === 'production' && filesize(),
-      process.env.NODE_ENV === 'production' && uglify(),
+      process.env.NODE_ENV === 'production' &&
+        uglify({
+          output: { comments: false },
+          compress: {
+            keep_infinity: true,
+            pure_getters: true,
+          },
+          warnings: true,
+          ecma: 5,
+          toplevel: false,
+        }),
     ],
   }),
 
   Object.assign({}, shared, {
-    targets: [
-      { dest: 'dist/formik.es6.js', format: 'es' },
-      { dest: 'dist/formik.js', format: 'cjs' },
+    output: [
+      {
+        file: 'dist/formik.es6.js',
+        format: 'es',
+        sourcemap: true,
+        exports: 'named',
+        globals: {
+          react: 'React',
+          'react-native': 'ReactNative',
+        },
+      },
+      {
+        file: 'dist/formik.js',
+        format: 'cjs',
+        sourcemap: true,
+        exports: 'named',
+        globals: {
+          react: 'React',
+          'react-native': 'ReactNative',
+        },
+      },
     ],
     plugins: [
       resolve(),

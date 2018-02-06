@@ -92,7 +92,8 @@ export const isReactNative =
   window.navigator.product === 'ReactNative';
 
 /** @private is the given object a Function? */
-export const isFunction = (obj: any) => 'function' === typeof obj;
+export const isFunction = (obj: any): obj is Function =>
+  'function' === typeof obj;
 
 /** @private is the given object an Object? */
 export const isObject = (obj: any) => obj !== null && typeof obj === 'object';

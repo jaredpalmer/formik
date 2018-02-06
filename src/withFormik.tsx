@@ -120,7 +120,7 @@ export function withFormik<
 
       validationSchema = () => {
         return isFunction(config.validationSchema)
-          ? config.validationSchema!(this.props)
+          ? config.validationSchema(this.props)
           : config.validationSchema;
       };
 

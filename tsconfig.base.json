@@ -23,7 +23,20 @@
     "strict": true,
     "strictNullChecks": true,
     "stripInternal": true,
-    "target": "es5"
+    "target": "es5",
+    "types": [
+      "react",
+      "react-native",
+      "jest",
+      "prop-types",
+      "enzyme",
+      "enzyme-adapter-react-16",
+      "lodash.clonedeep",
+      "lodash.isequal",
+      "lodash.topath",
+      "warning",
+      "react-test-renderer"
+    ]
   },
   "include": ["src", "./typings.d.ts"],
   "exclude": ["node_modules", "dist"]

@@ -5,7 +5,7 @@ const schema = Yup.object().shape({
   name: Yup.string('Name must be a string').required('required'),
 });
 
-describe('helpers', () => {
+describe('Yup helpers', () => {
   describe('yupToFormErrors()', () => {
     it('should transform Yup ValidationErrors into an object', async () => {
       try {

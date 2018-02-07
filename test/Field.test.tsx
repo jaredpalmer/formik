@@ -1,12 +1,15 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Field } from '../src/Field';
-import { Formik } from '../src/formik';
+import { Field, FieldProps } from '../src/Field';
+import { Formik, FormikProps } from '../src/formik';
 
-// tslint:disable-next-line:no-empty
-const noop = () => {};
+import { shallow } from 'enzyme';
+import { noop } from './testHelpers';
 
-const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+interface TestFormValues {
+  name: string;
+  email: string;
+}
 
 const TestForm: React.SFC<any> = p => (
   <Formik
@@ -17,9 +20,110 @@ const TestForm: React.SFC<any> = p => (
 );
 
 describe('A <Field />', () => {
+  describe('<Field validate>', () => {
+    const makeFieldTree = (props: any, ctx: any) =>
+      shallow(<Field {...props} />, { context: { formik: ctx } });
+
+    it('calls validate during onChange if present', () => {
+      const handleChange = jest.fn(noop);
+      const setFieldError = jest.fn(noop);
+      const validate = jest.fn(noop);
+      const tree = makeFieldTree(
+        { name: 'name', validate },
+        {
+          handleChange,
+          setFieldError,
+          validateOnChange: true,
+        }
+      );
+      tree.find('input').simulate('change', {
+        persist: noop,
+        target: {
+          name: 'name',
+          value: 'ian',
+        },
+      });
+      expect(handleChange).toHaveBeenCalled();
+      expect(setFieldError).toHaveBeenCalled();
+      expect(validate).toHaveBeenCalled();
+    });
+
+    it('does NOT call validate during onChange if validateOnChange is set to false', () => {
+      const handleChange = jest.fn(noop);
+      const setFieldError = jest.fn(noop);
+      const validate = jest.fn(noop);
+      const tree = makeFieldTree(
+        { name: 'name', validate },
+        {
+          handleChange,
+          setFieldError,
+          validateOnChange: false,
+        }
+      );
+      tree.find('input').simulate('change', {
+        persist: noop,
+        target: {
+          name: 'name',
+          value: 'ian',
+        },
+      });
+      expect(handleChange).toHaveBeenCalled();
+      expect(setFieldError).not.toHaveBeenCalled();
+      expect(validate).not.toHaveBeenCalled();
+    });
+
+    it('calls validate during onBlur if present', () => {
+      const handleBlur = jest.fn(noop);
+      const setFieldError = jest.fn(noop);
+      const validate = jest.fn(noop);
+      const tree = makeFieldTree(
+        { name: 'name', validate },
+        {
+          handleBlur,
+          setFieldError,
+          validateOnBlur: true,
+        }
+      );
+      tree.find('input').simulate('blur', {
+        persist: noop,
+        target: {
+          name: 'name',
+          value: 'ian',
+        },
+      });
+      expect(handleBlur).toHaveBeenCalled();
+      expect(setFieldError).toHaveBeenCalled();
+      expect(validate).toHaveBeenCalled();
+    });
+
+    it('does NOT call validate during onBlur if validateOnBlur is set to false', () => {
+      const handleBlur = jest.fn(noop);
+      const setFieldError = jest.fn(noop);
+      const validate = jest.fn(noop);
+      const tree = makeFieldTree(
+        { name: 'name', validate },
+        {
+          handleBlur,
+          setFieldError,
+          validateOnBlur: false,
+        }
+      );
+      tree.find('input').simulate('blur', {
+        persist: noop,
+        target: {
+          name: 'name',
+          value: 'ian',
+        },
+      });
+      expect(handleBlur).toHaveBeenCalled();
+      expect(setFieldError).not.toHaveBeenCalled();
+      expect(validate).not.toHaveBeenCalled();
+    });
+  });
+
   describe('<Field component />', () => {
     const node = document.createElement('div');
-    const placeholder = 'First name';
+
     const TEXT = 'Mrs. Kato';
 
     afterEach(() => {
@@ -27,10 +131,7 @@ describe('A <Field />', () => {
     });
 
     it('renders an <input /> by default', () => {
-      ReactDOM.render(
-        <TestForm render={formikProps => <Field name="name" />} />,
-        node
-      );
+      ReactDOM.render(<TestForm render={() => <Field name="name" />} />, node);
 
       expect((node.firstChild as HTMLInputElement).name).toBe('name');
     });
@@ -39,7 +140,7 @@ describe('A <Field />', () => {
       const SuperInput = () => <div>{TEXT}</div>;
       ReactDOM.render(
         <TestForm
-          render={formikProps => <Field name="name" component={SuperInput} />}
+          render={() => <Field name="name" component={SuperInput} />}
         />,
         node
       );
@@ -49,9 +150,7 @@ describe('A <Field />', () => {
 
     it('renders string components', () => {
       ReactDOM.render(
-        <TestForm
-          render={formikProps => <Field component="textarea" name="name" />}
-        />,
+        <TestForm render={() => <Field component="textarea" name="name" />} />,
         node
       );
 
@@ -59,13 +158,14 @@ describe('A <Field />', () => {
     });
 
     it('receives { field, form } props', () => {
-      let actual;
-      let injected;
-      const Component = props => (actual = props) && null;
+      let actual: any; /** FieldProps ;) */
+      let injected: any; /** FieldProps ;) */
+      const Component: React.SFC<FieldProps> = props =>
+        (actual = props) && null;
 
       ReactDOM.render(
         <TestForm
-          render={formikProps =>
+          render={(formikProps: FormikProps<TestFormValues>) =>
             (injected = formikProps) && (
               <Field name="name" component={Component} />
             )
@@ -94,9 +194,7 @@ describe('A <Field />', () => {
     it('renders its return value', () => {
       ReactDOM.render(
         <TestForm
-          render={formikProps => (
-            <Field name="name" render={props => <div>{TEXT}</div>} />
-          )}
+          render={() => <Field name="name" render={() => <div>{TEXT}</div>} />}
         />,
         node
       );
@@ -107,12 +205,12 @@ describe('A <Field />', () => {
     it('receives { field, form } props', () => {
       ReactDOM.render(
         <TestForm
-          render={formikProps => (
+          render={(formikProps: FormikProps<TestFormValues>) => (
             <Field
               placeholder={placeholder}
               name="name"
               testingAnArbitraryProp="thing"
-              render={({ field, form }) => {
+              render={({ field, form }: FieldProps) => {
                 const { handleBlur, handleChange } = formikProps;
                 expect(field.name).toBe('name');
                 expect(field.value).toBe('jared');
@@ -170,7 +268,6 @@ describe('A <Field />', () => {
 
     it('warns if both string component and children as a function', () => {
       let output = '';
-      let actual;
 
       (global as any).console = {
         error: jest.fn(input => (output += input)),
@@ -195,7 +292,8 @@ describe('A <Field />', () => {
     it('warns if both non-string component and children children as a function', () => {
       let output = '';
       let actual;
-      const Component = props => (actual = props) && null;
+      const Component: React.SFC<FieldProps> = props =>
+        (actual = props) && null;
 
       (global as any).console = {
         error: jest.fn(input => (output += input)),
@@ -219,7 +317,6 @@ describe('A <Field />', () => {
 
     it('warns if both string component and render', () => {
       let output = '';
-      let actual;
 
       (global as any).console = {
         error: jest.fn(input => (output += input)),
@@ -246,7 +343,8 @@ describe('A <Field />', () => {
     it('warns if both non-string component and render', () => {
       let output = '';
       let actual;
-      const Component = props => (actual = props) && null;
+      const Component: React.SFC<FieldProps> = props =>
+        (actual = props) && null;
 
       (global as any).console = {
         error: jest.fn(input => (output += input)),
@@ -272,8 +370,6 @@ describe('A <Field />', () => {
 
     it('warns if both children and render', () => {
       let output = '';
-      let actual;
-      const Component = props => (actual = props) && null;
 
       (global as any).console = {
         error: jest.fn(input => (output += input)),
@@ -307,13 +403,14 @@ describe('A <Field />', () => {
     });
 
     it('receives { field, form } props', () => {
-      let actual;
-      let injected;
-      const Component = props => (actual = props) && null;
+      let actual: any;
+      let injected: any;
+      const Component: React.SFC<FieldProps> = props =>
+        (actual = props) && null;
 
       ReactDOM.render(
         <TestForm
-          children={formikProps =>
+          children={(formikProps: FormikProps<TestFormValues>) =>
             (injected = formikProps) && (
               <Field name="name" component={Component} placeholder="hello" />
             )
@@ -327,6 +424,66 @@ describe('A <Field />', () => {
       expect(actual.field.onBlur).toBe(handleBlur);
       expect(actual.field.value).toBe('jared');
       expect(actual.form).toEqual(injected);
+    });
+
+    it('can resolve bracket paths', () => {
+      let actual: any;
+      let injected: any;
+      const Component: React.SFC<FieldProps> = props =>
+        (actual = props) && null;
+
+      ReactDOM.render(
+        <TestForm
+          initialValues={{ user: { superPowers: ['Surging', 'Binding'] } }}
+          children={(formikProps: FormikProps<TestFormValues>) =>
+            (injected = formikProps) && (
+              <Field name="user[superPowers][0]" component={Component} />
+            )
+          }
+        />,
+        node
+      );
+      expect(actual.field.value).toBe('Surging');
+    });
+
+    it('can resolve mixed dot and bracket paths', () => {
+      let actual: any;
+      let injected: any;
+      const Component: React.SFC<FieldProps> = props =>
+        (actual = props) && null;
+
+      ReactDOM.render(
+        <TestForm
+          initialValues={{ user: { superPowers: ['Surging', 'Binding'] } }}
+          children={(formikProps: FormikProps<TestFormValues>) =>
+            (injected = formikProps) && (
+              <Field name="user.superPowers[1]" component={Component} />
+            )
+          }
+        />,
+        node
+      );
+      expect(actual.field.value).toBe('Binding');
+    });
+
+    it('can resolve mixed dot and bracket paths II', () => {
+      let actual: any;
+      let injected: any;
+      const Component: React.SFC<FieldProps> = props =>
+        (actual = props) && null;
+
+      ReactDOM.render(
+        <TestForm
+          initialValues={{ user: { superPowers: ['Surging', 'Binding'] } }}
+          children={(formikProps: FormikProps<TestFormValues>) =>
+            (injected = formikProps) && (
+              <Field name="user[superPowers].1" component={Component} />
+            )
+          }
+        />,
+        node
+      );
+      expect(actual.field.value).toBe('Binding');
     });
   });
 });

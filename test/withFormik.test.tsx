@@ -1,17 +1,12 @@
 import * as React from 'react';
-import * as renderer from 'react-test-renderer';
 
 import { withFormik, InjectedFormikProps } from '../src/withFormik';
 import { mount, shallow } from 'enzyme';
-import { values } from '../src/utils';
-import { Formik } from '../src/formik';
-
-const Yup = require('yup');
 
 // tslint:disable-next-line:no-empty
 const noop = () => {};
 
-const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 interface Props {
   user: {

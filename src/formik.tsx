@@ -2,7 +2,6 @@ import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import isEqual from 'lodash.isequal';
 import warning from 'warning';
-import { GestureResponderEvent } from 'react-native';
 import {
   isFunction,
   isPromise,
@@ -11,18 +10,6 @@ import {
   setDeep,
   setNestedObjectValues,
 } from './utils';
-
-/**
- * We need to fix a TypeScript x Yarn x React Native bug that occurs
- * when you try to use @types/node and @types/react-native in the
- * same project. because of how react native's typings have their own
- * global declarations for require(). To fix this, Formik removes
- * ./node_modules/@types/node upon postinstall and then must declare
- * the only parts of @types/node it needs: process.env
- *
- * @see https://github.com/jaredpalmer/formik/issues/376
- */
-declare const process: { env: { NODE_ENV: string } };
 
 /**
  * Values of fields in the form
@@ -151,9 +138,7 @@ export interface FormikActions<Values> {
  */
 export interface FormikHandlers {
   /** Form submit handler */
-  handleSubmit: (
-    e: React.FormEvent<HTMLFormElement> | GestureResponderEvent
-  ) => void;
+  handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
   /** Classic React change handler, keyed by input name */
   handleChange: (e: React.ChangeEvent<any>) => void;
   /** Mark input as touched */
@@ -457,9 +442,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     );
   };
 
-  handleSubmit = (
-    e: React.FormEvent<HTMLFormElement> | GestureResponderEvent
-  ) => {
+  handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     this.submitForm();
   };

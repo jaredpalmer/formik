@@ -48,7 +48,7 @@ export interface FieldConfig {
   /**
    * Field component to render. Can either be a string like 'select' or a component.
    */
-  component?: string | React.ComponentType<FieldProps<any> | void>;
+  component?: string | React.ComponentType<FieldProps<any>> | React.ComponentType<void>;
 
   /**
    * Render prop (works like React router's <Route render={props =>} />)

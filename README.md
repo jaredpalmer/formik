@@ -334,8 +334,8 @@ npm install yup --save
       * [`resetForm: (nextValues?: Values) => void`](#resetform-nextvalues-values--void)
       * [`setErrors: (fields: { [field: string]: string }) => void`](#seterrors-fields--field-string-string---void)
       * [`setFieldError: (field: string, errorMsg: string) => void`](#setfielderror-field-string-errormsg-string--void)
-      * [`setFieldTouched: (field: string, isTouched: boolean) => void`](#setfieldtouched-field-string-istouched-boolean--void)
-      * [`setFieldValue: (field: string, value: any) => void`](#setfieldvalue-field-string-value-any--void)
+      * [`setFieldTouched: (field: string, isTouched: boolean, shouldValidate?: boolean) => void`](#setfieldtouched-field-string-istouched-boolean-shouldvalidate-boolean--void)
+      * [`setFieldValue: (field: string, value: any, shouldValidate?: boolean) => void`](#setfieldvalue-field-string-value-any-shouldvalidate-boolean--void)
       * [`setStatus: (status?: any) => void`](#setstatus-status-any--void)
       * [`setSubmitting: (isSubmitting: boolean) => void`](#setsubmitting-issubmitting-boolean--void)
       * [`setTouched: (fields: { [field: string]: boolean }) => void`](#settouched-fields--field-string-boolean---void)
@@ -960,15 +960,15 @@ Set `errors` imperatively.
 Set the error message of a field imperatively. `field` should match the key of
 [`errors`] you wish to update. Useful for creating custom input error handlers.
 
-##### `setFieldTouched: (field: string, isTouched: boolean) => void`
+##### `setFieldTouched: (field: string, isTouched: boolean, shouldValidate?: boolean) => void`
 
 Set the touched state of a field imperatively. `field` should match the key of
-[`touched`] you wish to update. Useful for creating custom input blur handlers.
+[`touched`] you wish to update. Useful for creating custom input blur handlers. Calling this method will trigger validation to run if [`validateOnBlur`] is set to `true` (which it is by default). You can also explicitly prevent/skip validation by passing a third argument as `false`.
 
-##### `setFieldValue: (field: string, value: any) => void`
+##### `setFieldValue: (field: string, value: any, shouldValidate?: boolean) => void`
 
 Set the value of a field imperatively. `field` should match the key of
-[`values`] you wish to update. Useful for creating custom input change handlers.
+[`values`] you wish to update. Useful for creating custom input change handlers. Calling this will trigger validation to run if [`validateOnChange`] is set to `true` (which it is by default). You can also explicitly prevent/skip validation by passing a third argument as `false`.
 
 ##### `setStatus: (status?: any) => void`
 
@@ -1674,8 +1674,8 @@ MIT License.
 [`resetform`]: #resetform-nextprops-props--void
 [`seterrors`]: #seterrors-fields--field-string-string---void
 [`setfielderror`]: #setfielderror-field-string-errormsg-string--void
-[`setfieldtouched`]: #setfieldtouched-field-string-istouched-boolean--void
-[`setfieldvalue`]: #setfieldvalue-field-string-value-any--void
+[`setfieldtouched`]: #setfieldtouched-field-string-istouched-boolean-shouldvalidate-boolean--void
+[`setfieldvalue`]: #setfieldvalue-field-string-value-any-shouldvalidate-boolean--void
 [`setstatus`]: #setstatus-status-any--void
 [`setsubmitting`]: #setsubmitting-boolean--void
 [`settouched`]: #settouched-fields--field-string-boolean---void

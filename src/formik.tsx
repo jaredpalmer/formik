@@ -83,11 +83,26 @@ export interface FormikActions<Values> {
   /** Manually set values object  */
   setValues(values: Values): void;
   /** Set value of form field directly */
-  setFieldValue(field: keyof Values, value: any): void;
+  setFieldValue(
+    field: keyof Values,
+    value: any,
+    shouldValidate?: boolean
+  ): void;
+  setFieldValue(field: string, value: any, shouldValidate?: boolean): void;
   /** Set error message of a form field directly */
   setFieldError(field: keyof Values, message: string): void;
+  setFieldError(field: string, message: string): void;
   /** Set whether field has been touched directly */
-  setFieldTouched(field: keyof Values, isTouched?: boolean): void;
+  setFieldTouched(
+    field: keyof Values,
+    isTouched?: boolean,
+    shouldValidate?: boolean
+  ): void;
+  setFieldTouched(
+    field: string,
+    isTouched?: boolean,
+    shouldValidate?: boolean
+  ): void;
   /** Validate form values */
   validateForm(values?: any): void;
   /** Reset form */
@@ -409,7 +424,11 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     }
   };
 
-  setFieldValue = (field: string, value: any) => {
+  setFieldValue = (
+    field: string,
+    value: any,
+    shouldValidate: boolean = true
+  ) => {
     // Set form field by name
     this.setState(
       prevState => ({
@@ -417,7 +436,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
         values: setDeep(field, value, prevState.values),
       }),
       () => {
-        if (this.props.validateOnChange) {
+        if (this.props.validateOnChange && shouldValidate) {
           this.runValidations(this.state.values);
         }
       }
@@ -504,7 +523,11 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     }
   };
 
-  setFieldTouched = (field: keyof Values, touched: boolean = true) => {
+  setFieldTouched = (
+    field: string,
+    touched: boolean = true,
+    shouldValidate: boolean = true
+  ) => {
     // Set touched field by name
     this.setState(
       prevState => ({
@@ -512,14 +535,14 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
         touched: setDeep(field, touched, prevState.touched),
       }),
       () => {
-        if (this.props.validateOnBlur) {
+        if (this.props.validateOnBlur && shouldValidate) {
           this.runValidations(this.state.values);
         }
       }
     );
   };
 
-  setFieldError = (field: keyof Values, message: string) => {
+  setFieldError = (field: string, message: string) => {
     // Set form field by name
     this.setState(prevState => ({
       ...prevState,

@@ -1,6 +1,7 @@
 import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import isEqual from 'lodash.isequal';
+import warning from 'warning';
 import { GestureResponderEvent } from 'react-native';
 import {
   isFunction,
@@ -10,7 +11,17 @@ import {
   setDeep,
   setNestedObjectValues,
 } from './utils';
-import warning from 'warning';
+
+/**
+ * We need to fix a TypeScript x Yarn x React Native bug that occurs
+ * when you try to use @types/node and @types/react-native in the
+ * same project. because of how react native's typings have their own
+ * global declarations for require(). To fix this, Formik removes
+ * ./node_modules/@types/node upon postinstall and then must declare
+ * the only parts of @types/node it needs: process.env
+ *
+ * @see https://github.com/jaredpalmer/formik/issues/376
+ */
 declare const process: { env: { NODE_ENV: string } };
 
 /**

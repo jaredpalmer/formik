@@ -60,9 +60,9 @@
     "@types/node" "*"
     "@types/react" "*"
 
-"@types/react-native@^0.52.5":
-  version "0.52.5"
-  resolved "https://registry.yarnpkg.com/@types/react-native/-/react-native-0.52.5.tgz#115bce4d15b1adb5f951b2f751e77d8e97b0c77b"
+"@types/react-native@^0.52.8":
+  version "0.52.8"
+  resolved "https://registry.yarnpkg.com/@types/react-native/-/react-native-0.52.8.tgz#dd5aa7c4eb944d7c0b2b249a2bb811aa119f49c6"
   dependencies:
     "@types/react" "*"
 
@@ -3200,15 +3200,9 @@ right-align@^0.1.1:
   dependencies:
     align-text "^0.1.1"
 
-rimraf@2, rimraf@^2.5.1, rimraf@^2.6.1:
+rimraf@2, rimraf@^2.5.1, rimraf@^2.6.1, rimraf@^2.6.2:
   version "2.6.2"
   resolved "https://registry.yarnpkg.com/rimraf/-/rimraf-2.6.2.tgz#2ed8150d24a16ea8651e6d6ef0f47c4158ce7a36"
-  dependencies:
-    glob "^7.0.5"
-
-rimraf@2.6.1:
-  version "2.6.1"
-  resolved "https://registry.yarnpkg.com/rimraf/-/rimraf-2.6.1.tgz#c2338ec643df7a1b7fe5c54fa86f57428a55f33d"
   dependencies:
     glob "^7.0.5"
 

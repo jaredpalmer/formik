@@ -22,6 +22,7 @@
     "dist"
   ],
   "scripts": {
+    "postinstall": "rimraf ./node_modules/@types/node",
     "test": "jest --env=jsdom",
     "test:watch": "npm run test -- --watch",
     "start": "cross-env NODE_ENV=development tsc-watch --project tsconfig.base.json  --onSuccess \"rollup -c\"",
@@ -54,7 +55,7 @@
     "@types/prop-types": "15.5.1",
     "@types/react": "16.0.28",
     "@types/react-dom": "16.0.3",
-    "@types/react-native": "^0.52.5",
+    "@types/react-native": "^0.52.8",
     "@types/react-test-renderer": "15.5.2",
     "@types/warning": "^3.0.0",
     "all-contributors-cli": "^4.4.0",
@@ -69,7 +70,7 @@
     "prettier": "^1.8.2",
     "react": "16.2.0",
     "react-dom": "16.2.0",
-    "rimraf": "2.6.1",
+    "rimraf": "^2.6.2",
     "rollup": "^0.55.3",
     "rollup-plugin-commonjs": "8.1.0",
     "rollup-plugin-filesize": "1.4.2",

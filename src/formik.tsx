@@ -418,6 +418,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
   handleChange = (
     eventOrString: any
   ): void | ((e: React.ChangeEvent<any>) => void) => {
+    // @todo someone make this less disgusting.
     const executeChange = (e: React.ChangeEvent<any>, path?: string) => {
       e.persist();
       let field = path;
@@ -449,7 +450,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
         }
       } else {
         console.warn(
-          'Formik could not determine which field to update in your input.'
+          'Formik could not determine which field to update based on your input and usage of `handleChange`'
         );
       }
     };

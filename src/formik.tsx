@@ -3,6 +3,7 @@ import * as React from 'react';
 import isEqual from 'lodash.isequal';
 import warning from 'warning';
 import { GestureResponderEvent } from 'react-native';
+import { isReactNative } from './utils';
 import {
   isFunction,
   isPromise,
@@ -419,28 +420,37 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
   ): void | ((e: React.ChangeEvent<any>) => void) => {
     const executeChange = (e: React.ChangeEvent<any>, path?: string) => {
       e.persist();
-      const { type, name, id, value, checked, outerHTML } = e.target;
-      const field = path ? path : name ? name : id;
-      const val = /number|range/.test(type)
-        ? parseFloat(value)
-        : /checkbox/.test(type) ? checked : value;
-
-      if (!field && process.env.NODE_ENV !== 'production') {
-        warnAboutMissingIdentifier({
-          htmlContent: outerHTML,
-          documentationAnchorLink: 'handlechange-e-reactchangeeventany--void',
-          handlerName: 'handleChange',
-        });
+      let field = path;
+      let val = e;
+      if (!isReactNative) {
+        const { type, name, id, value, checked, outerHTML } = e.target;
+        field = path ? path : name ? name : id;
+        if (!field && process.env.NODE_ENV !== 'production') {
+          warnAboutMissingIdentifier({
+            htmlContent: outerHTML,
+            documentationAnchorLink: 'handlechange-e-reactchangeeventany--void',
+            handlerName: 'handleChange',
+          });
+        }
+        val = /number|range/.test(type)
+          ? parseFloat(value)
+          : /checkbox/.test(type) ? checked : value;
       }
 
-      // Set form fields by name
-      this.setState(prevState => ({
-        ...prevState,
-        values: setDeep(field, val, prevState.values),
-      }));
+      if (field) {
+        // Set form fields by name
+        this.setState(prevState => ({
+          ...prevState,
+          values: setDeep(field!, val, prevState.values),
+        }));
 
-      if (this.props.validateOnChange) {
-        this.runValidations(setDeep(field, val, this.state.values));
+        if (this.props.validateOnChange) {
+          this.runValidations(setDeep(field, val, this.state.values));
+        }
+      } else {
+        console.warn(
+          'Formik could not determine which field to update in your input.'
+        );
       }
     };
 

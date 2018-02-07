@@ -6,7 +6,7 @@ import { GestureResponderEvent } from 'react-native';
 import {
   isFunction,
   isPromise,
-  isReactNative,
+  isString,
   isEmptyChildren,
   setDeep,
   setNestedObjectValues,
@@ -155,12 +155,16 @@ export interface FormikHandlers {
   handleSubmit: (
     e: React.FormEvent<HTMLFormElement> | GestureResponderEvent
   ) => void;
-  /** Classic React change handler, keyed by input name */
-  handleChange: (e: React.ChangeEvent<any>) => void;
-  /** Mark input as touched */
-  handleBlur: (e: any) => void;
   /** Reset form event handler  */
   handleReset: () => void;
+  /** Classic React blur handler, keyed by input name */
+  handleBlur(e: any): void;
+  /** Preact-like linkState. Will return a handleBlur function. */
+  handleBlur(field: string): ((e: any) => void);
+  /** Classic React change handler, keyed by input name */
+  handleChange(e: React.ChangeEvent<any>): void;
+  /** Preact-like linkState. Will return a handleChange function.  */
+  handleChange(field: string): ((e: React.ChangeEvent<any>) => void);
 }
 
 /**
@@ -267,6 +271,12 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
   };
 
   initialValues: Values;
+  hcCache: {
+    [key: string]: (e: React.ChangeEvent<any>) => void;
+  } = {};
+  hbCache: {
+    [key: string]: (e: any) => void;
+  } = {};
 
   getChildContext() {
     return {
@@ -404,38 +414,44 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     }
   };
 
-  handleChange = (e: React.ChangeEvent<any>) => {
-    if (isReactNative) {
-      if (process.env.NODE_ENV !== 'production') {
-        console.error(
-          `Warning: Formik's handleChange does not work with React Native. Use setFieldValue and within a callback instead. For more info see https://github.com/jaredpalmer/formik#react-native`
-        );
+  handleChange = (
+    eventOrString: any
+  ): void | ((e: React.ChangeEvent<any>) => void) => {
+    const executeChange = (e: React.ChangeEvent<any>, path?: string) => {
+      e.persist();
+      const { type, name, id, value, checked, outerHTML } = e.target;
+      const field = path ? path : name ? name : id;
+      const val = /number|range/.test(type)
+        ? parseFloat(value)
+        : /checkbox/.test(type) ? checked : value;
+
+      if (!field && process.env.NODE_ENV !== 'production') {
+        warnAboutMissingIdentifier({
+          htmlContent: outerHTML,
+          documentationAnchorLink: 'handlechange-e-reactchangeeventany--void',
+          handlerName: 'handleChange',
+        });
       }
-      return;
-    }
-    e.persist();
-    const { type, name, id, value, checked, outerHTML } = e.target;
-    const field = name ? name : id;
-    const val = /number|range/.test(type)
-      ? parseFloat(value)
-      : /checkbox/.test(type) ? checked : value;
 
-    if (!field && process.env.NODE_ENV !== 'production') {
-      warnAboutMissingIdentifier({
-        htmlContent: outerHTML,
-        documentationAnchorLink: 'handlechange-e-reactchangeeventany--void',
-        handlerName: 'handleChange',
-      });
-    }
+      // Set form fields by name
+      this.setState(prevState => ({
+        ...prevState,
+        values: setDeep(field, val, prevState.values),
+      }));
 
-    // Set form fields by name
-    this.setState(prevState => ({
-      ...prevState,
-      values: setDeep(field, val, prevState.values),
-    }));
+      if (this.props.validateOnChange) {
+        this.runValidations(setDeep(field, val, this.state.values));
+      }
+    };
 
-    if (this.props.validateOnChange) {
-      this.runValidations(setDeep(field, val, this.state.values));
+    if (isString(eventOrString)) {
+      // cache these handlers by key like Preact's linkState does for perf boost
+      return typeof this.hcCache[eventOrString] === 'function'
+        ? this.hcCache[eventOrString]
+        : (this.hcCache[eventOrString] = (event: React.ChangeEvent<any>) =>
+            executeChange(event, eventOrString));
+    } else {
+      executeChange(eventOrString);
     }
   };
 
@@ -510,33 +526,37 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     this.props.onSubmit(this.state.values, this.getFormikActions());
   };
 
-  handleBlur = (e: any) => {
-    if (isReactNative) {
-      if (process.env.NODE_ENV !== 'production') {
-        console.error(
-          `Warning: Formik's handleBlur does not work with React Native. Use setFieldTouched(field, isTouched) within a callback instead. For more info see https://github.com/jaredpalmer/formik#setfieldtouched-field-string-istouched-boolean--void`
-        );
+  handleBlur = (eventOrString: any): void | ((e: any) => void) => {
+    const executeBlur = (e: any, path?: string) => {
+      e.persist();
+      const { name, id, outerHTML } = e.target;
+      const field = path ? path : name ? name : id;
+
+      if (!field && process.env.NODE_ENV !== 'production') {
+        warnAboutMissingIdentifier({
+          htmlContent: outerHTML,
+          documentationAnchorLink: 'handleblur-e-any--void',
+          handlerName: 'handleBlur',
+        });
       }
-      return;
-    }
-    e.persist();
-    const { name, id, outerHTML } = e.target;
-    const field = name ? name : id;
 
-    if (!field && process.env.NODE_ENV !== 'production') {
-      warnAboutMissingIdentifier({
-        htmlContent: outerHTML,
-        documentationAnchorLink: 'handleblur-e-any--void',
-        handlerName: 'handleBlur',
-      });
-    }
+      this.setState(prevState => ({
+        touched: setDeep(field, true, prevState.touched),
+      }));
 
-    this.setState(prevState => ({
-      touched: setDeep(field, true, prevState.touched),
-    }));
+      if (this.props.validateOnBlur) {
+        this.runValidations(this.state.values);
+      }
+    };
 
-    if (this.props.validateOnBlur) {
-      this.runValidations(this.state.values);
+    if (isString(eventOrString)) {
+      // cache these handlers by key like Preact's linkState does for perf boost
+      return typeof this.hbCache[eventOrString] === 'function'
+        ? this.hbCache[eventOrString]
+        : (this.hbCache[eventOrString] = (event: any) =>
+            executeBlur(event, eventOrString));
+    } else {
+      executeBlur(eventOrString);
     }
   };
 

@@ -1,4 +1,4 @@
-import { setDeep, setNestedObjectValues } from '../src/utils';
+import { setIn, setNestedObjectValues } from '../src/utils';
 
 describe('utils', () => {
   describe('setNestedObjectValues', () => {
@@ -126,31 +126,31 @@ describe('utils', () => {
     });
   });
 
-  describe('setDeep', () => {
+  describe('setIn', () => {
     it('sets flat value', () => {
       const obj = { x: 'y' };
-      const newObj = setDeep('flat', 'value', obj);
+      const newObj = setIn(obj, 'flat', 'value');
       expect(obj).toEqual({ x: 'y' });
       expect(newObj).toEqual({ x: 'y', flat: 'value' });
     });
 
     it('sets nested value', () => {
       const obj = { x: 'y' };
-      const newObj = setDeep('nested.value', 'nested value', obj);
+      const newObj = setIn(obj, 'nested.value', 'nested value');
       expect(obj).toEqual({ x: 'y' });
       expect(newObj).toEqual({ x: 'y', nested: { value: 'nested value' } });
     });
 
     it('updates nested value', () => {
       const obj = { x: 'y', nested: { value: 'a' } };
-      const newObj = setDeep('nested.value', 'b', obj);
+      const newObj = setIn(obj, 'nested.value', 'b');
       expect(obj).toEqual({ x: 'y', nested: { value: 'a' } });
       expect(newObj).toEqual({ x: 'y', nested: { value: 'b' } });
     });
 
     it('updates deep nested value', () => {
       const obj = { x: 'y', twofoldly: { nested: { value: 'a' } } };
-      const newObj = setDeep('twofoldly.nested.value', 'b', obj);
+      const newObj = setIn(obj, 'twofoldly.nested.value', 'b');
       expect(obj.twofoldly.nested === newObj.twofoldly.nested).toEqual(false); // fails, same object still
       expect(obj).toEqual({ x: 'y', twofoldly: { nested: { value: 'a' } } }); // fails, it's b here, too
       expect(newObj).toEqual({ x: 'y', twofoldly: { nested: { value: 'b' } } }); // works ofc
@@ -158,101 +158,35 @@ describe('utils', () => {
 
     it('sets new array', () => {
       const obj = { x: 'y' };
-      const newObj = setDeep('nested.0', 'value', obj);
+      const newObj = setIn(obj, 'nested.0', 'value');
       expect(obj).toEqual({ x: 'y' });
       expect(newObj).toEqual({ x: 'y', nested: ['value'] });
     });
 
     it('updates nested array value', () => {
       const obj = { x: 'y', nested: ['a'] };
-      const newObj = setDeep('nested[0]', 'b', obj);
+      const newObj = setIn(obj, 'nested[0]', 'b');
       expect(obj).toEqual({ x: 'y', nested: ['a'] });
       expect(newObj).toEqual({ x: 'y', nested: ['b'] });
     });
 
     it('adds new item to nested array', () => {
       const obj = { x: 'y', nested: ['a'] };
-      const newObj = setDeep('nested.1', 'b', obj);
+      const newObj = setIn(obj, 'nested.1', 'b');
       expect(obj).toEqual({ x: 'y', nested: ['a'] });
       expect(newObj).toEqual({ x: 'y', nested: ['a', 'b'] });
     });
 
     it('sticks to object with int key when defined', () => {
       const obj = { x: 'y', nested: { 0: 'a' } };
-      const newObj = setDeep('nested.0', 'b', obj);
+      const newObj = setIn(obj, 'nested.0', 'b');
       expect(obj).toEqual({ x: 'y', nested: { 0: 'a' } });
       expect(newObj).toEqual({ x: 'y', nested: { 0: 'b' } });
     });
 
     it('supports bracket path', () => {
       const obj = { x: 'y' };
-      const newObj = setDeep('nested[0]', 'value', obj);
-      expect(obj).toEqual({ x: 'y' });
-      expect(newObj).toEqual({ x: 'y', nested: ['value'] });
-    });
-  });
-
-  describe('setDeep', () => {
-    it('sets flat value', () => {
-      const obj = { x: 'y' };
-      const newObj = setDeep('flat', 'value', obj);
-      expect(obj).toEqual({ x: 'y' });
-      expect(newObj).toEqual({ x: 'y', flat: 'value' });
-    });
-
-    it('sets nested value', () => {
-      const obj = { x: 'y' };
-      const newObj = setDeep('nested.value', 'nested value', obj);
-      expect(obj).toEqual({ x: 'y' });
-      expect(newObj).toEqual({ x: 'y', nested: { value: 'nested value' } });
-    });
-
-    it('updates nested value', () => {
-      const obj = { x: 'y', nested: { value: 'a' } };
-      const newObj = setDeep('nested.value', 'b', obj);
-      expect(obj).toEqual({ x: 'y', nested: { value: 'a' } });
-      expect(newObj).toEqual({ x: 'y', nested: { value: 'b' } });
-    });
-
-    it('updates deep nested value', () => {
-      const obj = { x: 'y', twofoldly: { nested: { value: 'a' } } };
-      const newObj = setDeep('twofoldly.nested.value', 'b', obj);
-      expect(obj.twofoldly.nested === newObj.twofoldly.nested).toEqual(false); // fails, same object still
-      expect(obj).toEqual({ x: 'y', twofoldly: { nested: { value: 'a' } } }); // fails, it's b here, too
-      expect(newObj).toEqual({ x: 'y', twofoldly: { nested: { value: 'b' } } }); // works ofc
-    });
-
-    it('sets new array', () => {
-      const obj = { x: 'y' };
-      const newObj = setDeep('nested.0', 'value', obj);
-      expect(obj).toEqual({ x: 'y' });
-      expect(newObj).toEqual({ x: 'y', nested: ['value'] });
-    });
-
-    it('updates nested array value', () => {
-      const obj = { x: 'y', nested: ['a'] };
-      const newObj = setDeep('nested[0]', 'b', obj);
-      expect(obj).toEqual({ x: 'y', nested: ['a'] });
-      expect(newObj).toEqual({ x: 'y', nested: ['b'] });
-    });
-
-    it('adds new item to nested array', () => {
-      const obj = { x: 'y', nested: ['a'] };
-      const newObj = setDeep('nested.1', 'b', obj);
-      expect(obj).toEqual({ x: 'y', nested: ['a'] });
-      expect(newObj).toEqual({ x: 'y', nested: ['a', 'b'] });
-    });
-
-    it('sticks to object with int key when defined', () => {
-      const obj = { x: 'y', nested: { 0: 'a' } };
-      const newObj = setDeep('nested.0', 'b', obj);
-      expect(obj).toEqual({ x: 'y', nested: { 0: 'a' } });
-      expect(newObj).toEqual({ x: 'y', nested: { 0: 'b' } });
-    });
-
-    it('supports bracket path', () => {
-      const obj = { x: 'y' };
-      const newObj = setDeep('nested[0]', 'value', obj);
+      const newObj = setIn(obj, 'nested[0]', 'value');
       expect(obj).toEqual({ x: 'y' });
       expect(newObj).toEqual({ x: 'y', nested: ['value'] });
     });

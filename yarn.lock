@@ -53,6 +53,13 @@
   version "15.5.1"
   resolved "https://registry.yarnpkg.com/@types/prop-types/-/prop-types-15.5.1.tgz#1ecf52621299e65b855374337fb11fd2d1066fc1"
 
+"@types/react-dom@^16.0.3":
+  version "16.0.3"
+  resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-16.0.3.tgz#8accad7eabdab4cca3e1a56f5ccb57de2da0ff64"
+  dependencies:
+    "@types/node" "*"
+    "@types/react" "*"
+
 "@types/react-native@^0.52.8":
   version "0.52.8"
   resolved "https://registry.yarnpkg.com/@types/react-native/-/react-native-0.52.8.tgz#dd5aa7c4eb944d7c0b2b249a2bb811aa119f49c6"

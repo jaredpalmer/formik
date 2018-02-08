@@ -83,7 +83,11 @@ export class FieldArray extends React.Component<FieldArrayConfig, {}> {
   };
 
   push = (value: any) =>
-    this.updateArrayField((array: any[]) => [...array, value], false, false);
+    this.updateArrayField(
+      (array: any[]) => [...(array || []), value],
+      false,
+      false
+    );
 
   swap = (indexA: number, indexB: number) =>
     this.updateArrayField(

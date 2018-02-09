@@ -26,7 +26,7 @@ import { GenericFieldHTMLAttributes } from './types';
  *     {form.touched[field.name] && form.errors[field.name]}
  *   </div>
  */
-export interface FieldProps<V = any> {
+export interface FastFieldProps<V = any> {
   field: {
     /** Classic React change handler, keyed by input name */
     onChange: (e: React.ChangeEvent<any>) => void;
@@ -40,24 +40,24 @@ export interface FieldProps<V = any> {
   form: FormikProps<V>; // if ppl want to restrict this for a given form, let them.
 }
 
-export interface FieldConfig {
+export interface FastFieldConfig {
   /**
    * Field component to render. Can either be a string like 'select' or a component.
    */
   component?:
     | string
-    | React.ComponentType<FieldProps<any>>
+    | React.ComponentType<FastFieldProps<any>>
     | React.ComponentType<void>;
 
   /**
    * Render prop (works like React router's <Route render={props =>} />)
    */
-  render?: ((props: FieldProps<any>) => React.ReactNode);
+  render?: ((props: FastFieldProps<any>) => React.ReactNode);
 
   /**
    * Children render function <Field name>{props => ...}</Field>)
    */
-  children?: ((props: FieldProps<any>) => React.ReactNode);
+  children?: ((props: FastFieldProps<any>) => React.ReactNode);
 
   /**
    * Validate a single field value independently
@@ -76,17 +76,16 @@ export interface FieldConfig {
   value?: any;
 }
 
-export type FieldAttributes = GenericFieldHTMLAttributes & FieldConfig;
+export type FastFieldAttributes = GenericFieldHTMLAttributes & FastFieldConfig;
 
 /**
  * Custom Field component for quickly hooking into Formik
  * context and wiring up forms.
  */
 
-export class Field<Props extends FieldAttributes = any> extends React.Component<
-  Props,
-  {}
-> {
+export class FastField<
+  Props extends FastFieldAttributes = any
+> extends React.Component<Props, {}> {
   static contextTypes = {
     formik: PropTypes.object,
   };
@@ -159,7 +158,7 @@ export class Field<Props extends FieldAttributes = any> extends React.Component<
       children,
       component = 'input',
       ...props
-    } = this.props as FieldConfig;
+    } = this.props as FastFieldConfig;
 
     const { formik } = this.context;
     const field = {
@@ -178,7 +177,7 @@ export class Field<Props extends FieldAttributes = any> extends React.Component<
     }
 
     if (isFunction(children)) {
-      return (children as (props: FieldProps<any>) => React.ReactNode)(bag);
+      return (children as (props: FastFieldProps<any>) => React.ReactNode)(bag);
     }
 
     if (typeof component === 'string') {

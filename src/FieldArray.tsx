@@ -1,12 +1,14 @@
-import * as React from 'react';
-import { dlv, setDeep, isEmptyChildren } from './utils';
-import { SharedRenderProps } from './types';
 import * as PropTypes from 'prop-types';
-import { FormikProps, FormikState } from './formik';
+import * as React from 'react';
+import { FormikProps, FormikState, isFunction } from './formik';
+import { isEmptyChildren, getIn, setIn } from './utils';
+import { SharedRenderProps } from './types';
 
 export type FieldArrayConfig = {
   /** Really the path to the array field to be updated */
   name: string;
+  /** Should field array validate the form AFTER array updates/changes? */
+  validateOnChange?: boolean;
 } & SharedRenderProps<ArrayHelpers & { form: FormikProps<any> }>;
 
 export interface ArrayHelpers {
@@ -52,6 +54,9 @@ export const insert = (array: any[], index: number, value: any) => {
 };
 
 export class FieldArray extends React.Component<FieldArrayConfig, {}> {
+  static defaultProps = {
+    validateOnChange: true,
+  };
   static contextTypes = {
     formik: PropTypes.object,
   };
@@ -68,18 +73,31 @@ export class FieldArray extends React.Component<FieldArrayConfig, {}> {
     alterTouched: boolean,
     alterErrors: boolean
   ) => {
-    const { setFormikState, values, touched, errors } = this.context.formik;
-    const { name } = this.props;
-    setFormikState((prevState: FormikState<any>) => ({
-      ...prevState,
-      values: setDeep(name, fn(dlv(values, name)), prevState.values),
-      errors: alterErrors
-        ? setDeep(name, fn(dlv(errors, name)), prevState.errors)
-        : prevState.errors,
-      touched: alterTouched
-        ? setDeep(name, fn(dlv(touched, name)), prevState.touched)
-        : prevState.touched,
-    }));
+    const {
+      setFormikState,
+      validateForm,
+      values,
+      touched,
+      errors,
+    } = this.context.formik;
+    const { name, validateOnChange } = this.props;
+    setFormikState(
+      (prevState: FormikState<any>) => ({
+        ...prevState,
+        values: setIn(prevState.values, name, fn(getIn(values, name))),
+        errors: alterErrors
+          ? setIn(prevState.errors, name, fn(getIn(errors, name)))
+          : prevState.errors,
+        touched: alterTouched
+          ? setIn(prevState.touched, name, fn(getIn(touched, name)))
+          : prevState.touched,
+      }),
+      () => {
+        if (validateOnChange) {
+          validateForm();
+        }
+      }
+    );
   };
 
   push = (value: any) =>
@@ -128,12 +146,14 @@ export class FieldArray extends React.Component<FieldArrayConfig, {}> {
     let result: any;
     this.updateArrayField(
       // so this gets call 3 times
-      (array: any[]) => {
-        const copy = [...(array || [])];
+      (array?: any[]) => {
+        const copy = array ? [...array] : [];
         if (!result) {
           result = copy[index];
         }
-        copy.splice(index, 1);
+        if (isFunction(copy.splice)) {
+          copy.splice(index, 1);
+        }
         return copy;
       },
       true,

@@ -8,7 +8,7 @@ import {
   isPromise,
   isReactNative,
   isEmptyChildren,
-  setDeep,
+  setIn,
   setNestedObjectValues,
 } from './utils';
 
@@ -437,11 +437,11 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     // Set form fields by name
     this.setState(prevState => ({
       ...prevState,
-      values: setDeep(field, val, prevState.values),
+      values: setIn(prevState.values, field, val),
     }));
 
     if (this.props.validateOnChange) {
-      this.runValidations(setDeep(field, val, this.state.values));
+      this.runValidations(setIn(this.state.values, field, val));
     }
   };
 
@@ -454,7 +454,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     this.setState(
       prevState => ({
         ...prevState,
-        values: setDeep(field, value, prevState.values),
+        values: setIn(prevState.values, field, value),
       }),
       () => {
         if (this.props.validateOnChange && shouldValidate) {
@@ -538,7 +538,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     }
 
     this.setState(prevState => ({
-      touched: setDeep(field, true, prevState.touched),
+      touched: setIn(prevState.touched, field, true),
     }));
 
     if (this.props.validateOnBlur) {
@@ -555,7 +555,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     this.setState(
       prevState => ({
         ...prevState,
-        touched: setDeep(field, touched, prevState.touched),
+        touched: setIn(prevState.touched, field, touched),
       }),
       () => {
         if (this.props.validateOnBlur && shouldValidate) {
@@ -569,7 +569,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     // Set form field by name
     this.setState(prevState => ({
       ...prevState,
-      errors: setDeep(field, message, prevState.errors),
+      errors: setIn(prevState.errors, field, message),
     }));
   };
 
@@ -695,7 +695,7 @@ export function yupToFormErrors<Values>(yupError: any): FormikErrors<Values> {
   let errors: any = {} as FormikErrors<Values>;
   for (let err of yupError.inner) {
     if (!errors[err.path]) {
-      errors = setDeep(err.path, err.message, errors);
+      errors = setIn(errors, err.path, err.message);
     }
   }
   return errors;
@@ -724,3 +724,4 @@ export * from './Field';
 export * from './Form';
 export * from './withFormik';
 export * from './FieldArray';
+export * from './utils';

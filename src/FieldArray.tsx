@@ -1,8 +1,7 @@
-import * as PropTypes from 'prop-types';
 import * as React from 'react';
-import { FormikProps, FormikState, isFunction } from './formik';
-import { isEmptyChildren, getIn, setIn } from './utils';
-import { SharedRenderProps } from './types';
+import { isFunction, isEmptyChildren, getIn, setIn } from './utils';
+import { SharedRenderProps, FormikProps, FormikState } from './types';
+import { connect } from './connect';
 
 export type FieldArrayConfig = {
   /** Really the path to the array field to be updated */
@@ -53,15 +52,15 @@ export const insert = (array: any[], index: number, value: any) => {
   return copy;
 };
 
-export class FieldArray extends React.Component<FieldArrayConfig, {}> {
+class FieldArrayWithContext extends React.Component<
+  FieldArrayConfig & { formik: FormikProps<any> },
+  {}
+> {
   static defaultProps = {
     validateOnChange: true,
   };
-  static contextTypes = {
-    formik: PropTypes.object,
-  };
 
-  constructor(props: FieldArrayConfig) {
+  constructor(props: FieldArrayConfig & { formik: FormikProps<any> }) {
     super(props);
     // We need TypeScript generics on these, so we'll bind them in the constructor
     this.remove = this.remove.bind(this);
@@ -79,7 +78,7 @@ export class FieldArray extends React.Component<FieldArrayConfig, {}> {
       values,
       touched,
       errors,
-    } = this.context.formik;
+    } = this.props.formik;
     const { name, validateOnChange } = this.props;
     setFormikState(
       (prevState: FormikState<any>) => ({
@@ -194,7 +193,7 @@ export class FieldArray extends React.Component<FieldArrayConfig, {}> {
     };
 
     const { component, render, children, name } = this.props;
-    const props = { ...arrayHelpers, form: this.context.formik, name };
+    const props = { ...arrayHelpers, form: this.props.formik, name };
 
     return component
       ? React.createElement(component as any, props)
@@ -207,3 +206,5 @@ export class FieldArray extends React.Component<FieldArrayConfig, {}> {
           : null;
   }
 }
+
+export const FieldArray = connect<FieldArrayConfig, any>(FieldArrayWithContext);

@@ -1,10 +1,8 @@
-import * as PropTypes from 'prop-types';
 import * as React from 'react';
-import { getIn, isPromise } from './utils';
-
-import { FormikProps } from './formik';
-import { isFunction, isEmptyChildren } from './utils';
 import warning from 'warning';
+import { FormikProps } from './types';
+import { getIn, isEmptyChildren, isFunction, isPromise } from './utils';
+import { connect } from './connect';
 
 export type GenericFieldHTMLAttributes =
   | React.InputHTMLAttributes<HTMLInputElement>
@@ -86,23 +84,9 @@ export type FieldAttributes = GenericFieldHTMLAttributes & FieldConfig;
  * Custom Field component for quickly hooking into Formik
  * context and wiring up forms.
  */
-
-export class Field<Props extends FieldAttributes = any> extends React.Component<
-  Props,
-  {}
-> {
-  static contextTypes = {
-    formik: PropTypes.object,
-  };
-
-  static propTypes = {
-    name: PropTypes.string.isRequired,
-    component: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
-    render: PropTypes.func,
-    children: PropTypes.oneOfType([PropTypes.func, PropTypes.node]),
-    validate: PropTypes.func,
-  };
-
+class FieldWithContext<
+  Props extends FieldAttributes = any
+> extends React.Component<Props & { formik: FormikProps<any> }, {}> {
   componentWillMount() {
     const { render, children, component } = this.props;
 
@@ -123,7 +107,7 @@ export class Field<Props extends FieldAttributes = any> extends React.Component<
   }
 
   handleChange = (e: React.ChangeEvent<any>) => {
-    const { handleChange, validateOnChange } = this.context.formik;
+    const { handleChange, validateOnChange } = this.props.formik;
     handleChange(e); // Call Formik's handleChange no matter what
     if (!!validateOnChange && !!this.props.validate) {
       this.runFieldValidations(e.target.value);
@@ -131,7 +115,7 @@ export class Field<Props extends FieldAttributes = any> extends React.Component<
   };
 
   handleBlur = (e: any) => {
-    const { handleBlur, validateOnBlur } = this.context.formik;
+    const { handleBlur, validateOnBlur } = this.props.formik;
     handleBlur(e); // Call Formik's handleBlur no matter what
     if (validateOnBlur && this.props.validate) {
       this.runFieldValidations(e.target.value);
@@ -139,7 +123,7 @@ export class Field<Props extends FieldAttributes = any> extends React.Component<
   };
 
   runFieldValidations = (value: any) => {
-    const { setFieldError } = this.context.formik;
+    const { setFieldError } = this.props.formik;
     const { name, validate } = this.props;
     // Call validate fn
     const maybePromise = (validate as any)(value);
@@ -162,10 +146,10 @@ export class Field<Props extends FieldAttributes = any> extends React.Component<
       render,
       children,
       component = 'input',
+      formik,
       ...props
-    } = this.props as FieldConfig;
+    } = this.props as FieldConfig & { formik: FormikProps<any> };
 
-    const { formik } = this.context;
     const field = {
       value:
         props.type === 'radio' || props.type === 'checkbox'
@@ -200,3 +184,5 @@ export class Field<Props extends FieldAttributes = any> extends React.Component<
     });
   }
 }
+
+export const Field = connect<FieldAttributes, any>(FieldWithContext);

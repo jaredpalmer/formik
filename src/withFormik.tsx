@@ -1,7 +1,10 @@
 import * as React from 'react';
+import { Formik } from './Formik';
+import { hoistNonReactStatics } from './hoistStatics';
+import { isFunction } from './utils';
+import { ComponentDecorator } from './types';
 
 import {
-  Formik,
   FormikActions,
   FormikComputedProps,
   FormikHandlers,
@@ -9,10 +12,8 @@ import {
   FormikSharedConfig,
   FormikState,
   FormikValues,
-} from './formik';
-
-import { hoistNonReactStatics } from './hoistStatics';
-import { isFunction } from './utils';
+  CompositeComponent,
+} from './types';
 
 /**
  * State, handlers, and helpers injected as props into the wrapped form component.
@@ -67,18 +68,6 @@ export interface WithFormikConfig<
    * throws an error object where that object keys map to corresponding value.
    */
   validate?: (values: Values, props: Props) => void | object | Promise<any>;
-}
-
-export type CompositeComponent<P> =
-  | React.ComponentClass<P>
-  | React.StatelessComponent<P>;
-
-export interface ComponentDecorator<TOwnProps, TMergedProps> {
-  (component: CompositeComponent<TMergedProps>): React.ComponentType<TOwnProps>;
-}
-
-export interface InferableComponentDecorator<TOwnProps> {
-  <T extends CompositeComponent<TOwnProps>>(component: T): T;
 }
 
 /**

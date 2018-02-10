@@ -273,10 +273,16 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
   };
 
   initialValues: Values;
+  fields: { [field: string]: () => void };
 
   getChildContext() {
     return {
-      formik: this.getFormikBag(),
+      formik: {
+        ...this.getFormikBag(),
+        // FastField needs to communicate with Formik during resets
+        registerField: this.registerField,
+        unregisterField: this.unregisterField,
+      },
     };
   }
 
@@ -288,9 +294,17 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       touched: {},
       isSubmitting: false,
     };
-
+    this.fields = {};
     this.initialValues = props.initialValues || ({} as any);
   }
+
+  registerField = (name: string, resetFn: () => void) => {
+    this.fields[name] = resetFn;
+  };
+
+  unregisterField = (name: string) => {
+    delete this.fields[name];
+  };
 
   componentWillReceiveProps(
     nextProps: Readonly<FormikConfig<Values> & ExtraProps>
@@ -586,6 +600,8 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       status: undefined,
       values: nextValues ? nextValues : this.props.initialValues,
     });
+
+    Object.keys(this.fields).map(f => this.fields[f]());
   };
 
   handleReset = () => {

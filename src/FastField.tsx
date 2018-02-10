@@ -2,10 +2,13 @@ import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import { getIn, isPromise } from './utils';
 
-import { FormikProps } from './formik';
+import { FormikProps, setIn } from './formik';
 import { isFunction, isEmptyChildren } from './utils';
 import warning from 'warning';
 import { GenericFieldHTMLAttributes } from './types';
+
+// tslint:disable-next-line:no-empty
+const noop = () => {};
 
 /**
  * Note: These typings could be more restrictive, but then it would limit the
@@ -78,14 +81,18 @@ export interface FastFieldConfig {
 
 export type FastFieldAttributes = GenericFieldHTMLAttributes & FastFieldConfig;
 
+export interface FastFieldState {
+  value: any;
+  error?: string;
+  touched: boolean;
+}
 /**
  * Custom Field component for quickly hooking into Formik
  * context and wiring up forms.
  */
-
 export class FastField<
   Props extends FastFieldAttributes = any
-> extends React.Component<Props, {}> {
+> extends React.Component<Props, FastFieldState> {
   static contextTypes = {
     formik: PropTypes.object,
   };
@@ -97,6 +104,29 @@ export class FastField<
     children: PropTypes.oneOfType([PropTypes.func, PropTypes.node]),
     validate: PropTypes.func,
   };
+
+  reset: Function;
+  constructor(props: Props, context: any) {
+    super(props);
+    this.state = {
+      value: getIn(context.formik.values, props.name),
+      error: getIn(context.formik.errors, props.name),
+      touched: getIn(context.formik.touched, props.name),
+    };
+
+    this.reset = () =>
+      this.setState({
+        value: getIn(context.formik.values, props.name),
+        error: getIn(context.formik.errors, props.name),
+        touched: getIn(context.formik.touched, props.name),
+      });
+
+    context.formik.registerField(props.name, this.reset);
+  }
+
+  componentWillUnmount() {
+    this.context.formik.unregisterField(this.props.name);
+  }
 
   componentWillMount() {
     const { render, children, component } = this.props;
@@ -118,35 +148,85 @@ export class FastField<
   }
 
   handleChange = (e: React.ChangeEvent<any>) => {
-    const { handleChange, validateOnChange } = this.context.formik;
-    handleChange(e); // Call Formik's handleChange no matter what
-    if (!!validateOnChange && !!this.props.validate) {
-      this.runFieldValidations(e.target.value);
+    e.persist();
+    const { validateOnChange } = this.context.formik;
+    const { type, value, checked } = e.target;
+    const val = /number|range/.test(type)
+      ? parseFloat(value)
+      : /checkbox/.test(type) ? checked : value;
+    if (this.props.validate && validateOnChange) {
+      const maybePromise = (this.props.validate as any)(value);
+      if (isPromise(maybePromise)) {
+        this.setState({ value: val });
+        (maybePromise as any).then(noop, (error: string) =>
+          this.setState({ error })
+        );
+      } else {
+        this.setState({ value: val, error: maybePromise });
+      }
+    } else {
+      this.setState({ value: val });
     }
   };
 
-  handleBlur = (e: any) => {
-    const { handleBlur, validateOnBlur } = this.context.formik;
-    handleBlur(e); // Call Formik's handleBlur no matter what
+  handleBlur = () => {
+    const { validateOnBlur, setFormikState } = this.context.formik;
+    const { name } = this.props;
+
+    // handleBlur(e); // Call Formik's handleBlur no matter what
+    // setFormikState(prevState => ({
+    //   values: setIn(prevState.values, name, this.state.value),
+    // errors: setIn(prevState.errors, name, this.state.error),
+    // touched: setIn(prevState.errors, name, true) // ?
+    // }))
     if (validateOnBlur && this.props.validate) {
-      this.runFieldValidations(e.target.value);
+      this.runFieldValidations(this.state.value, true);
+    } else {
+      setFormikState((prevState: any) => ({
+        ...prevState,
+        values: setIn(prevState.values, name, this.state.value),
+        touched: setIn(prevState.touched, name, true),
+      }));
     }
   };
 
-  runFieldValidations = (value: any) => {
-    const { setFieldError } = this.context.formik;
+  runFieldValidations = (value: any, touched?: boolean) => {
+    const { setFormikState } = this.context.formik;
     const { name, validate } = this.props;
     // Call validate fn
     const maybePromise = (validate as any)(value);
     // Check if validate it returns a Promise
     if (isPromise(maybePromise)) {
       (maybePromise as Promise<any>).then(
-        () => setFieldError(name, undefined),
-        error => setFieldError(name, error)
+        () =>
+          !touched
+            ? this.setState({ value, error: undefined })
+            : setFormikState((prevState: any) => ({
+                ...prevState,
+                values: setIn(prevState.values, name, value),
+                errors: setIn(prevState.errors, name, undefined),
+                touched: setIn(prevState.touched, name, true),
+              })),
+        error =>
+          !touched
+            ? this.setState({ value, error })
+            : setFormikState((prevState: any) => ({
+                ...prevState,
+                values: setIn(prevState.values, name, value),
+                errors: setIn(prevState.errors, name, error),
+                touched: setIn(prevState.touched, name, true),
+              }))
       );
     } else {
       // Otherwise set the error
-      setFieldError(name, maybePromise);
+      !touched
+        ? this.setState({ value, error: maybePromise })
+        : setFormikState((prevState: any) => ({
+            ...prevState,
+            values: setIn(prevState.values, name, value),
+            errors: setIn(prevState.errors, name, maybePromise),
+            touched: setIn(prevState.touched, name, true),
+          }));
     }
   };
 
@@ -165,12 +245,16 @@ export class FastField<
       value:
         props.type === 'radio' || props.type === 'checkbox'
           ? props.value // React uses checked={} for these inputs
-          : getIn(formik.values, name),
+          : this.state.value,
       name,
-      onChange: validate ? this.handleChange : formik.handleChange,
-      onBlur: validate ? this.handleBlur : formik.handleBlur,
+      onChange: this.handleChange,
+      onBlur: this.handleBlur,
     };
-    const bag = { field, form: formik };
+    const bag = {
+      field,
+      form: formik,
+      meta: { touched: getIn(formik.touched, name), error: this.state.error },
+    };
 
     if (render) {
       return (render as any)(bag);

@@ -52,15 +52,15 @@ export const insert = (array: any[], index: number, value: any) => {
   return copy;
 };
 
-class FieldArrayWithContext extends React.Component<
-  FieldArrayConfig & { formik: FormikProps<any> },
+class FieldArrayWithContext<Values = {}> extends React.Component<
+  FieldArrayConfig & { formik: FormikProps<Values> },
   {}
 > {
   static defaultProps = {
     validateOnChange: true,
   };
 
-  constructor(props: FieldArrayConfig & { formik: FormikProps<any> }) {
+  constructor(props: FieldArrayConfig & { formik: FormikProps<Values> }) {
     super(props);
     // We need TypeScript generics on these, so we'll bind them in the constructor
     this.remove = this.remove.bind(this);

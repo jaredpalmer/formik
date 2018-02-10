@@ -85,8 +85,9 @@ export type FieldAttributes = GenericFieldHTMLAttributes & FieldConfig;
  * context and wiring up forms.
  */
 class FieldWithContext<
-  Props extends FieldAttributes = any
-> extends React.Component<Props & { formik: FormikProps<any> }, {}> {
+  Props extends FieldAttributes = any,
+  Values = {}
+> extends React.Component<Props & { formik: FormikProps<Values> }, {}> {
   componentWillMount() {
     const { render, children, component } = this.props;
 
@@ -148,7 +149,7 @@ class FieldWithContext<
       component = 'input',
       formik,
       ...props
-    } = this.props as FieldConfig & { formik: FormikProps<any> };
+    } = this.props as FieldConfig & { formik: FormikProps<Values> };
 
     const field = {
       value:

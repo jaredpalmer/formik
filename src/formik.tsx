@@ -277,12 +277,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
 
   getChildContext() {
     return {
-      formik: {
-        ...this.getFormikBag(),
-        // FastField needs to communicate with Formik during resets
-        registerField: this.registerField,
-        unregisterField: this.unregisterField,
-      },
+      formik: this.getFormikBag(),
     };
   }
 
@@ -661,6 +656,9 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       ...this.state,
       ...this.getFormikActions(),
       ...this.getFormikComputedProps(),
+      // FastField needs to communicate with Formik during resets
+      registerField: this.registerField,
+      unregisterField: this.unregisterField,
       handleBlur: this.handleBlur,
       handleChange: this.handleChange,
       handleReset: this.handleReset,

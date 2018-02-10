@@ -2,7 +2,7 @@ import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import isEqual from 'lodash.isequal';
 import warning from 'warning';
-import { GestureResponderEvent } from 'react-native';
+
 import {
   isFunction,
   isPromise,
@@ -158,9 +158,7 @@ export interface FormikActions<Values> {
  */
 export interface FormikHandlers {
   /** Form submit handler */
-  handleSubmit: (
-    e: React.FormEvent<HTMLFormElement> | GestureResponderEvent
-  ) => void;
+  handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
   /** Classic React change handler, keyed by input name */
   handleChange: (e: React.ChangeEvent<any>) => void;
   /** Mark input as touched */
@@ -464,9 +462,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     );
   };
 
-  handleSubmit = (
-    e: React.FormEvent<HTMLFormElement> | GestureResponderEvent
-  ) => {
+  handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     this.submitForm();
   };

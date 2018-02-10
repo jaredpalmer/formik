@@ -54,7 +54,6 @@
     "@types/prop-types": "15.5.1",
     "@types/react": "16.0.28",
     "@types/react-dom": "^16.0.3",
-    "@types/react-native": "^0.52.8",
     "@types/react-test-renderer": "15.5.2",
     "@types/warning": "^3.0.0",
     "all-contributors-cli": "^4.4.0",

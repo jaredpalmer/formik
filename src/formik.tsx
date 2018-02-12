@@ -656,6 +656,8 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       ...this.state,
       ...this.getFormikActions(),
       ...this.getFormikComputedProps(),
+      validationSchema: this.props.validationSchema,
+      validate: this.props.validate,
       // FastField needs to communicate with Formik during resets
       registerField: this.registerField,
       unregisterField: this.unregisterField,
@@ -721,6 +723,7 @@ export function yupToFormErrors<Values>(yupError: any): FormikErrors<Values> {
 export function validateYupSchema<T>(
   data: T,
   schema: any,
+  sync: boolean = false,
   context: any = {}
 ): Promise<void> {
   let validateData: any = {};
@@ -731,7 +734,10 @@ export function validateYupSchema<T>(
         (data as any)[key] !== '' ? (data as any)[key] : undefined;
     }
   }
-  return schema.validate(validateData, { abortEarly: false, context: context });
+  return schema[sync ? 'validateSync' : 'validate'](validateData, {
+    abortEarly: false,
+    context: context,
+  });
 }
 
 export * from './Field';

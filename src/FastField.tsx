@@ -2,13 +2,10 @@ import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import { getIn, isPromise } from './utils';
 
-import { setIn } from './formik';
+import { setIn, validateYupSchema, yupToFormErrors } from './formik';
 import { isFunction, isEmptyChildren } from './utils';
 import warning from 'warning';
 import { FieldAttributes, FieldConfig, FieldProps } from './Field';
-
-// tslint:disable-next-line:no-empty
-const noop = () => {};
 
 export interface FastFieldState {
   value: any;
@@ -78,20 +75,77 @@ export class FastField<
 
   handleChange = (e: React.ChangeEvent<any>) => {
     e.persist();
-    const { validateOnChange } = this.context.formik;
+    const {
+      validateOnChange,
+      validate,
+      values,
+      validationSchema,
+    } = this.context.formik;
     const { type, value, checked } = e.target;
     const val = /number|range/.test(type)
       ? parseFloat(value)
       : /checkbox/.test(type) ? checked : value;
-    if (this.props.validate && validateOnChange) {
-      const maybePromise = (this.props.validate as any)(value);
-      if (isPromise(maybePromise)) {
-        this.setState({ value: val });
-        (maybePromise as any).then(noop, (error: string) =>
-          this.setState({ error })
-        );
+    if (validateOnChange) {
+      // Field-level validation
+      if (this.props.validate) {
+        const maybePromise = (this.props.validate as any)(value);
+        if (isPromise(maybePromise)) {
+          this.setState({ value: val });
+          (maybePromise as any).then(
+            () => this.setState({ error: undefined }),
+            (error: string) => this.setState({ error })
+          );
+        } else {
+          this.setState({ value: val, error: maybePromise });
+        }
+      } else if (validate) {
+        // Top-level validate
+        const maybePromise = (validate as any)(value);
+        if (isPromise(maybePromise)) {
+          this.setState({ value: val });
+          (maybePromise as any).then(
+            () => this.setState({ error: undefined }),
+            (error: any) =>
+              this.setState({ error: getIn(error, this.props.name) })
+          );
+        } else {
+          this.setState({
+            value: val,
+            error: getIn(maybePromise, this.props.name),
+          });
+        }
+      } else if (validationSchema) {
+        // Top-level validationsSchema
+        const schema = isFunction(validationSchema)
+          ? validationSchema()
+          : validationSchema;
+        const mergedValues = setIn(values, this.props.name, val);
+        // try to validate with yup synchronously if possible...saves a render.
+        try {
+          validateYupSchema(mergedValues, schema, true);
+        } catch (e) {
+          if (e.name === 'ValidationError') {
+            this.setState({
+              value: val,
+              error: getIn(yupToFormErrors(e), this.props.name),
+            });
+          } else {
+            this.setState({
+              value: val,
+            });
+            // try yup async validation
+            validateYupSchema(mergedValues, schema).then(
+              () => this.setState({ error: undefined }),
+              (err: any) =>
+                this.setState(s => ({
+                  ...s,
+                  error: getIn(yupToFormErrors(err), this.props.name),
+                }))
+            );
+          }
+        }
       } else {
-        this.setState({ value: val, error: maybePromise });
+        this.setState({ value: val });
       }
     } else {
       this.setState({ value: val });
@@ -133,6 +187,7 @@ export class FastField<
     } else {
       setFormikState((prevState: any) => ({
         ...prevState,
+        errors: setIn(prevState.errors, name, this.state.error),
         values: setIn(prevState.values, name, this.state.value),
         touched: setIn(prevState.touched, name, true),
       }));

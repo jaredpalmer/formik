@@ -420,8 +420,9 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     e.persist();
     const { type, name, id, value, checked, outerHTML } = e.target;
     const field = name ? name : id;
+    let parsed;
     const val = /number|range/.test(type)
-      ? parseFloat(value)
+      ? ((parsed = parseFloat(value)), Number.isNaN(parsed) ? '' : parsed)
       : /checkbox/.test(type) ? checked : value;
 
     if (!field && process.env.NODE_ENV !== 'production') {

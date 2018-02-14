@@ -61,7 +61,7 @@ export interface FieldConfig {
   /**
    * Children render function <Field name>{props => ...}</Field>)
    */
-  children?: ((props: FieldProps<any>) => React.ReactNode);
+  children?: ((props: FieldProps<any>) => React.ReactNode) | React.ReactNode;
 
   /**
    * Validate a single field value independently

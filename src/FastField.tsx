@@ -6,12 +6,18 @@ import { setIn, validateYupSchema, yupToFormErrors } from './formik';
 import { isFunction, isEmptyChildren } from './utils';
 import warning from 'warning';
 import { FieldAttributes, FieldConfig, FieldProps } from './Field';
+import isEqual from 'lodash.isequal';
 
 export interface FastFieldState {
   value: any;
   error?: string;
   touched: boolean;
 }
+
+function diffObjectsExceptForKey(a: any, b: any, path: string) {
+  return isEqual(setIn(a, path, undefined), setIn(b, path, undefined));
+}
+
 /**
  * Custom Field component for quickly hooking into Formik
  * context and wiring up forms.
@@ -80,6 +86,7 @@ export class FastField<
       validate,
       values,
       validationSchema,
+      errors,
     } = this.context.formik;
     const { type, value, checked } = e.target;
     const val = /number|range/.test(type)
@@ -88,6 +95,7 @@ export class FastField<
     if (validateOnChange) {
       // Field-level validation
       if (this.props.validate) {
+        console.log('field-validate');
         const maybePromise = (this.props.validate as any)(value);
         if (isPromise(maybePromise)) {
           this.setState({ value: val });
@@ -100,7 +108,13 @@ export class FastField<
         }
       } else if (validate) {
         // Top-level validate
-        const maybePromise = (validate as any)(value);
+        const maybePromise = (validate as any)(
+          setIn(values, this.props.name, val)
+        );
+        console.log('validate');
+        console.log(
+          diffObjectsExceptForKey(maybePromise, errors, this.props.name)
+        );
         if (isPromise(maybePromise)) {
           this.setState({ value: val });
           (maybePromise as any).then(
@@ -109,6 +123,9 @@ export class FastField<
               this.setState({ error: getIn(error, this.props.name) })
           );
         } else {
+          console.log(
+            diffObjectsExceptForKey(maybePromise, errors, this.props.name)
+          );
           this.setState({
             value: val,
             error: getIn(maybePromise, this.props.name),
@@ -145,9 +162,11 @@ export class FastField<
           }
         }
       } else {
+        console.log('no validate in ctx');
         this.setState({ value: val });
       }
     } else {
+      console.log('no validate');
       this.setState({ value: val });
     }
   };

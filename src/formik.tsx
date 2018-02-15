@@ -277,7 +277,11 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
 
   getChildContext() {
     return {
-      formik: this.getFormikBag(),
+      formik: {
+        ...this.getFormikBag(),
+        validationSchema: this.props.validationSchema,
+        validate: this.props.validate,
+      },
     };
   }
 
@@ -656,8 +660,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       ...this.state,
       ...this.getFormikActions(),
       ...this.getFormikComputedProps(),
-      validationSchema: this.props.validationSchema,
-      validate: this.props.validate,
+
       // FastField needs to communicate with Formik during resets
       registerField: this.registerField,
       unregisterField: this.unregisterField,

@@ -193,7 +193,7 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
   /**
    * Reset handler
    */
-  onReset?: (values: Values, formikActions: FormikActions<Values>) => void;
+  onReset?: (values: Values, formikActions: FormikProps<Values>) => void;
 
   /**
    * Submission handler
@@ -589,7 +589,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     if (this.props.onReset) {
       const maybePromisedOnReset = (this.props.onReset as any)(
         this.state.values,
-        this.getFormikActions()
+        this.getFormikBag()
       );
 
       if (isPromise(maybePromisedOnReset)) {

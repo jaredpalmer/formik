@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import { Formik, FormikProps } from '../src/formik';
-import { shallow } from 'enzyme';
+import { shallow, mount } from 'enzyme';
 import { sleep, noop } from './testHelpers';
 
 interface Values {
@@ -16,6 +16,7 @@ const Form: React.SFC<FormikProps<Values>> = ({
   handleBlur,
   status,
   errors,
+  dirty,
   isSubmitting,
 }) => {
   return (
@@ -41,6 +42,25 @@ const Form: React.SFC<FormikProps<Values>> = ({
 const BasicForm = (
   <Formik initialValues={{ name: 'jared' }} onSubmit={noop} component={Form} />
 );
+
+class WithState extends React.Component<{}, { data: { name: string } }> {
+  constructor(props: {}) {
+    super(props);
+    this.state = {
+      data: { name: 'ivan' },
+    };
+  }
+
+  render() {
+    return (
+      <Formik
+        initialValues={this.state.data}
+        onSubmit={noop}
+        component={Form}
+      />
+    );
+  }
+}
 
 describe('<Formik>', () => {
   it('should initialize Formik state and pass down props', () => {
@@ -962,6 +982,38 @@ describe('<Formik>', () => {
       );
 
       expect((tree.instance() as any).resetForm).toHaveBeenCalledWith('data');
+    });
+
+    it('should reset dirty flag even if initialValues has changed', async () => {
+      const tree = mount(<WithState />);
+      expect(tree.find(Form).props().dirty).toEqual(false);
+
+      tree
+        .find(Form)
+        .find('input')
+        .simulate('change', {
+          persist: noop,
+          target: {
+            id: 'name',
+            value: 'Ian',
+          },
+        });
+
+      expect(tree.find(Form).props().dirty).toEqual(true);
+
+      tree.setState({ data: { name: 'Jared' } });
+
+      await tree
+        .find(Form)
+        .props()
+        .handleReset();
+
+      expect(
+        tree
+          .update()
+          .find(Form)
+          .props().dirty
+      ).toEqual(false);
     });
   });
 });

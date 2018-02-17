@@ -571,9 +571,9 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
   };
 
   resetForm = (nextValues?: Values) => {
-    if (nextValues) {
-      this.initialValues = nextValues;
-    }
+    const values = nextValues ? nextValues : this.props.initialValues;
+
+    this.initialValues = values;
 
     this.setState({
       isSubmitting: false,
@@ -581,7 +581,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       touched: {},
       error: undefined,
       status: undefined,
-      values: nextValues ? nextValues : this.props.initialValues,
+      values,
     });
   };
 

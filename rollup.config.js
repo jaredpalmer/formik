@@ -2,7 +2,7 @@ import commonjs from 'rollup-plugin-commonjs';
 import filesize from 'rollup-plugin-filesize';
 import replace from 'rollup-plugin-replace';
 import resolve from 'rollup-plugin-node-resolve';
-import sourceMaps from 'rollup-plugin-sourcemaps';
+
 import uglify from 'rollup-plugin-uglify';
 
 const shared = {
@@ -10,16 +10,15 @@ const shared = {
   external: ['react', 'react-native'],
 };
 
+const prod = process.env.NODE_ENV === 'production';
+
 export default [
   Object.assign({}, shared, {
     output: {
       name: 'Formik',
       format: 'umd',
       sourcemap: true,
-      file:
-        process.env.NODE_ENV === 'production'
-          ? './dist/formik.umd.min.js'
-          : './dist/formik.umd.js',
+      file: prod ? './dist/formik.umd.min.js' : './dist/formik.umd.js',
       exports: 'named',
       globals: {
         react: 'React',
@@ -37,21 +36,10 @@ export default [
       }),
       commonjs({
         include: /node_modules/,
-        namedExports: {
-          'node_modules/prop-types/index.js': [
-            'object',
-            'oneOfType',
-            'string',
-            'node',
-            'func',
-            'bool',
-            'element',
-          ],
-        },
       }),
-      sourceMaps(),
-      process.env.NODE_ENV === 'production' && filesize(),
-      process.env.NODE_ENV === 'production' &&
+
+      prod && filesize(),
+      prod &&
         uglify({
           output: { comments: false },
           compress: {
@@ -92,19 +80,7 @@ export default [
       resolve(),
       commonjs({
         include: /node_modules/,
-        namedExports: {
-          'node_modules/prop-types/index.js': [
-            'object',
-            'oneOfType',
-            'string',
-            'node',
-            'func',
-            'bool',
-            'element',
-          ],
-        },
       }),
-      sourceMaps(),
     ],
   }),
 ];

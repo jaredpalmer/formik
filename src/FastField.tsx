@@ -182,11 +182,9 @@ export class FastField<
           }
         }
       } else {
-        console.log('no validate in ctx');
         this.setState({ value: val });
       }
     } else {
-      console.log('no validate');
       this.setState({ value: val });
     }
   };

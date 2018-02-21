@@ -9,6 +9,7 @@ import {
   isEmptyChildren,
   setIn,
   setNestedObjectValues,
+  isReactNative,
 } from './utils';
 
 /**
@@ -437,6 +438,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       e.persist();
       let field = path;
       let val = e;
+      let parsed;
       if (!isReactNative) {
         const { type, name, id, value, checked, outerHTML } = e.target;
         field = path ? path : name ? name : id;
@@ -456,7 +458,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
         // Set form fields by name
         this.setState(prevState => ({
           ...prevState,
-          values: setIn( prevState.values, field!, val,),
+          values: setIn(prevState.values, field!, val),
         }));
 
         if (this.props.validateOnChange) {
@@ -563,10 +565,9 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
         });
       }
 
-
-     this.setState(prevState => ({
-      touched: setIn(prevState.touched, field, true),
-     }));
+      this.setState(prevState => ({
+        touched: setIn(prevState.touched, field, true),
+      }));
 
       if (this.props.validateOnBlur) {
         this.runValidations(this.state.values);

@@ -97,6 +97,10 @@ export const isObject = (obj: any) => obj !== null && typeof obj === 'object';
 /** @private is the given object an integer  */
 export const isInteger = (obj: any) => String(Math.floor(Number(obj))) === obj;
 
+/** @private is the given object a string  */
+export const isString = (obj: any) =>
+  Object.prototype.toString.call(obj) === '[object String]';
+
 /** @private Does a React component have exactly 0 children? */
 export const isEmptyChildren = (children: any) =>
   React.Children.count(children) === 0;

@@ -10,13 +10,11 @@ interface Values {
 
 const Form: React.SFC<FormikProps<Values>> = ({
   values,
-  handleReset,
   handleSubmit,
   handleChange,
   handleBlur,
   status,
   errors,
-  dirty,
   isSubmitting,
 }) => {
   return (
@@ -898,7 +896,7 @@ describe('<Formik>', () => {
 
       const tree = shallow(
         <Formik
-          initialValues={{ foo: 'bar', bar: 'foo' }}
+          initialValues={{ name: 'jared' }}
           onSubmit={jest.fn()}
           onReset={onReset}
           component={Form}
@@ -910,7 +908,7 @@ describe('<Formik>', () => {
         .handleReset();
 
       expect(onReset).toHaveBeenCalledWith(
-        { foo: 'bar', bar: 'foo' },
+        { name: 'jared' },
         expect.objectContaining({
           resetForm: expect.any(Function),
           setError: expect.any(Function),
@@ -932,7 +930,7 @@ describe('<Formik>', () => {
 
       const tree = shallow(
         <Formik
-          initialValues={{ foo: 'bar' }}
+          initialValues={{ name: 'bar' }}
           onSubmit={onSubmit}
           component={Form}
         />
@@ -950,7 +948,7 @@ describe('<Formik>', () => {
 
       const tree = shallow(
         <Formik
-          initialValues={{ foo: 'bar', bar: 'foo' }}
+          initialValues={{ name: 'jared' }}
           onSubmit={jest.fn()}
           onReset={onReset}
           component={Form}
@@ -965,7 +963,7 @@ describe('<Formik>', () => {
         .handleReset();
 
       expect(onReset).toHaveBeenCalledWith(
-        { foo: 'bar', bar: 'foo' },
+        { name: 'jared' },
         expect.objectContaining({
           resetForm: expect.any(Function),
           setError: expect.any(Function),

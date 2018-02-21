@@ -256,7 +256,6 @@ export class FastField<
     const bag = {
       field,
       form: formik,
-      // @todo add types
       meta: { touched: getIn(formik.touched, name), error: this.state.error },
     };
 

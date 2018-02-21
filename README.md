@@ -592,14 +592,14 @@ const MyReactNativeForm = props => (
           actions.setSubmitting(false);
         }, 1000);
       }}
-      render={props => (
+      render={formikProps => (
         <View>
           <TextInput
             name="email"
-            onChangeText={props.handleChange} // this WILL NOT WORK IN RN
-            value={props.values.email}
+            onChangeText={formikProps.handleChange} // this WILL NOT WORK IN RN
+            value={formikProps.values.email}
           />
-          <Button onPress={props.handleSubmit} />
+          <Button onPress={formikProps.handleSubmit} />
         </View>
       )}
     />

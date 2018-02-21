@@ -3,9 +3,9 @@ import toPath from 'lodash.topath';
 import cloneDeep from 'lodash.clonedeep';
 
 /**
- * @private Deeply get a value from an object via it's path.
+ * Deeply get a value from an object via it's path.
  */
-export function dlv(
+export function getIn(
   obj: any,
   key: string | string[],
   def?: any,
@@ -19,10 +19,10 @@ export function dlv(
 }
 
 /**
- * @private Deeply set a value from in object via it's path.
- * See https://github.com/developit/linkstate
+ * Deeply set a value from in object via it's path.
+ * @see https://github.com/developit/linkstate
  */
-export function setDeep(path: string, value: any, obj: any): any {
+export function setIn(obj: any, path: string, value: any): any {
   let res: any = {};
   let resVal: any = res;
   let i = 0;

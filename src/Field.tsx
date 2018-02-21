@@ -1,15 +1,11 @@
 import * as PropTypes from 'prop-types';
 import * as React from 'react';
-import { dlv, isPromise } from './utils';
+import { getIn, isPromise } from './utils';
 
 import { FormikProps } from './formik';
 import { isFunction, isEmptyChildren } from './utils';
 import warning from 'warning';
-
-export type GenericFieldHTMLAttributes =
-  | React.InputHTMLAttributes<HTMLInputElement>
-  | React.SelectHTMLAttributes<HTMLSelectElement>
-  | React.TextareaHTMLAttributes<HTMLTextAreaElement>;
+import { GenericFieldHTMLAttributes } from './types';
 
 /**
  * Note: These typings could be more restrictive, but then it would limit the
@@ -48,7 +44,10 @@ export interface FieldConfig {
   /**
    * Field component to render. Can either be a string like 'select' or a component.
    */
-  component?: string | React.ComponentType<FieldProps<any>> | React.ComponentType<void>;
+  component?:
+    | string
+    | React.ComponentType<FieldProps<any>>
+    | React.ComponentType<void>;
 
   /**
    * Render prop (works like React router's <Route render={props =>} />)
@@ -58,7 +57,7 @@ export interface FieldConfig {
   /**
    * Children render function <Field name>{props => ...}</Field>)
    */
-  children?: ((props: FieldProps<any>) => React.ReactNode);
+  children?: ((props: FieldProps<any>) => React.ReactNode) | React.ReactNode;
 
   /**
    * Validate a single field value independently
@@ -167,7 +166,7 @@ export class Field<Props extends FieldAttributes = any> extends React.Component<
       value:
         props.type === 'radio' || props.type === 'checkbox'
           ? props.value // React uses checked={} for these inputs
-          : dlv(formik.values, name),
+          : getIn(formik.values, name),
       name,
       onChange: validate ? this.handleChange : formik.handleChange,
       onBlur: validate ? this.handleBlur : formik.handleBlur,

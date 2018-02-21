@@ -12,19 +12,33 @@ export type FieldArrayConfig = {
 } & SharedRenderProps<ArrayHelpers & { form: FormikProps<any> }>;
 
 export interface ArrayHelpers {
-  /** Add a value to the end of an array */
+  /** Imperatively add a value to the end of an array */
   push: (obj: any) => void;
-  /** Swap two values in an array */
+  /** Curried fn to add a value to the end of an array */
+  handlePush: (obj: any) => () => void;
+  /** Imperatively swap two values in an array */
   swap: (indexA: number, indexB: number) => void;
-  /** Move an element in an array to another index */
+  /** Curried fn to swap two values in an array */
+  handleSwap: (indexA: number, indexB: number) => () => void;
+  /** Imperatively move an element in an array to another index */
   move: (from: number, to: number) => void;
-  /** Insert an element at a given index into the array */
+  /** Imperatively move an element in an array to another index */
+  handleMove: (from: number, to: number) => () => void;
+  /** Imperatively insert an element at a given index into the array */
   insert: (index: number, value: any) => void;
-  /** Add an element to the beginning of an array and return its length */
+  /** Curried fn to insert an element at a given index into the array */
+  handleInsert: (index: number, value: any) => () => void;
+  /** Imperatively add an element to the beginning of an array and return its length */
   unshift: (value: any) => number;
-  /** Remove and element at an index of an array */
+  /** Curried fn to add an element to the beginning of an array */
+  handleUnshift: (value: any) => () => void;
+  /** Curried fn to remove an element at an index of an array */
+  handleRemove: (index: number) => () => void;
+  /** Curried fn to remove a value from the end of the array */
+  handlePop: () => () => void;
+  /** Imperatively remove and element at an index of an array */
   remove<T>(index: number): T | undefined;
-  /** Remove and return value from the end of the array */
+  /** Imperatively remove and return value from the end of the array */
   pop<T>(): T | undefined;
 }
 
@@ -107,12 +121,17 @@ export class FieldArray extends React.Component<FieldArrayConfig, {}> {
       false
     );
 
+  handlePush = (value: any) => () => this.push(value);
+
   swap = (indexA: number, indexB: number) =>
     this.updateArrayField(
       (array: any[]) => swap(array, indexA, indexB),
       false,
       false
     );
+
+  handleSwap = (indexA: number, indexB: number) => () =>
+    this.swap(indexA, indexB);
 
   move = (from: number, to: number) =>
     this.updateArrayField(
@@ -121,12 +140,16 @@ export class FieldArray extends React.Component<FieldArrayConfig, {}> {
       false
     );
 
+  handleMove = (from: number, to: number) => () => this.move(from, to);
+
   insert = (index: number, value: any) =>
     this.updateArrayField(
       (array: any[]) => insert(array, index, value),
       false,
       false
     );
+
+  handleInsert = (index: number, value: any) => () => this.insert(index, value);
 
   unshift = (value: any) => {
     let arr = [];
@@ -140,6 +163,8 @@ export class FieldArray extends React.Component<FieldArrayConfig, {}> {
     );
     return arr.length;
   };
+
+  handleUnshift = (value: any) => () => this.unshift(value);
 
   remove<T>(index: number): T {
     // We need to make sure we also remove relevant pieces of `touched` and `errors`
@@ -163,6 +188,8 @@ export class FieldArray extends React.Component<FieldArrayConfig, {}> {
     return result;
   }
 
+  handleRemove = (index: number) => () => this.remove<any>(index);
+
   pop<T>(): T {
     // Remove relevant pieces of `touched` and `errors` too!
     let result: any;
@@ -182,6 +209,8 @@ export class FieldArray extends React.Component<FieldArrayConfig, {}> {
     return result;
   }
 
+  handlePop = () => () => this.pop<any>();
+
   render() {
     const arrayHelpers: ArrayHelpers = {
       push: this.push,
@@ -191,6 +220,13 @@ export class FieldArray extends React.Component<FieldArrayConfig, {}> {
       insert: this.insert,
       unshift: this.unshift,
       remove: this.remove,
+      handlePush: this.handlePush,
+      handlePop: this.handlePop,
+      handleSwap: this.handleSwap,
+      handleMove: this.handleMove,
+      handleInsert: this.handleInsert,
+      handleUnshift: this.handleUnshift,
+      handleRemove: this.handleRemove,
     };
 
     const { component, render, children, name } = this.props;

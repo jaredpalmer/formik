@@ -30,3 +30,8 @@ export interface SharedRenderProps<T> {
    */
   children?: ((props: T) => React.ReactNode);
 }
+
+export type GenericFieldHTMLAttributes =
+  | React.InputHTMLAttributes<HTMLInputElement>
+  | React.SelectHTMLAttributes<HTMLSelectElement>
+  | React.TextareaHTMLAttributes<HTMLTextAreaElement>;

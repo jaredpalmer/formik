@@ -5,11 +5,7 @@ import { getIn, isPromise } from './utils';
 import { FormikProps } from './formik';
 import { isFunction, isEmptyChildren } from './utils';
 import warning from 'warning';
-
-export type GenericFieldHTMLAttributes =
-  | React.InputHTMLAttributes<HTMLInputElement>
-  | React.SelectHTMLAttributes<HTMLSelectElement>
-  | React.TextareaHTMLAttributes<HTMLTextAreaElement>;
+import { GenericFieldHTMLAttributes } from './types';
 
 /**
  * Note: These typings could be more restrictive, but then it would limit the

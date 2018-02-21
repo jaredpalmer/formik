@@ -271,10 +271,15 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
   };
 
   initialValues: Values;
+  fields: { [field: string]: () => void };
 
   getChildContext() {
     return {
-      formik: this.getFormikBag(),
+      formik: {
+        ...this.getFormikBag(),
+        validationSchema: this.props.validationSchema,
+        validate: this.props.validate,
+      },
     };
   }
 
@@ -286,9 +291,17 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       touched: {},
       isSubmitting: false,
     };
-
+    this.fields = {};
     this.initialValues = props.initialValues || ({} as any);
   }
+
+  registerField = (name: string, resetFn: () => void) => {
+    this.fields[name] = resetFn;
+  };
+
+  unregisterField = (name: string) => {
+    delete this.fields[name];
+  };
 
   componentWillReceiveProps(
     nextProps: Readonly<FormikConfig<Values> & ExtraProps>
@@ -583,6 +596,8 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       status: undefined,
       values,
     });
+
+    Object.keys(this.fields).map(f => this.fields[f]());
   };
 
   handleReset = () => {
@@ -642,6 +657,10 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       ...this.state,
       ...this.getFormikActions(),
       ...this.getFormikComputedProps(),
+
+      // FastField needs to communicate with Formik during resets
+      registerField: this.registerField,
+      unregisterField: this.unregisterField,
       handleBlur: this.handleBlur,
       handleChange: this.handleChange,
       handleReset: this.handleReset,
@@ -704,6 +723,7 @@ export function yupToFormErrors<Values>(yupError: any): FormikErrors<Values> {
 export function validateYupSchema<T>(
   data: T,
   schema: any,
+  sync: boolean = false,
   context: any = {}
 ): Promise<void> {
   let validateData: any = {};
@@ -714,7 +734,10 @@ export function validateYupSchema<T>(
         (data as any)[key] !== '' ? (data as any)[key] : undefined;
     }
   }
-  return schema.validate(validateData, { abortEarly: false, context: context });
+  return schema[sync ? 'validateSync' : 'validate'](validateData, {
+    abortEarly: false,
+    context: context,
+  });
 }
 
 export * from './Field';
@@ -722,3 +745,4 @@ export * from './Form';
 export * from './withFormik';
 export * from './FieldArray';
 export * from './utils';
+export * from './FastField';

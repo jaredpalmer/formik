@@ -6,7 +6,7 @@ import sourceMaps from 'rollup-plugin-sourcemaps';
 import uglify from 'rollup-plugin-uglify';
 
 const shared = {
-  input: `compiled/formik.js`,
+  input: `compiled/index.js`,
   external: ['react', 'react-native'],
 };
 

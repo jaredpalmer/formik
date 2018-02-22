@@ -1,11 +1,10 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
-import { FastField as Field, Formik, FormikProps } from '../src/formik';
+import { FastField as Field, FieldProps, Formik, FormikProps } from '../src';
 
 import { shallow } from 'enzyme';
 import { noop } from './testHelpers';
-import { FieldProps } from '../src/Field';
 
 interface TestFormValues {
   name: string;

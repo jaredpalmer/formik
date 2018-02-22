@@ -1,9 +1,8 @@
 import * as PropTypes from 'prop-types';
 import * as React from 'react';
-import { getIn, isPromise } from './utils';
 
-import { FormikProps } from './formik';
-import { isFunction, isEmptyChildren } from './utils';
+import { FormikProps } from './Formik';
+import { getIn, isPromise, isFunction, isEmptyChildren } from './utils';
 import warning from 'warning';
 import { GenericFieldHTMLAttributes } from './types';
 

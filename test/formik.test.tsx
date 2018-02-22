@@ -1,6 +1,5 @@
 import * as React from 'react';
-
-import { Formik, FormikProps } from '../src/formik';
+import { Formik, FormikProps } from '../src';
 import { shallow, mount } from 'enzyme';
 import { sleep, noop } from './testHelpers';
 

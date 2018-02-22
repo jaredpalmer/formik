@@ -1,7 +1,7 @@
 import * as PropTypes from 'prop-types';
 import * as React from 'react';
-import { FormikProps, FormikState, isFunction } from './formik';
-import { isEmptyChildren, getIn, setIn } from './utils';
+import { FormikProps, FormikState } from './Formik';
+import { isEmptyChildren, getIn, setIn, isFunction } from './utils';
 import { SharedRenderProps } from './types';
 
 export type FieldArrayConfig = {

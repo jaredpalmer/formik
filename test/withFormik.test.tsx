@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { withFormik, InjectedFormikProps } from '../src/withFormik';
+import { withFormik, InjectedFormikProps } from '../src';
 import { mount, shallow } from 'enzyme';
 
 // tslint:disable-next-line:no-empty

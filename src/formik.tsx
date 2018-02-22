@@ -13,19 +13,6 @@ import {
 } from './utils';
 
 /**
- * We need to fix a TypeScript x Yarn x React Native bug that occurs
- * when you try to use @types/node and @types/react-native in the
- * same project because of how react native's typings have their own
- * global declarations for require(). To fix this, Formik specifies all types
- * in tsconfig's compilerOptions explicitly (instead of TS inferring them from
- * ./node_modules/@types/**) and then must declare the only parts of @types/node it needs: process.env
- *
- * @see https://github.com/DefinitelyTyped/DefinitelyTyped/issues/15960
- * @see https://github.com/DefinitelyTyped/DefinitelyTyped/issues/15960#issuecomment-354403930 (solution)
- */
-declare const process: { env: { NODE_ENV: string } };
-
-/**
  * Values of fields in the form
  */
 export interface FormikValues {
@@ -770,10 +757,3 @@ export function validateYupSchema<T>(
     context: context,
   });
 }
-
-export * from './Field';
-export * from './Form';
-export * from './withFormik';
-export * from './FieldArray';
-export * from './utils';
-export * from './FastField';

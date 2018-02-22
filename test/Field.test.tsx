@@ -1,7 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Field, FieldProps } from '../src/Field';
-import { Formik, FormikProps } from '../src/formik';
+import { Formik, Field, FieldProps, FormikProps } from '../src';
 
 import { shallow } from 'enzyme';
 import { noop } from './testHelpers';

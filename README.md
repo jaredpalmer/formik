@@ -326,7 +326,7 @@ npm install yup --save
       - [`handleBlur: (e: any) => void`](#handleblur-e-any--void)
       - [`handleChange: (e: React.ChangeEvent<any>) => void`](#handlechange-e-reactchangeeventany--void)
       - [`handleReset: () => void`](#handlereset---void)
-      - [`handleSubmit: (e: React.FormEvent<HTMLFormEvent>) => void`](#handlesubmit-e-reactformeventhtmlformevent--void)
+      - [`handleSubmit: (e: React.FormEvent<HTMLFormEvent> | undefined) => void`](#handlesubmit-e-reactformeventhtmlformevent--void)
       - [`isSubmitting: boolean`](#issubmitting-boolean)
       - [`isValid: boolean`](#isvalid-boolean)
       - [`resetForm: (nextValues?: Values) => void`](#resetform-nextvalues-values--void)

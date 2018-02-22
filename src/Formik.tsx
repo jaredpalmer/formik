@@ -490,8 +490,10 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     );
   };
 
-  handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  handleSubmit = (e: React.FormEvent<HTMLFormElement> | undefined) => {
+    if (e && e.preventDefault) {
+      e.preventDefault();
+    }
     this.submitForm();
   };
 

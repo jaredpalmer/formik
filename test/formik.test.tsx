@@ -256,6 +256,38 @@ describe('<Formik>', () => {
         expect(preventDefault).toHaveBeenCalled();
       });
 
+      it('should not error if called without an object', () => {
+        const FormNoEvent = (
+          <Formik initialValues={{ name: 'jared' }} onSubmit={noop}>
+            {({ handleSubmit }) => (
+              <button onClick={() => handleSubmit(/* undefined event */)} />
+            )}
+          </Formik>
+        );
+        const tree = mount(FormNoEvent);
+        const fn = () => {
+          tree.find('button').simulate('click');
+        };
+        expect(fn).not.toThrow();
+      });
+
+      it('should not error if called without preventDefault property', () => {
+        const FormNoPreventDefault = (
+          <Formik initialValues={{ name: 'jared' }} onSubmit={noop}>
+            {({ handleSubmit }) => (
+              <button
+                onClick={() => handleSubmit({} /* no preventDefault */)}
+              />
+            )}
+          </Formik>
+        );
+        const tree = mount(FormNoPreventDefault);
+        const fn = () => {
+          tree.find('button').simulate('click');
+        };
+        expect(fn).not.toThrow();
+      });
+
       it('should touch all fields', () => {
         const tree = shallow(BasicForm);
         tree

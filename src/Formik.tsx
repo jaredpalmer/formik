@@ -89,15 +89,13 @@ export interface FormikActions<Values> {
   /** Manually set values object  */
   setValues(values: Values): void;
   /** Set value of form field directly */
-  setFieldValue(
-    field: keyof Values,
-    value: any,
+  setFieldValue<K extends keyof Values>(
+    field: K,
+    value: Values[K],
     shouldValidate?: boolean
   ): void;
-  setFieldValue(field: string, value: any, shouldValidate?: boolean): void;
   /** Set error message of a form field directly */
   setFieldError(field: keyof Values, message: string): void;
-  setFieldError(field: string, message: string): void;
   /** Set whether field has been touched directly */
   setFieldTouched(
     field: keyof Values,
@@ -121,21 +119,6 @@ export interface FormikActions<Values> {
       prevState: Readonly<FormikState<Values>>,
       props: any
     ) => Pick<FormikState<Values>, K>,
-    callback?: () => any
-  ): void;
-}
-
-/** Overloded methods / types */
-export interface FormikActions<Values> {
-  /** Set value of form field directly */
-  setFieldValue(field: string, value: any): void;
-  /** Set error message of a form field directly */
-  setFieldError(field: string, message: string): void;
-  /** Set whether field has been touched directly */
-  setFieldTouched(field: string, isTouched?: boolean): void;
-  /** Set Formik state, careful! */
-  setFormikState<K extends keyof FormikState<Values>>(
-    state: Pick<FormikState<Values>, K>,
     callback?: () => any
   ): void;
 }
@@ -471,9 +454,9 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     }
   };
 
-  setFieldValue = (
-    field: string,
-    value: any,
+  setFieldValue = <K extends keyof Values>(
+    field: K,
+    value: Values[K],
     shouldValidate: boolean = true
   ) => {
     // Set form field by name
@@ -715,11 +698,15 @@ function warnAboutMissingIdentifier({
   handlerName: string;
 }) {
   console.error(
-    `Warning: \`${handlerName}\` has triggered and you forgot to pass an \`id\` or \`name\` attribute to your input:
+    `Warning: \`${
+      handlerName
+    }\` has triggered and you forgot to pass an \`id\` or \`name\` attribute to your input:
 
     ${htmlContent}
 
-    Formik cannot determine which value to update. For more info see https://github.com/jaredpalmer/formik#${documentationAnchorLink}
+    Formik cannot determine which value to update. For more info see https://github.com/jaredpalmer/formik#${
+      documentationAnchorLink
+    }
   `
   );
 }

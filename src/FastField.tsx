@@ -1,6 +1,6 @@
 import * as PropTypes from 'prop-types';
 import * as React from 'react';
-import { validateYupSchema, yupToFormErrors } from './Formik';
+import { validateYupSchema, yupToFormErrors, FormikProps } from './Formik';
 import { getIn, isPromise, setIn, isFunction, isEmptyChildren } from './utils';
 import warning from 'warning';
 import { FieldAttributes, FieldConfig, FieldProps } from './Field';
@@ -9,7 +9,6 @@ import isEqual from 'lodash.isequal';
 export interface FastFieldState {
   value: any;
   error?: string;
-  touched: boolean;
 }
 
 /** @private Returns whether two objects are deeply equal **excluding** a key / dot path */
@@ -42,17 +41,37 @@ export class FastField<
     this.state = {
       value: getIn(context.formik.values, props.name),
       error: getIn(context.formik.errors, props.name),
-      touched: getIn(context.formik.touched, props.name),
     };
 
     this.reset = () =>
       this.setState({
         value: getIn(context.formik.values, props.name),
         error: getIn(context.formik.errors, props.name),
-        touched: getIn(context.formik.touched, props.name),
       });
 
     context.formik.registerField(props.name, this.reset);
+  }
+
+  componentWillReceiveProps(
+    nextProps: Props,
+    nextContext: { formik: FormikProps<any> }
+  ) {
+    const nextFieldValue = getIn(nextContext.formik.values, nextProps.name);
+    const nextFieldError = getIn(nextContext.formik.errors, nextProps.name);
+
+    let nextState: any;
+
+    if (nextFieldValue !== this.state.value) {
+      nextState = { value: nextFieldValue };
+    }
+
+    if (nextFieldError !== this.state.error) {
+      nextState = { ...nextState, error: nextFieldError };
+    }
+
+    if (nextState) {
+      this.setState(s => ({ ...s, ...nextState }));
+    }
   }
 
   componentWillUnmount() {

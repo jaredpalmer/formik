@@ -4,16 +4,20 @@
 
 ## Desired Behavior
 
-## Suggested Solutions
+## Suggested Solutions / Implementation
 
-## Info
- 
+## Additional Info
+
+
 <!-- PLEASE FILL THIS OUT -->
 
-- Formik Version: 
+- Formik Version:
+- React Version:
+- TypeScript Version:
+- CodeSandbox Link:
 - OS: 
 - Node Version:
-- Package Manager and version:
+- Package Manager and Version:
 
 
 

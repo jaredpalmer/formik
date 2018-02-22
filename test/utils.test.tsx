@@ -1,4 +1,4 @@
-import { setIn, setNestedObjectValues } from '../src/utils';
+import { setIn, setNestedObjectValues, isPromise } from '../src/utils';
 
 describe('utils', () => {
   describe('setNestedObjectValues', () => {
@@ -189,6 +189,29 @@ describe('utils', () => {
       const newObj = setIn(obj, 'nested[0]', 'value');
       expect(obj).toEqual({ x: 'y' });
       expect(newObj).toEqual({ x: 'y', nested: ['value'] });
+    });
+  });
+
+  describe('isPromise', () => {
+    it('verifies that a value is a promise', () => {
+      const alwaysResolve = (resolve: Function) => resolve();
+      const promise = new Promise(alwaysResolve);
+      expect(isPromise(promise)).toEqual(true);
+    });
+
+    it('verifies that a value is not a promise', () => {
+      const emptyObject = {};
+      const identity = (i: any) => i;
+      const foo = 'foo';
+      const answerToLife = 42;
+
+      expect(isPromise(emptyObject)).toEqual(false);
+      expect(isPromise(identity)).toEqual(false);
+      expect(isPromise(foo)).toEqual(false);
+      expect(isPromise(answerToLife)).toEqual(false);
+
+      expect(isPromise(undefined)).toEqual(false);
+      expect(isPromise(null)).toEqual(false);
     });
   });
 });

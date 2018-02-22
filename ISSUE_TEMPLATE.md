@@ -1,21 +1,29 @@
 ## Bug, Feature, or Question?
 
+
 ## Current Behavior
+
+
 
 ## Desired Behavior
 
-## Suggested Solutions
 
-## Info
- 
+
+## Suggested Solutions
 <!-- PLEASE FILL THIS OUT -->
 
-- Formik Version: 
+
+
+## Additional Information
+
+
+---
+
+<!-- PLEASE FILL THIS OUT -->
+- Formik Version:
+- React Version:
+- TypeScript Version:
+- CodeSandbox Link:
 - OS: 
 - Node Version:
-- Package Manager and version:
-
-
-
-
-
+- Package Manager and Version:

@@ -1,9 +1,7 @@
 import * as PropTypes from 'prop-types';
 import * as React from 'react';
-import { getIn, isPromise } from './utils';
-
-import { setIn, validateYupSchema, yupToFormErrors } from './formik';
-import { isFunction, isEmptyChildren } from './utils';
+import { validateYupSchema, yupToFormErrors } from './Formik';
+import { getIn, isPromise, setIn, isFunction, isEmptyChildren } from './utils';
 import warning from 'warning';
 import { FieldAttributes, FieldConfig, FieldProps } from './Field';
 import isEqual from 'lodash.isequal';

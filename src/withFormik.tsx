@@ -9,7 +9,7 @@ import {
   FormikSharedConfig,
   FormikState,
   FormikValues,
-} from './formik';
+} from './Formik';
 
 import { hoistNonReactStatics } from './hoistStatics';
 import { isFunction } from './utils';

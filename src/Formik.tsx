@@ -102,11 +102,6 @@ export interface FormikActions<Values> {
     isTouched?: boolean,
     shouldValidate?: boolean
   ): void;
-  setFieldTouched(
-    field: string,
-    isTouched?: boolean,
-    shouldValidate?: boolean
-  ): void;
   /** Validate form values */
   validateForm(values?: any): void;
   /** Reset form */

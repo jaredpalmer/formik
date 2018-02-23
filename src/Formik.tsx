@@ -494,12 +494,6 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     if (e && e.preventDefault) {
       e.preventDefault();
     }
-    if (
-      document.activeElement &&
-      document.activeElement instanceof HTMLElement
-    ) {
-      document.activeElement.blur();
-    }
     this.submitForm();
   };
 

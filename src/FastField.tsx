@@ -177,6 +177,10 @@ export class FastField<
         // try to validate with yup synchronously if possible...saves a render.
         try {
           validateYupSchema(mergedValues, schema, true);
+          this.setState({
+            value: val,
+            error: undefined,
+          });
         } catch (e) {
           if (e.name === 'ValidationError') {
             this.setState({

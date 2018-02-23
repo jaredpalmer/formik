@@ -494,7 +494,16 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     if (e && e.preventDefault) {
       e.preventDefault();
     }
-    this.submitForm();
+    if (
+      document.activeElement &&
+      document.activeElement instanceof HTMLElement
+    ) {
+      document.activeElement.blur();
+    }
+    // Queues this.submitForm so that it's called after the active element's blur event's code
+    setTimeout(() => {
+      this.submitForm();
+    }, 0);
   };
 
   submitForm = () => {

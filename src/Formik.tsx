@@ -498,6 +498,14 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
   };
 
   submitForm = () => {
+    //Blur active element first
+    if (
+      document.activeElement &&
+      document.activeElement instanceof HTMLElement
+    ) {
+      document.activeElement.blur();
+    }
+
     // Recursively set all values to `true`.
     this.setState({
       touched: setNestedObjectValues<FormikTouched<Values>>(

@@ -184,6 +184,15 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
   onSubmit: (values: Values, formikActions: FormikActions<Values>) => void;
 
   /**
+   * Submission handler when the form data is invalid
+   */
+  onSubmitWithInvalidData?: (
+    values: Values,
+    formikActions: FormikActions<Values>,
+    errors: FormikErrors<Values>
+  ) => void;
+
+  /**
    * Form component to render
    */
   component?: React.ComponentType<FormikProps<Values>> | React.ReactNode;

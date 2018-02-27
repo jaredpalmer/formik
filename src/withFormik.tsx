@@ -9,6 +9,7 @@ import {
   FormikSharedConfig,
   FormikState,
   FormikValues,
+  FormikErrors,
 } from './types';
 import { isFunction } from './utils';
 
@@ -44,6 +45,15 @@ export interface WithFormikConfig<
    * Submission handler
    */
   handleSubmit: (values: Values, formikBag: FormikBag<Props, Values>) => void;
+
+  /**
+   * Submission handler when the form data is invalid
+   */
+  handleSubmitWithInvalidData?: (
+    values: Values,
+    formikBag: FormikBag<Props, Values>,
+    errors: FormikErrors<Values>
+  ) => void;
 
   /**
    * Map props to the form values
@@ -136,6 +146,21 @@ export function withFormik<
         });
       };
 
+      handleSubmitWithInvalidData = (
+        values: Values,
+        actions: FormikActions<Values>,
+        errors: FormikErrors<Values>
+      ) => {
+        return config.handleSubmitWithInvalidData!(
+          values,
+          {
+            ...actions,
+            props: this.props,
+          },
+          errors
+        );
+      };
+
       /**
        * Just avoiding a render callback for perf here
        */
@@ -152,6 +177,10 @@ export function withFormik<
             validationSchema={config.validationSchema && this.validationSchema}
             initialValues={mapPropsToValues(this.props)}
             onSubmit={this.handleSubmit as any}
+            onSubmitWithInvalidData={
+              config.handleSubmitWithInvalidData &&
+              this.handleSubmitWithInvalidData
+            }
             render={this.renderFormComponent}
           />
         );

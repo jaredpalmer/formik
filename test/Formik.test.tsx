@@ -501,6 +501,126 @@ describe('<Formik>', () => {
         });
       });
     });
+
+    describe('handleSubmitWithInvalidData', () => {
+      describe('with sync validation', () => {
+        it('should call onSubmitWithInvalidData validate function returns an error', async () => {
+          const validate = jest.fn(() => ({ name: 'some error' }));
+          const onSubmit = jest.fn();
+          const onSubmitWithInvalidData = jest.fn();
+
+          const tree = shallow(
+            <Formik
+              initialValues={{ name: 'jared' }}
+              onSubmit={onSubmit}
+              onSubmitWithInvalidData={onSubmitWithInvalidData}
+              component={Form}
+              validate={validate}
+            />
+          );
+
+          await tree
+            .find(Form)
+            .props()
+            .submitForm();
+          expect(validate).toHaveBeenCalled();
+          expect(onSubmitWithInvalidData).toHaveBeenCalled();
+          expect(onSubmitWithInvalidData.mock.calls[0][2]).toEqual({
+            name: 'some error',
+          });
+          expect(onSubmit).not.toHaveBeenCalled();
+        });
+      });
+
+      describe('with async validation', () => {
+        it('should call onSubmitWithInvalidData validate promise is rejected', done => {
+          const validate = jest.fn(() => Promise.reject(['some error']));
+          const onSubmit = jest.fn();
+          // Because the async validation needs to fail, we call the done callback in the
+          // onSubmitWithInvalidData handler. This way we can be sure the validation failed.
+          const onSubmitWithInvalidData = (
+            values: any,
+            formikActions: any,
+            errors: any
+          ) => {
+            expect(validate).toHaveBeenCalled();
+            expect(onSubmit).not.toHaveBeenCalled();
+            expect(errors).toEqual(['some error']);
+
+            done();
+          };
+
+          const tree = shallow(
+            <Formik
+              initialValues={{ name: 'jared' }}
+              onSubmit={onSubmit}
+              onSubmitWithInvalidData={onSubmitWithInvalidData}
+              component={Form}
+              validate={validate}
+            />
+          );
+
+          tree
+            .find(Form)
+            .dive()
+            .find('form')
+            .simulate('submit', {
+              preventDefault: noop,
+            });
+        });
+      });
+
+      describe('with validation schema', () => {
+        it('should call onSubmitWithInvalidData validationSchema is invalid', done => {
+          const validate = jest.fn(() =>
+            Promise.reject({
+              inner: [
+                {
+                  path: 'name',
+                  message: 'some error',
+                },
+              ],
+            })
+          );
+          const onSubmit = jest.fn();
+          // Because the async validationSchema needs to fail, we call the done callback in the
+          // onSubmitWithInvalidData handler. This way we can be sure the validation failed.
+          const onSubmitWithInvalidData = (
+            values: any,
+            formikActions: any,
+            errors: any
+          ) => {
+            expect(validate).toHaveBeenCalled();
+            expect(onSubmit).not.toHaveBeenCalled();
+            expect(errors).toEqual({
+              name: 'some error',
+            });
+
+            done();
+          };
+
+          const tree = shallow(
+            <Formik
+              initialValues={{ name: 'jared' }}
+              onSubmit={noop}
+              onSubmitWithInvalidData={onSubmitWithInvalidData}
+              component={Form}
+              validationSchema={() => ({
+                validate,
+              })}
+            />
+          );
+
+          tree
+            .find(Form)
+            .dive()
+            .find('form')
+            .simulate('submit', {
+              preventDefault: noop,
+            });
+        });
+      });
+    });
   });
 
   describe('FormikActions', () => {

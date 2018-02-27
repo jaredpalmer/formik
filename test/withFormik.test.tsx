@@ -474,5 +474,118 @@ describe('withFormik()', () => {
         });
       });
     });
+
+    describe('handleSubmitWithInvalidData', () => {
+      describe('with sync validation', () => {
+        it('should call onSubmitWithInvalidData validate function returns an error', async () => {
+          const validate = jest.fn(() => ({ name: 'some error' }));
+          const handleSubmit = jest.fn();
+          const handleSubmitWithInvalidData = jest.fn();
+
+          const ValidateForm = withFormik<Props, Values, Values>({
+            validate,
+            mapPropsToValues: ({ user }) => ({ ...user }),
+            handleSubmit,
+            handleSubmitWithInvalidData,
+          })(Form);
+
+          const tree = mount(<ValidateForm user={{ name: 'jared' }} />);
+          await tree
+            .find(Form)
+            .props()
+            .submitForm();
+
+          expect(validate).toHaveBeenCalled();
+          expect(handleSubmitWithInvalidData).toHaveBeenCalled();
+          expect(handleSubmitWithInvalidData.mock.calls[0][2]).toEqual({
+            name: 'some error',
+          });
+          expect(handleSubmit).not.toHaveBeenCalled();
+        });
+      });
+
+      describe('with async validation', () => {
+        it('should call onSubmitWithInvalidData validate promise is rejected', done => {
+          const validate = jest.fn(() => Promise.reject(['some error']));
+          const handleSubmit = jest.fn();
+          // Because the async validation needs to fail, we call the done callback in the
+          // handleSubmitWithInvalidData handler. This way we can be sure the validation failed.
+          const handleSubmitWithInvalidData = (
+            values: any,
+            formikActions: any,
+            errors: any
+          ) => {
+            expect(validate).toHaveBeenCalled();
+            expect(handleSubmit).not.toHaveBeenCalled();
+            expect(errors).toEqual(['some error']);
+
+            done();
+          };
+
+          const ValidateForm = withFormik<Props, Values, Values>({
+            validate,
+            mapPropsToValues: ({ user }) => ({ ...user }),
+            handleSubmit,
+            handleSubmitWithInvalidData,
+          })(Form);
+
+          const tree = mount(<ValidateForm user={{ name: 'jared' }} />);
+          tree
+            .find(Form)
+            .find('form')
+            .simulate('submit', {
+              preventDefault: noop,
+            });
+        });
+      });
+
+      describe('with validation schema', () => {
+        it('should call onSubmitWithInvalidData validationSchema is invalid', done => {
+          const validate = jest.fn(() =>
+            Promise.reject({
+              inner: [
+                {
+                  path: 'name',
+                  message: 'some error',
+                },
+              ],
+            })
+          );
+          const handleSubmit = jest.fn();
+          // Because the async validationSchema needs to fail, we call the done callback in the
+          // handleSubmitWithInvalidData handler. This way we can be sure the validation failed.
+          const handleSubmitWithInvalidData = (
+            values: any,
+            formikActions: any,
+            errors: any
+          ) => {
+            expect(validate).toHaveBeenCalled();
+            expect(handleSubmit).not.toHaveBeenCalled();
+            expect(errors).toEqual({
+              name: 'some error',
+            });
+
+            done();
+          };
+
+          const ValidateForm = withFormik<Props, Values, Values>({
+            validationSchema: () => ({
+              validate,
+            }),
+            mapPropsToValues: ({ user }) => ({ ...user }),
+            handleSubmit,
+            handleSubmitWithInvalidData,
+          })(Form);
+
+          const tree = mount(<ValidateForm user={{ name: 'jared' }} />);
+          tree
+            .find(Form)
+            .find('form')
+            .simulate('submit', {
+              preventDefault: noop,
+            });
+        });
+      });
+    });
   });
 });

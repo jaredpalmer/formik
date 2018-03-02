@@ -73,6 +73,9 @@ export interface FieldConfig {
 
   /** Field value */
   value?: any;
+
+  /** Inner ref */
+  innerRef?: (instance: any) => void;
 }
 
 export type FieldAttributes = GenericFieldHTMLAttributes & FieldConfig;
@@ -96,6 +99,7 @@ export class Field<Props extends FieldAttributes = any> extends React.Component<
     render: PropTypes.func,
     children: PropTypes.oneOfType([PropTypes.func, PropTypes.node]),
     validate: PropTypes.func,
+    innerRef: PropTypes.func,
   };
 
   componentWillMount() {
@@ -181,9 +185,11 @@ export class Field<Props extends FieldAttributes = any> extends React.Component<
     }
 
     if (typeof component === 'string') {
+      const { innerRef, ...rest } = props;
       return React.createElement(component as any, {
+        ref: innerRef,
         ...field,
-        ...props,
+        ...rest,
         children,
       });
     }

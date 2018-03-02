@@ -33,6 +33,7 @@ export class FastField<
     render: PropTypes.func,
     children: PropTypes.oneOfType([PropTypes.func, PropTypes.node]),
     validate: PropTypes.func,
+    innerRef: PropTypes.func,
   };
 
   reset: Function;
@@ -291,9 +292,11 @@ export class FastField<
     }
 
     if (typeof component === 'string') {
+      const { innerRef, ...rest } = props;
       return React.createElement(component as any, {
+        ref: innerRef,
         ...field,
-        ...props,
+        ...rest,
         children,
       });
     }

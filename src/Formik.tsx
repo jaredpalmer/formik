@@ -170,6 +170,8 @@ export interface FormikSharedConfig {
   isInitialValid?: boolean | ((props: object) => boolean | undefined);
   /** Should Formik reset the form when new initialValues change */
   enableReinitialize?: boolean;
+
+  otherProps?: object;
 }
 
 /**
@@ -240,6 +242,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     validateOnBlur: true,
     isInitialValid: false,
     enableReinitialize: false,
+    otherProps: {},
   };
 
   static propTypes = {
@@ -255,6 +258,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     render: PropTypes.func,
     children: PropTypes.oneOfType([PropTypes.func, PropTypes.node]),
     enableReinitialize: PropTypes.bool,
+    otherProps: PropTypes.object,
   };
 
   static childContextTypes = {
@@ -687,6 +691,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       handleSubmit: this.handleSubmit,
       validateOnChange: this.props.validateOnChange,
       validateOnBlur: this.props.validateOnBlur,
+      otherProps: this.props.otherProps,
     };
   };
 

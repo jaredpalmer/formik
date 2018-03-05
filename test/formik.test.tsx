@@ -37,7 +37,12 @@ const Form: React.SFC<FormikProps<Values>> = ({
 };
 
 const BasicForm = (
-  <Formik initialValues={{ name: 'jared' }} onSubmit={noop} component={Form} />
+  <Formik
+    otherProps={{ test: 'test' }}
+    initialValues={{ name: 'jared' }}
+    onSubmit={noop}
+    component={Form}
+  />
 );
 
 class WithState extends React.Component<{}, { data: { name: string } }> {
@@ -68,6 +73,7 @@ describe('<Formik>', () => {
     expect(tree.find(Form).props().errors).toEqual({});
     expect(tree.find(Form).props().dirty).toBe(false);
     expect(tree.find(Form).props().isValid).toBe(false);
+    expect(tree.find(Form).props().otherProps).toEqual({ test: 'test' });
   });
 
   describe('FormikHandlers', () => {

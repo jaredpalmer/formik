@@ -114,7 +114,7 @@ export interface FormikActions<Values> {
   /** Reset form */
   resetForm(nextValues?: any): void;
   /** Submit the form imperatively */
-  submitForm(): void;
+  submitForm(): Promise<void>;
   /** Set Formik state, careful! */
   setFormikState<K extends keyof FormikState<Values>>(
     f: (
@@ -379,7 +379,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
   /**
    * Run validation against a Yup schema and optionally run a function if successful
    */
-  runValidationSchema = (values: FormikValues, onSuccess?: Function) => {
+  runValidationSchema = (values: FormikValues, callback?: Function) => {
     const { validationSchema } = this.props;
     const schema = isFunction(validationSchema)
       ? validationSchema()
@@ -387,12 +387,16 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     validateYupSchema(values, schema).then(
       () => {
         this.setState({ errors: {} });
-        if (onSuccess) {
-          onSuccess();
+        if (callback) {
+          callback();
         }
       },
-      (err: any) =>
-        this.setState({ errors: yupToFormErrors(err), isSubmitting: false })
+      (err: any) => {
+        this.setState({ errors: yupToFormErrors(err), isSubmitting: false });
+        if (callback) {
+          callback(err);
+        }
+      }
     );
   };
 
@@ -497,7 +501,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     this.submitForm();
   };
 
-  submitForm = () => {
+  submitForm = (): Promise<void> => {
     // Recursively set all values to `true`.
     this.setState({
       touched: setNestedObjectValues<FormikTouched<Values>>(
@@ -511,14 +515,16 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       const maybePromisedErrors =
         (this.props.validate as any)(this.state.values) || {};
       if (isPromise(maybePromisedErrors)) {
-        (maybePromisedErrors as Promise<any>).then(
+        return (maybePromisedErrors as Promise<any>).then(
           () => {
             this.setState({ errors: {} });
-            this.executeSubmit();
+            return this.executeSubmit();
           },
-          errors => this.setState({ errors, isSubmitting: false })
+          errors => {
+            this.setState({ errors, isSubmitting: false });
+            return Promise.resolve();
+          }
         );
-        return;
       } else {
         const isValid = Object.keys(maybePromisedErrors).length === 0;
         this.setState({
@@ -528,18 +534,28 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
 
         // only submit if there are no errors
         if (isValid) {
-          this.executeSubmit();
+          return this.executeSubmit();
         }
+        return Promise.resolve();
       }
     } else if (this.props.validationSchema) {
-      this.runValidationSchema(this.state.values, this.executeSubmit);
-    } else {
-      this.executeSubmit();
+      return new Promise((resolve, reject) => {
+        this.runValidationSchema(this.state.values, (err: any) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(this.executeSubmit());
+          }
+        });
+      });
     }
+    return this.executeSubmit();
   };
 
   executeSubmit = () => {
-    this.props.onSubmit(this.state.values, this.getFormikActions());
+    return Promise.resolve(
+      this.props.onSubmit(this.state.values, this.getFormikActions())
+    );
   };
 
   handleBlur = (eventOrString: any): void | ((e: any) => void) => {

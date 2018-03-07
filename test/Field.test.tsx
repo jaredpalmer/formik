@@ -156,7 +156,7 @@ describe('A <Field />', () => {
       expect((node.firstChild as HTMLTextAreaElement).name).toBe('name');
     });
 
-    it('receives { field, form } props', () => {
+    it('receives { field, meta, form } props', () => {
       let actual: any; /** FieldProps ;) */
       let injected: any; /** FieldProps ;) */
       const Component: React.SFC<FieldProps> = props =>
@@ -172,12 +172,37 @@ describe('A <Field />', () => {
         />,
         node
       );
+
       const { handleBlur, handleChange } = injected;
       expect(actual.field.name).toBe('name');
       expect(actual.field.value).toBe('jared');
       expect(actual.field.onChange).toBe(handleChange);
       expect(actual.field.onBlur).toBe(handleBlur);
+
+      expect(actual.meta.initialValue).toBe('jared');
+      expect(actual.meta.touched).toBeUndefined();
+      expect(actual.meta.error).toBeUndefined();
+
       expect(actual.form).toEqual(injected);
+    });
+
+    it('receives defined touched & error meta prop', () => {
+      let actual: any; /** FieldProps ;) */
+      const Component: React.SFC<FieldProps> = props =>
+        (actual = props) && null;
+
+      ReactDOM.render(
+        <TestForm
+          validate={() => ({ name: 'Some Error' })}
+          render={() => <Field name="name" component={Component} />}
+        />,
+        node
+      );
+
+      actual.field.onBlur({ target: { name: 'name' }, persist: jest.fn() });
+
+      expect(actual.meta.touched).toBeTruthy();
+      expect(actual.meta.error).toBeTruthy();
     });
   });
 
@@ -201,7 +226,7 @@ describe('A <Field />', () => {
       expect(node.innerHTML).toContain(TEXT);
     });
 
-    it('receives { field, form } props', () => {
+    it('receives { field, meta, form } props', () => {
       ReactDOM.render(
         <TestForm
           render={(formikProps: FormikProps<TestFormValues>) => (
@@ -209,12 +234,17 @@ describe('A <Field />', () => {
               placeholder={placeholder}
               name="name"
               testingAnArbitraryProp="thing"
-              render={({ field, form }: FieldProps) => {
+              render={({ field, meta, form }: FieldProps) => {
                 const { handleBlur, handleChange } = formikProps;
                 expect(field.name).toBe('name');
                 expect(field.value).toBe('jared');
                 expect(field.onChange).toBe(handleChange);
                 expect(field.onBlur).toBe(handleBlur);
+
+                expect(meta.initialValue).toBe('jared');
+                expect(meta.touched).toBeUndefined();
+                expect(meta.error).toBeUndefined();
+
                 expect(form).toEqual(formikProps);
 
                 return null;
@@ -224,6 +254,25 @@ describe('A <Field />', () => {
         />,
         node
       );
+    });
+
+    it('receives defined touched & error meta prop', () => {
+      let actual: any; /** FieldProps ;) */
+      const Component: React.SFC<FieldProps> = props =>
+        (actual = props) && null;
+
+      ReactDOM.render(
+        <TestForm
+          validate={() => ({ name: 'Some Error' })}
+          render={() => <Field name="name" component={Component} />}
+        />,
+        node
+      );
+
+      actual.field.onBlur({ target: { name: 'name' }, persist: jest.fn() });
+
+      expect(actual.meta.touched).toBeTruthy();
+      expect(actual.meta.error).toBeTruthy();
     });
   });
 
@@ -401,7 +450,7 @@ describe('A <Field />', () => {
       expect(node.innerHTML).toContain(TEXT);
     });
 
-    it('receives { field, form } props', () => {
+    it('receives { field, meta, form } props', () => {
       let actual: any;
       let injected: any;
       const Component: React.SFC<FieldProps> = props =>
@@ -422,7 +471,31 @@ describe('A <Field />', () => {
       expect(actual.field.onChange).toBe(handleChange);
       expect(actual.field.onBlur).toBe(handleBlur);
       expect(actual.field.value).toBe('jared');
+
+      expect(actual.meta.initialValue).toBe('jared');
+      expect(actual.meta.touched).toBeUndefined();
+      expect(actual.meta.error).toBeUndefined();
+
       expect(actual.form).toEqual(injected);
+    });
+
+    it('receives defined touched & error meta prop', () => {
+      let actual: any; /** FieldProps ;) */
+      const Component: React.SFC<FieldProps> = props =>
+        (actual = props) && null;
+
+      ReactDOM.render(
+        <TestForm
+          validate={() => ({ name: 'Some Error' })}
+          render={() => <Field name="name" component={Component} />}
+        />,
+        node
+      );
+
+      actual.field.onBlur({ target: { name: 'name' }, persist: jest.fn() });
+
+      expect(actual.meta.touched).toBeTruthy();
+      expect(actual.meta.error).toBeTruthy();
     });
 
     it('can resolve bracket paths', () => {

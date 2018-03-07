@@ -5,12 +5,10 @@ import { FieldArray, Formik, isFunction } from '../src';
 // tslint:disable-next-line:no-empty
 const noop = () => {};
 
+const friends = ['jared', 'andrea', 'brent'];
+
 const TestForm: React.SFC<any> = p => (
-  <Formik
-    onSubmit={noop}
-    initialValues={{ friends: ['jared', 'andrea', 'brent'] }}
-    {...p}
-  />
+  <Formik onSubmit={noop} initialValues={{ friends: [...friends] }} {...p} />
 );
 
 describe('<FieldArray />', () => {
@@ -20,8 +18,13 @@ describe('<FieldArray />', () => {
     ReactDOM.unmountComponentAtNode(node);
   });
 
-  it('renders component with array helpers as props', () => {
+  it('renders component with props', () => {
     const TestComponent = (arrayProps: any) => {
+      expect(arrayProps.friends).toEqual(friends);
+      expect(arrayProps.meta.touched).toEqual([]);
+      expect(arrayProps.meta.errors).toEqual([]);
+      expect(arrayProps.meta.isEmpty).toBeFalsy();
+      expect(arrayProps.meta.initialValues).toEqual(friends);
       expect(isFunction(arrayProps.push)).toBeTruthy();
       return null;
     };
@@ -36,13 +39,18 @@ describe('<FieldArray />', () => {
     );
   });
 
-  it('renders with render callback with array helpers as props', () => {
+  it('renders with render callback with props', () => {
     ReactDOM.render(
       <TestForm
         render={() => (
           <FieldArray
             name="friends"
-            render={arrayProps => {
+            render={(arrayProps: any) => {
+              expect(arrayProps.friends).toEqual(friends);
+              expect(arrayProps.meta.touched).toEqual([]);
+              expect(arrayProps.meta.errors).toEqual([]);
+              expect(arrayProps.meta.isEmpty).toBeFalsy();
+              expect(arrayProps.meta.initialValues).toEqual(friends);
               expect(isFunction(arrayProps.push)).toBeTruthy();
               return null;
             }}
@@ -53,12 +61,17 @@ describe('<FieldArray />', () => {
     );
   });
 
-  it('renders with "children as a function" with array helpers as props', () => {
+  it('renders with "children as a function" with props', () => {
     ReactDOM.render(
       <TestForm
         render={() => (
           <FieldArray name="friends">
-            {arrayProps => {
+            {(arrayProps: any) => {
+              expect(arrayProps.friends).toEqual(friends);
+              expect(arrayProps.meta.touched).toEqual([]);
+              expect(arrayProps.meta.errors).toEqual([]);
+              expect(arrayProps.meta.isEmpty).toBeFalsy();
+              expect(arrayProps.meta.initialValues).toEqual(friends);
               expect(isFunction(arrayProps.push)).toBeTruthy();
               return null;
             }}

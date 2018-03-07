@@ -213,6 +213,10 @@ describe('A <Field />', () => {
                 const { handleBlur, handleChange } = formikProps;
                 expect(field.name).toBe('name');
                 expect(field.value).toBe('jared');
+                expect(field.hasOwnProperty('error')).toBe(true);
+                expect(field.hasOwnProperty('touched')).toBe(true);
+                expect(field.error).toBe(undefined);
+                expect(field.touched).toBe(undefined);
                 expect(field.onChange).toBe(handleChange);
                 expect(field.onBlur).toBe(handleBlur);
                 expect(form).toEqual(formikProps);

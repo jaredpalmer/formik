@@ -167,6 +167,8 @@ export class Field<Props extends FieldAttributes = any> extends React.Component<
           ? props.value // React uses checked={} for these inputs
           : getIn(formik.values, name),
       name,
+      error: getIn(formik.errors, name),
+      touched: getIn(formik.touched, name),
       onChange: validate ? this.handleChange : formik.handleChange,
       onBlur: validate ? this.handleBlur : formik.handleBlur,
     };

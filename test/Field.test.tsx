@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Formik, Field, FieldProps, FormikProps } from '../src';
 
-import { shallow } from 'enzyme';
+import { shallow, mount } from 'enzyme';
 import { noop } from './testHelpers';
 
 interface TestFormValues {
@@ -90,6 +90,7 @@ describe('A <Field />', () => {
           value: 'ian',
         },
       });
+
       expect(handleBlur).toHaveBeenCalled();
       expect(setFieldError).toHaveBeenCalled();
       expect(validate).toHaveBeenCalled();
@@ -178,6 +179,33 @@ describe('A <Field />', () => {
       expect(actual.field.onChange).toBe(handleChange);
       expect(actual.field.onBlur).toBe(handleBlur);
       expect(actual.form).toEqual(injected);
+    });
+
+    it('assigns innerRef as a ref to string components', () => {
+      const innerRef = jest.fn();
+      const tree = mount(<Field name="name" innerRef={innerRef} />, {
+        context: { formik: {} },
+      });
+      const element = tree.find('input').instance();
+      expect(innerRef).toHaveBeenCalledWith(element);
+    });
+
+    it('forwards innerRef to React component', () => {
+      let actual: any; /** FieldProps ;) */
+      const Component: React.SFC<FieldProps> = props =>
+        (actual = props) && null;
+
+      const innerRef = jest.fn();
+
+      ReactDOM.render(
+        <TestForm
+          render={() => (
+            <Field name="name" component={Component} innerRef={innerRef} />
+          )}
+        />,
+        node
+      );
+      expect(actual.innerRef).toBe(innerRef);
     });
   });
 

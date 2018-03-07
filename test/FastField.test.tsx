@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 
 import { FastField as Field, FieldProps, Formik, FormikProps } from '../src';
 
-import { shallow } from 'enzyme';
+import { shallow, mount } from 'enzyme';
 import { noop } from './testHelpers';
 
 interface TestFormValues {
@@ -169,6 +169,37 @@ describe('A <Field />', () => {
       expect(actual.field.name).toBe('name');
       expect(actual.field.value).toBe('jared');
       expect(actual.form).toEqual(injected);
+    });
+
+    it('assigns innerRef as a ref to string components', () => {
+      const innerRef = jest.fn();
+      const tree = mount(<Field name="name" innerRef={innerRef} />, {
+        context: {
+          formik: {
+            registerField: jest.fn(noop),
+          },
+        },
+      });
+      const element = tree.find('input').instance();
+      expect(innerRef).toHaveBeenCalledWith(element);
+    });
+
+    it('forwards innerRef to React component', () => {
+      let actual: any; /** FieldProps ;) */
+      const Component: React.SFC<FieldProps> = props =>
+        (actual = props) && null;
+
+      const innerRef = jest.fn();
+
+      ReactDOM.render(
+        <TestForm
+          render={() => (
+            <Field name="name" component={Component} innerRef={innerRef} />
+          )}
+        />,
+        node
+      );
+      expect(actual.innerRef).toBe(innerRef);
     });
   });
 

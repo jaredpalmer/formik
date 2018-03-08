@@ -230,15 +230,32 @@ export class FieldArray extends React.Component<FieldArrayConfig, {}> {
     };
 
     const { component, render, children, name } = this.props;
-    const props = { ...arrayHelpers, form: this.context.formik, name };
+    const { formik } = this.context;
+
+    const values = formik.values[name] || [];
+
+    const meta = {
+      touched: getIn(formik.touched, name) || [],
+      errors: getIn(formik.errors, name) || [],
+      initialValues: getIn(formik.initialValues, name),
+      isEmpty: values.length === 0,
+    };
+
+    const bag = {
+      ...arrayHelpers,
+      [name]: values,
+      name,
+      meta,
+      form: formik,
+    };
 
     return component
-      ? React.createElement(component as any, props)
+      ? React.createElement(component as any, bag)
       : render
-        ? (render as any)(props)
+        ? (render as any)(bag)
         : children // children come last, always called
           ? typeof children === 'function'
-            ? (children as any)(props)
+            ? (children as any)(bag)
             : !isEmptyChildren(children) ? React.Children.only(children) : null
           : null;
   }

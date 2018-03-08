@@ -229,7 +229,7 @@ export class FieldArray extends React.Component<FieldArrayConfig, {}> {
       handleRemove: this.handleRemove,
     };
 
-    const { component, render, children, name } = this.props;
+    const { component, render, children, name, ...props } = this.props;
     const { formik } = this.context;
 
     const values = formik.values[name] || [];
@@ -249,14 +249,14 @@ export class FieldArray extends React.Component<FieldArrayConfig, {}> {
       form: formik,
     };
 
-    return component
-      ? React.createElement(component as any, bag)
-      : render
-        ? (render as any)(bag)
-        : children // children come last, always called
-          ? typeof children === 'function'
-            ? (children as any)(bag)
-            : !isEmptyChildren(children) ? React.Children.only(children) : null
-          : null;
+    if (render) {
+      return (render as any)(bag);
+    }
+
+    if (isFunction(children)) {
+      return (children as any)(bag);
+    }
+
+    return React.createElement(component as any, { ...bag, ...props });
   }
 }

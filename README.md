@@ -456,7 +456,8 @@ const EditUserDialog = ({ user, updateUser, onClose }) => {
               onBlur={handleBlur}
               value={values.social.facebook}
             />
-            {errors.social.facebook &&
+            {errors.social &&
+              errors.social.facebook &&
               touched.facebook && <div>{errors.social.facebook}</div>}
             <input
               type="text"
@@ -465,7 +466,8 @@ const EditUserDialog = ({ user, updateUser, onClose }) => {
               onBlur={handleBlur}
               value={values.social.twitter}
             />
-            {errors.social.twitter &&
+            {errors.social &&
+              errors.social.twitter &&
               touched.twitter && <div>{errors.social.twitter}</div>}
             <button type="submit" disabled={isSubmitting}>
               Submit

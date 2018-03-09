@@ -338,6 +338,7 @@ npm install yup --save
       - [`setSubmitting: (isSubmitting: boolean) => void`](#setsubmitting-issubmitting-boolean--void)
       - [`setTouched: (fields: { [field: string]: boolean }) => void`](#settouched-fields--field-string-boolean---void)
       - [`setValues: (fields: { [field: string]: any }) => void`](#setvalues-fields--field-string-any---void)
+      - [`submitForm`](#submitform-fields--field-string-any---void)
       - [`status?: any`](#status-any)
       - [`touched: { [field: string]: boolean }`](#touched--field-string-boolean-)
       - [`values: { [field: string]: any }`](#values--field-string-any-)
@@ -966,6 +967,10 @@ Set the error message of a field imperatively. `field` should match the key of
 
 Set the touched state of a field imperatively. `field` should match the key of
 [`touched`] you wish to update. Useful for creating custom input blur handlers. Calling this method will trigger validation to run if [`validateOnBlur`] is set to `true` (which it is by default). You can also explicitly prevent/skip validation by passing a third argument as `false`.
+
+##### `submitForm: () => void`
+
+Trigger a form submission.
 
 ##### `setFieldValue: (field: string, value: any, shouldValidate?: boolean) => void`
 

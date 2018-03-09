@@ -498,7 +498,11 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     if (e && e.preventDefault) {
       e.preventDefault();
     }
-    this.submitForm();
+    this.submitForm().catch(error => {
+      if (error.name !== 'ValidationError') {
+        throw error;
+      }
+    });
   };
 
   submitForm = (): Promise<void> => {

@@ -368,6 +368,7 @@ npm install yup --save
     - [`validationSchema?: Schema | (() => Schema)`](#validationschema-schema----schema)
   - [`<Field />`](#field-)
     - [`validate?: (value: any) => undefined | string | Promise<any>`](#validate-value-any--undefined--string--promiseany)
+    - [Refs](#refs)
   - [`<FieldArray/>`](#fieldarray)
       - [`name: string`](#name-string)
       - [`validateOnChange?: boolean`](#validateonchange-boolean-1)
@@ -1321,6 +1322,10 @@ const validate = value => {
 
 Note: To allow for i18n libraries, the TypeScript typings for `validate` are
 slightly relaxed and allow you to return a `Function` (e.g. `i18n('invalid')`).
+
+#### Refs
+
+When you are **not** using a custom component and you need to access the underlying DOM node created by `Field` (e.g. to call `focus`), pass the callback to the `innerRef` prop instead.
 
 ### `<FieldArray/>`
 

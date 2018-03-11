@@ -68,6 +68,7 @@ describe('<Formik>', () => {
     expect(tree.find(Form).props().errors).toEqual({});
     expect(tree.find(Form).props().dirty).toBe(false);
     expect(tree.find(Form).props().isValid).toBe(false);
+    expect(tree.find(Form).props().submitCount).toBe(0);
   });
 
   describe('FormikHandlers', () => {
@@ -852,6 +853,21 @@ describe('<Formik>', () => {
       expect(tree.find(Form).props().dirty).toBe(true);
       expect(tree.find(Form).props().isValid).toBe(true);
     });
+
+    it('should increase submitCount after submitting the form', async () => {
+      const tree = shallow(BasicForm);
+      expect(tree.find(Form).props().submitCount).toBe(0);
+      await tree
+        .find(Form)
+        .props()
+        .submitForm();
+      expect(
+        tree
+          .update()
+          .find(Form)
+          .props().submitCount
+      ).toBe(1);
+    });
   });
 
   describe('componentWillReceiveProps', () => {
@@ -1043,6 +1059,34 @@ describe('<Formik>', () => {
           .find(Form)
           .props().dirty
       ).toEqual(false);
+    });
+
+    it('should reset submitCount', () => {
+      const tree = mount(<WithState />);
+
+      tree
+        .find(Form)
+        .props()
+        .handleSubmit();
+
+      expect(
+        tree
+          .update()
+          .find(Form)
+          .props().submitCount
+      ).toEqual(1);
+
+      tree
+        .find(Form)
+        .props()
+        .handleReset();
+
+      expect(
+        tree
+          .update()
+          .find(Form)
+          .props().submitCount
+      ).toEqual(0);
     });
   });
 });

@@ -1,3 +1,6 @@
+/**
+ * Copyright 2017 Jared Palmer. All rights reserved.
+ */
 import * as PropTypes from 'prop-types';
 import * as React from 'react';
 

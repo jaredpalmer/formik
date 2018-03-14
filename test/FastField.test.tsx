@@ -1,3 +1,6 @@
+/**
+ * Copyright 2017 Jared Palmer. All rights reserved.
+ */
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
@@ -96,8 +99,8 @@ describe('A <Field />', () => {
       const tree = makeFieldTree(
         { name: 'name', validate },
         {
-          setFormikState,
           registerField,
+          setFormikState,
           validateOnBlur: false,
         }
       );

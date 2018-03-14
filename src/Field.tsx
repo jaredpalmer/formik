@@ -1,10 +1,13 @@
+/**
+ * Copyright 2017 Jared Palmer. All rights reserved.
+ */
 import * as PropTypes from 'prop-types';
 import * as React from 'react';
 
-import { FormikProps } from './Formik';
-import { getIn, isPromise, isFunction, isEmptyChildren } from './utils';
 import warning from 'warning';
+import { FormikProps } from './Formik';
 import { GenericFieldHTMLAttributes } from './types';
+import { getIn, isEmptyChildren, isFunction, isPromise } from './utils';
 
 /**
  * Note: These typings could be more restrictive, but then it would limit the
@@ -61,6 +64,7 @@ export interface FieldConfig {
   /**
    * Validate a single field value independently
    */
+  // tslint:disable-next-line:ban-types
   validate?: ((value: any) => string | Function | Promise<void> | undefined);
 
   /**
@@ -91,10 +95,10 @@ export class Field<Props extends FieldAttributes = any> extends React.Component<
   };
 
   static propTypes = {
-    name: PropTypes.string.isRequired,
-    component: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
-    render: PropTypes.func,
     children: PropTypes.oneOfType([PropTypes.func, PropTypes.node]),
+    component: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
+    name: PropTypes.string.isRequired,
+    render: PropTypes.func,
     validate: PropTypes.func,
   };
 
@@ -162,13 +166,13 @@ export class Field<Props extends FieldAttributes = any> extends React.Component<
 
     const { formik } = this.context;
     const field = {
+      name,
+      onBlur: validate ? this.handleBlur : formik.handleBlur,
+      onChange: validate ? this.handleChange : formik.handleChange,
       value:
         props.type === 'radio' || props.type === 'checkbox'
           ? props.value // React uses checked={} for these inputs
           : getIn(formik.values, name),
-      name,
-      onChange: validate ? this.handleChange : formik.handleChange,
-      onBlur: validate ? this.handleBlur : formik.handleBlur,
     };
     const bag = { field, form: formik };
 

@@ -1,4 +1,7 @@
-import { setIn, setNestedObjectValues, isPromise } from '../src/utils';
+/**
+ * Copyright 2017 Jared Palmer. All rights reserved.
+ */
+import { isPromise, setIn, setNestedObjectValues } from '../src/utils';
 
 describe('utils', () => {
   describe('setNestedObjectValues', () => {
@@ -30,19 +33,19 @@ describe('utils', () => {
     it('sets value of nested flat array items', () => {
       const obj = {
         x: {
+          nestedFlatArray: ['jared', 'ian'],
           nestedObject: {
             z: 'thing',
           },
-          nestedFlatArray: ['jared', 'ian'],
         },
       };
 
       const newObj = {
         x: {
+          nestedFlatArray: [true, true],
           nestedObject: {
             z: true,
           },
-          nestedFlatArray: [true, true],
         },
       };
       expect(setNestedObjectValues(obj, true)).toEqual(newObj);
@@ -51,9 +54,6 @@ describe('utils', () => {
     it('sets value of nested complex array items', () => {
       const obj = {
         x: {
-          nestedObject: {
-            z: 'thing',
-          },
           nestedFlatArray: [
             {
               nestedObject: {
@@ -66,14 +66,14 @@ describe('utils', () => {
               },
             },
           ],
+          nestedObject: {
+            z: 'thing',
+          },
         },
       };
 
       const newObj = {
         x: {
-          nestedObject: {
-            z: true,
-          },
           nestedFlatArray: [
             {
               nestedObject: {
@@ -86,6 +86,9 @@ describe('utils', () => {
               },
             },
           ],
+          nestedObject: {
+            z: true,
+          },
         },
       };
       expect(setNestedObjectValues(obj, true)).toEqual(newObj);
@@ -93,9 +96,6 @@ describe('utils', () => {
     it('sets value of nested mixed array items', () => {
       const obj = {
         x: {
-          nestedObject: {
-            z: 'thing',
-          },
           nestedFlatArray: [
             {
               nestedObject: {
@@ -104,14 +104,14 @@ describe('utils', () => {
             },
             'jared',
           ],
+          nestedObject: {
+            z: 'thing',
+          },
         },
       };
 
       const newObj = {
         x: {
-          nestedObject: {
-            z: true,
-          },
           nestedFlatArray: [
             {
               nestedObject: {
@@ -120,6 +120,9 @@ describe('utils', () => {
             },
             true,
           ],
+          nestedObject: {
+            z: true,
+          },
         },
       };
       expect(setNestedObjectValues(obj, true)).toEqual(newObj);
@@ -194,7 +197,7 @@ describe('utils', () => {
 
   describe('isPromise', () => {
     it('verifies that a value is a promise', () => {
-      const alwaysResolve = (resolve: Function) => resolve();
+      const alwaysResolve = (resolve: () => void) => resolve();
       const promise = new Promise(alwaysResolve);
       expect(isPromise(promise)).toEqual(true);
     });

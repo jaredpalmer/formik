@@ -1,8 +1,11 @@
+/**
+ * Copyright 2017 Jared Palmer. All rights reserved.
+ */
 import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import { FormikProps, FormikState } from './Formik';
-import { isEmptyChildren, getIn, setIn, isFunction } from './utils';
 import { SharedRenderProps } from './types';
+import { getIn, isEmptyChildren, isFunction, setIn } from './utils';
 
 export type FieldArrayConfig = {
   /** Really the path to the array field to be updated */
@@ -83,6 +86,7 @@ export class FieldArray extends React.Component<FieldArrayConfig, {}> {
   }
 
   updateArrayField = (
+    // tslint:disable-next-line:ban-types
     fn: Function,
     alterTouched: boolean,
     alterErrors: boolean
@@ -98,13 +102,13 @@ export class FieldArray extends React.Component<FieldArrayConfig, {}> {
     setFormikState(
       (prevState: FormikState<any>) => ({
         ...prevState,
-        values: setIn(prevState.values, name, fn(getIn(values, name))),
         errors: alterErrors
           ? setIn(prevState.errors, name, fn(getIn(errors, name)))
           : prevState.errors,
         touched: alterTouched
           ? setIn(prevState.touched, name, fn(getIn(touched, name)))
           : prevState.touched,
+        values: setIn(prevState.values, name, fn(getIn(values, name))),
       }),
       () => {
         if (validateOnChange) {
@@ -213,20 +217,20 @@ export class FieldArray extends React.Component<FieldArrayConfig, {}> {
 
   render() {
     const arrayHelpers: ArrayHelpers = {
-      push: this.push,
-      pop: this.pop,
-      swap: this.swap,
-      move: this.move,
-      insert: this.insert,
-      unshift: this.unshift,
-      remove: this.remove,
-      handlePush: this.handlePush,
-      handlePop: this.handlePop,
-      handleSwap: this.handleSwap,
-      handleMove: this.handleMove,
       handleInsert: this.handleInsert,
-      handleUnshift: this.handleUnshift,
+      handleMove: this.handleMove,
+      handlePop: this.handlePop,
+      handlePush: this.handlePush,
       handleRemove: this.handleRemove,
+      handleSwap: this.handleSwap,
+      handleUnshift: this.handleUnshift,
+      insert: this.insert,
+      move: this.move,
+      pop: this.pop,
+      push: this.push,
+      remove: this.remove,
+      swap: this.swap,
+      unshift: this.unshift,
     };
 
     const { component, render, children, name } = this.props;

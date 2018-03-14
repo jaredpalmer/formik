@@ -1,6 +1,9 @@
+/**
+ * Copyright 2017 Jared Palmer. All rights reserved.
+ */
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Formik, Field, FieldProps, FormikProps } from '../src';
+import { Field, FieldProps, Formik, FormikProps } from '../src';
 
 import { shallow } from 'enzyme';
 import { noop } from './testHelpers';

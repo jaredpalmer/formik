@@ -1,7 +1,10 @@
+/**
+ * Copyright 2017 Jared Palmer. All rights reserved.
+ */
+import { mount, shallow } from 'enzyme';
 import * as React from 'react';
 import { Formik, FormikProps } from '../src';
-import { shallow, mount } from 'enzyme';
-import { sleep, noop } from './testHelpers';
+import { noop, sleep } from './testHelpers';
 
 interface Values {
   name: string;
@@ -259,9 +262,7 @@ describe('<Formik>', () => {
       it('should not error if called without an object', () => {
         const FormNoEvent = (
           <Formik initialValues={{ name: 'jared' }} onSubmit={noop}>
-            {({ handleSubmit }) => (
-              <button onClick={() => handleSubmit(/* undefined event */)} />
-            )}
+            {({ handleSubmit }) => <button onClick={handleSubmit as any} />}
           </Formik>
         );
         const tree = mount(FormNoEvent);
@@ -276,7 +277,7 @@ describe('<Formik>', () => {
           <Formik initialValues={{ name: 'jared' }} onSubmit={noop}>
             {({ handleSubmit }) => (
               <button
-                onClick={() => handleSubmit({} /* no preventDefault */)}
+                onClick={() => handleSubmit({} /* no preventDefault */ as any)}
               />
             )}
           </Formik>
@@ -855,23 +856,24 @@ describe('<Formik>', () => {
   });
 
   describe('componentWillReceiveProps', () => {
-    let form: any, initialValues: any;
+    let form: any;
+    let initialValues: any;
     beforeEach(() => {
       initialValues = {
-        name: 'formik',
         github: { repoUrl: 'https://github.com/jaredpalmer/formik' },
+        name: 'formik',
         watchers: ['ian', 'sam'],
       };
       form = new Formik({
+        enableReinitialize: true,
         initialValues,
         onSubmit: jest.fn(),
-        enableReinitialize: true,
       });
       form.resetForm = jest.fn();
     });
 
     it('should not resetForm if new initialValues are the same as previous', () => {
-      const newInitialValues = Object.assign({}, initialValues);
+      const newInitialValues = { ...initialValues };
       form.componentWillReceiveProps({
         initialValues: newInitialValues,
         onSubmit: jest.fn(),

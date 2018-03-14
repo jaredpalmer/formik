@@ -1,3 +1,6 @@
+/**
+ * Copyright 2017 Jared Palmer. All rights reserved.
+ */
 import * as React from 'react';
 
 import {
@@ -73,13 +76,15 @@ export type CompositeComponent<P> =
   | React.ComponentClass<P>
   | React.StatelessComponent<P>;
 
-export interface ComponentDecorator<TOwnProps, TMergedProps> {
-  (component: CompositeComponent<TMergedProps>): React.ComponentType<TOwnProps>;
-}
+export type ComponentDecorator<TOwnProps, TMergedProps> = (
+  component: CompositeComponent<TMergedProps>
+) => React.ComponentType<TOwnProps>;
 
-export interface InferableComponentDecorator<TOwnProps> {
-  <T extends CompositeComponent<TOwnProps>>(component: T): T;
-}
+export type InferableComponentDecorator<TOwnProps> = <
+  T extends CompositeComponent<TOwnProps>
+>(
+  component: T
+) => T;
 
 /**
  * A public higher-order component to access the imperative API
@@ -90,8 +95,8 @@ export function withFormik<
   Payload = Values
 >({
   mapPropsToValues = (vanillaProps: Props): Values => {
-    let val: Values = {} as Values;
-    for (let k in vanillaProps) {
+    const val: any = {};
+    for (const k in vanillaProps) {
       if (
         vanillaProps.hasOwnProperty(k) &&
         typeof vanillaProps[k] !== 'function'

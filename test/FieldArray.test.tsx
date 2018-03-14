@@ -1,3 +1,6 @@
+/**
+ * Copyright 2017 Jared Palmer. All rights reserved.
+ */
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { FieldArray, Formik, isFunction } from '../src';

@@ -173,10 +173,9 @@ describe('<Formik>', () => {
               id: 'name',
             },
           });
-        expect(validate).toHaveBeenCalled();
         expect(validate).toHaveBeenCalledWith(
           { name: 'jared' },
-          tree.state().touched
+          { name: true }
         );
       });
 

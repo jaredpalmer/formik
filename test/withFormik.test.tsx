@@ -164,7 +164,6 @@ describe('withFormik()', () => {
               name: 'name',
             },
           });
-        expect(validate).toHaveBeenCalled();
         expect(validate).toHaveBeenCalledWith({ name: 'jared' }, userProps, {
           name: true,
         });

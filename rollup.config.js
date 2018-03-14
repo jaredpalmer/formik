@@ -4,6 +4,7 @@ import replace from 'rollup-plugin-replace';
 import resolve from 'rollup-plugin-node-resolve';
 import sourceMaps from 'rollup-plugin-sourcemaps';
 import uglify from 'rollup-plugin-uglify';
+import pkg from './package.json';
 
 const shared = {
   input: `compiled/index.js`,
@@ -66,44 +67,21 @@ export default [
   }),
 
   Object.assign({}, shared, {
+    external: shared.external.concat(Object.keys(pkg.dependencies)),
     output: [
       {
         file: 'dist/formik.es6.js',
         format: 'es',
         sourcemap: true,
-        exports: 'named',
-        globals: {
-          react: 'React',
-          'react-native': 'ReactNative',
-        },
       },
       {
         file: 'dist/formik.js',
         format: 'cjs',
         sourcemap: true,
-        exports: 'named',
-        globals: {
-          react: 'React',
-          'react-native': 'ReactNative',
-        },
       },
     ],
     plugins: [
       resolve(),
-      commonjs({
-        include: /node_modules/,
-        namedExports: {
-          'node_modules/prop-types/index.js': [
-            'object',
-            'oneOfType',
-            'string',
-            'node',
-            'func',
-            'bool',
-            'element',
-          ],
-        },
-      }),
       sourceMaps(),
     ],
   }),

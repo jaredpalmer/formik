@@ -55,6 +55,8 @@ export interface FormikState<Values> {
   isSubmitting: boolean;
   /** Top level status state, in case you need it */
   status?: any;
+  /** Number of times user tried to submit the form */
+  submitCount: number;
 }
 
 /**
@@ -288,6 +290,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       errors: {},
       touched: {},
       isSubmitting: false,
+      submitCount: 0,
     };
     this.fields = {};
     this.initialValues = props.initialValues || ({} as any);
@@ -499,13 +502,14 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
 
   submitForm = () => {
     // Recursively set all values to `true`.
-    this.setState({
+    this.setState(prevState => ({
       touched: setNestedObjectValues<FormikTouched<Values>>(
-        this.state.values,
+        prevState.values,
         true
       ),
       isSubmitting: true,
-    });
+      submitCount: prevState.submitCount + 1,
+    }));
 
     if (this.props.validate) {
       const maybePromisedErrors =
@@ -615,6 +619,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       error: undefined,
       status: undefined,
       values,
+      submitCount: 0,
     });
 
     Object.keys(this.fields).map(f => this.fields[f]());

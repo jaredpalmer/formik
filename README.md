@@ -326,19 +326,20 @@ npm install yup --save
       - [`handleBlur: (e: any) => void`](#handleblur-e-any--void)
       - [`handleChange: (e: React.ChangeEvent<any>) => void`](#handlechange-e-reactchangeeventany--void)
       - [`handleReset: () => void`](#handlereset---void)
-      - [`handleSubmit: (e: React.FormEvent<HTMLFormEvent> | undefined) => void`](#handlesubmit-e-reactformeventhtmlformevent--void)
+      - [`handleSubmit: (e: React.FormEvent<HTMLFormEvent>) => void`](#handlesubmit-e-reactformeventhtmlformevent--void)
       - [`isSubmitting: boolean`](#issubmitting-boolean)
       - [`isValid: boolean`](#isvalid-boolean)
       - [`resetForm: (nextValues?: Values) => void`](#resetform-nextvalues-values--void)
       - [`setErrors: (fields: { [field: string]: string }) => void`](#seterrors-fields--field-string-string---void)
       - [`setFieldError: (field: string, errorMsg: string) => void`](#setfielderror-field-string-errormsg-string--void)
       - [`setFieldTouched: (field: string, isTouched: boolean, shouldValidate?: boolean) => void`](#setfieldtouched-field-string-istouched-boolean-shouldvalidate-boolean--void)
+      - [`submitForm: () => void`](#submitform---void)
+      - [`submitCount: number`](#submitcount-number)
       - [`setFieldValue: (field: string, value: any, shouldValidate?: boolean) => void`](#setfieldvalue-field-string-value-any-shouldvalidate-boolean--void)
       - [`setStatus: (status?: any) => void`](#setstatus-status-any--void)
       - [`setSubmitting: (isSubmitting: boolean) => void`](#setsubmitting-issubmitting-boolean--void)
       - [`setTouched: (fields: { [field: string]: boolean }) => void`](#settouched-fields--field-string-boolean---void)
       - [`setValues: (fields: { [field: string]: any }) => void`](#setvalues-fields--field-string-any---void)
-      - [`submitForm`](#submitform-fields--field-string-any---void)
       - [`status?: any`](#status-any)
       - [`touched: { [field: string]: boolean }`](#touched--field-string-boolean-)
       - [`values: { [field: string]: any }`](#values--field-string-any-)
@@ -972,6 +973,11 @@ Set the touched state of a field imperatively. `field` should match the key of
 
 Trigger a form submission.
 
+##### `submitCount: number`
+
+Number of times user tried to submit the form. Increases when [`handleSubmit`](#handlesubmit-values-values-formikbag-formikbag--void) is called, resets after calling  
+[`handleReset`](#handlereset---void). `submitCount` is readonly computed property and should not be mutated directly.
+
 ##### `setFieldValue: (field: string, value: any, shouldValidate?: boolean) => void`
 
 Set the value of a field imperatively. `field` should match the key of
@@ -1312,7 +1318,7 @@ slightly relaxed and allow you to return a `Function` (e.g. `i18n('invalid')`).
 
 ```jsx
 import React from 'react';
-import { Formik, Form, Field, FieldArray } from 'formik'
+import { Formik, Form, Field, FieldArray } from 'formik';
 
 // Here is an example of a form with an editable list.
 // Next to each input are buttons for insert and remove.
@@ -1331,7 +1337,7 @@ export const FriendList = () => (
         <FieldArray
           name="friends"
           render={arrayHelpers => (
-          <Form>
+            <Form>
               {values.friends && values.friends.length > 0 ? (
                 values.friends.map((friend, index) => (
                   <div>
@@ -1351,10 +1357,7 @@ export const FriendList = () => (
                   </div>
                 ))
               ) : (
-                <button
-                  type="button"
-                  onClick={() => arrayHelpers.push('')}
-                >
+                <button type="button" onClick={() => arrayHelpers.push('')}>
                   {/* show this when user has removed all friends from the list */}
                   Add a friend
                 </button>

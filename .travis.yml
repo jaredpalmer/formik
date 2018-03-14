@@ -4,3 +4,4 @@ node_js:
 cache: yarn
 script:
   - yarn test -- --runInBand --no-cache --coverage
+  - yarn danger ci

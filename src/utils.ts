@@ -94,10 +94,10 @@ export const isFunction = (obj: any) => 'function' === typeof obj;
 /** @private is the given object an Object? */
 export const isObject = (obj: any) => obj !== null && typeof obj === 'object';
 
-/** @private is the given object an integer  */
+/** @private is the given object an integer?  */
 export const isInteger = (obj: any) => String(Math.floor(Number(obj))) === obj;
 
-/** @private is the given object a string  */
+/** @private is the given object a string?  */
 export const isString = (obj: any) =>
   Object.prototype.toString.call(obj) === '[object String]';
 
@@ -105,6 +105,6 @@ export const isString = (obj: any) =>
 export const isEmptyChildren = (children: any) =>
   React.Children.count(children) === 0;
 
-/** @private is the given object/value a promise? */
+/** @private is the given object/value a Promise? */
 export const isPromise = (value: any): boolean =>
   isObject(value) && isFunction(value.then);

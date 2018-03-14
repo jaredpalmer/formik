@@ -5,31 +5,22 @@
   "license": "MIT",
   "author": "Jared Palmer <jared@palmer.net>",
   "repository": "jaredpalmer/formik",
-  "keywords": [
-    "formik",
-    "react",
-    "react-dom",
-    "form",
-    "validation",
-    "forms",
-    "higher order component",
-    "hoc"
-  ],
+  "keywords": ["formik", "react", "react-dom", "form", "validation", "forms", "higher order component", "hoc"],
   "main": "dist/formik.js",
   "module": "dist/formik.es6.js",
   "typings": "dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "scripts": {
     "test": "jest --env=jsdom",
     "test:watch": "npm run test -- --watch",
     "start": "cross-env NODE_ENV=development tsc-watch --project tsconfig.base.json  --onSuccess \"rollup -c\"",
     "prebuild": "rimraf dist",
-    "build": "tsc -p tsconfig.base.json  && cross-env NODE_ENV=production rollup -c && cross-env NODE_ENV=development rollup -c && rimraf compiled",
+    "build":
+      "tsc -p tsconfig.base.json  && cross-env NODE_ENV=production rollup -c && cross-env NODE_ENV=development rollup -c && rimraf compiled",
     "prepublish": "npm run build",
-    "format": "prettier --trailing-comma es5 --single-quote --write 'src/**/*' 'test/**/*' 'README.md'",
+    "format": "prettier --write 'src/**/*' 'test/**/*' 'README.md'",
     "precommit": "lint-staged",
+    "lint": "tslint  --fix 'src/**/*.{ts,tsx}' 'test/**/*.{ts,tsx}'",
     "addc": "all-contributors add",
     "gen-docs": "all-contributors generate && doctoc README.md"
   },
@@ -79,43 +70,29 @@
     "ts-jest": "^21.2.4",
     "tsc-watch": "1.0.7",
     "tslint": "5.5.0",
-    "tslint-react": "3.2.0",
+    "tslint-config-prettier": "^1.10.0",
+    "tslint-plugin-prettier": "^1.3.0",
+    "tslint-react": "^3.5.1",
     "typescript": "^2.7.1",
     "yup": "0.21.3"
   },
   "lint-staged": {
-    "**/*.{ts,tsx}": [
-      "prettier --trailing-comma es5 --single-quote --write",
-      "git add"
-    ]
+    "**/*.{ts,tsx}": ["prettier --trailing-comma es5 --single-quote --write", "git add"]
   },
   "prettier": {
     "trailingComma": "es5",
     "singleQuote": true,
-    "semi": true
+    "semi": true,
+    "printWidth": 80
   },
   "jest": {
-    "setupFiles": [
-      "raf/polyfill",
-      "<rootDir>/test/setupTest.ts"
-    ],
-    "collectCoverageFrom": [
-      "src/**/*.{ts,tsx}"
-    ],
+    "setupFiles": ["raf/polyfill", "<rootDir>/test/setupTest.ts"],
+    "collectCoverageFrom": ["src/**/*.{ts,tsx}"],
     "transform": {
       ".(ts|tsx)": "<rootDir>/node_modules/ts-jest/preprocessor.js"
     },
-    "testMatch": [
-      "<rootDir>/test/**/?(*.)(spec|test).ts?(x)"
-    ],
-    "transformIgnorePatterns": [
-      "[/\\\\]node_modules[/\\\\].+\\.(js|jsx)$"
-    ],
-    "moduleFileExtensions": [
-      "ts",
-      "tsx",
-      "js",
-      "json"
-    ]
+    "testMatch": ["<rootDir>/test/**/?(*.)(spec|test).ts?(x)"],
+    "transformIgnorePatterns": ["[/\\\\]node_modules[/\\\\].+\\.(js|jsx)$"],
+    "moduleFileExtensions": ["ts", "tsx", "js", "json"]
   }
 }

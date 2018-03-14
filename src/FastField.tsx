@@ -1,10 +1,13 @@
+/**
+ * Copyright 2017 Jared Palmer. All rights reserved.
+ */
+import isEqual from 'lodash.isequal';
 import * as PropTypes from 'prop-types';
 import * as React from 'react';
-import { validateYupSchema, yupToFormErrors, FormikProps } from './Formik';
-import { getIn, isPromise, setIn, isFunction, isEmptyChildren } from './utils';
 import warning from 'warning';
 import { FieldAttributes, FieldConfig, FieldProps } from './Field';
-import isEqual from 'lodash.isequal';
+import { FormikProps, validateYupSchema, yupToFormErrors } from './Formik';
+import { getIn, isEmptyChildren, isFunction, isPromise, setIn } from './utils';
 
 export interface FastFieldState {
   value: any;
@@ -28,25 +31,25 @@ export class FastField<
   };
 
   static propTypes = {
-    name: PropTypes.string.isRequired,
-    component: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
-    render: PropTypes.func,
     children: PropTypes.oneOfType([PropTypes.func, PropTypes.node]),
+    component: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
+    name: PropTypes.string.isRequired,
+    render: PropTypes.func,
     validate: PropTypes.func,
   };
 
-  reset: Function;
+  reset: () => void;
   constructor(props: Props, context: any) {
     super(props);
     this.state = {
-      value: getIn(context.formik.values, props.name),
       error: getIn(context.formik.errors, props.name),
+      value: getIn(context.formik.values, props.name),
     };
 
     this.reset = () =>
       this.setState({
-        value: getIn(context.formik.values, props.name),
         error: getIn(context.formik.errors, props.name),
+        value: getIn(context.formik.values, props.name),
       });
 
     context.formik.registerField(props.name, this.reset);
@@ -155,8 +158,8 @@ export class FastField<
           // @todo refactor
           if (isEqualExceptForKey(maybePromise, errors, this.props.name)) {
             this.setState({
-              value: val,
               error: getIn(maybePromise, this.props.name),
+              value: val,
             });
           } else {
             this.setState({
@@ -178,14 +181,14 @@ export class FastField<
         try {
           validateYupSchema(mergedValues, schema, true);
           this.setState({
-            value: val,
             error: undefined,
+            value: val,
           });
         } catch (e) {
           if (e.name === 'ValidationError') {
             this.setState({
-              value: val,
               error: getIn(yupToFormErrors(e), this.props.name),
+              value: val,
             });
           } else {
             this.setState({
@@ -222,32 +225,32 @@ export class FastField<
           () =>
             setFormikState((prevState: any) => ({
               ...prevState,
-              values: setIn(prevState.values, name, this.state.value),
               errors: setIn(prevState.errors, name, undefined),
               touched: setIn(prevState.touched, name, true),
+              values: setIn(prevState.values, name, this.state.value),
             })),
           error =>
             setFormikState((prevState: any) => ({
               ...prevState,
-              values: setIn(prevState.values, name, this.state.value),
               errors: setIn(prevState.errors, name, error),
               touched: setIn(prevState.touched, name, true),
+              values: setIn(prevState.values, name, this.state.value),
             }))
         );
       } else {
         setFormikState((prevState: any) => ({
           ...prevState,
-          values: setIn(prevState.values, name, this.state.value),
           errors: setIn(prevState.errors, name, maybePromise),
           touched: setIn(prevState.touched, name, true),
+          values: setIn(prevState.values, name, this.state.value),
         }));
       }
     } else {
       setFormikState((prevState: any) => ({
         ...prevState,
         errors: setIn(prevState.errors, name, this.state.error),
-        values: setIn(prevState.values, name, this.state.value),
         touched: setIn(prevState.touched, name, true),
+        values: setIn(prevState.values, name, this.state.value),
       }));
     }
   };
@@ -264,13 +267,13 @@ export class FastField<
 
     const { formik } = this.context;
     const field = {
+      name,
+      onBlur: this.handleBlur,
+      onChange: this.handleChange,
       value:
         props.type === 'radio' || props.type === 'checkbox'
           ? props.value // React uses checked={} for these inputs
           : this.state.value,
-      name,
-      onChange: this.handleChange,
-      onBlur: this.handleBlur,
     };
     const bag = {
       field,

@@ -1,7 +1,10 @@
+/**
+ * Copyright 2017 Jared Palmer. All rights reserved.
+ */
 import * as React from 'react';
 
-import { withFormik, InjectedFormikProps } from '../src';
 import { mount, shallow } from 'enzyme';
+import { InjectedFormikProps, withFormik } from '../src';
 
 // tslint:disable-next-line:no-empty
 const noop = () => {};
@@ -58,8 +61,8 @@ const Form: React.SFC<InjectedFormikProps<Props, Values>> = ({
 
 const FormFactory = (options = {}) =>
   withFormik<Props, Values, Values>({
-    mapPropsToValues: ({ user }) => ({ ...user }),
     handleSubmit: noop,
+    mapPropsToValues: ({ user }) => ({ ...user }),
     ...options,
   })(Form);
 
@@ -336,9 +339,9 @@ describe('withFormik()', () => {
         it('should call validate if present', () => {
           const validate = jest.fn().mockReturnValue({});
           const ValidateForm = withFormik<Props, Values, Values>({
-            validate,
-            mapPropsToValues: ({ user }) => ({ ...user }),
             handleSubmit: noop,
+            mapPropsToValues: ({ user }) => ({ ...user }),
+            validate,
           })(Form);
           const tree = mount(<ValidateForm user={{ name: 'jared' }} />);
           tree
@@ -353,9 +356,9 @@ describe('withFormik()', () => {
         it('should submit the form if valid', () => {
           const handleSubmit = jest.fn();
           const ValidateForm = withFormik<Props, Values, Values>({
-            validate: noop,
-            mapPropsToValues: ({ user }) => ({ ...user }),
             handleSubmit,
+            mapPropsToValues: ({ user }) => ({ ...user }),
+            validate: noop,
           })(Form);
           const tree = mount(<ValidateForm user={{ name: 'jared' }} />);
           tree
@@ -372,9 +375,9 @@ describe('withFormik()', () => {
           const handleSubmit = jest.fn();
 
           const ValidateForm = withFormik<Props, Values, Values>({
-            validate,
-            mapPropsToValues: ({ user }) => ({ ...user }),
             handleSubmit,
+            mapPropsToValues: ({ user }) => ({ ...user }),
+            validate,
           })(Form);
 
           const tree = mount(<ValidateForm user={{ name: '' }} />);
@@ -393,9 +396,9 @@ describe('withFormik()', () => {
         it('should call validate if present', () => {
           const validate = jest.fn(() => Promise.resolve({}));
           const ValidateForm = withFormik<Props, Values, Values>({
-            validate,
-            mapPropsToValues: ({ user }) => ({ ...user }),
             handleSubmit: noop,
+            mapPropsToValues: ({ user }) => ({ ...user }),
+            validate,
           })(Form);
           const tree = mount(<ValidateForm user={{ name: 'jared' }} />);
           tree
@@ -411,9 +414,9 @@ describe('withFormik()', () => {
           const handleSubmit = jest.fn();
 
           const ValidateForm = withFormik<Props, Values, Values>({
-            validate: () => Promise.resolve({}),
-            mapPropsToValues: ({ user }) => ({ ...user }),
             handleSubmit,
+            mapPropsToValues: ({ user }) => ({ ...user }),
+            validate: () => Promise.resolve({}),
           })(Form);
 
           const tree = mount(<ValidateForm user={{ name: '' }} />);
@@ -429,12 +432,12 @@ describe('withFormik()', () => {
           const handleSubmit = jest.fn();
 
           const ValidateForm = withFormik<Props, Values, Values>({
+            handleSubmit,
+            mapPropsToValues: ({ user }) => ({ ...user }),
             validate: () =>
               sleep(25).then(() => {
                 throw { name: 'error!' };
               }),
-            mapPropsToValues: ({ user }) => ({ ...user }),
-            handleSubmit,
           })(Form);
 
           const tree = mount(<ValidateForm user={{ name: '' }} />);

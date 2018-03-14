@@ -1,3 +1,6 @@
+/**
+ * Copyright 2017 Jared Palmer. All rights reserved.
+ */
 // tslint:disable-next-line:no-empty
 export const noop = () => {};
 

@@ -1,15 +1,18 @@
+/**
+ * Copyright 2017 Jared Palmer. All rights reserved.
+ */
+import isEqual from 'lodash.isequal';
 import * as PropTypes from 'prop-types';
 import * as React from 'react';
-import isEqual from 'lodash.isequal';
 import warning from 'warning';
 import {
+  isEmptyChildren,
   isFunction,
   isPromise,
+  isReactNative,
   isString,
-  isEmptyChildren,
   setIn,
   setNestedObjectValues,
-  isReactNative,
 } from './utils';
 
 /**
@@ -236,25 +239,25 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
   FormikState<any>
 > {
   static defaultProps = {
-    validateOnChange: true,
-    validateOnBlur: true,
-    isInitialValid: false,
     enableReinitialize: false,
+    isInitialValid: false,
+    validateOnBlur: true,
+    validateOnChange: true,
   };
 
   static propTypes = {
-    validateOnChange: PropTypes.bool,
-    validateOnBlur: PropTypes.bool,
-    isInitialValid: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
+    children: PropTypes.oneOfType([PropTypes.func, PropTypes.node]),
+    component: PropTypes.func,
+    enableReinitialize: PropTypes.bool,
     initialValues: PropTypes.object,
+    isInitialValid: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
     onReset: PropTypes.func,
     onSubmit: PropTypes.func.isRequired,
-    validationSchema: PropTypes.oneOfType([PropTypes.func, PropTypes.object]),
-    validate: PropTypes.func,
-    component: PropTypes.func,
     render: PropTypes.func,
-    children: PropTypes.oneOfType([PropTypes.func, PropTypes.node]),
-    enableReinitialize: PropTypes.bool,
+    validate: PropTypes.func,
+    validateOnBlur: PropTypes.bool,
+    validateOnChange: PropTypes.bool,
+    validationSchema: PropTypes.oneOfType([PropTypes.func, PropTypes.object]),
   };
 
   static childContextTypes = {
@@ -271,26 +274,26 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
   } = {};
   fields: { [field: string]: () => void };
 
+  constructor(props: FormikConfig<Values> & ExtraProps) {
+    super(props);
+    this.state = {
+      errors: {},
+      isSubmitting: false,
+      touched: {},
+      values: props.initialValues || ({} as any),
+    };
+    this.fields = {};
+    this.initialValues = props.initialValues || ({} as any);
+  }
+
   getChildContext() {
     return {
       formik: {
         ...this.getFormikBag(),
-        validationSchema: this.props.validationSchema,
         validate: this.props.validate,
+        validationSchema: this.props.validationSchema,
       },
     };
-  }
-
-  constructor(props: FormikConfig<Values> & ExtraProps) {
-    super(props);
-    this.state = {
-      values: props.initialValues || ({} as any),
-      errors: {},
-      touched: {},
-      isSubmitting: false,
-    };
-    this.fields = {};
-    this.initialValues = props.initialValues || ({} as any);
   }
 
   registerField = (name: string, resetFn: () => void) => {
@@ -379,7 +382,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
   /**
    * Run validation against a Yup schema and optionally run a function if successful
    */
-  runValidationSchema = (values: FormikValues, onSuccess?: Function) => {
+  runValidationSchema = (values: FormikValues, onSuccess?: () => void) => {
     const { validationSchema } = this.props;
     const schema = isFunction(validationSchema)
       ? validationSchema()
@@ -433,9 +436,9 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
         field = path ? path : name ? name : id;
         if (!field && process.env.NODE_ENV !== 'production') {
           warnAboutMissingIdentifier({
-            htmlContent: outerHTML,
             documentationAnchorLink: 'handlechange-e-reactchangeeventany--void',
             handlerName: 'handleChange',
+            htmlContent: outerHTML,
           });
         }
         val = /number|range/.test(type)
@@ -500,11 +503,11 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
   submitForm = () => {
     // Recursively set all values to `true`.
     this.setState({
+      isSubmitting: true,
       touched: setNestedObjectValues<FormikTouched<Values>>(
         this.state.values,
         true
       ),
-      isSubmitting: true,
     });
 
     if (this.props.validate) {
@@ -550,9 +553,9 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
 
       if (!field && process.env.NODE_ENV !== 'production') {
         warnAboutMissingIdentifier({
-          htmlContent: outerHTML,
           documentationAnchorLink: 'handleblur-e-any--void',
           handlerName: 'handleBlur',
+          htmlContent: outerHTML,
         });
       }
 
@@ -609,11 +612,11 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     this.initialValues = values;
 
     this.setState({
-      isSubmitting: false,
-      errors: {},
-      touched: {},
       error: undefined,
+      errors: {},
+      isSubmitting: false,
       status: undefined,
+      touched: {},
       values,
     });
 
@@ -643,18 +646,18 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
   getFormikActions = (): FormikActions<Values> => {
     return {
       resetForm: this.resetForm,
-      submitForm: this.submitForm,
-      validateForm: this.runValidations,
       setError: this.setError,
       setErrors: this.setErrors,
       setFieldError: this.setFieldError,
       setFieldTouched: this.setFieldTouched,
       setFieldValue: this.setFieldValue,
+      setFormikState: this.setFormikState,
       setStatus: this.setStatus,
       setSubmitting: this.setSubmitting,
       setTouched: this.setTouched,
       setValues: this.setValues,
-      setFormikState: this.setFormikState,
+      submitForm: this.submitForm,
+      validateForm: this.runValidations,
     };
   };
 
@@ -663,12 +666,12 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     const dirty = !isEqual(this.initialValues, this.state.values);
     return {
       dirty,
+      initialValues: this.initialValues,
       isValid: dirty
         ? this.state.errors && Object.keys(this.state.errors).length === 0
         : isInitialValid !== false && isFunction(isInitialValid)
           ? (isInitialValid as (props: this['props']) => boolean)(this.props)
           : (isInitialValid as boolean),
-      initialValues: this.initialValues,
     };
   };
 
@@ -679,14 +682,14 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       ...this.getFormikComputedProps(),
 
       // FastField needs to communicate with Formik during resets
-      registerField: this.registerField,
-      unregisterField: this.unregisterField,
       handleBlur: this.handleBlur,
       handleChange: this.handleChange,
       handleReset: this.handleReset,
       handleSubmit: this.handleSubmit,
-      validateOnChange: this.props.validateOnChange,
+      registerField: this.registerField,
+      unregisterField: this.unregisterField,
       validateOnBlur: this.props.validateOnBlur,
+      validateOnChange: this.props.validateOnChange,
     };
   };
 
@@ -728,13 +731,13 @@ function warnAboutMissingIdentifier({
  * Transform Yup ValidationError to a more usable object
  */
 export function yupToFormErrors<Values>(yupError: any): FormikErrors<Values> {
-  let errors: any = {} as FormikErrors<Values>;
-  for (let err of yupError.inner) {
+  let errors: any = {};
+  for (const err of yupError.inner) {
     if (!errors[err.path]) {
       errors = setIn(errors, err.path, err.message);
     }
   }
-  return errors;
+  return errors as FormikErrors<Values>;
 }
 
 /**
@@ -746,8 +749,8 @@ export function validateYupSchema<T>(
   sync: boolean = false,
   context: any = {}
 ): Promise<void> {
-  let validateData: any = {};
-  for (let k in data) {
+  const validateData: any = {};
+  for (const k in data) {
     if (data.hasOwnProperty(k)) {
       const key = String(k);
       validateData[key] =
@@ -756,6 +759,6 @@ export function validateYupSchema<T>(
   }
   return schema[sync ? 'validateSync' : 'validate'](validateData, {
     abortEarly: false,
-    context: context,
+    context,
   });
 }

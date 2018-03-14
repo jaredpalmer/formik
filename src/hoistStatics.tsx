@@ -1,3 +1,6 @@
+/**
+ * Copyright 2017 Jared Palmer. All rights reserved.
+ */
 import { ComponentClass } from 'react';
 
 const REACT_STATICS: any = {
@@ -12,13 +15,13 @@ const REACT_STATICS: any = {
 };
 
 const KNOWN_STATICS: any = {
-  name: true,
-  length: true,
-  prototype: true,
-  caller: true,
-  callee: true,
   arguments: true,
   arity: true,
+  callee: true,
+  caller: true,
+  length: true,
+  name: true,
+  prototype: true,
 };
 
 const getOwnPropertySymbols = Object.getOwnPropertySymbols;
@@ -36,7 +39,7 @@ export function hoistNonReactStatics<P>(
     // don't hoist over string (html) components
 
     if (objectPrototype) {
-      let inheritedComponent = getPrototypeOf(sourceComponent);
+      const inheritedComponent = getPrototypeOf(sourceComponent);
       if (inheritedComponent && inheritedComponent !== objectPrototype) {
         hoistNonReactStatics(targetComponent, inheritedComponent, blacklist);
       }
@@ -48,8 +51,9 @@ export function hoistNonReactStatics<P>(
       keys = keys.concat(getOwnPropertySymbols(sourceComponent) as any);
     }
 
+    // tslint:disable-next-line:prefer-for-of
     for (let i = 0; i < keys.length; ++i) {
-      let key: string = keys[i];
+      const key: string = keys[i];
       if (
         !REACT_STATICS[key] &&
         !KNOWN_STATICS[key] &&

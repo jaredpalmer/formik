@@ -1,6 +1,9 @@
-import * as React from 'react';
-import toPath from 'lodash.topath';
+/**
+ * Copyright 2017 Jared Palmer. All rights reserved.
+ */
 import cloneDeep from 'lodash.clonedeep';
+import toPath from 'lodash.topath';
+import * as React from 'react';
 
 /**
  * Deeply get a value from an object via it's path.
@@ -23,14 +26,14 @@ export function getIn(
  * @see https://github.com/developit/linkstate
  */
 export function setIn(obj: any, path: string, value: any): any {
-  let res: any = {};
+  const res: any = {};
   let resVal: any = res;
   let i = 0;
-  let pathArray = toPath(path);
+  const pathArray = toPath(path);
 
   for (; i < pathArray.length - 1; i++) {
     const currentPath: string = pathArray[i];
-    let currentObj: any = obj[currentPath];
+    const currentObj: any = obj[currentPath];
 
     if (resVal[currentPath]) {
       resVal = resVal[currentPath];
@@ -60,7 +63,7 @@ export function setNestedObjectValues<T>(
   visited: any = new WeakMap(),
   response: any = {}
 ): T {
-  for (let k of Object.keys(object)) {
+  for (const k of Object.keys(object)) {
     const val = object[k];
     if (isObject(val)) {
       if (!visited.get(val)) {

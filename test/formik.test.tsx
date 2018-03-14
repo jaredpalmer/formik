@@ -152,6 +152,34 @@ describe('<Formik>', () => {
         expect(validate).toHaveBeenCalled();
       });
 
+      it('runs validations if validateOnBlur is set to true and passes touched to validate', async () => {
+        const validate = jest.fn(noop);
+        const tree = shallow(
+          <Formik
+            initialValues={{ name: 'jared' }}
+            onSubmit={noop}
+            component={Form}
+            validate={validate}
+            validateOnBlur={true}
+          />
+        );
+        tree
+          .find(Form)
+          .dive()
+          .find('input')
+          .simulate('blur', {
+            persist: noop,
+            target: {
+              id: 'name',
+            },
+          });
+        expect(validate).toHaveBeenCalled();
+        expect(validate).toHaveBeenCalledWith(
+          { name: 'jared' },
+          tree.state().touched
+        );
+      });
+
       it('does NOT run validations if validateOnChange is set to false', async () => {
         const validate = jest.fn(noop);
 

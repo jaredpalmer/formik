@@ -146,6 +146,30 @@ describe('withFormik()', () => {
         expect(validate).toHaveBeenCalled();
       });
 
+      it('runs validations by default (validate) and passes touched', async () => {
+        const validate = jest.fn(noop);
+        const ValidationForm = FormFactory({
+          validate,
+        });
+        const userProps = { user: { name: 'jared' } };
+        const tree = shallow(<ValidationForm {...userProps} />);
+        tree
+          .dive()
+          .find(Form)
+          .dive()
+          .find('input')
+          .simulate('blur', {
+            persist: noop,
+            target: {
+              name: 'name',
+            },
+          });
+        expect(validate).toHaveBeenCalled();
+        expect(validate).toHaveBeenCalledWith({ name: 'jared' }, userProps, {
+          name: true,
+        });
+      });
+
       it('does NOT run validations if validateOnChange is false (validate)', async () => {
         const validate = jest.fn(noop);
         const ValidationForm = FormFactory({

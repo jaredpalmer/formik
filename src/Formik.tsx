@@ -405,7 +405,10 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     }
 
     if (this.props.validate) {
-      const maybePromisedErrors = (this.props.validate as any)(values);
+      const maybePromisedErrors = (this.props.validate as any)(
+        values,
+        this.state.touched
+      );
       if (isPromise(maybePromisedErrors)) {
         (maybePromisedErrors as Promise<any>).then(
           () => {

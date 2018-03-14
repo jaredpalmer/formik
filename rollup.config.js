@@ -83,6 +83,7 @@ export default [
     plugins: [
       resolve(),
       sourceMaps(),
+      process.env.NODE_ENV === 'production' && filesize(),
     ],
   }),
 ];

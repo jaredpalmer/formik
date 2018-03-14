@@ -1333,7 +1333,7 @@ export const FriendList = () => (
           alert(JSON.stringify(values, null, 2));
         }, 500)
       }
-      render={formikProps => (
+      render={({ values }) => (
         <FieldArray
           name="friends"
           render={arrayHelpers => (

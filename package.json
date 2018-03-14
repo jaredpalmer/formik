@@ -5,7 +5,16 @@
   "license": "MIT",
   "author": "Jared Palmer <jared@palmer.net>",
   "repository": "jaredpalmer/formik",
-  "keywords": ["formik", "react", "react-dom", "form", "validation", "forms", "higher order component", "hoc"],
+  "keywords": [
+    "formik",
+    "react",
+    "react-dom",
+    "form",
+    "validation",
+    "forms",
+    "higher order component",
+    "hoc"
+  ],
   "main": "dist/formik.js",
   "module": "dist/formik.es6.js",
   "typings": "dist/index.d.ts",
@@ -13,7 +22,8 @@
   "scripts": {
     "test": "jest --env=jsdom",
     "test:watch": "npm run test -- --watch",
-    "start": "cross-env NODE_ENV=development tsc-watch --project tsconfig.base.json  --onSuccess \"rollup -c\"",
+    "start":
+      "cross-env NODE_ENV=development tsc-watch --project tsconfig.base.json  --onSuccess \"rollup -c\"",
     "prebuild": "rimraf dist",
     "build":
       "tsc -p tsconfig.base.json  && cross-env NODE_ENV=production rollup -c && cross-env NODE_ENV=development rollup -c && rimraf compiled",
@@ -77,7 +87,7 @@
     "yup": "0.21.3"
   },
   "lint-staged": {
-    "**/*.{ts,tsx}": ["prettier --trailing-comma es5 --single-quote --write", "git add"]
+    "**/*.{ts,tsx}": ["tslint --fix", "git add"]
   },
   "prettier": {
     "trailingComma": "es5",

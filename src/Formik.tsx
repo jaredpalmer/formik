@@ -387,7 +387,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     const schema = isFunction(validationSchema)
       ? validationSchema()
       : validationSchema;
-    validateYupSchema(values, schema).then(
+    validateYupSchema(values, schema, false, this.props).then(
       () => {
         this.setState({ errors: {} });
         if (onSuccess) {

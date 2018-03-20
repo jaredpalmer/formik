@@ -46,8 +46,8 @@ to you.**
 
 ## Testimonials
 
--> "I can't believe people ever put forms in redux, or did anything else other than this."  
--> --[James Long](https://twitter.com/jlongster), Creator of Prettier and Actual Budget
+> "I can't believe people ever put forms in redux, or did anything else other than this."  
+> --[James Long](https://twitter.com/jlongster), Creator of Prettier and Actual Budget
 
 > ["Formik. All day. All long."](https://twitter.com/ken_wheeler/status/974676242501947397?s=20)  
 > --[Ken Wheeler](https://twitter.com/ken_wheeler), Director of Open Source at Formidable Labs

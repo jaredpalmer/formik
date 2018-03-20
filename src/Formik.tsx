@@ -184,6 +184,14 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
   initialValues: Values;
 
   /**
+   * Reinitialize handler
+   */
+  onReinitialize?: (
+    values: Values,
+    formikActions: FormikActions<Values>
+  ) => void;
+
+  /**
    * Reset handler
    */
   onReset?: (values: Values, formikActions: FormikActions<Values>) => void;
@@ -257,6 +265,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     render: PropTypes.func,
     children: PropTypes.oneOfType([PropTypes.func, PropTypes.node]),
     enableReinitialize: PropTypes.bool,
+    onReinitialize: PropTypes.func,
   };
 
   static childContextTypes = {
@@ -313,7 +322,9 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       !isEqual(nextProps.initialValues, this.props.initialValues)
     ) {
       this.initialValues = nextProps.initialValues;
-      this.resetForm(nextProps.initialValues);
+      this.props.onReinitialize
+        ? this.props.onReinitialize(this.state.values, this.getFormikActions())
+        : this.resetForm(nextProps.initialValues);
     }
   }
 

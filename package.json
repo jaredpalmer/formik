@@ -20,7 +20,7 @@
   "typings": "dist/index.d.ts",
   "files": ["dist"],
   "scripts": {
-    "test": "jest --env=jsdom",
+    "test": "jest --env=jsdom && npm run size",
     "test:watch": "npm run test -- --watch",
     "start":
       "cross-env NODE_ENV=development tsc-watch --project tsconfig.base.json  --onSuccess \"rollup -c\"",
@@ -34,7 +34,8 @@
     "addc": "all-contributors add",
     "start-website": "cd website && yarn start",
     "build-website": "cd website && yarn install && yarn build",
-    "gen-docs": "all-contributors generate && doctoc README.md"
+    "gen-docs": "all-contributors generate && doctoc README.md",
+    "size": "size-limit"
   },
   "dependencies": {
     "hoist-non-react-statics": "^2.5.0",
@@ -80,6 +81,7 @@
     "rollup-plugin-replace": "1.1.1",
     "rollup-plugin-sourcemaps": "0.4.2",
     "rollup-plugin-uglify": "^3.0.0",
+    "size-limit": "^0.16.2",
     "ts-jest": "^21.2.4",
     "tsc-watch": "1.0.17",
     "tslint": "5.5.0",
@@ -107,5 +109,19 @@
     "testMatch": ["<rootDir>/test/**/?(*.)(spec|test).ts?(x)"],
     "transformIgnorePatterns": ["[/\\\\]node_modules[/\\\\].+\\.(js|jsx)$"],
     "moduleFileExtensions": ["ts", "tsx", "js", "json"]
-  }
+  },
+  "size-limit": [
+    {
+      "path": "./dist/formik.js",
+      "limit": "14 kB"
+    },
+    {
+      "path": "./dist/formik.es6.js",
+      "limit": "14 kB"
+    },
+    {
+      "path": "./dist/formik.umd.js",
+      "limit": "14 kB"
+    }
+  ]
 }

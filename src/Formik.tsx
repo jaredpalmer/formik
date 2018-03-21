@@ -9,7 +9,6 @@ import {
   isEmptyChildren,
   setIn,
   setNestedObjectValues,
-  isReactNative,
 } from './utils';
 
 /**
@@ -266,7 +265,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
   initialValues: Values;
 
   hcCache: {
-    [key: string]: (e: React.ChangeEvent<any>) => void;
+    [key: string]: (e: string | React.ChangeEvent<any>) => void;
   } = {};
   hbCache: {
     [key: string]: (e: any) => void;
@@ -423,17 +422,39 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
   };
 
   handleChange = (
-    eventOrString: any
-  ): void | ((e: React.ChangeEvent<any>) => void) => {
+    eventOrPath: string | React.ChangeEvent<any>
+  ): void | ((eventOrTextValue: string | React.ChangeEvent<any>) => void) => {
     // @todo someone make this less disgusting.
-    const executeChange = (e: React.ChangeEvent<any>, path?: string) => {
-      e.persist();
-      let field = path;
-      let val = e;
+    //
+    // executeChange is the core of handleChange, we'll use it cache change
+    // handlers like Preact's linkState.
+    const executeChange = (
+      eventOrTextValue: string | React.ChangeEvent<any>,
+      maybePath?: string
+    ) => {
+      // By default, assume that the first argument is a string. This allows us to use
+      // handleChange with React Native and React Native Web's onChangeText prop which
+      // provides just the value of the input.
+      let field = maybePath;
+      let val = eventOrTextValue;
       let parsed;
-      if (!isReactNative) {
-        const { type, name, id, value, checked, outerHTML } = e.target;
-        field = path ? path : name ? name : id;
+      // If the first argument is not a string though, it has to be a synthetic React Event (or a fake one),
+      // so we handle like we would a normal HTML change event.
+      if (!isString(eventOrTextValue)) {
+        // If we can, persist the event
+        // @see https://reactjs.org/docs/events.html#event-pooling
+        if ((eventOrTextValue as React.ChangeEvent<any>).persist) {
+          (eventOrTextValue as React.ChangeEvent<any>).persist();
+        }
+        const {
+          type,
+          name,
+          id,
+          value,
+          checked,
+          outerHTML,
+        } = (eventOrTextValue as React.ChangeEvent<any>).target;
+        field = maybePath ? maybePath : name ? name : id;
         if (!field && process.env.NODE_ENV !== 'production') {
           warnAboutMissingIdentifier({
             htmlContent: outerHTML,
@@ -463,14 +484,21 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       }
     };
 
-    if (isString(eventOrString)) {
-      // cache these handlers by key like Preact's linkState does for perf boost
-      return typeof this.hcCache[eventOrString] === 'function'
-        ? this.hcCache[eventOrString]
-        : (this.hcCache[eventOrString] = (event: React.ChangeEvent<any>) =>
-            executeChange(event, eventOrString));
+    // Actually execute logic above....
+    // cache these handlers by key like Preact's linkState does for perf boost
+    if (isString(eventOrPath as string)) {
+      return isFunction(this.hcCache[eventOrPath as string])
+        ? this.hcCache[eventOrPath as string] // return the cached handled
+        : (this.hcCache[eventOrPath as string] = (
+            // make a new one
+            event: React.ChangeEvent<any> | string
+          ) =>
+            executeChange(
+              event /* string or event, does not matter */,
+              eventOrPath as string /* this is path to the field now */
+            ));
     } else {
-      executeChange(eventOrString);
+      executeChange(eventOrPath);
     }
   };
 
@@ -548,7 +576,9 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
 
   handleBlur = (eventOrString: any): void | ((e: any) => void) => {
     const executeBlur = (e: any, path?: string) => {
-      e.persist();
+      if (e.persist) {
+        e.persist();
+      }
       const { name, id, outerHTML } = e.target;
       const field = path ? path : name ? name : id;
 
@@ -571,7 +601,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
 
     if (isString(eventOrString)) {
       // cache these handlers by key like Preact's linkState does for perf boost
-      return typeof this.hbCache[eventOrString] === 'function'
+      return isFunction(this.hbCache[eventOrString])
         ? this.hbCache[eventOrString]
         : (this.hbCache[eventOrString] = (event: any) =>
             executeBlur(event, eventOrString));

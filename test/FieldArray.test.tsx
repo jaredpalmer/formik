@@ -182,6 +182,34 @@ describe('<FieldArray />', () => {
     });
   });
 
+  describe('props.replace()', () => {
+    it('should replace a value at given index of field array', () => {
+      let formikBag: any;
+      let arrayHelpers: any;
+      ReactDOM.render(
+        <TestForm
+          render={(props: any) => {
+            formikBag = props;
+            return (
+              <FieldArray
+                name="friends"
+                render={arrayProps => {
+                  arrayHelpers = arrayProps;
+                  return null;
+                }}
+              />
+            );
+          }}
+        />,
+        node
+      );
+
+      arrayHelpers.replace(1, 'brian');
+      const expected = ['jared', 'brian', 'brent'];
+      expect(formikBag.values.friends).toEqual(expected);
+    });
+  });
+
   describe('props.unshift()', () => {
     it('should add a value to start of field array and return its length', () => {
       let formikBag: any;

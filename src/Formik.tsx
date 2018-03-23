@@ -182,6 +182,14 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
   initialValues: Values;
 
   /**
+   * Change handler
+   */
+  onChange?: (
+    e: React.ChangeEvent<any>,
+    formikActions: FormikActions<Values>
+  ) => void;
+
+  /**
    * Reset handler
    */
   onReset?: (values: Values, formikActions: FormikActions<Values>) => void;
@@ -247,6 +255,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     validateOnBlur: PropTypes.bool,
     isInitialValid: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
     initialValues: PropTypes.object,
+    onChange: PropTypes.func,
     onReset: PropTypes.func,
     onSubmit: PropTypes.func.isRequired,
     validationSchema: PropTypes.oneOfType([PropTypes.func, PropTypes.object]),
@@ -682,7 +691,11 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       registerField: this.registerField,
       unregisterField: this.unregisterField,
       handleBlur: this.handleBlur,
-      handleChange: this.handleChange,
+      handleChange: !this.props.onChange
+        ? this.handleChange
+        : (e: React.ChangeEvent<any>) => {
+            this.props.onChange!(e, this.getFormikActions());
+          },
       handleReset: this.handleReset,
       handleSubmit: this.handleSubmit,
       validateOnChange: this.props.validateOnChange,

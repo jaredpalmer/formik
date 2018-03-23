@@ -693,8 +693,16 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       handleBlur: this.handleBlur,
       handleChange: !this.props.onChange
         ? this.handleChange
-        : (e: React.ChangeEvent<any>) => {
-            this.props.onChange!(e, this.getFormikActions());
+        : (eventOrString: any) => {
+            const result = this.handleChange(eventOrString);
+            if (typeof result === 'function') {
+              return (e: React.ChangeEvent<any>) => {
+                result(e);
+                this.props.onChange!(e, this.getFormikActions());
+              };
+            }
+            this.props.onChange!(eventOrString, this.getFormikActions());
+            return;
           },
       handleReset: this.handleReset,
       handleSubmit: this.handleSubmit,

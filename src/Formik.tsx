@@ -270,7 +270,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
   hbCache: {
     [key: string]: (e: any) => void;
   } = {};
-  fields: { [field: string]: () => void };
+  fields: { [field: string]: (nextValues?: any) => void };
 
   getChildContext() {
     return {
@@ -295,7 +295,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     this.initialValues = props.initialValues || ({} as any);
   }
 
-  registerField = (name: string, resetFn: () => void) => {
+  registerField = (name: string, resetFn: (nextValues?: any) => void) => {
     this.fields[name] = resetFn;
   };
 
@@ -651,8 +651,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       values,
       submitCount: 0,
     });
-
-    Object.keys(this.fields).map(f => this.fields[f]());
+    Object.keys(this.fields).map(f => this.fields[f](values));
   };
 
   handleReset = () => {

@@ -31,9 +31,7 @@ export type FormikErrors<Values> = { [field in keyof Values]?: any };
  *
  * @todo Remove any in TypeScript 2.8
  */
-export type FormikTouched<Values> = {
-  [field in keyof Values]?: boolean & FormikTouched<Values[field]>
-};
+export type FormikTouched<Values> = { [field in keyof Values]?: boolean };
 
 /**
  * Formik state tree

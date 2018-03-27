@@ -43,11 +43,12 @@ export class FastField<
       error: getIn(context.formik.errors, props.name),
     };
 
-    this.reset = () =>
+    this.reset = (nextValues?: any) => {
       this.setState({
-        value: getIn(context.formik.values, props.name),
+        value: getIn(nextValues, props.name),
         error: getIn(context.formik.errors, props.name),
       });
+    };
 
     context.formik.registerField(props.name, this.reset);
   }

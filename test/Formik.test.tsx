@@ -9,6 +9,7 @@ interface Values {
 
 const Form: React.SFC<FormikProps<Values>> = ({
   values,
+  touched,
   handleSubmit,
   handleChange,
   handleBlur,
@@ -25,7 +26,7 @@ const Form: React.SFC<FormikProps<Values>> = ({
         value={values.name}
         name="name"
       />
-      {errors.name && <div id="feedback">{errors.name}</div>}
+      {touched.name && errors.name && <div id="feedback">{errors.name}</div>}
       {isSubmitting && <div id="submitting">Submitting</div>}
       {status &&
         !!status.myStatusMessage && (

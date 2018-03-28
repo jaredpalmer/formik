@@ -261,7 +261,11 @@ describe('<Formik>', () => {
         const FormNoEvent = (
           <Formik initialValues={{ name: 'jared' }} onSubmit={noop}>
             {({ handleSubmit }) => (
-              <button onClick={() => handleSubmit(/* undefined event */)} />
+              <button
+                onClick={() =>
+                  handleSubmit(undefined as any /* undefined event */)
+                }
+              />
             )}
           </Formik>
         );
@@ -277,7 +281,7 @@ describe('<Formik>', () => {
           <Formik initialValues={{ name: 'jared' }} onSubmit={noop}>
             {({ handleSubmit }) => (
               <button
-                onClick={() => handleSubmit({} /* no preventDefault */)}
+                onClick={() => handleSubmit({} as any /* no preventDefault */)}
               />
             )}
           </Formik>

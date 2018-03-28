@@ -81,7 +81,7 @@
     "tsc-watch": "1.0.7",
     "tslint": "5.5.0",
     "tslint-react": "3.2.0",
-    "typescript": "^2.7.1",
+    "typescript": "2.8.1",
     "yup": "0.21.3"
   },
   "lint-staged": {

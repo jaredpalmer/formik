@@ -28,14 +28,11 @@ export type FormikErrors<Values> = { [field in keyof Values]?: any };
 
 /**
  * An object containing touched state of the form whose keys correspond to FormikValues.
- *
- * @todo Remove any in TypeScript 2.8
  */
-export type FormikTouched<T> = T extends object
-  ? FormikTouchedObject<T>
-  : boolean;
-export type FormikTouchedObject<T extends object> = {
-  [K in keyof T]?: FormikTouched<T[K]>
+export type FormikTouched<Values> = {
+  [K in keyof Values]?: Values[K] extends object
+    ? FormikTouched<Values[K]>
+    : boolean
 };
 
 /**

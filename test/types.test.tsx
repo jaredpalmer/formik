@@ -1,4 +1,4 @@
-import { FormikTouched } from '../src';
+import { FormikTouched, FormikErrors } from '../src';
 
 describe('Formik Types', () => {
   describe('FormikTouched', () => {
@@ -9,8 +9,11 @@ describe('Formik Types', () => {
       };
     };
 
-    it('it should correctly infer type of touched property from Values', async () => {
-      const touched: FormikTouched<Values> = {};
+    it('it should infer nested object structure of touched property from Values', () => {
+      const touched: FormikTouched<Values> = {
+        id: true,
+        social: { facebook: true },
+      };
       // type touched = {
       //    id?: boolean | undefined;
       //    social?: {
@@ -18,10 +21,26 @@ describe('Formik Types', () => {
       //    } | undefined;
       // }
       const id: boolean | undefined = touched.id;
-      expect(id).toBeUndefined();
-      const social: { facebook?: boolean | undefined } | undefined =
-        touched.social;
-      expect(social).toBeUndefined();
+      expect(id).toBe(true);
+      const facebook: boolean | undefined = touched.social!.facebook;
+      expect(facebook).toBe(true);
+    });
+
+    it('it should infer nested object structure of error property from Values', () => {
+      const errors: FormikErrors<Values> = {
+        id: 'error',
+        social: { facebook: 'error' },
+      };
+      // type touched = {
+      //    id?: {} | undefined;
+      //    social?: {
+      //        facebook?: {} | undefined;
+      //    } | undefined;
+      // }
+      const id: {} | undefined = errors.id;
+      expect(id).toBe('error');
+      const facebook: {} | undefined = errors.social!.facebook;
+      expect(facebook).toBe('error');
     });
   });
 });

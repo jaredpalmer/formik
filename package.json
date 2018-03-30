@@ -66,7 +66,7 @@
     "jest": "^21.2.1",
     "jest-cli": "^21.2.1",
     "lint-staged": "4.0.2",
-    "prettier": "^1.8.2",
+    "prettier": "1.11.1",
     "react": "16.2.0",
     "react-dom": "16.2.0",
     "rimraf": "^2.6.2",
@@ -78,10 +78,10 @@
     "rollup-plugin-sourcemaps": "0.4.2",
     "rollup-plugin-uglify": "^3.0.0",
     "ts-jest": "^21.2.4",
-    "tsc-watch": "1.0.7",
+    "tsc-watch": "1.0.17",
     "tslint": "5.5.0",
     "tslint-react": "3.2.0",
-    "typescript": "^2.7.1",
+    "typescript": "2.8.1",
     "yup": "0.21.3"
   },
   "lint-staged": {

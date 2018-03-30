@@ -21,18 +21,18 @@ export interface FormikValues {
 /**
  * An object containing error messages whose keys correspond to FormikValues.
  * Should be always be and object of strings, but any is allowed to support i18n libraries.
- *
- * @todo Remove any in TypeScript 2.8
  */
-export type FormikErrors<Values> = { [field in keyof Values]?: any };
+export type FormikErrors<Values> = {
+  [K in keyof Values]?: Values[K] extends object ? FormikErrors<Values[K]> : {}
+};
 
 /**
  * An object containing touched state of the form whose keys correspond to FormikValues.
- *
- * @todo Remove any in TypeScript 2.8
  */
 export type FormikTouched<Values> = {
-  [field in keyof Values]?: boolean & FormikTouched<Values[field]>
+  [K in keyof Values]?: Values[K] extends object
+    ? FormikTouched<Values[K]>
+    : boolean
 };
 
 /**

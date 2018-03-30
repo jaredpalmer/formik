@@ -32,6 +32,8 @@
       "prettier --trailing-comma es5 --single-quote --write 'src/**/*' 'test/**/*' 'README.md'",
     "precommit": "lint-staged",
     "addc": "all-contributors add",
+    "start-website": "cd website && yarn start",
+    "build-website": "cd website && yarn install && build",
     "gen-docs": "all-contributors generate && doctoc README.md"
   },
   "dependencies": {

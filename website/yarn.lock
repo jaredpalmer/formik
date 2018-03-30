@@ -9286,12 +9286,6 @@ style-loader@^0.13.0:
   dependencies:
     loader-utils "^1.0.2"
 
-styled-system@^1.1.1:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/styled-system/-/styled-system-1.1.1.tgz#6611da9ce5e561b50f217996ea555ea7b1855d5d"
-  dependencies:
-    prop-types "^15.6.0"
-
 sum-up@^1.0.1:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/sum-up/-/sum-up-1.0.3.tgz#1c661f667057f63bcb7875aa1438bc162525156e"

@@ -1,3 +1,11 @@
+---
+path: "/docs/api"
+date: "2015-07-01T22:12:03.284Z"
+title: "API Reference"
+description: "Formik API Reference documentation"
+back: "/docs"
+---
+
 ## `<Formik />`
 
 `<Formik>` is a component that helps you with building forms. It uses a render

@@ -14,5 +14,4 @@ deploy:
   provider: script
   script: curl -X POST -d '' $NETLIFY_BUILD_HOOK
   skip_cleanup: true
-  on:
-    branch: master
+  

@@ -1,4 +1,5 @@
 module.exports = {
+  pathPrefix: '/formik',
   siteMetadata: {
     siteName: `Formik`,
   },

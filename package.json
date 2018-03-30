@@ -33,6 +33,7 @@
     "precommit": "lint-staged",
     "addc": "all-contributors add",
     "website": "cd website && yarn start",
+    "postinstall": "cd website && yarn install",
     "build-website": "cd website && yarn build",
     "gen-docs": "all-contributors generate && doctoc README.md"
   },

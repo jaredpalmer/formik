@@ -1,5 +1,5 @@
 ---
-path: "/docs/get-started"
+path: "/docs/basics"
 date: "2015-07-01T22:12:03.284Z"
 title: "Get started"
 description: "Get started with Formik"

@@ -7,9 +7,6 @@ env:
 script:
   - yarn test -- --runInBand --no-cache --coverage
 
-before_deploy:
-  - npm run build
-
 deploy:
   provider: script
   script: curl -X POST -d '' $NETLIFY_BUILD_HOOK

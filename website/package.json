@@ -7,7 +7,7 @@
     "@gaearon/react-live": "1.7.1-with-safari-fix",
     "classnames": "^2.2.5",
     "formik": "../",
-    "gatsby": "^1.9.9",
+    "gatsby": "^1.9.243",
     "gatsby-link": "^1.6.9",
     "gatsby-plugin-catch-links": "^1.0.15",
     "gatsby-plugin-glamor": "^1.6.4",

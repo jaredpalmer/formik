@@ -1,5 +1,18 @@
 language: node_js
 node_js:
   - '8'
+env:
+  - CI=true
+
 script:
   - yarn test -- --runInBand --no-cache --coverage
+
+before_deploy:
+  - npm run build
+
+deploy:
+  provider: script
+  script: curl -X POST -d '' $NETLIFY_BUILD_HOOK
+  skip_cleanup: true
+  on:
+    branch: master

@@ -31,7 +31,6 @@
     "gatsby-transformer-sharp": "^1.6.1",
     "glamor": "^2.20.40",
     "glamorous": "^4.11.2",
-    "jsxstyle": "^1.0.2",
     "palx": "^1.0.2",
     "prismjs": "^1.9.0",
     "react-json-tree": "^0.11.0",
@@ -55,22 +54,20 @@
     "tslint": "^5.5.0",
     "tslint-react": "^3.0.0"
   },
-  "keywords": [
-    "gatsby"
-  ],
+  "keywords": ["gatsby"],
   "resolutions": {
     "gatsby/graphql": "0.10.5",
     "gatsby/react": "16.0.0",
     "gatsby/react-dom": "16.0.0"
   },
   "license": "MIT",
-  "main": "n/a",
   "scripts": {
     "build": "gatsby build",
-    "deploy": "gatsby build --prefix-paths && gh-pages -d public",
+    "deploy": "gatsby build --prefix-paths",
     "start": "gatsby develop",
     "serve": "gatsby serve",
-    "format": "prettier --trailing-comma es5 --no-semi --single-quote --write \"pages/*.js\" \"utils/*.js\" \"wrappers/*.js\" \"html.js\"",
+    "format":
+      "prettier --trailing-comma es5 --no-semi --single-quote --write \"pages/*.js\" \"utils/*.js\" \"wrappers/*.js\" \"html.js\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   }
 }

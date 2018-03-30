@@ -30,7 +30,6 @@
     "gatsby-transformer-remark": "^1.7.2",
     "gatsby-transformer-sharp": "^1.6.1",
     "glamor": "^2.20.40",
-    "glamorous": "^4.11.2",
     "palx": "^1.0.2",
     "prismjs": "^1.9.0",
     "react-json-tree": "^0.11.0",
@@ -50,7 +49,6 @@
     "@types/react-helmet": "^5.0.3",
     "@types/react-router-dom": "^4.0.7",
     "@types/webpack-env": "^1.13.0",
-    "gh-pages": "^1.0.0",
     "tslint": "^5.5.0",
     "tslint-react": "^3.0.0"
   },

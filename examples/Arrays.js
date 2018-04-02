@@ -27,7 +27,7 @@ const SignIn = () => (
               <div>
                 {values.friends.length > 0 &&
                   values.friends.map((friend, index) => (
-                    <div className="row">
+                    <div className="row" key={index}>
                       <div className="col">
                         <label htmlFor={`friends.${index}.name`}>Name</label>
                         <Field
@@ -36,6 +36,7 @@ const SignIn = () => (
                           type="text"
                         />
                         {errors.friends &&
+                          errors.friends[index] &&
                           errors.friends[index].name &&
                           touched.friends &&
                           touched.friends[index].name && (
@@ -52,6 +53,7 @@ const SignIn = () => (
                           type="email"
                         />
                         {errors.friends &&
+                          errors.friends[index] &&
                           errors.friends[index].email &&
                           touched.friends &&
                           touched.friends[index].email && (

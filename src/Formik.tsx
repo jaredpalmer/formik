@@ -774,18 +774,17 @@ export function yupToFormErrors<Values>(yupError: any): FormikErrors<Values> {
 /**
  * Validate a yup schema.
  */
-export function validateYupSchema<T>(
-  data: T,
+export function validateYupSchema<T extends FormikValues>(
+  values: T,
   schema: any,
   sync: boolean = false,
   context: any = {}
-): Promise<void> {
-  let validateData: any = {};
-  for (let k in data) {
-    if (data.hasOwnProperty(k)) {
+): Promise<Partial<T>> {
+  let validateData: Partial<T> = {};
+  for (let k in values) {
+    if (values.hasOwnProperty(k)) {
       const key = String(k);
-      validateData[key] =
-        (data as any)[key] !== '' ? (data as any)[key] : undefined;
+      validateData[key] = values[key] !== '' ? values[key] : undefined;
     }
   }
   return schema[sync ? 'validateSync' : 'validate'](validateData, {

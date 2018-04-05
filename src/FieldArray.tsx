@@ -192,8 +192,6 @@ export class FieldArray extends React.Component<FieldArrayConfig, {}> {
   remove<T>(index: number): T {
     // We need to make sure we also remove relevant pieces of `touched` and `errors`
     let result: any;
-    console.log('remove');
-    console.log('result');
     this.updateArrayField(
       // so this gets call 3 times
       (array?: any[]) => {
@@ -219,7 +217,6 @@ export class FieldArray extends React.Component<FieldArrayConfig, {}> {
     this.updateArrayField(
       (array?: any[]) => {
         const copy = array ? [...array] : [];
-        console.log(array);
         for (var i = 0; i < copy.length; i++) {
           if (value == copy[i]) {
             index = i;

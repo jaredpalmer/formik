@@ -38,6 +38,8 @@ export interface ArrayHelpers {
   handleUnshift: (value: any) => () => void;
   /** Curried fn to remove an element at an index of an array */
   handleRemove: (index: number) => () => void;
+  /** Curried fn to remove an element at an index of an array */
+  handleRemoveValue: (value: String) => () => void;
   /** Curried fn to remove a value from the end of the array */
   handlePop: () => () => void;
   /** Imperatively remove and element at an index of an array */
@@ -89,6 +91,7 @@ export class FieldArray extends React.Component<FieldArrayConfig, {}> {
     super(props);
     // We need TypeScript generics on these, so we'll bind them in the constructor
     this.remove = this.remove.bind(this);
+    this.removeValue = this.removeValue.bind(this);
     this.pop = this.pop.bind(this);
   }
 
@@ -207,8 +210,36 @@ export class FieldArray extends React.Component<FieldArrayConfig, {}> {
 
     return result;
   }
+  removeValue<T>(value: string): T {
+    let result: any;
+    var index: number;
+    index = -1;
+    this.updateArrayField(
+      (array?: any[]) => {
+        const copy = array ? [...array] : [];
+        for (var i = 0; i < copy.length; i++) {
+          if (value == copy[i]) {
+            index = i;
+          }
+        }
+        if (index !== -1) {
+          if (!result) {
+            result = copy[index];
+          }
+          if (isFunction(copy.splice)) {
+            copy.splice(index, 1);
+          }
+        }
+        return copy;
+      },
+      true,
+      true
+    );
+    return result;
+  }
 
   handleRemove = (index: number) => () => this.remove<any>(index);
+  handleRemoveValue = (value: string) => () => this.removeValue<any>(value);
 
   pop<T>(): T {
     // Remove relevant pieces of `touched` and `errors` too!
@@ -241,6 +272,7 @@ export class FieldArray extends React.Component<FieldArrayConfig, {}> {
       replace: this.replace,
       unshift: this.unshift,
       remove: this.remove,
+      removeValue: this.removeValue,
       handlePush: this.handlePush,
       handlePop: this.handlePop,
       handleSwap: this.handleSwap,

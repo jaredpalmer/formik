@@ -213,7 +213,7 @@ export class FieldArray extends React.Component<FieldArrayConfig, {}> {
   removeValue<T>(value: string): T {
     let result: any;
     var index: number;
-    index = null;
+    index = -1;
     this.updateArrayField(
       (array?: any[]) => {
         const copy = array ? [...array] : [];
@@ -222,7 +222,7 @@ export class FieldArray extends React.Component<FieldArrayConfig, {}> {
             index = i;
           }
         }
-        if (index !== null) {
+        if (index !== -1) {
           if (!result) {
             result = copy[index];
           }
@@ -239,7 +239,7 @@ export class FieldArray extends React.Component<FieldArrayConfig, {}> {
   }
 
   handleRemove = (index: number) => () => this.remove<any>(index);
-  handleRemoveValue = (value: String) => () => this.removeValue<any>(value);
+  handleRemoveValue = (value: string) => () => this.removeValue<any>(value);
 
   pop<T>(): T {
     // Remove relevant pieces of `touched` and `errors` too!

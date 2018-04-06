@@ -9,6 +9,7 @@ import { media } from 'theme';
 import { AppBar } from 'components/AppBar';
 
 const Media = require('react-media');
+
 export interface NavProps {
   children?: any;
   title: string;
@@ -45,17 +46,30 @@ export class Nav extends React.Component<NavProps, NavState> {
       <Media query={media.greaterThan('small', true)}>
         {(isDesktop: boolean) => (
           <Block height="100%" flex="1">
-            {!isDesktop && <AppBar title={title} />}
+            {!isDesktop &&
+              !isOpen && (
+                <AppBar
+                  title={title}
+                  renderLeftArea={() => (
+                    <button onClick={this.toggle}>Menu</button>
+                  )}
+                />
+              )}
             <Block paddingTop={isDesktop ? 0 : 50}>
               {!isDesktop && isOpen /** destroy errthing when nav is open */ ? (
-                <Sidebar isDesktop={isDesktop} />
+                <Sidebar isDesktop={isDesktop} onClose={this.toggle} />
               ) : (
                 <Switch>
                   <Route
                     path="/docs"
                     render={(props: RouteComponentProps<any>) => (
                       <Block>
-                        {isDesktop ? <Sidebar isDesktop={isDesktop} /> : null}
+                        {isDesktop ? (
+                          <Sidebar
+                            isDesktop={isDesktop}
+                            onClose={this.toggle}
+                          />
+                        ) : null}
                         <SidebarInner>{this.props.children}</SidebarInner>
                       </Block>
                     )}
@@ -64,7 +78,12 @@ export class Nav extends React.Component<NavProps, NavState> {
                     path="/examples"
                     render={(props: RouteComponentProps<any>) => (
                       <Block>
-                        {isDesktop ? <Sidebar isDesktop={isDesktop} /> : null}
+                        {isDesktop ? (
+                          <Sidebar
+                            isDesktop={isDesktop}
+                            onClose={this.toggle}
+                          />
+                        ) : null}
                         <SidebarInner>{this.props.children}</SidebarInner>
                       </Block>
                     )}

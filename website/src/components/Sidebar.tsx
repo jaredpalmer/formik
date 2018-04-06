@@ -11,6 +11,7 @@ import { css } from 'glamor';
 
 export interface SidebarProps {
   isDesktop: boolean;
+  onClose: () => void;
 }
 
 export interface SidebarState {}
@@ -30,21 +31,29 @@ export class Sidebar extends React.Component<SidebarProps, SidebarState> {
           left="0"
           overflow="scroll"
         >
-          <Block margin="2rem 2rem 0" textAlign="center">
-            <Mark color={COLORS.black} height={72} width={66} />
-            <Block>
-              <Text color="#000" size={3} fontWeight={800}>
-                Formik
-              </Text>
+          {isDesktop ? (
+            <Block margin="2rem 2rem 0" textAlign="center">
+              <Mark color={COLORS.black} height={72} width={66} />
+              <Block>
+                <Text color="#000" size={3} fontWeight={800}>
+                  Formik
+                </Text>
+              </Block>
             </Block>
-          </Block>
+          ) : null}
+          {isDesktop ? (
+            <Block margin="2rem 2rem 0">
+              <button onClick={this.props.onClose}>Close</button>
+            </Block>
+          ) : null}
           <Block>
             <Block
               component="input"
               fontSize="1rem"
-              margin="1rem auto"
+              margin="1rem 2rem"
               padding=".25rem .5rem"
               borderRadius="4px"
+              width="100%"
               outline="0"
               border={`1px solid ${COLORS.gray[2]}`}
               props={{
@@ -129,7 +138,7 @@ export class Sidebar extends React.Component<SidebarProps, SidebarState> {
                 ))}
             </Block>
           ))}
-          <Text size={8} padding="1rem">
+          <Text size={8} padding="1rem 2rem">
             Copyright 2017 Jared Palmer. {`Made with <3 in NYC.`}
           </Text>
         </Block>

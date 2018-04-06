@@ -37,7 +37,7 @@ export const FONTS = {
 
 export const TYPE_SCALE = [72, 64, 48, 32, 24, 20, 16, 14, 12];
 
-const SIZES = {
+const SCREENS = {
   xsmall: { min: 0, max: 699 },
   small: { min: 700, max: 779 },
   medium: { min: 780, max: 979 },
@@ -50,7 +50,7 @@ const SIZES = {
   sidebarFixed: { min: 2000, max: Infinity },
 };
 
-type Size = keyof typeof SIZES;
+type Size = keyof typeof SCREENS;
 
 export const media = {
   between(
@@ -62,15 +62,15 @@ export const media = {
     let result: string;
     if (excludeLarge) {
       result = `@media (min-width: ${
-        SIZES[smallKey].min
-      }px) and (max-width: ${SIZES[largeKey].min - 1}px)`;
+        SCREENS[smallKey].min
+      }px) and (max-width: ${SCREENS[largeKey].min - 1}px)`;
     } else {
-      if (SIZES[largeKey].max === Infinity) {
-        result = `@media (min-width: ${SIZES[smallKey].min}px)`;
+      if (SCREENS[largeKey].max === Infinity) {
+        result = `@media (min-width: ${SCREENS[smallKey].min}px)`;
       } else {
         result = `@media (min-width: ${
-          SIZES[smallKey].min
-        }px) and (max-width: ${SIZES[largeKey].max}px)`;
+          SCREENS[smallKey].min
+        }px) and (max-width: ${SCREENS[largeKey].max}px)`;
       }
     }
 
@@ -82,7 +82,7 @@ export const media = {
   },
 
   greaterThan(key: Size, trim: boolean = false) {
-    let result = `@media (min-width: ${SIZES[key].min}px)`;
+    let result = `@media (min-width: ${SCREENS[key].min}px)`;
 
     if (trim) {
       return result.replace('@media ', '');
@@ -92,7 +92,7 @@ export const media = {
   },
 
   lessThan(key: Size, trim: boolean = false) {
-    let result = `@media (max-width: ${SIZES[key].min - 1}px)`;
+    let result = `@media (max-width: ${SCREENS[key].min - 1}px)`;
     if (trim) {
       return result.replace('@media ', '');
     }
@@ -100,7 +100,7 @@ export const media = {
   },
 
   size(key: Size, trim: boolean = false) {
-    const size = SIZES[key];
+    const size = SCREENS[key];
 
     if (size.min == null) {
       return media.lessThan(key, trim);

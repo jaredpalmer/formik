@@ -209,6 +209,12 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
   validationSchema?: any | (() => any);
 
   /**
+   * An object or a function that returns an object which will be passed as
+   * context to the yup schema validation.
+   */
+  validationSchemaContext?: any | ((values: Values) => any);
+
+  /**
    * Validation function. Must return an error object or promise that
    * throws an error object where that object keys map to corresponding value.
    */
@@ -242,6 +248,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     validateOnBlur: true,
     isInitialValid: false,
     enableReinitialize: false,
+    validationSchemaContext: {},
   };
 
   static propTypes = {
@@ -252,6 +259,10 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     onReset: PropTypes.func,
     onSubmit: PropTypes.func.isRequired,
     validationSchema: PropTypes.oneOfType([PropTypes.func, PropTypes.object]),
+    validationSchemaContext: PropTypes.oneOfType([
+      PropTypes.func,
+      PropTypes.object,
+    ]),
     validate: PropTypes.func,
     component: PropTypes.func,
     render: PropTypes.func,
@@ -278,6 +289,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       formik: {
         ...this.getFormikBag(),
         validationSchema: this.props.validationSchema,
+        validationSchemaContext: this.props.validationSchemaContext,
         validate: this.props.validate,
       },
     };
@@ -383,11 +395,14 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
    * Run validation against a Yup schema and optionally run a function if successful
    */
   runValidationSchema = (values: FormikValues, onSuccess?: Function) => {
-    const { validationSchema } = this.props;
+    const { validationSchema, validationSchemaContext } = this.props;
     const schema = isFunction(validationSchema)
       ? validationSchema()
       : validationSchema;
-    validateYupSchema(values, schema, false, this.props).then(
+    const context = isFunction(validationSchemaContext)
+      ? validationSchemaContext(values)
+      : validationSchemaContext;
+    validateYupSchema(values, schema, false, context).then(
       () => {
         this.setState({ errors: {} });
         if (onSuccess) {

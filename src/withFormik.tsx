@@ -63,6 +63,12 @@ export interface WithFormikConfig<
   validationSchema?: any | ((props: Props) => any);
 
   /**
+   * An object or a function that returns an object which will be passed as
+   * context to the yup schema validation.
+   */
+  validationSchemaContext?: any | ((values: Values, props: Props) => any);
+
+  /**
    * Validation function. Must return an error object or promise that
    * throws an error object where that object keys map to corresponding value.
    */
@@ -124,6 +130,12 @@ export function withFormik<
           : config.validationSchema;
       };
 
+      validationSchemaContext = (values: Values): object => {
+        return isFunction(config.validationSchemaContext)
+          ? config.validationSchemaContext!(values, this.props)
+          : config.validationSchemaContext;
+      };
+
       handleSubmit = (values: Values, actions: FormikActions<Values>) => {
         return config.handleSubmit(values, {
           ...actions,
@@ -145,6 +157,9 @@ export function withFormik<
             {...config}
             validate={config.validate && this.validate}
             validationSchema={config.validationSchema && this.validationSchema}
+            validationSchemaContext={
+              config.validationSchemaContext && this.validationSchemaContext
+            }
             initialValues={mapPropsToValues(this.props)}
             onSubmit={this.handleSubmit as any}
             render={this.renderFormComponent}

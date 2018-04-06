@@ -16,8 +16,8 @@
     "gatsby-plugin-nprogress": "^1.0.7",
     "gatsby-plugin-react-helmet": "^1.0.3",
     "gatsby-plugin-react-next": "^1.0.3",
-    "gatsby-plugin-sitemap": "^1.2.11",
     "gatsby-plugin-sharp": "^1.6.2",
+    "gatsby-plugin-sitemap": "^1.2.11",
     "gatsby-plugin-twitter": "^1.0.15",
     "gatsby-plugin-typescript": "^1.0.1",
     "gatsby-remark-autolink-headers": "^1.4.4",
@@ -43,15 +43,18 @@
   "devDependencies": {
     "@types/classnames": "^2.2.0",
     "@types/node": "^8.0.15",
-    "@types/react": "16.0.7",
-    "@types/react-dom": "15.5.5",
+    "@types/react": "^16.1.0",
+    "@types/react-dom": "^16.0.4",
     "@types/react-helmet": "^5.0.3",
     "@types/react-router-dom": "^4.0.7",
     "@types/webpack-env": "^1.13.0",
     "tslint": "^5.5.0",
-    "tslint-react": "^3.0.0"
+    "tslint-react": "^3.0.0",
+    "typescript": "^2.8.1"
   },
-  "keywords": ["gatsby"],
+  "keywords": [
+    "gatsby"
+  ],
   "resolutions": {
     "gatsby/graphql": "0.10.5",
     "gatsby/react": "16.0.0",
@@ -63,8 +66,7 @@
     "deploy": "gatsby build --prefix-paths",
     "start": "gatsby develop",
     "serve": "gatsby serve",
-    "format":
-      "prettier --trailing-comma es5 --no-semi --single-quote --write \"pages/*.js\" \"utils/*.js\" \"wrappers/*.js\" \"html.js\"",
+    "format": "prettier --trailing-comma es5 --no-semi --single-quote --write \"pages/*.js\" \"utils/*.js\" \"wrappers/*.js\" \"html.js\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   }
 }

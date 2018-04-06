@@ -73,10 +73,11 @@
   version "8.0.31"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-8.0.31.tgz#d9af61093cf4bfc9f066ca34de0175012cfb0ce9"
 
-"@types/react-dom@15.5.5":
-  version "15.5.5"
-  resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-15.5.5.tgz#6b117c7697b61fe74132bfe5c72bceb3319433b8"
+"@types/react-dom@^16.0.4":
+  version "16.0.4"
+  resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-16.0.4.tgz#2e8fd45f5443780ed49bf2cdd9809e6091177a7d"
   dependencies:
+    "@types/node" "*"
     "@types/react" "*"
 
 "@types/react-helmet@^5.0.3":
@@ -108,9 +109,13 @@
     "@types/history" "*"
     "@types/react" "*"
 
-"@types/react@*", "@types/react@16.0.7":
+"@types/react@*":
   version "16.0.7"
   resolved "https://registry.yarnpkg.com/@types/react/-/react-16.0.7.tgz#f85b6c33c988a1631e2f32fedae71ec6d9718a0d"
+
+"@types/react@^16.1.0":
+  version "16.1.0"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-16.1.0.tgz#6c0e9955ce73f332b4a1948d45decaf18c764c6e"
 
 "@types/tmp@^0.0.32":
   version "0.0.32"
@@ -9691,6 +9696,10 @@ typedarray@^0.0.6:
 typescript@^2.2.1:
   version "2.5.3"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-2.5.3.tgz#df3dcdc38f3beb800d4bc322646b04a3f6ca7f0d"
+
+typescript@^2.8.1:
+  version "2.8.1"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-2.8.1.tgz#6160e4f8f195d5ba81d4876f9c0cc1fbc0820624"
 
 typography-breakpoint-constants@^0.15.10:
   version "0.15.10"

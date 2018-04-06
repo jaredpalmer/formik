@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { Block } from 'components/Primitives';
+import Link from 'gatsby-link';
 
 // Please note that you can use https://github.com/dotansimha/graphql-code-generator
 // to generate all types from graphQL schema
@@ -18,7 +20,13 @@ export default class Index extends React.Component<IndexPageProps, {}> {
   }
 
   render() {
-    return <div>todo</div>;
+    return (
+      <div>
+        <Block component="h1">Formik</Block>
+        <Link to="/docs/basics">Basics</Link>
+        <Link to="/docs/api">API Reference</Link>
+      </div>
+    );
   }
 }
 

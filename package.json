@@ -1,7 +1,7 @@
 {
   "name": "formik",
   "description": "Forms in React, without tears",
-  "version": "1.0.0-alpha.3",
+  "version": "1.0.0-alpha.4",
   "license": "MIT",
   "author": "Jared Palmer <jared@palmer.net>",
   "repository": "jaredpalmer/formik",
@@ -18,19 +18,22 @@
   "main": "dist/formik.js",
   "module": "dist/formik.es6.js",
   "typings": "dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "scripts": {
     "test": "jest --env=jsdom",
     "test:watch": "npm run test -- --watch",
-    "start": "cross-env NODE_ENV=development tsc-watch --project tsconfig.base.json  --onSuccess \"rollup -c\"",
+    "start":
+      "cross-env NODE_ENV=development tsc-watch --project tsconfig.base.json  --onSuccess \"rollup -c\"",
     "prebuild": "rimraf dist",
-    "build": "tsc -p tsconfig.base.json  && cross-env NODE_ENV=production rollup -c && cross-env NODE_ENV=development rollup -c && rimraf compiled",
+    "build":
+      "tsc -p tsconfig.base.json  && cross-env NODE_ENV=production rollup -c && cross-env NODE_ENV=development rollup -c && rimraf compiled",
     "prepublish": "npm run build",
-    "format": "prettier --trailing-comma es5 --single-quote --write 'src/**/*' 'test/**/*' 'README.md'",
+    "format":
+      "prettier --trailing-comma es5 --single-quote --write 'src/**/*' 'test/**/*' 'README.md'",
     "precommit": "lint-staged",
     "addc": "all-contributors add",
+    "start-website": "cd website && yarn start",
+    "build-website": "cd website && yarn install && yarn build",
     "gen-docs": "all-contributors generate && doctoc README.md"
   },
   "dependencies": {
@@ -66,7 +69,7 @@
     "jest": "^21.2.1",
     "jest-cli": "^21.2.1",
     "lint-staged": "4.0.2",
-    "prettier": "^1.8.2",
+    "prettier": "1.11.1",
     "react": "16.2.0",
     "react-dom": "16.2.0",
     "rimraf": "^2.6.2",
@@ -78,10 +81,10 @@
     "rollup-plugin-sourcemaps": "0.4.2",
     "rollup-plugin-uglify": "^3.0.0",
     "ts-jest": "^21.2.4",
-    "tsc-watch": "1.0.7",
+    "tsc-watch": "1.0.17",
     "tslint": "5.5.0",
     "tslint-react": "3.2.0",
-    "typescript": "^2.7.1",
+    "typescript": "2.8.1",
     "yup": "0.21.3"
   },
   "lint-staged": {
@@ -96,27 +99,13 @@
     "semi": true
   },
   "jest": {
-    "setupFiles": [
-      "raf/polyfill",
-      "<rootDir>/test/setupTest.ts"
-    ],
-    "collectCoverageFrom": [
-      "src/**/*.{ts,tsx}"
-    ],
+    "setupFiles": ["raf/polyfill", "<rootDir>/test/setupTest.ts"],
+    "collectCoverageFrom": ["src/**/*.{ts,tsx}"],
     "transform": {
       ".(ts|tsx)": "<rootDir>/node_modules/ts-jest/preprocessor.js"
     },
-    "testMatch": [
-      "<rootDir>/test/**/?(*.)(spec|test).ts?(x)"
-    ],
-    "transformIgnorePatterns": [
-      "[/\\\\]node_modules[/\\\\].+\\.(js|jsx)$"
-    ],
-    "moduleFileExtensions": [
-      "ts",
-      "tsx",
-      "js",
-      "json"
-    ]
+    "testMatch": ["<rootDir>/test/**/?(*.)(spec|test).ts?(x)"],
+    "transformIgnorePatterns": ["[/\\\\]node_modules[/\\\\].+\\.(js|jsx)$"],
+    "moduleFileExtensions": ["ts", "tsx", "js", "json"]
   }
 }

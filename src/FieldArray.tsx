@@ -28,6 +28,10 @@ export interface ArrayHelpers {
   insert: (index: number, value: any) => void;
   /** Curried fn to insert an element at a given index into the array */
   handleInsert: (index: number, value: any) => () => void;
+  /** Imperatively replace a value at an index of an array  */
+  replace: (index: number, value: any) => void;
+  /** Curried fn to replace an element at a given index into the array */
+  handleReplace: (index: number, value: any) => () => void;
   /** Imperatively add an element to the beginning of an array and return its length */
   unshift: (value: any) => number;
   /** Curried fn to add an element to the beginning of an array */
@@ -64,6 +68,12 @@ export const swap = (array: any[], indexA: number, indexB: number) => {
 export const insert = (array: any[], index: number, value: any) => {
   const copy = [...(array || [])];
   copy.splice(index, 0, value);
+  return copy;
+};
+
+export const replace = (array: any[], index: number, value: any) => {
+  const copy = [...(array || [])];
+  copy[index] = value;
   return copy;
 };
 
@@ -151,6 +161,16 @@ export class FieldArray extends React.Component<FieldArrayConfig, {}> {
 
   handleInsert = (index: number, value: any) => () => this.insert(index, value);
 
+  replace = (index: number, value: any) =>
+    this.updateArrayField(
+      (array: any[]) => replace(array, index, value),
+      false,
+      false
+    );
+
+  handleReplace = (index: number, value: any) => () =>
+    this.replace(index, value);
+
   unshift = (value: any) => {
     let arr = [];
     this.updateArrayField(
@@ -218,6 +238,7 @@ export class FieldArray extends React.Component<FieldArrayConfig, {}> {
       swap: this.swap,
       move: this.move,
       insert: this.insert,
+      replace: this.replace,
       unshift: this.unshift,
       remove: this.remove,
       handlePush: this.handlePush,
@@ -225,6 +246,7 @@ export class FieldArray extends React.Component<FieldArrayConfig, {}> {
       handleSwap: this.handleSwap,
       handleMove: this.handleMove,
       handleInsert: this.handleInsert,
+      handleReplace: this.handleReplace,
       handleUnshift: this.handleUnshift,
       handleRemove: this.handleRemove,
     };

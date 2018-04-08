@@ -190,6 +190,13 @@ describe('utils', () => {
       expect(obj).toEqual({ x: 'y' });
       expect(newObj).toEqual({ x: 'y', nested: ['value'] });
     });
+
+    it('supports path containing key of the object', () => {
+      const obj = { x: 'y' };
+      const newObj = setIn(obj, 'a.x.c', 'value');
+      expect(obj).toEqual({ x: 'y' });
+      expect(newObj).toEqual({ x: 'y', a: { x: { c: 'value' } } });
+    });
   });
 
   describe('isPromise', () => {

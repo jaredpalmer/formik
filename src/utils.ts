@@ -30,7 +30,7 @@ export function setIn(obj: any, path: string, value: any): any {
 
   for (; i < pathArray.length - 1; i++) {
     const currentPath: string = pathArray[i];
-    let currentObj: any = obj[currentPath];
+    let currentObj: any = getIn(obj, pathArray.slice(0, i + 1));
 
     if (resVal[currentPath]) {
       resVal = resVal[currentPath];

@@ -264,6 +264,7 @@ export class FastField<
     } = this.props as FieldConfig;
 
     const { formik } = this.context;
+
     const field = {
       value:
         props.type === 'radio' || props.type === 'checkbox'
@@ -273,18 +274,21 @@ export class FastField<
       onChange: this.handleChange,
       onBlur: this.handleBlur,
     };
+
+    const meta = {
+      touched: getIn(formik.touched, name),
+      error: this.state.error,
+      initialValue: getIn(formik.initialValues, name),
+    };
+
     const bag = {
       field,
       form: formik,
-      meta: { touched: getIn(formik.touched, name), error: this.state.error },
+      meta,
     };
 
     if (render) {
-      return (render as (
-        props: FieldProps<any> & {
-          meta: { error?: string; touched?: boolean };
-        }
-      ) => React.ReactNode)(bag);
+      return (render as (props: FieldProps<any>) => React.ReactNode)(bag);
     }
 
     if (isFunction(children)) {

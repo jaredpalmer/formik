@@ -37,6 +37,14 @@ export interface FieldProps<V = any> {
     name: string;
   };
   form: FormikProps<V>; // if ppl want to restrict this for a given form, let them.
+  meta: {
+    /** Field is touched */
+    touched?: boolean;
+    /** Field has errror */
+    error?: string;
+    /** Field initial value */
+    initialValue?: string;
+  };
 }
 
 export interface FieldConfig {
@@ -161,6 +169,7 @@ export class Field<Props extends FieldAttributes = any> extends React.Component<
     } = this.props as FieldConfig;
 
     const { formik } = this.context;
+
     const field = {
       value:
         props.type === 'radio' || props.type === 'checkbox'
@@ -170,10 +179,21 @@ export class Field<Props extends FieldAttributes = any> extends React.Component<
       onChange: validate ? this.handleChange : formik.handleChange,
       onBlur: validate ? this.handleBlur : formik.handleBlur,
     };
-    const bag = { field, form: formik };
+
+    const meta = {
+      touched: getIn(formik.touched, name),
+      error: getIn(formik.errors, name),
+      initialValue: getIn(formik.initialValues, name),
+    };
+
+    const bag = {
+      field,
+      meta,
+      form: formik,
+    };
 
     if (render) {
-      return (render as any)(bag);
+      return (render as (props: FieldProps<any>) => React.ReactNode)(bag);
     }
 
     if (isFunction(children)) {

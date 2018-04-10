@@ -1,7 +1,7 @@
 import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import { FormikProps, FormikState } from './Formik';
-import { isEmptyChildren, getIn, setIn, isFunction } from './utils';
+import { getIn, setIn, isFunction } from './utils';
 import { SharedRenderProps } from './types';
 
 export type FieldArrayConfig = {
@@ -251,17 +251,34 @@ export class FieldArray extends React.Component<FieldArrayConfig, {}> {
       handleRemove: this.handleRemove,
     };
 
-    const { component, render, children, name } = this.props;
-    const props = { ...arrayHelpers, form: this.context.formik, name };
+    const { component, render, children, name, ...props } = this.props;
+    const { formik } = this.context;
 
-    return component
-      ? React.createElement(component as any, props)
-      : render
-        ? (render as any)(props)
-        : children // children come last, always called
-          ? typeof children === 'function'
-            ? (children as any)(props)
-            : !isEmptyChildren(children) ? React.Children.only(children) : null
-          : null;
+    const values = formik.values[name] || [];
+
+    const meta = {
+      touched: getIn(formik.touched, name) || [],
+      errors: getIn(formik.errors, name) || [],
+      initialValues: getIn(formik.initialValues, name),
+      isEmpty: values.length === 0,
+    };
+
+    const bag = {
+      ...arrayHelpers,
+      [name]: values,
+      name,
+      meta,
+      form: formik,
+    };
+
+    if (render) {
+      return (render as any)(bag);
+    }
+
+    if (isFunction(children)) {
+      return (children as any)(bag);
+    }
+
+    return React.createElement(component as any, { ...bag, ...props });
   }
 }

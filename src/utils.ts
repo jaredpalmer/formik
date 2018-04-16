@@ -81,13 +81,6 @@ export function setNestedObjectValues<T>(
 
 // Assertions
 
-/** @private is running React Native?  */
-export const isReactNative =
-  typeof window !== 'undefined' &&
-  window.navigator &&
-  window.navigator.product &&
-  window.navigator.product === 'ReactNative';
-
 /** @private is the given object a Function? */
 export const isFunction = (obj: any) => 'function' === typeof obj;
 

@@ -41,6 +41,7 @@
     "hoist-non-react-statics": "^2.5.0",
     "lodash.clonedeep": "^4.5.0",
     "lodash.isequal": "4.5.0",
+    "lodash.isnan": "^3.0.2",
     "lodash.topath": "4.5.2",
     "prop-types": "^15.5.10",
     "warning": "^3.0.0"
@@ -55,6 +56,7 @@
     "@types/jest": "20.0.6",
     "@types/lodash.clonedeep": "^4.5.3",
     "@types/lodash.isequal": "4.5.2",
+    "@types/lodash.isnan": "^3.0.3",
     "@types/lodash.topath": "4.5.3",
     "@types/prop-types": "^15.5.2",
     "@types/react": "16.0.28",

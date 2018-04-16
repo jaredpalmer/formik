@@ -1,6 +1,7 @@
 import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import isEqual from 'lodash.isequal';
+import isNaN from 'lodash.isnan';
 import warning from 'warning';
 import {
   isFunction,
@@ -463,7 +464,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
           });
         }
         val = /number|range/.test(type)
-          ? ((parsed = parseFloat(value)), Number.isNaN(parsed) ? '' : parsed)
+          ? ((parsed = parseFloat(value)), isNaN(parsed) ? '' : parsed)
           : /checkbox/.test(type) ? checked : value;
       }
 

@@ -105,6 +105,7 @@ export class FastField<
       validate,
       values,
       validationSchema,
+      validationSchemaContext,
       errors,
       setFormikState,
     } = this.context.formik;
@@ -174,10 +175,13 @@ export class FastField<
         const schema = isFunction(validationSchema)
           ? validationSchema()
           : validationSchema;
+        const context = isFunction(validationSchemaContext)
+          ? validationSchemaContext(values)
+          : validationSchemaContext;
         const mergedValues = setIn(values, this.props.name, val);
         // try to validate with yup synchronously if possible...saves a render.
         try {
-          validateYupSchema(mergedValues, schema, true);
+          validateYupSchema(mergedValues, schema, true, context);
           this.setState({
             value: val,
             error: undefined,
@@ -193,7 +197,7 @@ export class FastField<
               value: val,
             });
             // try yup async validation
-            validateYupSchema(mergedValues, schema).then(
+            validateYupSchema(mergedValues, schema, false, context).then(
               () => this.setState({ error: undefined }),
               (err: any) =>
                 this.setState(s => ({

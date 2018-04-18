@@ -4,7 +4,7 @@ import { validateYupSchema, yupToFormErrors, FormikProps } from './Formik';
 import { getIn, isPromise, setIn, isFunction, isEmptyChildren } from './utils';
 import warning from 'warning';
 import { FieldAttributes, FieldConfig, FieldProps } from './Field';
-import isEqual from 'lodash.isequal';
+import isEqual from 'react-fast-compare';
 
 export interface FastFieldState {
   value: any;

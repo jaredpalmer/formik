@@ -1,6 +1,6 @@
 import * as PropTypes from 'prop-types';
 import * as React from 'react';
-import isEqual from 'lodash.isequal';
+import isEqual from 'react-fast-compare';
 import warning from 'warning';
 import {
   isFunction,

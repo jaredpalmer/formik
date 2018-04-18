@@ -6,6 +6,7 @@ import {
   isFunction,
   isPromise,
   isString,
+  isNaN,
   isEmptyChildren,
   setIn,
   setNestedObjectValues,
@@ -463,7 +464,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
           });
         }
         val = /number|range/.test(type)
-          ? ((parsed = parseFloat(value)), Number.isNaN(parsed) ? '' : parsed)
+          ? ((parsed = parseFloat(value)), isNaN(parsed) ? '' : parsed)
           : /checkbox/.test(type) ? checked : value;
       }
 

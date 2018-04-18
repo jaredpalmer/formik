@@ -303,7 +303,7 @@ passed to the the wrapped component.
 Note: [`errors`], [`touched`], [`status`] and all event handlers are NOT
 included in the `FormikBag`.
 
-### `validate?: (values: Values) => FormikError<Values> | Promise<any>`
+### `validate?: (values: Values) => FormikErrors<Values> | Promise<any>`
 
 _Note: I suggest using [`validationSchema`] and Yup for validation. However,
 `validate` is a dependency-free, straightforward way to validate your forms._
@@ -792,7 +792,7 @@ will map all props that are not functions to the inner component's
 Even if your form is not receiving any props from its parent, use
 `mapPropsToValues` to initialize your forms empty state.
 
-#### `validate?: (values: Values, props: Props) => FormikError<Values> | Promise<any>`
+#### `validate?: (values: Values, props: Props) => FormikErrors<Values> | Promise<any>`
 
 _Note: I suggest using [`validationSchema`] and Yup for validation. However,
 `validate` is a dependency-free, straightforward way to validate your forms._

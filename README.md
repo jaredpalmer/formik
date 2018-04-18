@@ -362,7 +362,7 @@ npm install yup --save
     - [`initialValues?: Values`](#initialvalues-values)
     - [`onReset?: (values: Values, formikBag: FormikBag) => void`](#onreset-values-values-formikbag-formikbag--void)
     - [`onSubmit: (values: Values, formikBag: FormikBag) => void`](#onsubmit-values-values-formikbag-formikbag--void)
-    - [`validate?: (values: Values) => FormikError<Values> | Promise<any>`](#validate-values-values--formikerrorvalues--promiseany)
+    - [`validate?: (values: Values) => FormikErrors<Values> | Promise<any>`](#validate-values-values--formikerrorvalues--promiseany)
     - [`validateOnBlur?: boolean`](#validateonblur-boolean)
     - [`validateOnChange?: boolean`](#validateonchange-boolean)
     - [`validationSchema?: Schema | (() => Schema)`](#validationschema-schema----schema)
@@ -386,7 +386,7 @@ npm install yup --save
         - [The "FormikBag":](#the-formikbag)
       - [`isInitialValid?: boolean | (props: Props) => boolean`](#isinitialvalid-boolean--props-props--boolean)
       - [`mapPropsToValues?: (props: Props) => Values`](#mappropstovalues-props-props--values)
-      - [`validate?: (values: Values, props: Props) => FormikError<Values> | Promise<any>`](#validate-values-values-props-props--formikerrorvalues--promiseany)
+      - [`validate?: (values: Values, props: Props) => FormikErrors<Values> | Promise<any>`](#validate-values-values-props-props--formikerrorvalues--promiseany)
       - [`validateOnBlur?: boolean`](#validateonblur-boolean-1)
       - [`validateOnChange?: boolean`](#validateonchange-boolean-2)
       - [`validationSchema?: Schema | ((props: Props) => Schema)`](#validationschema-schema--props-props--schema)
@@ -1155,7 +1155,7 @@ passed to the the wrapped component.
 Note: [`errors`], [`touched`], [`status`] and all event handlers are NOT
 included in the `FormikBag`.
 
-#### `validate?: (values: Values) => FormikError<Values> | Promise<any>`
+#### `validate?: (values: Values) => FormikErrors<Values> | Promise<any>`
 
 _Note: I suggest using [`validationSchema`] and Yup for validation. However,
 `validate` is a dependency-free, straightforward way to validate your forms._
@@ -1648,7 +1648,7 @@ will map all props that are not functions to the inner component's
 Even if your form is not receiving any props from its parent, use
 `mapPropsToValues` to initialize your forms empty state.
 
-##### `validate?: (values: Values, props: Props) => FormikError<Values> | Promise<any>`
+##### `validate?: (values: Values, props: Props) => FormikErrors<Values> | Promise<any>`
 
 _Note: I suggest using [`validationSchema`] and Yup for validation. However,
 `validate` is a dependency-free, straightforward way to validate your forms._

@@ -1,6 +1,5 @@
 import * as React from 'react';
 import toPath from 'lodash.topath';
-import cloneDeep from 'lodash.clonedeep';
 
 /**
  * Deeply get a value from an object via it's path.
@@ -18,33 +17,52 @@ export function getIn(
   return obj === undefined ? def : obj;
 }
 
+function _updateIn(obj: any, path: string[], value: any): any {
+  const firstPath = Array.isArray(obj) ? Number(path[0]) : path[0];
+
+  if (path.length == 1) {
+    if (Array.isArray(obj)) {
+      obj = obj.slice();
+      obj[firstPath] = value;
+      return obj;
+    }
+
+    return {
+      ...obj,
+      [firstPath]: value,
+    };
+  }
+
+  const objAtFirstPart = obj[firstPath];
+
+  let nextObj = objAtFirstPart;
+
+  if (!objAtFirstPart) {
+    const nextPartIsArrayIndex = isInteger(path[1]) && Number(path[1]) >= 0;
+    nextObj = nextPartIsArrayIndex ? [] : {};
+  }
+
+  const updatedObj = _updateIn(nextObj, path.slice(1), value);
+
+  if (Array.isArray(obj)) {
+    obj = obj.slice();
+    obj[firstPath] = updatedObj;
+    return obj;
+  }
+
+  return {
+    ...obj,
+    [firstPath]: updatedObj,
+  };
+}
+
 /**
  * Deeply set a value from in object via it's path.
  * @see https://github.com/developit/linkstate
  */
 export function setIn(obj: any, path: string, value: any): any {
-  let res: any = {};
-  let resVal: any = res;
-  let i = 0;
-  let pathArray = toPath(path);
-
-  for (; i < pathArray.length - 1; i++) {
-    const currentPath: string = pathArray[i];
-    let currentObj: any = getIn(obj, pathArray.slice(0, i + 1));
-
-    if (resVal[currentPath]) {
-      resVal = resVal[currentPath];
-    } else if (currentObj) {
-      resVal = resVal[currentPath] = cloneDeep(currentObj);
-    } else {
-      const nextPath: string = pathArray[i + 1];
-      resVal = resVal[currentPath] =
-        isInteger(nextPath) && Number(nextPath) >= 0 ? [] : {};
-    }
-  }
-
-  resVal[pathArray[i]] = value;
-  return { ...obj, ...res };
+  const splitPath = toPath(path);
+  return _updateIn(obj, splitPath, value);
 }
 
 /**

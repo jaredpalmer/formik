@@ -38,7 +38,6 @@
   },
   "dependencies": {
     "hoist-non-react-statics": "^2.5.0",
-    "lodash.clonedeep": "^4.5.0",
     "lodash.topath": "4.5.2",
     "prop-types": "^15.5.10",
     "react-fast-compare": "^1.0.0",
@@ -52,7 +51,6 @@
     "@types/enzyme": "3.1.5",
     "@types/enzyme-adapter-react-16": "1.0.1",
     "@types/jest": "20.0.6",
-    "@types/lodash.clonedeep": "^4.5.3",
     "@types/lodash.topath": "4.5.3",
     "@types/prop-types": "^15.5.2",
     "@types/react": "16.0.28",

@@ -30,12 +30,6 @@
   version "20.0.6"
   resolved "https://registry.yarnpkg.com/@types/jest/-/jest-20.0.6.tgz#7e0ba76ddfacb42ee9bb0d8833e5208cf0680431"
 
-"@types/lodash.clonedeep@^4.5.3":
-  version "4.5.3"
-  resolved "https://registry.yarnpkg.com/@types/lodash.clonedeep/-/lodash.clonedeep-4.5.3.tgz#d42cfba3d929a4e1177a775142ce2a9444e384cf"
-  dependencies:
-    "@types/lodash" "*"
-
 "@types/lodash.topath@4.5.3":
   version "4.5.3"
   resolved "https://registry.yarnpkg.com/@types/lodash.topath/-/lodash.topath-4.5.3.tgz#87de9823f4b8702a77ac927954c0dd4cafa496b5"
@@ -3579,10 +3573,6 @@ lodash.camelcase@^4.3.0:
 lodash.chunk@^4.2.0:
   version "4.2.0"
   resolved "https://registry.yarnpkg.com/lodash.chunk/-/lodash.chunk-4.2.0.tgz#66e5ce1f76ed27b4303d8c6512e8d1216e8106bc"
-
-lodash.clonedeep@^4.5.0:
-  version "4.5.0"
-  resolved "https://registry.yarnpkg.com/lodash.clonedeep/-/lodash.clonedeep-4.5.0.tgz#e23f3f9c4f8fbdde872529c1071857a086e5ccef"
 
 lodash.flattendeep@^4.4.0:
   version "4.4.0"

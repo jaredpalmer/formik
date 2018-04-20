@@ -9,9 +9,9 @@ import {
   FormikSharedConfig,
   FormikState,
   FormikValues,
-} from './formik';
+} from './Formik';
 
-import { hoistNonReactStatics } from './hoistStatics';
+import hoistNonReactStatics from 'hoist-non-react-statics';
 import { isFunction } from './utils';
 
 /**
@@ -74,9 +74,7 @@ export type CompositeComponent<P> =
   | React.StatelessComponent<P>;
 
 export interface ComponentDecorator<TOwnProps, TMergedProps> {
-  (component: CompositeComponent<TMergedProps>): React.ComponentClass<
-    TOwnProps
-  >;
+  (component: CompositeComponent<TMergedProps>): React.ComponentType<TOwnProps>;
 }
 
 export interface InferableComponentDecorator<TOwnProps> {
@@ -91,8 +89,8 @@ export function withFormik<
   Values extends FormikValues,
   Payload = Values
 >({
-  mapPropsToValues = (vanillaProps: any) => {
-    let val: FormikValues = {} as FormikValues;
+  mapPropsToValues = (vanillaProps: Props): Values => {
+    let val: Values = {} as Values;
     for (let k in vanillaProps) {
       if (
         vanillaProps.hasOwnProperty(k) &&
@@ -101,14 +99,16 @@ export function withFormik<
         val[k] = vanillaProps[k];
       }
     }
-    return val;
+    return val as Values;
   },
-  ...config,
+  ...config
 }: WithFormikConfig<Props, Values, Payload>): ComponentDecorator<
   Props,
   InjectedFormikProps<Props, Values>
 > {
-  return function createFormik(Component: CompositeComponent<Props>) {
+  return function createFormik(
+    Component: CompositeComponent<InjectedFormikProps<Props, Values>>
+  ): React.ComponentClass<Props> {
     /**
      * We need to use closures here for to provide the wrapped component's props to
      * the respective withFormik config methods.
@@ -128,7 +128,7 @@ export function withFormik<
       };
 
       handleSubmit = (values: Values, actions: FormikActions<Values>) => {
-        return config.handleSubmit(values as Values, {
+        return config.handleSubmit(values, {
           ...actions,
           props: this.props,
         });
@@ -145,12 +145,12 @@ export function withFormik<
         return (
           <Formik
             ref={(e) => {this.component = e;}}
-            {...this.props}
+            {...this.props as any}
             {...config}
             validate={config.validate && this.validate}
             validationSchema={config.validationSchema && this.validationSchema}
             initialValues={mapPropsToValues(this.props)}
-            onSubmit={this.handleSubmit}
+            onSubmit={this.handleSubmit as any}
             render={this.renderFormComponent}
           />
         );
@@ -161,7 +161,7 @@ export function withFormik<
       }
     }
 
-    return hoistNonReactStatics<Props>(
+    return hoistNonReactStatics<Props, InjectedFormikProps<Props, Values>>(
       C as any,
       Component as React.ComponentClass<InjectedFormikProps<Props, Values>> // cast type to ComponentClass (even if SFC)
     ) as React.ComponentClass<Props>;

@@ -1,0 +1,128 @@
+/* @flow */
+import * as React from 'react';
+
+export type FormikErrors<Values> = $Shape<
+  $ObjMap<
+    { ...Values },
+    (<T>(a: Array<T>) => Array<FormikErrors<T>>) &
+      (<T: Object>(a: T) => FormikErrors<T>) &
+      (<T>(a: T) => ?string)
+  >
+>;
+
+export type FormikTouched<Values> = $Shape<
+  $ObjMap<
+    { ...Values },
+    (<T>(a: Array<T>) => Array<FormikTouched<T>>) &
+      (<T: Object>(a: T) => FormikTouched<T>) &
+      (<T>(a: T) => ?boolean)
+  >
+>;
+
+export type FormikActions<Values> = {
+  /** Manually set errors object */
+  setErrors(errors: FormikErrors<Values>): void,
+
+  /** Manually set isSubmitting */
+  setSubmitting(isSubmitting: boolean): void,
+
+  /** Manually set touched object */
+  setTouched(touched: FormikTouched<Values>): void,
+
+  /** Manually set values object  */
+  setValues(values: Values): void,
+
+  /** Set value of form field directly */
+  setFieldValue<P: $Keys<Values>>(
+    field: P,
+    value: $ElementType<Values, P>,
+    shouldValidate?: boolean
+  ): void,
+
+  /** Set error message of a form field directly */
+  setFieldError(field: $Keys<Values>, message: string): void,
+
+  /** Set whether field has been touched directly */
+  setFieldTouched(
+    field: $Keys<Values>,
+    isTouched?: boolean,
+    shouldValidate?: boolean
+  ): void,
+
+  /** Validate form values */
+  validateForm(values?: Values): void,
+
+  /** Reset form */
+  resetForm(nextValues?: Values): void,
+
+  /** Submit the form imperatively */
+  submitForm(): void,
+};
+
+export type FormikHandlers<Values> = {
+  /** Form submit handler */
+  handleSubmit: (e: SyntheticEvent<HTMLFormElement>) => void,
+  /** Reset form event handler  */
+  handleReset: () => void,
+  /** Classic React blur handler, keyed by input name */
+  /** or Preact-like linkState. Will return a handleBlur function. */
+  handleBlur: ((field: $Keys<Values>) => (e: SyntheticEvent<any>) => void) &
+    ((e: SyntheticEvent<any>) => void),
+
+  /** Classic React change handler, keyed by input name */
+  /** or Preact-like linkState. Will return a handleChange function.  */
+  handleChange: ((
+    field: $Keys<Values>
+  ) => (e: SyntheticInputEvent<any>) => void) &
+    ((e: SyntheticInputEvent<any>) => void),
+};
+
+export type ChildrenProps<Values> = {
+  values: Values,
+  isSubmitting: boolean,
+  dirty: boolean,
+  isValid: boolean,
+  errors: FormikErrors<Values>,
+  touched: FormikTouched<Values>,
+  ...$Exact<FormikActions<Values>>,
+  ...$Exact<FormikHandlers<Values>>,
+};
+
+export type FormikProps<Values> = {
+  initialValues: Values,
+  validateOnChange?: boolean,
+  /** Tells Formik to validate the form on each input's onBlur event */
+  validateOnBlur?: boolean,
+  /** Tell Formik if initial form values are valid or not on first render */
+  isInitialValid?: boolean,
+  /** Should Formik reset the form when new initialValues change */
+  enableReinitialize?: boolean,
+
+  onReset?: (values: Values, formikActions: FormikActions<Values>) => void,
+  onSubmit?: (values: Values, formikActions: FormikActions<Values>) => void,
+
+  render?: (props: FormikProps<Values>) => React.Node,
+
+  validate?: (
+    values: Values
+  ) => void | FormikErrors<Values> | Promise<FormikErrors<Values>>,
+
+  children: (props: ChildrenProps<Values>) => React.Node,
+};
+
+declare export class Formik<Values> extends React.Component<
+  FormikProps<Values>
+> {}
+
+declare export class Form extends React.Component<{|
+  children?: React.Node,
+  className?: string,
+  acceptCharset?: string,
+  action?: string,
+  encoding?: string,
+  enctype?: string,
+  length?: number,
+  method?: string,
+  name?: string,
+  target?: string,
+|}> {}

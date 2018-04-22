@@ -1,6 +1,11 @@
 import * as React from 'react';
 import { connect } from './connect';
-import { FormikProps, FormikState, SharedRenderProps } from './types';
+import {
+  FormikContext,
+  FormikState,
+  SharedRenderProps,
+  FormikProps,
+} from './types';
 import { getIn, isEmptyChildren, isFunction, setIn } from './utils';
 
 export type FieldArrayConfig = {
@@ -9,7 +14,6 @@ export type FieldArrayConfig = {
   /** Should field array validate the form AFTER array updates/changes? */
   validateOnChange?: boolean;
 } & SharedRenderProps<ArrayHelpers & { form: FormikProps<any> }>;
-
 export interface ArrayHelpers {
   /** Imperatively add a value to the end of an array */
   push: (obj: any) => void;
@@ -76,14 +80,14 @@ export const replace = (array: any[], index: number, value: any) => {
   return copy;
 };
 class FieldArrayInner<Values = {}> extends React.Component<
-  FieldArrayConfig & { formik: FormikProps<Values> },
+  FieldArrayConfig & { formik: FormikContext<Values> },
   {}
 > {
   static defaultProps = {
     validateOnChange: true,
   };
 
-  constructor(props: FieldArrayConfig & { formik: FormikProps<Values> }) {
+  constructor(props: FieldArrayConfig & { formik: FormikContext<Values> }) {
     super(props);
     // We need TypeScript generics on these, so we'll bind them in the constructor
     this.remove = this.remove.bind(this);
@@ -246,8 +250,19 @@ class FieldArrayInner<Values = {}> extends React.Component<
       handleRemove: this.handleRemove,
     };
 
-    const { component, render, children, name } = this.props;
-    const props = { ...arrayHelpers, form: this.context.formik, name };
+    const {
+      component,
+      render,
+      children,
+      name,
+      formik: {
+        validate: _validate,
+        validationSchema: _validationSchema,
+        ...restOfFormik
+      },
+    } = this.props;
+
+    const props = { ...arrayHelpers, form: restOfFormik, name };
 
     return component
       ? React.createElement(component as any, props)

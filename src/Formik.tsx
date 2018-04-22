@@ -1,7 +1,7 @@
 import * as React from 'react';
 import isEqual from 'react-fast-compare';
 import warning from 'warning';
-import { FormikContext } from './connect';
+import { FormikProvider } from './connect';
 import {
   FormikActions,
   FormikConfig,
@@ -9,6 +9,7 @@ import {
   FormikState,
   FormikTouched,
   FormikValues,
+  FormikContext,
 } from './types';
 import {
   isEmptyChildren,
@@ -41,16 +42,6 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
   } = {};
   fields: { [field: string]: (nextValues?: any) => void };
 
-  getChildContext() {
-    return {
-      formik: {
-        ...this.getFormikBag(),
-        validationSchema: this.props.validationSchema,
-        validate: this.props.validate,
-      },
-    };
-  }
-
   constructor(props: FormikConfig<Values> & ExtraProps) {
     super(props);
     this.state = {
@@ -62,6 +53,21 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     };
     this.fields = {};
     this.initialValues = props.initialValues || ({} as any);
+
+    warning(
+      !(props.component && props.render),
+      'You should not use <Formik component> and <Formik render> in the same <Formik> component; <Formik render> will be ignored'
+    );
+
+    warning(
+      !(props.component && props.children && !isEmptyChildren(props.children)),
+      'You should not use <Formik component> and <Formik children> in the same <Formik> component; <Formik children> will be ignored'
+    );
+
+    warning(
+      !(props.render && props.children && !isEmptyChildren(props.children)),
+      'You should not use <Formik render> and <Formik children> in the same <Formik> component; <Formik children> will be ignored'
+    );
   }
 
   registerField = (name: string, resetFn: (nextValues?: any) => void) => {
@@ -79,33 +85,9 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       !isEqual(prevProps.initialValues, this.props.initialValues)
     ) {
       this.initialValues = this.props.initialValues;
+      // @todo refactor to use getDerivedStateFromProps?
       this.resetForm(this.props.initialValues);
     }
-  }
-
-  componentWillMount() {
-    warning(
-      !(this.props.component && this.props.render),
-      'You should not use <Formik component> and <Formik render> in the same <Formik> component; <Formik render> will be ignored'
-    );
-
-    warning(
-      !(
-        this.props.component &&
-        this.props.children &&
-        !isEmptyChildren(this.props.children)
-      ),
-      'You should not use <Formik component> and <Formik children> in the same <Formik> component; <Formik children> will be ignored'
-    );
-
-    warning(
-      !(
-        this.props.render &&
-        this.props.children &&
-        !isEmptyChildren(this.props.children)
-      ),
-      'You should not use <Formik render> and <Formik children> in the same <Formik> component; <Formik children> will be ignored'
-    );
   }
 
   setErrors = (errors: FormikErrors<Values>) => {
@@ -253,16 +235,16 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
 
     // Actually execute logic above....
     // cache these handlers by key like Preact's linkState does for perf boost
-    if (isString(eventOrPath as string)) {
-      return isFunction(this.hcCache[eventOrPath as string])
-        ? this.hcCache[eventOrPath as string] // return the cached handled
-        : (this.hcCache[eventOrPath as string] = (
+    if (isString(eventOrPath)) {
+      return isFunction(this.hcCache[eventOrPath])
+        ? this.hcCache[eventOrPath] // return the cached handled
+        : (this.hcCache[eventOrPath] = (
             // make a new one
             event: React.ChangeEvent<any> | string
           ) =>
             executeChange(
               event /* string or event, does not matter */,
-              eventOrPath as string /* this is path to the field now */
+              eventOrPath /* this is path to the field now */
             ));
     } else {
       executeChange(eventOrPath);
@@ -482,8 +464,6 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       // FastField needs to communicate with Formik during resets
       registerField: this.registerField,
       unregisterField: this.unregisterField,
-      validationSchema: this.props.validationSchema,
-      validate: this.props.validate,
       handleBlur: this.handleBlur,
       handleChange: this.handleChange,
       handleReset: this.handleReset,
@@ -493,11 +473,21 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     };
   };
 
+  getFormikContext = (): FormikContext<any> => {
+    return {
+      ...this.getFormikBag(),
+      validationSchema: this.props.validationSchema,
+      validate: this.props.validate,
+    };
+  };
+
   render() {
     const { component, render, children } = this.props;
     const props = this.getFormikBag();
+    const ctx = this.getFormikContext();
+
     return (
-      <FormikContext.Provider value={props}>
+      <FormikProvider value={ctx}>
         <React.Fragment>
           {component
             ? React.createElement(component as any, props)
@@ -511,7 +501,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
                     : null
                 : null}
         </React.Fragment>
-      </FormikContext.Provider>
+      </FormikProvider>
     );
   }
 }

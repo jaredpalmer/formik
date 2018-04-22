@@ -138,14 +138,19 @@ export interface FormikHandlers {
   /** Reset form event handler  */
   handleReset: () => void;
   /** Classic React blur handler, keyed by input name */
-
   handleBlur(e: any): void;
   /** Preact-like linkState. Will return a handleBlur function. */
-  handleBlur(field: string): ((e: any) => void);
+  handleBlur<T = string | any>(
+    fieldOrEvent: T
+  ): T extends string ? ((e: any) => void) : void;
   /** Classic React change handler, keyed by input name */
   handleChange(e: React.ChangeEvent<any>): void;
   /** Preact-like linkState. Will return a handleChange function.  */
-  handleChange(field: string): ((e: React.ChangeEvent<any>) => void);
+  handleChange<T = string | React.ChangeEvent<any>>(
+    field: T
+  ): T extends React.ChangeEvent<any>
+    ? void
+    : ((e: React.ChangeEvent<any>) => void);
 }
 
 /**
@@ -221,13 +226,15 @@ export type FormikProps<Values> = FormikSharedConfig &
   FormikActions<Values> &
   FormikHandlers &
   FormikComputedProps<Values> & {
-    validate?: ((
-      values: Values
-    ) => void | object | Promise<FormikErrors<Values>>);
-    validationSchema?: any | (() => any);
-    registerField(name: string, resetFn: (nextValues?: any) => void): void;
+    registerField(name: string, resetFn: ((nextValues?: any) => void)): void;
     unregisterField(name: string): void;
   };
+
+/**
+ * State, handlers, and helpers made available to Formik's primitive components through context.
+ */
+export type FormikContext<Values> = FormikProps<Values> &
+  Pick<FormikConfig<Values>, 'validate' | 'validationSchema'>;
 
 export interface SharedRenderProps<T> {
   /**

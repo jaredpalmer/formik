@@ -1,7 +1,11 @@
 import * as React from 'react';
 import warning from 'warning';
 import { connect } from './connect';
-import { FormikProps, GenericFieldHTMLAttributes } from './types';
+import {
+  FormikProps,
+  GenericFieldHTMLAttributes,
+  FormikContext,
+} from './types';
 import { getIn, isEmptyChildren, isFunction, isPromise } from './utils';
 
 /**
@@ -85,17 +89,17 @@ export type FieldAttributes = GenericFieldHTMLAttributes & FieldConfig;
 class FieldInner<
   Props extends FieldAttributes = any,
   Values = {}
-> extends React.Component<Props & { formik: FormikProps<Values> }, {}> {
-  componentWillMount() {
+> extends React.Component<Props & { formik: FormikContext<Values> }, {}> {
+  constructor(props: Props & { formik: FormikContext<Values> }) {
+    super(props);
     const { render, children, component } = this.props;
-
     warning(
       !(component && render),
       'You should not use <Field component> and <Field render> in the same <Field> component; <Field component> will be ignored'
     );
 
     warning(
-      !(this.props.component && children && isFunction(children)),
+      !(component && children && isFunction(children)),
       'You should not use <Field component> and <Field children> as a function in the same <Field> component; <Field component> will be ignored.'
     );
 
@@ -147,8 +151,12 @@ class FieldInner<
       component = 'input',
       formik,
       ...props
-    } = this.props as FieldConfig & { formik: FormikProps<Values> };
-
+    } = this.props as FieldConfig & { formik: FormikContext<Values> };
+    const {
+      validate: _validate,
+      validationSchema: _validationSchema,
+      ...restOfFormik
+    } = formik;
     const field = {
       value:
         props.type === 'radio' || props.type === 'checkbox'
@@ -158,7 +166,7 @@ class FieldInner<
       onChange: validate ? this.handleChange : formik.handleChange,
       onBlur: validate ? this.handleBlur : formik.handleBlur,
     };
-    const bag = { field, form: formik };
+    const bag = { field, form: restOfFormik };
 
     if (render) {
       return (render as any)(bag);

@@ -152,7 +152,7 @@ export function withFormik<
     }
 
     return hoistNonReactStatics<Props, InjectedFormikProps<Props, Values>>(
-      C as any,
+      C,
       Component as React.ComponentClass<InjectedFormikProps<Props, Values>> // cast type to ComponentClass (even if SFC)
     ) as React.ComponentClass<Props>;
   };

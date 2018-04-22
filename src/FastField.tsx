@@ -1,10 +1,11 @@
-import * as PropTypes from 'prop-types';
 import * as React from 'react';
-import { validateYupSchema, yupToFormErrors, FormikProps } from './Formik';
-import { getIn, isPromise, setIn, isFunction, isEmptyChildren } from './utils';
+import isEqual from 'react-fast-compare';
 import warning from 'warning';
 import { FieldAttributes, FieldConfig, FieldProps } from './Field';
-import isEqual from 'react-fast-compare';
+import { validateYupSchema, yupToFormErrors } from './Formik';
+import { connect } from './connect';
+import { FormikProps } from './types';
+import { getIn, isEmptyChildren, isFunction, isPromise, setIn } from './utils';
 
 export interface FastFieldState {
   value: any;
@@ -20,46 +21,34 @@ function isEqualExceptForKey(a: any, b: any, path: string) {
  * Custom Field component for quickly hooking into Formik
  * context and wiring up forms.
  */
-export class FastField<
-  Props extends FieldAttributes = any
-> extends React.Component<Props, FastFieldState> {
-  static contextTypes = {
-    formik: PropTypes.object,
-  };
-
-  static propTypes = {
-    name: PropTypes.string.isRequired,
-    component: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
-    render: PropTypes.func,
-    children: PropTypes.oneOfType([PropTypes.func, PropTypes.node]),
-    validate: PropTypes.func,
-    innerRef: PropTypes.func,
-  };
-
-  reset: Function;
-  constructor(props: Props, context: any) {
+class FastFieldInner<
+  Props extends FieldAttributes = any,
+  Values = {}
+> extends React.Component<
+  Props & { formik: FormikProps<Values> },
+  FastFieldState
+> {
+  reset: (nextValues?: any) => void;
+  constructor(props: Props & { formik: FormikProps<Values> }) {
     super(props);
     this.state = {
-      value: getIn(context.formik.values, props.name),
-      error: getIn(context.formik.errors, props.name),
+      value: getIn(props.formik.values, props.name),
+      error: getIn(props.formik.errors, props.name),
     };
 
     this.reset = (nextValues?: any) => {
       this.setState({
         value: getIn(nextValues, props.name),
-        error: getIn(context.formik.errors, props.name),
+        error: getIn(props.formik.errors, props.name),
       });
     };
 
-    context.formik.registerField(props.name, this.reset);
+    props.formik.registerField(props.name, this.reset);
   }
 
-  componentWillReceiveProps(
-    nextProps: Props,
-    nextContext: { formik: FormikProps<any> }
-  ) {
-    const nextFieldValue = getIn(nextContext.formik.values, nextProps.name);
-    const nextFieldError = getIn(nextContext.formik.errors, nextProps.name);
+  componentWillReceiveProps(nextProps: Props & { formik: FormikProps<any> }) {
+    const nextFieldValue = getIn(nextProps.formik.values, nextProps.name);
+    const nextFieldError = getIn(nextProps.formik.errors, nextProps.name);
 
     let nextState: any;
 
@@ -77,7 +66,7 @@ export class FastField<
   }
 
   componentWillUnmount() {
-    this.context.formik.unregisterField(this.props.name);
+    this.props.formik.unregisterField(this.props.name);
   }
 
   componentWillMount() {
@@ -108,7 +97,7 @@ export class FastField<
       validationSchema,
       errors,
       setFormikState,
-    } = this.context.formik;
+    } = this.props.formik;
     const { type, value, checked } = e.target;
     const val = /number|range/.test(type)
       ? parseFloat(value)
@@ -213,7 +202,7 @@ export class FastField<
   };
 
   handleBlur = () => {
-    const { validateOnBlur, setFormikState } = this.context.formik;
+    const { validateOnBlur, setFormikState } = this.props.formik;
     const { name, validate } = this.props;
 
     // @todo refactor
@@ -261,10 +250,10 @@ export class FastField<
       render,
       children,
       component = 'input',
+      formik,
       ...props
-    } = this.props as FieldConfig;
+    } = this.props as FieldConfig & { formik: FormikProps<Values> };
 
-    const { formik } = this.context;
     const field = {
       value:
         props.type === 'radio' || props.type === 'checkbox'
@@ -309,3 +298,5 @@ export class FastField<
     });
   }
 }
+
+export const FastField = connect<FieldAttributes, any>(FastFieldInner);

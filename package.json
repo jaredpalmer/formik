@@ -37,16 +37,14 @@
     "size": "size-limit"
   },
   "dependencies": {
+    "create-react-context": "^0.2.2",
     "hoist-non-react-statics": "^2.5.0",
     "lodash.clonedeep": "^4.5.0",
     "lodash.topath": "4.5.2",
-    "prop-types": "^15.5.10",
     "react-fast-compare": "^1.0.0",
     "warning": "^3.0.0"
   },
-  "peerDependencies": {
-    "react": ">=15"
-  },
+  "peerDependencies": {},
   "optionalDependencies": {},
   "devDependencies": {
     "@types/enzyme": "3.1.5",
@@ -54,7 +52,6 @@
     "@types/jest": "20.0.6",
     "@types/lodash.clonedeep": "^4.5.3",
     "@types/lodash.topath": "4.5.3",
-    "@types/prop-types": "^15.5.2",
     "@types/react": "16.0.28",
     "@types/react-dom": "^16.0.3",
     "@types/react-test-renderer": "15.5.2",
@@ -69,8 +66,9 @@
     "jest-cli": "^21.2.1",
     "lint-staged": "4.0.2",
     "prettier": "1.11.1",
-    "react": "16.2.0",
-    "react-dom": "16.2.0",
+    "prop-types": "^15.6.1",
+    "react": "^16.3.2",
+    "react-dom": "^16.3.2",
     "rimraf": "^2.6.2",
     "rollup": "^0.55.3",
     "rollup-plugin-commonjs": "8.1.0",

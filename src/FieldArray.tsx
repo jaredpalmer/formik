@@ -1,8 +1,7 @@
-import * as PropTypes from 'prop-types';
 import * as React from 'react';
-import { FormikProps, FormikState } from './Formik';
-import { isEmptyChildren, getIn, setIn, isFunction } from './utils';
-import { SharedRenderProps } from './types';
+import { connect } from './connect';
+import { FormikProps, FormikState, SharedRenderProps } from './types';
+import { getIn, isEmptyChildren, isFunction, setIn } from './utils';
 
 export type FieldArrayConfig = {
   /** Really the path to the array field to be updated */
@@ -76,16 +75,15 @@ export const replace = (array: any[], index: number, value: any) => {
   copy[index] = value;
   return copy;
 };
-
-export class FieldArray extends React.Component<FieldArrayConfig, {}> {
+class FieldArrayInner<Values = {}> extends React.Component<
+  FieldArrayConfig & { formik: FormikProps<Values> },
+  {}
+> {
   static defaultProps = {
     validateOnChange: true,
   };
-  static contextTypes = {
-    formik: PropTypes.object,
-  };
 
-  constructor(props: FieldArrayConfig) {
+  constructor(props: FieldArrayConfig & { formik: FormikProps<Values> }) {
     super(props);
     // We need TypeScript generics on these, so we'll bind them in the constructor
     this.remove = this.remove.bind(this);
@@ -98,13 +96,10 @@ export class FieldArray extends React.Component<FieldArrayConfig, {}> {
     alterErrors: boolean
   ) => {
     const {
-      setFormikState,
-      validateForm,
-      values,
-      touched,
-      errors,
-    } = this.context.formik;
-    const { name, validateOnChange } = this.props;
+      name,
+      validateOnChange,
+      formik: { setFormikState, validateForm, values, touched, errors },
+    } = this.props;
     setFormikState(
       (prevState: FormikState<any>) => ({
         ...prevState,
@@ -265,3 +260,5 @@ export class FieldArray extends React.Component<FieldArrayConfig, {}> {
           : null;
   }
 }
+
+export const FieldArray = connect<FieldArrayConfig, any>(FieldArrayInner);

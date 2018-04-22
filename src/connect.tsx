@@ -1,3 +1,4 @@
+import hoistNonReactStatics from 'hoist-non-react-statics';
 import createContext from 'create-react-context';
 import * as React from 'react';
 import { FormikProps } from './types';
@@ -11,9 +12,14 @@ export const FormikContext = createContext<FormikProps<any>>({} as any);
 export function connect<Outer, Values = {}>(
   Comp: React.ComponentType<Outer & { formik: FormikProps<Values> }>
 ) {
-  return (props: Outer) => (
+  const C = (props: Outer) => (
     <FormikContext.Consumer>
       {formik => <Comp {...props} formik={formik} />}
     </FormikContext.Consumer>
   );
+
+  return hoistNonReactStatics<Outer, Outer & { formik: FormikProps<Values> }>(
+    C,
+    Comp as React.ComponentClass<Outer & { formik: FormikProps<Values> }> // cast type to ComponentClass (even if SFC)
+  ) as React.ComponentClass<Outer>;
 }

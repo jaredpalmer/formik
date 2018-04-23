@@ -499,7 +499,7 @@ export const FriendList = () => (
             <Form>
               {values.friends && values.friends.length > 0 ? (
                 values.friends.map((friend, index) => (
-                  <div>
+                  <div key={index}>
                     <Field name={`friends.${index}`} />
                     <button
                       type="button"

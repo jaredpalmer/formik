@@ -15,8 +15,8 @@
     "higher order component",
     "hoc"
   ],
-  "main": "dist/formik.js",
-  "module": "dist/formik.es6.js",
+  "main": "dist/formik.cjs.js",
+  "module": "dist/formik.esm.js",
   "typings": "dist/index.d.ts",
   "files": [
     "dist"
@@ -124,11 +124,11 @@
   },
   "size-limit": [
     {
-      "path": "./dist/formik.js",
+      "path": "./dist/formik.cjs.js",
       "limit": "14 kB"
     },
     {
-      "path": "./dist/formik.es6.js",
+      "path": "./dist/formik.esm.js",
       "limit": "14 kB"
     },
     {

@@ -574,7 +574,7 @@ const MyReactNativeForm = props => (
       onChangeText={text => props.setFieldValue('email', text)}
       value={props.values.email}
     />
-    <Button onPress={props.handleSubmit} title="Submit" /> //
+    <Button onPress={props.handleSubmit} title="Submit" />
   </View>
 );
 

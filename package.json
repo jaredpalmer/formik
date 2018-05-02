@@ -121,8 +121,7 @@
       "json"
     ]
   },
-  "size-limit": [
-    {
+  "size-limit": [{
       "path": "./dist/formik.js",
       "limit": "14 kB"
     },

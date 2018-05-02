@@ -76,6 +76,11 @@ describe('withFormik()', () => {
     expect(tree.find(Form).props().isValid).toBe(false);
   });
 
+  it('should correctly set displayName', () => {
+    const tree = mount(<BasicForm user={{ name: 'jared' }} />);
+    expect((tree.get(0).type as any).displayName).toBe('WithFormik(Form)');
+  });
+
   describe('FormikHandlers', () => {
     describe('handleChange', () => {
       it('sets values state', async () => {

@@ -109,11 +109,18 @@ export function withFormik<
   return function createFormik(
     Component: CompositeComponent<InjectedFormikProps<Props, Values>>
   ): React.ComponentClass<Props> {
+    const componentDisplayName =
+      Component.displayName ||
+      Component.name ||
+      (Component.constructor && Component.constructor.name) ||
+      'Component';
     /**
      * We need to use closures here for to provide the wrapped component's props to
      * the respective withFormik config methods.
      */
     class C extends React.Component<Props, {}> {
+      static displayName = `WithFormik(${componentDisplayName})`;
+
       validate = (values: Values): void | object | Promise<any> => {
         return config.validate!(values, this.props);
       };

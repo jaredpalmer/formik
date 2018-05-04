@@ -6,7 +6,7 @@
   "dependencies": {
     "@gaearon/react-live": "1.7.1-with-safari-fix",
     "classnames": "^2.2.5",
-    "formik": "../",
+    "formik": "file:../",
     "gatsby": "^1.9.243",
     "gatsby-link": "^1.6.9",
     "gatsby-plugin-catch-links": "^1.0.15",
@@ -27,6 +27,7 @@
     "gatsby-remark-responsive-iframe": "^1.4.3",
     "gatsby-remark-smartypants": "^1.4.3",
     "gatsby-source-filesystem": "^1.4.4",
+    "gatsby-starter-default": "file:",
     "gatsby-transformer-remark": "^1.7.2",
     "gatsby-transformer-sharp": "^1.6.1",
     "glamor": "^2.20.40",

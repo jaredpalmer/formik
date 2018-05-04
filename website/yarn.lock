@@ -3674,14 +3674,14 @@ form-data@~2.3.1:
     combined-stream "^1.0.5"
     mime-types "^2.1.12"
 
-formik@../:
-  version "1.0.0-alpha.4"
+"formik@file:..":
+  version "1.0.0-alpha.6"
   dependencies:
     hoist-non-react-statics "^2.5.0"
     lodash.clonedeep "^4.5.0"
-    lodash.isequal "4.5.0"
     lodash.topath "4.5.2"
     prop-types "^15.5.10"
+    react-fast-compare "^1.0.0"
     warning "^3.0.0"
 
 forwarded@~0.1.2:
@@ -3994,6 +3994,46 @@ gatsby-source-filesystem@^1.4.4:
     mime "^1.3.6"
     pretty-bytes "^4.0.2"
     slash "^1.0.0"
+
+"gatsby-starter-default@file:.":
+  version "1.0.0"
+  dependencies:
+    "@gaearon/react-live" "1.7.1-with-safari-fix"
+    classnames "^2.2.5"
+    formik "file:../../../Library/Caches/Yarn/v1"
+    gatsby "^1.9.243"
+    gatsby-link "^1.6.9"
+    gatsby-plugin-catch-links "^1.0.15"
+    gatsby-plugin-glamor "^1.6.4"
+    gatsby-plugin-google-analytics "^1.0.4"
+    gatsby-plugin-manifest "^1.0.4"
+    gatsby-plugin-nprogress "^1.0.7"
+    gatsby-plugin-react-helmet "^1.0.3"
+    gatsby-plugin-react-next "^1.0.3"
+    gatsby-plugin-sharp "^1.6.2"
+    gatsby-plugin-sitemap "^1.2.11"
+    gatsby-plugin-twitter "^1.0.15"
+    gatsby-plugin-typescript "^1.0.1"
+    gatsby-remark-autolink-headers "^1.4.4"
+    gatsby-remark-copy-linked-files "^1.5.2"
+    gatsby-remark-images "^1.5.11"
+    gatsby-remark-prismjs "^1.2.1"
+    gatsby-remark-responsive-iframe "^1.4.3"
+    gatsby-remark-smartypants "^1.4.3"
+    gatsby-source-filesystem "^1.4.4"
+    gatsby-starter-default "file:../../../Library/Caches/Yarn/v1/npm-gatsby-starter-default-1.0.0-a6973e7c-d535-4bae-be6c-8b5bfd309aeb-1525456816277"
+    gatsby-transformer-remark "^1.7.2"
+    gatsby-transformer-sharp "^1.6.1"
+    glamor "^2.20.40"
+    palx "^1.0.2"
+    prismjs "^1.9.0"
+    react-json-tree "^0.11.0"
+    react-media "^1.6.1"
+    react-router-dom "^4.1.2"
+    typography "^0.15.12"
+    typography-breakpoint-constants "^0.15.10"
+    typography-plugin-code "^0.15.11"
+    yup "^0.21.3"
 
 gatsby-transformer-remark@^1.7.2:
   version "1.7.15"
@@ -5774,7 +5814,7 @@ lodash.isarray@^3.0.0:
   version "3.0.4"
   resolved "https://registry.yarnpkg.com/lodash.isarray/-/lodash.isarray-3.0.4.tgz#79e4eb88c36a8122af86f844aa9bcd851b5fbb55"
 
-lodash.isequal@4.5.0, lodash.isequal@^4.0.0:
+lodash.isequal@^4.0.0:
   version "4.5.0"
   resolved "https://registry.yarnpkg.com/lodash.isequal/-/lodash.isequal-4.5.0.tgz#415c4478f2bcc30120c22ce10ed3226f7d3e18e0"
 
@@ -7849,6 +7889,10 @@ react-dom@16.0.0, react-dom@^15.6.0, react-dom@^16.0.0:
 react-error-overlay@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/react-error-overlay/-/react-error-overlay-3.0.0.tgz#c2bc8f4d91f1375b3dad6d75265d51cd5eeaf655"
+
+react-fast-compare@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/react-fast-compare/-/react-fast-compare-1.0.0.tgz#813a039155e49b43ceffe99528fe5e9d97a6c938"
 
 react-helmet@^5.1.3:
   version "5.2.0"

@@ -26,7 +26,7 @@ const Basic = () => (
           <label htmlFor="email">Email</label>
           <Field name="email" placeholder="jane@acme.com" type="email" />
 
-          <button type="submit">Submit</button>
+          <button>Submit</button>
         </Form>
       )}
     />

@@ -21,10 +21,11 @@ export interface FormikValues {
 
 /**
  * An object containing error messages whose keys correspond to FormikValues.
- * Should be always be and object of strings, but any is allowed to support i18n libraries.
  */
 export type FormikErrors<Values> = {
-  [K in keyof Values]?: Values[K] extends object ? FormikErrors<Values[K]> : {}
+  [K in keyof Values]?: Values[K] extends object
+    ? FormikErrors<Values[K]>
+    : string
 };
 
 /**

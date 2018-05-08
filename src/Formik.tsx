@@ -392,20 +392,24 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
   /**
    * Run validation against a Yup schema and optionally run a function if successful
    */
-  runValidationSchema = (values: FormikValues, onSuccess?: Function) => {
+  runValidationSchema = (
+    values: FormikValues,
+    onSuccess?: () => any,
+    onFailure?: () => any
+  ) => {
     const { validationSchema } = this.props;
     const schema = isFunction(validationSchema)
       ? validationSchema()
       : validationSchema;
     validateYupSchema(values, schema).then(
       () => {
-        this.setState({ errors: {} });
-        if (onSuccess) {
-          onSuccess();
-        }
+        this.setState({ errors: {} }, onSuccess);
       },
       (err: any) =>
-        this.setState({ errors: yupToFormErrors(err), isSubmitting: false })
+        this.setState(
+          { errors: yupToFormErrors(err), isSubmitting: false },
+          onFailure
+        )
     );
   };
 
@@ -417,7 +421,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     done?: () => any
   ) => {
     if (this.props.validationSchema) {
-      this.runValidationSchema(values);
+      this.runValidationSchema(values, done, done);
     }
 
     if (this.props.validate) {

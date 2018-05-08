@@ -59,6 +59,11 @@ export interface FormikState<Values> {
   submitCount: number;
 }
 
+export interface FormikInternalState<Values> extends FormikState<Values> {
+  /** Used to batch state updates */
+  shouldComponentUpdate: boolean;
+}
+
 /**
  * Formik computed properties. These are read-only.
  */
@@ -235,7 +240,7 @@ export type FormikProps<Values> = FormikState<Values> &
 
 export class Formik<ExtraProps = {}, Values = object> extends React.Component<
   FormikConfig<Values> & ExtraProps,
-  FormikState<any>
+  FormikInternalState<any>
 > {
   static defaultProps = {
     validateOnChange: true,
@@ -291,6 +296,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       touched: {},
       isSubmitting: false,
       submitCount: 0,
+      shouldComponentUpdate: true,
     };
     this.fields = {};
     this.initialValues = props.initialValues || ({} as any);
@@ -303,6 +309,10 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
   unregisterField = (name: string) => {
     delete this.fields[name];
   };
+
+  shouldComponentUpdate(_: any, nextState: any) {
+    return nextState.shouldComponentUpdate;
+  }
 
   componentWillReceiveProps(
     nextProps: Readonly<FormikConfig<Values> & ExtraProps>
@@ -342,8 +352,8 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     );
   }
 
-  setErrors = (errors: FormikErrors<Values>) => {
-    this.setState({ errors });
+  setErrors = (errors: FormikErrors<Values>, done?: () => any) => {
+    this.setState({ errors }, done);
   };
 
   setTouched = (touched: FormikTouched<Values>) => {
@@ -402,7 +412,10 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
   /**
    * Run validations and update state accordingly
    */
-  runValidations = (values: FormikValues = this.state.values) => {
+  runValidations = (
+    values: FormikValues = this.state.values,
+    done?: () => any
+  ) => {
     if (this.props.validationSchema) {
       this.runValidationSchema(values);
     }
@@ -412,13 +425,15 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       if (isPromise(maybePromisedErrors)) {
         (maybePromisedErrors as Promise<any>).then(
           () => {
-            this.setState({ errors: {} });
+            this.setState({ errors: {} }, done);
           },
-          errors => this.setState({ errors, isSubmitting: false })
+          errors => this.setState({ errors, isSubmitting: false }, done)
         );
       } else {
-        this.setErrors(maybePromisedErrors as FormikErrors<Values>);
+        this.setErrors(maybePromisedErrors as FormikErrors<Values>, done);
       }
+    } else if (done) {
+      done();
     }
   };
 
@@ -508,18 +523,28 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     value: any,
     shouldValidate: boolean = true
   ) => {
+    const willValidate = this.props.validateOnChange && shouldValidate;
     // Set form field by name
     this.setState(
       prevState => ({
         ...prevState,
         values: setIn(prevState.values, field, value),
+        shouldComponentUpdate: !willValidate,
       }),
       () => {
-        if (this.props.validateOnChange && shouldValidate) {
-          this.runValidations(this.state.values);
+        if (willValidate) {
+          this.runValidations(this.state.values, this.unpauseUpdates);
         }
       }
     );
+  };
+
+  pauseUpdates = () => {
+    this.setState({ shouldComponentUpdate: false });
+  };
+
+  unpauseUpdates = () => {
+    this.setState({ shouldComponentUpdate: true });
   };
 
   handleSubmit = (e: React.FormEvent<HTMLFormElement> | undefined) => {

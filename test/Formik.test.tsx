@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Formik, FormikProps } from '../src';
+import { Formik, FormikProps, FormikConfig } from '../src';
 import { shallow, mount } from 'enzyme';
 import { sleep, noop } from './testHelpers';
 
@@ -595,6 +595,33 @@ describe('<Formik>', () => {
         .props()
         .setFieldValue('name', 'ian');
       expect(validate).toHaveBeenCalled();
+    });
+
+    it('setFieldValue should update values and errors at the same time (State updates should be batched)', () => {
+      const validate: FormikConfig<Values>['validate'] = ({ name }) =>
+        name === 'jared' ? {} : { errors: { name: 'should be jared' } };
+
+      const ExpectUpdatedErrors: React.SFC<FormikProps<Values>> = ({
+        errors,
+        values,
+      }) => {
+        expect(errors).toEqual(validate(values));
+        return null;
+      };
+
+      const tree = mount(
+        <Formik
+          initialValues={{ name: 'jared' }}
+          onSubmit={noop}
+          component={ExpectUpdatedErrors}
+          validate={validate}
+          validateOnChange={true}
+        />
+      );
+      tree
+        .find(ExpectUpdatedErrors)
+        .props()
+        .setFieldValue('name', 'ian');
     });
 
     it('setFieldValue should NOT run validations when validateOnChange is false', () => {

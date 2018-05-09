@@ -21,7 +21,9 @@
   "files": [
     "dist"
   ],
-  "peerDependencies": {},
+  "peerDependencies": {
+    "react": ">=15"
+  },
   "scripts": {
     "test": "jest --env=jsdom",
     "test:watch": "npm run test -- --watch",

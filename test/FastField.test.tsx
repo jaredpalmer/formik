@@ -177,13 +177,16 @@ describe('A <Field />', () => {
 
     it('assigns innerRef as a ref to string components', () => {
       const innerRef = jest.fn();
-      const tree = mount(<Field name="name" innerRef={innerRef} />, {
-        context: {
-          formik: {
-            registerField: jest.fn(noop),
-          },
-        },
-      });
+      const fmk = {
+        registerField: jest.fn(noop),
+      };
+      const tree = mount(
+        <Field.WrappedComponent
+          name="name"
+          innerRef={innerRef}
+          formik={fmk as any}
+        />
+      );
       const element = tree.find('input').instance();
       expect(innerRef).toHaveBeenCalledWith(element);
     });

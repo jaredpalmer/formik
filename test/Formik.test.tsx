@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Formik, FormikProps } from '../src';
-import { shallow, mount } from 'enzyme';
+import { shallow, mount } from '@pisano/enzyme';
 import { sleep, noop } from './testHelpers';
 
 interface Values {

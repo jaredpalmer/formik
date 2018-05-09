@@ -43,7 +43,7 @@
   "devDependencies": {
     "@types/classnames": "^2.2.0",
     "@types/node": "^8.0.15",
-    "@types/react": "^16.1.0",
+    "@types/react": "^16.3.14",
     "@types/react-dom": "^16.0.4",
     "@types/react-helmet": "^5.0.3",
     "@types/react-router-dom": "^4.0.7",
@@ -57,8 +57,8 @@
   ],
   "resolutions": {
     "gatsby/graphql": "0.10.5",
-    "gatsby/react": "16.0.0",
-    "gatsby/react-dom": "16.0.0"
+    "gatsby/react": "16.3.2",
+    "gatsby/react-dom": "16.3.2"
   },
   "license": "MIT",
   "scripts": {

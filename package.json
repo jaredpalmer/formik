@@ -50,8 +50,6 @@
   "devDependencies": {
     "@pisano/enzyme": "^3.3.0-pisano.public.1",
     "@pisano/enzyme-adapter-react-16": "^1.1.1-pisano.public.1",
-    "@types/enzyme": "3.1.5",
-    "@types/enzyme-adapter-react-16": "1.0.1",
     "@types/jest": "20.0.6",
     "@types/lodash.clonedeep": "^4.5.3",
     "@types/lodash.topath": "4.5.3",

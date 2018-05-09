@@ -50,23 +50,6 @@
     raf "^3.4.0"
     rst-selector-parser "^2.2.3"
 
-"@types/cheerio@*":
-  version "0.22.6"
-  resolved "https://registry.yarnpkg.com/@types/cheerio/-/cheerio-0.22.6.tgz#ad8c630a942efe3fc59165857851b55f95de2d50"
-
-"@types/enzyme-adapter-react-16@1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@types/enzyme-adapter-react-16/-/enzyme-adapter-react-16-1.0.1.tgz#cb93338ccf6cd1b8fdda91027c4ffe56583537b5"
-  dependencies:
-    "@types/enzyme" "*"
-
-"@types/enzyme@*", "@types/enzyme@3.1.5":
-  version "3.1.5"
-  resolved "https://registry.yarnpkg.com/@types/enzyme/-/enzyme-3.1.5.tgz#6cc31d7f7e552209e244a45d89279f4def4aaade"
-  dependencies:
-    "@types/cheerio" "*"
-    "@types/react" "*"
-
 "@types/jest@20.0.6":
   version "20.0.6"
   resolved "https://registry.yarnpkg.com/@types/jest/-/jest-20.0.6.tgz#7e0ba76ddfacb42ee9bb0d8833e5208cf0680431"

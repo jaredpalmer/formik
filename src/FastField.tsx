@@ -38,15 +38,16 @@ class FastFieldInner<
     const nextFieldValue = getIn(nextProps.formik.values, nextProps.name);
     const nextFieldError = getIn(nextProps.formik.errors, nextProps.name);
 
-    let nextState: any;
-
-    if (nextFieldValue !== prevState.value) {
+    let nextState = null;
+    if (!isEqual(nextFieldValue, prevState.value)) {
       nextState = { value: nextFieldValue };
     }
 
-    if (nextFieldError !== prevState.error) {
-      nextState = { ...nextState, error: nextFieldError };
+    if (!isEqual(nextFieldError, prevState.error)) {
+      nextState = { error: nextFieldError };
     }
+
+    return nextState;
   }
 
   constructor(props: Props & { formik: FormikContext<Values> }) {

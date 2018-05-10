@@ -12,6 +12,13 @@ import {
   setNestedObjectValues,
 } from './utils';
 
+export type Extends<A, B> = A extends B ? true : false;
+export type Tree<Children, Leaf> = {
+  [K in keyof Children]?: Children[K] extends object
+    ? false extends Extends<Children[K], object> ? any : Tree<Children[K], Leaf>
+    : Leaf
+};
+
 /**
  * Values of fields in the form
  */
@@ -22,20 +29,12 @@ export interface FormikValues {
 /**
  * An object containing error messages whose keys correspond to FormikValues.
  */
-export type FormikErrors<Values> = {
-  [K in keyof Values]?: Values[K] extends object
-    ? FormikErrors<Values[K]>
-    : string
-};
+export type FormikErrors<Values> = Tree<Values, string>;
 
 /**
  * An object containing touched state of the form whose keys correspond to FormikValues.
  */
-export type FormikTouched<Values> = {
-  [K in keyof Values]?: Values[K] extends object
-    ? FormikTouched<Values[K]>
-    : boolean
-};
+export type FormikTouched<Values> = Tree<Values, boolean>;
 
 /**
  * Formik state tree

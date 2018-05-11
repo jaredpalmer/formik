@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 
 import { FastField as Field, FieldProps, Formik, FormikProps } from '../src';
 
-import { shallow, mount } from '@pisano/enzyme';
+import { mount } from '@pisano/enzyme';
 import { noop } from './testHelpers';
 
 interface TestFormValues {

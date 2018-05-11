@@ -485,22 +485,19 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     const { component, render, children } = this.props;
     const props = this.getFormikBag();
     const ctx = this.getFormikContext();
-
     return (
       <FormikProvider value={ctx}>
-        <React.Fragment>
-          {component
-            ? React.createElement(component as any, props)
-            : render
-              ? (render as any)(props)
-              : children // children come last, always called
-                ? typeof children === 'function'
-                  ? (children as any)(props)
-                  : !isEmptyChildren(children)
-                    ? React.Children.only(children)
-                    : null
-                : null}
-        </React.Fragment>
+        {component
+          ? React.createElement(component as any, props)
+          : render
+            ? (render as any)(props)
+            : children // children come last, always called
+              ? typeof children === 'function'
+                ? (children as any)(props)
+                : !isEmptyChildren(children)
+                  ? React.Children.only(children)
+                  : null
+              : null}
       </FormikProvider>
     );
   }

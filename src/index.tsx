@@ -6,3 +6,4 @@ export * from './FieldArray';
 export * from './utils';
 export * from './FastField';
 export * from './types';
+export * from './connect';

@@ -80,17 +80,19 @@ export interface FieldConfig {
   innerRef?: (instance: any) => void;
 }
 
-export type FieldAttributes = GenericFieldHTMLAttributes & FieldConfig;
+export type FieldAttributes<T> = GenericFieldHTMLAttributes & FieldConfig & T;
 
 /**
  * Custom Field component for quickly hooking into Formik
  * context and wiring up forms.
  */
-class FieldInner<
-  Props extends FieldAttributes = any,
-  Values = {}
-> extends React.Component<Props & { formik: FormikContext<Values> }, {}> {
-  constructor(props: Props & { formik: FormikContext<Values> }) {
+class FieldInner<Props = {}, Values = {}> extends React.Component<
+  FieldAttributes<Props> & { formik: FormikContext<Values> },
+  {}
+> {
+  constructor(
+    props: FieldAttributes<Props> & { formik: FormikContext<Values> }
+  ) {
     super(props);
     const { render, children, component } = this.props;
     warning(
@@ -151,7 +153,9 @@ class FieldInner<
       component = 'input',
       formik,
       ...props
-    } = this.props as FieldConfig & { formik: FormikContext<Values> };
+    } = (this.props as FieldAttributes<Props> & {
+      formik: FormikContext<Values>;
+    }) as any;
     const {
       validate: _validate,
       validationSchema: _validationSchema,
@@ -194,4 +198,4 @@ class FieldInner<
   }
 }
 
-export const Field = connect<FieldAttributes, any>(FieldInner);
+export const Field = connect<FieldAttributes<any>, any>(FieldInner);

@@ -22,17 +22,14 @@ function isEqualExceptForKey(a: any, b: any, path: string) {
  * Custom Field component for quickly hooking into Formik
  * context and wiring up forms.
  */
-class FastFieldInner<
-  Props extends FieldAttributes = any,
-  Values = {}
-> extends React.Component<
-  Props & { formik: FormikContext<Values> },
+class FastFieldInner<Props = {}, Values = {}> extends React.Component<
+  FieldAttributes<Props> & { formik: FormikContext<Values> },
   FastFieldState
 > {
   reset: (nextValues?: any) => void;
 
   static getDerivedStateFromProps(
-    nextProps: any /* Props & { formik: FormikContext<Values> }*/,
+    nextProps: any /* FieldAttributes<Props> & { formik: FormikContext<Values> }*/,
     prevState: FastFieldState
   ) {
     const nextFieldValue = getIn(nextProps.formik.values, nextProps.name);
@@ -50,7 +47,9 @@ class FastFieldInner<
     return nextState;
   }
 
-  constructor(props: Props & { formik: FormikContext<Values> }) {
+  constructor(
+    props: FieldAttributes<Props> & { formik: FormikContext<Values> }
+  ) {
     super(props);
     this.state = {
       value: getIn(props.formik.values, props.name),
@@ -303,6 +302,6 @@ class FastFieldInner<
   }
 }
 
-export const FastField = connect<FieldAttributes, any>(
+export const FastField = connect<FieldAttributes<any>, any>(
   polyfill(FastFieldInner)
 );

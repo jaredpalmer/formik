@@ -1,7 +1,7 @@
-import * as React from 'react';
-
+import hoistNonReactStatics from 'hoist-non-react-statics';
+import React from 'react';
+import { Formik } from './Formik';
 import {
-  Formik,
   FormikActions,
   FormikComputedProps,
   FormikHandlers,
@@ -9,9 +9,7 @@ import {
   FormikSharedConfig,
   FormikState,
   FormikValues,
-} from './Formik';
-
-import hoistNonReactStatics from 'hoist-non-react-statics';
+} from './types';
 import { isFunction } from './utils';
 
 /**
@@ -161,7 +159,7 @@ export function withFormik<
     }
 
     return hoistNonReactStatics<Props, InjectedFormikProps<Props, Values>>(
-      C as any,
+      C,
       Component as React.ComponentClass<InjectedFormikProps<Props, Values>> // cast type to ComponentClass (even if SFC)
     ) as React.ComponentClass<Props>;
   };

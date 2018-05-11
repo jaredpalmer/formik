@@ -1,8 +1,12 @@
-import * as PropTypes from 'prop-types';
-import * as React from 'react';
-import { FormikProps, FormikState } from './Formik';
-import { isEmptyChildren, getIn, setIn, isFunction } from './utils';
-import { SharedRenderProps } from './types';
+import React from 'react';
+import { connect } from './connect';
+import {
+  FormikContext,
+  FormikState,
+  SharedRenderProps,
+  FormikProps,
+} from './types';
+import { getIn, isEmptyChildren, isFunction, setIn } from './utils';
 
 export type FieldArrayConfig = {
   /** Really the path to the array field to be updated */
@@ -10,7 +14,6 @@ export type FieldArrayConfig = {
   /** Should field array validate the form AFTER array updates/changes? */
   validateOnChange?: boolean;
 } & SharedRenderProps<ArrayHelpers & { form: FormikProps<any> }>;
-
 export interface ArrayHelpers {
   /** Imperatively add a value to the end of an array */
   push: (obj: any) => void;
@@ -76,16 +79,15 @@ export const replace = (array: any[], index: number, value: any) => {
   copy[index] = value;
   return copy;
 };
-
-export class FieldArray extends React.Component<FieldArrayConfig, {}> {
+class FieldArrayInner<Values = {}> extends React.Component<
+  FieldArrayConfig & { formik: FormikContext<Values> },
+  {}
+> {
   static defaultProps = {
     validateOnChange: true,
   };
-  static contextTypes = {
-    formik: PropTypes.object,
-  };
 
-  constructor(props: FieldArrayConfig) {
+  constructor(props: FieldArrayConfig & { formik: FormikContext<Values> }) {
     super(props);
     // We need TypeScript generics on these, so we'll bind them in the constructor
     this.remove = this.remove.bind(this);
@@ -98,13 +100,10 @@ export class FieldArray extends React.Component<FieldArrayConfig, {}> {
     alterErrors: boolean
   ) => {
     const {
-      setFormikState,
-      validateForm,
-      values,
-      touched,
-      errors,
-    } = this.context.formik;
-    const { name, validateOnChange } = this.props;
+      name,
+      validateOnChange,
+      formik: { setFormikState, validateForm, values, touched, errors },
+    } = this.props;
     setFormikState(
       (prevState: FormikState<any>) => ({
         ...prevState,
@@ -251,8 +250,19 @@ export class FieldArray extends React.Component<FieldArrayConfig, {}> {
       handleRemove: this.handleRemove,
     };
 
-    const { component, render, children, name } = this.props;
-    const props = { ...arrayHelpers, form: this.context.formik, name };
+    const {
+      component,
+      render,
+      children,
+      name,
+      formik: {
+        validate: _validate,
+        validationSchema: _validationSchema,
+        ...restOfFormik
+      },
+    } = this.props;
+
+    const props = { ...arrayHelpers, form: restOfFormik, name };
 
     return component
       ? React.createElement(component as any, props)
@@ -265,3 +275,5 @@ export class FieldArray extends React.Component<FieldArrayConfig, {}> {
           : null;
   }
 }
+
+export const FieldArray = connect<FieldArrayConfig, any>(FieldArrayInner);

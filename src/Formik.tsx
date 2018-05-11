@@ -1,237 +1,25 @@
-import * as PropTypes from 'prop-types';
-import * as React from 'react';
+import React from 'react';
 import isEqual from 'react-fast-compare';
 import warning from 'warning';
+import { FormikProvider } from './connect';
 import {
+  FormikActions,
+  FormikConfig,
+  FormikErrors,
+  FormikState,
+  FormikTouched,
+  FormikValues,
+  FormikContext,
+} from './types';
+import {
+  isEmptyChildren,
   isFunction,
+  isNaN,
   isPromise,
   isString,
-  isNaN,
-  isEmptyChildren,
   setIn,
   setNestedObjectValues,
 } from './utils';
-
-/**
- * Values of fields in the form
- */
-export interface FormikValues {
-  [field: string]: any;
-}
-
-/**
- * An object containing error messages whose keys correspond to FormikValues.
- * Should be always be and object of strings, but any is allowed to support i18n libraries.
- */
-export type FormikErrors<Values> = {
-  [K in keyof Values]?: Values[K] extends object ? FormikErrors<Values[K]> : {}
-};
-
-/**
- * An object containing touched state of the form whose keys correspond to FormikValues.
- */
-export type FormikTouched<Values> = {
-  [K in keyof Values]?: Values[K] extends object
-    ? FormikTouched<Values[K]>
-    : boolean
-};
-
-/**
- * Formik state tree
- */
-export interface FormikState<Values> {
-  /** Form values */
-  values: Values;
-  /**
-   * Top level error, in case you need it
-   * @deprecated since 0.8.0
-   */
-  error?: any;
-  /** map of field names to specific error for that field */
-  errors: FormikErrors<Values>;
-  /** map of field names to whether the field has been touched */
-  touched: FormikTouched<Values>;
-  /** whether the form is currently submitting */
-  isSubmitting: boolean;
-  /** Top level status state, in case you need it */
-  status?: any;
-  /** Number of times user tried to submit the form */
-  submitCount: number;
-}
-
-/**
- * Formik computed properties. These are read-only.
- */
-export interface FormikComputedProps<Values> {
-  /** True if any input has been touched. False otherwise. */
-  readonly dirty: boolean;
-  /** Result of isInitiallyValid on mount, then whether true values pass validation. */
-  readonly isValid: boolean;
-  /** initialValues */
-  readonly initialValues: Values;
-}
-
-/**
- * Formik state helpers
- */
-export interface FormikActions<Values> {
-  /** Manually set top level status. */
-  setStatus(status?: any): void;
-  /**
-   * Manually set top level error
-   * @deprecated since 0.8.0
-   */
-  setError(e: any): void;
-  /** Manually set errors object */
-  setErrors(errors: FormikErrors<Values>): void;
-  /** Manually set isSubmitting */
-  setSubmitting(isSubmitting: boolean): void;
-  /** Manually set touched object */
-  setTouched(touched: FormikTouched<Values>): void;
-  /** Manually set values object  */
-  setValues(values: Values): void;
-  /** Set value of form field directly */
-  setFieldValue(
-    field: keyof Values,
-    value: any,
-    shouldValidate?: boolean
-  ): void;
-  setFieldValue(field: string, value: any, shouldValidate?: boolean): void;
-  /** Set error message of a form field directly */
-  setFieldError(field: keyof Values, message: string): void;
-  setFieldError(field: string, message: string): void;
-  /** Set whether field has been touched directly */
-  setFieldTouched(
-    field: keyof Values,
-    isTouched?: boolean,
-    shouldValidate?: boolean
-  ): void;
-  setFieldTouched(
-    field: string,
-    isTouched?: boolean,
-    shouldValidate?: boolean
-  ): void;
-  /** Validate form values */
-  validateForm(values?: any): void;
-  /** Reset form */
-  resetForm(nextValues?: any): void;
-  /** Submit the form imperatively */
-  submitForm(): void;
-  /** Set Formik state, careful! */
-  setFormikState<K extends keyof FormikState<Values>>(
-    f: (
-      prevState: Readonly<FormikState<Values>>,
-      props: any
-    ) => Pick<FormikState<Values>, K>,
-    callback?: () => any
-  ): void;
-}
-
-/** Overloded methods / types */
-export interface FormikActions<Values> {
-  /** Set value of form field directly */
-  setFieldValue(field: string, value: any): void;
-  /** Set error message of a form field directly */
-  setFieldError(field: string, message: string): void;
-  /** Set whether field has been touched directly */
-  setFieldTouched(field: string, isTouched?: boolean): void;
-  /** Set Formik state, careful! */
-  setFormikState<K extends keyof FormikState<Values>>(
-    state: Pick<FormikState<Values>, K>,
-    callback?: () => any
-  ): void;
-}
-
-/**
- * Formik form event handlers
- */
-export interface FormikHandlers {
-  /** Form submit handler */
-  handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
-  /** Reset form event handler  */
-  handleReset: () => void;
-  /** Classic React blur handler, keyed by input name */
-  handleBlur(e: any): void;
-  /** Preact-like linkState. Will return a handleBlur function. */
-  handleBlur(field: string): ((e: any) => void);
-  /** Classic React change handler, keyed by input name */
-  handleChange(e: React.ChangeEvent<any>): void;
-  /** Preact-like linkState. Will return a handleChange function.  */
-  handleChange(field: string): ((e: React.ChangeEvent<any>) => void);
-}
-
-/**
- * Base formik configuration/props shared between the HoC and Component.
- */
-export interface FormikSharedConfig {
-  /** Tells Formik to validate the form on each input's onChange event */
-  validateOnChange?: boolean;
-  /** Tells Formik to validate the form on each input's onBlur event */
-  validateOnBlur?: boolean;
-  /** Tell Formik if initial form values are valid or not on first render */
-  isInitialValid?: boolean | ((props: object) => boolean | undefined);
-  /** Should Formik reset the form when new initialValues change */
-  enableReinitialize?: boolean;
-}
-
-/**
- * <Formik /> props
- */
-export interface FormikConfig<Values> extends FormikSharedConfig {
-  /**
-   * Initial values of the form
-   */
-  initialValues: Values;
-
-  /**
-   * Reset handler
-   */
-  onReset?: (values: Values, formikActions: FormikActions<Values>) => void;
-
-  /**
-   * Submission handler
-   */
-  onSubmit: (values: Values, formikActions: FormikActions<Values>) => void;
-
-  /**
-   * Form component to render
-   */
-  component?: React.ComponentType<FormikProps<Values>> | React.ReactNode;
-
-  /**
-   * Render prop (works like React router's <Route render={props =>} />)
-   */
-  render?: ((props: FormikProps<Values>) => React.ReactNode);
-
-  /**
-   * A Yup Schema or a function that returns a Yup schema
-   */
-  validationSchema?: any | (() => any);
-
-  /**
-   * Validation function. Must return an error object or promise that
-   * throws an error object where that object keys map to corresponding value.
-   */
-  validate?: ((
-    values: Values
-  ) => void | object | Promise<FormikErrors<Values>>);
-
-  /**
-   * React children or child render callback
-   */
-  children?:
-    | ((props: FormikProps<Values>) => React.ReactNode)
-    | React.ReactNode;
-}
-
-/**
- * State, handlers, and helpers made available to form component or render prop
- * of <Formik/>.
- */
-export type FormikProps<Values> = FormikState<Values> &
-  FormikActions<Values> &
-  FormikHandlers &
-  FormikComputedProps<Values>;
 
 export class Formik<ExtraProps = {}, Values = object> extends React.Component<
   FormikConfig<Values> & ExtraProps,
@@ -244,25 +32,6 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     enableReinitialize: false,
   };
 
-  static propTypes = {
-    validateOnChange: PropTypes.bool,
-    validateOnBlur: PropTypes.bool,
-    isInitialValid: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
-    initialValues: PropTypes.object,
-    onReset: PropTypes.func,
-    onSubmit: PropTypes.func.isRequired,
-    validationSchema: PropTypes.oneOfType([PropTypes.func, PropTypes.object]),
-    validate: PropTypes.func,
-    component: PropTypes.func,
-    render: PropTypes.func,
-    children: PropTypes.oneOfType([PropTypes.func, PropTypes.node]),
-    enableReinitialize: PropTypes.bool,
-  };
-
-  static childContextTypes = {
-    formik: PropTypes.object,
-  };
-
   initialValues: Values;
 
   hcCache: {
@@ -272,16 +41,6 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     [key: string]: (e: any) => void;
   } = {};
   fields: { [field: string]: (nextValues?: any) => void };
-
-  getChildContext() {
-    return {
-      formik: {
-        ...this.getFormikBag(),
-        validationSchema: this.props.validationSchema,
-        validate: this.props.validate,
-      },
-    };
-  }
 
   constructor(props: FormikConfig<Values> & ExtraProps) {
     super(props);
@@ -294,6 +53,21 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     };
     this.fields = {};
     this.initialValues = props.initialValues || ({} as any);
+
+    warning(
+      !(props.component && props.render),
+      'You should not use <Formik component> and <Formik render> in the same <Formik> component; <Formik render> will be ignored'
+    );
+
+    warning(
+      !(props.component && props.children && !isEmptyChildren(props.children)),
+      'You should not use <Formik component> and <Formik children> in the same <Formik> component; <Formik children> will be ignored'
+    );
+
+    warning(
+      !(props.render && props.children && !isEmptyChildren(props.children)),
+      'You should not use <Formik render> and <Formik children> in the same <Formik> component; <Formik children> will be ignored'
+    );
   }
 
   registerField = (name: string, resetFn: (nextValues?: any) => void) => {
@@ -304,42 +78,16 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     delete this.fields[name];
   };
 
-  componentWillReceiveProps(
-    nextProps: Readonly<FormikConfig<Values> & ExtraProps>
-  ) {
+  componentDidUpdate(prevProps: Readonly<FormikConfig<Values> & ExtraProps>) {
     // If the initialValues change, reset the form
     if (
       this.props.enableReinitialize &&
-      !isEqual(nextProps.initialValues, this.props.initialValues)
+      !isEqual(prevProps.initialValues, this.props.initialValues)
     ) {
-      this.initialValues = nextProps.initialValues;
-      this.resetForm(nextProps.initialValues);
+      this.initialValues = this.props.initialValues;
+      // @todo refactor to use getDerivedStateFromProps?
+      this.resetForm(this.props.initialValues);
     }
-  }
-
-  componentWillMount() {
-    warning(
-      !(this.props.component && this.props.render),
-      'You should not use <Formik component> and <Formik render> in the same <Formik> component; <Formik render> will be ignored'
-    );
-
-    warning(
-      !(
-        this.props.component &&
-        this.props.children &&
-        !isEmptyChildren(this.props.children)
-      ),
-      'You should not use <Formik component> and <Formik children> in the same <Formik> component; <Formik children> will be ignored'
-    );
-
-    warning(
-      !(
-        this.props.render &&
-        this.props.children &&
-        !isEmptyChildren(this.props.children)
-      ),
-      'You should not use <Formik render> and <Formik children> in the same <Formik> component; <Formik children> will be ignored'
-    );
   }
 
   setErrors = (errors: FormikErrors<Values>) => {
@@ -478,25 +226,21 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
         if (this.props.validateOnChange) {
           this.runValidations(setIn(this.state.values, field, val));
         }
-      } else {
-        console.warn(
-          'Formik could not determine which field to update based on your input and usage of `handleChange`'
-        );
       }
     };
 
     // Actually execute logic above....
     // cache these handlers by key like Preact's linkState does for perf boost
-    if (isString(eventOrPath as string)) {
-      return isFunction(this.hcCache[eventOrPath as string])
-        ? this.hcCache[eventOrPath as string] // return the cached handled
-        : (this.hcCache[eventOrPath as string] = (
+    if (isString(eventOrPath)) {
+      return isFunction(this.hcCache[eventOrPath])
+        ? this.hcCache[eventOrPath] // return the cached handled
+        : (this.hcCache[eventOrPath] = (
             // make a new one
             event: React.ChangeEvent<any> | string
           ) =>
             executeChange(
               event /* string or event, does not matter */,
-              eventOrPath as string /* this is path to the field now */
+              eventOrPath /* this is path to the field now */
             ));
     } else {
       executeChange(eventOrPath);
@@ -725,18 +469,33 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     };
   };
 
+  getFormikContext = (): FormikContext<any> => {
+    return {
+      ...this.getFormikBag(),
+      validationSchema: this.props.validationSchema,
+      validate: this.props.validate,
+    };
+  };
+
   render() {
     const { component, render, children } = this.props;
     const props = this.getFormikBag();
-    return component
-      ? React.createElement(component as any, props)
-      : render
-        ? (render as any)(props)
-        : children // children come last, always called
-          ? typeof children === 'function'
-            ? (children as any)(props)
-            : !isEmptyChildren(children) ? React.Children.only(children) : null
-          : null;
+    const ctx = this.getFormikContext();
+    return (
+      <FormikProvider value={ctx}>
+        {component
+          ? React.createElement(component as any, props)
+          : render
+            ? (render as any)(props)
+            : children // children come last, always called
+              ? typeof children === 'function'
+                ? (children as any)(props)
+                : !isEmptyChildren(children)
+                  ? React.Children.only(children)
+                  : null
+              : null}
+      </FormikProvider>
+    );
   }
 }
 
@@ -750,7 +509,7 @@ function warnAboutMissingIdentifier({
   handlerName: string;
 }) {
   console.error(
-    `Warning: \`${handlerName}\` has triggered and you forgot to pass an \`id\` or \`name\` attribute to your input:
+    `Warning: Formik called \`${handlerName}\`, but you forgot to pass an \`id\` or \`name\` attribute to your input:
 
     ${htmlContent}
 

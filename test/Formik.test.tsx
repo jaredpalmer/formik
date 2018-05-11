@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Formik, FormikProps } from '../src';
-import { shallow, mount } from 'enzyme';
+import { shallow, mount } from '@pisano/enzyme';
 import { sleep, noop } from './testHelpers';
 
 interface Values {
@@ -875,7 +875,7 @@ describe('<Formik>', () => {
     });
   });
 
-  describe('componentWillReceiveProps', () => {
+  describe('componentDidUpdate', () => {
     let form: any, initialValues: any;
     beforeEach(() => {
       initialValues = {
@@ -893,7 +893,7 @@ describe('<Formik>', () => {
 
     it('should not resetForm if new initialValues are the same as previous', () => {
       const newInitialValues = Object.assign({}, initialValues);
-      form.componentWillReceiveProps({
+      form.componentDidUpdate({
         initialValues: newInitialValues,
         onSubmit: jest.fn(),
       });
@@ -905,7 +905,7 @@ describe('<Formik>', () => {
         ...initialValues,
         watchers: ['jared', 'ian', 'sam'],
       };
-      form.componentWillReceiveProps({
+      form.componentDidUpdate({
         initialValues: newInitialValues,
         onSubmit: jest.fn(),
       });
@@ -917,7 +917,7 @@ describe('<Formik>', () => {
         ...initialValues,
         github: { repoUrl: 'different' },
       };
-      form.componentWillReceiveProps({
+      form.componentDidUpdate({
         initialValues: newInitialValues,
         onSubmit: jest.fn(),
       });
@@ -934,7 +934,7 @@ describe('<Formik>', () => {
         ...initialValues,
         watchers: ['jared', 'ian', 'sam'],
       };
-      form.componentWillReceiveProps({
+      form.componentDidUpdate({
         initialValues: newInitialValues,
         onSubmit: jest.fn(),
       });

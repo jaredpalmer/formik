@@ -5,7 +5,7 @@ env:
   - CI=true
 
 script:
-  - yarn test -- --runInBand --no-cache --coverage
+  - yarn test -- --runInBand --no-cache --coverage && yarn size
 
 deploy:
   provider: script

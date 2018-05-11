@@ -7,10 +7,11 @@ import uglify from 'rollup-plugin-uglify';
 import pkg from './package.json';
 
 const input = './compiled/index.js';
+const external = ['react', 'react-native'];
 
 const getUMDConfig = ({ env }) => ({
   input,
-  external: ['react', 'react-native'],
+  external,
   output: {
     name: 'Formik',
     format: 'umd',
@@ -64,12 +65,10 @@ const getUMDConfig = ({ env }) => ({
 
 export default [
   getUMDConfig({ env: 'production' }),
-
   getUMDConfig({ env: 'development' }),
-
   {
     input,
-    external: id => !id.startsWith('.') && !id.startsWith('/'),
+    external: external.concat(Object.keys(pkg.dependencies)),
     output: [
       {
         file: pkg.module,

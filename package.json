@@ -78,7 +78,6 @@
     "rollup-plugin-replace": "1.1.1",
     "rollup-plugin-sourcemaps": "0.4.2",
     "rollup-plugin-uglify": "^3.0.0",
-    "size-limit": "^0.17.0",
     "ts-jest": "^22.4.6",
     "tsc-watch": "^1.0.21",
     "tslint": "5.5.0",
@@ -123,7 +122,7 @@
   },
   "size-limit": [
     {
-      "path": "./dist/formik.js",
+      "path": "./dist/index.js",
       "limit": "14 kB"
     },
     {
@@ -131,7 +130,7 @@
       "limit": "14 kB"
     },
     {
-      "path": "./dist/formik.umd.js",
+      "path": "./dist/formik.umd.production.js",
       "limit": "14 kB"
     }
   ]

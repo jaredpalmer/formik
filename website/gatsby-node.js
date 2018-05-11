@@ -12,9 +12,6 @@ exports.modifyWebpackConfig = ({ config, stage }) => {
     resolve: {
       root: path.resolve(__dirname, './src'),
       extensions: ['', '.js', '.jsx', '.tsx', '.ts', '.json'],
-      // alias: {
-      //   formik: path.resolve(__dirname, '../dist'),
-      // },
     },
     plugins: [
       // new ForkTsCheckerWebpackPlugin({

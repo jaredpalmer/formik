@@ -6,7 +6,14 @@ import { FieldAttributes, FieldConfig, FieldProps } from './Field';
 import { validateYupSchema, yupToFormErrors } from './Formik';
 import { connect } from './connect';
 import { FormikContext } from './types';
-import { getIn, isEmptyChildren, isFunction, isPromise, setIn } from './utils';
+import {
+  getIn,
+  isEmptyChildren,
+  isFunction,
+  isPromise,
+  setIn,
+  unsetIn,
+} from './utils';
 
 export interface FastFieldState {
   value: any;
@@ -213,7 +220,7 @@ class FastFieldInner<Props = {}, Values = {}> extends React.Component<
             setFormikState((prevState: any) => ({
               ...prevState,
               values: setIn(prevState.values, name, this.state.value),
-              errors: setIn(prevState.errors, name, undefined),
+              errors: unsetIn(prevState.errors, name),
               touched: setIn(prevState.touched, name, true),
             })),
           error =>
@@ -235,7 +242,10 @@ class FastFieldInner<Props = {}, Values = {}> extends React.Component<
     } else {
       setFormikState((prevState: any) => ({
         ...prevState,
-        errors: setIn(prevState.errors, name, this.state.error),
+        errors:
+          this.state.error === undefined
+            ? unsetIn(prevState.errors, name)
+            : setIn(prevState.errors, name, this.state.error),
         values: setIn(prevState.values, name, this.state.value),
         touched: setIn(prevState.touched, name, true),
       }));

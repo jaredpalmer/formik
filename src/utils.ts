@@ -47,6 +47,69 @@ export function setIn(obj: any, path: string, value: any): any {
   return { ...obj, ...res };
 }
 
+export function createCopyWithoutKey(obj: any, key: any) {
+  const copy: any = {};
+  for (let k of Object.keys(obj)) {
+    if (k !== key) {
+      copy[k] = obj[k];
+    }
+  }
+  return copy;
+}
+
+export function isEmptyObject(obj: any) {
+  if (Array.isArray(obj)) {
+    return obj.every(item => item === undefined);
+  }
+  return Object.keys(obj).length === 0;
+}
+
+export function _unsetIn(obj: any, path: string[]): any {
+  const firstPath = Array.isArray(obj) ? Number(path[0]) : path[0];
+
+  if (path.length === 1) {
+    return createCopyWithoutKey(obj, firstPath);
+  }
+
+  if (!obj.hasOwnProperty(firstPath)) {
+    return obj;
+  }
+
+  const objAtFirstPart = obj[firstPath];
+
+  const updatedObj = _unsetIn(objAtFirstPart, path.slice(1));
+
+  if (Array.isArray(obj)) {
+    obj = obj.slice();
+
+    if (isEmptyObject(updatedObj)) {
+      delete obj[firstPath];
+    } else {
+      obj[firstPath] = updatedObj;
+    }
+
+    return obj;
+  }
+
+  if (isEmptyObject(updatedObj)) {
+    return createCopyWithoutKey(obj, firstPath);
+  }
+
+  const copy = { ...obj };
+  copy[firstPath] = updatedObj;
+
+  return copy;
+}
+
+/**
+ * Deeply unsets a value and then removes data structures all the way back to
+ * the top if they're empty
+ */
+export function unsetIn(obj: any, path: string): any {
+  const splitPath = toPath(path);
+  return _unsetIn(obj, splitPath);
+}
+
 /**
  * Recursively a set the same value for all keys and arrays nested object, cloning
  * @param object

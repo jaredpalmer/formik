@@ -1,4 +1,4 @@
-import { setIn, setNestedObjectValues, isPromise } from '../src/utils';
+import { unsetIn, setIn, setNestedObjectValues, isPromise } from '../src/utils';
 
 describe('utils', () => {
   describe('setNestedObjectValues', () => {
@@ -123,6 +123,83 @@ describe('utils', () => {
         },
       };
       expect(setNestedObjectValues(obj, true)).toEqual(newObj);
+    });
+  });
+
+  describe('unsetIn', () => {
+    it("does nothing when given a path that doesn't exist", () => {
+      const obj = { a: '1', b: '2' };
+      const newObj = unsetIn(obj, 'c');
+      expect(obj).toEqual({ a: '1', b: '2' });
+      expect(newObj).toEqual({ a: '1', b: '2' });
+    });
+
+    it("does nothing when given a nested path that doesn't exist", () => {
+      const obj = { a: '1', b: { c: '2' } };
+      const newObj = unsetIn(obj, 'b.d');
+      expect(obj).toEqual({ a: '1', b: { c: '2' } });
+      expect(newObj).toEqual({ a: '1', b: { c: '2' } });
+    });
+
+    it('unsets a flat value', () => {
+      const obj = { a: '1', b: '2' };
+      const newObj = unsetIn(obj, 'a');
+      expect(obj).toEqual({ a: '1', b: '2' });
+      expect(newObj).toEqual({ b: '2' });
+    });
+
+    it('unsets a flat value and leaves an empty object if one key at top', () => {
+      const obj = { a: '1' };
+      const newObj = unsetIn(obj, 'a');
+      expect(obj).toEqual({ a: '1' });
+      expect(newObj).toEqual({});
+    });
+
+    it('unsets a nested value and deletes empty objecct if nested', () => {
+      const obj = { a: '1', b: { c: '2' } };
+      const newObj = unsetIn(obj, 'b.c');
+      expect(obj).toEqual({ a: '1', b: { c: '2' } });
+      expect(newObj).toEqual({ a: '1' });
+    });
+
+    it('unsets and deletes multiple levels', () => {
+      const obj = { a: '1', b: { c: { d: '2' } } };
+      const newObj = unsetIn(obj, 'b.c.d');
+      expect(obj).toEqual({ a: '1', b: { c: { d: '2' } } });
+      expect(newObj).toEqual({ a: '1' });
+    });
+
+    it('can traverse arrays', () => {
+      const obj = { a: '1', b: [{ c: '2', d: '3' }, { e: '4' }] };
+      const newObj = unsetIn(obj, 'b.0.c');
+      expect(obj).toEqual({
+        a: '1',
+        b: [{ c: '2', d: '3' }, { e: '4' }],
+      });
+      expect(newObj).toEqual({
+        a: '1',
+        b: [{ d: '3' }, { e: '4' }],
+      });
+    });
+
+    it('replaces empty objects with deleted index in arrays', () => {
+      const obj = { a: '1', b: [{ c: '2', d: '3' }, { e: '4' }] };
+      const newObj = unsetIn(obj, 'b.1.e');
+      expect(obj).toEqual({
+        a: '1',
+        b: [{ c: '2', d: '3' }, { e: '4' }],
+      });
+      expect(newObj).toEqual({ a: '1', b: [{ c: '2', d: '3' }, undefined] });
+    });
+
+    it('deletes fully empty arrays too', () => {
+      const obj = { a: '1', b: [undefined, { e: '2' }] };
+      const newObj = unsetIn(obj, 'b.1.e');
+      expect(obj).toEqual({
+        a: '1',
+        b: [undefined, { e: '2' }],
+      });
+      expect(newObj).toEqual({ a: '1' });
     });
   });
 

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import warning from 'warning';
 import { connect } from './connect';
 import {

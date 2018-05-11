@@ -26,6 +26,6 @@
     "stripInternal": true,
     "target": "es5"
   },
-  "include": ["src", "typepatches"],
+  "include": ["src", "types"],
   "exclude": ["node_modules", "dist"]
 }

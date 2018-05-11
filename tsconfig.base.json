@@ -26,6 +26,6 @@
     "stripInternal": true,
     "target": "es5"
   },
-  "include": ["src", "./typings.d.ts"],
+  "include": ["src", "typepatches"],
   "exclude": ["node_modules", "dist"]
 }

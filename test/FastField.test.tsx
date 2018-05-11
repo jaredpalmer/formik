@@ -115,6 +115,21 @@ describe('A <Field />', () => {
       expect(setFormikState).toHaveBeenCalled();
       expect(validate).not.toHaveBeenCalled();
     });
+
+    it('does not cause undefined errors to be pushed into formik state', () => {
+      let injected: any; /** FieldProps<any> ;) */
+
+      const form = mount(
+        <TestForm
+          render={(formikProps: FormikProps<TestFormValues>) =>
+            (injected = formikProps) && <Field name="name" type={'text'} />
+          }
+        />
+      );
+
+      form.find('input').simulate('blur');
+      expect(injected.errors.hasOwnProperty('name')).toBe(false);
+    });
   });
 
   describe('<Field component />', () => {

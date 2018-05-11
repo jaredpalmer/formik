@@ -1282,7 +1282,7 @@ const CustomInputComponent: React.SFC<
 #### `validate?: (value: any) => undefined | string | Promise<any>`
 
 You can run independent field-level validations by passing a function to the
-`validate>` prop. The function will respect the [`validateOnBlur`] and
+`validate` prop. The function will respect the [`validateOnBlur`] and
 [`validateOnChange`] config/props specified in the `<Field>'s` parent `<Formik>`
 / `withFormik`. This function can be either be:
 

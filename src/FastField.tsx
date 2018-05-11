@@ -1,10 +1,12 @@
-import * as PropTypes from 'prop-types';
-import * as React from 'react';
-import { validateYupSchema, yupToFormErrors, FormikProps } from './Formik';
-import { getIn, isPromise, setIn, isFunction, isEmptyChildren } from './utils';
-import warning from 'warning';
-import { FieldAttributes, FieldConfig, FieldProps } from './Field';
+import React from 'react';
 import isEqual from 'react-fast-compare';
+import warning from 'warning';
+import { polyfill } from 'react-lifecycles-compat';
+import { FieldAttributes, FieldConfig, FieldProps } from './Field';
+import { validateYupSchema, yupToFormErrors } from './Formik';
+import { connect } from './connect';
+import { FormikContext } from './types';
+import { getIn, isEmptyChildren, isFunction, isPromise, setIn } from './utils';
 
 export interface FastFieldState {
   value: any;
@@ -20,68 +22,50 @@ function isEqualExceptForKey(a: any, b: any, path: string) {
  * Custom Field component for quickly hooking into Formik
  * context and wiring up forms.
  */
-export class FastField<
-  Props extends FieldAttributes = any
-> extends React.Component<Props, FastFieldState> {
-  static contextTypes = {
-    formik: PropTypes.object,
-  };
+class FastFieldInner<Props = {}, Values = {}> extends React.Component<
+  FieldAttributes<Props> & { formik: FormikContext<Values> },
+  FastFieldState
+> {
+  reset: (nextValues?: any) => void;
 
-  static propTypes = {
-    name: PropTypes.string.isRequired,
-    component: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
-    render: PropTypes.func,
-    children: PropTypes.oneOfType([PropTypes.func, PropTypes.node]),
-    validate: PropTypes.func,
-    innerRef: PropTypes.func,
-  };
+  static getDerivedStateFromProps(
+    nextProps: any /* FieldAttributes<Props> & { formik: FormikContext<Values> }*/,
+    prevState: FastFieldState
+  ) {
+    const nextFieldValue = getIn(nextProps.formik.values, nextProps.name);
+    const nextFieldError = getIn(nextProps.formik.errors, nextProps.name);
 
-  reset: Function;
-  constructor(props: Props, context: any) {
+    let nextState = null;
+    if (!isEqual(nextFieldValue, prevState.value)) {
+      nextState = { value: nextFieldValue };
+    }
+
+    if (!isEqual(nextFieldError, prevState.error)) {
+      nextState = { error: nextFieldError };
+    }
+
+    return nextState;
+  }
+
+  constructor(
+    props: FieldAttributes<Props> & { formik: FormikContext<Values> }
+  ) {
     super(props);
     this.state = {
-      value: getIn(context.formik.values, props.name),
-      error: getIn(context.formik.errors, props.name),
+      value: getIn(props.formik.values, props.name),
+      error: getIn(props.formik.errors, props.name),
     };
 
     this.reset = (nextValues?: any) => {
       this.setState({
         value: getIn(nextValues, props.name),
-        error: getIn(context.formik.errors, props.name),
+        error: getIn(props.formik.errors, props.name),
       });
     };
 
-    context.formik.registerField(props.name, this.reset);
-  }
+    props.formik.registerField(props.name, this.reset);
 
-  componentWillReceiveProps(
-    nextProps: Props,
-    nextContext: { formik: FormikProps<any> }
-  ) {
-    const nextFieldValue = getIn(nextContext.formik.values, nextProps.name);
-    const nextFieldError = getIn(nextContext.formik.errors, nextProps.name);
-
-    let nextState: any;
-
-    if (nextFieldValue !== this.state.value) {
-      nextState = { value: nextFieldValue };
-    }
-
-    if (nextFieldError !== this.state.error) {
-      nextState = { ...nextState, error: nextFieldError };
-    }
-
-    if (nextState) {
-      this.setState(s => ({ ...s, ...nextState }));
-    }
-  }
-
-  componentWillUnmount() {
-    this.context.formik.unregisterField(this.props.name);
-  }
-
-  componentWillMount() {
-    const { render, children, component } = this.props;
+    const { render, children, component } = props;
 
     warning(
       !(component && render),
@@ -89,7 +73,7 @@ export class FastField<
     );
 
     warning(
-      !(this.props.component && children && isFunction(children)),
+      !(props.component && children && isFunction(children)),
       'You should not use <FastField component> and <FastField children> as a function in the same <FastField> component; <FastField component> will be ignored.'
     );
 
@@ -97,6 +81,10 @@ export class FastField<
       !(render && children && !isEmptyChildren(children)),
       'You should not use <FastField render> and <FastField children> in the same <FastField> component; <FastField children> will be ignored'
     );
+  }
+
+  componentWillUnmount() {
+    this.props.formik.unregisterField(this.props.name);
   }
 
   handleChange = (e: React.ChangeEvent<any>) => {
@@ -108,7 +96,7 @@ export class FastField<
       validationSchema,
       errors,
       setFormikState,
-    } = this.context.formik;
+    } = this.props.formik;
     const { type, value, checked } = e.target;
     const val = /number|range/.test(type)
       ? parseFloat(value)
@@ -213,7 +201,7 @@ export class FastField<
   };
 
   handleBlur = () => {
-    const { validateOnBlur, setFormikState } = this.context.formik;
+    const { validateOnBlur, setFormikState } = this.props.formik;
     const { name, validate } = this.props;
 
     // @todo refactor
@@ -261,10 +249,14 @@ export class FastField<
       render,
       children,
       component = 'input',
+      formik,
       ...props
-    } = this.props as FieldConfig;
-
-    const { formik } = this.context;
+    } = this.props as FieldConfig & { formik: FormikContext<Values> };
+    const {
+      validate: _validate,
+      validationSchema: _validationSchema,
+      ...restOfFormik
+    } = formik;
     const field = {
       value:
         props.type === 'radio' || props.type === 'checkbox'
@@ -276,7 +268,7 @@ export class FastField<
     };
     const bag = {
       field,
-      form: formik,
+      form: restOfFormik,
       meta: { touched: getIn(formik.touched, name), error: this.state.error },
     };
 
@@ -309,3 +301,7 @@ export class FastField<
     });
   }
 }
+
+export const FastField = connect<FieldAttributes<any>, any>(
+  polyfill(FastFieldInner)
+);

@@ -226,10 +226,6 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
         if (this.props.validateOnChange) {
           this.runValidations(setIn(this.state.values, field, val));
         }
-      } else {
-        console.warn(
-          'Formik could not determine which field to update based on your input and usage of `handleChange`'
-        );
       }
     };
 
@@ -513,7 +509,7 @@ function warnAboutMissingIdentifier({
   handlerName: string;
 }) {
   console.error(
-    `Warning: \`${handlerName}\` has triggered and you forgot to pass an \`id\` or \`name\` attribute to your input:
+    `Warning: Formik called \`${handlerName}\`, but you forgot to pass an \`id\` or \`name\` attribute to your input:
 
     ${htmlContent}
 

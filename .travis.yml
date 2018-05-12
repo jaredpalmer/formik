@@ -4,6 +4,8 @@ node_js:
 env:
   - CI=true
 
+cache: yarn
+
 script:
   - yarn test -- --runInBand --no-cache --coverage && yarn size
 

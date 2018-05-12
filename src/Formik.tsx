@@ -270,6 +270,25 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     if (e && e.preventDefault) {
       e.preventDefault();
     }
+
+    if (
+      process.env.NODE_ENV !== 'production' &&
+      document &&
+      document.activeElement
+    ) {
+      const type =
+        document.activeElement.attributes &&
+        document.activeElement.attributes.getNamedItem('type');
+
+      const submitTriggeredFromButtonWithType =
+        document.activeElement instanceof HTMLButtonElement && type;
+
+      warning(
+        submitTriggeredFromButtonWithType,
+        'You submitted a Formik form using a button with an unspecified type.  Most browsers default button elements to type="submit". If this is not a submit button please add type="button".'
+      );
+    }
+
     this.submitForm();
   };
 

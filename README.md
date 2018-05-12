@@ -1438,7 +1438,7 @@ const FriendArrayErrors = errors =>
 ```js
 // within a `FieldArray`'s render
 const FriendArrayErrors = errors =>
-  typeof friends === 'string' ? <div>{errors.friends}</div> : null;
+  typeof errors.friends === 'string' ? <div>{errors.friends}</div> : null;
 ```
 
 For the nested field errors, you should assume that no part of the object is defined unless you've checked for it. Thus, you may want to do yourself a favor and make a custom `<ErrorMessage />` component that looks like this:

@@ -1,6 +1,6 @@
 import cloneDeep from 'lodash.clonedeep';
 import toPath from 'lodash.topath';
-import React from 'react';
+import * as React from 'react';
 
 /**
  * Deeply get a value from an object via it's path.

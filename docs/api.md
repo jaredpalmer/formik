@@ -48,7 +48,7 @@ const BasicExample = () => (
 
 ### Formik render methods
 
-There are three ways to render things with `<Formik/>`
+There are three ways to render things with `<Formik />`
 
 * `<Formik component>`
 * `<Formik render>`
@@ -215,7 +215,7 @@ don’t use both in the same `<Formik>`.
 ### `render: (props: FormikProps<Values>) => ReactNode`
 
 ```tsx
-<Formik render={props => <ContactForm {...props} />}/>
+<Formik render={props => <ContactForm {...props} />} />
 
 <Formik
   render={({ handleSubmit, handleChange, handleBlur, values, errors }) => (
@@ -240,7 +240,7 @@ don’t use both in the same `<Formik>`.
 ### `children: func`
 
 ```tsx
-<Formik children={props => <ContactForm {...props} />}/>
+<Formik children={props => <ContactForm {...props} />} />
 
 // or...
 
@@ -370,10 +370,10 @@ component's [`errors`]. Its keys should match those of [`values`].
 ## `<Field />`
 
 `<Field />` will automagically hook up inputs to Formik. It uses the `name`
-attribute to match up with Formik state. `<Field/>` will default to an
-`<input/>` element. To change the underlying element of `<Field/>`, specify a
+attribute to match up with Formik state. `<Field />` will default to an
+`<input />` element. To change the underlying element of `<Field />`, specify a
 `component` prop. It can either be a string like `select` or another React
-component. `<Field/>` can also take a `render` prop.
+component. `<Field />` can also take a `render` prop.
 
 ```js
 import React from 'react';
@@ -471,7 +471,7 @@ const validate = value => {
 Note: To allow for i18n libraries, the TypeScript typings for `validate` are
 slightly relaxed and allow you to return a `Function` (e.g. `i18n('invalid')`).
 
-## `<FieldArray/>`
+## `<FieldArray />`
 
 `<FieldArray />` is a component that helps with common array/list manipulations. You pass it a `name` property with the path to the key within `values` that holds the relevant array. `<FieldArray />` will then give you access to array helper methods via render props. For convenience, calling these methods will trigger validation and also manage `touched` for you.
 
@@ -621,7 +621,7 @@ The following methods are made available via render props.
 
 ### FieldArray render methods
 
-There are three ways to render things with `<FieldArray/>`
+There are three ways to render things with `<FieldArray />`
 
 * `<FieldArray name="..." component>`
 * `<FieldArray name="..." render>`
@@ -689,9 +689,9 @@ export const MyDynamicForm = ({
 
 ## `<Form />`
 
-Like `<Field/>`, `<Form/>` is a helper component you can use to save time. It is
+Like `<Field />`, `<Form />` is a helper component you can use to save time. It is
 tiny wrapper around `<form onSubmit={context.formik.handleSubmit} />`. This
-means you don't need to explictly type out `<form onSubmit={props.handleSubmit}/>` if you don't want to.
+means you don't need to explictly type out `<form onSubmit={props.handleSubmit} />` if you don't want to.
 
 **ReactDOM only**
 

@@ -1,11 +1,11 @@
-import * as React from 'react';
-import toPath from 'lodash.topath';
 import cloneDeep from 'lodash.clonedeep';
+import toPath from 'lodash.topath';
+import * as React from 'react';
 
 /**
- * @private Deeply get a value from an object via it's path.
+ * Deeply get a value from an object via it's path.
  */
-export function dlv(
+export function getIn(
   obj: any,
   key: string | string[],
   def?: any,
@@ -19,10 +19,10 @@ export function dlv(
 }
 
 /**
- * @private Deeply set a value from in object via it's path.
- * See https://github.com/developit/linkstate
+ * Deeply set a value from in object via it's path.
+ * @see https://github.com/developit/linkstate
  */
-export function setDeep(path: string, value: any, obj: any): any {
+export function setIn(obj: any, path: string, value: any): any {
   let res: any = {};
   let resVal: any = res;
   let i = 0;
@@ -30,7 +30,7 @@ export function setDeep(path: string, value: any, obj: any): any {
 
   for (; i < pathArray.length - 1; i++) {
     const currentPath: string = pathArray[i];
-    let currentObj: any = obj[currentPath];
+    let currentObj: any = getIn(obj, pathArray.slice(0, i + 1));
 
     if (resVal[currentPath]) {
       resVal = resVal[currentPath];
@@ -57,12 +57,9 @@ export function setDeep(path: string, value: any, obj: any): any {
 export function setNestedObjectValues<T>(
   object: any,
   value: any,
-  visited?: any,
-  response?: any
+  visited: any = new WeakMap(),
+  response: any = {}
 ): T {
-  visited = visited || new WeakMap();
-  response = response || {};
-
   for (let k of Object.keys(object)) {
     const val = object[k];
     if (isObject(val)) {
@@ -84,32 +81,29 @@ export function setNestedObjectValues<T>(
 
 // Assertions
 
-/** @private is running React Native?  */
-export const isReactNative =
-  typeof window !== 'undefined' &&
-  window.navigator &&
-  window.navigator.product &&
-  window.navigator.product === 'ReactNative';
-
 /** @private is the given object a Function? */
 export const isFunction = (obj: any): obj is Function =>
-  'function' === typeof obj;
+  typeof obj === 'function';
 
 /** @private is the given object an Object? */
-export const isObject = (obj: any) => obj !== null && typeof obj === 'object';
+export const isObject = (obj: any): boolean =>
+  obj !== null && typeof obj === 'object';
 
-/** @private is the given object an integer  */
-export const isInteger = (obj: any) => String(Math.floor(Number(obj))) === obj;
+/** @private is the given object an integer? */
+export const isInteger = (obj: any): boolean =>
+  String(Math.floor(Number(obj))) === obj;
+
+/** @private is the given object a string? */
+export const isString = (obj: any): obj is string =>
+  Object.prototype.toString.call(obj) === '[object String]';
+
+/** @private is the given object a NaN? */
+export const isNaN = (obj: any): boolean => obj !== obj;
 
 /** @private Does a React component have exactly 0 children? */
-export const isEmptyChildren = (children: any) =>
+export const isEmptyChildren = (children: any): boolean =>
   React.Children.count(children) === 0;
 
 /** @private is the given object/value a promise? */
-export function isPromise(value: any): boolean {
-  if (value !== null && typeof value === 'object') {
-    return value && typeof value.then === 'function';
-  }
-
-  return false;
-}
+export const isPromise = (value: any): boolean =>
+  isObject(value) && isFunction(value.then);

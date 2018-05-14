@@ -1,7 +1,7 @@
 import * as React from 'react';
 
-import { withFormik, InjectedFormikProps } from '../src/withFormik';
-import { mount, shallow } from 'enzyme';
+import { withFormik, InjectedFormikProps } from '../src';
+import { mount, shallow } from '@pisano/enzyme';
 
 // tslint:disable-next-line:no-empty
 const noop = () => {};
@@ -74,6 +74,11 @@ describe('withFormik()', () => {
     expect(tree.find(Form).props().errors).toEqual({});
     expect(tree.find(Form).props().dirty).toBe(false);
     expect(tree.find(Form).props().isValid).toBe(false);
+  });
+
+  it('should correctly set displayName', () => {
+    const tree = mount(<BasicForm user={{ name: 'jared' }} />);
+    expect((tree.get(0).type as any).displayName).toBe('WithFormik(Form)');
   });
 
   describe('FormikHandlers', () => {

@@ -64,6 +64,7 @@ class Wizard extends React.Component {
       <Formik
         initialValues={values}
         enableReinitialize={false}
+        validate={this.validate}
         onSubmit={this.handleSubmit}
         render={({ values, handleSubmit, isSubmitting, handleReset }) => (
           <form onSubmit={handleSubmit}>

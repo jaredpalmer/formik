@@ -1,8 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { FieldArray } from '../src/FieldArray';
-import { Formik } from '../src/formik';
-import { isFunction } from '../src/utils';
+import { FieldArray, Formik, isFunction } from '../src';
 
 // tslint:disable-next-line:no-empty
 const noop = () => {};
@@ -180,6 +178,34 @@ describe('<FieldArray />', () => {
 
       arrayHelpers.insert(1, 'brian');
       const expected = ['jared', 'brian', 'andrea', 'brent'];
+      expect(formikBag.values.friends).toEqual(expected);
+    });
+  });
+
+  describe('props.replace()', () => {
+    it('should replace a value at given index of field array', () => {
+      let formikBag: any;
+      let arrayHelpers: any;
+      ReactDOM.render(
+        <TestForm
+          render={(props: any) => {
+            formikBag = props;
+            return (
+              <FieldArray
+                name="friends"
+                render={arrayProps => {
+                  arrayHelpers = arrayProps;
+                  return null;
+                }}
+              />
+            );
+          }}
+        />,
+        node
+      );
+
+      arrayHelpers.replace(1, 'brian');
+      const expected = ['jared', 'brian', 'brent'];
       expect(formikBag.values.friends).toEqual(expected);
     });
   });

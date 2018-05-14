@@ -5,6 +5,7 @@
     "declarationDir": "dist",
     "emitDecoratorMetadata": false,
     "experimentalDecorators": false,
+    "esModuleInterop": true,
     "importHelpers": true,
     "jsx": "react",
     "lib": ["es2015", "dom"],
@@ -23,9 +24,8 @@
     "strict": true,
     "strictNullChecks": true,
     "stripInternal": true,
-    "target": "es5",
-    "typeRoots": ["node_modules/@types"]
+    "target": "es5"
   },
-  "include": ["src", "./typings.d.ts"],
+  "include": ["src", "types"],
   "exclude": ["node_modules", "dist"]
 }

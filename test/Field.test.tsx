@@ -1,9 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Field, FieldProps } from '../src/Field';
-import { Formik, FormikProps } from '../src/formik';
+import { Formik, Field, FieldProps, FormikProps } from '../src';
 
-import { shallow } from 'enzyme';
+import { shallow, mount } from '@pisano/enzyme';
 import { noop } from './testHelpers';
 
 interface TestFormValues {
@@ -21,21 +20,22 @@ const TestForm: React.SFC<any> = p => (
 
 describe('A <Field />', () => {
   describe('<Field validate>', () => {
-    const makeFieldTree = (props: any, ctx: any) =>
-      shallow(<Field {...props} />, { context: { formik: ctx } });
+    const makeFieldTree = (props: any) =>
+      shallow(<Field.WrappedComponent {...props} />);
 
     it('calls validate during onChange if present', () => {
       const handleChange = jest.fn(noop);
       const setFieldError = jest.fn(noop);
       const validate = jest.fn(noop);
-      const tree = makeFieldTree(
-        { name: 'name', validate },
-        {
+      const tree = makeFieldTree({
+        name: 'name',
+        validate,
+        formik: {
           handleChange,
           setFieldError,
           validateOnChange: true,
-        }
-      );
+        },
+      });
       tree.find('input').simulate('change', {
         persist: noop,
         target: {
@@ -52,14 +52,15 @@ describe('A <Field />', () => {
       const handleChange = jest.fn(noop);
       const setFieldError = jest.fn(noop);
       const validate = jest.fn(noop);
-      const tree = makeFieldTree(
-        { name: 'name', validate },
-        {
+      const tree = makeFieldTree({
+        name: 'name',
+        validate,
+        formik: {
           handleChange,
           setFieldError,
           validateOnChange: false,
-        }
-      );
+        },
+      });
       tree.find('input').simulate('change', {
         persist: noop,
         target: {
@@ -76,14 +77,15 @@ describe('A <Field />', () => {
       const handleBlur = jest.fn(noop);
       const setFieldError = jest.fn(noop);
       const validate = jest.fn(noop);
-      const tree = makeFieldTree(
-        { name: 'name', validate },
-        {
+      const tree = makeFieldTree({
+        name: 'name',
+        validate,
+        formik: {
           handleBlur,
           setFieldError,
           validateOnBlur: true,
-        }
-      );
+        },
+      });
       tree.find('input').simulate('blur', {
         persist: noop,
         target: {
@@ -91,6 +93,7 @@ describe('A <Field />', () => {
           value: 'ian',
         },
       });
+
       expect(handleBlur).toHaveBeenCalled();
       expect(setFieldError).toHaveBeenCalled();
       expect(validate).toHaveBeenCalled();
@@ -100,14 +103,15 @@ describe('A <Field />', () => {
       const handleBlur = jest.fn(noop);
       const setFieldError = jest.fn(noop);
       const validate = jest.fn(noop);
-      const tree = makeFieldTree(
-        { name: 'name', validate },
-        {
+      const tree = makeFieldTree({
+        name: 'name',
+        validate,
+        formik: {
           handleBlur,
           setFieldError,
           validateOnBlur: false,
-        }
-      );
+        },
+      });
       tree.find('input').simulate('blur', {
         persist: noop,
         target: {
@@ -179,6 +183,33 @@ describe('A <Field />', () => {
       expect(actual.field.onChange).toBe(handleChange);
       expect(actual.field.onBlur).toBe(handleBlur);
       expect(actual.form).toEqual(injected);
+    });
+
+    it('assigns innerRef as a ref to string components', () => {
+      const innerRef = jest.fn();
+      const tree = mount(<Field name="name" innerRef={innerRef} />, {
+        context: { formik: {} },
+      });
+      const element = tree.find('input').instance();
+      expect(innerRef).toHaveBeenCalledWith(element);
+    });
+
+    it('forwards innerRef to React component', () => {
+      let actual: any; /** FieldProps ;) */
+      const Component: React.SFC<FieldProps> = props =>
+        (actual = props) && null;
+
+      const innerRef = jest.fn();
+
+      ReactDOM.render(
+        <TestForm
+          render={() => (
+            <Field name="name" component={Component} innerRef={innerRef} />
+          )}
+        />,
+        node
+      );
+      expect(actual.innerRef).toBe(innerRef);
     });
   });
 

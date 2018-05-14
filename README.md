@@ -44,6 +44,14 @@ By now, you might be thinking, "Why didn't you just use
 minimal API that does the really really annoying stuff, and leaves the rest up
 to you.**
 
+## Testimonials
+
+> "I can't believe people ever put forms in redux, or did anything else other than this."  
+> --[James Long](https://twitter.com/jlongster), Creator of Prettier and Actual Budget
+
+> ["Formik. All day. All long."](https://twitter.com/ken_wheeler/status/974676242501947397?s=20)  
+> --[Ken Wheeler](https://twitter.com/ken_wheeler), Director of Open Source at Formidable Labs
+
 ## Influences
 
 Formik started by expanding on
@@ -79,6 +87,8 @@ You can also try before you buy with this
 
 * [An Introduction to Formik](https://youtu.be/-tDy7ds0dag?t=33s) by
   [Jared Palmer](https://twitter.com/jaredpalmer) @ Spotify NYC. August 15th, 2017.
+
+
 
 ## Community Articles / Tutorials
 
@@ -303,84 +313,87 @@ can install Yup from npm...
 npm install yup --save
 ```
 
-** Table of Contents **
+## Table of Contents
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
-
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-
-* [Guides](#guides)
-  * [Basics](#basics)
-  * [React Native](#react-native)
-    * [Why use `setFieldValue` instead of `handleChange`?](#why-use-setfieldvalue-instead-of-handlechange)
-    * [Avoiding new functions in render](#avoiding-new-functions-in-render)
-  * [Using Formik with TypeScript](#using-formik-with-typescript)
-    * [Render props (`<Formik />` and `<Field/>`)](#render-props-formik--and-field)
-    * [`withFormik()`](#withformik)
-* [API](#api)
-  * [`<Formik />`](#formik-)
-    * [Formik render methods](#formik-render-methods)
-    * [Formik props](#formik-props)
-      * [`dirty: boolean`](#dirty-boolean)
-      * [`errors: { [field: string]: string }`](#errors--field-string-string-)
-      * [`handleBlur: (e: any) => void`](#handleblur-e-any--void)
-      * [`handleChange: (e: React.ChangeEvent<any>) => void`](#handlechange-e-reactchangeeventany--void)
-      * [`handleReset: () => void`](#handlereset---void)
-      * [`handleSubmit: (e: React.FormEvent<HTMLFormEvent>) => void`](#handlesubmit-e-reactformeventhtmlformevent--void)
-      * [`isSubmitting: boolean`](#issubmitting-boolean)
-      * [`isValid: boolean`](#isvalid-boolean)
-      * [`resetForm: (nextValues?: Values) => void`](#resetform-nextvalues-values--void)
-      * [`setErrors: (fields: { [field: string]: string }) => void`](#seterrors-fields--field-string-string---void)
-      * [`setFieldError: (field: string, errorMsg: string) => void`](#setfielderror-field-string-errormsg-string--void)
-      * [`setFieldTouched: (field: string, isTouched: boolean) => void`](#setfieldtouched-field-string-istouched-boolean--void)
-      * [`setFieldValue: (field: string, value: any) => void`](#setfieldvalue-field-string-value-any--void)
-      * [`setStatus: (status?: any) => void`](#setstatus-status-any--void)
-      * [`setSubmitting: (isSubmitting: boolean) => void`](#setsubmitting-issubmitting-boolean--void)
-      * [`setTouched: (fields: { [field: string]: boolean }) => void`](#settouched-fields--field-string-boolean---void)
-      * [`setValues: (fields: { [field: string]: any }) => void`](#setvalues-fields--field-string-any---void)
-      * [`status?: any`](#status-any)
-      * [`touched: { [field: string]: boolean }`](#touched--field-string-boolean-)
-      * [`values: { [field: string]: any }`](#values--field-string-any-)
-      * [`validateForm: (values?: any) => void`](#validateform-values-any--void)
-    * [`component`](#component)
-    * [`render: (props: FormikProps<Values>) => ReactNode`](#render-props-formikpropsvalues--reactnode)
-    * [`children: func`](#children-func)
-    * [`enableReinitialize?: boolean`](#enablereinitialize-boolean)
-    * [`isInitialValid?: boolean`](#isinitialvalid-boolean)
-    * [`initialValues?: Values`](#initialvalues-values)
-    * [`onReset?: (values: Values, formikBag: FormikBag) => void`](#onreset-values-values-formikbag-formikbag--void)
-    * [`onSubmit: (values: Values, formikBag: FormikBag) => void`](#onsubmit-values-values-formikbag-formikbag--void)
-    * [`validate?: (values: Values) => FormikError<Values> | Promise<any>`](#validate-values-values--formikerrorvalues--promiseany)
-    * [`validateOnBlur?: boolean`](#validateonblur-boolean)
-    * [`validateOnChange?: boolean`](#validateonchange-boolean)
-    * [`validationSchema?: Schema | (() => Schema)`](#validationschema-schema----schema)
-  * [`<Field />`](#field-)
-    * [`validate?: (value: any) => undefined | string | Promise<any>`](#validate-value-any--undefined--string--promiseany)
-  * [`<FieldArray/>`](#fieldarray)
-    * [`name: string`](#name-string)
-    * [FieldArray Helpers](#fieldarray-helpers)
-    * [FieldArray render methods](#fieldarray-render-methods)
-      * [`render: (arrayHelpers: ArrayHelpers) => React.ReactNode`](#render-arrayhelpers-arrayhelpers--reactreactnode)
-      * [`component: React.ReactNode`](#component-reactreactnode)
-  * [`<Form />`](#form-)
-  * [`withFormik(options)`](#withformikoptions)
-    * [`options`](#options)
-      * [`displayName?: string`](#displayname-string)
-      * [`enableReinitialize?: boolean`](#enablereinitialize-boolean-1)
-      * [`handleSubmit: (values: Values, formikBag: FormikBag) => void`](#handlesubmit-values-values-formikbag-formikbag--void)
-        * [The "FormikBag":](#the-formikbag)
-      * [`isInitialValid?: boolean | (props: Props) => boolean`](#isinitialvalid-boolean--props-props--boolean)
-      * [`mapPropsToValues?: (props: Props) => Values`](#mappropstovalues-props-props--values)
-      * [`validate?: (values: Values, props: Props) => FormikError<Values> | Promise<any>`](#validate-values-values-props-props--formikerrorvalues--promiseany)
-      * [`validateOnBlur?: boolean`](#validateonblur-boolean-1)
-      * [`validateOnChange?: boolean`](#validateonchange-boolean-1)
-      * [`validationSchema?: Schema | ((props: Props) => Schema)`](#validationschema-schema--props-props--schema)
-    * [Injected props and methods](#injected-props-and-methods)
-* [Organizations and projects using Formik](#organizations-and-projects-using-formik)
-* [Authors](#authors)
-* [Contributors](#contributors)
+- [Guides](#guides)
+  - [Basics](#basics)
+  - [React Native](#react-native)
+    - [Why use `setFieldValue` instead of `handleChange`?](#why-use-setfieldvalue-instead-of-handlechange)
+    - [Avoiding new functions in render](#avoiding-new-functions-in-render)
+  - [Using Formik with TypeScript](#using-formik-with-typescript)
+    - [Render props (`<Formik />` and `<Field />`)](#render-props-formik--and-field)
+    - [`withFormik()`](#withformik)
+- [API](#api)
+  - [`<Formik />`](#formik-)
+    - [Formik render methods](#formik-render-methods)
+    - [Formik props](#formik-props)
+      - [`dirty: boolean`](#dirty-boolean)
+      - [`errors: { [field: string]: string }`](#errors--field-string-string-)
+      - [`handleBlur: (e: any) => void`](#handleblur-e-any--void)
+      - [`handleChange: (e: React.ChangeEvent<any>) => void`](#handlechange-e-reactchangeeventany--void)
+      - [`handleReset: () => void`](#handlereset---void)
+      - [`handleSubmit: (e: React.FormEvent<HTMLFormEvent>) => void`](#handlesubmit-e-reactformeventhtmlformevent--void)
+      - [`isSubmitting: boolean`](#issubmitting-boolean)
+      - [`isValid: boolean`](#isvalid-boolean)
+      - [`resetForm: (nextValues?: Values) => void`](#resetform-nextvalues-values--void)
+      - [`setErrors: (fields: { [field: string]: string }) => void`](#seterrors-fields--field-string-string---void)
+      - [`setFieldError: (field: string, errorMsg: string) => void`](#setfielderror-field-string-errormsg-string--void)
+      - [`setFieldTouched: (field: string, isTouched: boolean, shouldValidate?: boolean) => void`](#setfieldtouched-field-string-istouched-boolean-shouldvalidate-boolean--void)
+      - [`submitForm: () => void`](#submitform---void)
+      - [`submitCount: number`](#submitcount-number)
+      - [`setFieldValue: (field: string, value: any, shouldValidate?: boolean) => void`](#setfieldvalue-field-string-value-any-shouldvalidate-boolean--void)
+      - [`setStatus: (status?: any) => void`](#setstatus-status-any--void)
+      - [`setSubmitting: (isSubmitting: boolean) => void`](#setsubmitting-issubmitting-boolean--void)
+      - [`setTouched: (fields: { [field: string]: boolean }) => void`](#settouched-fields--field-string-boolean---void)
+      - [`setValues: (fields: { [field: string]: any }) => void`](#setvalues-fields--field-string-any---void)
+      - [`status?: any`](#status-any)
+      - [`touched: { [field: string]: boolean }`](#touched--field-string-boolean-)
+      - [`values: { [field: string]: any }`](#values--field-string-any-)
+      - [`validateForm: (values?: any) => void`](#validateform-values-any--void)
+    - [`component`](#component)
+    - [`render: (props: FormikProps<Values>) => ReactNode`](#render-props-formikpropsvalues--reactnode)
+    - [`children: func`](#children-func)
+    - [`enableReinitialize?: boolean`](#enablereinitialize-boolean)
+    - [`isInitialValid?: boolean`](#isinitialvalid-boolean)
+    - [`initialValues?: Values`](#initialvalues-values)
+    - [`onReset?: (values: Values, formikBag: FormikBag) => void`](#onreset-values-values-formikbag-formikbag--void)
+    - [`onSubmit: (values: Values, formikBag: FormikBag) => void`](#onsubmit-values-values-formikbag-formikbag--void)
+    - [`validate?: (values: Values) => FormikErrors<Values> | Promise<any>`](#validate-values-values--formikerrorsvalues--promiseany)
+    - [`validateOnBlur?: boolean`](#validateonblur-boolean)
+    - [`validateOnChange?: boolean`](#validateonchange-boolean)
+    - [`validationSchema?: Schema | (() => Schema)`](#validationschema-schema----schema)
+  - [`<Field />`](#field-)
+    - [`validate?: (value: any) => undefined | string | Promise<any>`](#validate-value-any--undefined--string--promiseany)
+    - [Refs](#refs)
+  - [`<FieldArray />`](#fieldarray)
+      - [`name: string`](#name-string)
+      - [`validateOnChange?: boolean`](#validateonchange-boolean-1)
+    - [FieldArray Validation Gotchas](#fieldarray-validation-gotchas)
+    - [FieldArray Helpers](#fieldarray-helpers)
+    - [FieldArray render methods](#fieldarray-render-methods)
+      - [`render: (arrayHelpers: ArrayHelpers) => React.ReactNode`](#render-arrayhelpers-arrayhelpers--reactreactnode)
+      - [`component: React.ReactNode`](#component-reactreactnode)
+  - [`<Form />`](#form-)
+  - [`withFormik(options)`](#withformikoptions)
+    - [`options`](#options)
+      - [`displayName?: string`](#displayname-string)
+      - [`enableReinitialize?: boolean`](#enablereinitialize-boolean-1)
+      - [`handleSubmit: (values: Values, formikBag: FormikBag) => void`](#handlesubmit-values-values-formikbag-formikbag--void)
+        - [The "FormikBag":](#the-formikbag)
+      - [`isInitialValid?: boolean | (props: Props) => boolean`](#isinitialvalid-boolean--props-props--boolean)
+      - [`mapPropsToValues?: (props: Props) => Values`](#mappropstovalues-props-props--values)
+      - [`validate?: (values: Values, props: Props) => FormikErrors<Values> | Promise<any>`](#validate-values-values-props-props--formikerrorsvalues--promiseany)
+      - [`validateOnBlur?: boolean`](#validateonblur-boolean-1)
+      - [`validateOnChange?: boolean`](#validateonchange-boolean-2)
+      - [`validationSchema?: Schema | ((props: Props) => Schema)`](#validationschema-schema--props-props--schema)
+    - [Injected props and methods](#injected-props-and-methods)
+- [Organizations and projects using Formik](#organizations-and-projects-using-formik)
+- [Authors](#authors)
+- [Contributors](#contributors)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -456,7 +469,8 @@ const EditUserDialog = ({ user, updateUser, onClose }) => {
               onBlur={handleBlur}
               value={values.social.facebook}
             />
-            {errors.social.facebook &&
+            {errors.social &&
+              errors.social.facebook &&
               touched.facebook && <div>{errors.social.facebook}</div>}
             <input
               type="text"
@@ -465,7 +479,8 @@ const EditUserDialog = ({ user, updateUser, onClose }) => {
               onBlur={handleBlur}
               value={values.social.twitter}
             />
-            {errors.social.twitter &&
+            {errors.social &&
+              errors.social.twitter &&
               touched.twitter && <div>{errors.social.twitter}</div>}
             <button type="submit" disabled={isSubmitting}>
               Submit
@@ -482,10 +497,10 @@ To make writing forms less verbose. Formik comes with a few helpers to save you
 key strokes.
 
 * `<Field>`
-* `<Form/>`
+* `<Form />`
 
-This is the **exact** same form as before, but written with `<Form/>` and
-`<Field/>`:
+This is the **exact** same form as before, but written with `<Form />` and
+`<Field />`:
 
 ```js
 // EditUserDialog.js
@@ -559,7 +574,7 @@ const MyReactNativeForm = props => (
       onChangeText={text => props.setFieldValue('email', text)}
       value={props.values.email}
     />
-    <Button onPress={props.handleSubmit} title="Submit" /> //
+    <Button onPress={props.handleSubmit} title="Submit" />
   </View>
 );
 
@@ -569,9 +584,9 @@ export default enhancer(MyReactNativeForm);
 As you can see above, the notable differences between using Formik with React
 DOM and React Native are:
 
-1. Formik's `props.handleSubmit` is passed to a `<Button onPress={...}/>`
-   instead of HTML `<form onSubmit={...}/>` component (since there is no
-   `<form/>` element in React Native).
+1. Formik's `props.handleSubmit` is passed to a `<Button onPress={...} />`
+   instead of HTML `<form onSubmit={...} />` component (since there is no
+   `<form />` element in React Native).
 2. `<TextInput />` uses Formik's `props.setFieldValue` instead of
    `props.handleChange`. To understand why, see the discussion below.
 
@@ -592,14 +607,14 @@ const MyReactNativeForm = props => (
           actions.setSubmitting(false);
         }, 1000);
       }}
-      render={props => (
+      render={formikProps => (
         <View>
           <TextInput
             name="email"
-            onChangeText={props.handleChange} // this WILL NOT WORK IN RN
-            value={props.values.email}
+            onChangeText={formikProps.handleChange} // this WILL NOT WORK IN RN
+            value={formikProps.values.email}
           />
-          <Button onPress={props.handleSubmit} />
+          <Button onPress={formikProps.handleSubmit} />
         </View>
       )}
     />
@@ -628,7 +643,7 @@ the following _(emphasis added)_:
 > as an argument to the callback handler.**
 
 However, Formik works just fine if you use `props.setFieldValue`!
-Philisophically, just treat React Native's `<TextInput/>` the same way you would
+Philosophically, just treat React Native's `<TextInput />` the same way you would
 any other 3rd party custom input element.
 
 In conclusion, the following WILL work in React Native:
@@ -651,7 +666,7 @@ export const MyReactNativeForm = props => (
 #### Avoiding new functions in render
 
 If for any reason you wish to avoid creating new functions on each render, I
-suggest treating React Native's `<TextInput/>` as if it were another 3rd party
+suggest treating React Native's `<TextInput />` as if it were another 3rd party
 custom input element:
 
 * Write your own class wrapper around the custom input element
@@ -725,7 +740,7 @@ The Formik source code is written in TypeScript, so you can rest assured that
 types will always be up to date. As a mental model, Formik's types are very
 similar to React Router 4's `<Route>`.
 
-#### Render props (`<Formik />` and `<Field/>`)
+#### Render props (`<Formik />` and `<Field />`)
 
 ```tsx
 import * as React from 'react';
@@ -885,7 +900,7 @@ const BasicExample = () => (
 
 #### Formik render methods
 
-There are three ways to render things with `<Formik/>`
+There are three ways to render things with `<Formik />`
 
 * `<Formik component>`
 * `<Formik render>`
@@ -960,15 +975,24 @@ Set `errors` imperatively.
 Set the error message of a field imperatively. `field` should match the key of
 [`errors`] you wish to update. Useful for creating custom input error handlers.
 
-##### `setFieldTouched: (field: string, isTouched: boolean) => void`
+##### `setFieldTouched: (field: string, isTouched: boolean, shouldValidate?: boolean) => void`
 
 Set the touched state of a field imperatively. `field` should match the key of
-[`touched`] you wish to update. Useful for creating custom input blur handlers.
+[`touched`] you wish to update. Useful for creating custom input blur handlers. Calling this method will trigger validation to run if [`validateOnBlur`] is set to `true` (which it is by default). You can also explicitly prevent/skip validation by passing a third argument as `false`.
 
-##### `setFieldValue: (field: string, value: any) => void`
+##### `submitForm: () => void`
+
+Trigger a form submission.
+
+##### `submitCount: number`
+
+Number of times user tried to submit the form. Increases when [`handleSubmit`](#handlesubmit-values-values-formikbag-formikbag--void) is called, resets after calling  
+[`handleReset`](#handlereset---void). `submitCount` is readonly computed property and should not be mutated directly.
+
+##### `setFieldValue: (field: string, value: any, shouldValidate?: boolean) => void`
 
 Set the value of a field imperatively. `field` should match the key of
-[`values`] you wish to update. Useful for creating custom input change handlers.
+[`values`] you wish to update. Useful for creating custom input change handlers. Calling this will trigger validation to run if [`validateOnChange`] is set to `true` (which it is by default). You can also explicitly prevent/skip validation by passing a third argument as `false`.
 
 ##### `setStatus: (status?: any) => void`
 
@@ -1043,7 +1067,7 @@ don’t use both in the same `<Formik>`.
 #### `render: (props: FormikProps<Values>) => ReactNode`
 
 ```tsx
-<Formik render={props => <ContactForm {...props} />}/>
+<Formik render={props => <ContactForm {...props} />} />
 
 <Formik
   render={({ handleSubmit, handleChange, handleBlur, values, errors }) => (
@@ -1068,7 +1092,7 @@ don’t use both in the same `<Formik>`.
 #### `children: func`
 
 ```tsx
-<Formik children={props => <ContactForm {...props} />}/>
+<Formik children={props => <ContactForm {...props} />} />
 
 // or...
 
@@ -1131,7 +1155,7 @@ passed to the the wrapped component.
 Note: [`errors`], [`touched`], [`status`] and all event handlers are NOT
 included in the `FormikBag`.
 
-#### `validate?: (values: Values) => FormikError<Values> | Promise<any>`
+#### `validate?: (values: Values) => FormikErrors<Values> | Promise<any>`
 
 _Note: I suggest using [`validationSchema`] and Yup for validation. However,
 `validate` is a dependency-free, straightforward way to validate your forms._
@@ -1198,10 +1222,10 @@ component's [`errors`]. Its keys should match those of [`values`].
 ### `<Field />`
 
 `<Field />` will automagically hook up inputs to Formik. It uses the `name`
-attribute to match up with Formik state. `<Field/>` will default to an
-`<input/>` element. To change the underlying element of `<Field/>`, specify a
+attribute to match up with Formik state. `<Field />` will default to an
+`<input />` element. To change the underlying element of `<Field />`, specify a
 `component` prop. It can either be a string like `select` or another React
-component. `<Field/>` can also take a `render` prop.
+component. `<Field />` can also take a `render` prop.
 
 ```js
 import React from 'react';
@@ -1258,7 +1282,7 @@ const CustomInputComponent: React.SFC<
 #### `validate?: (value: any) => undefined | string | Promise<any>`
 
 You can run independent field-level validations by passing a function to the
-`validate>` prop. The function will respect the [`validateOnBlur`] and
+`validate` prop. The function will respect the [`validateOnBlur`] and
 [`validateOnChange`] config/props specified in the `<Field>'s` parent `<Formik>`
 / `withFormik`. This function can be either be:
 
@@ -1267,9 +1291,9 @@ You can run independent field-level validations by passing a function to the
 
 ```js
 // Synchronous validation for Field
-const validate = values => {
+const validate = value => {
   let errorMessage;
-  if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)) {
+  if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value)) {
     errorMessage = 'Invalid email address';
   }
   return errorMessage;
@@ -1299,13 +1323,17 @@ const validate = value => {
 Note: To allow for i18n libraries, the TypeScript typings for `validate` are
 slightly relaxed and allow you to return a `Function` (e.g. `i18n('invalid')`).
 
-### `<FieldArray/>`
+#### Refs
+
+When you are **not** using a custom component and you need to access the underlying DOM node created by `Field` (e.g. to call `focus`), pass the callback to the `innerRef` prop instead.
+
+### `<FieldArray />`
 
 `<FieldArray />` is a component that helps with common array/list manipulations. You pass it a `name` property with the path to the key within `values` that holds the relevant array. `<FieldArray />` will then give you access to array helper methods via render props. For convenience, calling these methods will trigger validation and also manage `touched` for you.
 
 ```jsx
 import React from 'react';
-import { Formik, Form, Field, FieldArray } from 'formik'
+import { Formik, Form, Field, FieldArray } from 'formik';
 
 // Here is an example of a form with an editable list.
 // Next to each input are buttons for insert and remove.
@@ -1320,35 +1348,32 @@ export const FriendList = () => (
           alert(JSON.stringify(values, null, 2));
         }, 500)
       }
-      render={formikProps => (
+      render={({ values }) => (
         <FieldArray
           name="friends"
           render={arrayHelpers => (
-          <Form>
+            <Form>
               {values.friends && values.friends.length > 0 ? (
                 values.friends.map((friend, index) => (
                   <div>
                     <Field name={`friends.${index}`} />
                     <button
                       type="button"
-                      onClick={() => arrayHelpers.remove(index) // remove a friend from the list}
+                      onClick={() => arrayHelpers.remove(index)} // remove a friend from the list
                     >
                       -
                     </button>
                     <button
                       type="button"
-                      onClick={() => arrayHelpers.insert(index, '') // insert an empty string at a position}
+                      onClick={() => arrayHelpers.insert(index, '')} // insert an empty string at a position
                     >
                       +
                     </button>
                   </div>
                 ))
               ) : (
-                <button
-                  type="button"
-                  onClick={() => arrayHelpers.push('')}
-                >
-                  {/** show this when user has removed all friends from the list */}
+                <button type="button" onClick={() => arrayHelpers.push('')}>
+                  {/* show this when user has removed all friends from the list */}
                   Add a friend
                 </button>
               )}
@@ -1368,6 +1393,76 @@ export const FriendList = () => (
 
 The name or path to the relevant key in [`values`].
 
+##### `validateOnChange?: boolean`
+
+Default is `true`. Determines if form validation should or should not be run _after_ any array manipulations.
+
+#### FieldArray Validation Gotchas
+
+Validation can be tricky with `<FieldArray>`.
+
+If you use [`validationSchema`] and your form has array validation requirements (like a min length) as well as nested array field requirements, displaying errors can be tricky. Formik/Yup will show validation errors inside out. For example,
+
+```js
+const schema = Yup.object().shape({
+  friends: Yup.array()
+    .of(
+      Yup.object().shape({
+        name: Yup.string()
+          .min(4, 'too short')
+          .required('Required'), // these constraints take precedence
+        salary: Yup.string()
+          .min(3, 'cmon')
+          .required('Required'), // these constraints take precedence
+      })
+    )
+    .required('Must have friends') // these constraints are shown if and only if inner constraints are satisfied
+    .min(3, 'Minimum of 3 friends'),
+});
+```
+
+Since Yup and your custom validation function should always output error messages as strings, you'll need to sniff whether your nested error is an array or a string when you go to display it.
+
+So...to display `'Must have friends'` and `'Minimum of 3 friends'` (our example's array validation contstraints)...
+
+**_Bad_**
+
+```js
+// within a `FieldArray`'s render
+const FriendArrayErrors = errors =>
+  errors.friends ? <div>{errors.friends}</div> : null; // app will crash
+```
+
+**_Good_**
+
+```js
+// within a `FieldArray`'s render
+const FriendArrayErrors = errors =>
+  typeof errors.friends === 'string' ? <div>{errors.friends}</div> : null;
+```
+
+For the nested field errors, you should assume that no part of the object is defined unless you've checked for it. Thus, you may want to do yourself a favor and make a custom `<ErrorMessage />` component that looks like this:
+
+```js
+import { Field, getIn } from 'formik';
+
+const ErrorMessage = ({ name }) => (
+  <Field
+    name={name}
+    render={({ form }) => {
+      const error = getIn(form.errors, name);
+      const touch = getIn(form.touched, name);
+      return touch && error ? error : null;
+    }}
+  />
+);
+
+// Usage
+<ErrorMessage name="friends[0].name" />; // => null, 'too short', or 'required'
+```
+
+_NOTE_: In Formik v0.12 / 1.0, a new `meta` prop may be be added to `Field` and `FieldArray` that will give you relevant metadata such as `error` & `touch`, which will save you from having to use Formik or lodash's getIn or checking if the path is defined on your own.
+
 #### FieldArray Helpers
 
 The following methods are made available via render props.
@@ -1382,7 +1477,7 @@ The following methods are made available via render props.
 
 #### FieldArray render methods
 
-There are three ways to render things with `<FieldArray/>`
+There are three ways to render things with `<FieldArray />`
 
 * `<FieldArray name="..." component>`
 * `<FieldArray name="..." render>`
@@ -1450,9 +1545,9 @@ export const MyDynamicForm = ({
 
 ### `<Form />`
 
-Like `<Field/>`, `<Form/>` is a helper component you can use to save time. It is
+Like `<Field />`, `<Form />` is a helper component you can use to save time. It is
 tiny wrapper around `<form onSubmit={context.formik.handleSubmit} />`. This
-means you don't need to explictly type out `<form onSubmit={props.handleSubmit}/>` if you don't want to.
+means you don't need to explictly type out `<form onSubmit={props.handleSubmit} />` if you don't want to.
 
 **ReactDOM only**
 
@@ -1553,7 +1648,7 @@ will map all props that are not functions to the inner component's
 Even if your form is not receiving any props from its parent, use
 `mapPropsToValues` to initialize your forms empty state.
 
-##### `validate?: (values: Values, props: Props) => FormikError<Values> | Promise<any>`
+##### `validate?: (values: Values, props: Props) => FormikErrors<Values> | Promise<any>`
 
 _Note: I suggest using [`validationSchema`] and Yup for validation. However,
 `validate` is a dependency-free, straightforward way to validate your forms._
@@ -1674,8 +1769,8 @@ MIT License.
 [`resetform`]: #resetform-nextprops-props--void
 [`seterrors`]: #seterrors-fields--field-string-string---void
 [`setfielderror`]: #setfielderror-field-string-errormsg-string--void
-[`setfieldtouched`]: #setfieldtouched-field-string-istouched-boolean--void
-[`setfieldvalue`]: #setfieldvalue-field-string-value-any--void
+[`setfieldtouched`]: #setfieldtouched-field-string-istouched-boolean-shouldvalidate-boolean--void
+[`setfieldvalue`]: #setfieldvalue-field-string-value-any-shouldvalidate-boolean--void
 [`setstatus`]: #setstatus-status-any--void
 [`setsubmitting`]: #setsubmitting-boolean--void
 [`settouched`]: #settouched-fields--field-string-boolean---void

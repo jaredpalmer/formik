@@ -1,12 +1,14 @@
 language: node_js
 node_js:
   - '8'
+  - '10'
 env:
   - CI=true
-
+cache: yarn
+git:
+  depth: 5
 script:
   - yarn test -- --runInBand --no-cache --coverage && yarn size
-
 deploy:
   provider: script
   script: curl -X POST -d '' $NETLIFY_BUILD_HOOK

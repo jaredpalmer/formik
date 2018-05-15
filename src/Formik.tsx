@@ -22,9 +22,8 @@ import {
 } from './utils';
 
 /**
- * We should use a constant enum here, but we don't for compat with Babel 7 TypeScript
+ * We probably should not use a constant enum here, but Babel 7 isn't out yet
  */
-
 export enum FormikConstants {
   SUBMIT_FORM = 'SUBMIT_FORM',
   VALIDATE_ATTEMPT = 'VALIDATE_ATTEMPT',

@@ -46,7 +46,7 @@
     "lodash.topath": "4.5.2",
     "prop-types": "^15.6.1",
     "react-fast-compare": "^1.0.0",
-    "react-lifecycles-compat": "^3.0.2",
+    "react-lifecycles-compat": "^3.0.4",
     "warning": "^3.0.0"
   },
   "optionalDependencies": {},

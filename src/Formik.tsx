@@ -161,7 +161,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
 
   reducer = (
     state: FormikState<Values>,
-    props: FormikConfig<Values> & ExtraProps,
+    _props: FormikConfig<Values> & ExtraProps,
     action: Actions<Values>
   ) => {
     switch (action.type) {

@@ -1128,7 +1128,7 @@ describe('<Formik>', () => {
     );
 
     button.blur(); // unsets activeElement
-    global.console.error.mockClear();
+    (global.console.error as jest.Mock<{}>).mockClear();
   });
 
   it('should not warn when button has type submit', () => {
@@ -1162,7 +1162,7 @@ describe('<Formik>', () => {
     );
 
     button.blur(); // unsets activeElement
-    global.console.error.mockClear();
+    (global.console.error as jest.Mock<{}>).mockClear();
   });
 
   it('should not warn when activeElement is not a button', () => {
@@ -1196,6 +1196,6 @@ describe('<Formik>', () => {
     );
 
     input.blur(); // unsets activeElement
-    global.console.error.mockClear();
+    (global.console.error as jest.Mock<{}>).mockClear();
   });
 });

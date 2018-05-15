@@ -40,6 +40,8 @@ export interface FormikState<Values> {
   touched: FormikTouched<Values>;
   /** whether the form is currently submitting */
   isSubmitting: boolean;
+  /** whether the form is currently validating */
+  isValidating: boolean;
   /** Top level status state, in case you need it */
   status?: any;
   /** Number of times user tried to submit the form */
@@ -64,11 +66,6 @@ export interface FormikComputedProps<Values> {
 export interface FormikActions<Values> {
   /** Manually set top level status. */
   setStatus(status?: any): void;
-  /**
-   * Manually set top level error
-   * @deprecated since 0.8.0
-   */
-  setError(e: any): void;
   /** Manually set errors object */
   setErrors(errors: FormikErrors<Values>): void;
   /** Manually set isSubmitting */

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Actions } from '.';
 /**
  * Values of fields in the form
  */
@@ -187,6 +188,13 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
    * Form component to render
    */
   component?: React.ComponentType<FormikProps<Values>> | React.ReactNode;
+
+  /** State reducer */
+  reducer?: (
+    prevState: FormikState<Values>,
+    nextState: FormikState<Values>,
+    action: Actions<Values>
+  ) => FormikState<Values>;
 
   /**
    * Render prop (works like React router's <Route render={props =>} />)

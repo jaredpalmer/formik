@@ -86,7 +86,7 @@ export type Actions<Values> =
     }
   | {
       type: FormikConstants.SET_TOUCHED;
-      payload: FormikValues;
+      payload: FormikTouched<Values>;
     }
   | {
       type: FormikConstants.SET_STATUS;
@@ -106,6 +106,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     validateOnBlur: true,
     isInitialValid: false,
     enableReinitialize: false,
+    reducer: (_p: FormikState<any>, n: FormikState<any>, _a: Actions<any>) => n,
   };
 
   initialValues: Values;
@@ -231,7 +232,12 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       (
         prevState: FormikState<Values>,
         props: FormikConfig<Values> & ExtraProps
-      ) => this.reducer(prevState, props, action),
+      ) =>
+        this.props.reducer!(
+          prevState,
+          this.reducer(prevState, props, action),
+          action
+        ),
       cb
     );
   };

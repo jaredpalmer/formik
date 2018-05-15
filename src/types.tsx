@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Actions } from '.';
+import { Actions } from './reducer';
+
 /**
  * Values of fields in the form
  */

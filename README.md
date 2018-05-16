@@ -369,7 +369,7 @@ npm install yup --save
   - [`<Field />`](#field-)
     - [`validate?: (value: any) => undefined | string | Promise<any>`](#validate-value-any--undefined--string--promiseany)
     - [Refs](#refs)
-  - [`<FieldArray />`](#fieldarray)
+  - [`<FieldArray />`](#fieldarray-)
       - [`name: string`](#name-string)
       - [`validateOnChange?: boolean`](#validateonchange-boolean-1)
     - [FieldArray Validation Gotchas](#fieldarray-validation-gotchas)

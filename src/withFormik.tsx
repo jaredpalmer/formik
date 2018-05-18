@@ -7,7 +7,7 @@ import {
   FormikHandlers,
   FormikProps,
   FormikSharedConfig,
-  FormikState,
+  FormikVisibleState,
   FormikValues,
 } from './types';
 import { isFunction } from './utils';
@@ -17,7 +17,7 @@ import { isFunction } from './utils';
  * Used with withFormik()
  */
 export type InjectedFormikProps<Props, Values> = Props &
-  FormikState<Values> &
+  FormikVisibleState<Values> &
   FormikActions<Values> &
   FormikHandlers &
   FormikComputedProps<Values>;

@@ -24,9 +24,9 @@ export type FormikTouched<Values> = {
 };
 
 /**
- * Formik state tree
+ * Formik state tree, visible keys
  */
-export interface FormikState<Values> {
+export interface FormikVisibleState<Values> {
   /** Form values */
   values: Values;
   /**
@@ -34,7 +34,7 @@ export interface FormikState<Values> {
    * @deprecated since 0.8.0
    */
   error?: any;
-  /** map of field names to specific error for that field */
+  /** map of field names to specific user set error for that field */
   errors: FormikErrors<Values>;
   /** map of field names to whether the field has been touched */
   touched: FormikTouched<Values>;
@@ -45,6 +45,20 @@ export interface FormikState<Values> {
   /** Number of times user tried to submit the form */
   submitCount: number;
 }
+
+/**
+ * Formik state tree, hidden keys
+ */
+export interface FormikHiddenState<Values> {
+  /** map of field names to specific validation error for that field */
+  validationErrors: FormikErrors<Values>;
+}
+
+/**
+ * Formik state tree
+ */
+export type FormikState<Values> = FormikVisibleState<Values> &
+  FormikHiddenState<Values>;
 
 /**
  * Formik computed properties. These are read-only.
@@ -222,7 +236,7 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
  * of <Formik/>.
  */
 export type FormikProps<Values> = FormikSharedConfig &
-  FormikState<Values> &
+  FormikVisibleState<Values> &
   FormikActions<Values> &
   FormikHandlers &
   FormikComputedProps<Values> & {

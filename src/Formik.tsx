@@ -1,4 +1,7 @@
 import * as React from 'react';
+import merge from 'lodash.merge';
+import omit from 'lodash.omit';
+import pickBy from 'lodash.pickby';
 import isEqual from 'react-fast-compare';
 import warning from 'warning';
 import { FormikProvider } from './connect';
@@ -12,6 +15,7 @@ import {
   FormikContext,
 } from './types';
 import {
+  deepKeys,
   isEmptyChildren,
   isFunction,
   isNaN,
@@ -46,6 +50,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     super(props);
     this.state = {
       values: props.initialValues || ({} as any),
+      validationErrors: {},
       errors: {},
       touched: {},
       isSubmitting: false,
@@ -94,10 +99,19 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     this.setState({ errors });
   };
 
+  /**
+   * Removes nested fields from this.state.errors
+   */
+  omitErrors = (fields: string | string[]) => {
+    this.setState(prevState => ({ errors: omit(prevState.errors, fields) }));
+  };
+
   setTouched = (touched: FormikTouched<Values>) => {
     this.setState({ touched }, () => {
       if (this.props.validateOnBlur) {
         this.runValidations(this.state.values);
+        const fields = deepKeys(pickBy(touched, key => key === true));
+        this.omitErrors(fields);
       }
     });
   };
@@ -106,6 +120,8 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     this.setState({ values }, () => {
       if (this.props.validateOnChange) {
         this.runValidations(values);
+        const fields = deepKeys(values);
+        this.omitErrors(fields);
       }
     });
   };
@@ -137,13 +153,16 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       : validationSchema;
     validateYupSchema(values, schema).then(
       () => {
-        this.setState({ errors: {} });
+        this.setState({ validationErrors: {} });
         if (onSuccess) {
           onSuccess();
         }
       },
       (err: any) =>
-        this.setState({ errors: yupToFormErrors(err), isSubmitting: false })
+        this.setState({
+          validationErrors: yupToFormErrors(err),
+          isSubmitting: false,
+        })
     );
   };
 
@@ -160,12 +179,15 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       if (isPromise(maybePromisedErrors)) {
         (maybePromisedErrors as Promise<any>).then(
           () => {
-            this.setState({ errors: {} });
+            this.setState({ validationErrors: {} });
           },
-          errors => this.setState({ errors, isSubmitting: false })
+          validationErrors =>
+            this.setState({ validationErrors, isSubmitting: false })
         );
       } else {
-        this.setErrors(maybePromisedErrors as FormikErrors<Values>);
+        this.setState({
+          validationErrors: maybePromisedErrors as FormikErrors<Values>,
+        });
       }
     }
   };
@@ -225,6 +247,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
 
         if (this.props.validateOnChange) {
           this.runValidations(setIn(this.state.values, field, val));
+          this.omitErrors(field);
         }
       }
     };
@@ -261,6 +284,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       () => {
         if (this.props.validateOnChange && shouldValidate) {
           this.runValidations(this.state.values);
+          this.omitErrors(field);
         }
       }
     );
@@ -313,16 +337,17 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       if (isPromise(maybePromisedErrors)) {
         (maybePromisedErrors as Promise<any>).then(
           () => {
-            this.setState({ errors: {} });
+            this.setState({ validationErrors: {} });
             this.executeSubmit();
           },
-          errors => this.setState({ errors, isSubmitting: false })
+          validationErrors =>
+            this.setState({ validationErrors, isSubmitting: false })
         );
         return;
       } else {
         const isValid = Object.keys(maybePromisedErrors).length === 0;
         this.setState({
-          errors: maybePromisedErrors as FormikErrors<Values>,
+          validationErrors: maybePromisedErrors as FormikErrors<Values>,
           isSubmitting: isValid,
         });
 
@@ -364,6 +389,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
 
       if (this.props.validateOnBlur) {
         this.runValidations(this.state.values);
+        this.omitErrors(field);
       }
     };
 
@@ -392,6 +418,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       () => {
         if (this.props.validateOnBlur && shouldValidate) {
           this.runValidations(this.state.values);
+          this.omitErrors(field);
         }
       }
     );
@@ -412,6 +439,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
 
     this.setState({
       isSubmitting: false,
+      validationErrors: {},
       errors: {},
       touched: {},
       error: undefined,
@@ -466,7 +494,10 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     return {
       dirty,
       isValid: dirty
-        ? this.state.errors && Object.keys(this.state.errors).length === 0
+        ? this.state.errors &&
+          Object.keys(this.state.errors).length === 0 &&
+          (this.state.validationErrors &&
+            Object.keys(this.state.validationErrors).length === 0)
         : isInitialValid !== false && isFunction(isInitialValid)
           ? (isInitialValid as (props: this['props']) => boolean)(this.props)
           : (isInitialValid as boolean),
@@ -475,8 +506,22 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
   };
 
   getFormikBag = () => {
+    const {
+      errors,
+      isSubmitting,
+      status,
+      submitCount,
+      touched,
+      validationErrors,
+      values,
+    } = this.state;
     return {
-      ...this.state,
+      errors: merge(validationErrors, errors),
+      isSubmitting,
+      status,
+      submitCount,
+      touched,
+      values,
       ...this.getFormikActions(),
       ...this.getFormikComputedProps(),
 

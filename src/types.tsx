@@ -36,6 +36,8 @@ export interface FormikState<Values> {
   error?: any;
   /** map of field names to specific error for that field */
   errors: FormikErrors<Values>;
+  /** map of field names to specific api error for that field */
+  apiErrors: FormikErrors<Values>;
   /** map of field names to whether the field has been touched */
   touched: FormikTouched<Values>;
   /** whether the form is currently submitting */
@@ -69,6 +71,8 @@ export interface FormikActions<Values> {
    * @deprecated since 0.8.0
    */
   setError(e: any): void;
+  /** Manually set apiErrors object */
+  setApiErrors(errors: FormikErrors<Values>): void;
   /** Manually set errors object */
   setErrors(errors: FormikErrors<Values>): void;
   /** Manually set isSubmitting */

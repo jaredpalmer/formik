@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { omit } from 'lodash';
 import isEqual from 'react-fast-compare';
 import warning from 'warning';
 import { FormikProvider } from './connect';
@@ -12,6 +13,7 @@ import {
   FormikContext,
 } from './types';
 import {
+  deepKeys,
   isEmptyChildren,
   isFunction,
   isNaN,
@@ -47,6 +49,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     this.state = {
       values: props.initialValues || ({} as any),
       errors: {},
+      apiErrors: {},
       touched: {},
       isSubmitting: false,
       submitCount: 0,
@@ -94,6 +97,19 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     this.setState({ errors });
   };
 
+  setApiErrors = (apiErrors: FormikErrors<Values>) => {
+    this.setState({ apiErrors });
+  };
+
+  /**
+   * Removes nested fields from this.state.apiErrors.
+   */
+  removeApiErrors = (fields: string | string[]) => {
+    this.setState(prevState => ({
+      apiErrors: omit(prevState.apiErrors, fields),
+    }));
+  };
+
   setTouched = (touched: FormikTouched<Values>) => {
     this.setState({ touched }, () => {
       if (this.props.validateOnBlur) {
@@ -104,6 +120,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
 
   setValues = (values: FormikValues) => {
     this.setState({ values }, () => {
+      this.removeApiErrors(deepKeys(values));
       if (this.props.validateOnChange) {
         this.runValidations(values);
       }
@@ -223,6 +240,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
           values: setIn(prevState.values, field!, val),
         }));
 
+        this.removeApiErrors(field);
         if (this.props.validateOnChange) {
           this.runValidations(setIn(this.state.values, field, val));
         }
@@ -259,6 +277,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
         values: setIn(prevState.values, field, value),
       }),
       () => {
+        this.removeApiErrors(field);
         if (this.props.validateOnChange && shouldValidate) {
           this.runValidations(this.state.values);
         }
@@ -412,6 +431,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
 
     this.setState({
       isSubmitting: false,
+      apiErrors: {},
       errors: {},
       touched: {},
       error: undefined,
@@ -447,6 +467,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       resetForm: this.resetForm,
       submitForm: this.submitForm,
       validateForm: this.runValidations,
+      setApiErrors: this.setApiErrors,
       setError: this.setError,
       setErrors: this.setErrors,
       setFieldError: this.setFieldError,
@@ -466,7 +487,10 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     return {
       dirty,
       isValid: dirty
-        ? this.state.errors && Object.keys(this.state.errors).length === 0
+        ? this.state.errors &&
+          Object.keys(this.state.errors).length === 0 &&
+          (this.state.apiErrors &&
+            Object.keys(this.state.apiErrors).length === 0)
         : isInitialValid !== false && isFunction(isInitialValid)
           ? (isInitialValid as (props: this['props']) => boolean)(this.props)
           : (isInitialValid as boolean),

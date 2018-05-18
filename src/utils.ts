@@ -79,6 +79,22 @@ export function setNestedObjectValues<T>(
   return response;
 }
 
+/**
+ * Recursively creates an array of keys of a nested object
+ * @param obj
+ * @param path
+ */
+export function deepKeys(obj: { [field: string]: any }, path: string = '') {
+  return Object.keys(obj).reduce((acc: any[], key: string) => {
+    if (isObject(obj[key])) {
+      acc = acc.concat(deepKeys(obj[key], path + key + '.'));
+    } else {
+      acc.push(path + key);
+    }
+    return acc;
+  }, []);
+}
+
 // Assertions
 
 /** @private is the given object a Function? */

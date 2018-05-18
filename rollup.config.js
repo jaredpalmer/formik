@@ -45,6 +45,7 @@ const buildUmd = ({ env }) => ({
           'bool',
           'element',
         ],
+        'node_modules/lodash/lodash.js': ['omit'],
       },
     }),
     sourceMaps(),

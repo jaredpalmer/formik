@@ -42,6 +42,7 @@
   "dependencies": {
     "create-react-context": "^0.2.2",
     "hoist-non-react-statics": "^2.5.0",
+    "lodash": "^4.17.10",
     "lodash.clonedeep": "^4.5.0",
     "lodash.topath": "4.5.2",
     "prop-types": "^15.6.1",
@@ -54,6 +55,7 @@
     "@pisano/enzyme": "^3.3.0-pisano.public.1",
     "@pisano/enzyme-adapter-react-16": "^1.1.1-pisano.public.1",
     "@types/jest": "^22.2.3",
+    "@types/lodash": "^4.14.108",
     "@types/lodash.clonedeep": "^4.5.3",
     "@types/lodash.topath": "4.5.3",
     "@types/react": "16.0.28",

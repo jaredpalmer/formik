@@ -197,6 +197,13 @@ describe('utils', () => {
       expect(obj).toEqual({ x: 'y' });
       expect(newObj).toEqual({ x: 'y', a: { x: { c: 'value' } } });
     });
+
+    it('does not clone unaffected keys of the object', () => {
+      const obj = { x: { name: 'n1', arr: [1] } };
+      const newObj = setIn(obj, 'x.name', 'n2');
+
+      expect(newObj.x.arr).toBe(obj.x.arr);
+    });
   });
 
   describe('isPromise', () => {

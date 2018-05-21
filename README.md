@@ -782,7 +782,7 @@ export const MyApp: React.SFC<{} /* whatever */> = () => {
 
 ```tsx
 import React from 'react';
-import Yup from 'yup';
+import * as Yup from 'yup';
 import { withFormik, FormikProps, FormikErrors, Form, Field } from 'formik';
 
 // Shape of form values

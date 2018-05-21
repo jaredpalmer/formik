@@ -65,6 +65,8 @@ export interface FieldConfig {
    */
   validate?: ((value: any) => string | Function | Promise<void> | undefined);
 
+  useDomValidation?: boolean;
+
   /**
    * Field name
    */
@@ -113,25 +115,43 @@ class FieldInner<Props = {}, Values = {}> extends React.Component<
 
   handleChange = (e: React.ChangeEvent<any>) => {
     const { handleChange, validateOnChange } = this.props.formik;
+    const { validate, useDomValidation } = this.props;
     handleChange(e); // Call Formik's handleChange no matter what
-    if (!!validateOnChange && !!this.props.validate) {
-      this.runFieldValidations(e.target.value);
+
+    if (validateOnChange && (validate || useDomValidation)) {
+      this.runFieldValidations(e.target);
     }
   };
 
   handleBlur = (e: any) => {
     const { handleBlur, validateOnBlur } = this.props.formik;
+    const { validate, useDomValidation } = this.props;
     handleBlur(e); // Call Formik's handleBlur no matter what
-    if (validateOnBlur && this.props.validate) {
-      this.runFieldValidations(e.target.value);
+    if (validateOnBlur && (validate || useDomValidation)) {
+      this.runFieldValidations(e.target);
     }
   };
 
-  runFieldValidations = (value: any) => {
+  runFieldValidations = (field: any) => {
     const { setFieldError } = this.props.formik;
-    const { name, validate } = this.props;
+    const { name, validate, useDomValidation } = this.props;
+
+    if (useDomValidation) {
+      const domError = field.validationMessage;
+      setFieldError(name, domError);
+      if (domError) {
+        // if dom constraint validation is not passed,
+        // there's no need to run user's `validate` fn
+        return;
+      }
+    }
+
+    if (!validate) {
+      return;
+    }
+
     // Call validate fn
-    const maybePromise = (validate as any)(value);
+    const maybePromise = (validate as any)(field.value);
     // Check if validate it returns a Promise
     if (isPromise(maybePromise)) {
       (maybePromise as Promise<any>).then(
@@ -150,6 +170,7 @@ class FieldInner<Props = {}, Values = {}> extends React.Component<
       name,
       render,
       children,
+      useDomValidation,
       component = 'input',
       formik,
       ...props
@@ -167,8 +188,10 @@ class FieldInner<Props = {}, Values = {}> extends React.Component<
           ? props.value // React uses checked={} for these inputs
           : getIn(formik.values, name),
       name,
-      onChange: validate ? this.handleChange : formik.handleChange,
-      onBlur: validate ? this.handleBlur : formik.handleBlur,
+      onChange:
+        validate || useDomValidation ? this.handleChange : formik.handleChange,
+      onBlur:
+        validate || useDomValidation ? this.handleBlur : formik.handleBlur,
     };
     const bag = { field, form: restOfFormik };
 

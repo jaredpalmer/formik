@@ -273,7 +273,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
 
     if (
       process.env.NODE_ENV !== 'production' &&
-      document &&
+      typeof document !== 'undefined' &&
       document.activeElement
     ) {
       const type =

@@ -38,7 +38,7 @@ By now, you might be thinking, "Why didn't you just use
 2. Redux-Form calls your entire top-level Redux reducer multiple times ON EVERY
    SINGLE KEYSTROKE. This is fine for small apps, but as your Redux app grows,
    input latency will continue to increase if you use Redux-Form.
-3. Redux-Form is 22.5 kB minified gzipped (Formik is 12.7 kB)
+3. Redux-Form is 22.5 kB minified gzipped (Formik is 7.8 kB)
 
 **My goal with Formik was to create a scalable, performant, form helper with a
 minimal API that does the really really annoying stuff, and leaves the rest up

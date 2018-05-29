@@ -52,6 +52,12 @@ to you.**
 > ["Formik. All day. All long."](https://twitter.com/ken_wheeler/status/974676242501947397?s=20)  
 > --[Ken Wheeler](https://twitter.com/ken_wheeler), Director of Open Source at Formidable Labs
 
+> ["Been using @jaredpalmer's Formik lately at work – this is my all-time favorite way to handle forms"](https://twitter.com/jxnblk/status/1000036895366307846)  
+> --[Brent Jackson](https://twitter.com/jxnblk/), Creator of Rebass, styled-system, Compositor and many more
+
+> ["Formik removes most of the moving parts involved in forms allowing me to move faster with more confidence."](https://twitter.com/tkh44/status/1000058583197732864)  
+> --[Kye Hohenberger](https://twitter.com/tkh44), Creator of Emotion
+
 ## Influences
 
 Formik started by expanding on

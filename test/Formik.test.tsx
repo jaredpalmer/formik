@@ -66,6 +66,7 @@ describe('<Formik>', () => {
   it('should initialize Formik state and pass down props', () => {
     const tree = shallow(BasicForm);
     expect(tree.find(Form).props().isSubmitting).toBe(false);
+    expect(tree.find(Form).props().isValidating).toBe(false);
     expect(tree.find(Form).props().touched).toEqual({});
     expect(tree.find(Form).props().values).toEqual({ name: 'jared' });
     expect(tree.find(Form).props().errors).toEqual({});
@@ -965,7 +966,6 @@ describe('<Formik>', () => {
         { name: 'jared' },
         expect.objectContaining({
           resetForm: expect.any(Function),
-          setError: expect.any(Function),
           setErrors: expect.any(Function),
           setFieldError: expect.any(Function),
           setFieldTouched: expect.any(Function),
@@ -1020,7 +1020,6 @@ describe('<Formik>', () => {
         { name: 'jared' },
         expect.objectContaining({
           resetForm: expect.any(Function),
-          setError: expect.any(Function),
           setErrors: expect.any(Function),
           setFieldError: expect.any(Function),
           setFieldTouched: expect.any(Function),

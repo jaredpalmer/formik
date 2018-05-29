@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { Actions } from './reducer';
+
 /**
  * Values of fields in the form
  */
@@ -40,6 +42,8 @@ export interface FormikState<Values> {
   touched: FormikTouched<Values>;
   /** whether the form is currently submitting */
   isSubmitting: boolean;
+  /** whether the form is currently validating */
+  isValidating: boolean;
   /** Top level status state, in case you need it */
   status?: any;
   /** Number of times user tried to submit the form */
@@ -64,11 +68,6 @@ export interface FormikComputedProps<Values> {
 export interface FormikActions<Values> {
   /** Manually set top level status. */
   setStatus(status?: any): void;
-  /**
-   * Manually set top level error
-   * @deprecated since 0.8.0
-   */
-  setError(e: any): void;
   /** Manually set errors object */
   setErrors(errors: FormikErrors<Values>): void;
   /** Manually set isSubmitting */
@@ -190,6 +189,13 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
    * Form component to render
    */
   component?: React.ComponentType<FormikProps<Values>> | React.ReactNode;
+
+  /** State reducer */
+  reducer?: (
+    prevState: FormikState<Values>,
+    nextState: FormikState<Values>,
+    action: Actions<Values>
+  ) => FormikState<Values>;
 
   /**
    * Render prop (works like React router's <Route render={props =>} />)

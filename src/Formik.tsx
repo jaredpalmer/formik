@@ -20,16 +20,18 @@ import {
   setIn,
   setNestedObjectValues,
 } from './utils';
+import { Actions, reducer, FormikConstants } from './reducer';
 
 export class Formik<ExtraProps = {}, Values = object> extends React.Component<
   FormikConfig<Values> & ExtraProps,
-  FormikState<any>
+  FormikState<Values>
 > {
   static defaultProps = {
     validateOnChange: true,
     validateOnBlur: true,
     isInitialValid: false,
     enableReinitialize: false,
+    reducer: (_p: FormikState<any>, n: FormikState<any>, _a: Actions<any>) => n,
   };
 
   initialValues: Values;
@@ -42,6 +44,8 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
   } = {};
   fields: { [field: string]: (nextValues?: any) => void };
 
+  reducer = reducer;
+
   constructor(props: FormikConfig<Values> & ExtraProps) {
     super(props);
     this.state = {
@@ -49,6 +53,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       errors: {},
       touched: {},
       isSubmitting: false,
+      isValidating: false,
       submitCount: 0,
     };
     this.fields = {};
@@ -70,14 +75,6 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     );
   }
 
-  registerField = (name: string, resetFn: (nextValues?: any) => void) => {
-    this.fields[name] = resetFn;
-  };
-
-  unregisterField = (name: string) => {
-    delete this.fields[name];
-  };
-
   componentDidUpdate(prevProps: Readonly<FormikConfig<Values> & ExtraProps>) {
     // If the initialValues change, reset the form
     if (
@@ -90,41 +87,48 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     }
   }
 
-  setErrors = (errors: FormikErrors<Values>) => {
-    this.setState({ errors });
+  dispatch = (action: Actions<Values>, cb?: () => any) => {
+    this.setState(
+      (prevState: FormikState<Values>) =>
+        this.props.reducer!(prevState, this.reducer(prevState, action), action),
+      cb
+    );
   };
 
-  setTouched = (touched: FormikTouched<Values>) => {
-    this.setState({ touched }, () => {
+  registerField = (name: string, resetFn: (nextValues?: any) => void) => {
+    this.fields[name] = resetFn;
+  };
+
+  unregisterField = (name: string) => {
+    delete this.fields[name];
+  };
+
+  setErrors = (payload: FormikErrors<Values>) => {
+    this.dispatch({ type: FormikConstants.SET_ERRORS, payload });
+  };
+
+  setTouched = (payload: FormikTouched<Values>) => {
+    this.dispatch({ type: FormikConstants.SET_TOUCHED, payload }, () => {
       if (this.props.validateOnBlur) {
         this.runValidations(this.state.values);
       }
     });
   };
 
-  setValues = (values: FormikValues) => {
-    this.setState({ values }, () => {
+  setValues = (payload: Values) => {
+    this.dispatch({ type: FormikConstants.SET_VALUES, payload }, () => {
       if (this.props.validateOnChange) {
-        this.runValidations(values);
+        this.runValidations(this.state.values);
       }
     });
   };
 
-  setStatus = (status?: any) => {
-    this.setState({ status });
+  setStatus = (payload?: any) => {
+    this.dispatch({ type: FormikConstants.SET_STATUS, payload });
   };
 
-  setError = (error: any) => {
-    if (process.env.NODE_ENV !== 'production') {
-      console.warn(
-        `Warning: Formik\'s setError(error) is deprecated and may be removed in future releases. Please use Formik\'s setStatus(status) instead. It works identically. For more info see https://github.com/jaredpalmer/formik#setstatus-status-any--void`
-      );
-    }
-    this.setState({ error });
-  };
-
-  setSubmitting = (isSubmitting: boolean) => {
-    this.setState({ isSubmitting });
+  setSubmitting = (payload: boolean) => {
+    this.dispatch({ type: FormikConstants.SET_SUBMITTING, payload });
   };
 
   /**
@@ -135,15 +139,19 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     const schema = isFunction(validationSchema)
       ? validationSchema()
       : validationSchema;
+
     validateYupSchema(values, schema).then(
       () => {
-        this.setState({ errors: {} });
+        this.dispatch({ type: FormikConstants.VALIDATE_SUCCESS });
         if (onSuccess) {
           onSuccess();
         }
       },
       (err: any) =>
-        this.setState({ errors: yupToFormErrors(err), isSubmitting: false })
+        this.dispatch({
+          type: FormikConstants.VALIDATE_FAILURE,
+          payload: yupToFormErrors(err),
+        })
     );
   };
 
@@ -151,6 +159,8 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
    * Run validations and update state accordingly
    */
   runValidations = (values: FormikValues = this.state.values) => {
+    this.dispatch({ type: FormikConstants.VALIDATE_ATTEMPT });
+
     if (this.props.validationSchema) {
       this.runValidationSchema(values);
     }
@@ -160,12 +170,21 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       if (isPromise(maybePromisedErrors)) {
         (maybePromisedErrors as Promise<any>).then(
           () => {
-            this.setState({ errors: {} });
+            this.dispatch({ type: FormikConstants.VALIDATE_SUCCESS });
           },
-          errors => this.setState({ errors, isSubmitting: false })
+          errors =>
+            this.dispatch({
+              type: FormikConstants.VALIDATE_FAILURE,
+              payload: errors,
+            })
         );
+      } else if (!!maybePromisedErrors) {
+        this.dispatch({
+          type: FormikConstants.VALIDATE_FAILURE,
+          payload: maybePromisedErrors,
+        });
       } else {
-        this.setErrors(maybePromisedErrors as FormikErrors<Values>);
+        this.dispatch({ type: FormikConstants.VALIDATE_SUCCESS });
       }
     }
   };
@@ -218,10 +237,13 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
 
       if (field) {
         // Set form fields by name
-        this.setState(prevState => ({
-          ...prevState,
-          values: setIn(prevState.values, field!, val),
-        }));
+        this.dispatch({
+          type: FormikConstants.SET_FIELD_VALUE,
+          payload: {
+            field,
+            value: val,
+          },
+        });
 
         if (this.props.validateOnChange) {
           this.runValidations(setIn(this.state.values, field, val));
@@ -253,11 +275,11 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     shouldValidate: boolean = true
   ) => {
     // Set form field by name
-    this.setState(
-      prevState => ({
-        ...prevState,
-        values: setIn(prevState.values, field, value),
-      }),
+    this.dispatch(
+      {
+        type: FormikConstants.SET_FIELD_VALUE,
+        payload: { field, value },
+      },
       () => {
         if (this.props.validateOnChange && shouldValidate) {
           this.runValidations(this.state.values);
@@ -447,7 +469,6 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       resetForm: this.resetForm,
       submitForm: this.submitForm,
       validateForm: this.runValidations,
-      setError: this.setError,
       setErrors: this.setErrors,
       setFieldError: this.setFieldError,
       setFieldTouched: this.setFieldTouched,

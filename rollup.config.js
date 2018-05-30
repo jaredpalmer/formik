@@ -1,9 +1,9 @@
 import commonjs from 'rollup-plugin-commonjs';
-import filesize from 'rollup-plugin-filesize';
 import replace from 'rollup-plugin-replace';
 import resolve from 'rollup-plugin-node-resolve';
 import sourceMaps from 'rollup-plugin-sourcemaps';
-import uglify from 'rollup-plugin-uglify';
+import { uglify } from 'rollup-plugin-uglify';
+import { sizeSnapshot } from 'rollup-plugin-size-snapshot';
 import pkg from './package.json';
 
 const input = './compiled/index.js';
@@ -48,7 +48,7 @@ const buildUmd = ({ env }) => ({
       },
     }),
     sourceMaps(),
-    env === 'production' && filesize(),
+    env === 'production' && sizeSnapshot(),
     env === 'production' &&
       uglify({
         output: { comments: false },
@@ -57,7 +57,6 @@ const buildUmd = ({ env }) => ({
           pure_getters: true,
         },
         warnings: true,
-        ecma: 5,
         toplevel: false,
       }),
   ],
@@ -80,7 +79,7 @@ const buildCjs = ({ env }) => ({
       'process.env.NODE_ENV': JSON.stringify(env),
     }),
     sourceMaps(),
-    filesize(),
+    sizeSnapshot(),
   ],
 })
 
@@ -106,9 +105,8 @@ export default [
     ],
     plugins: [
       resolve(),
-      
       sourceMaps(),
-      filesize(),
+      sizeSnapshot(),
     ],
   },
 ];

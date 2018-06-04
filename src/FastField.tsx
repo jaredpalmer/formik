@@ -8,7 +8,7 @@ import { connect } from './connect';
 import { FormikContext } from './types';
 import { getIn, isEmptyChildren, isFunction, isPromise, setIn } from './utils';
 
-export interface FastFieldState<Props, Values> {
+export interface FastFieldState {
   value: any;
   error?: string;
 }
@@ -24,7 +24,7 @@ function isEqualExceptForKey(a: any, b: any, path: string) {
  */
 class FastFieldInner<Props = {}, Values = {}> extends React.Component<
   FieldAttributes<Props> & { formik: FormikContext<Values> },
-  FastFieldState<Props, Values>
+  FastFieldState
 > {
   reset: (nextValues?: any) => void;
 
@@ -66,7 +66,7 @@ class FastFieldInner<Props = {}, Values = {}> extends React.Component<
 
   componentDidUpdate(
     prevProps: any /* FieldAttributes<Props> & { formik: FormikContext<Values> }*/,
-    _state: FastFieldState<any, any>
+    _state: FastFieldState
   ) {
     const nextFieldValue = getIn(this.props.formik.values, this.props.name);
     const nextFieldError = getIn(this.props.formik.errors, this.props.name);

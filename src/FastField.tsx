@@ -8,7 +8,7 @@ import { connect } from './connect';
 import { FormikContext } from './types';
 import { getIn, isEmptyChildren, isFunction, isPromise, setIn } from './utils';
 
-export interface FastFieldState {
+export interface FastFieldState<Props, Values> {
   value: any;
   error?: string;
 }
@@ -24,28 +24,9 @@ function isEqualExceptForKey(a: any, b: any, path: string) {
  */
 class FastFieldInner<Props = {}, Values = {}> extends React.Component<
   FieldAttributes<Props> & { formik: FormikContext<Values> },
-  FastFieldState
+  FastFieldState<Props, Values>
 > {
   reset: (nextValues?: any) => void;
-
-  static getDerivedStateFromProps(
-    nextProps: any /* FieldAttributes<Props> & { formik: FormikContext<Values> }*/,
-    prevState: FastFieldState
-  ) {
-    const nextFieldValue = getIn(nextProps.formik.values, nextProps.name);
-    const nextFieldError = getIn(nextProps.formik.errors, nextProps.name);
-
-    let nextState = null;
-    if (!isEqual(nextFieldValue, prevState.value)) {
-      nextState = { ...prevState, value: nextFieldValue };
-    }
-
-    if (!isEqual(nextFieldError, prevState.error)) {
-      nextState = { ...prevState, error: nextFieldError };
-    }
-
-    return nextState;
-  }
 
   constructor(
     props: FieldAttributes<Props> & { formik: FormikContext<Values> }
@@ -81,6 +62,24 @@ class FastFieldInner<Props = {}, Values = {}> extends React.Component<
       !(render && children && !isEmptyChildren(children)),
       'You should not use <FastField render> and <FastField children> in the same <FastField> component; <FastField children> will be ignored'
     );
+  }
+
+  componentDidUpdate(
+    prevProps: any /* FieldAttributes<Props> & { formik: FormikContext<Values> }*/,
+    _state: FastFieldState<any, any>
+  ) {
+    const nextFieldValue = getIn(this.props.formik.values, this.props.name);
+    const nextFieldError = getIn(this.props.formik.errors, this.props.name);
+    const prevFieldValue = getIn(prevProps.formik.values, prevProps.name);
+    const prevFieldError = getIn(prevProps.formik.errors, prevProps.name);
+
+    if (!isEqual(nextFieldValue, prevFieldValue)) {
+      this.setState({ value: nextFieldValue });
+    }
+
+    if (!isEqual(nextFieldError, prevFieldError)) {
+      this.setState({ error: nextFieldError });
+    }
   }
 
   componentWillUnmount() {

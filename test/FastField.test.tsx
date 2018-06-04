@@ -69,13 +69,12 @@ describe('A <Field />', () => {
 
     it('calls validate during onBlur if present', () => {
       const validate = jest.fn(noop);
-      const registerField = jest.fn(noop);
+
       const setFormikState = jest.fn(noop);
       const tree = makeFieldTree({
         name: 'name',
         validate,
         formik: {
-          registerField,
           setFormikState,
           validateOnBlur: true,
         },
@@ -88,20 +87,18 @@ describe('A <Field />', () => {
         },
       });
       expect(setFormikState).toHaveBeenCalled();
-      expect(registerField).toHaveBeenCalled();
       expect(validate).toHaveBeenCalled();
     });
 
     it('does NOT call validate during onBlur if validateOnBlur is set to false', () => {
       const validate = jest.fn(noop);
-      const registerField = jest.fn(noop);
+
       const setFormikState = jest.fn(noop);
       const tree = makeFieldTree({
         name: 'name',
         validate,
         formik: {
           setFormikState,
-          registerField,
           validateOnBlur: false,
         },
       });
@@ -177,9 +174,7 @@ describe('A <Field />', () => {
 
     it('assigns innerRef as a ref to string components', () => {
       const innerRef = jest.fn();
-      const fmk = {
-        registerField: jest.fn(noop),
-      };
+      const fmk = {};
       const tree = mount(
         <Field.WrappedComponent
           name="name"

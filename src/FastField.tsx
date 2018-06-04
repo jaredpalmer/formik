@@ -26,8 +26,6 @@ class FastFieldInner<Props = {}, Values = {}> extends React.Component<
   FieldAttributes<Props> & { formik: FormikContext<Values> },
   FastFieldState
 > {
-  reset: (nextValues?: any) => void;
-
   constructor(
     props: FieldAttributes<Props> & { formik: FormikContext<Values> }
   ) {
@@ -36,15 +34,6 @@ class FastFieldInner<Props = {}, Values = {}> extends React.Component<
       value: getIn(props.formik.values, props.name),
       error: getIn(props.formik.errors, props.name),
     };
-
-    this.reset = (nextValues?: any) => {
-      this.setState({
-        value: getIn(nextValues, props.name),
-        error: getIn(props.formik.errors, props.name),
-      });
-    };
-
-    props.formik.registerField(props.name, this.reset);
 
     const { render, children, component } = props;
 
@@ -80,10 +69,6 @@ class FastFieldInner<Props = {}, Values = {}> extends React.Component<
     if (!isEqual(nextFieldError, prevFieldError)) {
       this.setState({ error: nextFieldError });
     }
-  }
-
-  componentWillUnmount() {
-    this.props.formik.unregisterField(this.props.name);
   }
 
   handleChange = (e: React.ChangeEvent<any>) => {

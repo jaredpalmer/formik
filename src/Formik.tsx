@@ -19,6 +19,7 @@ import {
   isString,
   setIn,
   setNestedObjectValues,
+  getIn,
 } from './utils';
 
 export class Formik<ExtraProps = {}, Values = object> extends React.Component<
@@ -40,7 +41,12 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
   hbCache: {
     [key: string]: (e: any) => void;
   } = {};
-  fields: { [field: string]: (nextValues?: any) => void };
+  fields: {
+    [field: string]: {
+      reset?: ((nextValues?: any) => void);
+      validate?: ((value: any) => string | Promise<void> | undefined);
+    };
+  };
 
   constructor(props: FormikConfig<Values> & ExtraProps) {
     super(props);
@@ -70,8 +76,14 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     );
   }
 
-  registerField = (name: string, resetFn: (nextValues?: any) => void) => {
-    this.fields[name] = resetFn;
+  registerField = (
+    name: string,
+    fns: {
+      reset?: ((nextValues?: any) => void);
+      validate?: ((value: any) => string | Promise<void> | undefined);
+    }
+  ) => {
+    this.fields[name] = fns;
   };
 
   unregisterField = (name: string) => {
@@ -311,14 +323,36 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       const maybePromisedErrors =
         (this.props.validate as any)(this.state.values) || {};
       if (isPromise(maybePromisedErrors)) {
-        (maybePromisedErrors as Promise<any>).then(
-          () => {
-            this.setState({ errors: {} });
-            this.executeSubmit();
-          },
-          errors => this.setState({ errors, isSubmitting: false })
+        const fieldKeysWithValidation = Object.keys(this.fields).filter(
+          f =>
+            this.fields &&
+            this.fields[f] &&
+            this.fields[f].validate &&
+            isFunction(this.fields[f].validate)
         );
-        return;
+        Promise.all([
+          maybePromisedErrors.then(x => x, e => e),
+          ...fieldKeysWithValidation.map(
+            f =>
+              Promise.resolve<string | undefined | PromiseLike<any>>(
+                this.fields[f].validate!(getIn(this.state.values, f))
+              ).then(x => x, e => e) // always catch
+          ),
+        ]).then(([alwaysEmpty, ...fieldErrors]) => {
+          const errors = fieldErrors.reduce((prev, curr, index) => {
+            if (!!curr) {
+              prev[fieldKeysWithValidation[index]] = curr;
+            }
+            return prev;
+          }, alwaysEmpty);
+          this.setState({ errors });
+          if (Object.keys(errors).length === 0) {
+            this.executeSubmit();
+          } else {
+            this.setState({ isSubmitting: false });
+            return;
+          }
+        });
       } else {
         const isValid = Object.keys(maybePromisedErrors).length === 0;
         this.setState({
@@ -419,7 +453,15 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       values,
       submitCount: 0,
     });
-    Object.keys(this.fields).map(f => this.fields[f](values));
+    Object.keys(this.fields).forEach(f => {
+      if (
+        !!this.fields[f] &&
+        !!this.fields[f].reset &&
+        isFunction(this.fields[f].reset)
+      ) {
+        this.fields[f].reset!(values);
+      }
+    });
   };
 
   handleReset = () => {

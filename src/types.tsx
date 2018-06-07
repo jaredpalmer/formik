@@ -226,7 +226,15 @@ export type FormikProps<Values> = FormikSharedConfig &
   FormikActions<Values> &
   FormikHandlers &
   FormikComputedProps<Values> & {
-    registerField(name: string, resetFn: ((nextValues?: any) => void)): void;
+    registerField(
+      name: string,
+      fns: {
+        reset?: ((nextValues?: any) => void);
+        validate?: ((
+          value: any
+        ) => string | Function | Promise<void> | undefined);
+      }
+    ): void;
     unregisterField(name: string): void;
   };
 

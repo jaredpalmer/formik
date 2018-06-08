@@ -6,6 +6,7 @@ import {
   FormikActions,
   FormikConfig,
   FormikErrors,
+  FormikWarnings,
   FormikState,
   FormikTouched,
   FormikValues,
@@ -28,6 +29,8 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
   static defaultProps = {
     validateOnChange: true,
     validateOnBlur: true,
+    warnOnChange: true,
+    warnOnBlur: true,
     isInitialValid: false,
     enableReinitialize: false,
   };
@@ -47,6 +50,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     this.state = {
       values: props.initialValues || ({} as any),
       errors: {},
+      warnings: {},
       touched: {},
       isSubmitting: false,
       submitCount: 0,
@@ -94,10 +98,17 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     this.setState({ errors });
   };
 
+  setWarnings = (warnings: FormikWarnings<Values>) => {
+    this.setState({ warnings });
+  };
+
   setTouched = (touched: FormikTouched<Values>) => {
     this.setState({ touched }, () => {
       if (this.props.validateOnBlur) {
         this.runValidations(this.state.values);
+      }
+      if (this.props.warnOnBlur) {
+        this.runWarnings(this.state.values);
       }
     });
   };
@@ -106,6 +117,9 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     this.setState({ values }, () => {
       if (this.props.validateOnChange) {
         this.runValidations(values);
+      }
+      if (this.props.warnOnChange) {
+        this.runWarnings(values);
       }
     });
   };
@@ -170,6 +184,25 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     }
   };
 
+  /**
+   * Run validations and update state accordingly
+   */
+  runWarnings = (values: FormikValues = this.state.values) => {
+    if (this.props.warn) {
+      const maybePromisedWarnings = (this.props.warn as any)(values);
+      if (isPromise(maybePromisedWarnings)) {
+        (maybePromisedWarnings as Promise<any>).then(
+          () => {
+            this.setState({ warnings: {} });
+          },
+          warnings => this.setState({ warnings })
+        );
+      } else {
+        this.setWarnings(maybePromisedWarnings as FormikErrors<Values>);
+      }
+    }
+  };
+
   handleChange = (
     eventOrPath: string | React.ChangeEvent<any>
   ): void | ((eventOrTextValue: string | React.ChangeEvent<any>) => void) => {
@@ -226,6 +259,9 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
         if (this.props.validateOnChange) {
           this.runValidations(setIn(this.state.values, field, val));
         }
+        if (this.props.warnOnChange) {
+          this.runWarnings(setIn(this.state.values, field, val));
+        }
       }
     };
 
@@ -250,7 +286,8 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
   setFieldValue = (
     field: string,
     value: any,
-    shouldValidate: boolean = true
+    shouldValidate: boolean = true,
+    shouldWarn: boolean = true
   ) => {
     // Set form field by name
     this.setState(
@@ -261,6 +298,9 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       () => {
         if (this.props.validateOnChange && shouldValidate) {
           this.runValidations(this.state.values);
+        }
+        if (this.props.warnOnChange && shouldWarn) {
+          this.runWarnings(this.state.values);
         }
       }
     );
@@ -306,6 +346,23 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       isSubmitting: true,
       submitCount: prevState.submitCount + 1,
     }));
+
+    if (this.props.warn) {
+      const maybePromisedWarnings =
+        (this.props.warn as any)(this.state.values) || {};
+      if (isPromise(maybePromisedWarnings)) {
+        (maybePromisedWarnings as Promise<any>).then(
+          () => {
+            this.setState({ warnings: {} });
+          },
+          warnings => this.setState({ warnings })
+        );
+      } else {
+        this.setState({
+          warnings: maybePromisedWarnings as FormikWarnings<Values>,
+        });
+      }
+    }
 
     if (this.props.validate) {
       const maybePromisedErrors =
@@ -365,6 +422,10 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       if (this.props.validateOnBlur) {
         this.runValidations(this.state.values);
       }
+
+      if (this.props.warnOnBlur) {
+        this.runWarnings(this.state.values);
+      }
     };
 
     if (isString(eventOrString)) {
@@ -381,7 +442,8 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
   setFieldTouched = (
     field: string,
     touched: boolean = true,
-    shouldValidate: boolean = true
+    shouldValidate: boolean = true,
+    shouldWarn: boolean = true
   ) => {
     // Set touched field by name
     this.setState(
@@ -392,6 +454,10 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       () => {
         if (this.props.validateOnBlur && shouldValidate) {
           this.runValidations(this.state.values);
+        }
+
+        if (this.props.warnOnBlur && shouldWarn) {
+          this.runWarnings(this.state.values);
         }
       }
     );
@@ -405,6 +471,14 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     }));
   };
 
+  setFieldWarning = (field: string, message: string) => {
+    // Set form field by name
+    this.setState(prevState => ({
+      ...prevState,
+      warnings: setIn(prevState.warnings, field, message),
+    }));
+  };
+
   resetForm = (nextValues?: Values) => {
     const values = nextValues ? nextValues : this.props.initialValues;
 
@@ -413,6 +487,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     this.setState({
       isSubmitting: false,
       errors: {},
+      warnings: {},
       touched: {},
       error: undefined,
       status: undefined,
@@ -447,9 +522,12 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       resetForm: this.resetForm,
       submitForm: this.submitForm,
       validateForm: this.runValidations,
+      warnForm: this.runWarnings,
       setError: this.setError,
       setErrors: this.setErrors,
+      setWarnings: this.setWarnings,
       setFieldError: this.setFieldError,
+      setFieldWarning: this.setFieldWarning,
       setFieldTouched: this.setFieldTouched,
       setFieldValue: this.setFieldValue,
       setStatus: this.setStatus,
@@ -489,6 +567,8 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       handleSubmit: this.handleSubmit,
       validateOnChange: this.props.validateOnChange,
       validateOnBlur: this.props.validateOnBlur,
+      warnOnChange: this.props.warnOnChange,
+      warnOnBlur: this.props.warnOnBlur,
     };
   };
 
@@ -497,6 +577,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       ...this.getFormikBag(),
       validationSchema: this.props.validationSchema,
       validate: this.props.validate,
+      warn: this.props.warn,
     };
   };
 

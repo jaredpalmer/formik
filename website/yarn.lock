@@ -3688,7 +3688,7 @@ form-data@~2.3.1:
     mime-types "^2.1.12"
 
 "formik@file:..":
-  version "1.0.0-beta.1"
+  version "1.0.0-beta.2"
   dependencies:
     create-react-context "^0.2.2"
     hoist-non-react-statics "^2.5.0"
@@ -4015,7 +4015,7 @@ gatsby-source-filesystem@^1.4.4:
   dependencies:
     "@gaearon/react-live" "1.7.1-with-safari-fix"
     classnames "^2.2.5"
-    formik "file:../../../../../Library/Caches/Yarn/v1"
+    formik "file:../../../Library/Caches/Yarn/v1"
     gatsby "^1.9.243"
     gatsby-link "^1.6.9"
     gatsby-plugin-catch-links "^1.0.15"
@@ -4036,7 +4036,7 @@ gatsby-source-filesystem@^1.4.4:
     gatsby-remark-responsive-iframe "^1.4.3"
     gatsby-remark-smartypants "^1.4.3"
     gatsby-source-filesystem "^1.4.4"
-    gatsby-starter-default "file:../../../../../Library/Caches/Yarn/v1/npm-gatsby-starter-default-1.0.0-102f7ab8-9592-441f-8608-5a0d2309efdf-1526402936718"
+    gatsby-starter-default "file:../../../Library/Caches/Yarn/v1/npm-gatsby-starter-default-1.0.0-49afea81-1734-4fb7-a7c7-a7e1ec95ac8c-1528435448698"
     gatsby-transformer-remark "^1.7.2"
     gatsby-transformer-sharp "^1.6.1"
     glamor "^2.20.40"
@@ -4486,13 +4486,13 @@ graphql-skip-limit@^1.0.11:
     babel-runtime "^6.26.0"
     graphql "^0.11.7"
 
-graphql@0.10.5:
+graphql@0.10.5, graphql@^0.11.7:
   version "0.10.5"
   resolved "https://registry.yarnpkg.com/graphql/-/graphql-0.10.5.tgz#c9be17ca2bdfdbd134077ffd9bbaa48b8becd298"
   dependencies:
     iterall "^1.1.0"
 
-graphql@^0.11.3, graphql@^0.11.7:
+graphql@^0.11.3:
   version "0.11.7"
   resolved "https://registry.yarnpkg.com/graphql/-/graphql-0.11.7.tgz#e5abaa9cb7b7cccb84e9f0836bf4370d268750c6"
   dependencies:

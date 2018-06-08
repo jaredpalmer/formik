@@ -25,6 +25,7 @@ import { getIn, isEmptyChildren, isFunction, isPromise } from './utils';
  *   <div>
  *     <input {...field} {...props}/>
  *     {form.touched[field.name] && form.errors[field.name]}
+ *     {form.touched[field.name] && form.warnings[field.name]}
  *   </div>
  */
 export interface FieldProps<V = any> {
@@ -64,6 +65,11 @@ export interface FieldConfig {
    * Validate a single field value independently
    */
   validate?: ((value: any) => string | Function | Promise<void> | undefined);
+
+  /**
+   * Warn a single field value independently
+   */
+  warn?: ((value: any) => string | Function | Promise<void> | undefined);
 
   /**
    * Field name
@@ -112,10 +118,13 @@ class FieldInner<Props = {}, Values = {}> extends React.Component<
   }
 
   handleChange = (e: React.ChangeEvent<any>) => {
-    const { handleChange, validateOnChange } = this.props.formik;
+    const { handleChange, validateOnChange, warnOnChange } = this.props.formik;
     handleChange(e); // Call Formik's handleChange no matter what
     if (!!validateOnChange && !!this.props.validate) {
       this.runFieldValidations(e.target.value);
+    }
+    if (!!warnOnChange && !!this.props.warn) {
+      this.runFieldWarnings(e.target.value);
     }
   };
 
@@ -144,9 +153,27 @@ class FieldInner<Props = {}, Values = {}> extends React.Component<
     }
   };
 
+  runFieldWarnings = (value: any) => {
+    const { setFieldWarning } = this.props.formik;
+    const { name, warn } = this.props;
+    // Call warn fn
+    const maybePromise = (warn as any)(value);
+    // Check if warn it returns a Promise
+    if (isPromise(maybePromise)) {
+      (maybePromise as Promise<any>).then(
+        () => setFieldWarning(name, undefined as any),
+        warning => setFieldWarning(name, warning)
+      );
+    } else {
+      // Otherwise set the error
+      setFieldWarning(name, maybePromise);
+    }
+  };
+
   render() {
     const {
       validate,
+      warn,
       name,
       render,
       children,
@@ -158,6 +185,7 @@ class FieldInner<Props = {}, Values = {}> extends React.Component<
     }) as any;
     const {
       validate: _validate,
+      warn: _warn,
       validationSchema: _validationSchema,
       ...restOfFormik
     } = formik;
@@ -167,8 +195,8 @@ class FieldInner<Props = {}, Values = {}> extends React.Component<
           ? props.value // React uses checked={} for these inputs
           : getIn(formik.values, name),
       name,
-      onChange: validate ? this.handleChange : formik.handleChange,
-      onBlur: validate ? this.handleBlur : formik.handleBlur,
+      onChange: validate || warn ? this.handleChange : formik.handleChange,
+      onBlur: validate || warn ? this.handleBlur : formik.handleBlur,
     };
     const bag = { field, form: restOfFormik };
 

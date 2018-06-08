@@ -15,6 +15,16 @@ export type FormikErrors<Values> = {
 };
 
 /**
+ * An object containing warning messages whose keys correspond to FormikValues.
+ * Should be always be and object of strings, but any is allowed to support i18n libraries.
+ */
+export type FormikWarnings<Values> = {
+  [K in keyof Values]?: Values[K] extends object
+    ? FormikWarnings<Values[K]>
+    : {}
+};
+
+/**
  * An object containing touched state of the form whose keys correspond to FormikValues.
  */
 export type FormikTouched<Values> = {
@@ -36,6 +46,8 @@ export interface FormikState<Values> {
   error?: any;
   /** map of field names to specific error for that field */
   errors: FormikErrors<Values>;
+  /** map of field names to specific warning for that field */
+  warnings: FormikWarnings<Values>;
   /** map of field names to whether the field has been touched */
   touched: FormikTouched<Values>;
   /** whether the form is currently submitting */
@@ -71,6 +83,8 @@ export interface FormikActions<Values> {
   setError(e: any): void;
   /** Manually set errors object */
   setErrors(errors: FormikErrors<Values>): void;
+  /** Manually set errors object */
+  setWarnings(errors: FormikErrors<Values>): void;
   /** Manually set isSubmitting */
   setSubmitting(isSubmitting: boolean): void;
   /** Manually set touched object */
@@ -81,25 +95,38 @@ export interface FormikActions<Values> {
   setFieldValue(
     field: keyof Values,
     value: any,
-    shouldValidate?: boolean
+    shouldValidate?: boolean,
+    shouldWarn?: boolean
   ): void;
-  setFieldValue(field: string, value: any, shouldValidate?: boolean): void;
+  setFieldValue(
+    field: string,
+    value: any,
+    shouldValidate?: boolean,
+    shouldWarn?: boolean
+  ): void;
   /** Set error message of a form field directly */
   setFieldError(field: keyof Values, message: string): void;
   setFieldError(field: string, message: string): void;
+  /** Set warning message of a form field directly */
+  setFieldWarning(field: keyof Values, message: string): void;
+  setFieldWarning(field: string, message: string): void;
   /** Set whether field has been touched directly */
   setFieldTouched(
     field: keyof Values,
     isTouched?: boolean,
-    shouldValidate?: boolean
+    shouldValidate?: boolean,
+    shouldWarn?: boolean
   ): void;
   setFieldTouched(
     field: string,
     isTouched?: boolean,
-    shouldValidate?: boolean
+    shouldValidate?: boolean,
+    shouldWarn?: boolean
   ): void;
   /** Validate form values */
   validateForm(values?: any): void;
+  /** Warn form values */
+  warnForm(values?: any): void;
   /** Reset form */
   resetForm(nextValues?: any): void;
   /** Submit the form imperatively */
@@ -120,6 +147,8 @@ export interface FormikActions<Values> {
   setFieldValue(field: string, value: any): void;
   /** Set error message of a form field directly */
   setFieldError(field: string, message: string): void;
+  /** Set warning message of a form field directly */
+  setFieldWarning(field: string, message: string): void;
   /** Set whether field has been touched directly */
   setFieldTouched(field: string, isTouched?: boolean): void;
   /** Set Formik state, careful! */
@@ -161,6 +190,10 @@ export interface FormikSharedConfig {
   validateOnChange?: boolean;
   /** Tells Formik to validate the form on each input's onBlur event */
   validateOnBlur?: boolean;
+  /** Tells Formik to warn the form on each input's onChange event */
+  warnOnChange?: boolean;
+  /** Tells Formik to warn the form on each input's onBlur event */
+  warnOnBlur?: boolean;
   /** Tell Formik if initial form values are valid or not on first render */
   isInitialValid?: boolean | ((props: object) => boolean | undefined);
   /** Should Formik reset the form when new initialValues change */
@@ -210,6 +243,12 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
   ) => void | object | Promise<FormikErrors<Values>>);
 
   /**
+   * Warning function. Must return an warning object or promise that
+   * throws an warning object where that object keys map to corresponding value.
+   */
+  warn?: ((values: Values) => void | object | Promise<FormikWarnings<Values>>);
+
+  /**
    * React children or child render callback
    */
   children?:
@@ -234,7 +273,8 @@ export type FormikProps<Values> = FormikSharedConfig &
  * State, handlers, and helpers made available to Formik's primitive components through context.
  */
 export type FormikContext<Values> = FormikProps<Values> &
-  Pick<FormikConfig<Values>, 'validate' | 'validationSchema'>;
+  Pick<FormikConfig<Values>, 'validate' | 'validationSchema'> &
+  Pick<FormikConfig<Values>, 'warn'>;
 
 export interface SharedRenderProps<T> {
   /**

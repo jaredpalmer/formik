@@ -13,6 +13,8 @@ export type FieldArrayConfig = {
   name: string;
   /** Should field array validate the form AFTER array updates/changes? */
   validateOnChange?: boolean;
+  /** Should field array warn the form AFTER array updates/changes? */
+  warnOnChange?: boolean;
 } & SharedRenderProps<ArrayHelpers & { form: FormikProps<any> }>;
 export interface ArrayHelpers {
   /** Imperatively add a value to the end of an array */
@@ -85,6 +87,7 @@ class FieldArrayInner<Values = {}> extends React.Component<
 > {
   static defaultProps = {
     validateOnChange: true,
+    warnOnChange: true,
   };
 
   constructor(props: FieldArrayConfig & { formik: FormikContext<Values> }) {
@@ -97,12 +100,22 @@ class FieldArrayInner<Values = {}> extends React.Component<
   updateArrayField = (
     fn: Function,
     alterTouched: boolean,
-    alterErrors: boolean
+    alterErrors: boolean,
+    alterWarnings: boolean
   ) => {
     const {
       name,
       validateOnChange,
-      formik: { setFormikState, validateForm, values, touched, errors },
+      warnOnChange,
+      formik: {
+        setFormikState,
+        validateForm,
+        warnForm,
+        values,
+        touched,
+        errors,
+        warnings,
+      },
     } = this.props;
     setFormikState(
       (prevState: FormikState<any>) => ({
@@ -111,6 +124,9 @@ class FieldArrayInner<Values = {}> extends React.Component<
         errors: alterErrors
           ? setIn(prevState.errors, name, fn(getIn(errors, name)))
           : prevState.errors,
+        warnings: alterWarnings
+          ? setIn(prevState.warnings, name, fn(getIn(warnings, name)))
+          : prevState.warnings,
         touched: alterTouched
           ? setIn(prevState.touched, name, fn(getIn(touched, name)))
           : prevState.touched,
@@ -118,6 +134,9 @@ class FieldArrayInner<Values = {}> extends React.Component<
       () => {
         if (validateOnChange) {
           validateForm();
+        }
+        if (warnOnChange) {
+          warnForm();
         }
       }
     );
@@ -127,6 +146,7 @@ class FieldArrayInner<Values = {}> extends React.Component<
     this.updateArrayField(
       (array: any[]) => [...(array || []), value],
       false,
+      false,
       false
     );
 
@@ -135,6 +155,7 @@ class FieldArrayInner<Values = {}> extends React.Component<
   swap = (indexA: number, indexB: number) =>
     this.updateArrayField(
       (array: any[]) => swap(array, indexA, indexB),
+      false,
       false,
       false
     );
@@ -146,6 +167,7 @@ class FieldArrayInner<Values = {}> extends React.Component<
     this.updateArrayField(
       (array: any[]) => move(array, from, to),
       false,
+      false,
       false
     );
 
@@ -155,6 +177,7 @@ class FieldArrayInner<Values = {}> extends React.Component<
     this.updateArrayField(
       (array: any[]) => insert(array, index, value),
       false,
+      false,
       false
     );
 
@@ -163,6 +186,7 @@ class FieldArrayInner<Values = {}> extends React.Component<
   replace = (index: number, value: any) =>
     this.updateArrayField(
       (array: any[]) => replace(array, index, value),
+      false,
       false,
       false
     );
@@ -177,6 +201,7 @@ class FieldArrayInner<Values = {}> extends React.Component<
         arr = array ? [value, ...array] : [value];
         return arr;
       },
+      false,
       false,
       false
     );
@@ -201,6 +226,7 @@ class FieldArrayInner<Values = {}> extends React.Component<
         return copy;
       },
       true,
+      true,
       true
     );
 
@@ -221,6 +247,7 @@ class FieldArrayInner<Values = {}> extends React.Component<
         }
         return tmp;
       },
+      true,
       true,
       true
     );
@@ -257,6 +284,7 @@ class FieldArrayInner<Values = {}> extends React.Component<
       name,
       formik: {
         validate: _validate,
+        warn: _warn,
         validationSchema: _validationSchema,
         ...restOfFormik
       },

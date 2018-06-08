@@ -9,6 +9,8 @@ export type FieldArrayConfig = {
   name: string;
   /** Should field array validate the form AFTER array updates/changes? */
   validateOnChange?: boolean;
+  /** Should field array warn the form AFTER array updates/changes? */
+  warnOnChange?: boolean;
 } & SharedRenderProps<ArrayHelpers & { form: FormikProps<any> }>;
 
 export interface ArrayHelpers {
@@ -95,16 +97,19 @@ export class FieldArray extends React.Component<FieldArrayConfig, {}> {
   updateArrayField = (
     fn: Function,
     alterTouched: boolean,
-    alterErrors: boolean
+    alterErrors: boolean,
+    alterWarnings: boolean
   ) => {
     const {
       setFormikState,
       validateForm,
+      warnForm,
       values,
       touched,
       errors,
+      warnings,
     } = this.context.formik;
-    const { name, validateOnChange } = this.props;
+    const { name, validateOnChange, warnOnChange } = this.props;
     setFormikState(
       (prevState: FormikState<any>) => ({
         ...prevState,
@@ -112,6 +117,9 @@ export class FieldArray extends React.Component<FieldArrayConfig, {}> {
         errors: alterErrors
           ? setIn(prevState.errors, name, fn(getIn(errors, name)))
           : prevState.errors,
+        warnings: alterWarnings
+          ? setIn(prevState.warnings, name, fn(getIn(warnings, name)))
+          : prevState.warnings,
         touched: alterTouched
           ? setIn(prevState.touched, name, fn(getIn(touched, name)))
           : prevState.touched,
@@ -119,6 +127,10 @@ export class FieldArray extends React.Component<FieldArrayConfig, {}> {
       () => {
         if (validateOnChange) {
           validateForm();
+        }
+
+        if (warnOnChange) {
+          warnForm();
         }
       }
     );
@@ -128,6 +140,7 @@ export class FieldArray extends React.Component<FieldArrayConfig, {}> {
     this.updateArrayField(
       (array: any[]) => [...(array || []), value],
       false,
+      false,
       false
     );
 
@@ -136,6 +149,7 @@ export class FieldArray extends React.Component<FieldArrayConfig, {}> {
   swap = (indexA: number, indexB: number) =>
     this.updateArrayField(
       (array: any[]) => swap(array, indexA, indexB),
+      false,
       false,
       false
     );
@@ -147,6 +161,7 @@ export class FieldArray extends React.Component<FieldArrayConfig, {}> {
     this.updateArrayField(
       (array: any[]) => move(array, from, to),
       false,
+      false,
       false
     );
 
@@ -156,6 +171,7 @@ export class FieldArray extends React.Component<FieldArrayConfig, {}> {
     this.updateArrayField(
       (array: any[]) => insert(array, index, value),
       false,
+      false,
       false
     );
 
@@ -164,6 +180,7 @@ export class FieldArray extends React.Component<FieldArrayConfig, {}> {
   replace = (index: number, value: any) =>
     this.updateArrayField(
       (array: any[]) => replace(array, index, value),
+      false,
       false,
       false
     );
@@ -179,6 +196,7 @@ export class FieldArray extends React.Component<FieldArrayConfig, {}> {
         return arr;
       },
       false,
+      false,
       false
     );
     return arr.length;
@@ -187,7 +205,7 @@ export class FieldArray extends React.Component<FieldArrayConfig, {}> {
   handleUnshift = (value: any) => () => this.unshift(value);
 
   remove<T>(index: number): T {
-    // We need to make sure we also remove relevant pieces of `touched` and `errors`
+    // We need to make sure we also remove relevant pieces of `touched`, `errors`, and `warnings`
     let result: any;
     this.updateArrayField(
       // so this gets call 3 times
@@ -202,6 +220,7 @@ export class FieldArray extends React.Component<FieldArrayConfig, {}> {
         return copy;
       },
       true,
+      true,
       true
     );
 
@@ -211,7 +230,7 @@ export class FieldArray extends React.Component<FieldArrayConfig, {}> {
   handleRemove = (index: number) => () => this.remove<any>(index);
 
   pop<T>(): T {
-    // Remove relevant pieces of `touched` and `errors` too!
+    // Remove relevant pieces of `touched`, `errors`, and `warnings` too!
     let result: any;
     this.updateArrayField(
       // so this gets call 3 times
@@ -222,6 +241,7 @@ export class FieldArray extends React.Component<FieldArrayConfig, {}> {
         }
         return tmp;
       },
+      true,
       true,
       true
     );

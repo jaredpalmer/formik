@@ -9,6 +9,7 @@ import isEqual from 'react-fast-compare';
 export interface FastFieldState {
   value: any;
   error?: string;
+  warning?: string;
 }
 
 /** @private Returns whether two objects are deeply equal **excluding** a key / dot path */
@@ -33,6 +34,7 @@ export class FastField<
     render: PropTypes.func,
     children: PropTypes.oneOfType([PropTypes.func, PropTypes.node]),
     validate: PropTypes.func,
+    warn: PropTypes.func,
     innerRef: PropTypes.func,
   };
 
@@ -42,12 +44,14 @@ export class FastField<
     this.state = {
       value: getIn(context.formik.values, props.name),
       error: getIn(context.formik.errors, props.name),
+      warning: getIn(context.formik.warnings, props.name),
     };
 
     this.reset = (nextValues?: any) => {
       this.setState({
         value: getIn(nextValues, props.name),
         error: getIn(context.formik.errors, props.name),
+        warning: getIn(context.formik.warnings, props.name),
       });
     };
 
@@ -60,6 +64,7 @@ export class FastField<
   ) {
     const nextFieldValue = getIn(nextContext.formik.values, nextProps.name);
     const nextFieldError = getIn(nextContext.formik.errors, nextProps.name);
+    const nextFieldWarning = getIn(nextContext.formik.warnings, nextProps.name);
 
     let nextState: any;
 
@@ -69,6 +74,10 @@ export class FastField<
 
     if (nextFieldError !== this.state.error) {
       nextState = { ...nextState, error: nextFieldError };
+    }
+
+    if (nextFieldWarning !== this.state.warning) {
+      nextState = { ...nextState, warning: nextFieldWarning };
     }
 
     if (nextState) {
@@ -103,16 +112,80 @@ export class FastField<
     e.persist();
     const {
       validateOnChange,
+      warnOnChange,
       validate,
+      warn,
       values,
       validationSchema,
       errors,
+      warnings,
       setFormikState,
     } = this.context.formik;
     const { type, value, checked } = e.target;
     const val = /number|range/.test(type)
       ? parseFloat(value)
       : /checkbox/.test(type) ? checked : value;
+
+    if (warnOnChange) {
+      // Field-level validation
+      if (this.props.warn) {
+        const maybePromise = (this.props.warn as any)(value);
+        if (isPromise(maybePromise)) {
+          this.setState({ value: val });
+          (maybePromise as any).then(
+            () => this.setState({ warning: undefined }),
+            (warning: string) => this.setState({ warning })
+          );
+        } else {
+          this.setState({ value: val, warning: maybePromise });
+        }
+      } else if (validate) {
+        // Top-level validate
+        const maybePromise = (warn as any)(setIn(values, this.props.name, val));
+
+        if (isPromise(maybePromise)) {
+          this.setState({ value: val });
+          (maybePromise as any).then(
+            () => this.setState({ warning: undefined }),
+            (warning: any) => {
+              // Here we diff the errors object relative to Formik parents except for
+              // the Field's key. If they are equal, the field's validation function is
+              // has no inter-field side-effects and we only need to update local state
+              // otherwise we need to lift up the update to the parent (causing a full form render)
+              if (
+                isEqualExceptForKey(maybePromise, warnings, this.props.name)
+              ) {
+                this.setState({ warning: getIn(warning, this.props.name) });
+              } else {
+                setFormikState((prevState: any) => ({
+                  ...prevState,
+                  warnings: warning,
+                  // touched: setIn(prevState.touched, name, true),
+                }));
+              }
+            }
+          );
+        } else {
+          // Handle the same diff situation
+          // @todo refactor
+          if (isEqualExceptForKey(maybePromise, warnings, this.props.name)) {
+            this.setState({
+              value: val,
+              warning: getIn(maybePromise, this.props.name),
+            });
+          } else {
+            this.setState({
+              value: val,
+            });
+            setFormikState((prevState: any) => ({
+              ...prevState,
+              warnings: maybePromise,
+            }));
+          }
+        }
+      }
+    }
+
     if (validateOnChange) {
       // Field-level validation
       if (this.props.validate) {
@@ -213,10 +286,39 @@ export class FastField<
   };
 
   handleBlur = () => {
-    const { validateOnBlur, setFormikState } = this.context.formik;
-    const { name, validate } = this.props;
+    const { validateOnBlur, warnOnBlur, setFormikState } = this.context.formik;
+    const { name, validate, warn } = this.props;
 
     // @todo refactor
+    if (warnOnBlur && warn) {
+      const maybePromise = (warn as any)(this.state.value);
+      if (isPromise(maybePromise)) {
+        (maybePromise as Promise<any>).then(
+          () =>
+            setFormikState((prevState: any) => ({
+              ...prevState,
+              values: setIn(prevState.values, name, this.state.value),
+              warnings: setIn(prevState.warnings, name, undefined),
+              touched: setIn(prevState.touched, name, true),
+            })),
+          warning =>
+            setFormikState((prevState: any) => ({
+              ...prevState,
+              values: setIn(prevState.values, name, this.state.value),
+              warnings: setIn(prevState.warnings, name, warning),
+              touched: setIn(prevState.touched, name, true),
+            }))
+        );
+      } else {
+        setFormikState((prevState: any) => ({
+          ...prevState,
+          values: setIn(prevState.values, name, this.state.value),
+          warnings: setIn(prevState.warnings, name, maybePromise),
+          touched: setIn(prevState.touched, name, true),
+        }));
+      }
+    }
+
     if (validateOnBlur && validate) {
       const maybePromise = (validate as any)(this.state.value);
       if (isPromise(maybePromise)) {
@@ -257,6 +359,7 @@ export class FastField<
   render() {
     const {
       validate,
+      warn,
       name,
       render,
       children,
@@ -277,13 +380,17 @@ export class FastField<
     const bag = {
       field,
       form: formik,
-      meta: { touched: getIn(formik.touched, name), error: this.state.error },
+      meta: {
+        touched: getIn(formik.touched, name),
+        error: this.state.error,
+        warning: this.state.warning,
+      },
     };
 
     if (render) {
       return (render as (
         props: FieldProps<any> & {
-          meta: { error?: string; touched?: boolean };
+          meta: { error?: string; warning?: string; touched?: boolean };
         }
       ) => React.ReactNode)(bag);
     }

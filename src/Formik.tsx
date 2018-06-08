@@ -28,6 +28,16 @@ export type FormikErrors<Values> = {
 };
 
 /**
+ * An object containing warning messages whose keys correspond to FormikValues.
+ * Should be always be and object of strings, but any is allowed to support i18n libraries.
+ */
+export type FormikWarnings<Values> = {
+  [K in keyof Values]?: Values[K] extends object
+    ? FormikWarnings<Values[K]>
+    : {}
+};
+
+/**
  * An object containing touched state of the form whose keys correspond to FormikValues.
  */
 export type FormikTouched<Values> = {
@@ -49,6 +59,8 @@ export interface FormikState<Values> {
   error?: any;
   /** map of field names to specific error for that field */
   errors: FormikErrors<Values>;
+  /** map of field names to specific warning for that field */
+  warnings: FormikWarnings<Values>;
   /** map of field names to whether the field has been touched */
   touched: FormikTouched<Values>;
   /** whether the form is currently submitting */
@@ -84,6 +96,8 @@ export interface FormikActions<Values> {
   setError(e: any): void;
   /** Manually set errors object */
   setErrors(errors: FormikErrors<Values>): void;
+  /** Manually set errors object */
+  setWarnings(warnings: FormikWarnings<Values>): void;
   /** Manually set isSubmitting */
   setSubmitting(isSubmitting: boolean): void;
   /** Manually set touched object */
@@ -113,6 +127,8 @@ export interface FormikActions<Values> {
   ): void;
   /** Validate form values */
   validateForm(values?: any): void;
+  /** Warn form values */
+  warnForm(values?: any): void;
   /** Reset form */
   resetForm(nextValues?: any): void;
   /** Submit the form imperatively */
@@ -133,6 +149,8 @@ export interface FormikActions<Values> {
   setFieldValue(field: string, value: any): void;
   /** Set error message of a form field directly */
   setFieldError(field: string, message: string): void;
+  /** Set warning message of a form field directly */
+  setFieldWarning(field: string, message: string): void;
   /** Set whether field has been touched directly */
   setFieldTouched(field: string, isTouched?: boolean): void;
   /** Set Formik state, careful! */
@@ -168,6 +186,10 @@ export interface FormikSharedConfig {
   validateOnChange?: boolean;
   /** Tells Formik to validate the form on each input's onBlur event */
   validateOnBlur?: boolean;
+  /** Tells Formik to warn the form on each input's onChange event */
+  warnOnChange?: boolean;
+  /** Tells Formik to warn the form on each input's onBlur event */
+  warnOnBlur?: boolean;
   /** Tell Formik if initial form values are valid or not on first render */
   isInitialValid?: boolean | ((props: object) => boolean | undefined);
   /** Should Formik reset the form when new initialValues change */
@@ -217,6 +239,12 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
   ) => void | object | Promise<FormikErrors<Values>>);
 
   /**
+   * Warn function. Must return an error object or promise that
+   * throws an warning object where that object keys map to corresponding value.
+   */
+  warn?: ((values: Values) => void | object | Promise<FormikWarnings<Values>>);
+
+  /**
    * React children or child render callback
    */
   children?:
@@ -240,6 +268,8 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
   static defaultProps = {
     validateOnChange: true,
     validateOnBlur: true,
+    warnOnChange: true,
+    warnOnBlur: true,
     isInitialValid: false,
     enableReinitialize: false,
   };
@@ -247,12 +277,15 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
   static propTypes = {
     validateOnChange: PropTypes.bool,
     validateOnBlur: PropTypes.bool,
+    warnOnChange: PropTypes.bool,
+    warnOnBlur: PropTypes.bool,
     isInitialValid: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
     initialValues: PropTypes.object,
     onReset: PropTypes.func,
     onSubmit: PropTypes.func.isRequired,
     validationSchema: PropTypes.oneOfType([PropTypes.func, PropTypes.object]),
     validate: PropTypes.func,
+    warn: PropTypes.func,
     component: PropTypes.func,
     render: PropTypes.func,
     children: PropTypes.oneOfType([PropTypes.func, PropTypes.node]),
@@ -279,6 +312,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
         ...this.getFormikBag(),
         validationSchema: this.props.validationSchema,
         validate: this.props.validate,
+        warn: this.props.warn,
       },
     };
   }
@@ -288,6 +322,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     this.state = {
       values: props.initialValues || ({} as any),
       errors: {},
+      warnings: {},
       touched: {},
       isSubmitting: false,
       submitCount: 0,
@@ -346,10 +381,17 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     this.setState({ errors });
   };
 
+  setWarnings = (warnings: FormikWarnings<Values>) => {
+    this.setState({ warnings });
+  };
+
   setTouched = (touched: FormikTouched<Values>) => {
     this.setState({ touched }, () => {
       if (this.props.validateOnBlur) {
         this.runValidations(this.state.values);
+      }
+      if (this.props.warnOnBlur) {
+        this.runWarnings(this.state.values);
       }
     });
   };
@@ -358,6 +400,9 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     this.setState({ values }, () => {
       if (this.props.validateOnChange) {
         this.runValidations(values);
+      }
+      if (this.props.warnOnChange) {
+        this.runWarnings(values);
       }
     });
   };
@@ -422,6 +467,25 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     }
   };
 
+  /**
+   * Run warnings and update state accordingly
+   */
+  runWarnings = (values: FormikValues = this.state.values) => {
+    if (this.props.warn) {
+      const maybePromisedWarnings = (this.props.warn as any)(values);
+      if (isPromise(maybePromisedWarnings)) {
+        (maybePromisedWarnings as Promise<any>).then(
+          () => {
+            this.setState({ warnings: {} });
+          },
+          warnings => this.setState({ warnings })
+        );
+      } else {
+        this.setWarnings(maybePromisedWarnings as FormikWarnings<Values>);
+      }
+    }
+  };
+
   handleChange = (
     eventOrPath: string | React.ChangeEvent<any>
   ): void | ((eventOrTextValue: string | React.ChangeEvent<any>) => void) => {
@@ -478,6 +542,10 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
         if (this.props.validateOnChange) {
           this.runValidations(setIn(this.state.values, field, val));
         }
+
+        if (this.props.warnOnChange) {
+          this.runValidations(setIn(this.state.values, field, val));
+        }
       } else {
         console.warn(
           'Formik could not determine which field to update based on your input and usage of `handleChange`'
@@ -506,7 +574,8 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
   setFieldValue = (
     field: string,
     value: any,
-    shouldValidate: boolean = true
+    shouldValidate: boolean = true,
+    shouldWarn: boolean = true
   ) => {
     // Set form field by name
     this.setState(
@@ -517,6 +586,10 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       () => {
         if (this.props.validateOnChange && shouldValidate) {
           this.runValidations(this.state.values);
+        }
+
+        if (this.props.warnOnChange && shouldWarn) {
+          this.runWarnings(this.state.values);
         }
       }
     );
@@ -539,6 +612,24 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       isSubmitting: true,
       submitCount: prevState.submitCount + 1,
     }));
+
+    if (this.props.warn) {
+      const maybePromisedWarnings =
+        (this.props.warn as any)(this.state.values) || {};
+      if (isPromise(maybePromisedWarnings)) {
+        (maybePromisedWarnings as Promise<any>).then(
+          () => {
+            this.setState({ warnings: {} });
+          },
+          warnings => this.setState({ warnings })
+        );
+        return;
+      } else {
+        this.setState({
+          warnings: maybePromisedWarnings as FormikWarnings<Values>,
+        });
+      }
+    }
 
     if (this.props.validate) {
       const maybePromisedErrors =
@@ -598,6 +689,10 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       if (this.props.validateOnBlur) {
         this.runValidations(this.state.values);
       }
+
+      if (this.props.warnOnBlur) {
+        this.runWarnings(this.state.values);
+      }
     };
 
     if (isString(eventOrString)) {
@@ -614,7 +709,8 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
   setFieldTouched = (
     field: string,
     touched: boolean = true,
-    shouldValidate: boolean = true
+    shouldValidate: boolean = true,
+    shouldWarn: boolean = true
   ) => {
     // Set touched field by name
     this.setState(
@@ -625,6 +721,9 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       () => {
         if (this.props.validateOnBlur && shouldValidate) {
           this.runValidations(this.state.values);
+        }
+        if (this.props.warnOnBlur && shouldWarn) {
+          this.runWarnings(this.state.values);
         }
       }
     );
@@ -638,6 +737,14 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     }));
   };
 
+  setFieldWarning = (field: string, message: string) => {
+    // Set form field by name
+    this.setState(prevState => ({
+      ...prevState,
+      warnings: setIn(prevState.warnings, field, message),
+    }));
+  };
+
   resetForm = (nextValues?: Values) => {
     const values = nextValues ? nextValues : this.props.initialValues;
 
@@ -646,6 +753,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     this.setState({
       isSubmitting: false,
       errors: {},
+      warnings: {},
       touched: {},
       error: undefined,
       status: undefined,
@@ -680,9 +788,12 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       resetForm: this.resetForm,
       submitForm: this.submitForm,
       validateForm: this.runValidations,
+      warnForm: this.runWarnings,
       setError: this.setError,
       setErrors: this.setErrors,
+      setWarnings: this.setWarnings,
       setFieldError: this.setFieldError,
+      setFieldWarning: this.setFieldWarning,
       setFieldTouched: this.setFieldTouched,
       setFieldValue: this.setFieldValue,
       setStatus: this.setStatus,
@@ -722,6 +833,8 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       handleSubmit: this.handleSubmit,
       validateOnChange: this.props.validateOnChange,
       validateOnBlur: this.props.validateOnBlur,
+      warnOnChange: this.props.warnOnChange,
+      warnOnBlur: this.props.warnOnBlur,
     };
   };
 

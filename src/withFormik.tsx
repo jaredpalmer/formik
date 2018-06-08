@@ -67,6 +67,12 @@ export interface WithFormikConfig<
    * throws an error object where that object keys map to corresponding value.
    */
   validate?: (values: Values, props: Props) => void | object | Promise<any>;
+
+  /**
+   * Warning function. Must return an error object or promise that
+   * throws an warning object where that object keys map to corresponding value.
+   */
+  warn?: (values: Values, props: Props) => void | object | Promise<any>;
 }
 
 export type CompositeComponent<P> =

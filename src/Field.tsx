@@ -129,10 +129,13 @@ class FieldInner<Props = {}, Values = {}> extends React.Component<
   };
 
   handleBlur = (e: any) => {
-    const { handleBlur, validateOnBlur } = this.props.formik;
+    const { handleBlur, validateOnBlur, warnOnBlur } = this.props.formik;
     handleBlur(e); // Call Formik's handleBlur no matter what
     if (!!validateOnBlur && !!this.props.validate) {
       this.runFieldValidations(e.target.value);
+    }
+    if (!!warnOnBlur && !!this.props.warn) {
+      this.runFieldWarnings(e.target.value);
     }
   };
 

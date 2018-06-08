@@ -165,7 +165,7 @@ class FieldInner<Props = {}, Values = {}> extends React.Component<
         warning => setFieldWarning(name, warning)
       );
     } else {
-      // Otherwise set the error
+      // Otherwise set the warning
       setFieldWarning(name, maybePromise);
     }
   };

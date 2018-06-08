@@ -109,7 +109,7 @@ class FastFieldInner<Props = {}, Values = {}> extends React.Component<
       : /checkbox/.test(type) ? checked : value;
 
     if (warnOnChange) {
-      // Field-level validation
+      // Field-level warning
       if (this.props.warn) {
         const maybePromise = (this.props.warn as any)(value);
         if (isPromise(maybePromise)) {
@@ -122,7 +122,7 @@ class FastFieldInner<Props = {}, Values = {}> extends React.Component<
           this.setState({ value: val, warning: maybePromise });
         }
       } else if (warn) {
-        // Top-level validate
+        // Top-level warning
         const maybePromise = (warn as any)(setIn(values, this.props.name, val));
 
         if (isPromise(maybePromise)) {
@@ -150,7 +150,7 @@ class FastFieldInner<Props = {}, Values = {}> extends React.Component<
         } else {
           // Handle the same diff situation
           // @todo refactor
-          if (isEqualExceptForKey(maybePromise, errors, this.props.name)) {
+          if (isEqualExceptForKey(maybePromise, warnings, this.props.name)) {
             this.setState({
               value: val,
               error: getIn(maybePromise, this.props.name),
@@ -161,7 +161,7 @@ class FastFieldInner<Props = {}, Values = {}> extends React.Component<
             });
             setFormikState((prevState: any) => ({
               ...prevState,
-              errors: maybePromise,
+              warnings: maybePromise,
             }));
           }
         }

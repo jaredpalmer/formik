@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Formik, Field, FieldProps, FormikProps } from '../src';
 
-import { shallow, mount } from 'enzyme';
+import { shallow, mount } from '@pisano/enzyme';
 import { noop } from './testHelpers';
 
 interface TestFormValues {
@@ -20,21 +20,22 @@ const TestForm: React.SFC<any> = p => (
 
 describe('A <Field />', () => {
   describe('<Field validate>', () => {
-    const makeFieldTree = (props: any, ctx: any) =>
-      shallow(<Field {...props} />, { context: { formik: ctx } });
+    const makeFieldTree = (props: any) =>
+      shallow(<Field.WrappedComponent {...props} />);
 
     it('calls validate during onChange if present', () => {
       const handleChange = jest.fn(noop);
       const setFieldError = jest.fn(noop);
       const validate = jest.fn(noop);
-      const tree = makeFieldTree(
-        { name: 'name', validate },
-        {
+      const tree = makeFieldTree({
+        name: 'name',
+        validate,
+        formik: {
           handleChange,
           setFieldError,
           validateOnChange: true,
-        }
-      );
+        },
+      });
       tree.find('input').simulate('change', {
         persist: noop,
         target: {
@@ -51,14 +52,15 @@ describe('A <Field />', () => {
       const handleChange = jest.fn(noop);
       const setFieldError = jest.fn(noop);
       const validate = jest.fn(noop);
-      const tree = makeFieldTree(
-        { name: 'name', validate },
-        {
+      const tree = makeFieldTree({
+        name: 'name',
+        validate,
+        formik: {
           handleChange,
           setFieldError,
           validateOnChange: false,
-        }
-      );
+        },
+      });
       tree.find('input').simulate('change', {
         persist: noop,
         target: {
@@ -75,14 +77,15 @@ describe('A <Field />', () => {
       const handleBlur = jest.fn(noop);
       const setFieldError = jest.fn(noop);
       const validate = jest.fn(noop);
-      const tree = makeFieldTree(
-        { name: 'name', validate },
-        {
+      const tree = makeFieldTree({
+        name: 'name',
+        validate,
+        formik: {
           handleBlur,
           setFieldError,
           validateOnBlur: true,
-        }
-      );
+        },
+      });
       tree.find('input').simulate('blur', {
         persist: noop,
         target: {
@@ -100,14 +103,15 @@ describe('A <Field />', () => {
       const handleBlur = jest.fn(noop);
       const setFieldError = jest.fn(noop);
       const validate = jest.fn(noop);
-      const tree = makeFieldTree(
-        { name: 'name', validate },
-        {
+      const tree = makeFieldTree({
+        name: 'name',
+        validate,
+        formik: {
           handleBlur,
           setFieldError,
           validateOnBlur: false,
-        }
-      );
+        },
+      });
       tree.find('input').simulate('blur', {
         persist: noop,
         target: {

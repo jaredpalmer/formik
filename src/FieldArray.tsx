@@ -1,18 +1,19 @@
-import * as PropTypes from 'prop-types';
 import * as React from 'react';
-import { FormikProps, FormikState } from './Formik';
-import { isEmptyChildren, getIn, setIn, isFunction } from './utils';
-import { SharedRenderProps } from './types';
+import { connect } from './connect';
+import {
+  FormikContext,
+  FormikState,
+  SharedRenderProps,
+  FormikProps,
+} from './types';
+import { getIn, isEmptyChildren, isFunction, setIn } from './utils';
 
 export type FieldArrayConfig = {
   /** Really the path to the array field to be updated */
   name: string;
   /** Should field array validate the form AFTER array updates/changes? */
   validateOnChange?: boolean;
-  /** Should field array warn the form AFTER array updates/changes? */
-  warnOnChange?: boolean;
 } & SharedRenderProps<ArrayHelpers & { form: FormikProps<any> }>;
-
 export interface ArrayHelpers {
   /** Imperatively add a value to the end of an array */
   push: (obj: any) => void;
@@ -78,16 +79,15 @@ export const replace = (array: any[], index: number, value: any) => {
   copy[index] = value;
   return copy;
 };
-
-export class FieldArray extends React.Component<FieldArrayConfig, {}> {
+class FieldArrayInner<Values = {}> extends React.Component<
+  FieldArrayConfig & { formik: FormikContext<Values> },
+  {}
+> {
   static defaultProps = {
     validateOnChange: true,
   };
-  static contextTypes = {
-    formik: PropTypes.object,
-  };
 
-  constructor(props: FieldArrayConfig) {
+  constructor(props: FieldArrayConfig & { formik: FormikContext<Values> }) {
     super(props);
     // We need TypeScript generics on these, so we'll bind them in the constructor
     this.remove = this.remove.bind(this);
@@ -97,19 +97,13 @@ export class FieldArray extends React.Component<FieldArrayConfig, {}> {
   updateArrayField = (
     fn: Function,
     alterTouched: boolean,
-    alterErrors: boolean,
-    alterWarnings: boolean
+    alterErrors: boolean
   ) => {
     const {
-      setFormikState,
-      validateForm,
-      warnForm,
-      values,
-      touched,
-      errors,
-      warnings,
-    } = this.context.formik;
-    const { name, validateOnChange, warnOnChange } = this.props;
+      name,
+      validateOnChange,
+      formik: { setFormikState, validateForm, values, touched, errors },
+    } = this.props;
     setFormikState(
       (prevState: FormikState<any>) => ({
         ...prevState,
@@ -117,9 +111,6 @@ export class FieldArray extends React.Component<FieldArrayConfig, {}> {
         errors: alterErrors
           ? setIn(prevState.errors, name, fn(getIn(errors, name)))
           : prevState.errors,
-        warnings: alterWarnings
-          ? setIn(prevState.warnings, name, fn(getIn(warnings, name)))
-          : prevState.warnings,
         touched: alterTouched
           ? setIn(prevState.touched, name, fn(getIn(touched, name)))
           : prevState.touched,
@@ -127,10 +118,6 @@ export class FieldArray extends React.Component<FieldArrayConfig, {}> {
       () => {
         if (validateOnChange) {
           validateForm();
-        }
-
-        if (warnOnChange) {
-          warnForm();
         }
       }
     );
@@ -140,7 +127,6 @@ export class FieldArray extends React.Component<FieldArrayConfig, {}> {
     this.updateArrayField(
       (array: any[]) => [...(array || []), value],
       false,
-      false,
       false
     );
 
@@ -149,7 +135,6 @@ export class FieldArray extends React.Component<FieldArrayConfig, {}> {
   swap = (indexA: number, indexB: number) =>
     this.updateArrayField(
       (array: any[]) => swap(array, indexA, indexB),
-      false,
       false,
       false
     );
@@ -161,7 +146,6 @@ export class FieldArray extends React.Component<FieldArrayConfig, {}> {
     this.updateArrayField(
       (array: any[]) => move(array, from, to),
       false,
-      false,
       false
     );
 
@@ -171,7 +155,6 @@ export class FieldArray extends React.Component<FieldArrayConfig, {}> {
     this.updateArrayField(
       (array: any[]) => insert(array, index, value),
       false,
-      false,
       false
     );
 
@@ -180,7 +163,6 @@ export class FieldArray extends React.Component<FieldArrayConfig, {}> {
   replace = (index: number, value: any) =>
     this.updateArrayField(
       (array: any[]) => replace(array, index, value),
-      false,
       false,
       false
     );
@@ -196,7 +178,6 @@ export class FieldArray extends React.Component<FieldArrayConfig, {}> {
         return arr;
       },
       false,
-      false,
       false
     );
     return arr.length;
@@ -205,7 +186,7 @@ export class FieldArray extends React.Component<FieldArrayConfig, {}> {
   handleUnshift = (value: any) => () => this.unshift(value);
 
   remove<T>(index: number): T {
-    // We need to make sure we also remove relevant pieces of `touched`, `errors`, and `warnings`
+    // We need to make sure we also remove relevant pieces of `touched` and `errors`
     let result: any;
     this.updateArrayField(
       // so this gets call 3 times
@@ -220,7 +201,6 @@ export class FieldArray extends React.Component<FieldArrayConfig, {}> {
         return copy;
       },
       true,
-      true,
       true
     );
 
@@ -230,7 +210,7 @@ export class FieldArray extends React.Component<FieldArrayConfig, {}> {
   handleRemove = (index: number) => () => this.remove<any>(index);
 
   pop<T>(): T {
-    // Remove relevant pieces of `touched`, `errors`, and `warnings` too!
+    // Remove relevant pieces of `touched` and `errors` too!
     let result: any;
     this.updateArrayField(
       // so this gets call 3 times
@@ -241,7 +221,6 @@ export class FieldArray extends React.Component<FieldArrayConfig, {}> {
         }
         return tmp;
       },
-      true,
       true,
       true
     );
@@ -271,8 +250,19 @@ export class FieldArray extends React.Component<FieldArrayConfig, {}> {
       handleRemove: this.handleRemove,
     };
 
-    const { component, render, children, name } = this.props;
-    const props = { ...arrayHelpers, form: this.context.formik, name };
+    const {
+      component,
+      render,
+      children,
+      name,
+      formik: {
+        validate: _validate,
+        validationSchema: _validationSchema,
+        ...restOfFormik
+      },
+    } = this.props;
+
+    const props = { ...arrayHelpers, form: restOfFormik, name };
 
     return component
       ? React.createElement(component as any, props)
@@ -285,3 +275,5 @@ export class FieldArray extends React.Component<FieldArrayConfig, {}> {
           : null;
   }
 }
+
+export const FieldArray = connect<FieldArrayConfig, any>(FieldArrayInner);

@@ -38,7 +38,7 @@ By now, you might be thinking, "Why didn't you just use
 2. Redux-Form calls your entire top-level Redux reducer multiple times ON EVERY
    SINGLE KEYSTROKE. This is fine for small apps, but as your Redux app grows,
    input latency will continue to increase if you use Redux-Form.
-3. Redux-Form is 22.5 kB minified gzipped (Formik is 12.7 kB)
+3. Redux-Form is 22.5 kB minified gzipped (Formik is 7.8 kB)
 
 **My goal with Formik was to create a scalable, performant, form helper with a
 minimal API that does the really really annoying stuff, and leaves the rest up
@@ -51,6 +51,12 @@ to you.**
 
 > ["Formik. All day. All long."](https://twitter.com/ken_wheeler/status/974676242501947397?s=20)  
 > --[Ken Wheeler](https://twitter.com/ken_wheeler), Director of Open Source at Formidable Labs
+
+> ["Been using @jaredpalmer's Formik lately at work – this is my all-time favorite way to handle forms"](https://twitter.com/jxnblk/status/1000036895366307846)  
+> --[Brent Jackson](https://twitter.com/jxnblk/), Creator of Rebass, styled-system, Compositor and many more
+
+> ["Formik removes most of the moving parts involved in forms allowing me to move faster with more confidence."](https://twitter.com/tkh44/status/1000058583197732864)  
+> --[Kye Hohenberger](https://twitter.com/tkh44), Creator of Emotion
 
 ## Influences
 
@@ -325,7 +331,7 @@ npm install yup --save
     - [Why use `setFieldValue` instead of `handleChange`?](#why-use-setfieldvalue-instead-of-handlechange)
     - [Avoiding new functions in render](#avoiding-new-functions-in-render)
   - [Using Formik with TypeScript](#using-formik-with-typescript)
-    - [Render props (`<Formik />` and `<Field/>`)](#render-props-formik--and-field)
+    - [Render props (`<Formik />` and `<Field />`)](#render-props-formik--and-field)
     - [`withFormik()`](#withformik)
 - [API](#api)
   - [`<Formik />`](#formik-)
@@ -369,7 +375,7 @@ npm install yup --save
   - [`<Field />`](#field-)
     - [`validate?: (value: any) => undefined | string | Promise<any>`](#validate-value-any--undefined--string--promiseany)
     - [Refs](#refs)
-  - [`<FieldArray/>`](#fieldarray)
+  - [`<FieldArray />`](#fieldarray-)
       - [`name: string`](#name-string)
       - [`validateOnChange?: boolean`](#validateonchange-boolean-1)
     - [FieldArray Validation Gotchas](#fieldarray-validation-gotchas)
@@ -497,10 +503,10 @@ To make writing forms less verbose. Formik comes with a few helpers to save you
 key strokes.
 
 * `<Field>`
-* `<Form/>`
+* `<Form />`
 
-This is the **exact** same form as before, but written with `<Form/>` and
-`<Field/>`:
+This is the **exact** same form as before, but written with `<Form />` and
+`<Field />`:
 
 ```js
 // EditUserDialog.js
@@ -574,7 +580,7 @@ const MyReactNativeForm = props => (
       onChangeText={text => props.setFieldValue('email', text)}
       value={props.values.email}
     />
-    <Button onPress={props.handleSubmit} title="Submit" /> //
+    <Button onPress={props.handleSubmit} title="Submit" />
   </View>
 );
 
@@ -584,9 +590,9 @@ export default enhancer(MyReactNativeForm);
 As you can see above, the notable differences between using Formik with React
 DOM and React Native are:
 
-1. Formik's `props.handleSubmit` is passed to a `<Button onPress={...}/>`
-   instead of HTML `<form onSubmit={...}/>` component (since there is no
-   `<form/>` element in React Native).
+1. Formik's `props.handleSubmit` is passed to a `<Button onPress={...} />`
+   instead of HTML `<form onSubmit={...} />` component (since there is no
+   `<form />` element in React Native).
 2. `<TextInput />` uses Formik's `props.setFieldValue` instead of
    `props.handleChange`. To understand why, see the discussion below.
 
@@ -643,7 +649,7 @@ the following _(emphasis added)_:
 > as an argument to the callback handler.**
 
 However, Formik works just fine if you use `props.setFieldValue`!
-Philisophically, just treat React Native's `<TextInput/>` the same way you would
+Philosophically, just treat React Native's `<TextInput />` the same way you would
 any other 3rd party custom input element.
 
 In conclusion, the following WILL work in React Native:
@@ -666,7 +672,7 @@ export const MyReactNativeForm = props => (
 #### Avoiding new functions in render
 
 If for any reason you wish to avoid creating new functions on each render, I
-suggest treating React Native's `<TextInput/>` as if it were another 3rd party
+suggest treating React Native's `<TextInput />` as if it were another 3rd party
 custom input element:
 
 * Write your own class wrapper around the custom input element
@@ -740,7 +746,7 @@ The Formik source code is written in TypeScript, so you can rest assured that
 types will always be up to date. As a mental model, Formik's types are very
 similar to React Router 4's `<Route>`.
 
-#### Render props (`<Formik />` and `<Field/>`)
+#### Render props (`<Formik />` and `<Field />`)
 
 ```tsx
 import * as React from 'react';
@@ -782,7 +788,7 @@ export const MyApp: React.SFC<{} /* whatever */> = () => {
 
 ```tsx
 import React from 'react';
-import Yup from 'yup';
+import * as Yup from 'yup';
 import { withFormik, FormikProps, FormikErrors, Form, Field } from 'formik';
 
 // Shape of form values
@@ -900,7 +906,7 @@ const BasicExample = () => (
 
 #### Formik render methods
 
-There are three ways to render things with `<Formik/>`
+There are three ways to render things with `<Formik />`
 
 * `<Formik component>`
 * `<Formik render>`
@@ -1067,7 +1073,7 @@ don’t use both in the same `<Formik>`.
 #### `render: (props: FormikProps<Values>) => ReactNode`
 
 ```tsx
-<Formik render={props => <ContactForm {...props} />}/>
+<Formik render={props => <ContactForm {...props} />} />
 
 <Formik
   render={({ handleSubmit, handleChange, handleBlur, values, errors }) => (
@@ -1092,7 +1098,7 @@ don’t use both in the same `<Formik>`.
 #### `children: func`
 
 ```tsx
-<Formik children={props => <ContactForm {...props} />}/>
+<Formik children={props => <ContactForm {...props} />} />
 
 // or...
 
@@ -1190,7 +1196,7 @@ const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
 const validate = (values, props) => {
   return sleep(2000).then(() => {
     let errors = {}
-    if (['admin', 'null', 'god']).includes(values.username) {
+    if (['admin', 'null', 'god'].includes(values.username)) {
       errors.username = 'Nice try'
     }
     // ...
@@ -1222,10 +1228,10 @@ component's [`errors`]. Its keys should match those of [`values`].
 ### `<Field />`
 
 `<Field />` will automagically hook up inputs to Formik. It uses the `name`
-attribute to match up with Formik state. `<Field/>` will default to an
-`<input/>` element. To change the underlying element of `<Field/>`, specify a
+attribute to match up with Formik state. `<Field />` will default to an
+`<input />` element. To change the underlying element of `<Field />`, specify a
 `component` prop. It can either be a string like `select` or another React
-component. `<Field/>` can also take a `render` prop.
+component. `<Field />` can also take a `render` prop.
 
 ```js
 import React from 'react';
@@ -1282,7 +1288,7 @@ const CustomInputComponent: React.SFC<
 #### `validate?: (value: any) => undefined | string | Promise<any>`
 
 You can run independent field-level validations by passing a function to the
-`validate>` prop. The function will respect the [`validateOnBlur`] and
+`validate` prop. The function will respect the [`validateOnBlur`] and
 [`validateOnChange`] config/props specified in the `<Field>'s` parent `<Formik>`
 / `withFormik`. This function can be either be:
 
@@ -1327,7 +1333,7 @@ slightly relaxed and allow you to return a `Function` (e.g. `i18n('invalid')`).
 
 When you are **not** using a custom component and you need to access the underlying DOM node created by `Field` (e.g. to call `focus`), pass the callback to the `innerRef` prop instead.
 
-### `<FieldArray/>`
+### `<FieldArray />`
 
 `<FieldArray />` is a component that helps with common array/list manipulations. You pass it a `name` property with the path to the key within `values` that holds the relevant array. `<FieldArray />` will then give you access to array helper methods via render props. For convenience, calling these methods will trigger validation and also manage `touched` for you.
 
@@ -1438,7 +1444,7 @@ const FriendArrayErrors = errors =>
 ```js
 // within a `FieldArray`'s render
 const FriendArrayErrors = errors =>
-  typeof friends === 'string' ? <div>{errors.friends}</div> : null;
+  typeof errors.friends === 'string' ? <div>{errors.friends}</div> : null;
 ```
 
 For the nested field errors, you should assume that no part of the object is defined unless you've checked for it. Thus, you may want to do yourself a favor and make a custom `<ErrorMessage />` component that looks like this:
@@ -1477,7 +1483,7 @@ The following methods are made available via render props.
 
 #### FieldArray render methods
 
-There are three ways to render things with `<FieldArray/>`
+There are three ways to render things with `<FieldArray />`
 
 * `<FieldArray name="..." component>`
 * `<FieldArray name="..." render>`
@@ -1545,9 +1551,9 @@ export const MyDynamicForm = ({
 
 ### `<Form />`
 
-Like `<Field/>`, `<Form/>` is a helper component you can use to save time. It is
+Like `<Field />`, `<Form />` is a helper component you can use to save time. It is
 tiny wrapper around `<form onSubmit={context.formik.handleSubmit} />`. This
-means you don't need to explictly type out `<form onSubmit={props.handleSubmit}/>` if you don't want to.
+means you don't need to explictly type out `<form onSubmit={props.handleSubmit} />` if you don't want to.
 
 **ReactDOM only**
 

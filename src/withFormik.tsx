@@ -1,7 +1,7 @@
+import hoistNonReactStatics from 'hoist-non-react-statics';
 import * as React from 'react';
-
+import { Formik } from './Formik';
 import {
-  Formik,
   FormikActions,
   FormikComputedProps,
   FormikHandlers,
@@ -9,9 +9,7 @@ import {
   FormikSharedConfig,
   FormikState,
   FormikValues,
-} from './Formik';
-
-import hoistNonReactStatics from 'hoist-non-react-statics';
+} from './types';
 import { isFunction } from './utils';
 
 /**
@@ -115,11 +113,18 @@ export function withFormik<
   return function createFormik(
     Component: CompositeComponent<InjectedFormikProps<Props, Values>>
   ): React.ComponentClass<Props> {
+    const componentDisplayName =
+      Component.displayName ||
+      Component.name ||
+      (Component.constructor && Component.constructor.name) ||
+      'Component';
     /**
      * We need to use closures here for to provide the wrapped component's props to
      * the respective withFormik config methods.
      */
     class C extends React.Component<Props, {}> {
+      static displayName = `WithFormik(${componentDisplayName})`;
+
       validate = (values: Values): void | object | Promise<any> => {
         return config.validate!(values, this.props);
       };
@@ -160,7 +165,7 @@ export function withFormik<
     }
 
     return hoistNonReactStatics<Props, InjectedFormikProps<Props, Values>>(
-      C as any,
+      C,
       Component as React.ComponentClass<InjectedFormikProps<Props, Values>> // cast type to ComponentClass (even if SFC)
     ) as React.ComponentClass<Props>;
   };

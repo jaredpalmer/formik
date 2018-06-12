@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 
 import { FastField as Field, FieldProps, Formik, FormikProps } from '../src';
 
-import { shallow, mount } from 'enzyme';
+import { mount } from '@pisano/enzyme';
 import { noop } from './testHelpers';
 
 interface TestFormValues {
@@ -21,19 +21,20 @@ const TestForm: React.SFC<any> = p => (
 
 describe('A <Field />', () => {
   describe('<Field validate>', () => {
-    const makeFieldTree = (props: any, ctx: any) =>
-      shallow(<Field {...props} />, { context: { formik: ctx } });
+    const makeFieldTree = (props: any) =>
+      mount(<Field.WrappedComponent {...props} />);
 
     it('calls validate during onChange if present', () => {
       const registerField = jest.fn(noop);
       const validate = jest.fn(noop);
-      const tree = makeFieldTree(
-        { name: 'name', validate },
-        {
+      const tree = makeFieldTree({
+        name: 'name',
+        validate,
+        formik: {
           registerField,
           validateOnChange: true,
-        }
-      );
+        },
+      });
       tree.find('input').simulate('change', {
         persist: noop,
         target: {
@@ -47,13 +48,14 @@ describe('A <Field />', () => {
     it('does NOT call validate during onChange if validateOnChange is set to false', () => {
       const registerField = jest.fn(noop);
       const validate = jest.fn(noop);
-      const tree = makeFieldTree(
-        { name: 'name', validate },
-        {
+      const tree = makeFieldTree({
+        name: 'name',
+        validate,
+        formik: {
           registerField,
           validateOnChange: false,
-        }
-      );
+        },
+      });
       tree.find('input').simulate('change', {
         persist: noop,
         target: {
@@ -69,14 +71,15 @@ describe('A <Field />', () => {
       const validate = jest.fn(noop);
       const registerField = jest.fn(noop);
       const setFormikState = jest.fn(noop);
-      const tree = makeFieldTree(
-        { name: 'name', validate },
-        {
+      const tree = makeFieldTree({
+        name: 'name',
+        validate,
+        formik: {
           registerField,
           setFormikState,
           validateOnBlur: true,
-        }
-      );
+        },
+      });
       tree.find('input').simulate('blur', {
         persist: noop,
         target: {
@@ -93,14 +96,15 @@ describe('A <Field />', () => {
       const validate = jest.fn(noop);
       const registerField = jest.fn(noop);
       const setFormikState = jest.fn(noop);
-      const tree = makeFieldTree(
-        { name: 'name', validate },
-        {
+      const tree = makeFieldTree({
+        name: 'name',
+        validate,
+        formik: {
           setFormikState,
           registerField,
           validateOnBlur: false,
-        }
-      );
+        },
+      });
       tree.find('input').simulate('blur', {
         persist: noop,
         target: {
@@ -173,13 +177,16 @@ describe('A <Field />', () => {
 
     it('assigns innerRef as a ref to string components', () => {
       const innerRef = jest.fn();
-      const tree = mount(<Field name="name" innerRef={innerRef} />, {
-        context: {
-          formik: {
-            registerField: jest.fn(noop),
-          },
-        },
-      });
+      const fmk = {
+        registerField: jest.fn(noop),
+      };
+      const tree = mount(
+        <Field.WrappedComponent
+          name="name"
+          innerRef={innerRef}
+          formik={fmk as any}
+        />
+      );
       const element = tree.find('input').instance();
       expect(innerRef).toHaveBeenCalledWith(element);
     });

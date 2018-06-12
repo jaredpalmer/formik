@@ -1,7 +1,9 @@
 import * as React from 'react';
 import { Formik, FormikProps, FormikConfig } from '../src';
-import { shallow, mount } from 'enzyme';
+import { shallow, mount } from '@pisano/enzyme';
 import { sleep, noop } from './testHelpers';
+
+jest.spyOn(global.console, 'error');
 
 interface Values {
   name: string;
@@ -902,7 +904,7 @@ describe('<Formik>', () => {
     });
   });
 
-  describe('componentWillReceiveProps', () => {
+  describe('componentDidUpdate', () => {
     let form: any, initialValues: any;
     beforeEach(() => {
       initialValues = {
@@ -920,7 +922,7 @@ describe('<Formik>', () => {
 
     it('should not resetForm if new initialValues are the same as previous', () => {
       const newInitialValues = Object.assign({}, initialValues);
-      form.componentWillReceiveProps({
+      form.componentDidUpdate({
         initialValues: newInitialValues,
         onSubmit: jest.fn(),
       });
@@ -932,7 +934,7 @@ describe('<Formik>', () => {
         ...initialValues,
         watchers: ['jared', 'ian', 'sam'],
       };
-      form.componentWillReceiveProps({
+      form.componentDidUpdate({
         initialValues: newInitialValues,
         onSubmit: jest.fn(),
       });
@@ -944,7 +946,7 @@ describe('<Formik>', () => {
         ...initialValues,
         github: { repoUrl: 'different' },
       };
-      form.componentWillReceiveProps({
+      form.componentDidUpdate({
         initialValues: newInitialValues,
         onSubmit: jest.fn(),
       });
@@ -961,7 +963,7 @@ describe('<Formik>', () => {
         ...initialValues,
         watchers: ['jared', 'ian', 'sam'],
       };
-      form.componentWillReceiveProps({
+      form.componentDidUpdate({
         initialValues: newInitialValues,
         onSubmit: jest.fn(),
       });
@@ -1120,5 +1122,107 @@ describe('<Formik>', () => {
           .props().submitCount
       ).toEqual(0);
     });
+  });
+
+  it('should warn against buttons with unspecified type', () => {
+    const FormWithNoButtonType = () => (
+      <Formik onSubmit={noop} initialValues={{ opensource: 'yay' }}>
+        {({ handleSubmit, handleChange, values }) => (
+          <form onSubmit={handleSubmit}>
+            <input
+              type="text"
+              onChange={handleChange}
+              value={values.opensource}
+              name="name"
+            />
+            <button>Submit</button>
+          </form>
+        )}
+      </Formik>
+    );
+    const tree = mount(<FormWithNoButtonType />);
+    const preventDefault = jest.fn();
+    const button = tree.find('button').getDOMNode();
+
+    button.focus(); // sets activeElement
+    tree.find('form').simulate('submit', {
+      preventDefault,
+    });
+    expect(global.console.error).toHaveBeenCalledWith(
+      expect.stringMatching(
+        /Warning: You submitted a Formik form using a button with an unspecified type./
+      )
+    );
+
+    button.blur(); // unsets activeElement
+    (global.console.error as jest.Mock<{}>).mockClear();
+  });
+
+  it('should not warn when button has type submit', () => {
+    const FormWithValidButtonType = () => (
+      <Formik onSubmit={noop} initialValues={{ opensource: 'yay' }}>
+        {({ handleSubmit, handleChange, values }) => (
+          <form onSubmit={handleSubmit}>
+            <input
+              type="text"
+              onChange={handleChange}
+              value={values.opensource}
+              name="name"
+            />
+            <button type="submit">Submit</button>
+          </form>
+        )}
+      </Formik>
+    );
+    const tree = mount(<FormWithValidButtonType />);
+    const preventDefault = jest.fn();
+    const button = tree.find('button').getDOMNode();
+
+    button.focus(); // sets activeElement
+    tree.find('form').simulate('submit', {
+      preventDefault,
+    });
+    expect(global.console.error).not.toHaveBeenCalledWith(
+      expect.stringMatching(
+        /Warning: You submitted a Formik form using a button with an unspecified type./
+      )
+    );
+
+    button.blur(); // unsets activeElement
+    (global.console.error as jest.Mock<{}>).mockClear();
+  });
+
+  it('should not warn when activeElement is not a button', () => {
+    const FormWithInput = () => (
+      <Formik onSubmit={noop} initialValues={{ opensource: 'yay' }}>
+        {({ handleSubmit, handleChange, values }) => (
+          <form onSubmit={handleSubmit}>
+            <input
+              type="text"
+              onChange={handleChange}
+              value={values.opensource}
+              name="name"
+            />
+            <button type="submit">Submit</button>
+          </form>
+        )}
+      </Formik>
+    );
+    const tree = mount(<FormWithInput />);
+    const preventDefault = jest.fn();
+    const input = tree.find('input').getDOMNode();
+
+    input.focus(); // sets activeElement
+    tree.find('form').simulate('submit', {
+      preventDefault,
+    });
+    expect(global.console.error).not.toHaveBeenCalledWith(
+      expect.stringMatching(
+        /Warning: You submitted a Formik form using a button with an unspecified type./
+      )
+    );
+
+    input.blur(); // unsets activeElement
+    (global.console.error as jest.Mock<{}>).mockClear();
   });
 });

@@ -107,3 +107,7 @@ export const isEmptyChildren = (children: any): boolean =>
 /** @private is the given object/value a promise? */
 export const isPromise = (value: any): boolean =>
   isObject(value) && isFunction(value.then);
+
+/** @private is running in React Native? */
+export const isReactNative =
+  typeof navigator === 'object' && navigator.product === 'ReactNative';

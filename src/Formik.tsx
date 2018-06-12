@@ -20,8 +20,7 @@ import {
   setIn,
   setNestedObjectValues,
 } from './utils';
-import ReactDOM from 'react-dom';
-
+import { batchUpdate } from './batchUpdate';
 export class Formik<ExtraProps = {}, Values = object> extends React.Component<
   FormikConfig<Values> & ExtraProps,
   FormikState<any>
@@ -104,7 +103,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
   };
 
   setValues = (values: FormikValues) => {
-    ReactDOM.unstable_batchedUpdates(() => {
+    batchUpdate(() => {
       this.setState({ values });
 
       if (this.props.validateOnChange) {
@@ -260,7 +259,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       values: setIn(prevState.values, field, value),
     });
 
-    ReactDOM.unstable_batchedUpdates(() => {
+    batchUpdate(() => {
       this.setState(valuesState);
 
       if (this.props.validateOnChange && shouldValidate) {

@@ -117,6 +117,103 @@ describe('A <Field />', () => {
     });
   });
 
+  describe('<Field warn>', () => {
+    const makeFieldTree = (props: any) =>
+      mount(<Field.WrappedComponent {...props} />);
+
+    it('calls warn during onChange if present', () => {
+      const registerField = jest.fn(noop);
+      const warn = jest.fn(noop);
+      const tree = makeFieldTree({
+        name: 'name',
+        warn,
+        formik: {
+          registerField,
+          warnOnChange: true,
+        },
+      });
+      tree.find('input').simulate('change', {
+        persist: noop,
+        target: {
+          name: 'name',
+          value: 'ian',
+        },
+      });
+      expect(warn).toHaveBeenCalled();
+    });
+
+    it('does NOT call warn during onChange if warnOnChange is set to false', () => {
+      const registerField = jest.fn(noop);
+      const warn = jest.fn(noop);
+      const tree = makeFieldTree({
+        name: 'name',
+        warn,
+        formik: {
+          registerField,
+          warnOnChange: false,
+        },
+      });
+      tree.find('input').simulate('change', {
+        persist: noop,
+        target: {
+          name: 'name',
+          value: 'ian',
+        },
+      });
+
+      expect(warn).not.toHaveBeenCalled();
+    });
+
+    it('calls warn during onBlur if present', () => {
+      const warn = jest.fn(noop);
+      const registerField = jest.fn(noop);
+      const setFormikState = jest.fn(noop);
+      const tree = makeFieldTree({
+        name: 'name',
+        warn,
+        formik: {
+          registerField,
+          setFormikState,
+          warnOnBlur: true,
+        },
+      });
+      tree.find('input').simulate('blur', {
+        persist: noop,
+        target: {
+          name: 'name',
+          value: 'ian',
+        },
+      });
+      expect(setFormikState).toHaveBeenCalled();
+      expect(registerField).toHaveBeenCalled();
+      expect(warn).toHaveBeenCalled();
+    });
+
+    it('does NOT call warn during onBlur if warnOnBlur is set to false', () => {
+      const warn = jest.fn(noop);
+      const registerField = jest.fn(noop);
+      const setFormikState = jest.fn(noop);
+      const tree = makeFieldTree({
+        name: 'name',
+        warn,
+        formik: {
+          setFormikState,
+          registerField,
+          warnOnBlur: false,
+        },
+      });
+      tree.find('input').simulate('blur', {
+        persist: noop,
+        target: {
+          name: 'name',
+          value: 'ian',
+        },
+      });
+      expect(setFormikState).toHaveBeenCalled();
+      expect(warn).not.toHaveBeenCalled();
+    });
+  });
+
   describe('<Field component />', () => {
     const node = document.createElement('div');
 

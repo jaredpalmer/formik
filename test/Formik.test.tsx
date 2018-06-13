@@ -434,26 +434,6 @@ describe('<Formik>', () => {
           expect(validate).toHaveBeenCalled();
         });
 
-        it('should call warn if present', () => {
-          const warn = jest.fn().mockReturnValue({});
-          const tree = shallow(
-            <Formik
-              initialValues={{ name: 'jared' }}
-              onSubmit={noop}
-              component={Form}
-              warn={warn}
-            />
-          );
-          tree
-            .find(Form)
-            .dive()
-            .find('form')
-            .simulate('submit', {
-              preventDefault: noop,
-            });
-          expect(warn).toHaveBeenCalled();
-        });
-
         it('should submit the form if valid', () => {
           const onSubmit = jest.fn();
           const tree = shallow(
@@ -520,27 +500,6 @@ describe('<Formik>', () => {
           expect(validate).toHaveBeenCalled();
         });
 
-        it('should call warn if present', () => {
-          const warn = jest.fn(() => Promise.resolve({}));
-
-          const tree = shallow(
-            <Formik
-              initialValues={{ name: 'jared' }}
-              onSubmit={noop}
-              component={Form}
-              warn={warn}
-            />
-          );
-          tree
-            .find(Form)
-            .dive()
-            .find('form')
-            .simulate('submit', {
-              preventDefault: noop,
-            });
-          expect(warn).toHaveBeenCalled();
-        });
-
         it('should submit the form if valid', async () => {
           const onSubmit = jest.fn();
 
@@ -550,30 +509,6 @@ describe('<Formik>', () => {
               onSubmit={onSubmit}
               component={Form}
               validate={() => Promise.resolve({})}
-            />
-          );
-          await tree
-            .find(Form)
-            .props()
-            .submitForm();
-
-          expect(onSubmit).toHaveBeenCalled();
-        });
-
-        it('should submit the form if valid with warnings', async () => {
-          const onSubmit = jest.fn();
-
-          const tree = shallow(
-            <Formik
-              initialValues={{ name: 'jared' }}
-              onSubmit={onSubmit}
-              component={Form}
-              validate={() => Promise.resolve({})}
-              warn={() => {
-                sleep(25).then(() => {
-                  throw { name: 'warning!' };
-                });
-              }}
             />
           );
           await tree
@@ -653,6 +588,137 @@ describe('<Formik>', () => {
               preventDefault: noop,
             });
           expect(validate).toHaveBeenCalled();
+        });
+      });
+
+      describe('with warn (SYNC)', () => {
+        it('should call warn if present', () => {
+          const warn = jest.fn().mockReturnValue({});
+          const tree = shallow(
+            <Formik
+              initialValues={{ name: 'jared' }}
+              onSubmit={noop}
+              component={Form}
+              warn={warn}
+            />
+          );
+          tree
+            .find(Form)
+            .dive()
+            .find('form')
+            .simulate('submit', {
+              preventDefault: noop,
+            });
+          expect(warn).toHaveBeenCalled();
+        });
+
+        it('should submit the form with no warnings', () => {
+          const onSubmit = jest.fn();
+          const tree = shallow(
+            <Formik
+              initialValues={{ name: 'jared' }}
+              onSubmit={onSubmit}
+              component={Form}
+              warn={noop}
+            />
+          );
+          tree
+            .find(Form)
+            .dive()
+            .find('form')
+            .simulate('submit', {
+              preventDefault: noop,
+            });
+          expect(onSubmit).toHaveBeenCalled();
+        });
+
+        it('should submit the form with warnings', () => {
+          const warn = jest.fn().mockReturnValue({ name: 'Error!' });
+          const onSubmit = jest.fn();
+
+          const tree = shallow(
+            <Formik
+              initialValues={{ name: 'jared' }}
+              onSubmit={onSubmit}
+              component={Form}
+              warn={warn}
+            />
+          );
+          tree
+            .find(Form)
+            .dive()
+            .find('form')
+            .simulate('submit', {
+              preventDefault: noop,
+            });
+          expect(warn).toHaveBeenCalled();
+          expect(onSubmit).toHaveBeenCalled();
+        });
+      });
+
+      describe('with warn (ASYNC)', () => {
+        it('should call warn if present', () => {
+          const warn = jest.fn(() => Promise.resolve({}));
+
+          const tree = shallow(
+            <Formik
+              initialValues={{ name: 'jared' }}
+              onSubmit={noop}
+              component={Form}
+              warn={warn}
+            />
+          );
+          tree
+            .find(Form)
+            .dive()
+            .find('form')
+            .simulate('submit', {
+              preventDefault: noop,
+            });
+          expect(warn).toHaveBeenCalled();
+        });
+
+        it('should submit the form with no warnings', async () => {
+          const onSubmit = jest.fn();
+
+          const tree = shallow(
+            <Formik
+              initialValues={{ name: 'jared' }}
+              onSubmit={onSubmit}
+              component={Form}
+              warn={() => Promise.resolve({})}
+            />
+          );
+          await tree
+            .find(Form)
+            .props()
+            .submitForm();
+
+          expect(onSubmit).toHaveBeenCalled();
+        });
+
+        it('should submit the form with warnings', async () => {
+          const onSubmit = jest.fn();
+
+          const tree = shallow(
+            <Formik
+              initialValues={{ name: 'jared' }}
+              onSubmit={onSubmit}
+              component={Form}
+              validate={() => Promise.resolve({})}
+              warn={() => {
+                sleep(25).then(() => {
+                  throw { name: 'warning!' };
+                });
+              }}
+            />
+          );
+          await tree
+            .find(Form)
+            .props()
+            .submitForm();
+
+          expect(onSubmit).toHaveBeenCalled();
         });
       });
     });
@@ -899,6 +965,21 @@ describe('<Formik>', () => {
       ).toEqual('Required');
     });
 
+    it('setWarnings sets warning object', async () => {
+      const tree = shallow(BasicForm);
+      tree
+        .find(Form)
+        .props()
+        .setWarnings({ name: 'Required' });
+
+      expect(
+        tree
+          .update()
+          .find(Form)
+          .props().warnings.name
+      ).toEqual('Required');
+    });
+
     it('setFieldError sets error by key', async () => {
       const tree = shallow(BasicForm);
       tree
@@ -910,6 +991,20 @@ describe('<Formik>', () => {
           .update()
           .find(Form)
           .props().errors.name
+      ).toEqual('Required');
+    });
+
+    it('setFieldWarning sets warning by key', async () => {
+      const tree = shallow(BasicForm);
+      tree
+        .find(Form)
+        .props()
+        .setFieldWarning('name', 'Required');
+      expect(
+        tree
+          .update()
+          .find(Form)
+          .props().warnings.name
       ).toEqual('Required');
     });
 

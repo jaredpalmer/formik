@@ -28,6 +28,7 @@ const Form: React.SFC<InjectedFormikProps<Props, Values>> = ({
   setStatus,
   status,
   errors,
+  warnings,
   isSubmitting,
 }) => {
   return (
@@ -40,6 +41,7 @@ const Form: React.SFC<InjectedFormikProps<Props, Values>> = ({
         name="name"
       />
       {touched.name && errors.name && <div id="feedback">{errors.name}</div>}
+      {touched.name && warnings.name && <div id="warning">{warnings.name}</div>}
       {isSubmitting && <div id="submitting">Submitting</div>}
       <button
         id="statusButton"
@@ -72,6 +74,7 @@ describe('withFormik()', () => {
     expect(tree.find(Form).props().touched).toEqual({});
     expect(tree.find(Form).props().values).toEqual({ name: 'jared' });
     expect(tree.find(Form).props().errors).toEqual({});
+    expect(tree.find(Form).props().warnings).toEqual({});
     expect(tree.find(Form).props().dirty).toBe(false);
     expect(tree.find(Form).props().isValid).toBe(false);
   });
@@ -218,6 +221,50 @@ describe('withFormik()', () => {
           });
         expect(validate).not.toHaveBeenCalled();
       });
+
+      it('runs warnings by default (validate)', async () => {
+        const warn = jest.fn(noop);
+        const ValidationForm = FormFactory({
+          warn,
+        });
+        const tree = shallow(<ValidationForm user={{ name: 'jared' }} />);
+        tree
+          .dive()
+          .find(Form)
+          .dive()
+          .find('input')
+          .simulate('change', {
+            persist: noop,
+            target: {
+              name: 'name',
+              value: 'ian',
+            },
+          });
+        expect(warn).toHaveBeenCalled();
+      });
+
+      it('does NOT run warnings if warnOnChange is false (warn)', async () => {
+        const warn = jest.fn(noop);
+        const ValidationForm = FormFactory({
+          warn,
+          warnOnChange: false,
+        });
+        const tree = shallow(<ValidationForm user={{ name: 'jared' }} />);
+
+        tree
+          .dive()
+          .find(Form)
+          .dive()
+          .find('input')
+          .simulate('change', {
+            persist: noop,
+            target: {
+              name: 'name',
+              value: 'ian',
+            },
+          });
+        expect(warn).not.toHaveBeenCalled();
+      });
     });
 
     describe('handleBlur', () => {
@@ -293,6 +340,26 @@ describe('withFormik()', () => {
           });
 
         expect(validate).toHaveBeenCalled();
+      });
+
+      it('runs warnings by default (warn)', async () => {
+        const warn = jest.fn(noop);
+        const ValidationForm = FormFactory({ warn });
+
+        const tree = shallow(<ValidationForm user={{ name: 'jared' }} />);
+
+        tree
+          .dive()
+          .find(Form)
+          .dive()
+          .find('input')
+          .simulate('blur', {
+            persist: noop,
+            target: {
+              name: 'name',
+            },
+          });
+        expect(warn).toHaveBeenCalled();
       });
     });
 
@@ -481,6 +548,121 @@ describe('withFormik()', () => {
               preventDefault: noop,
             });
           expect(validate).toHaveBeenCalled();
+        });
+      });
+
+      describe('with warn (SYNC)', () => {
+        it('should call warn if present', () => {
+          const warn = jest.fn().mockReturnValue({});
+          const WarnForm = withFormik<Props, Values, Values>({
+            warn,
+            mapPropsToValues: ({ user }) => ({ ...user }),
+            handleSubmit: noop,
+          })(Form);
+          const tree = mount(<WarnForm user={{ name: 'jared' }} />);
+          tree
+            .find(Form)
+            .find('form')
+            .simulate('submit', {
+              preventDefault: noop,
+            });
+          expect(warn).toHaveBeenCalled();
+        });
+
+        it('should submit the form with no warnings', () => {
+          const handleSubmit = jest.fn();
+          const WarnForm = withFormik<Props, Values, Values>({
+            warn: noop,
+            mapPropsToValues: ({ user }) => ({ ...user }),
+            handleSubmit,
+          })(Form);
+          const tree = mount(<WarnForm user={{ name: 'jared' }} />);
+          tree
+            .find(Form)
+            .find('form')
+            .simulate('submit', {
+              preventDefault: noop,
+            });
+          expect(handleSubmit).toHaveBeenCalled();
+        });
+
+        it('should submit the form with warnings', () => {
+          const warn = jest.fn().mockReturnValue({ name: 'Warning!' });
+          const handleSubmit = jest.fn();
+
+          const WarnForm = withFormik<Props, Values, Values>({
+            warn,
+            mapPropsToValues: ({ user }) => ({ ...user }),
+            handleSubmit,
+          })(Form);
+
+          const tree = mount(<WarnForm user={{ name: '' }} />);
+          tree
+            .find(Form)
+            .find('form')
+            .simulate('submit', {
+              preventDefault: noop,
+            });
+          expect(warn).toHaveBeenCalled();
+          expect(handleSubmit).toHaveBeenCalled();
+        });
+      });
+
+      describe('with warn (ASYNC)', () => {
+        it('should call warn if present', () => {
+          const warn = jest.fn(() => Promise.resolve({}));
+          const WarnForm = withFormik<Props, Values, Values>({
+            warn,
+            mapPropsToValues: ({ user }) => ({ ...user }),
+            handleSubmit: noop,
+          })(Form);
+          const tree = mount(<WarnForm user={{ name: 'jared' }} />);
+          tree
+            .find(Form)
+            .find('form')
+            .simulate('submit', {
+              preventDefault: noop,
+            });
+          expect(warn).toHaveBeenCalled();
+        });
+
+        it('should submit the form with no warning', async () => {
+          const handleSubmit = jest.fn();
+
+          const WarnForm = withFormik<Props, Values, Values>({
+            warn: () => Promise.resolve({}),
+            mapPropsToValues: ({ user }) => ({ ...user }),
+            handleSubmit,
+          })(Form);
+
+          const tree = mount(<WarnForm user={{ name: '' }} />);
+          await tree
+            .find(Form)
+            .props()
+            .submitForm();
+
+          expect(handleSubmit).toHaveBeenCalled();
+        });
+
+        it('should submit the form with warnings', async () => {
+          const handleSubmit = jest.fn();
+
+          const WarnForm = withFormik<Props, Values, Values>({
+            warn: () =>
+              sleep(25).then(() => {
+                throw { name: 'warning!' };
+              }),
+            mapPropsToValues: ({ user }) => ({ ...user }),
+            handleSubmit,
+          })(Form);
+
+          const tree = mount(<WarnForm user={{ name: '' }} />);
+          await tree
+            .find(Form)
+            .props()
+            .submitForm();
+
+          expect(handleSubmit).toHaveBeenCalled();
         });
       });
     });

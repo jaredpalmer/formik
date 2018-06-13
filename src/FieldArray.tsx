@@ -260,9 +260,10 @@ class FieldArrayInner<Values = {}> extends React.Component<
         validationSchema: _validationSchema,
         ...restOfFormik
       },
+      ...rest
     } = this.props;
 
-    const props = { ...arrayHelpers, form: restOfFormik, name };
+    const props = { ...arrayHelpers, form: restOfFormik, name, ...rest };
 
     return component
       ? React.createElement(component as any, props)

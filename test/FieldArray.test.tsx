@@ -36,6 +36,27 @@ describe('<FieldArray />', () => {
     );
   });
 
+  it('renders component with custom props', () => {
+    const customPropValue = 'beep';
+    const TestComponent = ({ customProp }) => {
+      expect(customProp).toBe(customPropValue);
+      return null;
+    };
+
+    ReactDOM.render(
+      <TestForm
+        component={() => (
+          <FieldArray
+            name="friends"
+            component={TestComponent}
+            customProp={customPropValue}
+          />
+        )}
+      />,
+      node
+    );
+  });
+
   it('renders with render callback with array helpers as props', () => {
     ReactDOM.render(
       <TestForm

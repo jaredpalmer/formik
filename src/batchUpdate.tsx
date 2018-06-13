@@ -1,7 +1,8 @@
 import { isReactNative } from './utils';
 
-// React polyfill for some next-level unstable optimizations
 let ReactRenderer;
+
+// React polyfill for some unstable shit..
 if (!!isReactNative) {
   ReactRenderer = require('react-native');
 } else {
@@ -10,7 +11,7 @@ if (!!isReactNative) {
 
 let { unstable_batchedUpdates } = ReactRenderer;
 if (unstable_batchedUpdates === undefined) {
-  unstable_batchedUpdates = (fn: any) => fn();
+  unstable_batchedUpdates = (fn: (() => void)) => fn();
 }
 
 export const batchUpdate = unstable_batchedUpdates;

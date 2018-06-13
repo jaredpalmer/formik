@@ -22,6 +22,8 @@ import {
   getActiveElement,
 } from './utils';
 import { batchUpdate } from './batchUpdate';
+
+// The Guts....
 export class Formik<ExtraProps = {}, Values = object> extends React.Component<
   FormikConfig<Values> & ExtraProps,
   FormikState<any>

@@ -37,11 +37,11 @@ class FastFieldInner<Props = {}, Values = {}> extends React.Component<
 
     let nextState = null;
     if (!isEqual(nextFieldValue, prevState.value)) {
-      nextState = { value: nextFieldValue };
+      nextState = { ...prevState, value: nextFieldValue };
     }
 
     if (!isEqual(nextFieldError, prevState.error)) {
-      nextState = { error: nextFieldError };
+      nextState = { ...prevState, error: nextFieldError };
     }
 
     return nextState;

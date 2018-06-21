@@ -1,6 +1,6 @@
 import React from 'react';
 import { Formik, Field, Form } from 'formik';
-import Yup from 'yup';
+import * as Yup from 'yup';
 
 const SignUp = () => (
   <div>
@@ -116,7 +116,7 @@ const Fieldset = ({ component = 'input', render, name, label, ...rest }) => (
     render={({ field, form }) => {
       const error = form.touched[name] && form.errors[name];
       const classes = error ? 'fieldset fieldset--error' : 'fieldset';
-      
+
       return (
         <div className={classes}>
           <label htmlFor={name}>{label}</label>

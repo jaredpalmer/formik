@@ -38,7 +38,7 @@ By now, you might be thinking, "Why didn't you just use
 2. Redux-Form calls your entire top-level Redux reducer multiple times ON EVERY
    SINGLE KEYSTROKE. This is fine for small apps, but as your Redux app grows,
    input latency will continue to increase if you use Redux-Form.
-3. Redux-Form is 22.5 kB minified gzipped (Formik is 12.7 kB)
+3. Redux-Form is 22.5 kB minified gzipped (Formik is 7.8 kB)
 
 **My goal with Formik was to create a scalable, performant, form helper with a
 minimal API that does the really really annoying stuff, and leaves the rest up
@@ -51,6 +51,12 @@ to you.**
 
 > ["Formik. All day. All long."](https://twitter.com/ken_wheeler/status/974676242501947397?s=20)  
 > --[Ken Wheeler](https://twitter.com/ken_wheeler), Director of Open Source at Formidable Labs
+
+> ["Been using @jaredpalmer's Formik lately at work – this is my all-time favorite way to handle forms"](https://twitter.com/jxnblk/status/1000036895366307846)  
+> --[Brent Jackson](https://twitter.com/jxnblk/), Creator of Rebass, styled-system, Compositor and many more
+
+> ["Formik removes most of the moving parts involved in forms allowing me to move faster with more confidence."](https://twitter.com/tkh44/status/1000058583197732864)  
+> --[Kye Hohenberger](https://twitter.com/tkh44), Creator of Emotion
 
 ## Influences
 
@@ -369,7 +375,7 @@ npm install yup --save
   - [`<Field />`](#field-)
     - [`validate?: (value: any) => undefined | string | Promise<any>`](#validate-value-any--undefined--string--promiseany)
     - [Refs](#refs)
-  - [`<FieldArray />`](#fieldarray)
+  - [`<FieldArray />`](#fieldarray-)
       - [`name: string`](#name-string)
       - [`validateOnChange?: boolean`](#validateonchange-boolean-1)
     - [FieldArray Validation Gotchas](#fieldarray-validation-gotchas)
@@ -782,7 +788,7 @@ export const MyApp: React.SFC<{} /* whatever */> = () => {
 
 ```tsx
 import React from 'react';
-import Yup from 'yup';
+import * as Yup from 'yup';
 import { withFormik, FormikProps, FormikErrors, Form, Field } from 'formik';
 
 // Shape of form values
@@ -1190,7 +1196,7 @@ const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
 const validate = (values, props) => {
   return sleep(2000).then(() => {
     let errors = {}
-    if (['admin', 'null', 'god']).includes(values.username) {
+    if (['admin', 'null', 'god'].includes(values.username)) {
       errors.username = 'Nice try'
     }
     // ...

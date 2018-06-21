@@ -19,6 +19,7 @@ import {
   isString,
   setIn,
   setNestedObjectValues,
+  getActiveElement,
 } from './utils';
 
 export class Formik<ExtraProps = {}, Values = object> extends React.Component<
@@ -271,22 +272,28 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       e.preventDefault();
     }
 
+    // Warn if form submission is triggered by a <button> without a
+    // specified `type` attribute during development. This mitigates
+    // a common gotcha in forms with both reset and submit buttons,
+    // where the dev forgets to add type="button" to the reset button.
     if (
       process.env.NODE_ENV !== 'production' &&
-      document &&
-      document.activeElement
+      typeof document !== 'undefined'
     ) {
-      const type =
-        document.activeElement.attributes &&
-        document.activeElement.attributes.getNamedItem('type');
-
-      const submitTriggeredFromButtonWithType =
-        document.activeElement instanceof HTMLButtonElement && type;
-
-      warning(
-        submitTriggeredFromButtonWithType,
-        'You submitted a Formik form using a button with an unspecified type.  Most browsers default button elements to type="submit". If this is not a submit button please add type="button".'
-      );
+      // Safely get the active element (works with IE)
+      const activeElement = getActiveElement();
+      if (
+        activeElement !== null &&
+        activeElement instanceof HTMLButtonElement
+      ) {
+        warning(
+          !!(
+            activeElement.attributes &&
+            activeElement.attributes.getNamedItem('type')
+          ),
+          'You submitted a Formik form using a button with an unspecified `type` attribute.  Most browsers default button elements to `type="submit"`. If this is not a submit button, please add `type="button"`.'
+        );
+      }
     }
 
     this.submitForm();

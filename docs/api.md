@@ -166,7 +166,7 @@ A top-level status object that you can use to represent form state that can't
 otherwise be expressed/stored with other methods. This is useful for capturing
 and passing through API responses to your inner component.
 
-`status` should only be modifed by calling
+`status` should only be modified by calling
 [`setStatus: (status?: any) => void`](#setstatus-status-any--void)
 
 #### `touched: { [field: string]: boolean }`
@@ -209,7 +209,7 @@ const ContactForm = ({
 };
 ```
 
-**Warning:** `<Formik component>` takes precendence over `<Formik render>` so
+**Warning:** `<Formik component>` takes precedence over `<Formik render>` so
 don’t use both in the same `<Formik>`.
 
 ### `render: (props: FormikProps<Values>) => ReactNode`
@@ -567,7 +567,7 @@ const schema = Yup.object().shape({
 
 Since Yup and your custom validation function should always output error messages as strings, you'll need to sniff whether your nested error is an array or a string when you go to display it.
 
-So...to display `'Must have friends'` and `'Minimum of 3 friends'` (our example's array validation contstraints)...
+So...to display `'Must have friends'` and `'Minimum of 3 friends'` (our example's array validation constraints)...
 
 **_Bad_**
 
@@ -691,7 +691,7 @@ export const MyDynamicForm = ({
 
 Like `<Field />`, `<Form />` is a helper component you can use to save time. It is
 tiny wrapper around `<form onSubmit={context.formik.handleSubmit} />`. This
-means you don't need to explictly type out `<form onSubmit={props.handleSubmit} />` if you don't want to.
+means you don't need to explicitly type out `<form onSubmit={props.handleSubmit} />` if you don't want to.
 
 **ReactDOM only**
 

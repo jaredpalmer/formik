@@ -1196,7 +1196,7 @@ const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
 const validate = (values, props) => {
   return sleep(2000).then(() => {
     let errors = {}
-    if (['admin', 'null', 'god']).includes(values.username) {
+    if (['admin', 'null', 'god'].includes(values.username)) {
       errors.username = 'Nice try'
     }
     // ...

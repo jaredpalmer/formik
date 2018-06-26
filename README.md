@@ -580,7 +580,7 @@ const MyReactNativeForm = props => (
       onChangeText={text => props.setFieldValue('email', text)}
       value={props.values.email}
     />
-    <Button onPress={props.handleSubmit} title="Submit" />
+    <Button onPress={props.submitForm} title="Submit" />
   </View>
 );
 
@@ -590,7 +590,7 @@ export default enhancer(MyReactNativeForm);
 As you can see above, the notable differences between using Formik with React
 DOM and React Native are:
 
-1. Formik's `props.handleSubmit` is passed to a `<Button onPress={...} />`
+1. Formik's `props.submitForm` is passed to a `<Button onPress={...} />`
    instead of HTML `<form onSubmit={...} />` component (since there is no
    `<form />` element in React Native).
 2. `<TextInput />` uses Formik's `props.setFieldValue` instead of
@@ -620,7 +620,7 @@ const MyReactNativeForm = props => (
             onChangeText={formikProps.handleChange} // this WILL NOT WORK IN RN
             value={formikProps.values.email}
           />
-          <Button onPress={formikProps.handleSubmit} />
+          <Button onPress={formikProps.submitForm} />
         </View>
       )}
     />

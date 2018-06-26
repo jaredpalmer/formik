@@ -41,7 +41,6 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
   hbCache: {
     [key: string]: (e: any) => void;
   } = {};
-  fields: { [field: string]: (nextValues?: any) => void };
 
   constructor(props: FormikConfig<Values> & ExtraProps) {
     super(props);
@@ -52,7 +51,6 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       isSubmitting: false,
       submitCount: 0,
     };
-    this.fields = {};
     this.initialValues = props.initialValues || ({} as any);
 
     warning(
@@ -70,14 +68,6 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       'You should not use <Formik render> and <Formik children> in the same <Formik> component; <Formik children> will be ignored'
     );
   }
-
-  registerField = (name: string, resetFn: (nextValues?: any) => void) => {
-    this.fields[name] = resetFn;
-  };
-
-  unregisterField = (name: string) => {
-    delete this.fields[name];
-  };
 
   componentDidUpdate(prevProps: Readonly<FormikConfig<Values> & ExtraProps>) {
     // If the initialValues change, reset the form
@@ -422,7 +412,6 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       values,
       submitCount: 0,
     });
-    Object.keys(this.fields).map(f => this.fields[f](values));
   };
 
   handleReset = () => {
@@ -484,8 +473,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       ...this.getFormikComputedProps(),
 
       // FastField needs to communicate with Formik during resets
-      registerField: this.registerField,
-      unregisterField: this.unregisterField,
+
       handleBlur: this.handleBlur,
       handleChange: this.handleChange,
       handleReset: this.handleReset,

@@ -26,27 +26,6 @@ class FastFieldInner<Props = {}, Values = {}> extends React.Component<
   FieldAttributes<Props> & { formik: FormikContext<Values> },
   FastFieldState
 > {
-  reset: (nextValues?: any) => void;
-
-  static getDerivedStateFromProps(
-    nextProps: any /* FieldAttributes<Props> & { formik: FormikContext<Values> }*/,
-    prevState: FastFieldState
-  ) {
-    const nextFieldValue = getIn(nextProps.formik.values, nextProps.name);
-    const nextFieldError = getIn(nextProps.formik.errors, nextProps.name);
-
-    let nextState = null;
-    if (!isEqual(nextFieldValue, prevState.value)) {
-      nextState = { ...prevState, value: nextFieldValue };
-    }
-
-    if (!isEqual(nextFieldError, prevState.error)) {
-      nextState = { ...prevState, error: nextFieldError };
-    }
-
-    return nextState;
-  }
-
   constructor(
     props: FieldAttributes<Props> & { formik: FormikContext<Values> }
   ) {
@@ -55,15 +34,6 @@ class FastFieldInner<Props = {}, Values = {}> extends React.Component<
       value: getIn(props.formik.values, props.name),
       error: getIn(props.formik.errors, props.name),
     };
-
-    this.reset = (nextValues?: any) => {
-      this.setState({
-        value: getIn(nextValues, props.name),
-        error: getIn(props.formik.errors, props.name),
-      });
-    };
-
-    props.formik.registerField(props.name, this.reset);
 
     const { render, children, component } = props;
 
@@ -83,8 +53,22 @@ class FastFieldInner<Props = {}, Values = {}> extends React.Component<
     );
   }
 
-  componentWillUnmount() {
-    this.props.formik.unregisterField(this.props.name);
+  componentDidUpdate(
+    prevProps: any /* FieldAttributes<Props> & { formik: FormikContext<Values> }*/,
+    _state: FastFieldState
+  ) {
+    const nextFieldValue = getIn(this.props.formik.values, this.props.name);
+    const nextFieldError = getIn(this.props.formik.errors, this.props.name);
+    const prevFieldValue = getIn(prevProps.formik.values, prevProps.name);
+    const prevFieldError = getIn(prevProps.formik.errors, prevProps.name);
+
+    if (!isEqual(nextFieldValue, prevFieldValue)) {
+      this.setState({ value: nextFieldValue });
+    }
+
+    if (!isEqual(nextFieldError, prevFieldError)) {
+      this.setState({ error: nextFieldError });
+    }
   }
 
   handleChange = (e: React.ChangeEvent<any>) => {

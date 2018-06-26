@@ -218,10 +218,7 @@ export type FormikProps<Values> = FormikSharedConfig &
   FormikState<Values> &
   FormikActions<Values> &
   FormikHandlers &
-  FormikComputedProps<Values> & {
-    registerField(name: string, resetFn: ((nextValues?: any) => void)): void;
-    unregisterField(name: string): void;
-  };
+  FormikComputedProps<Values>;
 
 /**
  * State, handlers, and helpers made available to Formik's primitive components through context.

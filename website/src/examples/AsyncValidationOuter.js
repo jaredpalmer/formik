@@ -78,6 +78,9 @@ class SignIn extends React.Component {
         errors: {},
         values: { ...prevState.values, email: values.email },
       }));
+      setTimeout(() => {
+        alert(JSON.stringify(values, null, 2));
+      }, 500);
     }
   }
 }

@@ -33,9 +33,6 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     enableReinitialize: false,
   };
 
-  initialValues: Values;
-  initialErrors: FormikErrors<Values>;
-
   hcCache: {
     [key: string]: (e: string | React.ChangeEvent<any>) => void;
   } = {};
@@ -43,6 +40,29 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     [key: string]: (e: any) => void;
   } = {};
   fields: { [field: string]: (nextValues?: any) => void };
+
+  static getDerivedStateFromProps<Values extends object, ExtraProps = {}>(
+    props: Readonly<FormikConfig<Values> & ExtraProps>,
+    state: FormikState<Values>
+  ) {
+    // If enableReinitialize set to true, reset the form if initialValues or
+    // initialErrors changed
+    if (props.enableReinitialize) {
+      const values = Object.assign({}, props.initialValues, state.values);
+      const errors = Object.assign({}, props.initialErrors, state.errors);
+      return {
+        isSubmitting: false,
+        values,
+        errors,
+        touched: setNestedObjectValues(errors, true),
+        error: undefined,
+        status: undefined,
+        submitCount: 0,
+      };
+    } else {
+      return state;
+    }
+  }
 
   constructor(props: FormikConfig<Values> & ExtraProps) {
     super(props);
@@ -56,8 +76,6 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       submitCount: 0,
     };
     this.fields = {};
-    this.initialValues = props.initialValues || {};
-    this.initialErrors = props.initialErrors || {};
 
     warning(
       !(props.component && props.render),
@@ -82,25 +100,6 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
   unregisterField = (name: string) => {
     delete this.fields[name];
   };
-
-  componentDidUpdate(prevProps: Readonly<FormikConfig<Values> & ExtraProps>) {
-    // If enableReinitialize set to true, reset the form if initialValues or
-    // initialErrors changed
-    if (this.props.enableReinitialize) {
-      const valsChanged = !isEqual(
-        prevProps.initialValues,
-        this.props.initialValues
-      );
-      const errsChanged = !isEqual(
-        prevProps.initialErrors,
-        this.props.initialErrors
-      );
-      if (valsChanged || errsChanged) {
-        // @todo refactor to use getDerivedStateFromProps?
-        this.resetForm(this.props.initialValues, this.props.initialErrors);
-      }
-    }
-  }
 
   setErrors = (errors: FormikErrors<Values>) => {
     this.setState({ errors });
@@ -419,12 +418,10 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     }));
   };
 
-  resetForm = (nextValues?: Values, nextErrors?: FormikErrors<Values>) => {
-    const values = nextValues || this.props.initialValues;
+  resetForm = (/*nextValues?: Values, nextErrors?: FormikErrors<Values>*/) => {
+    const values = this.props.initialValues;
     // @todo ! assertion should be redundant, try removing after TS update
-    const errors = (nextErrors || this.props.initialErrors || {})!;
-    this.initialValues = values;
-    this.initialErrors = errors;
+    const errors = (this.props.initialErrors || {})!;
 
     this.setState({
       isSubmitting: false,
@@ -477,8 +474,8 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
   };
 
   getFormikComputedProps = () => {
-    const { isInitialValid } = this.props;
-    const dirty = !isEqual(this.initialValues, this.state.values);
+    const { isInitialValid, initialValues, initialErrors = {} } = this.props;
+    const dirty = !isEqual(initialValues, this.state.values);
     return {
       dirty,
       isValid: dirty
@@ -486,8 +483,8 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
         : isInitialValid !== false && isFunction(isInitialValid)
           ? (isInitialValid as (props: this['props']) => boolean)(this.props)
           : (isInitialValid as boolean),
-      initialValues: this.initialValues,
-      initialErrors: this.initialErrors,
+      initialValues,
+      initialErrors,
     };
   };
 

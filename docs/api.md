@@ -70,7 +70,8 @@ in `initialValues`. If you are using [`validationSchema`] (which you should be),
 keys and shape will match your schema exactly. Internally, Formik transforms raw
 [Yup validation errors](https://github.com/jquense/yup#validationerrorerrors-string--arraystring-value-any-path-string)
 on your behalf. If you are using [`validate`], then that function will determine
-the `errors` objects shape.
+the `errors` objects shape. If you are using [`initialErrors`] and no further
+validation was performed yet, it will match the ones provided.
 
 #### `handleBlur: (e: any) => void`
 
@@ -134,7 +135,7 @@ Trigger a form submission.
 
 #### `submitCount: number`
 
-Number of times user tried to submit the form. Increases when [`handleSubmit`](#handlesubmit-values-values-formikbag-formikbag--void) is called, resets after calling  
+Number of times user tried to submit the form. Increases when [`handleSubmit`](#handlesubmit-values-values-formikbag-formikbag--void) is called, resets after calling
 [`handleReset`](#handlereset---void). `submitCount` is readonly computed property and should not be mutated directly.
 
 #### `setFieldValue: (field: string, value: any, shouldValidate?: boolean) => void`
@@ -267,7 +268,7 @@ don’t use both in the same `<Formik>`.
 ### `enableReinitialize?: boolean`
 
 Default is `false`. Control whether Formik should reset the form if
-[`initialValues`] changes (using deep equality).
+[`initialValues`] or [`initialErrors`] changes (using deep equality).
 
 ### `isInitialValid?: boolean`
 
@@ -275,7 +276,7 @@ Default is `false`. Control the initial value of [`isValid`] prop prior to
 mount. You can also pass a function. Useful for situations when you want to
 enable/disable a submit and reset buttons on initial mount.
 
-### `initialValues?: Values`
+### `initialValues: Values`
 
 Initial field values of the form, Formik will make these values available to
 render methods component as [`props.values`][`values`].
@@ -284,8 +285,16 @@ Even if your form is empty by default, you must initialize all fields with
 initial values otherwise React will throw an error saying that you have changed
 an input from uncontrolled to controlled.
 
-Note: `initialValues` not available to the higher-order component, use
+Note: `initialValues` are not available to the higher-order component, use
 [`mapPropsToValues`] instead.
+
+### `initialErrors?: FormikErrors<Values>`
+
+Initial errors for field values of the form, Formik will make these values
+available to render methods component as [`props.errors`][`errors`].
+
+Note: `initialErrors` are not available to the higher-order component, use
+[`mapPropsToErrors`] instead.
 
 ### `onReset?: (values: Values, formikBag: FormikBag) => void`
 
@@ -791,6 +800,13 @@ will map all props that are not functions to the inner component's
 
 Even if your form is not receiving any props from its parent, use
 `mapPropsToValues` to initialize your forms empty state.
+
+#### `mapPropsToErrors?: (props: Props) => FormikErrors<Values>`
+
+If this option is specified, then Formik will transfer its results into
+updatable form state and make these values available to the new component as
+[`props.errors`][`errors`]. If `mapPropsToErrors` is not specified, then no
+[`initialErrors`] will be passed down.
 
 #### `validate?: (values: Values, props: Props) => FormikErrors<Values> | Promise<any>`
 

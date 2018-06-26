@@ -429,7 +429,6 @@ When we are done we want our dialog to accept just a `user`, `updateUser`, and
 // User.js
 import React from 'react';
 import Dialog from 'MySuperDialog';
-import EditUserForm from './EditUserForm';
 import { Formik } from 'formik';
 
 const EditUserDialog = ({ user, updateUser, onClose }) => {
@@ -512,7 +511,6 @@ This is the **exact** same form as before, but written with `<Form />` and
 // EditUserDialog.js
 import React from 'react';
 import Dialog from 'MySuperDialog';
-import EditUserForm from './EditUserForm';
 import { Formik, Field, Form } from 'formik';
 
 const EditUserDialog = ({ user, updateUser, onClose }) => {

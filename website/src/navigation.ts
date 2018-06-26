@@ -19,6 +19,7 @@ export const APILINKS: {
       Basic: '/examples/basic',
       'Sync Validation': '/examples/sync-validation',
       'Async Validation': '/examples/async-validation',
+      'Async Validation with initialErrors': '/examples/async-validation-outer',
       'Schema Validation': '/examples/schema-validation',
       'Custom Inputs': '/examples/custom-inputs',
       Arrays: '/examples/arrays',

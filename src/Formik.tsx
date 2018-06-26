@@ -34,6 +34,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
   };
 
   initialValues: Values;
+  initialErrors: FormikErrors<Values>;
 
   hcCache: {
     [key: string]: (e: string | React.ChangeEvent<any>) => void;
@@ -46,14 +47,15 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
   constructor(props: FormikConfig<Values> & ExtraProps) {
     super(props);
     this.state = {
-      values: props.initialValues || ({} as any),
-      errors: {},
+      values: props.initialValues || {},
+      errors: props.initialErrors || {},
       touched: {},
       isSubmitting: false,
       submitCount: 0,
     };
     this.fields = {};
-    this.initialValues = props.initialValues || ({} as any);
+    this.initialValues = props.initialValues || {};
+    this.initialErrors = props.initialErrors || {};
 
     warning(
       !(props.component && props.render),
@@ -80,14 +82,21 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
   };
 
   componentDidUpdate(prevProps: Readonly<FormikConfig<Values> & ExtraProps>) {
-    // If the initialValues change, reset the form
-    if (
-      this.props.enableReinitialize &&
-      !isEqual(prevProps.initialValues, this.props.initialValues)
-    ) {
-      this.initialValues = this.props.initialValues;
-      // @todo refactor to use getDerivedStateFromProps?
-      this.resetForm(this.props.initialValues);
+    // If enableReinitialize set to true, reset the form if initialValues or
+    // initialErrors changed
+    if (this.props.enableReinitialize) {
+      const valsChanged = !isEqual(
+        prevProps.initialValues,
+        this.props.initialValues
+      );
+      const errsChanged = !isEqual(
+        prevProps.initialErrors,
+        this.props.initialErrors
+      );
+      if (valsChanged || errsChanged) {
+        // @todo refactor to use getDerivedStateFromProps?
+        this.resetForm(this.props.initialValues, this.props.initialErrors);
+      }
     }
   }
 
@@ -408,18 +417,20 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     }));
   };
 
-  resetForm = (nextValues?: Values) => {
-    const values = nextValues ? nextValues : this.props.initialValues;
-
+  resetForm = (nextValues?: Values, nextErrors?: FormikErrors<Values>) => {
+    const values = nextValues || this.props.initialValues;
+    // @todo ! assertion should be redundant, try removing after TS update
+    const errors = (nextErrors || this.props.initialErrors || {})!;
     this.initialValues = values;
+    this.initialErrors = errors;
 
     this.setState({
       isSubmitting: false,
-      errors: {},
+      values,
+      errors,
       touched: {},
       error: undefined,
       status: undefined,
-      values,
       submitCount: 0,
     });
     Object.keys(this.fields).map(f => this.fields[f](values));
@@ -474,6 +485,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
           ? (isInitialValid as (props: this['props']) => boolean)(this.props)
           : (isInitialValid as boolean),
       initialValues: this.initialValues,
+      initialErrors: this.initialErrors,
     };
   };
 

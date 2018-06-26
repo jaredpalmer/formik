@@ -52,10 +52,12 @@ export interface FormikState<Values> {
 export interface FormikComputedProps<Values> {
   /** True if any input has been touched. False otherwise. */
   readonly dirty: boolean;
-  /** Result of isInitiallyValid on mount, then whether true values pass validation. */
+  /** Result of isInitialValid on mount, then whether values pass validation. */
   readonly isValid: boolean;
-  /** initialValues */
+  /** Values passed to the form as initialValues */
   readonly initialValues: Values;
+  /** Errors passed to the form as initialErrors */
+  readonly initialErrors: FormikErrors<Values>;
 }
 
 /**
@@ -168,6 +170,11 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
    * Initial values of the form
    */
   initialValues: Values;
+
+  /**
+   * Initial errors of the form
+   */
+  initialErrors?: FormikErrors<Values>;
 
   /**
    * Reset handler

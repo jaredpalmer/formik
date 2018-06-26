@@ -878,66 +878,127 @@ describe('<Formik>', () => {
   });
 
   describe('componentDidUpdate', () => {
-    let form: any, initialValues: any;
+    let form: any, initialValues: any, initialErrors: any;
     beforeEach(() => {
       initialValues = {
         name: 'formik',
         github: { repoUrl: 'https://github.com/jaredpalmer/formik' },
         watchers: ['ian', 'sam'],
       };
+      initialErrors = {
+        watchers: 'should contain jam',
+      };
       form = new Formik({
         initialValues,
+        initialErrors,
         onSubmit: jest.fn(),
         enableReinitialize: true,
       });
       form.resetForm = jest.fn();
     });
 
-    it('should not resetForm if new initialValues are the same as previous', () => {
-      const newInitialValues = Object.assign({}, initialValues);
+    it('should not resetForm if new initialValues/initialErrors are the same as previous', () => {
+      const prevInitialValues = { ...initialValues };
+      const prevInitialErrors = { ...initialErrors };
       form.componentDidUpdate({
-        initialValues: newInitialValues,
+        initialValues: prevInitialValues,
+        initialErrors: prevInitialErrors,
         onSubmit: jest.fn(),
       });
       expect(form.resetForm).not.toHaveBeenCalled();
     });
 
     it('should resetForm if new initialValues are different than previous', () => {
-      const newInitialValues = {
+      const prevInitialValues = {
         ...initialValues,
         watchers: ['jared', 'ian', 'sam'],
       };
+      const prevInitialErrors = { ...initialErrors };
       form.componentDidUpdate({
-        initialValues: newInitialValues,
+        initialValues: prevInitialValues,
+        initialErrors: prevInitialErrors,
+        onSubmit: jest.fn(),
+      });
+      expect(form.resetForm).toHaveBeenCalled();
+    });
+
+    it('should resetForm if new initialErrors are different than previous', () => {
+      const prevInitialValues = { ...initialValues };
+      const prevInitialErrors = {
+        ...initialErrors,
+        watchers: 'Should contain jam & sam',
+      };
+      form.componentDidUpdate({
+        initialValues: prevInitialValues,
+        initialErrors: prevInitialErrors,
         onSubmit: jest.fn(),
       });
       expect(form.resetForm).toHaveBeenCalled();
     });
 
     it('should resetForm if new initialValues are deeply different than previous', () => {
-      const newInitialValues = {
+      const prevInitialValues = {
         ...initialValues,
         github: { repoUrl: 'different' },
       };
+      const prevInitialErrors = { ...initialErrors };
       form.componentDidUpdate({
-        initialValues: newInitialValues,
+        initialValues: prevInitialValues,
+        initialErrors: prevInitialErrors,
         onSubmit: jest.fn(),
       });
       expect(form.resetForm).toHaveBeenCalled();
     });
 
-    it('should NOT resetForm without enableReinitialize flag', () => {
+    it('should resetForm if new initialErrors are deeply different than previous', () => {
+      const prevInitialValues = { ...initialValues };
+      const prevInitialErrors = {
+        ...initialErrors,
+        watchers: ['old certificate', undefined],
+      };
+      form.componentDidUpdate({
+        initialValues: prevInitialValues,
+        initialErrors: prevInitialErrors,
+        onSubmit: jest.fn(),
+      });
+      expect(form.resetForm).toHaveBeenCalled();
+    });
+
+    it('should NOT resetForm without enableReinitialize flag (initialValues)', () => {
       form = new Formik({
         initialValues,
+        initialErrors,
         onSubmit: jest.fn(),
       });
       form.resetForm = jest.fn();
-      const newInitialValues = {
+      const prevInitialValues = {
         ...initialValues,
         watchers: ['jared', 'ian', 'sam'],
       };
+      const prevInitialErrors = { ...initialErrors };
       form.componentDidUpdate({
-        initialValues: newInitialValues,
+        initialValues: prevInitialValues,
+        initialErrors: prevInitialErrors,
+        onSubmit: jest.fn(),
+      });
+      expect(form.resetForm).not.toHaveBeenCalled();
+    });
+
+    it('should NOT resetForm without enableReinitialize flag (initialErrors)', () => {
+      form = new Formik({
+        initialValues,
+        initialErrors,
+        onSubmit: jest.fn(),
+      });
+      form.resetForm = jest.fn();
+      const prevInitialValues = { ...initialValues };
+      const prevInitialErrors = {
+        ...initialErrors,
+        watchers: [undefined, 'did you mean jam?'],
+      };
+      form.componentDidUpdate({
+        initialValues: prevInitialValues,
+        initialErrors: prevInitialErrors,
         onSubmit: jest.fn(),
       });
       expect(form.resetForm).not.toHaveBeenCalled();

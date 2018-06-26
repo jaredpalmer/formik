@@ -9,6 +9,7 @@ import {
   FormikSharedConfig,
   FormikState,
   FormikValues,
+  FormikErrors,
 } from './types';
 import { isFunction } from './utils';
 
@@ -49,6 +50,11 @@ export interface WithFormikConfig<
    * Map props to the form values
    */
   mapPropsToValues?: (props: Props) => Values;
+
+  /**
+   * Map props to the form errors
+   */
+  mapPropsToErrors?: (props: Props) => FormikErrors<Values>;
 
   /**
    * @deprecated in 0.9.0 (but needed to break TS types)
@@ -99,6 +105,7 @@ export function withFormik<
     }
     return val as Values;
   },
+  mapPropsToErrors,
   ...config
 }: WithFormikConfig<Props, Values, Payload>): ComponentDecorator<
   Props,
@@ -151,6 +158,7 @@ export function withFormik<
             validate={config.validate && this.validate}
             validationSchema={config.validationSchema && this.validationSchema}
             initialValues={mapPropsToValues(this.props)}
+            initialErrors={mapPropsToErrors && mapPropsToErrors(this.props)}
             onSubmit={this.handleSubmit as any}
             render={this.renderFormComponent}
           />

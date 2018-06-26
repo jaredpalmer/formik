@@ -49,7 +49,9 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     this.state = {
       values: props.initialValues || {},
       errors: props.initialErrors || {},
-      touched: {},
+      touched: props.initialErrors
+        ? setNestedObjectValues(props.initialErrors, true)
+        : {},
       isSubmitting: false,
       submitCount: 0,
     };
@@ -428,7 +430,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       isSubmitting: false,
       values,
       errors,
-      touched: {},
+      touched: setNestedObjectValues(errors, true),
       error: undefined,
       status: undefined,
       submitCount: 0,

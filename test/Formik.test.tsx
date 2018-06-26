@@ -877,131 +877,150 @@ describe('<Formik>', () => {
     });
   });
 
-  describe('componentDidUpdate', () => {
-    let form: any, initialValues: any, initialErrors: any;
-    beforeEach(() => {
-      initialValues = {
-        name: 'formik',
-        github: { repoUrl: 'https://github.com/jaredpalmer/formik' },
-        watchers: ['ian', 'sam'],
-      };
-      initialErrors = {
-        watchers: 'should contain jam',
-      };
-      form = new Formik({
-        initialValues,
-        initialErrors,
-        onSubmit: jest.fn(),
+  describe('getDerivedStateFromProps', () => {
+    it('Merges values and initialValues if enableReinitialize', () => {
+      const newProps = {
+        initialValues: {
+          name: 'formik',
+          github: { repoUrl: 'https://github.com/jaredpalmer/formik' },
+          watchers: ['ian', 'sam'],
+        },
         enableReinitialize: true,
-      });
-      form.resetForm = jest.fn();
-    });
-
-    it('should not resetForm if new initialValues/initialErrors are the same as previous', () => {
-      const prevInitialValues = { ...initialValues };
-      const prevInitialErrors = { ...initialErrors };
-      form.componentDidUpdate({
-        initialValues: prevInitialValues,
-        initialErrors: prevInitialErrors,
         onSubmit: jest.fn(),
-      });
-      expect(form.resetForm).not.toHaveBeenCalled();
-    });
-
-    it('should resetForm if new initialValues are different than previous', () => {
-      const prevInitialValues = {
-        ...initialValues,
-        watchers: ['jared', 'ian', 'sam'],
       };
-      const prevInitialErrors = { ...initialErrors };
-      form.componentDidUpdate({
-        initialValues: prevInitialValues,
-        initialErrors: prevInitialErrors,
-        onSubmit: jest.fn(),
+      const oldState = {
+        values: {
+          name: 'yan',
+        },
+        touched: {
+          name: true,
+        },
+        errors: {},
+        isSubmitting: false,
+        submitCount: 0,
+      };
+      const newState = Formik.getDerivedStateFromProps(newProps, oldState);
+      expect(newState).toEqual({
+        ...oldState,
+        values: {
+          name: 'yan',
+          github: { repoUrl: 'https://github.com/jaredpalmer/formik' },
+          watchers: ['ian', 'sam'],
+        },
+        touched: {},
+        error: undefined,
+        status: undefined,
       });
-      expect(form.resetForm).toHaveBeenCalled();
     });
 
-    it('should resetForm if new initialErrors are different than previous', () => {
-      const prevInitialValues = { ...initialValues };
-      const prevInitialErrors = {
-        ...initialErrors,
-        watchers: 'Should contain jam & sam',
-      };
-      form.componentDidUpdate({
-        initialValues: prevInitialValues,
-        initialErrors: prevInitialErrors,
+    it('Does not merge values and initialValues if not enableReinitialize', () => {
+      const newProps = {
+        initialValues: {
+          name: 'formik',
+          github: { repoUrl: 'https://github.com/jaredpalmer/formik' },
+          watchers: ['ian', 'sam'],
+        },
+        enableReinitialize: false,
         onSubmit: jest.fn(),
-      });
-      expect(form.resetForm).toHaveBeenCalled();
+      };
+      const oldState = {
+        values: {
+          name: 'yan',
+        },
+        touched: {
+          name: true,
+        },
+        errors: {},
+        isSubmitting: false,
+        submitCount: 0,
+      };
+      const newState = Formik.getDerivedStateFromProps(newProps, oldState);
+      expect(newState).toEqual(oldState);
     });
 
-    it('should resetForm if new initialValues are deeply different than previous', () => {
-      const prevInitialValues = {
-        ...initialValues,
-        github: { repoUrl: 'different' },
-      };
-      const prevInitialErrors = { ...initialErrors };
-      form.componentDidUpdate({
-        initialValues: prevInitialValues,
-        initialErrors: prevInitialErrors,
+    it('Merges errors and initialErrors if enableReinitialize', () => {
+      const newProps = {
+        initialValues: {
+          name: 'formik',
+          github: { repoUrl: 'https://github.com/jaredpalmer/formik' },
+          watchers: ['ian', 'sam'],
+        },
+        initialErrors: {
+          name: 'too formy',
+          github: {
+            repoUrl: 'too official',
+          },
+        },
+        enableReinitialize: true,
         onSubmit: jest.fn(),
+      };
+      const oldState = {
+        values: {
+          name: 'yan',
+        },
+        touched: {
+          name: true,
+        },
+        errors: {
+          name: 'too yanny',
+        },
+        isSubmitting: false,
+        submitCount: 0,
+      };
+      const newState = Formik.getDerivedStateFromProps(newProps, oldState);
+      expect(newState).toEqual({
+        ...oldState,
+        values: {
+          name: 'yan',
+          github: { repoUrl: 'https://github.com/jaredpalmer/formik' },
+          watchers: ['ian', 'sam'],
+        },
+        touched: {
+          name: true,
+          github: {
+            repoUrl: true,
+          },
+        },
+        errors: {
+          name: 'too yanny',
+          github: { repoUrl: 'too official' },
+        },
+        error: undefined,
+        status: undefined,
       });
-      expect(form.resetForm).toHaveBeenCalled();
     });
 
-    it('should resetForm if new initialErrors are deeply different than previous', () => {
-      const prevInitialValues = { ...initialValues };
-      const prevInitialErrors = {
-        ...initialErrors,
-        watchers: ['old certificate', undefined],
+    it('Does not merge errors and initialErrors if not enableReinitialize', () => {
+      const newProps = {
+        initialValues: {
+          name: 'formik',
+          github: { repoUrl: 'https://github.com/jaredpalmer/formik' },
+          watchers: ['ian', 'sam'],
+        },
+        initialErrors: {
+          name: 'too formy',
+          github: {
+            repoUrl: 'too official',
+          },
+        },
+        enableReinitialize: false,
+        onSubmit: jest.fn(),
       };
-      form.componentDidUpdate({
-        initialValues: prevInitialValues,
-        initialErrors: prevInitialErrors,
-        onSubmit: jest.fn(),
-      });
-      expect(form.resetForm).toHaveBeenCalled();
-    });
-
-    it('should NOT resetForm without enableReinitialize flag (initialValues)', () => {
-      form = new Formik({
-        initialValues,
-        initialErrors,
-        onSubmit: jest.fn(),
-      });
-      form.resetForm = jest.fn();
-      const prevInitialValues = {
-        ...initialValues,
-        watchers: ['jared', 'ian', 'sam'],
+      const oldState = {
+        values: {
+          name: 'yan',
+        },
+        touched: {
+          name: true,
+        },
+        errors: {
+          name: 'too yanny',
+        },
+        isSubmitting: false,
+        submitCount: 0,
       };
-      const prevInitialErrors = { ...initialErrors };
-      form.componentDidUpdate({
-        initialValues: prevInitialValues,
-        initialErrors: prevInitialErrors,
-        onSubmit: jest.fn(),
-      });
-      expect(form.resetForm).not.toHaveBeenCalled();
-    });
-
-    it('should NOT resetForm without enableReinitialize flag (initialErrors)', () => {
-      form = new Formik({
-        initialValues,
-        initialErrors,
-        onSubmit: jest.fn(),
-      });
-      form.resetForm = jest.fn();
-      const prevInitialValues = { ...initialValues };
-      const prevInitialErrors = {
-        ...initialErrors,
-        watchers: [undefined, 'did you mean jam?'],
-      };
-      form.componentDidUpdate({
-        initialValues: prevInitialValues,
-        initialErrors: prevInitialErrors,
-        onSubmit: jest.fn(),
-      });
-      expect(form.resetForm).not.toHaveBeenCalled();
+      const newState = Formik.getDerivedStateFromProps(newProps, oldState);
+      expect(newState).toEqual(oldState);
     });
   });
 

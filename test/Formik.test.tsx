@@ -1259,7 +1259,31 @@ describe('<Formik>', () => {
     await injected.submitForm();
     // now should be false because validation failed
     expect(injected.isValidating).toBe(false);
+    expect(validate).toHaveBeenCalledTimes(2);
     expect(onSubmit).not.toHaveBeenCalled();
     expect(injected.submitCount).toEqual(2);
+  });
+
+  it('isValidating is fired validation is run', async () => {
+    const node = document.createElement('div');
+    const validate = jest.fn(() => ({ opensource: 'no ' }));
+    let injected: any;
+    ReactDOM.render(
+      <Formik
+        onSubmit={noop}
+        validate={validate}
+        initialValues={{ opensource: 'yay' }}
+      >
+        {formikProps => (injected = formikProps) && null}
+      </Formik>,
+      node
+    );
+
+    expect(injected.isValidating).toBe(false);
+    // we call set isValidating synchronously
+    injected.validateForm();
+    // so it should change
+    expect(injected.isValidating).toBe(true);
+    expect(validate).toHaveBeenCalled();
   });
 });

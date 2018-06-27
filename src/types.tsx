@@ -34,16 +34,18 @@ export interface FormikState<Values> {
    * @deprecated since 0.8.0
    */
   error?: any;
-  /** map of field names to specific error for that field */
+  /** Map of field names to specific error for that field */
   errors: FormikErrors<Values>;
-  /** map of field names to whether the field has been touched */
+  /** Map of field names to whether the field has been touched */
   touched: FormikTouched<Values>;
-  /** whether the form is currently submitting */
+  /** Is the form currently submitting? */
   isSubmitting: boolean;
   /** Top level status state, in case you need it */
   status?: any;
   /** Number of times user tried to submit the form */
   submitCount: number;
+  /** Is top-level validation running?  */
+  isValidating: boolean;
 }
 
 /**

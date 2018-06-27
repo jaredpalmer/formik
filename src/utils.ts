@@ -1,7 +1,7 @@
 import cloneDeep from 'lodash.clonedeep';
 import toPath from 'lodash.topath';
 import * as React from 'react';
-
+import produce from 'immer';
 /**
  * Deeply get a value from an object via it's path.
  */
@@ -23,28 +23,26 @@ export function getIn(
  * @see https://github.com/developit/linkstate
  */
 export function setIn(obj: any, path: string, value: any): any {
-  let res: any = {};
-  let resVal: any = res;
+  return produce(obj, draft => {
+    dirtySet(draft, path, value);
+  });
+}
+
+/** @private mutate an object via a path, used with immer  */
+function dirtySet(obj: any, path: string, value: any) {
+  const properties = toPath(path);
   let i = 0;
-  let pathArray = toPath(path);
-
-  for (; i < pathArray.length - 1; i++) {
-    const currentPath: string = pathArray[i];
-    let currentObj: any = getIn(obj, pathArray.slice(0, i + 1));
-
-    if (resVal[currentPath]) {
-      resVal = resVal[currentPath];
-    } else if (currentObj) {
-      resVal = resVal[currentPath] = cloneDeep(currentObj);
-    } else {
-      const nextPath: string = pathArray[i + 1];
-      resVal = resVal[currentPath] =
-        isInteger(nextPath) && Number(nextPath) >= 0 ? [] : {};
-    }
+  let target = obj;
+  let property = properties[i];
+  while (i < properties.length - 1) {
+    property = properties[i++];
+    console.log({ target, property });
+    target = target[property] =
+      isInteger(property) && Number(property) >= 0 ? [] : {};
+    console.log({ target, property });
   }
-
-  resVal[pathArray[i]] = value;
-  return { ...obj, ...res };
+  property = properties[i];
+  target[property] = value;
 }
 
 /**

@@ -220,5 +220,12 @@ describe('utils', () => {
       expect(isPromise(undefined)).toEqual(false);
       expect(isPromise(null)).toEqual(false);
     });
+
+    it('does not clone unaffected keys of the object', () => {
+      const obj = { x: { name: 'n1', arr: [1] } };
+      const newObj = setIn(obj, 'x.name', 'n2');
+
+      expect(newObj.x.arr).toBe(obj.x.arr);
+    });
   });
 });

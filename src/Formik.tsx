@@ -45,7 +45,6 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
   } = {};
   fields: {
     [field: string]: {
-      reset?: ((nextValues?: any) => void);
       validate?: ((value: any) => string | Promise<void> | undefined);
     };
   };
@@ -61,7 +60,6 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     };
     this.fields = {};
     this.initialValues = props.initialValues || ({} as any);
-
     warning(
       !(props.component && props.render),
       'You should not use <Formik component> and <Formik render> in the same <Formik> component; <Formik render> will be ignored'
@@ -506,15 +504,6 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       values,
       submitCount: 0,
     });
-    Object.keys(this.fields).forEach(f => {
-      if (
-        !!this.fields[f] &&
-        !!this.fields[f].reset &&
-        isFunction(this.fields[f].reset)
-      ) {
-        this.fields[f].reset!(values);
-      }
-    });
   };
 
   handleReset = () => {
@@ -574,8 +563,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       ...this.state,
       ...this.getFormikActions(),
       ...this.getFormikComputedProps(),
-
-      // FastField needs to communicate with Formik during resets
+      // Field needs to communicate with Formik during resets
       registerField: this.registerField,
       unregisterField: this.unregisterField,
       handleBlur: this.handleBlur,

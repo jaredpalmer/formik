@@ -378,6 +378,7 @@ npm install yup --save
   - [`<FieldArray />`](#fieldarray-)
       - [`name: string`](#name-string)
       - [`validateOnChange?: boolean`](#validateonchange-boolean-1)
+    - [FieldArray Array of Objects](#fieldarray-array-of-objects)
     - [FieldArray Validation Gotchas](#fieldarray-validation-gotchas)
     - [FieldArray Helpers](#fieldarray-helpers)
     - [FieldArray render methods](#fieldarray-render-methods)
@@ -429,7 +430,6 @@ When we are done we want our dialog to accept just a `user`, `updateUser`, and
 // User.js
 import React from 'react';
 import Dialog from 'MySuperDialog';
-import EditUserForm from './EditUserForm';
 import { Formik } from 'formik';
 
 const EditUserDialog = ({ user, updateUser, onClose }) => {
@@ -512,7 +512,6 @@ This is the **exact** same form as before, but written with `<Form />` and
 // EditUserDialog.js
 import React from 'react';
 import Dialog from 'MySuperDialog';
-import EditUserForm from './EditUserForm';
 import { Formik, Field, Form } from 'formik';
 
 const EditUserDialog = ({ user, updateUser, onClose }) => {
@@ -1361,7 +1360,7 @@ export const FriendList = () => (
             <Form>
               {values.friends && values.friends.length > 0 ? (
                 values.friends.map((friend, index) => (
-                  <div>
+                  <div key={index}>
                     <Field name={`friends.${index}`} />
                     <button
                       type="button"
@@ -1402,6 +1401,40 @@ The name or path to the relevant key in [`values`].
 ##### `validateOnChange?: boolean`
 
 Default is `true`. Determines if form validation should or should not be run _after_ any array manipulations.
+
+#### FieldArray Array of Objects
+
+You can also iterate through an array of objects, by following a convention of `object[index]property` or `object.index.property` for the name attributes of `<Field />` or `<input />` elements in `<FieldArray />`.
+
+```
+<Form>
+  <FieldArray
+    name="friends"
+    render={arrayHelpers => (
+      <div>
+        {values.friends.map((friend, index) => (
+          <div key={index}>
+            <Field name={`friends.${index}.name`} />
+            <Field name={`friends.${index}.age`} />
+            <button
+              type="button"
+              onClick={() => arrayHelpers.remove(index)}
+            >
+              -
+                        </button>
+          </div>
+        ))}
+        <button
+          type="button"
+          onClick={() => arrayHelpers.push({ name: '', age: '' })}
+        >
+          +
+                </button>
+      </div>
+    )}
+  />
+</Form>
+```
 
 #### FieldArray Validation Gotchas
 

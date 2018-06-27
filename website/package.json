@@ -39,7 +39,8 @@
     "typography": "^0.15.12",
     "typography-breakpoint-constants": "^0.15.10",
     "typography-plugin-code": "^0.15.11",
-    "yup": "^0.21.3"
+    "yup": "^0.21.3",
+    "snyk": "^1.85.0"
   },
   "devDependencies": {
     "@types/classnames": "^2.2.0",
@@ -68,6 +69,9 @@
     "start": "gatsby develop",
     "serve": "gatsby serve",
     "format": "prettier --trailing-comma es5 --no-semi --single-quote --write \"pages/*.js\" \"utils/*.js\" \"wrappers/*.js\" \"html.js\"",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  }
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
+  },
+  "snyk": true
 }

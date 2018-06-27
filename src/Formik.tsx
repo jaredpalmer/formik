@@ -361,7 +361,40 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       )
       .then((fieldErrors: FormikErrors<Values>) => {
         const hasFieldErrors = Object.keys(fieldErrors).length !== 0;
-        if (this.props.validationSchema) {
+        if (this.props.validate) {
+          const maybePromisedErrors =
+            (this.props.validate as any)(this.state.values) || {};
+          if (isPromise(maybePromisedErrors)) {
+            maybePromisedErrors.then(errors => {
+              const combinedErrors = deepmerge<FormikErrors<Values>>(
+                fieldErrors,
+                errors
+              );
+              this.setState({ errors: combinedErrors });
+              if (Object.keys(combinedErrors).length === 0) {
+                this.executeSubmit();
+              } else {
+                this.setState({ isSubmitting: false });
+                return;
+              }
+            });
+          } else {
+            const combinedErrors = deepmerge<FormikErrors<Values>>(
+              fieldErrors,
+              maybePromisedErrors
+            );
+            const isValid = Object.keys(combinedErrors).length === 0;
+            this.setState({
+              errors: combinedErrors,
+              isSubmitting: isValid,
+            });
+
+            // only submit if there are no errors
+            if (isValid) {
+              this.executeSubmit();
+            }
+          }
+        } else if (this.props.validationSchema) {
           const { validationSchema } = this.props;
           const schema = isFunction(validationSchema)
             ? validationSchema()

@@ -243,6 +243,10 @@ class FastFieldInner<Props = {}, Values = {}> extends React.Component<
     }
   };
 
+  componentWillUnmount() {
+    this.props.formik.unregisterField(this.props.name);
+  }
+
   render() {
     const {
       validate,

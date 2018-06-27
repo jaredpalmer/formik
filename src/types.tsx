@@ -222,7 +222,6 @@ export type FormikProps<Values> = FormikSharedConfig &
     registerField(
       name: string,
       fns: {
-        reset?: ((nextValues?: any) => void);
         validate?: ((
           value: any
         ) => string | Function | Promise<void> | undefined);

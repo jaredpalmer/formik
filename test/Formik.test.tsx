@@ -336,7 +336,7 @@ describe('<Formik>', () => {
       });
 
       describe('with validate (SYNC)', () => {
-        it('should call validate if present', () => {
+        it('should call validate if present', async () => {
           const validate = jest.fn().mockReturnValue({});
           const tree = shallow(
             <Formik
@@ -346,17 +346,14 @@ describe('<Formik>', () => {
               validate={validate}
             />
           );
-          tree
+          await tree
             .find(Form)
-            .dive()
-            .find('form')
-            .simulate('submit', {
-              preventDefault: noop,
-            });
+            .props()
+            .submitForm();
           expect(validate).toHaveBeenCalled();
         });
 
-        it('should submit the form if valid', () => {
+        it('should submit the form if valid', async () => {
           const onSubmit = jest.fn();
           const tree = shallow(
             <Formik
@@ -366,17 +363,14 @@ describe('<Formik>', () => {
               validate={noop}
             />
           );
-          tree
+          await tree
             .find(Form)
-            .dive()
-            .find('form')
-            .simulate('submit', {
-              preventDefault: noop,
-            });
+            .props()
+            .submitForm();
           expect(onSubmit).toHaveBeenCalled();
         });
 
-        it('should not submit the form if invalid', () => {
+        it('should not submit the form if invalid', async () => {
           const validate = jest.fn().mockReturnValue({ name: 'Error!' });
           const onSubmit = jest.fn();
 
@@ -388,20 +382,18 @@ describe('<Formik>', () => {
               validate={validate}
             />
           );
-          tree
+          await tree
             .find(Form)
-            .dive()
-            .find('form')
-            .simulate('submit', {
-              preventDefault: noop,
-            });
+            .props()
+            .submitForm();
+
           expect(validate).toHaveBeenCalled();
           expect(onSubmit).not.toHaveBeenCalled();
         });
       });
 
       describe('with validate (ASYNC)', () => {
-        it('should call validate if present', () => {
+        it('should call validate if present', async () => {
           const validate = jest.fn(() => Promise.resolve({}));
 
           const tree = shallow(
@@ -412,13 +404,10 @@ describe('<Formik>', () => {
               validate={validate}
             />
           );
-          tree
+          await tree
             .find(Form)
-            .dive()
-            .find('form')
-            .simulate('submit', {
-              preventDefault: noop,
-            });
+            .props()
+            .submitForm();
           expect(validate).toHaveBeenCalled();
         });
 
@@ -466,7 +455,7 @@ describe('<Formik>', () => {
       });
 
       describe('with validationSchema (ASYNC)', () => {
-        it('should run validationSchema if present', () => {
+        it('should run validationSchema if present', async () => {
           const validate = jest.fn(() => Promise.resolve({}));
           const tree = shallow(
             <Formik
@@ -479,17 +468,16 @@ describe('<Formik>', () => {
               }}
             />
           );
-          tree
+
+          await tree
             .find(Form)
-            .dive()
-            .find('form')
-            .simulate('submit', {
-              preventDefault: noop,
-            });
+            .props()
+            .submitForm();
+
           expect(validate).toHaveBeenCalled();
         });
 
-        it('should call validationSchema if it is a function and present', () => {
+        it('should call validationSchema if it is a function and present', async () => {
           const validate = jest.fn(() => Promise.resolve({}));
           const tree = shallow(
             <Formik
@@ -502,13 +490,12 @@ describe('<Formik>', () => {
               })}
             />
           );
-          tree
+
+          await tree
             .find(Form)
-            .dive()
-            .find('form')
-            .simulate('submit', {
-              preventDefault: noop,
-            });
+            .props()
+            .submitForm();
+
           expect(validate).toHaveBeenCalled();
         });
       });

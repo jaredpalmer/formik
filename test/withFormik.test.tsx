@@ -453,16 +453,25 @@ describe('withFormik()', () => {
       });
 
       describe('with validationSchema (ASYNC)', () => {
-        it('should run validationSchema if present', () => {
+        it.only('should run validationSchema if present', async () => {
           const validate = jest.fn(() => Promise.resolve({}));
           const ValidateForm = FormFactory({ validationSchema: { validate } });
           const tree = mount(<ValidateForm user={{ name: 'jared' }} />);
-          tree
+          const handler = tree
             .find(Form)
             .find('form')
-            .simulate('submit', {
-              preventDefault: noop,
-            });
+            .prop('onSubmit');
+          console.log(handler);
+          const sub = tree.find(Form).prop('submitForm');
+          const sleep = (ms: number) =>
+            new Promise(resolve =>
+              setTimeout(() => {
+                resolve();
+              }, ms)
+            );
+          handler({ preventDefault: noop });
+          await sleep(4000);
+
           expect(validate).toHaveBeenCalled();
         });
 

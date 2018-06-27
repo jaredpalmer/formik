@@ -94,7 +94,8 @@ class FieldInner<Props = {}, Values = {}> extends React.Component<
     props: FieldAttributes<Props> & { formik: FormikContext<Values> }
   ) {
     super(props);
-    const { render, children, component, formik } = this.props;
+
+    const { render, children, component, formik } = props;
     warning(
       !(component && render),
       'You should not use <Field component> and <Field render> in the same <Field> component; <Field component> will be ignored'
@@ -112,8 +113,8 @@ class FieldInner<Props = {}, Values = {}> extends React.Component<
 
     // Register the Field with the parent Formik. Parent will cycle through
     // registered Field's validate fns right prior to submit
-    this.props.formik.registerField(this.props.name, {
-      validate: this.props.validate,
+    formik.registerField(props.name, {
+      validate: props.validate,
     });
   }
 

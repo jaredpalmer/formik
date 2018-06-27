@@ -1,6 +1,7 @@
 import * as React from 'react';
 import isEqual from 'react-fast-compare';
 import warning from 'warning';
+import deepmerge from 'deepmerge';
 import { FormikProvider } from './connect';
 import {
   FormikActions,
@@ -319,57 +320,106 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       submitCount: prevState.submitCount + 1,
     }));
 
-    if (this.props.validate) {
-      const maybePromisedErrors =
-        (this.props.validate as any)(this.state.values) || {};
-      if (isPromise(maybePromisedErrors)) {
-        const fieldKeysWithValidation = Object.keys(this.fields).filter(
-          f =>
-            this.fields &&
-            this.fields[f] &&
-            this.fields[f].validate &&
-            isFunction(this.fields[f].validate)
-        );
-        Promise.all([
-          maybePromisedErrors.then(x => x, e => e),
-          ...fieldKeysWithValidation.map(
+    // We run field-level validation first!
+    const fieldKeysWithValidation: string[] = Object.keys(this.fields).filter(
+      f =>
+        this.fields &&
+        this.fields[f] &&
+        this.fields[f].validate &&
+        isFunction(this.fields[f].validate)
+    );
+
+    // Construct an array with all of the field validation functions
+    const fieldValidations: Promise<string>[] =
+      fieldKeysWithValidation.length > 0
+        ? fieldKeysWithValidation.map(
             f =>
               Promise.resolve<string | undefined | PromiseLike<any>>(
                 this.fields[f].validate!(getIn(this.state.values, f))
-              ).then(x => x, e => e) // always catch
-          ),
-        ]).then(([alwaysEmpty, ...fieldErrors]) => {
-          const errors = fieldErrors.reduce((prev, curr, index) => {
+              ).then(x => x, e => e) // always catch so Promise.all runs each one
+          )
+        : [Promise.resolve('DO_NOT_DELETE_YOU_WILL_BE_FIRED')]; // use special case ;)
+
+    // Always run field-level validations first
+    return Promise.all(fieldValidations)
+      .then((fieldErrorsList: string[]) =>
+        fieldErrorsList.reduce(
+          (prev, curr, index) => {
+            if (curr === 'DO_NOT_DELETE_YOU_WILL_BE_FIRED') {
+              return prev;
+            }
             if (!!curr) {
-              prev[fieldKeysWithValidation[index]] = curr;
+              setIn(prev, fieldKeysWithValidation[index], curr);
             }
             return prev;
-          }, alwaysEmpty);
-          this.setState({ errors });
-          if (Object.keys(errors).length === 0) {
-            this.executeSubmit();
+          },
+          {} as FormikErrors<Values>
+        )
+      )
+      .then((fieldErrors: FormikErrors<Values>) => {
+        const hasFieldErrors = Object.keys(fieldErrors).length !== 0;
+        if (this.props.validate) {
+          const maybePromisedErrors =
+            (this.props.validate as any)(this.state.values) || {};
+          if (isPromise(maybePromisedErrors)) {
+            maybePromisedErrors.then(errors => {
+              const combinedErrors = deepmerge<FormikErrors<Values>>(
+                fieldErrors,
+                errors
+              );
+              this.setState({ errors: combinedErrors });
+              if (Object.keys(combinedErrors).length === 0) {
+                this.executeSubmit();
+              } else {
+                this.setState({ isSubmitting: false });
+                return;
+              }
+            });
           } else {
-            this.setState({ isSubmitting: false });
-            return;
-          }
-        });
-      } else {
-        const isValid = Object.keys(maybePromisedErrors).length === 0;
-        this.setState({
-          errors: maybePromisedErrors as FormikErrors<Values>,
-          isSubmitting: isValid,
-        });
+            const combinedErrors = deepmerge<FormikErrors<Values>>(
+              fieldErrors,
+              maybePromisedErrors
+            );
+            const isValid = Object.keys(combinedErrors).length === 0;
+            this.setState({
+              errors: combinedErrors,
+              isSubmitting: isValid,
+            });
 
-        // only submit if there are no errors
-        if (isValid) {
+            // only submit if there are no errors
+            if (isValid) {
+              this.executeSubmit();
+            }
+          }
+        } else if (this.props.validationSchema) {
+          const { validationSchema } = this.props;
+          const schema = isFunction(validationSchema)
+            ? validationSchema()
+            : validationSchema;
+          validateYupSchema(this.state.values, schema).then(
+            () => {
+              if (hasFieldErrors) {
+                this.setState({ errors: fieldErrors, isSubmitting: false });
+              } else {
+                this.setState({ errors: {} });
+                this.executeSubmit();
+              }
+            },
+            (err: any) =>
+              this.setState({
+                errors: deepmerge<FormikErrors<Values>>(
+                  fieldErrors,
+                  yupToFormErrors(err)
+                ),
+                isSubmitting: false,
+              })
+          );
+        } else if (hasFieldErrors) {
+          this.setState({ errors: fieldErrors, isSubmitting: false });
+        } else {
           this.executeSubmit();
         }
-      }
-    } else if (this.props.validationSchema) {
-      this.runValidationSchema(this.state.values, this.executeSubmit);
-    } else {
-      this.executeSubmit();
-    }
+      });
   };
 
   executeSubmit = () => {

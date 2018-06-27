@@ -19,8 +19,8 @@ const TestForm: React.SFC<any> = p => (
   />
 );
 
-describe('A <Field />', () => {
-  describe('<Field validate>', () => {
+describe('A <FastField />', () => {
+  describe('<FastField validate>', () => {
     const makeFieldTree = (props: any) =>
       mount(<Field.WrappedComponent {...props} />);
 
@@ -75,6 +75,8 @@ describe('A <Field />', () => {
         name: 'name',
         validate,
         formik: {
+          registerField: noop,
+          unregisterField: noop,
           setFormikState,
           validateOnBlur: true,
         },
@@ -98,6 +100,8 @@ describe('A <Field />', () => {
         name: 'name',
         validate,
         formik: {
+          registerField: noop,
+          unregisterField: noop,
           setFormikState,
           validateOnBlur: false,
         },
@@ -174,7 +178,10 @@ describe('A <Field />', () => {
 
     it('assigns innerRef as a ref to string components', () => {
       const innerRef = jest.fn();
-      const fmk = {};
+      const fmk = {
+        registerField: noop,
+        unregisterField: noop,
+      };
       const tree = mount(
         <Field.WrappedComponent
           name="name"

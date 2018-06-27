@@ -1,7 +1,6 @@
 import * as React from 'react';
 import isEqual from 'react-fast-compare';
 import warning from 'warning';
-import { polyfill } from 'react-lifecycles-compat';
 import { FieldAttributes, FieldConfig, FieldProps } from './Field';
 import { validateYupSchema, yupToFormErrors } from './Formik';
 import { connect } from './connect';
@@ -286,6 +285,4 @@ class FastFieldInner<Props = {}, Values = {}> extends React.Component<
   }
 }
 
-export const FastField = connect<FieldAttributes<any>, any>(
-  polyfill(FastFieldInner)
-);
+export const FastField = connect<FieldAttributes<any>, any>(FastFieldInner);

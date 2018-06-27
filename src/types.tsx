@@ -79,22 +79,15 @@ export interface FormikActions<Values> {
   setValues(values: Values): void;
   /** Set value of form field directly */
   setFieldValue(
-    field: keyof Values,
+    field: keyof Values & string,
     value: any,
     shouldValidate?: boolean
   ): void;
-  setFieldValue(field: string, value: any, shouldValidate?: boolean): void;
   /** Set error message of a form field directly */
-  setFieldError(field: keyof Values, message: string): void;
-  setFieldError(field: string, message: string): void;
+  setFieldError(field: keyof Values & string, message: string): void;
   /** Set whether field has been touched directly */
   setFieldTouched(
-    field: keyof Values,
-    isTouched?: boolean,
-    shouldValidate?: boolean
-  ): void;
-  setFieldTouched(
-    field: string,
+    field: keyof Values & string,
     isTouched?: boolean,
     shouldValidate?: boolean
   ): void;

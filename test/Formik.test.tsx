@@ -1110,7 +1110,7 @@ describe('<Formik>', () => {
     });
     expect(global.console.error).toHaveBeenCalledWith(
       expect.stringMatching(
-        /Warning: You submitted a Formik form using a button with an unspecified type./
+        /Warning: You submitted a Formik form using a button with an unspecified `type./
       )
     );
 

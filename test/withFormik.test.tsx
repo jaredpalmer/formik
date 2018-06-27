@@ -457,20 +457,11 @@ describe('withFormik()', () => {
           const validate = jest.fn(() => Promise.resolve({}));
           const ValidateForm = FormFactory({ validationSchema: { validate } });
           const tree = mount(<ValidateForm user={{ name: 'jared' }} />);
-          const handler = tree
+
+          await tree
             .find(Form)
-            .find('form')
-            .prop('onSubmit');
-          console.log(handler);
-          const sub = tree.find(Form).prop('submitForm');
-          const sleep = (ms: number) =>
-            new Promise(resolve =>
-              setTimeout(() => {
-                resolve();
-              }, ms)
-            );
-          handler({ preventDefault: noop });
-          await sleep(4000);
+            .props()
+            .submitForm();
 
           expect(validate).toHaveBeenCalled();
         });

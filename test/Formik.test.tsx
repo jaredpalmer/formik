@@ -1266,7 +1266,7 @@ describe('<Formik>', () => {
 
   it('isValidating is fired validation is run', async () => {
     const node = document.createElement('div');
-    const validate = jest.fn(() => ({ opensource: 'no ' }));
+    const validate = jest.fn(() => ({ opensource: 'no' }));
     let injected: any;
     ReactDOM.render(
       <Formik
@@ -1281,9 +1281,9 @@ describe('<Formik>', () => {
 
     expect(injected.isValidating).toBe(false);
     // we call set isValidating synchronously
-    injected.validateForm();
-    // so it should change
-    expect(injected.isValidating).toBe(true);
+    await injected.validateForm();
     expect(validate).toHaveBeenCalled();
+    // so it should change
+    expect(injected.isValidating).toBe(false);
   });
 });

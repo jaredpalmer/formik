@@ -32,6 +32,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     validateOnChange: true,
     validateOnBlur: true,
     isInitialValid: false,
+    isValidating: false,
     enableReinitialize: false,
   };
 
@@ -55,6 +56,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       values: props.initialValues || ({} as any),
       errors: {},
       touched: {},
+      isValidating: false,
       isSubmitting: false,
       submitCount: 0,
     };
@@ -114,7 +116,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     });
   };
 
-  setValues = (values: FormikValues) => {
+  setValues = (values: Values) => {
     this.setState({ values }, () => {
       if (this.props.validateOnChange) {
         this.runValidations(values);
@@ -142,43 +144,47 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
   /**
    * Run validation against a Yup schema and optionally run a function if successful
    */
-  runValidationSchema = (values: FormikValues, onSuccess?: Function) => {
+  runValidationSchema = (values: Values) => {
     const { validationSchema } = this.props;
     const schema = isFunction(validationSchema)
       ? validationSchema()
       : validationSchema;
     validateYupSchema(values, schema).then(
       () => {
-        this.setState({ errors: {} });
-        if (onSuccess) {
-          onSuccess();
-        }
+        this.setState({ errors: {}, isValidating: false });
       },
       (err: any) =>
-        this.setState({ errors: yupToFormErrors(err), isSubmitting: false })
+        this.setState({ errors: yupToFormErrors(err), isValidating: false })
     );
+  };
+
+  runValidate = (values: Values) => {
+    const maybePromisedErrors = (this.props.validate as any)(values);
+    if (isPromise(maybePromisedErrors)) {
+      (maybePromisedErrors as Promise<any>).then(
+        () => this.setState({ errors: {}, isValidating: false }),
+        errors => this.setState({ errors, isValidating: false })
+      );
+    } else {
+      this.setState({
+        errors: maybePromisedErrors as FormikErrors<Values>,
+        isValidating: false,
+      });
+    }
   };
 
   /**
    * Run validations and update state accordingly
    */
-  runValidations = (values: FormikValues = this.state.values) => {
+  runValidations = (values: Values) => {
     if (this.props.validationSchema) {
+      this.setState({ isValidating: true });
       this.runValidationSchema(values);
     }
 
     if (this.props.validate) {
-      const maybePromisedErrors = (this.props.validate as any)(values);
-      if (isPromise(maybePromisedErrors)) {
-        (maybePromisedErrors as Promise<any>).then(
-          () => {
-            this.setState({ errors: {} });
-          },
-          errors => this.setState({ errors, isSubmitting: false })
-        );
-      } else {
-        this.setErrors(maybePromisedErrors as FormikErrors<Values>);
-      }
+      this.setState({ isValidating: true });
+      this.runValidate(values);
     }
   };
 
@@ -317,7 +323,8 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
         prevState.values,
         true
       ),
-      isSubmitting: true,
+      isSubmitting: false,
+      isValidating: true,
       submitCount: prevState.submitCount + 1,
     }));
 
@@ -370,9 +377,10 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
               );
               this.setState({ errors: combinedErrors });
               if (Object.keys(combinedErrors).length === 0) {
+                this.setState({ isValidating: false });
                 this.executeSubmit();
               } else {
-                this.setState({ isSubmitting: false });
+                this.setState({ isValidating: false });
                 return;
               }
             });
@@ -381,14 +389,14 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
               fieldErrors,
               maybePromisedErrors
             );
-            const isValid = Object.keys(combinedErrors).length === 0;
+
             this.setState({
               errors: combinedErrors,
-              isSubmitting: isValid,
+              isValidating: false,
             });
 
             // only submit if there are no errors
-            if (isValid) {
+            if (Object.keys(combinedErrors).length === 0) {
               this.executeSubmit();
             }
           }
@@ -400,9 +408,9 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
           validateYupSchema(this.state.values, schema).then(
             () => {
               if (hasFieldErrors) {
-                this.setState({ errors: fieldErrors, isSubmitting: false });
+                this.setState({ errors: fieldErrors, isValidating: false });
               } else {
-                this.setState({ errors: {} });
+                this.setState({ errors: {}, isValidating: false });
                 this.executeSubmit();
               }
             },
@@ -412,12 +420,13 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
                   fieldErrors,
                   yupToFormErrors(err)
                 ),
-                isSubmitting: false,
+                isValidating: false,
               })
           );
         } else if (hasFieldErrors) {
-          this.setState({ errors: fieldErrors, isSubmitting: false });
+          this.setState({ errors: fieldErrors, isValidating: false });
         } else {
+          this.setState({ isValidating: false });
           this.executeSubmit();
         }
       });

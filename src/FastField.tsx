@@ -34,7 +34,7 @@ class FastFieldInner<Props = {}, Values = {}> extends React.Component<
       error: getIn(props.formik.errors, props.name),
     };
 
-    const { render, children, component } = props;
+    const { render, children, component, formik } = props;
 
     warning(
       !(component && render),
@@ -50,6 +50,11 @@ class FastFieldInner<Props = {}, Values = {}> extends React.Component<
       !(render && children && !isEmptyChildren(children)),
       'You should not use <FastField render> and <FastField children> in the same <FastField> component; <FastField children> will be ignored'
     );
+    // Register the FastField with the parent Formik. Parent will cycle through
+    // registered FastField's validate fns right prior to submit
+    formik.registerField(props.name, {
+      validate: props.validate,
+    });
   }
 
   componentDidUpdate(
@@ -67,6 +72,19 @@ class FastFieldInner<Props = {}, Values = {}> extends React.Component<
 
     if (!isEqual(nextFieldError, prevFieldError)) {
       this.setState({ error: nextFieldError });
+    }
+
+    if (this.props.name !== prevProps.name) {
+      this.props.formik.unregisterField(prevProps.name);
+      this.props.formik.registerField(this.props.name, {
+        validate: this.props.validate,
+      });
+    }
+
+    if (this.props.validate !== prevProps.validate) {
+      this.props.formik.registerField(this.props.name, {
+        validate: this.props.validate,
+      });
     }
   }
 
@@ -224,6 +242,10 @@ class FastFieldInner<Props = {}, Values = {}> extends React.Component<
       }));
     }
   };
+
+  componentWillUnmount() {
+    this.props.formik.unregisterField(this.props.name);
+  }
 
   render() {
     const {

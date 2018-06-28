@@ -338,7 +338,7 @@ describe('withFormik()', () => {
       });
 
       describe('with validate (SYNC)', () => {
-        it('should call validate if present', () => {
+        it('should call validate if present', async () => {
           const validate = jest.fn().mockReturnValue({});
           const ValidateForm = withFormik<Props, Values, Values>({
             validate,
@@ -346,16 +346,14 @@ describe('withFormik()', () => {
             handleSubmit: noop,
           })(Form);
           const tree = mount(<ValidateForm user={{ name: 'jared' }} />);
-          tree
+          await tree
             .find(Form)
-            .find('form')
-            .simulate('submit', {
-              preventDefault: noop,
-            });
+            .props()
+            .submitForm();
           expect(validate).toHaveBeenCalled();
         });
 
-        it('should submit the form if valid', () => {
+        it('should submit the form if valid', async () => {
           const handleSubmit = jest.fn();
           const ValidateForm = withFormik<Props, Values, Values>({
             validate: noop,
@@ -363,16 +361,14 @@ describe('withFormik()', () => {
             handleSubmit,
           })(Form);
           const tree = mount(<ValidateForm user={{ name: 'jared' }} />);
-          tree
+          await tree
             .find(Form)
-            .find('form')
-            .simulate('submit', {
-              preventDefault: noop,
-            });
+            .props()
+            .submitForm();
           expect(handleSubmit).toHaveBeenCalled();
         });
 
-        it('should not submit the form if invalid', () => {
+        it('should not submit the form if invalid', async () => {
           const validate = jest.fn().mockReturnValue({ name: 'Error!' });
           const handleSubmit = jest.fn();
 
@@ -383,19 +379,17 @@ describe('withFormik()', () => {
           })(Form);
 
           const tree = mount(<ValidateForm user={{ name: '' }} />);
-          tree
+          await tree
             .find(Form)
-            .find('form')
-            .simulate('submit', {
-              preventDefault: noop,
-            });
+            .props()
+            .submitForm();
           expect(validate).toHaveBeenCalled();
           expect(handleSubmit).not.toHaveBeenCalled();
         });
       });
 
       describe('with validate (ASYNC)', () => {
-        it('should call validate if present', () => {
+        it('should call validate if present', async () => {
           const validate = jest.fn(() => Promise.resolve({}));
           const ValidateForm = withFormik<Props, Values, Values>({
             validate,
@@ -403,12 +397,10 @@ describe('withFormik()', () => {
             handleSubmit: noop,
           })(Form);
           const tree = mount(<ValidateForm user={{ name: 'jared' }} />);
-          tree
+          await tree
             .find(Form)
-            .find('form')
-            .simulate('submit', {
-              preventDefault: noop,
-            });
+            .props()
+            .submitForm();
           expect(validate).toHaveBeenCalled();
         });
 
@@ -453,20 +445,20 @@ describe('withFormik()', () => {
       });
 
       describe('with validationSchema (ASYNC)', () => {
-        it('should run validationSchema if present', () => {
+        it('should run validationSchema if present', async () => {
           const validate = jest.fn(() => Promise.resolve({}));
           const ValidateForm = FormFactory({ validationSchema: { validate } });
           const tree = mount(<ValidateForm user={{ name: 'jared' }} />);
-          tree
+
+          await tree
             .find(Form)
-            .find('form')
-            .simulate('submit', {
-              preventDefault: noop,
-            });
+            .props()
+            .submitForm();
+
           expect(validate).toHaveBeenCalled();
         });
 
-        it('should call validationSchema if it is a function and present', () => {
+        it('should call validationSchema if it is a function and present', async () => {
           const validate = jest.fn(() => Promise.resolve({}));
           const ValidateForm = FormFactory({
             validationSchema: () => ({
@@ -474,12 +466,10 @@ describe('withFormik()', () => {
             }),
           });
           const tree = mount(<ValidateForm user={{ name: 'jared' }} />);
-          tree
+          await tree
             .find(Form)
-            .find('form')
-            .simulate('submit', {
-              preventDefault: noop,
-            });
+            .props()
+            .submitForm();
           expect(validate).toHaveBeenCalled();
         });
       });

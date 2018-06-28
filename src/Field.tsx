@@ -63,7 +63,7 @@ export interface FieldConfig {
   /**
    * Validate a single field value independently
    */
-  validate?: ((value: any) => string | Function | Promise<void> | undefined);
+  validate?: ((value: any) => string | Promise<void> | undefined);
 
   /**
    * Field name
@@ -94,7 +94,8 @@ class FieldInner<Props = {}, Values = {}> extends React.Component<
     props: FieldAttributes<Props> & { formik: FormikContext<Values> }
   ) {
     super(props);
-    const { render, children, component } = this.props;
+
+    const { render, children, component, formik } = props;
     warning(
       !(component && render),
       'You should not use <Field component> and <Field render> in the same <Field> component; <Field component> will be ignored'
@@ -109,6 +110,33 @@ class FieldInner<Props = {}, Values = {}> extends React.Component<
       !(render && children && !isEmptyChildren(children)),
       'You should not use <Field render> and <Field children> in the same <Field> component; <Field children> will be ignored'
     );
+
+    // Register the Field with the parent Formik. Parent will cycle through
+    // registered Field's validate fns right prior to submit
+    formik.registerField(props.name, {
+      validate: props.validate,
+    });
+  }
+
+  componentDidUpdate(
+    prevProps: FieldAttributes<Props> & { formik: FormikContext<Values> }
+  ) {
+    if (this.props.name !== prevProps.name) {
+      this.props.formik.unregisterField(prevProps.name);
+      this.props.formik.registerField(this.props.name, {
+        validate: this.props.validate,
+      });
+    }
+
+    if (this.props.validate !== prevProps.validate) {
+      this.props.formik.registerField(this.props.name, {
+        validate: this.props.validate,
+      });
+    }
+  }
+
+  componentWillUnmount() {
+    this.props.formik.unregisterField(this.props.name);
   }
 
   handleChange = (e: React.ChangeEvent<any>) => {

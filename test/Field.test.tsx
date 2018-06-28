@@ -31,6 +31,8 @@ describe('A <Field />', () => {
         name: 'name',
         validate,
         formik: {
+          registerField: noop,
+          unregisterField: noop,
           handleChange,
           setFieldError,
           validateOnChange: true,
@@ -56,6 +58,8 @@ describe('A <Field />', () => {
         name: 'name',
         validate,
         formik: {
+          registerField: noop,
+          unregisterField: noop,
           handleChange,
           setFieldError,
           validateOnChange: false,
@@ -81,6 +85,8 @@ describe('A <Field />', () => {
         name: 'name',
         validate,
         formik: {
+          registerField: noop,
+          unregisterField: noop,
           handleBlur,
           setFieldError,
           validateOnBlur: true,
@@ -107,6 +113,8 @@ describe('A <Field />', () => {
         name: 'name',
         validate,
         formik: {
+          registerField: noop,
+          unregisterField: noop,
           handleBlur,
           setFieldError,
           validateOnBlur: false,
@@ -187,9 +195,13 @@ describe('A <Field />', () => {
 
     it('assigns innerRef as a ref to string components', () => {
       const innerRef = jest.fn();
-      const tree = mount(<Field name="name" innerRef={innerRef} />, {
-        context: { formik: {} },
-      });
+      const tree = mount(
+        <Field.WrappedComponent
+          name="name"
+          innerRef={innerRef}
+          formik={{ registerField: noop }}
+        />
+      );
       const element = tree.find('input').instance();
       expect(innerRef).toHaveBeenCalledWith(element);
     });

@@ -218,7 +218,17 @@ export type FormikProps<Values> = FormikSharedConfig &
   FormikState<Values> &
   FormikActions<Values> &
   FormikHandlers &
-  FormikComputedProps<Values>;
+  FormikComputedProps<Values> & {
+    registerField(
+      name: string,
+      fns: {
+        validate?: ((
+          value: any
+        ) => string | Function | Promise<void> | undefined);
+      }
+    ): void;
+    unregisterField(name: string): void;
+  };
 
 /**
  * State, handlers, and helpers made available to Formik's primitive components through context.

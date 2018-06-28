@@ -6,7 +6,7 @@
   "dependencies": {
     "@gaearon/react-live": "1.7.1-with-safari-fix",
     "classnames": "^2.2.5",
-    "formik": "../",
+    "formik": "file:../",
     "gatsby": "^1.9.243",
     "gatsby-link": "^1.6.9",
     "gatsby-plugin-catch-links": "^1.0.15",
@@ -27,6 +27,7 @@
     "gatsby-remark-responsive-iframe": "^1.4.3",
     "gatsby-remark-smartypants": "^1.4.3",
     "gatsby-source-filesystem": "^1.4.4",
+    "gatsby-starter-default": "file:",
     "gatsby-transformer-remark": "^1.7.2",
     "gatsby-transformer-sharp": "^1.6.1",
     "glamor": "^2.20.40",
@@ -38,12 +39,13 @@
     "typography": "^0.15.12",
     "typography-breakpoint-constants": "^0.15.10",
     "typography-plugin-code": "^0.15.11",
-    "yup": "^0.21.3"
+    "yup": "^0.21.3",
+    "snyk": "^1.85.0"
   },
   "devDependencies": {
     "@types/classnames": "^2.2.0",
     "@types/node": "^8.0.15",
-    "@types/react": "^16.1.0",
+    "@types/react": "^16.3.14",
     "@types/react-dom": "^16.0.4",
     "@types/react-helmet": "^5.0.3",
     "@types/react-router-dom": "^4.0.7",
@@ -57,8 +59,8 @@
   ],
   "resolutions": {
     "gatsby/graphql": "0.10.5",
-    "gatsby/react": "16.0.0",
-    "gatsby/react-dom": "16.0.0"
+    "gatsby/react": "16.3.2",
+    "gatsby/react-dom": "16.3.2"
   },
   "license": "MIT",
   "scripts": {
@@ -67,6 +69,9 @@
     "start": "gatsby develop",
     "serve": "gatsby serve",
     "format": "prettier --trailing-comma es5 --no-semi --single-quote --write \"pages/*.js\" \"utils/*.js\" \"wrappers/*.js\" \"html.js\"",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  }
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
+  },
+  "snyk": true
 }

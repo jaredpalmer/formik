@@ -1,6 +1,6 @@
-import * as React from 'react';
-import toPath from 'lodash.topath';
 import cloneDeep from 'lodash.clonedeep';
+import toPath from 'lodash.topath';
+import * as React from 'react';
 
 /**
  * Deeply get a value from an object via it's path.
@@ -82,7 +82,8 @@ export function setNestedObjectValues<T>(
 // Assertions
 
 /** @private is the given object a Function? */
-export const isFunction = (obj: any): boolean => typeof obj === 'function';
+export const isFunction = (obj: any): obj is Function =>
+  typeof obj === 'function';
 
 /** @private is the given object an Object? */
 export const isObject = (obj: any): boolean =>
@@ -93,7 +94,7 @@ export const isInteger = (obj: any): boolean =>
   String(Math.floor(Number(obj))) === obj;
 
 /** @private is the given object a string? */
-export const isString = (obj: any): boolean =>
+export const isString = (obj: any): obj is string =>
   Object.prototype.toString.call(obj) === '[object String]';
 
 /** @private is the given object a NaN? */
@@ -104,5 +105,28 @@ export const isEmptyChildren = (children: any): boolean =>
   React.Children.count(children) === 0;
 
 /** @private is the given object/value a promise? */
-export const isPromise = (value: any): boolean =>
+export const isPromise = (value: any): value is PromiseLike<any> =>
   isObject(value) && isFunction(value.then);
+
+/**
+ * Same as document.activeElement but wraps in a try-catch block. In IE it is
+ * not safe to call document.activeElement if there is nothing focused.
+ *
+ * The activeElement will be null only if the document or document body is not
+ * yet defined.
+ *
+ * @param {?Document} doc Defaults to current document.
+ * @return {Element | null}
+ * @see https://github.com/facebook/fbjs/blob/master/packages/fbjs/src/core/dom/getActiveElement.js
+ */
+export function getActiveElement(doc?: Document): Element | null {
+  doc = doc || (typeof document !== 'undefined' ? document : undefined);
+  if (typeof doc === 'undefined') {
+    return null;
+  }
+  try {
+    return doc.activeElement || doc.body;
+  } catch (e) {
+    return doc.body;
+  }
+}

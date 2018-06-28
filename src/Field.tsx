@@ -1,10 +1,12 @@
-import * as PropTypes from 'prop-types';
 import * as React from 'react';
-
-import { FormikProps } from './Formik';
-import { getIn, isPromise, isFunction, isEmptyChildren } from './utils';
 import warning from 'warning';
-import { GenericFieldHTMLAttributes } from './types';
+import { connect } from './connect';
+import {
+  FormikProps,
+  GenericFieldHTMLAttributes,
+  FormikContext,
+} from './types';
+import { getIn, isEmptyChildren, isFunction, isPromise } from './utils';
 
 /**
  * Note: These typings could be more restrictive, but then it would limit the
@@ -61,7 +63,7 @@ export interface FieldConfig {
   /**
    * Validate a single field value independently
    */
-  validate?: ((value: any) => string | Function | Promise<void> | undefined);
+  validate?: ((value: any) => string | Promise<void> | undefined);
 
   /**
    * Field name
@@ -78,40 +80,29 @@ export interface FieldConfig {
   innerRef?: (instance: any) => void;
 }
 
-export type FieldAttributes = GenericFieldHTMLAttributes & FieldConfig;
+export type FieldAttributes<T> = GenericFieldHTMLAttributes & FieldConfig & T;
 
 /**
  * Custom Field component for quickly hooking into Formik
  * context and wiring up forms.
  */
-
-export class Field<Props extends FieldAttributes = any> extends React.Component<
-  Props,
+class FieldInner<Props = {}, Values = {}> extends React.Component<
+  FieldAttributes<Props> & { formik: FormikContext<Values> },
   {}
 > {
-  static contextTypes = {
-    formik: PropTypes.object,
-  };
+  constructor(
+    props: FieldAttributes<Props> & { formik: FormikContext<Values> }
+  ) {
+    super(props);
 
-  static propTypes = {
-    name: PropTypes.string.isRequired,
-    component: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
-    render: PropTypes.func,
-    children: PropTypes.oneOfType([PropTypes.func, PropTypes.node]),
-    validate: PropTypes.func,
-    innerRef: PropTypes.func,
-  };
-
-  componentWillMount() {
-    const { render, children, component } = this.props;
-
+    const { render, children, component, formik } = props;
     warning(
       !(component && render),
       'You should not use <Field component> and <Field render> in the same <Field> component; <Field component> will be ignored'
     );
 
     warning(
-      !(this.props.component && children && isFunction(children)),
+      !(component && children && isFunction(children)),
       'You should not use <Field component> and <Field children> as a function in the same <Field> component; <Field component> will be ignored.'
     );
 
@@ -119,10 +110,37 @@ export class Field<Props extends FieldAttributes = any> extends React.Component<
       !(render && children && !isEmptyChildren(children)),
       'You should not use <Field render> and <Field children> in the same <Field> component; <Field children> will be ignored'
     );
+
+    // Register the Field with the parent Formik. Parent will cycle through
+    // registered Field's validate fns right prior to submit
+    formik.registerField(props.name, {
+      validate: props.validate,
+    });
+  }
+
+  componentDidUpdate(
+    prevProps: FieldAttributes<Props> & { formik: FormikContext<Values> }
+  ) {
+    if (this.props.name !== prevProps.name) {
+      this.props.formik.unregisterField(prevProps.name);
+      this.props.formik.registerField(this.props.name, {
+        validate: this.props.validate,
+      });
+    }
+
+    if (this.props.validate !== prevProps.validate) {
+      this.props.formik.registerField(this.props.name, {
+        validate: this.props.validate,
+      });
+    }
+  }
+
+  componentWillUnmount() {
+    this.props.formik.unregisterField(this.props.name);
   }
 
   handleChange = (e: React.ChangeEvent<any>) => {
-    const { handleChange, validateOnChange } = this.context.formik;
+    const { handleChange, validateOnChange } = this.props.formik;
     handleChange(e); // Call Formik's handleChange no matter what
     if (!!validateOnChange && !!this.props.validate) {
       this.runFieldValidations(e.target.value);
@@ -130,22 +148,22 @@ export class Field<Props extends FieldAttributes = any> extends React.Component<
   };
 
   handleBlur = (e: any) => {
-    const { handleBlur, validateOnBlur } = this.context.formik;
+    const { handleBlur, validateOnBlur } = this.props.formik;
     handleBlur(e); // Call Formik's handleBlur no matter what
-    if (validateOnBlur && this.props.validate) {
+    if (!!validateOnBlur && !!this.props.validate) {
       this.runFieldValidations(e.target.value);
     }
   };
 
   runFieldValidations = (value: any) => {
-    const { setFieldError } = this.context.formik;
+    const { setFieldError } = this.props.formik;
     const { name, validate } = this.props;
     // Call validate fn
     const maybePromise = (validate as any)(value);
     // Check if validate it returns a Promise
     if (isPromise(maybePromise)) {
       (maybePromise as Promise<any>).then(
-        () => setFieldError(name, undefined),
+        () => setFieldError(name, undefined as any),
         error => setFieldError(name, error)
       );
     } else {
@@ -161,10 +179,16 @@ export class Field<Props extends FieldAttributes = any> extends React.Component<
       render,
       children,
       component = 'input',
+      formik,
       ...props
-    } = this.props as FieldConfig;
-
-    const { formik } = this.context;
+    } = (this.props as FieldAttributes<Props> & {
+      formik: FormikContext<Values>;
+    }) as any;
+    const {
+      validate: _validate,
+      validationSchema: _validationSchema,
+      ...restOfFormik
+    } = formik;
     const field = {
       value:
         props.type === 'radio' || props.type === 'checkbox'
@@ -174,7 +198,7 @@ export class Field<Props extends FieldAttributes = any> extends React.Component<
       onChange: validate ? this.handleChange : formik.handleChange,
       onBlur: validate ? this.handleBlur : formik.handleBlur,
     };
-    const bag = { field, form: formik };
+    const bag = { field, form: restOfFormik };
 
     if (render) {
       return (render as any)(bag);
@@ -201,3 +225,5 @@ export class Field<Props extends FieldAttributes = any> extends React.Component<
     });
   }
 }
+
+export const Field = connect<FieldAttributes<any>, any>(FieldInner);

@@ -169,3 +169,5 @@ const App = () => (
     </Wizard>
   </div>
 );
+
+export default App

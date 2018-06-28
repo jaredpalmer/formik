@@ -33,6 +33,7 @@
     "prepublish": "npm run build",
     "format": "prettier --trailing-comma es5 --single-quote --write 'src/**/*' 'test/**/*' 'README.md'",
     "precommit": "lint-staged",
+    "storybook": "start-storybook -p 9001",
     "addc": "all-contributors add",
     "start-website": "cd website && yarn start",
     "build-website": "cd website && yarn install && yarn build",
@@ -51,6 +52,7 @@
   },
   "optionalDependencies": {},
   "devDependencies": {
+    "@storybook/react": "^3.4.0",
     "@pisano/enzyme": "^3.3.0-pisano.public.1",
     "@pisano/enzyme-adapter-react-16": "^1.1.1-pisano.public.1",
     "@types/jest": "^22.2.3",
@@ -61,6 +63,7 @@
     "@types/react-test-renderer": "15.5.2",
     "@types/warning": "^3.0.0",
     "all-contributors-cli": "^4.4.0",
+    "awesome-typescript-loader": "^3.4.1",
     "cross-env": "5.0.5",
     "doctoc": "^1.3.0",
     "husky": "0.14.3",

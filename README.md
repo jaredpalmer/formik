@@ -1406,7 +1406,7 @@ Default is `true`. Determines if form validation should or should not be run _af
 
 You can also iterate through an array of objects, by following a convention of `object[index]property` or `object.index.property` for the name attributes of `<Field />` or `<input />` elements in `<FieldArray />`.
 
-```
+```js
 <Form>
   <FieldArray
     name="friends"
@@ -1414,14 +1414,14 @@ You can also iterate through an array of objects, by following a convention of `
       <div>
         {values.friends.map((friend, index) => (
           <div key={index}>
-            <Field name={`friends.${index}.name`} />
-            <Field name={`friends.${index}.age`} />
+            <Field name={`friends[${index}]name`} />
+            <Field name={`friends.${index}.age`} /> // both these conventions do the same
             <button
               type="button"
               onClick={() => arrayHelpers.remove(index)}
             >
               -
-                        </button>
+            </button>
           </div>
         ))}
         <button
@@ -1429,7 +1429,7 @@ You can also iterate through an array of objects, by following a convention of `
           onClick={() => arrayHelpers.push({ name: '', age: '' })}
         >
           +
-                </button>
+        </button>
       </div>
     )}
   />

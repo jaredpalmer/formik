@@ -88,6 +88,12 @@
     global "^4.3.2"
     prop-types "^15.6.1"
 
+"@storybook/addon-options@^3.4.8":
+  version "3.4.8"
+  resolved "https://registry.yarnpkg.com/@storybook/addon-options/-/addon-options-3.4.8.tgz#e2b79605bb8674e8d67e3ad695f4b7a489bcd06a"
+  dependencies:
+    babel-runtime "^6.26.0"
+
 "@storybook/addons@3.4.8":
   version "3.4.8"
   resolved "https://registry.yarnpkg.com/@storybook/addons/-/addons-3.4.8.tgz#ff1142d8f0963dd28b7c6f88dc9d3be170ac6600"
@@ -7242,6 +7248,10 @@ raw-body@2.3.2:
     http-errors "1.6.2"
     iconv-lite "0.4.19"
     unpipe "1.0.0"
+
+raw-loader@^0.5.1:
+  version "0.5.1"
+  resolved "https://registry.yarnpkg.com/raw-loader/-/raw-loader-0.5.1.tgz#0c3d0beaed8a01c966d9787bf778281252a979aa"
 
 rc@^1.1.7:
   version "1.2.7"

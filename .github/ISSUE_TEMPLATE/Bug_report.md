@@ -4,27 +4,30 @@ about: Create a report to help make Formik better
 
 ---
 
-**Describe the bug**
-<!--A clear and concise description of what the bug is. -->
-
-**To Reproduce**
-<!-- Steps to reproduce the behavior: -->
-
-**Expected behavior**
-<!-- A clear and concise description of what you expected to happen. -->
-
-**Suggested solution(s)**
+## Current Behavior
 <!-- If applicable, add screenshots to help explain your problem. -->
 
-**Additional context**
+## Steps to Reproduce
+<!-- Steps to reproduce the behavior: -->
+
+## Expected behavior
+<!-- A clear and concise description of what you expected to happen. -->
+
+## Suggested solution(s)
+<!-- How could we solve this bug? What changes would need to made to Formik? -->
+
+## Additional context
 <!-- Add any other context about the problem here.  -->
+
+
+**CodeSandbox Link**:
 
 ---
 <!-- PLEASE FILL THIS OUT -->
 - Formik Version:
 - React Version:
 - TypeScript Version:
-- CodeSandbox Link:
+- Browser and Version:
 - OS: 
 - Node Version:
 - Package Manager and Version:

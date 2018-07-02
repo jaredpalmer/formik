@@ -350,7 +350,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
               return prev;
             }
             if (!!curr) {
-              setIn(prev, fieldKeysWithValidation[index], curr);
+              prev = setIn(prev, fieldKeysWithValidation[index], curr);
             }
             return prev;
           },

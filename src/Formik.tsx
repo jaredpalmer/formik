@@ -122,10 +122,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
    * Run validation against a Yup schema and optionally run a function if successful
    */
   runValidationSchema = (values: FormikValues, onSuccess?: Function) => {
-    const { validationSchema } = this.props;
-    const schema = isFunction(validationSchema)
-      ? validationSchema()
-      : validationSchema;
+    const schema = this.getValidationSchema();
     validateYupSchema(values, schema).then(
       () => {
         this.setState({ errors: {} });
@@ -332,7 +329,21 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
   };
 
   executeSubmit = () => {
-    this.props.onSubmit(this.state.values, this.getFormikActions());
+    const schema = this.getValidationSchema();
+    const { values } = this.state;
+    const actualizedValues = schema ? schema.cast(values) : values;
+
+    this.props.onSubmit(actualizedValues, this.getFormikActions());
+  };
+
+  getValidationSchema = () => {
+    const { validationSchema } = this.props;
+
+    if (!validationSchema) {
+      return;
+    }
+
+    return isFunction(validationSchema) ? validationSchema() : validationSchema;
   };
 
   handleBlur = (eventOrString: any): void | ((e: any) => void) => {

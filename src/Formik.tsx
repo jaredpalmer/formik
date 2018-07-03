@@ -339,10 +339,6 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
   getValidationSchema = () => {
     const { validationSchema } = this.props;
 
-    if (!validationSchema) {
-      return;
-    }
-
     return isFunction(validationSchema) ? validationSchema() : validationSchema;
   };
 

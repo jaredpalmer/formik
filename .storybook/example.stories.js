@@ -24,18 +24,19 @@ const CombinedValidationsCode = require('!raw-loader!../examples/CombinedValidat
 const Code = props => (
   <pre
     style={{
+      position: 'absolute',
+      top: 12,
+      right: 12,
+      bottom: 12,
+      width: 500,
       border: '1px solid #eee',
       borderRadius: 4,
-      fontSize: 11,
-      padding: 12,
-      margin: 12,
-      lineHeight: 1.4,
-      position: 'absolute',
-      top: 0,
-      right: 0,
-      width: 500,
-      height: '100%',
       overflowX: 'scroll',
+      fontSize: 11,
+      lineHeight: 1.4,
+      boxSizing: 'border-box',
+      padding: 12,
+      margin: 0,
     }}
     {...props}
   />

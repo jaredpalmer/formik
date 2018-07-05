@@ -3,7 +3,7 @@ import isEqual from 'react-fast-compare';
 import warning from 'warning';
 import { FieldAttributes, FieldConfig, FieldProps } from './Field';
 import { validateYupSchema, yupToFormErrors } from './Formik';
-import { connect } from './connect';
+import { FormikConsumer } from './connect';
 import { FormikContext } from './types';
 import { getIn, isEmptyChildren, isFunction, isPromise, setIn } from './utils';
 
@@ -307,4 +307,16 @@ class FastFieldInner<Props = {}, Values = {}> extends React.Component<
   }
 }
 
-export const FastField = connect<FieldAttributes<any>, any>(FastFieldInner);
+export class FastField<Props = {}> extends React.Component<
+  FieldAttributes<Props>
+> {
+  static WrappedComponent = FastFieldInner;
+
+  render() {
+    return (
+      <FormikConsumer>
+        {formik => <FastFieldInner {...this.props} formik={formik} />}
+      </FormikConsumer>
+    );
+  }
+}

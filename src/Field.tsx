@@ -1,6 +1,6 @@
 import * as React from 'react';
 import warning from 'warning';
-import { connect } from './connect';
+import { FormikConsumer } from './connect';
 import {
   FormikProps,
   GenericFieldHTMLAttributes,
@@ -226,4 +226,14 @@ class FieldInner<Props = {}, Values = {}> extends React.Component<
   }
 }
 
-export const Field = connect<FieldAttributes<any>, any>(FieldInner);
+export class Field<Props = {}> extends React.Component<FieldAttributes<Props>> {
+  static WrappedComponent = FieldInner;
+
+  render() {
+    return (
+      <FormikConsumer>
+        {formik => <FieldInner {...this.props} formik={formik} />}
+      </FormikConsumer>
+    );
+  }
+}

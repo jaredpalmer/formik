@@ -181,6 +181,23 @@ describe('<Formik>', () => {
           });
         expect(validate).not.toHaveBeenCalled();
       });
+
+      it('sets touched state', () => {
+        const tree = shallow(BasicForm);
+
+        // Simulate a change event in the inner Form component's input
+        tree
+          .find(Form)
+          .dive()
+          .find('input')
+          .simulate('change', {
+            persist: noop,
+            target: {
+              id: 'name',
+            },
+          });
+        expect(tree.update().state().touched).toEqual({ name: true });
+      });
     });
 
     describe('handleBlur', () => {

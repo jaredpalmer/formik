@@ -16,7 +16,7 @@
     "hoc"
   ],
   "main": "dist/index.js",
-  "module": "dist/formik.es6.js",
+  "module": "dist/formik.esm.js",
   "typings": "dist/index.d.ts",
   "files": [
     "dist"
@@ -126,8 +126,7 @@
       "json"
     ]
   },
-  "size-limit": [
-    {
+  "size-limit": [{
       "path": "./dist/index.js",
       "limit": "14 kB"
     },

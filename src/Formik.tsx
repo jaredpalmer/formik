@@ -202,7 +202,9 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
   runValidateHandler(values: FormikValues): Promise<FormikErrors<Values>> {
     return new Promise(resolve => {
       const maybePromisedErrors = (this.props.validate as any)(values);
-      if (isPromise(maybePromisedErrors)) {
+      if (maybePromisedErrors === undefined) {
+        resolve({});
+      } else if (isPromise(maybePromisedErrors)) {
         (maybePromisedErrors as Promise<any>).then(
           () => {
             resolve({});
@@ -399,7 +401,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       submitCount: prevState.submitCount + 1,
     }));
 
-    this.runValidations().then(combinedErrors => {
+    return this.runValidations().then(combinedErrors => {
       this.setState({ isSubmitting: false });
       const isValid = Object.keys(combinedErrors).length === 0;
       if (isValid) {

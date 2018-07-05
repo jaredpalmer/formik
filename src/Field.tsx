@@ -226,4 +226,4 @@ class FieldInner<Props = {}, Values = {}> extends React.Component<
   }
 }
 
-export const Field = connect<FieldAttributes<any>, any>(FieldInner);
+export const Field = connect<FieldAttributes<{}>, any>(FieldInner);

@@ -9,6 +9,7 @@ import MultistepWizard from '../examples/MultistepWizard';
 import SchemaValidation from '../examples/SchemaValidation';
 import SyncValidation from '../examples/SyncValidation';
 import FieldLevelValidation from '../examples/FieldLevelValidation';
+import CombinedValidations from '../examples/CombinedValidations';
 
 const AsyncValidationCode = require('!raw-loader!../examples/AsyncValidation');
 const ArraysCode = require('!raw-loader!../examples/Arrays');
@@ -18,6 +19,7 @@ const MultistepWizardCode = require('!raw-loader!../examples/MultistepWizard');
 const SchemaValidationCode = require('!raw-loader!../examples/SchemaValidation');
 const SyncValidationCode = require('!raw-loader!../examples/SyncValidation');
 const FieldLevelValidationCode = require('!raw-loader!../examples/FieldLevelValidation');
+const CombinedValidationsCode = require('!raw-loader!../examples/CombinedValidations');
 
 const Code = props => (
   <pre
@@ -117,6 +119,16 @@ storiesOf('Example', module)
           <FieldLevelValidation />
         </main>
         <Code>{FieldLevelValidationCode}</Code>
+      </div>
+    );
+  })
+  .add('CombinedValidations', () => {
+    return (
+      <div className="story">
+        <main>
+          <CombinedValidations />
+        </main>
+        <Code>{CombinedValidationsCode}</Code>
       </div>
     );
   });

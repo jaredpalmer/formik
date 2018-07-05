@@ -233,6 +233,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
         this.setState(prevState => ({
           ...prevState,
           values: setIn(prevState.values, field!, val),
+          touched: setIn(prevState.touched, field!, true),
         }));
 
         if (this.props.validateOnChange) {

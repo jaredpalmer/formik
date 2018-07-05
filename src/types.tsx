@@ -93,6 +93,8 @@ export interface FormikActions<Values> {
   ): void;
   /** Validate form values */
   validateForm(values?: any): void;
+  /** Validate field value */
+  validateField(field: string): void;
   /** Reset form */
   resetForm(nextValues?: any): void;
   /** Submit the form imperatively */

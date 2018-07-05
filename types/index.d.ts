@@ -6,17 +6,28 @@ declare module 'react-lifecycles-compat' {
     Comp: React.ComponentType<P>
   ): React.ComponentType<P>;
 }
+
 declare module 'deepmerge' {
-  // https://github.com/KyleAMathews/deepmerge
-  // 06/27/18 by Jared Palmer
-  // for Version 2.1.1
-  export default function deepmerge<T>(
-    x: any,
-    y: any,
-    options?: {
-      clone?: boolean;
-      arrayMerge?: (x: any[], y: any[], option: { clone?: boolean }) => any[];
-      isMergeableObject?: (obj: any) => boolean;
-    }
+  export = deepmerge;
+
+  function deepmerge<T>(
+    x: Partial<T>,
+    y: Partial<T>,
+    options?: deepmerge.Options
   ): T;
+  function deepmerge<T1, T2>(
+    x: T1,
+    y: T2,
+    options?: deepmerge.Options
+  ): T1 & T2;
+
+  namespace deepmerge {
+    interface Options {
+      clone?: boolean;
+      arrayMerge?(destination: any[], source: any[], options?: Options): any[];
+      isMergeableObject?(value: object): boolean;
+    }
+
+    function all<T>(objects: Array<Partial<T>>, options?: Options): T;
+  }
 }

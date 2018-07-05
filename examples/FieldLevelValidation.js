@@ -7,11 +7,9 @@ const FieldLevelValidation = () => (
   <div>
     <h1>Pick a username</h1>
     <Formik
-      initialValues={{username: '', password: ''}}
+      initialValues={{ username: '', email: '' }}
       onSubmit={values => {
-        sleep(500).then(() => {
-          alert(JSON.stringify(values, null, 2));
-        });
+        alert(JSON.stringify(values, null, 2));
       }}
       render={({
         errors,
@@ -40,7 +38,7 @@ const FieldLevelValidation = () => (
             <Field
               name="email"
               validate={isRequired('This field is required')}
-              type="email"
+              type="text"
               placeholder="Email"
             />
             {errors.email &&

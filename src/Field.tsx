@@ -159,7 +159,7 @@ class FieldInner<Props = {}, Values = {}> extends React.Component<
     const { setFieldError } = this.props.formik;
     const { name, validate } = this.props;
     // Call validate fn
-    const maybePromise = (validate as any)(value);
+    const maybePromise = (validate as any)(value, this.props.formik);
     // Check if validate it returns a Promise
     if (isPromise(maybePromise)) {
       (maybePromise as Promise<any>).then(

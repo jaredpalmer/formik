@@ -307,9 +307,7 @@ class FastFieldInner<Props = {}, Values = {}> extends React.Component<
   }
 }
 
-export class FastField<Props = {}> extends React.Component<
-  FieldAttributes<Props>
-> {
+export class FastField<Props> extends React.Component<FieldAttributes<Props>> {
   static WrappedComponent = FastFieldInner;
 
   render() {

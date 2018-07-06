@@ -226,7 +226,7 @@ class FieldInner<Props = {}, Values = {}> extends React.Component<
   }
 }
 
-export class Field<Props = {}> extends React.Component<FieldAttributes<Props>> {
+export class Field<Props> extends React.Component<FieldAttributes<Props>> {
   static WrappedComponent = FieldInner;
 
   render() {

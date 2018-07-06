@@ -538,7 +538,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     return {
       dirty,
       isValid: dirty
-        ? this.state.errors && !Object.keys(this.state.errors).find(key => this.state.errors[key] == undefined)
+        ? this.state.errors && !Object.keys(this.state.errors).find(key => this.state.errors[key] != undefined)
         : isInitialValid !== false && isFunction(isInitialValid)
           ? (isInitialValid as (props: this['props']) => boolean)(this.props)
           : (isInitialValid as boolean),

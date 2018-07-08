@@ -26,7 +26,6 @@ import {
 
 export namespace Formik {
   export type Props<ExtraProps, Values> = ExtraProps & FormikConfig<Values>;
-  export type RenderProps = {};
   export type State<Values> = {
     /** Form values */
     values: Values;

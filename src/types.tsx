@@ -1,4 +1,11 @@
 import * as React from 'react';
+import { Formik } from './Formik';
+/**
+ * Default values for extra props in the fields
+ */
+export interface FormikExtraProps {
+  [prop: string]: any;
+}
 /**
  * Values of fields in the form
  */
@@ -10,46 +17,25 @@ export interface FormikValues {
  * An object containing error messages whose keys correspond to FormikValues.
  * Should be always be and object of strings, but any is allowed to support i18n libraries.
  */
-export type FormikErrors<Values> = {
+export type FormikErrors<Values extends FormikValues> = {
   [K in keyof Values]?: Values[K] extends object ? FormikErrors<Values[K]> : {}
 };
 
 /**
  * An object containing touched state of the form whose keys correspond to FormikValues.
  */
-export type FormikTouched<Values> = {
+export type FormikTouched<Values extends FormikValues> = {
   [K in keyof Values]?: Values[K] extends object
     ? FormikTouched<Values[K]>
     : boolean
 };
 
-/**
- * Formik state tree
- */
-export interface FormikState<Values> {
-  /** Form values */
-  values: Values;
-  /**
-   * Top level error, in case you need it
-   * @deprecated since 0.8.0
-   */
-  error?: any;
-  /** map of field names to specific error for that field */
-  errors: FormikErrors<Values>;
-  /** map of field names to whether the field has been touched */
-  touched: FormikTouched<Values>;
-  /** whether the form is currently submitting */
-  isSubmitting: boolean;
-  /** Top level status state, in case you need it */
-  status?: any;
-  /** Number of times user tried to submit the form */
-  submitCount: number;
-}
+export type FormikState<Values extends FormikValues> = Formik.State<Values>;
 
 /**
  * Formik computed properties. These are read-only.
  */
-export interface FormikComputedProps<Values> {
+export interface FormikComputedProps<Values extends FormikValues> {
   /** True if any input has been touched. False otherwise. */
   readonly dirty: boolean;
   /** Result of isInitiallyValid on mount, then whether true values pass validation. */
@@ -61,7 +47,7 @@ export interface FormikComputedProps<Values> {
 /**
  * Formik state helpers
  */
-export interface FormikActions<Values> {
+export interface FormikActions<Values extends FormikValues> {
   /** Manually set top level status. */
   setStatus(status?: any): void;
   /**
@@ -84,7 +70,10 @@ export interface FormikActions<Values> {
     shouldValidate?: boolean
   ): void;
   /** Set error message of a form field directly */
-  setFieldError(field: keyof Values & string, message: string): void;
+  setFieldError(
+    field: keyof Values & string,
+    message: string | undefined
+  ): void;
   /** Set whether field has been touched directly */
   setFieldTouched(
     field: keyof Values & string,
@@ -110,11 +99,11 @@ export interface FormikActions<Values> {
 }
 
 /** Overloded methods / types */
-export interface FormikActions<Values> {
+export interface FormikActions<Values extends FormikValues> {
   /** Set value of form field directly */
   setFieldValue(field: string, value: any): void;
   /** Set error message of a form field directly */
-  setFieldError(field: string, message: string): void;
+  setFieldError(field: string, message: string | undefined): void;
   /** Set whether field has been touched directly */
   setFieldTouched(field: string, isTouched?: boolean): void;
   /** Set Formik state, careful! */
@@ -217,7 +206,7 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
  * of <Formik/>.
  */
 export type FormikProps<Values> = FormikSharedConfig &
-  FormikState<Values> &
+  Formik.State<Values> &
   FormikActions<Values> &
   FormikHandlers &
   FormikComputedProps<Values> & {

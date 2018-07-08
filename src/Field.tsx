@@ -1,12 +1,11 @@
 import * as React from 'react';
-import warning from 'warning';
-import { connect } from './connect';
+import { FormikConsumer } from './connect';
 import {
   FormikProps,
   GenericFieldHTMLAttributes,
   FormikContext,
 } from './types';
-import { getIn, isEmptyChildren, isFunction, isPromise } from './utils';
+import { getIn, isFunction, isPromise, warnRenderProps } from './utils';
 
 /**
  * Note: These typings could be more restrictive, but then it would limit the
@@ -41,13 +40,13 @@ export interface FieldProps<V = any> {
   form: FormikProps<V>; // if ppl want to restrict this for a given form, let them.
 }
 
-export interface FieldConfig {
+export interface FieldConfig<ExtraProps> {
   /**
    * Field component to render. Can either be a string like 'select' or a component.
    */
   component?:
     | string
-    | React.ComponentType<FieldProps<any>>
+    | React.ComponentType<ExtraProps & FieldProps<any>>
     | React.ComponentType<void>;
 
   /**
@@ -80,47 +79,32 @@ export interface FieldConfig {
   innerRef?: (instance: any) => void;
 }
 
-export type FieldAttributes<T> = GenericFieldHTMLAttributes & FieldConfig & T;
+export namespace FieldInner {
+  export type Props<ExtraProps, Values> = ExtraProps &
+    Field.Props<ExtraProps> & { formik: FormikContext<Values> };
+  export type State = {};
+}
 
 /**
  * Custom Field component for quickly hooking into Formik
  * context and wiring up forms.
  */
-class FieldInner<Props = {}, Values = {}> extends React.Component<
-  FieldAttributes<Props> & { formik: FormikContext<Values> },
-  {}
+class FieldInner<ExtraProps, Values> extends React.Component<
+  FieldInner.Props<ExtraProps, Values>,
+  FieldInner.State
 > {
-  constructor(
-    props: FieldAttributes<Props> & { formik: FormikContext<Values> }
-  ) {
+  constructor(props: FieldInner.Props<ExtraProps, Values>) {
     super(props);
-
-    const { render, children, component, formik } = props;
-    warning(
-      !(component && render),
-      'You should not use <Field component> and <Field render> in the same <Field> component; <Field component> will be ignored'
-    );
-
-    warning(
-      !(component && children && isFunction(children)),
-      'You should not use <Field component> and <Field children> as a function in the same <Field> component; <Field component> will be ignored.'
-    );
-
-    warning(
-      !(render && children && !isEmptyChildren(children)),
-      'You should not use <Field render> and <Field children> in the same <Field> component; <Field children> will be ignored'
-    );
+    warnRenderProps('Field', props);
 
     // Register the Field with the parent Formik. Parent will cycle through
     // registered Field's validate fns right prior to submit
-    formik.registerField(props.name, {
+    props.formik.registerField(props.name, {
       validate: props.validate,
     });
   }
 
-  componentDidUpdate(
-    prevProps: FieldAttributes<Props> & { formik: FormikContext<Values> }
-  ) {
+  componentDidUpdate(prevProps: FieldInner.Props<ExtraProps, Values>) {
     if (this.props.name !== prevProps.name) {
       this.props.formik.unregisterField(prevProps.name);
       this.props.formik.registerField(this.props.name, {
@@ -162,8 +146,8 @@ class FieldInner<Props = {}, Values = {}> extends React.Component<
     const maybePromise = (validate as any)(value);
     // Check if validate it returns a Promise
     if (isPromise(maybePromise)) {
-      (maybePromise as Promise<any>).then(
-        () => setFieldError(name, undefined as any),
+      maybePromise.then(
+        () => setFieldError(name, undefined),
         error => setFieldError(name, error)
       );
     } else {
@@ -181,9 +165,7 @@ class FieldInner<Props = {}, Values = {}> extends React.Component<
       component = 'input',
       formik,
       ...props
-    } = (this.props as FieldAttributes<Props> & {
-      formik: FormikContext<Values>;
-    }) as any;
+    } = (this.props as FieldInner.Props<ExtraProps, Values>) as any;
     const {
       validate: _validate,
       validationSchema: _validationSchema,
@@ -226,4 +208,29 @@ class FieldInner<Props = {}, Values = {}> extends React.Component<
   }
 }
 
-export const Field = connect<FieldAttributes<any>, any>(FieldInner);
+export namespace Field {
+  export type Props<ExtraProps> = ExtraProps &
+    GenericFieldHTMLAttributes &
+    FieldConfig<ExtraProps>;
+  export type State = {};
+}
+
+export class Field<ExtraProps, Values> extends React.Component<
+  Field.Props<ExtraProps>,
+  Field.State
+> {
+  static WrappedComponent = FieldInner;
+
+  render() {
+    return (
+      <FormikConsumer<Values>>
+        {formik => (
+          <FieldInner<ExtraProps, Values>
+            {...this.props as Field.Props<ExtraProps>}
+            formik={formik}
+          />
+        )}
+      </FormikConsumer>
+    );
+  }
+}

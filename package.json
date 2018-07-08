@@ -71,7 +71,7 @@
     "jest": "^23.1.0",
     "jest-cli": "^23.1.0",
     "lint-staged": "4.0.2",
-    "prettier": "1.11.1",
+    "prettier": "^1.13.7",
     "raw-loader": "^0.5.1",
     "react": "^16.3.2",
     "react-dom": "^16.3.2",

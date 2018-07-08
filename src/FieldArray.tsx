@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { connect } from './connect';
+import { FormikConsumer } from './connect';
 import {
   FormikContext,
   FormikState,
@@ -8,12 +8,6 @@ import {
 } from './types';
 import { getIn, isEmptyChildren, isFunction, setIn } from './utils';
 
-export type FieldArrayConfig = {
-  /** Really the path to the array field to be updated */
-  name: string;
-  /** Should field array validate the form AFTER array updates/changes? */
-  validateOnChange?: boolean;
-} & SharedRenderProps<ArrayHelpers & { form: FormikProps<any> }>;
 export interface ArrayHelpers {
   /** Imperatively add a value to the end of an array */
   push: (obj: any) => void;
@@ -79,15 +73,23 @@ export const replace = (array: any[], index: number, value: any) => {
   copy[index] = value;
   return copy;
 };
-class FieldArrayInner<Values = {}> extends React.Component<
-  FieldArrayConfig & { formik: FormikContext<Values> },
-  {}
+
+namespace FieldArrayInner {
+  export type Props<Values> = FieldArray.Props<Values> & {
+    formik: FormikContext<Values>;
+  };
+  export type State = {};
+}
+
+class FieldArrayInner<Values> extends React.Component<
+  FieldArrayInner.Props<Values>,
+  FieldArrayInner.State
 > {
   static defaultProps = {
     validateOnChange: true,
   };
 
-  constructor(props: FieldArrayConfig & { formik: FormikContext<Values> }) {
+  constructor(props: FieldArrayInner.Props<Values>) {
     super(props);
     // We need TypeScript generics on these, so we'll bind them in the constructor
     this.remove = this.remove.bind(this);
@@ -105,7 +107,7 @@ class FieldArrayInner<Values = {}> extends React.Component<
       formik: { setFormikState, validateForm, values, touched, errors },
     } = this.props;
     setFormikState(
-      (prevState: FormikState<any>) => ({
+      (prevState: FormikState<Values>) => ({
         ...prevState,
         values: setIn(prevState.values, name, fn(getIn(values, name))),
         errors: alterErrors
@@ -271,9 +273,39 @@ class FieldArrayInner<Values = {}> extends React.Component<
         : children // children come last, always called
           ? typeof children === 'function'
             ? (children as any)(props)
-            : !isEmptyChildren(children) ? React.Children.only(children) : null
+            : !isEmptyChildren(children)
+              ? React.Children.only(children)
+              : null
           : null;
   }
 }
 
-export const FieldArray = connect<FieldArrayConfig, any>(FieldArrayInner);
+export namespace FieldArray {
+  export type Props<Values> = {
+    /** Really the path to the array field to be updated */
+    name: string;
+    /** Should field array validate the form AFTER array updates/changes? */
+    validateOnChange?: boolean;
+  } & SharedRenderProps<ArrayHelpers & { form: FormikProps<Values> }>;
+  export type State = {};
+}
+
+export class FieldArray<Values> extends React.Component<
+  FieldArray.Props<Values>,
+  FieldArray.State
+> {
+  static WrappedComponent = FieldArrayInner;
+
+  render() {
+    return (
+      <FormikConsumer<Values>>
+        {formik => (
+          <FieldArrayInner<Values>
+            {...this.props as FieldArray.Props<Values>}
+            formik={formik}
+          />
+        )}
+      </FormikConsumer>
+    );
+  }
+}

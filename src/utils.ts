@@ -1,6 +1,7 @@
 import cloneDeep from 'lodash.clonedeep';
 import toPath from 'lodash.topath';
 import * as React from 'react';
+import warning from 'warning';
 
 /**
  * Deeply get a value from an object via it's path.
@@ -129,4 +130,21 @@ export function getActiveElement(doc?: Document): Element | null {
   } catch (e) {
     return doc.body;
   }
+}
+
+export function warnRenderProps(c: string, props: any) {
+  warning(
+    !(props.component && props.render),
+    `You should not use <${c} component> and <${c} render> in the same <${c}> component; <${c} component> will be ignored`
+  );
+
+  warning(
+    !(props.component && props.children && isFunction(props.children)),
+    `You should not use <${c} component> and <${c} children> as a function in the same <${c}> component; <${c} component> will be ignored.`
+  );
+
+  warning(
+    !(props.render && props.children && !isEmptyChildren(props.children)),
+    `You should not use <${c} render> and <${c} children> in the same <${c}> component; <${c} children> will be ignored`
+  );
 }

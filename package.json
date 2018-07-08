@@ -126,13 +126,12 @@
       "json"
     ]
   },
-  "size-limit": [
-    {
+  "size-limit": [{
       "path": "./dist/index.js",
       "limit": "14 kB"
     },
     {
-      "path": "./dist/formik.es6.js",
+      "path": "./dist/formik.esm.js",
       "limit": "14 kB"
     },
     {

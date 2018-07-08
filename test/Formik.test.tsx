@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Formik, FormikProps } from '../src';
+import { Formik, FormikProps, Field } from '../src';
 import { shallow, mount } from '@pisano/enzyme';
 import { sleep, noop } from './testHelpers';
 
@@ -296,16 +296,35 @@ describe('<Formik>', () => {
         expect(fn).not.toThrow();
       });
 
+      it('should register fields', () => {
+        const tree = mount(
+          <Formik initialValues={{}} onSubmit={noop}>
+            {() => <Field name="name" />}
+          </Formik>
+        );
+
+        expect(tree.instance().fields.name).toBeDefined();
+      });
+
       it('should touch all fields', () => {
-        const tree = shallow(BasicForm);
-        tree
-          .find(Form)
-          .dive()
-          .find('form')
-          .simulate('submit', {
-            preventDefault: noop,
-          });
-        expect(tree.update().state().touched).toEqual({ name: true });
+        const tree = mount(
+          <Formik initialValues={{ name: '' }} onSubmit={noop}>
+            {({ handleSubmit }) => (
+              <form onSubmit={handleSubmit}>
+                <Field name="email" />
+              </form>
+            )}
+          </Formik>
+        );
+
+        tree.find('form').simulate('submit', {
+          preventDefault: noop,
+        });
+
+        expect(tree.update().state().touched).toEqual({
+          name: true,
+          email: true,
+        });
       });
 
       it('should push submission state changes to child component', () => {

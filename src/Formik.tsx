@@ -58,6 +58,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       isSubmitting: false,
       submitCount: 0,
     };
+
     this.fields = {};
     this.initialValues = props.initialValues || ({} as any);
     warning(
@@ -393,9 +394,12 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
   submitForm = () => {
     // Recursively set all values to `true`.
     this.setState(prevState => ({
-      touched: setNestedObjectValues<FormikTouched<Values>>(
-        prevState.values,
-        true
+      touched: deepmerge(
+        setNestedObjectValues<FormikTouched<Values>>(prevState.values, true),
+        Object.keys(this.fields).reduce(
+          (prev, curr) => ({ ...prev, [curr]: true }),
+          {} as FormikTouched<any>
+        )
       ),
       isSubmitting: true,
       submitCount: prevState.submitCount + 1,

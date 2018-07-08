@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { withFormik, InjectedFormikProps } from '../src';
+import { withFormik, InjectedFormikProps, Field } from '../src';
 import { mount, shallow } from '@pisano/enzyme';
 
 // tslint:disable-next-line:no-empty
@@ -310,6 +310,19 @@ describe('withFormik()', () => {
       });
 
       it('should touch all fields', () => {
+        const Form: React.SFC<InjectedFormikProps<Props, Values>> = ({
+          handleSubmit,
+        }) => (
+          <form onSubmit={handleSubmit}>
+            <Field name="email" />
+          </form>
+        );
+
+        const BasicForm = withFormik<Props, Values, Values>({
+          mapPropsToValues: ({ user }) => ({ ...user }),
+          handleSubmit: noop,
+        })(Form);
+
         const tree = mount(<BasicForm user={{ name: 'jared' }} />);
         tree
           .find(Form)
@@ -317,8 +330,10 @@ describe('withFormik()', () => {
           .simulate('submit', {
             preventDefault: noop,
           });
+
         expect(tree.find(Form).props().touched).toEqual({
           name: true,
+          email: true,
         });
       });
 

@@ -7,7 +7,7 @@ const FieldLevelValidation = () => (
   <div>
     <h1>Pick a username</h1>
     <Formik
-      initialValues={{ username: '', email: '' }}
+      initialValues={{}}
       onSubmit={values => {
         alert(JSON.stringify(values, null, 2));
       }}

@@ -87,7 +87,7 @@ export class Formik<
     };
     this.fields = {};
     this.initialValues = props.initialValues || ({} as any);
-    warnRenderProps('Formik', props);
+    warnRenderProps('Formik', props, 'render');
   }
 
   registerField = (

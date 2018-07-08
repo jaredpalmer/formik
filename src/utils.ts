@@ -132,10 +132,10 @@ export function getActiveElement(doc?: Document): Element | null {
   }
 }
 
-export function warnRenderProps(c: string, props: any) {
+export function warnRenderProps(c: string, props: any, ignored: string) {
   warning(
     !(props.component && props.render),
-    `You should not use <${c} component> and <${c} render> in the same <${c}> component; <${c} component> will be ignored`
+    `You should not use <${c} component> and <${c} render> in the same <${c}> ${ignored}; <${c} ${ignored}> will be ignored`
   );
 
   warning(

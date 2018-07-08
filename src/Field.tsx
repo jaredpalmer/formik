@@ -95,7 +95,7 @@ class FieldInner<ExtraProps, Values> extends React.Component<
 > {
   constructor(props: FieldInner.Props<ExtraProps, Values>) {
     super(props);
-    warnRenderProps('Field', props);
+    warnRenderProps('Field', props, 'component');
 
     // Register the Field with the parent Formik. Parent will cycle through
     // registered Field's validate fns right prior to submit

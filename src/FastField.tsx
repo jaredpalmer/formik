@@ -36,7 +36,7 @@ class FastFieldInner<ExtraProps, Values> extends React.Component<
       value: getIn(props.formik.values, props.name),
       error: getIn(props.formik.errors, props.name),
     };
-    warnRenderProps('FastField', props);
+    warnRenderProps('FastField', props, 'component');
 
     // Register the FastField with the parent Formik. Parent will cycle through
     // registered FastField's validate fns right prior to submit

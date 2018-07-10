@@ -71,10 +71,12 @@ started with.
 
 ## Installation
 
-Add Formik to your project.
+Add Formik to your project. 
+
+_Version 1.0 is coming will be released by the end of July, so I suggest installing from the `next` release channel._
 
 ```bash
-npm i formik --save
+npm i formik@next --save
 ```
 
 You can also try before you buy with this

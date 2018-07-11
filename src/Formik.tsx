@@ -402,7 +402,6 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     }));
 
     return this.runValidations().then(combinedErrors => {
-      this.setState({ isSubmitting: false });
       const isValid = Object.keys(combinedErrors).length === 0;
       if (isValid) {
         this.executeSubmit();

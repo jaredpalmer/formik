@@ -36,7 +36,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
   };
 
   initialValues: Values;
-
+  didMount: boolean;
   hcCache: {
     [key: string]: (e: string | React.ChangeEvent<any>) => void;
   } = {};
@@ -58,6 +58,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       isSubmitting: false,
       submitCount: 0,
     };
+    this.didMount = false;
     this.fields = {};
     this.initialValues = props.initialValues || ({} as any);
     warning(
@@ -89,6 +90,10 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
   unregisterField = (name: string) => {
     delete this.fields[name];
   };
+
+  componentDidMount() {
+    this.didMount = true;
+  }
 
   componentDidUpdate(prevProps: Readonly<FormikConfig<Values> & ExtraProps>) {
     // If the initialValues change, reset the form
@@ -255,8 +260,9 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
         schemaErrors,
         handlerErrors,
       ]);
-
-      this.setState({ errors: combinedErrors });
+      if (this.didMount) {
+        this.setState({ errors: combinedErrors });
+      }
 
       return combinedErrors;
     });

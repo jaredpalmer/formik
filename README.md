@@ -219,17 +219,17 @@ const Basic = () => (
     <h1>My Form</h1>
     <p>This can be anywhere in your application</p>
     {/*
-                              The benefit of the render prop approach is that you have full access to React's
-                              state, props, and composition model. Thus there is no need to map outer props
-                              to values...you can just set the initial values, and if they depend on props / state
-                              then--boom--you can directly access to props / state.
+                                              The benefit of the render prop approach is that you have full access to React's
+                                              state, props, and composition model. Thus there is no need to map outer props
+                                              to values...you can just set the initial values, and if they depend on props / state
+                                              then--boom--you can directly access to props / state.
 
-                              The render prop accepts your inner form component, which you can define separately or inline
-                              totally up to you:
-                              - `<Formik render={props => <form>...</form>}>`
-                              - `<Formik component={InnerForm}>`
-                              - `<Formik>{props => <form>...</form>}</Formik>` (identical to as render, just written differently)
-                            */}
+                                              The render prop accepts your inner form component, which you can define separately or inline
+                                              totally up to you:
+                                              - `<Formik render={props => <form>...</form>}>`
+                                              - `<Formik component={InnerForm}>`
+                                              - `<Formik>{props => <form>...</form>}</Formik>` (identical to as render, just written differently)
+                                            */}
     <Formik
       initialValues={{
         email: '',
@@ -333,8 +333,10 @@ npm install yup --save
     * [Why use `setFieldValue` instead of `handleChange`?](#why-use-setfieldvalue-instead-of-handlechange)
     * [Avoiding new functions in render](#avoiding-new-functions-in-render)
   * [Using Formik with TypeScript](#using-formik-with-typescript)
-    * [Render props (`<Formik />` and `<Field />`)](#render-props-formik--and-field)
+    * [Render props (`<Formik />` and `<Field />`)](#render-props-formik--and-field-)
     * [`withFormik()`](#withformik)
+  * [How Form Submission Works](#how-form-submission-works)
+    * [Frequently Asked Questions](#frequently-asked-questions)
 * [API](#api)
   * [`<Formik />`](#formik-)
     * [Formik render methods](#formik-render-methods)
@@ -347,6 +349,7 @@ npm install yup --save
       * [`handleSubmit: (e: React.FormEvent<HTMLFormEvent>) => void`](#handlesubmit-e-reactformeventhtmlformevent--void)
       * [`isSubmitting: boolean`](#issubmitting-boolean)
       * [`isValid: boolean`](#isvalid-boolean)
+      * [`isValidating: boolean`](#isvalidating-boolean)
       * [`resetForm: (nextValues?: Values) => void`](#resetform-nextvalues-values--void)
       * [`setErrors: (fields: { [field: string]: string }) => void`](#seterrors-fields--field-string-string---void)
       * [`setFieldError: (field: string, errorMsg: string) => void`](#setfielderror-field-string-errormsg-string--void)
@@ -362,7 +365,7 @@ npm install yup --save
       * [`touched: { [field: string]: boolean }`](#touched--field-string-boolean-)
       * [`values: { [field: string]: any }`](#values--field-string-any-)
       * [`validateForm: (values?: any) => void`](#validateform-values-any--void)
-      * [`validateField: (field: string) => void`](#validatefield-field-string--void)
+    * [`validateField: (field: string) => void`](#validatefield-field-string--void)
     * [`component`](#component)
     * [`render: (props: FormikProps<Values>) => ReactNode`](#render-props-formikpropsvalues--reactnode)
     * [`children: func`](#children-func)
@@ -1001,11 +1004,11 @@ to `<button onClick={handleReset}>...</button>`
 
 ##### `handleSubmit: (e: React.FormEvent<HTMLFormEvent>) => void`
 
-Submit handler. This should be passed to `<form onSubmit={props.handleSubmit}>...</form>`
+Submit handler. This should be passed to `<form onSubmit={props.handleSubmit}>...</form>`. To learn more about the submission process, see [How Form Submission Works](#how-form-submission-works).
 
 ##### `isSubmitting: boolean`
 
-Submitting state of the form. Returns `true` if submission is in progress and `false` otherwise. IMPORTANT: Formik will set this to `true` as soon as submission is _attempted_. Submission process works as follows.
+Submitting state of the form. Returns `true` if submission is in progress and `false` otherwise. IMPORTANT: Formik will set this to `true` as soon as submission is _attempted_. To learn more about the submission process, see [How Form Submission Works](#how-form-submission-works).
 
 ##### `isValid: boolean`
 
@@ -1014,12 +1017,12 @@ Returns `true` if the there are no [`errors`], or the result of
 
 ##### `isValidating: boolean`
 
-Returns `true` if Formik is running any validation function, `false` otherwise.
+Returns `true` if Formik is running any validation function, `false` otherwise. To learn more about what happens with `isValidating` during the submission process, see [How Form Submission Works](#how-form-submission-works).
 
 ##### `resetForm: (nextValues?: Values) => void`
 
 Imperatively reset the form. This will clear [`errors`] and [`touched`], set
-[`isSubmitting`] to `false` and rerun `mapPropsToValues` with the current
+[`isSubmitting`] to `false`, `isValidating` to `false`, and rerun `mapPropsToValues` with the current
 `WrappedComponent`'s `props` or what's passed as an argument. The latter is
 useful for calling `resetForm` within `componentWillReceiveProps`.
 

@@ -6,7 +6,7 @@ export type FormikFormProps = Pick<
   Exclude<keyof React.FormHTMLAttributes<HTMLFormElement>, 'onSubmit'>
 >;
 
-export const Form = connect<FormikFormProps>(
+export const Form = connect<FormikFormProps, any>(
   ({ formik: { handleSubmit }, ...props }) => (
     <form onSubmit={handleSubmit} {...props} />
   )

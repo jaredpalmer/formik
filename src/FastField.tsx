@@ -1,11 +1,10 @@
 import * as React from 'react';
 import isEqual from 'react-fast-compare';
-import warning from 'warning';
-import { FieldAttributes, FieldConfig, FieldProps } from './Field';
+import { Field, FieldConfig, FieldProps, FieldInner } from './Field';
 import { validateYupSchema, yupToFormErrors } from './Formik';
-import { connect } from './connect';
+import { FormikConsumer } from './connect';
 import { FormikContext } from './types';
-import { getIn, isEmptyChildren, isFunction, isPromise, setIn } from './utils';
+import { getIn, isFunction, isPromise, setIn, warnRenderProps } from './utils';
 
 export interface FastFieldState {
   value: any;
@@ -17,50 +16,36 @@ function isEqualExceptForKey(a: any, b: any, path: string) {
   return isEqual(setIn(a, path, undefined), setIn(b, path, undefined));
 }
 
+export namespace FastFieldInner {
+  export type Props<ExtraProps, Values> = FastField.Props<ExtraProps> & {
+    formik: FormikContext<Values>;
+  };
+}
+
 /**
  * Custom Field component for quickly hooking into Formik
  * context and wiring up forms.
  */
-class FastFieldInner<Props = {}, Values = {}> extends React.Component<
-  FieldAttributes<Props> & { formik: FormikContext<Values> },
+class FastFieldInner<ExtraProps, Values> extends React.Component<
+  FastFieldInner.Props<ExtraProps, Values>,
   FastFieldState
 > {
-  constructor(
-    props: FieldAttributes<Props> & { formik: FormikContext<Values> }
-  ) {
+  constructor(props: FieldInner.Props<ExtraProps, Values>) {
     super(props);
     this.state = {
       value: getIn(props.formik.values, props.name),
       error: getIn(props.formik.errors, props.name),
     };
+    warnRenderProps('FastField', props, 'component');
 
-    const { render, children, component, formik } = props;
-
-    warning(
-      !(component && render),
-      'You should not use <FastField component> and <FastField render> in the same <FastField> component; <FastField component> will be ignored'
-    );
-
-    warning(
-      !(props.component && children && isFunction(children)),
-      'You should not use <FastField component> and <FastField children> as a function in the same <FastField> component; <FastField component> will be ignored.'
-    );
-
-    warning(
-      !(render && children && !isEmptyChildren(children)),
-      'You should not use <FastField render> and <FastField children> in the same <FastField> component; <FastField children> will be ignored'
-    );
     // Register the FastField with the parent Formik. Parent will cycle through
     // registered FastField's validate fns right prior to submit
-    formik.registerField(props.name, {
+    props.formik.registerField(props.name, {
       validate: props.validate,
     });
   }
 
-  componentDidUpdate(
-    prevProps: any /* FieldAttributes<Props> & { formik: FormikContext<Values> }*/,
-    _state: FastFieldState
-  ) {
+  componentDidUpdate(prevProps: FieldInner.Props<ExtraProps, Values>) {
     const nextFieldValue = getIn(this.props.formik.values, this.props.name);
     const nextFieldError = getIn(this.props.formik.errors, this.props.name);
     const prevFieldValue = getIn(prevProps.formik.values, prevProps.name);
@@ -101,14 +86,16 @@ class FastFieldInner<Props = {}, Values = {}> extends React.Component<
     const { type, value, checked } = e.target;
     const val = /number|range/.test(type)
       ? parseFloat(value)
-      : /checkbox/.test(type) ? checked : value;
+      : /checkbox/.test(type)
+        ? checked
+        : value;
     if (validateOnChange) {
       // Field-level validation
       if (this.props.validate) {
-        const maybePromise = (this.props.validate as any)(value);
+        const maybePromise = this.props.validate(value);
         if (isPromise(maybePromise)) {
           this.setState({ value: val });
-          (maybePromise as any).then(
+          maybePromise.then(
             () => this.setState({ error: undefined }),
             (error: string) => this.setState({ error })
           );
@@ -117,13 +104,11 @@ class FastFieldInner<Props = {}, Values = {}> extends React.Component<
         }
       } else if (validate) {
         // Top-level validate
-        const maybePromise = (validate as any)(
-          setIn(values, this.props.name, val)
-        );
+        const maybePromise = validate(setIn(values, this.props.name, val));
 
         if (isPromise(maybePromise)) {
           this.setState({ value: val });
-          (maybePromise as any).then(
+          maybePromise.then(
             () => this.setState({ error: undefined }),
             (error: any) => {
               // Here we diff the errors object relative to Formik parents except for
@@ -207,9 +192,9 @@ class FastFieldInner<Props = {}, Values = {}> extends React.Component<
 
     // @todo refactor
     if (validateOnBlur && validate) {
-      const maybePromise = (validate as any)(this.state.value);
+      const maybePromise = validate(this.state.value);
       if (isPromise(maybePromise)) {
-        (maybePromise as Promise<any>).then(
+        maybePromise.then(
           () =>
             setFormikState((prevState: any) => ({
               ...prevState,
@@ -256,7 +241,9 @@ class FastFieldInner<Props = {}, Values = {}> extends React.Component<
       component = 'input',
       formik,
       ...props
-    } = this.props as FieldConfig & { formik: FormikContext<Values> };
+    } = this.props as FieldConfig<ExtraProps> & {
+      formik: FormikContext<Values>;
+    };
     const {
       validate: _validate,
       validationSchema: _validationSchema,
@@ -307,4 +294,27 @@ class FastFieldInner<Props = {}, Values = {}> extends React.Component<
   }
 }
 
-export const FastField = connect<FieldAttributes<any>, any>(FastFieldInner);
+export namespace FastField {
+  export type Props<ExtraProps> = Field.Props<ExtraProps>;
+  export type State = {};
+}
+
+export class FastField<ExtraProps, Values> extends React.Component<
+  FastField.Props<ExtraProps>,
+  FastField.State
+> {
+  static WrappedComponent = FastFieldInner;
+
+  render() {
+    return (
+      <FormikConsumer<Values>>
+        {formik => (
+          <FastFieldInner<ExtraProps, Values>
+            {...this.props as FastField.Props<ExtraProps>}
+            formik={formik}
+          />
+        )}
+      </FormikConsumer>
+    );
+  }
+}

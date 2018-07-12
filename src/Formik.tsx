@@ -7,7 +7,6 @@ import {
   FormikActions,
   FormikConfig,
   FormikErrors,
-  FormikState,
   FormikTouched,
   FormikValues,
   FormikContext,
@@ -22,11 +21,38 @@ import {
   setNestedObjectValues,
   getActiveElement,
   getIn,
+  warnRenderProps,
 } from './utils';
 
-export class Formik<ExtraProps = {}, Values = object> extends React.Component<
-  FormikConfig<Values> & ExtraProps,
-  FormikState<any>
+export namespace Formik {
+  export type Props<ExtraProps, Values> = ExtraProps & FormikConfig<Values>;
+  export type State<Values> = {
+    /** Form values */
+    values: Values;
+    /**
+     * Top level error, in case you need it
+     * @deprecated since 0.8.0
+     */
+    error?: any;
+    /** map of field names to specific error for that field */
+    errors: FormikErrors<Values>;
+    /** map of field names to whether the field has been touched */
+    touched: FormikTouched<Values>;
+    /** whether the form is currently submitting */
+    isSubmitting: boolean;
+    /** Top level status state, in case you need it */
+    status?: any;
+    /** Number of times user tried to submit the form */
+    submitCount: number;
+  };
+}
+
+export class Formik<
+  ExtraProps,
+  Values extends FormikValues
+> extends React.Component<
+  Formik.Props<ExtraProps, Values>,
+  Formik.State<Values>
 > {
   static defaultProps = {
     validateOnChange: true,
@@ -52,7 +78,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
   constructor(props: FormikConfig<Values> & ExtraProps) {
     super(props);
     this.state = {
-      values: props.initialValues || ({} as any),
+      values: props.initialValues || ({} as Values),
       errors: {},
       touched: {},
       isSubmitting: false,
@@ -61,20 +87,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     this.didMount = false;
     this.fields = {};
     this.initialValues = props.initialValues || ({} as any);
-    warning(
-      !(props.component && props.render),
-      'You should not use <Formik component> and <Formik render> in the same <Formik> component; <Formik render> will be ignored'
-    );
-
-    warning(
-      !(props.component && props.children && !isEmptyChildren(props.children)),
-      'You should not use <Formik component> and <Formik children> in the same <Formik> component; <Formik children> will be ignored'
-    );
-
-    warning(
-      !(props.render && props.children && !isEmptyChildren(props.children)),
-      'You should not use <Formik render> and <Formik children> in the same <Formik> component; <Formik children> will be ignored'
-    );
+    warnRenderProps('Formik', props, 'render');
   }
 
   registerField = (
@@ -129,7 +142,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     });
   };
 
-  setValues = (values: FormikValues) => {
+  setValues = (values: Values) => {
     this.setState({ values }, () => {
       if (this.props.validateOnChange) {
         this.runValidations(values);
@@ -175,9 +188,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     return new Promise(resolve => resolve(this.fields[field].validate!(value)));
   };
 
-  runFieldLevelValidations(
-    values: FormikValues
-  ): Promise<FormikErrors<Values>> {
+  runFieldLevelValidations(values: Values): Promise<FormikErrors<Values>> {
     const fieldKeysWithValidation: string[] = Object.keys(this.fields).filter(
       f =>
         this.fields &&
@@ -214,7 +225,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     );
   }
 
-  runValidateHandler(values: FormikValues): Promise<FormikErrors<Values>> {
+  runValidateHandler(values: Values): Promise<FormikErrors<Values>> {
     return new Promise(resolve => {
       const maybePromisedErrors = (this.props.validate as any)(values);
       if (maybePromisedErrors === undefined) {
@@ -237,7 +248,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
   /**
    * Run validation against a Yup schema and optionally run a function if successful
    */
-  runValidationSchema = (values: FormikValues) => {
+  runValidationSchema = (values: Values) => {
     return new Promise(resolve => {
       const { validationSchema } = this.props;
       const schema = isFunction(validationSchema)
@@ -258,7 +269,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
    * Run all validations methods and update state accordingly
    */
   runValidations = (
-    values: FormikValues = this.state.values
+    values: Values = this.state.values
   ): Promise<FormikErrors<Values>> => {
     return Promise.all([
       this.runFieldLevelValidations(values),
@@ -321,7 +332,9 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
         }
         val = /number|range/.test(type)
           ? ((parsed = parseFloat(value)), isNaN(parsed) ? '' : parsed)
-          : /checkbox/.test(type) ? checked : value;
+          : /checkbox/.test(type)
+            ? checked
+            : value;
       }
 
       if (field) {
@@ -589,9 +602,8 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
   render() {
     const { component, render, children } = this.props;
     const props = this.getFormikBag();
-    const ctx = this.getFormikContext();
     return (
-      <FormikProvider value={ctx}>
+      <FormikProvider value={this.getFormikContext()}>
         {component
           ? React.createElement(component as any, props)
           : render

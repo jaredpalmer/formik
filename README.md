@@ -219,17 +219,17 @@ const Basic = () => (
     <h1>My Form</h1>
     <p>This can be anywhere in your application</p>
     {/*
-                                              The benefit of the render prop approach is that you have full access to React's
-                                              state, props, and composition model. Thus there is no need to map outer props
-                                              to values...you can just set the initial values, and if they depend on props / state
-                                              then--boom--you can directly access to props / state.
+                                                  The benefit of the render prop approach is that you have full access to React's
+                                                  state, props, and composition model. Thus there is no need to map outer props
+                                                  to values...you can just set the initial values, and if they depend on props / state
+                                                  then--boom--you can directly access to props / state.
 
-                                              The render prop accepts your inner form component, which you can define separately or inline
-                                              totally up to you:
-                                              - `<Formik render={props => <form>...</form>}>`
-                                              - `<Formik component={InnerForm}>`
-                                              - `<Formik>{props => <form>...</form>}</Formik>` (identical to as render, just written differently)
-                                            */}
+                                                  The render prop accepts your inner form component, which you can define separately or inline
+                                                  totally up to you:
+                                                  - `<Formik render={props => <form>...</form>}>`
+                                                  - `<Formik component={InnerForm}>`
+                                                  - `<Formik>{props => <form>...</form>}</Formik>` (identical to as render, just written differently)
+                                                */}
     <Formik
       initialValues={{
         email: '',
@@ -909,6 +909,7 @@ It is common practice to only show an input's errors in the UI if it has been vi
 Disable whatever is triggering submission if `isSubmitting` is `true`.
 
 </details>
+<details>
 <summary>How do I know when my form is validating before submit?</summary>
 
 If `isValidating` is `true` and `isSubmitting` is `true`.

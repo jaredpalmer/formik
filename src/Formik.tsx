@@ -56,6 +56,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       errors: {},
       touched: {},
       isSubmitting: false,
+      isValidating: false,
       submitCount: 0,
     };
     this.didMount = false;
@@ -158,12 +159,16 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
    * Run field level validation
    */
   validateField = (field: string) => {
+    this.setState({ isValidating: true });
     this.runSingleFieldLevelValidation(
       field,
       getIn(this.state.values, field)
     ).then(error => {
       if (!!error && this.didMount) {
-        this.setState({ errors: setIn(this.state.errors, field, error) });
+        this.setState({
+          errors: setIn(this.state.errors, field, error),
+          isValidating: false,
+        });
       }
     });
   };
@@ -260,6 +265,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
   runValidations = (
     values: FormikValues = this.state.values
   ): Promise<FormikErrors<Values>> => {
+    this.setState({ isValidating: true });
     return Promise.all([
       this.runFieldLevelValidations(values),
       this.props.validationSchema ? this.runValidationSchema(values) : {},
@@ -272,6 +278,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       ]);
       if (this.didMount) {
         this.setState({ errors: combinedErrors });
+        this.setState({ isValidating: false });
       }
 
       return combinedErrors;
@@ -499,6 +506,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
 
     this.setState({
       isSubmitting: false,
+      isValidating: false,
       errors: {},
       touched: {},
       error: undefined,

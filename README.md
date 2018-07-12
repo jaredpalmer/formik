@@ -14,9 +14,9 @@ helpers do wayyyy too much magic and often have a significant performance cost
 associated with them. Formik is a small library that helps you with the 3 most
 annoying parts:
 
-1.  Getting values in and out of form state
-2.  Validation and error messages
-3.  Handling form submission
+1. Getting values in and out of form state
+2. Validation and error messages
+3. Handling form submission
 
 By colocating all of the above in one place, Formik will keep things
 organized--making testing, refactoring, and reasoning about your forms a breeze.
@@ -33,12 +33,12 @@ components but also the way in which data flowed through our forms.
 By now, you might be thinking, "Why didn't you just use
 [Redux-Form](https://github.com/erikras/redux-form)?" Good question.
 
-1.  According to our prophet Dan Abramov,
-    [**form state is inherently ephemeral and local**, so tracking it in Redux (or any kind of Flux library) is unnecessary](https://github.com/reactjs/redux/issues/1287#issuecomment-175351978)
-2.  Redux-Form calls your entire top-level Redux reducer multiple times ON EVERY
-    SINGLE KEYSTROKE. This is fine for small apps, but as your Redux app grows,
-    input latency will continue to increase if you use Redux-Form.
-3.  Redux-Form is 22.5 kB minified gzipped (Formik is 7.8 kB)
+1. According to our prophet Dan Abramov,
+   [**form state is inherently ephemeral and local**, so tracking it in Redux (or any kind of Flux library) is unnecessary](https://github.com/reactjs/redux/issues/1287#issuecomment-175351978)
+2. Redux-Form calls your entire top-level Redux reducer multiple times ON EVERY
+   SINGLE KEYSTROKE. This is fine for small apps, but as your Redux app grows,
+   input latency will continue to increase if you use Redux-Form.
+3. Redux-Form is 22.5 kB minified gzipped (Formik is 7.8 kB)
 
 **My goal with Formik was to create a scalable, performant, form helper with a
 minimal API that does the really really annoying stuff, and leaves the rest up
@@ -71,7 +71,7 @@ started with.
 
 ## Installation
 
-Add Formik to your project.
+Add Formik to your project. 
 
 _Version 1.0 is coming will be released by the end of July, so I suggest installing from the `next` release channel._
 
@@ -95,6 +95,8 @@ You can also try before you buy with this
 
 * [An Introduction to Formik](https://youtu.be/-tDy7ds0dag?t=33s) by
   [Jared Palmer](https://twitter.com/jaredpalmer) @ Spotify NYC. August 15th, 2017.
+
+
 
 ## Community Articles / Tutorials
 
@@ -219,17 +221,17 @@ const Basic = () => (
     <h1>My Form</h1>
     <p>This can be anywhere in your application</p>
     {/*
-          The benefit of the render prop approach is that you have full access to React's
-          state, props, and composition model. Thus there is no need to map outer props
-          to values...you can just set the initial values, and if they depend on props / state
-          then--boom--you can directly access to props / state.
+      The benefit of the render prop approach is that you have full access to React's
+      state, props, and composition model. Thus there is no need to map outer props
+      to values...you can just set the initial values, and if they depend on props / state
+      then--boom--you can directly access to props / state.
 
-          The render prop accepts your inner form component, which you can define separately or inline
-          totally up to you:
-          - `<Formik render={props => <form>...</form>}>`
-          - `<Formik component={InnerForm}>`
-          - `<Formik>{props => <form>...</form>}</Formik>` (identical to as render, just written differently)
-        */}
+      The render prop accepts your inner form component, which you can define separately or inline
+      totally up to you:
+      - `<Formik render={props => <form>...</form>}>`
+      - `<Formik component={InnerForm}>`
+      - `<Formik>{props => <form>...</form>}</Formik>` (identical to as render, just written differently)
+    */}
     <Formik
       initialValues={{
         email: '',
@@ -331,7 +333,7 @@ npm install yup --save
     - [Why use `setFieldValue` instead of `handleChange`?](#why-use-setfieldvalue-instead-of-handlechange)
     - [Avoiding new functions in render](#avoiding-new-functions-in-render)
   - [Using Formik with TypeScript](#using-formik-with-typescript)
-    - [Render props (`<Formik />` and `<Field />`)](#render-props-formik--and-field-)
+    - [Render props (`<Formik />` and `<Field />`)](#render-props-formik--and-field)
     - [`withFormik()`](#withformik)
 - [API](#api)
   - [`<Formik />`](#formik-)
@@ -344,8 +346,6 @@ npm install yup --save
       - [`handleReset: () => void`](#handlereset---void)
       - [`handleSubmit: (e: React.FormEvent<HTMLFormEvent>) => void`](#handlesubmit-e-reactformeventhtmlformevent--void)
       - [`isSubmitting: boolean`](#issubmitting-boolean)
-      - [`isValidating: boolean`](#isvalidating-boolean)
-      - [`isIdle: boolean`](#isidle-boolean)
       - [`isValid: boolean`](#isvalid-boolean)
       - [`resetForm: (nextValues?: Values) => void`](#resetform-nextvalues-values--void)
       - [`setErrors: (fields: { [field: string]: string }) => void`](#seterrors-fields--field-string-string---void)
@@ -592,11 +592,11 @@ export default enhancer(MyReactNativeForm);
 As you can see above, the notable differences between using Formik with React
 DOM and React Native are:
 
-1.  Formik's `props.handleSubmit` is passed to a `<Button onPress={...} />`
-    instead of HTML `<form onSubmit={...} />` component (since there is no
-    `<form />` element in React Native).
-2.  `<TextInput />` uses Formik's `props.setFieldValue` instead of
-    `props.handleChange`. To understand why, see the discussion below.
+1. Formik's `props.handleSubmit` is passed to a `<Button onPress={...} />`
+   instead of HTML `<form onSubmit={...} />` component (since there is no
+   `<form />` element in React Native).
+2. `<TextInput />` uses Formik's `props.setFieldValue` instead of
+   `props.handleChange`. To understand why, see the discussion below.
 
 #### Why use `setFieldValue` instead of `handleChange`?
 
@@ -960,15 +960,7 @@ Submit handler. This should be passed to `<form onSubmit={props.handleSubmit}>..
 ##### `isSubmitting: boolean`
 
 Submitting state. Either `true` or `false`. Formik will set this to `true` on
-your behalf before calling your [`handleSubmit`]/[`onSubmit`] function to reduce boilerplate.
-
-##### `isValidating: boolean`
-
-Returns `true` if Formik is running any validation function, `false` otherwise.
-
-##### `isIdle: boolean`
-
-Returns `true` if Formik is neither validating nor submitting, `false` otherwise.
+your behalf before calling [`handleSubmit`] to reduce boilerplate.
 
 ##### `isValid: boolean`
 
@@ -978,7 +970,7 @@ Returns `true` if the there are no [`errors`], or the result of
 ##### `resetForm: (nextValues?: Values) => void`
 
 Imperatively reset the form. This will clear [`errors`] and [`touched`], set
-[`isSubmitting`] to `false`, [`isValidating`] to `false`, [`isIdle`] to `true`, and rerun `mapPropsToValues` with the current
+[`isSubmitting`] to `false` and rerun `mapPropsToValues` with the current
 `WrappedComponent`'s `props` or what's passed as an argument. The latter is
 useful for calling `resetForm` within `componentWillReceiveProps`.
 
@@ -1051,7 +1043,7 @@ component.
 
 Imperatively call your [`validate`] or [`validateSchema`] depending on what was specified. You can optionally pass values to validate against and this modify Formik state accordingly, otherwise this will use the current `values` of the form.
 
-##### `validateField: (field: string) => void`
+#### `validateField: (field: string) => void`
 
 Imperatively call field's [`validate`] function if specified for given field. Formik will use the current field value.
 
@@ -1182,7 +1174,7 @@ _Note: I suggest using [`validationSchema`] and Yup for validation. However,
 
 Validate the form's [`values`] with function. This function can either be:
 
-1.  Synchronous and return an [`errors`] object.
+1. Synchronous and return an [`errors`] object.
 
 ```js
 // Synchronous validation
@@ -1205,20 +1197,20 @@ const validate = (values, props) => {
 
 ```js
 // Async Validation
-const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
 
 const validate = (values, props) => {
   return sleep(2000).then(() => {
-    let errors = {};
+    let errors = {}
     if (['admin', 'null', 'god'].includes(values.username)) {
-      errors.username = 'Nice try';
+      errors.username = 'Nice try'
     }
     // ...
     if (Object.keys(errors).length) {
-      throw errors;
+      throw errors
     }
-  });
-};
+  })
+}
 ```
 
 #### `validateOnBlur?: boolean`
@@ -1402,13 +1394,13 @@ export const FriendList = () => (
                   <button type="submit">Submit</button>
                 </div>
               </div>
-            )}
+              )}
           />
         </Form>
-      )}
-    />
-  </div>
-);
+        )}
+        />
+      </div>
+    );
 ```
 
 ##### `name: string`
@@ -1432,9 +1424,11 @@ You can also iterate through an array of objects, by following a convention of `
         {values.friends.map((friend, index) => (
           <div key={index}>
             <Field name={`friends[${index}]name`} />
-            <Field name={`friends.${index}.age`} /> // both these conventions do
-            the same
-            <button type="button" onClick={() => arrayHelpers.remove(index)}>
+            <Field name={`friends.${index}.age`} /> // both these conventions do the same
+            <button
+              type="button"
+              onClick={() => arrayHelpers.remove(index)}
+            >
               -
             </button>
           </div>
@@ -1709,7 +1703,7 @@ _Note: I suggest using [`validationSchema`] and Yup for validation. However,
 
 Validate the form's [`values`] with function. This function can either be:
 
-1.  Synchronous and return an [`errors`] object.
+1. Synchronous and return an [`errors`] object.
 
 ```js
 // Synchronous validation
@@ -1786,9 +1780,9 @@ Formik is made with <3 thanks to these wonderful people
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 
-| [<img src="https://avatars2.githubusercontent.com/u/4060187?v=4" width="100px;"/><br /><sub>Jared Palmer</sub>](http://jaredpalmer.com)<br />[💬](#question-jaredpalmer 'Answering Questions') [💻](https://github.com/jaredpalmer/formik/commits?author=jaredpalmer 'Code') [🎨](#design-jaredpalmer 'Design') [📖](https://github.com/jaredpalmer/formik/commits?author=jaredpalmer 'Documentation') [💡](#example-jaredpalmer 'Examples') [🤔](#ideas-jaredpalmer 'Ideas, Planning, & Feedback') [👀](#review-jaredpalmer 'Reviewed Pull Requests') [⚠️](https://github.com/jaredpalmer/formik/commits?author=jaredpalmer 'Tests') | [<img src="https://avatars0.githubusercontent.com/u/109324?v=4" width="100px;"/><br /><sub>Ian White</sub>](https://www.stardog.io)<br />[💬](#question-eonwhite 'Answering Questions') [🐛](https://github.com/jaredpalmer/formik/issues?q=author%3Aeonwhite 'Bug reports') [💻](https://github.com/jaredpalmer/formik/commits?author=eonwhite 'Code') [📖](https://github.com/jaredpalmer/formik/commits?author=eonwhite 'Documentation') [🤔](#ideas-eonwhite 'Ideas, Planning, & Feedback') [👀](#review-eonwhite 'Reviewed Pull Requests') | [<img src="https://avatars0.githubusercontent.com/u/829963?v=4" width="100px;"/><br /><sub>Andrej Badin</sub>](http://andrejbadin.com)<br />[💬](#question-Andreyco 'Answering Questions') [🐛](https://github.com/jaredpalmer/formik/issues?q=author%3AAndreyco 'Bug reports') [📖](https://github.com/jaredpalmer/formik/commits?author=Andreyco 'Documentation') | [<img src="https://avatars2.githubusercontent.com/u/91115?v=4" width="100px;"/><br /><sub>Adam Howard</sub>](http://adz.co.de)<br />[💬](#question-skattyadz 'Answering Questions') [🐛](https://github.com/jaredpalmer/formik/issues?q=author%3Askattyadz 'Bug reports') [🤔](#ideas-skattyadz 'Ideas, Planning, & Feedback') [👀](#review-skattyadz 'Reviewed Pull Requests') | [<img src="https://avatars1.githubusercontent.com/u/6711845?v=4" width="100px;"/><br /><sub>Vlad Shcherbin</sub>](https://github.com/VladShcherbin)<br />[💬](#question-VladShcherbin 'Answering Questions') [🐛](https://github.com/jaredpalmer/formik/issues?q=author%3AVladShcherbin 'Bug reports') [🤔](#ideas-VladShcherbin 'Ideas, Planning, & Feedback') | [<img src="https://avatars3.githubusercontent.com/u/383212?v=4" width="100px;"/><br /><sub>Brikou CARRE</sub>](https://github.com/brikou)<br />[🐛](https://github.com/jaredpalmer/formik/issues?q=author%3Abrikou 'Bug reports') [📖](https://github.com/jaredpalmer/formik/commits?author=brikou 'Documentation') | [<img src="https://avatars0.githubusercontent.com/u/5314713?v=4" width="100px;"/><br /><sub>Sam Kvale</sub>](http://skvale.github.io)<br />[🐛](https://github.com/jaredpalmer/formik/issues?q=author%3Askvale 'Bug reports') [💻](https://github.com/jaredpalmer/formik/commits?author=skvale 'Code') [⚠️](https://github.com/jaredpalmer/formik/commits?author=skvale 'Tests') |
+| [<img src="https://avatars2.githubusercontent.com/u/4060187?v=4" width="100px;"/><br /><sub>Jared Palmer</sub>](http://jaredpalmer.com)<br />[💬](#question-jaredpalmer "Answering Questions") [💻](https://github.com/jaredpalmer/formik/commits?author=jaredpalmer "Code") [🎨](#design-jaredpalmer "Design") [📖](https://github.com/jaredpalmer/formik/commits?author=jaredpalmer "Documentation") [💡](#example-jaredpalmer "Examples") [🤔](#ideas-jaredpalmer "Ideas, Planning, & Feedback") [👀](#review-jaredpalmer "Reviewed Pull Requests") [⚠️](https://github.com/jaredpalmer/formik/commits?author=jaredpalmer "Tests") | [<img src="https://avatars0.githubusercontent.com/u/109324?v=4" width="100px;"/><br /><sub>Ian White</sub>](https://www.stardog.io)<br />[💬](#question-eonwhite "Answering Questions") [🐛](https://github.com/jaredpalmer/formik/issues?q=author%3Aeonwhite "Bug reports") [💻](https://github.com/jaredpalmer/formik/commits?author=eonwhite "Code") [📖](https://github.com/jaredpalmer/formik/commits?author=eonwhite "Documentation") [🤔](#ideas-eonwhite "Ideas, Planning, & Feedback") [👀](#review-eonwhite "Reviewed Pull Requests") | [<img src="https://avatars0.githubusercontent.com/u/829963?v=4" width="100px;"/><br /><sub>Andrej Badin</sub>](http://andrejbadin.com)<br />[💬](#question-Andreyco "Answering Questions") [🐛](https://github.com/jaredpalmer/formik/issues?q=author%3AAndreyco "Bug reports") [📖](https://github.com/jaredpalmer/formik/commits?author=Andreyco "Documentation") | [<img src="https://avatars2.githubusercontent.com/u/91115?v=4" width="100px;"/><br /><sub>Adam Howard</sub>](http://adz.co.de)<br />[💬](#question-skattyadz "Answering Questions") [🐛](https://github.com/jaredpalmer/formik/issues?q=author%3Askattyadz "Bug reports") [🤔](#ideas-skattyadz "Ideas, Planning, & Feedback") [👀](#review-skattyadz "Reviewed Pull Requests") | [<img src="https://avatars1.githubusercontent.com/u/6711845?v=4" width="100px;"/><br /><sub>Vlad Shcherbin</sub>](https://github.com/VladShcherbin)<br />[💬](#question-VladShcherbin "Answering Questions") [🐛](https://github.com/jaredpalmer/formik/issues?q=author%3AVladShcherbin "Bug reports") [🤔](#ideas-VladShcherbin "Ideas, Planning, & Feedback") | [<img src="https://avatars3.githubusercontent.com/u/383212?v=4" width="100px;"/><br /><sub>Brikou CARRE</sub>](https://github.com/brikou)<br />[🐛](https://github.com/jaredpalmer/formik/issues?q=author%3Abrikou "Bug reports") [📖](https://github.com/jaredpalmer/formik/commits?author=brikou "Documentation") | [<img src="https://avatars0.githubusercontent.com/u/5314713?v=4" width="100px;"/><br /><sub>Sam Kvale</sub>](http://skvale.github.io)<br />[🐛](https://github.com/jaredpalmer/formik/issues?q=author%3Askvale "Bug reports") [💻](https://github.com/jaredpalmer/formik/commits?author=skvale "Code") [⚠️](https://github.com/jaredpalmer/formik/commits?author=skvale "Tests") |
 | :-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
-|                                                                                                                                                             [<img src="https://avatars0.githubusercontent.com/u/13765558?v=4" width="100px;"/><br /><sub>Jon Tansey</sub>](http://jon.tansey.info)<br />[🐛](https://github.com/jaredpalmer/formik/issues?q=author%3Ajontansey 'Bug reports') [💻](https://github.com/jaredpalmer/formik/commits?author=jontansey 'Code')                                                                                                                                                             |                                                                                                       [<img src="https://avatars0.githubusercontent.com/u/6819171?v=4" width="100px;"/><br /><sub>Tyler Martinez</sub>](http://slightlytyler.com)<br />[🐛](https://github.com/jaredpalmer/formik/issues?q=author%3Aslightlytyler 'Bug reports') [📖](https://github.com/jaredpalmer/formik/commits?author=slightlytyler 'Documentation')                                                                                                       |
+|                                                                                                                                                             [<img src="https://avatars0.githubusercontent.com/u/13765558?v=4" width="100px;"/><br /><sub>Jon Tansey</sub>](http://jon.tansey.info)<br />[🐛](https://github.com/jaredpalmer/formik/issues?q=author%3Ajontansey "Bug reports") [💻](https://github.com/jaredpalmer/formik/commits?author=jontansey "Code")                                                                                                                                                             |                                                                                                       [<img src="https://avatars0.githubusercontent.com/u/6819171?v=4" width="100px;"/><br /><sub>Tyler Martinez</sub>](http://slightlytyler.com)<br />[🐛](https://github.com/jaredpalmer/formik/issues?q=author%3Aslightlytyler "Bug reports") [📖](https://github.com/jaredpalmer/formik/commits?author=slightlytyler "Documentation")                                                                                                       |
 
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
@@ -1832,5 +1826,3 @@ MIT License.
 [`status`]: #status-any
 [`touched`]: #touched--field-string-boolean-
 [`values`]: #values--field-string-any-
-[`isvalidating`](#isvalidating-boolean)
-[`isidle`](#isidle-boolean)

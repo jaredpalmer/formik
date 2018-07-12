@@ -11,7 +11,6 @@ import {
   FormikTouched,
   FormikValues,
   FormikContext,
-  FormikStage,
 } from './types';
 import {
   isEmptyChildren,
@@ -56,7 +55,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       values: props.initialValues || ({} as any),
       errors: {},
       touched: {},
-      stage: FormikStage.IDLE,
+      isSubmitting: false,
       submitCount: 0,
     };
     this.fields = {};
@@ -137,9 +136,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
   };
 
   setSubmitting = (isSubmitting: boolean) => {
-    this.setState({
-      stage: isSubmitting ? FormikStage.SUBMITTING : FormikStage.IDLE,
-    });
+    this.setState({ isSubmitting });
   };
 
   /**
@@ -246,10 +243,8 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
    * Run all validations methods and update state accordingly
    */
   runValidations = (
-    values: FormikValues,
-    nextStageIsSubmit: boolean = false
+    values: FormikValues = this.state.values
   ): Promise<FormikErrors<Values>> => {
-    this.setState({ stage: FormikStage.VALIDATING });
     return Promise.all([
       this.runFieldLevelValidations(values),
       this.props.validationSchema ? this.runValidationSchema(values) : {},
@@ -261,14 +256,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
         handlerErrors,
       ]);
 
-      if (nextStageIsSubmit) {
-        // If this runs within submit, the next stage could be
-        // either SUBMITTING or IDLE. This determination happens later,
-        // so we avoid updating the stage right now.
-        this.setState({ errors: combinedErrors });
-      } else {
-        this.setState({ errors: combinedErrors, stage: FormikStage.IDLE });
-      }
+      this.setState({ errors: combinedErrors });
 
       return combinedErrors;
     });
@@ -409,23 +397,20 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
         prevState.values,
         true
       ),
+      isSubmitting: true,
       submitCount: prevState.submitCount + 1,
     }));
 
-    return this.runValidations(this.state.values, true).then(combinedErrors => {
+    return this.runValidations().then(combinedErrors => {
+      this.setState({ isSubmitting: false });
       const isValid = Object.keys(combinedErrors).length === 0;
       if (isValid) {
-        // Go forward with submit stage
         this.executeSubmit();
-      } else {
-        // Abort submit, go back to idle stage
-        this.setState({ stage: FormikStage.IDLE });
       }
     });
   };
 
   executeSubmit = () => {
-    this.setState({ stage: FormikStage.SUBMITTING });
     this.props.onSubmit(this.state.values, this.getFormikActions());
   };
 
@@ -498,7 +483,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     this.initialValues = values;
 
     this.setState({
-      stage: FormikStage.IDLE,
+      isSubmitting: false,
       errors: {},
       touched: {},
       error: undefined,
@@ -558,9 +543,6 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
           ? (isInitialValid as (props: this['props']) => boolean)(this.props)
           : (isInitialValid as boolean),
       initialValues: this.initialValues,
-      isSubmitting: this.state.stage === FormikStage.SUBMITTING,
-      isValidating: this.state.stage === FormikStage.VALIDATING,
-      isIdle: this.state.stage === FormikStage.IDLE,
     };
   };
 

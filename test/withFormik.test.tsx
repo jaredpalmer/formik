@@ -322,22 +322,19 @@ describe('withFormik()', () => {
         });
       });
 
-      it('should push submission state changes to child component', async () => {
+      it('should push submission state changes to child component', () => {
         const tree = mount(<BasicForm user={{ name: 'jared' }} />);
 
         expect(tree.find(Form).find('#submitting')).toHaveLength(0);
 
-        await tree
+        tree
           .find(Form)
-          .props()
-          .submitForm();
+          .find('form')
+          .simulate('submit', {
+            preventDefault: noop,
+          });
 
-        expect(
-          tree
-            .update()
-            .find(Form)
-            .find('#submitting')
-        ).toHaveLength(1);
+        expect(tree.find(Form).find('#submitting')).toHaveLength(1);
       });
 
       describe('with validate (SYNC)', () => {

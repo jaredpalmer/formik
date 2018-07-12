@@ -23,11 +23,6 @@ export type FormikTouched<Values> = {
     : boolean
 };
 
-export enum FormikStage {
-  IDLE,
-  VALIDATING,
-  SUBMITTING,
-}
 /**
  * Formik state tree
  */
@@ -43,12 +38,12 @@ export interface FormikState<Values> {
   errors: FormikErrors<Values>;
   /** map of field names to whether the field has been touched */
   touched: FormikTouched<Values>;
+  /** whether the form is currently submitting */
+  isSubmitting: boolean;
   /** Top level status state, in case you need it */
   status?: any;
   /** Number of times user tried to submit the form */
   submitCount: number;
-  /** Component stage. Either IDLE, VALIDATING, SUBMITTING */
-  stage: FormikStage;
 }
 
 /**
@@ -57,16 +52,10 @@ export interface FormikState<Values> {
 export interface FormikComputedProps<Values> {
   /** True if any input has been touched. False otherwise. */
   readonly dirty: boolean;
-  /** Result of isInitialValid on mount, then whether true values pass validation. */
+  /** Result of isInitiallyValid on mount, then whether true values pass validation. */
   readonly isValid: boolean;
   /** initialValues */
   readonly initialValues: Values;
-  /** Is Formik validating? */
-  readonly isValidating: boolean;
-  /** Is Formik submitting? */
-  readonly isSubmitting: boolean;
-  /** Is Formik in an idle state? */
-  readonly isIdle: boolean;
 }
 
 /**

@@ -308,7 +308,7 @@ describe('<Formik>', () => {
         expect(tree.update().state().touched).toEqual({ name: true });
       });
 
-      it('should push submission state changes to child component', async () => {
+      it('should push submission state changes to child component', () => {
         const tree = shallow(BasicForm);
 
         expect(
@@ -318,10 +318,13 @@ describe('<Formik>', () => {
             .find('#submitting')
         ).toHaveLength(0);
 
-        await tree
+        tree
           .find(Form)
-          .props()
-          .submitForm();
+          .dive()
+          .find('form')
+          .simulate('submit', {
+            preventDefault: noop,
+          });
 
         expect(
           tree

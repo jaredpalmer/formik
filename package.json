@@ -43,7 +43,7 @@
   "dependencies": {
     "create-react-context": "^0.2.2",
     "deepmerge": "^2.1.1",
-    "hoist-non-react-statics": "^2.5.0",
+    "hoist-non-react-statics": "^2.5.5",
     "lodash.clonedeep": "^4.5.0",
     "lodash.topath": "4.5.2",
     "prop-types": "^15.6.1",
@@ -88,7 +88,7 @@
     "tsc-watch": "^1.0.21",
     "tslint": "5.5.0",
     "tslint-react": "3.2.0",
-    "typescript": "^2.9.2",
+    "typescript": "^3.0.0-dev.20180711",
     "yup": "0.21.3"
   },
   "lint-staged": {

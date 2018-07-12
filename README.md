@@ -1,10 +1,10 @@
 ![](https://user-images.githubusercontent.com/4060187/27243721-3b5219d0-52b1-11e7-96f1-dae8391a3ef6.png)
 
-[![gzip size](http://img.badgesize.io/https://unpkg.com/formik/dist/formik.umd.min.js?compression=gzip)](https://unpkg.com/formik/dist/formik.umd.min.js)
 [![Build Status](https://travis-ci.org/jaredpalmer/formik.svg?branch=master)](https://travis-ci.org/jaredpalmer/formik)
 [![Stable Release](https://img.shields.io/npm/v/formik.svg)](https://npm.im/formik)
 [![Next Release](https://img.shields.io/npm/v/formik/next.svg)](https://www.npmjs.com/package/formik/v/next)
 [![Blazing Fast](https://badgen.now.sh/badge/speed/blazing%20%F0%9F%94%A5/green)](https://npm.im/formik)
+[![gzip size](http://img.badgesize.io/https://unpkg.com/formik/dist/formik.umd.min.js?compression=gzip)](https://unpkg.com/formik/dist/formik.umd.min.js)
 [![license](https://badgen.now.sh/badge/license/MIT)](./LICENSE)
 [![Discord](https://img.shields.io/discord/102860784329052160.svg?style=flat-square)](https://discord.gg/cU6MCve)
 
@@ -221,17 +221,17 @@ const Basic = () => (
     <h1>My Form</h1>
     <p>This can be anywhere in your application</p>
     {/*
-                                                                                                  The benefit of the render prop approach is that you have full access to React's
-                                                                                                  state, props, and composition model. Thus there is no need to map outer props
-                                                                                                  to values...you can just set the initial values, and if they depend on props / state
-                                                                                                  then--boom--you can directly access to props / state.
+                                                                                                                          The benefit of the render prop approach is that you have full access to React's
+                                                                                                                          state, props, and composition model. Thus there is no need to map outer props
+                                                                                                                          to values...you can just set the initial values, and if they depend on props / state
+                                                                                                                          then--boom--you can directly access to props / state.
 
-                                                                                                  The render prop accepts your inner form component, which you can define separately or inline
-                                                                                                  totally up to you:
-                                                                                                  - `<Formik render={props => <form>...</form>}>`
-                                                                                                  - `<Formik component={InnerForm}>`
-                                                                                                  - `<Formik>{props => <form>...</form>}</Formik>` (identical to as render, just written differently)
-                                                                                                */}
+                                                                                                                          The render prop accepts your inner form component, which you can define separately or inline
+                                                                                                                          totally up to you:
+                                                                                                                          - `<Formik render={props => <form>...</form>}>`
+                                                                                                                          - `<Formik component={InnerForm}>`
+                                                                                                                          - `<Formik>{props => <form>...</form>}</Formik>` (identical to as render, just written differently)
+                                                                                                                        */}
     <Formik
       initialValues={{
         email: '',
@@ -749,6 +749,8 @@ export default MyReactNativeForm;
 ```
 
 ### Using Formik with TypeScript
+
+[![TypeScript Types](https://img.shields.io/npm/types/formik.svg)](https://npm.im/formik)
 
 The Formik source code is written in TypeScript, so you can rest assured that
 types will always be up to date. As a mental model, Formik's types are very

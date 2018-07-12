@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import { Formik, FormikProps } from '../src';
 import { shallow, mount } from '@pisano/enzyme';
 import { sleep, noop } from './testHelpers';
@@ -1184,5 +1185,115 @@ describe('<Formik>', () => {
 
     input.blur(); // unsets activeElement
     (global.console.error as jest.Mock<{}>).mockClear();
+  });
+  it('submit count increments', async () => {
+    const node = document.createElement('div');
+    const onSubmit = jest.fn();
+    let injected: any;
+    ReactDOM.render(
+      <Formik onSubmit={onSubmit} initialValues={{ opensource: 'yay' }}>
+        {formikProps => (injected = formikProps) && null}
+      </Formik>,
+      node
+    );
+
+    expect(injected.submitCount).toEqual(0);
+    await injected.submitForm();
+    expect(onSubmit).toHaveBeenCalled();
+    expect(injected.submitCount).toEqual(1);
+  });
+
+  it('isValidating is fired when submit is attempted', async () => {
+    const node = document.createElement('div');
+    const onSubmit = jest.fn();
+    const validate = jest.fn(() => ({ opensource: 'no ' }));
+    let injected: any;
+    ReactDOM.render(
+      <Formik
+        onSubmit={onSubmit}
+        validate={validate}
+        initialValues={{ opensource: 'yay' }}
+      >
+        {formikProps => (injected = formikProps) && null}
+      </Formik>,
+      node
+    );
+
+    expect(injected.submitCount).toEqual(0);
+    expect(injected.isSubmitting).toBe(false);
+    expect(injected.isValidating).toBe(false);
+    // we call set isValidating synchronously
+    const validatePromise = injected.submitForm();
+    // so it should change
+    expect(injected.isSubmitting).toBe(true);
+    expect(injected.isValidating).toBe(true);
+    // do it again async
+    await validatePromise;
+    // now both should be false because validation failed
+    expect(injected.isSubmitting).toBe(false);
+    expect(injected.isValidating).toBe(false);
+    expect(validate).toHaveBeenCalled();
+    expect(onSubmit).not.toHaveBeenCalled();
+    expect(injected.submitCount).toEqual(1);
+  });
+
+  it('isSubmitting is fired when submit is attempted', async () => {
+    const node = document.createElement('div');
+    const onSubmit = jest.fn();
+    const validate = jest.fn(() => ({}));
+    let injected: any;
+    ReactDOM.render(
+      <Formik
+        onSubmit={onSubmit}
+        validate={validate}
+        initialValues={{ opensource: 'yay' }}
+      >
+        {formikProps => (injected = formikProps) && null}
+      </Formik>,
+      node
+    );
+
+    expect(injected.submitCount).toEqual(0);
+    expect(injected.isSubmitting).toBe(false);
+    expect(injected.isValidating).toBe(false);
+    // we call set isValidating synchronously
+    const validatePromise = injected.submitForm();
+    // so it should change
+    expect(injected.isSubmitting).toBe(true);
+    expect(injected.isValidating).toBe(true);
+    // do it again async
+    await validatePromise;
+    // done validating
+    expect(injected.isValidating).toBe(false);
+    // now run submit
+    expect(injected.isSubmitting).toBe(true);
+    expect(validate).toHaveBeenCalled();
+    expect(onSubmit).toHaveBeenCalled();
+    expect(injected.submitCount).toEqual(1);
+  });
+
+  it('isValidating is fired validation is run', async () => {
+    const node = document.createElement('div');
+    const validate = jest.fn(() => ({ opensource: 'no' }));
+    let injected: any;
+    ReactDOM.render(
+      <Formik
+        onSubmit={noop}
+        validate={validate}
+        initialValues={{ opensource: 'yay' }}
+      >
+        {formikProps => (injected = formikProps) && null}
+      </Formik>,
+      node
+    );
+
+    expect(injected.isValidating).toBe(false);
+    // we call set isValidating synchronously
+    const validatePromise = injected.validateForm();
+    expect(injected.isValidating).toBe(true);
+    await validatePromise;
+    expect(validate).toHaveBeenCalled();
+    // so it should change
+    expect(injected.isValidating).toBe(false);
   });
 });

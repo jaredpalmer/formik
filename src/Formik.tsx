@@ -276,9 +276,9 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
         schemaErrors,
         handlerErrors,
       ]);
+
       if (this.didMount) {
-        this.setState({ errors: combinedErrors });
-        this.setState({ isValidating: false });
+        this.setState({ isValidating: false, errors: combinedErrors });
       }
 
       return combinedErrors;

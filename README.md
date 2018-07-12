@@ -219,17 +219,17 @@ const Basic = () => (
     <h1>My Form</h1>
     <p>This can be anywhere in your application</p>
     {/*
-                                                  The benefit of the render prop approach is that you have full access to React's
-                                                  state, props, and composition model. Thus there is no need to map outer props
-                                                  to values...you can just set the initial values, and if they depend on props / state
-                                                  then--boom--you can directly access to props / state.
+                                                          The benefit of the render prop approach is that you have full access to React's
+                                                          state, props, and composition model. Thus there is no need to map outer props
+                                                          to values...you can just set the initial values, and if they depend on props / state
+                                                          then--boom--you can directly access to props / state.
 
-                                                  The render prop accepts your inner form component, which you can define separately or inline
-                                                  totally up to you:
-                                                  - `<Formik render={props => <form>...</form>}>`
-                                                  - `<Formik component={InnerForm}>`
-                                                  - `<Formik>{props => <form>...</form>}</Formik>` (identical to as render, just written differently)
-                                                */}
+                                                          The render prop accepts your inner form component, which you can define separately or inline
+                                                          totally up to you:
+                                                          - `<Formik render={props => <form>...</form>}>`
+                                                          - `<Formik component={InnerForm}>`
+                                                          - `<Formik>{props => <form>...</form>}</Formik>` (identical to as render, just written differently)
+                                                        */}
     <Formik
       initialValues={{
         email: '',
@@ -1814,6 +1814,18 @@ component's [`errors`]. Its keys should match those of [`values`].
 #### Injected props and methods
 
 These are identical to the props of `<Formik render={props => ...} />`
+
+### `connect()`
+
+`connect()` is a higher-order component that injects raw Formik context as prop called `formik` into the inner component. Fun fact: Formik uses `connect()` under the hood to wire up `<Field/>`, `<FastField>`, and `<Form>`. Advanced users may find it useful to use `connect()` when building custom components.
+
+```js
+import { connnect } from 'formik';
+
+const SubmitCount = ({ formik }) => <div>{formik.submitCount}</div>;
+
+export default connect(SubmitCount);
+```
 
 ## Organizations and projects using Formik
 

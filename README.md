@@ -76,7 +76,7 @@ started with.
 Add Formik to your project.
 
 ```bash
-npm i formik@next --save
+npm i formik --save
 ```
 
 You can also try before you buy with this

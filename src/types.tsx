@@ -194,6 +194,14 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
   render?: ((props: FormikProps<Values>) => React.ReactNode);
 
   /**
+   * State reducer
+   */
+  stateReducer?: (
+    state: FormikState<any>,
+    changes: Pick<FormikState<any>, never>
+  ) => any;
+
+  /**
    * A Yup Schema or a function that returns a Yup schema
    */
   validationSchema?: any | (() => any);

@@ -80,7 +80,7 @@ npm i formik --save
 ```
 
 You can also try before you buy with this
-**[demo of Formik on CodeSandbox.io](https://codesandbox.io/s/zKrK5YLDZ)**
+**[demo of Formik on CodeSandbox.io](https://codesandbox.io/s/zKrK5YLDZ)** or on [Expo Snack](https://snack.expo.io/Bk9pPK87X)
 
 ## Demos
 
@@ -90,6 +90,7 @@ You can also try before you buy with this
 * [Working with 3rd-party inputs #1: react-select](https://codesandbox.io/s/jRzE53pqR)
 * [Working with 3rd-party inputs #2: Draft.js](https://codesandbox.io/s/QW1rqjBLl)
 * [Accessing React lifecycle functions](https://codesandbox.io/s/pgD4DLypy)
+* [React Native](https://snack.expo.io/Bk9pPK87X)
 
 ## Talks
 

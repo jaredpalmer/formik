@@ -196,7 +196,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       fieldKeysWithValidation.length > 0
         ? fieldKeysWithValidation.map(
             f =>
-              this.runSingleFieldLevelValidation(f, values[f]).then(
+              this.runSingleFieldLevelValidation(f, getIn(values, f)).then(
                 x => x,
                 e => e
               ) // always catch so Promise.all runs each one

@@ -48,6 +48,7 @@
     "lodash.topath": "4.5.2",
     "prop-types": "^15.6.1",
     "react-fast-compare": "^1.0.0",
+    "tslib": "^1.9.3",
     "warning": "^3.0.0"
   },
   "optionalDependencies": {},

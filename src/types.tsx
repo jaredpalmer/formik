@@ -38,6 +38,8 @@ export interface FormikState<Values> {
   errors: FormikErrors<Values>;
   /** map of field names to whether the field has been touched */
   touched: FormikTouched<Values>;
+  /** whether the form is currently validating */
+  isValidating: boolean;
   /** whether the form is currently submitting */
   isSubmitting: boolean;
   /** Top level status state, in case you need it */
@@ -93,6 +95,8 @@ export interface FormikActions<Values> {
   ): void;
   /** Validate form values */
   validateForm(values?: any): void;
+  /** Validate field value */
+  validateField(field: string): void;
   /** Reset form */
   resetForm(nextValues?: any): void;
   /** Submit the form imperatively */
@@ -218,7 +222,17 @@ export type FormikProps<Values> = FormikSharedConfig &
   FormikState<Values> &
   FormikActions<Values> &
   FormikHandlers &
-  FormikComputedProps<Values>;
+  FormikComputedProps<Values> & {
+    registerField(
+      name: string,
+      fns: {
+        validate?: ((
+          value: any
+        ) => string | Function | Promise<void> | undefined);
+      }
+    ): void;
+    unregisterField(name: string): void;
+  };
 
 /**
  * State, handlers, and helpers made available to Formik's primitive components through context.

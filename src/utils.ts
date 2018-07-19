@@ -105,7 +105,7 @@ export const isEmptyChildren = (children: any): boolean =>
   React.Children.count(children) === 0;
 
 /** @private is the given object/value a promise? */
-export const isPromise = (value: any): boolean =>
+export const isPromise = (value: any): value is PromiseLike<any> =>
   isObject(value) && isFunction(value.then);
 
 /**

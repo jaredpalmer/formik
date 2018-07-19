@@ -1,4 +1,10 @@
 {
   "extends": "./tsconfig.base.json",
-  "include": ["src", "types", "test"]
+  "include": ["src", "./typings.d.ts", "types", "test"],
+  "compilerOptions": {
+    "baseUrl": "./",
+    "paths": {
+      "formik": ["src/"]
+    }
+  }
 }

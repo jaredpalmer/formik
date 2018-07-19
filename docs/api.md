@@ -134,7 +134,7 @@ Trigger a form submission.
 
 #### `submitCount: number`
 
-Number of times user tried to submit the form. Increases when [`handleSubmit`](#handlesubmit-values-values-formikbag-formikbag--void) is called, resets after calling  
+Number of times user tried to submit the form. Increases when [`handleSubmit`](#handlesubmit-values-values-formikbag-formikbag--void) is called, resets after calling
 [`handleReset`](#handlereset---void). `submitCount` is readonly computed property and should not be mutated directly.
 
 #### `setFieldValue: (field: string, value: any, shouldValidate?: boolean) => void`
@@ -182,6 +182,10 @@ component.
 #### `validateForm: (values?: any) => void`
 
 Imperatively call your [`validate`] or [`validateSchema`] depending on what was specified. You can optionally pass values to validate against and this modify Formik state accordingly, otherwise this will use the current `values` of the form.
+
+#### `validateField: (field: string) => void`
+
+Imperatively call field's [`validate`] function if specified for given field. Formik will use the current field value.
 
 ### `component`
 

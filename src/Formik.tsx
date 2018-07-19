@@ -339,7 +339,9 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
   getValidationSchema = () => {
     const { validationSchema } = this.props;
 
-    return isFunction(validationSchema) ? validationSchema() : validationSchema;
+    return isFunction(validationSchema)
+      ? validationSchema(this.getFormikActions())
+      : validationSchema;
   };
 
   handleBlur = (eventOrString: any): void | ((e: any) => void) => {

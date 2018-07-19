@@ -1,6 +1,7 @@
 import * as React from 'react';
 
 import { withFormik, InjectedFormikProps } from '../src';
+import { getYupFakeSchema } from './testHelpers';
 import { mount, shallow } from '@pisano/enzyme';
 
 // tslint:disable-next-line:no-empty
@@ -64,6 +65,18 @@ const FormFactory = (options = {}) =>
   })(Form);
 
 const BasicForm = FormFactory();
+
+const getValidationForm = (props = {}) => {
+  const validationSchema = getYupFakeSchema();
+
+  return {
+    ValidationForm: FormFactory({
+      validationSchema,
+      ...props,
+    }),
+    validationSchema,
+  };
+};
 
 describe('withFormik()', () => {
   it('should initialize Formik state and pass down props', () => {
@@ -175,8 +188,7 @@ describe('withFormik()', () => {
       });
 
       it('runs validations by default (validationSchema)', async () => {
-        const validate = jest.fn(() => Promise.resolve({}));
-        const ValidationForm = FormFactory({ validationSchema: { validate } });
+        const { ValidationForm, validationSchema } = getValidationForm();
 
         const tree = shallow(<ValidationForm user={{ name: 'jared' }} />);
 
@@ -192,14 +204,12 @@ describe('withFormik()', () => {
               value: 'ian',
             },
           });
-        expect(validate).toHaveBeenCalled();
+        expect(validationSchema.validate).toHaveBeenCalled();
       });
 
       it('does NOT run validations if validateOnChange is false (validationSchema)', async () => {
-        const validate = jest.fn(() => Promise.resolve({}));
-        const ValidationForm = FormFactory({
+        const { ValidationForm, validationSchema } = getValidationForm({
           validateOnChange: false,
-          validationSchema: { validate },
         });
 
         const tree = shallow(<ValidationForm user={{ name: 'jared' }} />);
@@ -216,7 +226,7 @@ describe('withFormik()', () => {
               value: 'ian',
             },
           });
-        expect(validate).not.toHaveBeenCalled();
+        expect(validationSchema.validate).not.toHaveBeenCalled();
       });
     });
 
@@ -275,8 +285,7 @@ describe('withFormik()', () => {
       });
 
       it('runs validations by default (validationSchema)', async () => {
-        const validate = jest.fn(() => Promise.resolve({}));
-        const ValidationForm = FormFactory({ validationSchema: { validate } });
+        const { ValidationForm, validationSchema } = getValidationForm();
 
         const tree = shallow(<ValidationForm user={{ name: 'jared' }} />);
 
@@ -292,7 +301,7 @@ describe('withFormik()', () => {
             },
           });
 
-        expect(validate).toHaveBeenCalled();
+        expect(validationSchema.validate).toHaveBeenCalled();
       });
     });
 
@@ -454,33 +463,30 @@ describe('withFormik()', () => {
 
       describe('with validationSchema (ASYNC)', () => {
         it('should run validationSchema if present', () => {
-          const validate = jest.fn(() => Promise.resolve({}));
-          const ValidateForm = FormFactory({ validationSchema: { validate } });
-          const tree = mount(<ValidateForm user={{ name: 'jared' }} />);
+          const { ValidationForm, validationSchema } = getValidationForm();
+          const tree = mount(<ValidationForm user={{ name: 'jared' }} />);
           tree
             .find(Form)
             .find('form')
             .simulate('submit', {
               preventDefault: noop,
             });
-          expect(validate).toHaveBeenCalled();
+          expect(validationSchema.validate).toHaveBeenCalled();
         });
 
         it('should call validationSchema if it is a function and present', () => {
-          const validate = jest.fn(() => Promise.resolve({}));
-          const ValidateForm = FormFactory({
-            validationSchema: () => ({
-              validate,
-            }),
+          const { validationSchema } = getValidationForm();
+          const { ValidationForm } = getValidationForm({
+            validationSchema: () => validationSchema,
           });
-          const tree = mount(<ValidateForm user={{ name: 'jared' }} />);
+          const tree = mount(<ValidationForm user={{ name: 'jared' }} />);
           tree
             .find(Form)
             .find('form')
             .simulate('submit', {
               preventDefault: noop,
             });
-          expect(validate).toHaveBeenCalled();
+          expect(validationSchema.validate).toHaveBeenCalled();
         });
       });
     });

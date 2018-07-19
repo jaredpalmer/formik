@@ -33,10 +33,6 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     validateOnBlur: true,
     isInitialValid: false,
     enableReinitialize: false,
-    stateReducer: (
-      _: FormikState<any>,
-      changes: Pick<FormikState<any>, never>
-    ) => changes,
   };
 
   initialValues: Values;
@@ -52,6 +48,16 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       validate?: ((value: any) => string | Promise<void> | undefined);
     };
   };
+
+  static getDerivedStateFromProps(
+    props: FormikConfig<object>,
+    state: FormikState<any>
+  ) {
+    if (props.stateReducer) {
+      return props.stateReducer(state);
+    }
+    return null;
+  }
 
   constructor(props: FormikConfig<Values> & ExtraProps) {
     super(props);
@@ -136,7 +142,6 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       state => {
         let newStateToSet =
           typeof stateToSet === 'function' ? stateToSet(state) : stateToSet;
-        newStateToSet = this.props.stateReducer!(state, newStateToSet);
         return newStateToSet;
       },
       () => {

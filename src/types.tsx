@@ -196,10 +196,7 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
   /**
    * State reducer
    */
-  stateReducer?: (
-    state: FormikState<any>,
-    changes: Pick<FormikState<any>, never>
-  ) => any;
+  stateReducer?: (state: FormikState<any>) => FormikState<any> | null;
 
   /**
    * A Yup Schema or a function that returns a Yup schema

@@ -4,7 +4,7 @@
 [![Stable Release](https://img.shields.io/npm/v/formik.svg)](https://npm.im/formik)
 [![Next Release](https://img.shields.io/npm/v/formik/next.svg)](https://www.npmjs.com/package/formik/v/next)
 [![Blazing Fast](https://badgen.now.sh/badge/speed/blazing%20%F0%9F%94%A5/green)](https://npm.im/formik)
-[![gzip size](http://img.badgesize.io/https://unpkg.com/formik/dist/formik.umd.min.js?compression=gzip)](https://unpkg.com/formik/dist/formik.umd.min.js)
+[![gzip size](https://img.badgesize.io/https://unpkg.com/formik/dist/formik.cjs.production.js?compression=gzip)](https://unpkg.com/formik/dist/formik.cjs.production.js)
 [![license](https://badgen.now.sh/badge/license/MIT)](./LICENSE)
 [![Discord](https://img.shields.io/discord/102860784329052160.svg?style=flat-square)](https://discord.gg/cU6MCve)
 
@@ -40,7 +40,7 @@ By now, you might be thinking, "Why didn't you just use
 2.  Redux-Form calls your entire top-level Redux reducer multiple times ON EVERY
     SINGLE KEYSTROKE. This is fine for small apps, but as your Redux app grows,
     input latency will continue to increase if you use Redux-Form.
-3.  Redux-Form is 22.5 kB minified gzipped (Formik is 7.8 kB)
+3.  Redux-Form is heavier ![redux-form minified gziped size](https://img.badgesize.io/https://unpkg.com/redux-form/dist/redux-form.min.js?compression=gzip) vs ![formik minified gziped size](https://img.badgesize.io/https://unpkg.com/formik/dist/formik.cjs.production.js?compression=gzip)
 
 **My goal with Formik was to create a scalable, performant, form helper with a
 minimal API that does the really really annoying stuff, and leaves the rest up

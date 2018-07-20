@@ -1,6 +1,6 @@
 import { validateYupSchema, yupToFormErrors } from '../src';
+import * as Yup from 'yup';
 
-const Yup = require('yup');
 const schema = Yup.object().shape({
   name: Yup.string('Name must be a string').required('required'),
 });

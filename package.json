@@ -96,7 +96,7 @@
     "tslint": "^5.11.0",
     "tslint-react": "^3.6.0",
     "typescript": "^3.1.6",
-    "yup": "0.21.3"
+    "yup": "0.26.0"
   },
   "lint-staged": {
     "**/*.{ts,tsx}": [

@@ -221,9 +221,12 @@ export class Formik<Values = FormikValues> extends React.Component<
     );
   }
 
-  runValidateHandler(values: FormikValues): Promise<FormikErrors<Values>> {
+  runValidateHandler(
+    values: FormikValues,
+    field?: string
+  ): Promise<FormikErrors<Values>> {
     return new Promise(resolve => {
-      const maybePromisedErrors = (this.props.validate as any)(values);
+      const maybePromisedErrors = (this.props.validate as any)(values, field);
       if (maybePromisedErrors === undefined) {
         resolve({});
       } else if (isPromise(maybePromisedErrors)) {
@@ -244,13 +247,19 @@ export class Formik<Values = FormikValues> extends React.Component<
   /**
    * Run validation against a Yup schema and optionally run a function if successful
    */
-  runValidationSchema = (values: FormikValues) => {
+  runValidationSchema = (values: FormikValues, field?: string) => {
     return new Promise(resolve => {
       const { validationSchema } = this.props;
       const schema = isFunction(validationSchema)
-        ? validationSchema()
+        ? validationSchema(field)
         : validationSchema;
-      validateYupSchema(values, schema).then(
+
+      let promise =
+        field && schema.validateAt
+          ? schema.validateAt(field, values)
+          : validateYupSchema(values, schema);
+
+      promise.then(
         () => {
           resolve({});
         },
@@ -265,7 +274,8 @@ export class Formik<Values = FormikValues> extends React.Component<
    * Run all validations methods and update state accordingly
    */
   runValidations = (
-    values: FormikValues = this.state.values
+    values: FormikValues = this.state.values,
+    field?: string
   ): Promise<FormikErrors<Values>> => {
     if (this.validator) {
       this.validator();
@@ -274,8 +284,10 @@ export class Formik<Values = FormikValues> extends React.Component<
     const [promise, cancel] = makeCancelable(
       Promise.all([
         this.runFieldLevelValidations(values),
-        this.props.validationSchema ? this.runValidationSchema(values) : {},
-        this.props.validate ? this.runValidateHandler(values) : {},
+        this.props.validationSchema
+          ? this.runValidationSchema(values, field)
+          : {},
+        this.props.validate ? this.runValidateHandler(values, field) : {},
       ]).then(([fieldErrors, schemaErrors, handlerErrors]) => {
         return deepmerge.all<FormikErrors<Values>>(
           [fieldErrors, schemaErrors, handlerErrors],
@@ -347,7 +359,10 @@ export class Formik<Values = FormikValues> extends React.Component<
           }),
           () => {
             if (this.props.validateOnChange) {
-              this.runValidations(setIn(this.state.values, field!, value));
+              this.runValidations(
+                setIn(this.state.values, field!, value),
+                field
+              );
             }
           }
         );
@@ -384,7 +399,7 @@ export class Formik<Values = FormikValues> extends React.Component<
         }),
         () => {
           if (this.props.validateOnChange && shouldValidate) {
-            this.runValidations(this.state.values);
+            this.runValidations(this.state.values, field);
           }
         }
       );
@@ -483,7 +498,7 @@ export class Formik<Values = FormikValues> extends React.Component<
       }));
 
       if (this.props.validateOnBlur) {
-        this.runValidations(this.state.values);
+        this.runValidations(this.state.values, field);
       }
     };
     if (isString(eventOrPath)) {
@@ -514,7 +529,7 @@ export class Formik<Values = FormikValues> extends React.Component<
       }),
       () => {
         if (this.props.validateOnBlur && shouldValidate) {
-          this.runValidations(this.state.values);
+          this.runValidations(this.state.values, field);
         }
       }
     );
@@ -562,7 +577,7 @@ export class Formik<Values = FormikValues> extends React.Component<
     }
   };
 
-  setFormikState = (s: any, callback?: (() => void)) =>
+  setFormikState = (s: any, callback?: () => void) =>
     this.setState(s, callback);
 
   validateForm = (values: Values) => {
@@ -602,8 +617,8 @@ export class Formik<Values = FormikValues> extends React.Component<
       isValid: dirty
         ? this.state.errors && Object.keys(this.state.errors).length === 0
         : isInitialValid !== false && isFunction(isInitialValid)
-          ? (isInitialValid as (props: this['props']) => boolean)(this.props)
-          : (isInitialValid as boolean),
+        ? (isInitialValid as (props: this['props']) => boolean)(this.props)
+        : (isInitialValid as boolean),
       initialValues: this.initialValues,
     };
   };
@@ -643,16 +658,16 @@ export class Formik<Values = FormikValues> extends React.Component<
         {component
           ? React.createElement(component as any, props)
           : render
-            ? render(props)
-            : children // children come last, always called
-              ? isFunction(children)
-                ? (children as ((
-                    props: FormikProps<Values>
-                  ) => React.ReactNode))(props as FormikProps<Values>)
-                : !isEmptyChildren(children)
-                  ? React.Children.only(children)
-                  : null
-              : null}
+          ? render(props)
+          : children // children come last, always called
+          ? isFunction(children)
+            ? (children as ((props: FormikProps<Values>) => React.ReactNode))(
+                props as FormikProps<Values>
+              )
+            : !isEmptyChildren(children)
+            ? React.Children.only(children)
+            : null
+          : null}
       </FormikProvider>
     );
   }

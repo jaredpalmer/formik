@@ -330,7 +330,6 @@ npm install yup --save
 * [Guides](#guides)
   * [Basics](#basics)
   * [React Native](#react-native)
-    * [Why use `setFieldValue` instead of `handleChange`?](#why-use-setfieldvalue-instead-of-handlechange)
     * [Avoiding new functions in render](#avoiding-new-functions-in-render)
   * [Using Formik with TypeScript](#using-formik-with-typescript)
     * [Render props (`<Formik />` and `<Field />`)](#render-props-formik--and-field-)
@@ -583,7 +582,8 @@ const enhancer = withFormik({
 const MyReactNativeForm = props => (
   <View>
     <TextInput
-      onChangeText={text => props.setFieldValue('email', text)}
+      onChangeText={props.handleChange('email')}
+      onBlur={props.handleBlur('email')}
       value={props.values.email}
     />
     <Button onPress={props.handleSubmit} title="Submit" />
@@ -599,81 +599,8 @@ DOM and React Native are:
 1.  Formik's `props.handleSubmit` is passed to a `<Button onPress={...} />`
     instead of HTML `<form onSubmit={...} />` component (since there is no
     `<form />` element in React Native).
-2.  `<TextInput />` uses Formik's `props.setFieldValue` instead of
-    `props.handleChange`. To understand why, see the discussion below.
+2.  `<TextInput />` uses Formik's `props.handleChange(fieldName)` and `handleBlur(fieldName)` instead of directly     assigning the callbacks to props, because we have to get the `fieldName` from somewhere and with ReactNative we can't get it automatically like for web (using input name attribute). You can also use `setFieldValue(fieldName, value)` and `setTouched(fieldName, bool)` as an alternative.
 
-#### Why use `setFieldValue` instead of `handleChange`?
-
-'cuz [`handleChange`] will not work in React Native...
-
-```js
-import { Button, TextInput, View } from 'react-native';
-import { Formik } from 'formik';
-
-const MyReactNativeForm = props => (
-  <View>
-    <Formik
-      onSubmit={(values, actions) => {
-        setTimeout(() => {
-          console.log(JSON.stringify(values, null, 2));
-          actions.setSubmitting(false);
-        }, 1000);
-      }}
-      render={formikProps => (
-        <View>
-          <TextInput
-            name="email"
-            onChangeText={formikProps.handleChange} // this WILL NOT WORK IN RN
-            value={formikProps.values.email}
-          />
-          <Button onPress={formikProps.handleSubmit} />
-        </View>
-      )}
-    />
-  </View>
-);
-```
-
-The reason is that Formik's [`handleChange`] function expects its first argument
-to be synthetic DOM event where the `event.target` is the DOM input element and
-`event.target.id` or `event.target.name` matches the field to be updated.
-Without this, [`handleChange`] will do nothing.
-
-In React Native, neither
-[`<TextInput />`](https://facebook.github.io/react-native/docs/textinput.html)'s
-[`onChange`](https://facebook.github.io/react-native/docs/textinput.html#onchange)
-nor
-[`onChangeText`](https://facebook.github.io/react-native/docs/textinput.html#onchange)
-callbacks pass such an event or one like it to its callback. Instead, they do
-the following _(emphasis added)_:
-
-> [`onChange?: function`](https://facebook.github.io/react-native/docs/textinput.html#onchange)\
-> Callback that is called when the text input's text changes.
->
-> [`onChangeText?: function`](https://facebook.github.io/react-native/docs/textinput.html#onchangetext)\
-> Callback that is called when the text input's text changes. **Changed text is passed
-> as an argument to the callback handler.**
-
-However, Formik works just fine if you use `props.setFieldValue`!
-Philosophically, just treat React Native's `<TextInput />` the same way you would
-any other 3rd party custom input element.
-
-In conclusion, the following WILL work in React Native:
-
-```js
-// ...
-// this works.
-export const MyReactNativeForm = props => (
-  <View>
-    <TextInput
-      onChangeText={text => props.setFieldValue('email', text)}
-      value={props.values.email}
-    />
-    <Button onPress={props.handleSubmit} />
-  </View>
-);
-// ...
-```
 
 #### Avoiding new functions in render
 

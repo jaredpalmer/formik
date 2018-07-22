@@ -1750,7 +1750,7 @@ These are identical to the props of `<Formik render={props => ...} />`
 `connect()` is a higher-order component that injects raw Formik context as prop called `formik` into the inner component. Fun fact: Formik uses `connect()` under the hood to wire up `<Field/>`, `<FastField>`, and `<Form>`. Advanced users may find it useful to use `connect()` when building custom components.
 
 ```js
-import { connnect } from 'formik';
+import { connect } from 'formik';
 
 const SubmitCount = ({ formik }) => <div>{formik.submitCount}</div>;
 

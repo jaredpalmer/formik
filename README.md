@@ -1490,7 +1490,7 @@ const ErrorMessage = ({ name }) => (
 <ErrorMessage name="friends[0].name" />; // => null, 'too short', or 'required'
 ```
 
-_NOTE_: In Formik v0.12 / 1.0, a new `meta` prop may be be added to `Field` and `FieldArray` that will give you relevant metadata such as `error` & `touch`, which will save you from having to use Formik or lodash's getIn or checking if the path is defined on your own.
+_NOTE_: In Formik v0.12 / 1.0, a new `meta` prop may be added to `Field` and `FieldArray` that will give you relevant metadata such as `error` & `touch`, which will save you from having to use Formik or lodash's getIn or checking if the path is defined on your own.
 
 #### FieldArray Helpers
 

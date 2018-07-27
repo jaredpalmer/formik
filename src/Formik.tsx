@@ -164,7 +164,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       field,
       getIn(this.state.values, field)
     ).then(error => {
-      if (!!error && this.didMount) {
+      if (this.didMount) {
         this.setState({
           errors: setIn(this.state.errors, field, error),
           isValidating: false,

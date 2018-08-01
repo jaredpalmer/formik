@@ -147,7 +147,7 @@ export interface FormikHandlers {
     field: T
   ): T extends React.ChangeEvent<any>
     ? void
-    : ((e: React.ChangeEvent<any>) => void);
+    : ((e: string | React.ChangeEvent<any>) => void);
 }
 
 /**

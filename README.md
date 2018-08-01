@@ -542,7 +542,7 @@ const EditUserDialog = ({ user, updateUser, onClose }) => {
         render={({ errors, touched, isSubmitting }) => (
           <Form>
             <Field type="email" name="email" />
-            {errors.email && touched.social.email && <div>{errors.email}</div>}
+            {errors.email && touched.email && <div>{errors.email}</div>}
             <Field type="text" name="social.facebook" />
             {errors.social.facebook &&
               touched.social.facebook && <div>{errors.social.facebook}</div>}

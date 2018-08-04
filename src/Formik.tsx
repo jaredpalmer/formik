@@ -48,6 +48,9 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       validate?: ((value: any) => string | Promise<void> | undefined);
     };
   };
+  fieldValidatedMap: { [field: string]: boolean } = {};
+  fieldChangingMap: { [field: string]: boolean } = {};
+  fieldLevelValidateErrors: { [field: string]: any } = {};
 
   constructor(props: FormikConfig<Values> & ExtraProps) {
     super(props);
@@ -177,11 +180,25 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     field: string,
     value: void | string
   ): Promise<string | undefined | PromiseLike<any>> => {
-    return new Promise(resolve => resolve(this.fields[field].validate!(value)));
+    return new Promise(resolve =>
+      resolve(this.fields[field].validate!(value))
+    ).then(
+      error => {
+        this.fieldLevelValidateErrors[field] = error;
+        this.fieldValidatedMap[field] = true;
+        return error;
+      },
+      error => {
+        this.fieldLevelValidateErrors[field] = error;
+        this.fieldValidatedMap[field] = true;
+        return error;
+      }
+    );
   };
 
   runFieldLevelValidations(
-    values: FormikValues
+    values: FormikValues,
+    fieldReason?: string
   ): Promise<FormikErrors<Values>> {
     const fieldKeysWithValidation: string[] = Object.keys(this.fields).filter(
       f =>
@@ -194,13 +211,26 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     // Construct an array with all of the field validation functions
     const fieldValidations: Promise<string>[] =
       fieldKeysWithValidation.length > 0
-        ? fieldKeysWithValidation.map(
-            f =>
-              this.runSingleFieldLevelValidation(f, getIn(values, f)).then(
-                x => x,
-                e => e
-              ) // always catch so Promise.all runs each one
-          )
+        ? fieldKeysWithValidation.map(f => {
+            if (
+              fieldReason &&
+              f !== fieldReason &&
+              !new RegExp(`^${f}[.\[]`).test(fieldReason)
+            ) {
+              // Use validation cache when the field not changing
+              if (
+                (!this.props.validateFieldOnOtherChangeAtInit &&
+                  this.fieldValidatedMap[f]) ||
+                this.fieldValidatedMap[fieldReason]
+              ) {
+                return Promise.resolve(this.fieldLevelValidateErrors[f]);
+              }
+            }
+            return this.runSingleFieldLevelValidation(f, getIn(values, f)).then(
+              x => x,
+              e => e
+            ); // always catch so Promise.all runs each one
+          })
         : [Promise.resolve('DO_NOT_DELETE_YOU_WILL_BE_FIRED')]; // use special case ;)
 
     return Promise.all(fieldValidations).then((fieldErrorsList: string[]) =>
@@ -263,11 +293,12 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
    * Run all validations methods and update state accordingly
    */
   runValidations = (
-    values: FormikValues = this.state.values
+    values: FormikValues = this.state.values,
+    fieldReason?: string
   ): Promise<FormikErrors<Values>> => {
     this.setState({ isValidating: true });
     return Promise.all([
-      this.runFieldLevelValidations(values),
+      this.runFieldLevelValidations(values, fieldReason),
       this.props.validationSchema ? this.runValidationSchema(values) : {},
       this.props.validate ? this.runValidateHandler(values) : {},
     ]).then(([fieldErrors, schemaErrors, handlerErrors]) => {
@@ -333,13 +364,20 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
 
       if (field) {
         // Set form fields by name
-        this.setState(prevState => ({
-          ...prevState,
-          values: setIn(prevState.values, field!, val),
-        }));
+        this.fieldChangingMap[field] = true;
+        this.setState(
+          prevState => ({
+            ...prevState,
+            values: setIn(prevState.values, field!, val),
+            touched: setIn(prevState.touched, field!, true),
+          }),
+          () => {
+            delete this.fieldChangingMap[field as string];
+          }
+        );
 
         if (this.props.validateOnChange) {
-          this.runValidations(setIn(this.state.values, field, val));
+          this.runValidations(setIn(this.state.values, field, val), field);
         }
       }
     };
@@ -367,6 +405,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     value: any,
     shouldValidate: boolean = true
   ) => {
+    this.fieldChangingMap[field] = true;
     // Set form field by name
     this.setState(
       prevState => ({
@@ -374,8 +413,9 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
         values: setIn(prevState.values, field, value),
       }),
       () => {
+        this.fieldChangingMap[field] = false;
         if (this.props.validateOnChange && shouldValidate) {
-          this.runValidations(this.state.values);
+          this.runValidations(this.state.values, field);
         }
       }
     );
@@ -459,7 +499,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       }));
 
       if (this.props.validateOnBlur) {
-        this.runValidations(this.state.values);
+        this.runValidations(this.state.values, field);
       }
     };
 
@@ -487,7 +527,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       }),
       () => {
         if (this.props.validateOnBlur && shouldValidate) {
-          this.runValidations(this.state.values);
+          this.runValidations(this.state.values, field);
         }
       }
     );
@@ -585,6 +625,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       handleSubmit: this.handleSubmit,
       validateOnChange: this.props.validateOnChange,
       validateOnBlur: this.props.validateOnBlur,
+      fieldChangingMap: this.fieldChangingMap,
     };
   };
 

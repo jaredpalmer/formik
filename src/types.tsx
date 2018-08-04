@@ -207,6 +207,11 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
   ) => void | object | Promise<FormikErrors<Values>>);
 
   /**
+   * Whether validate on other changing at the initialization
+   */
+  validateFieldOnOtherChangeAtInit: boolean;
+
+  /**
    * React children or child render callback
    */
   children?:
@@ -232,6 +237,7 @@ export type FormikProps<Values> = FormikSharedConfig &
       }
     ): void;
     unregisterField(name: string): void;
+    fieldChangingMap: { [field: string]: boolean };
   };
 
 /**

@@ -209,7 +209,7 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
   /**
    * Whether validate on other changing at the initialization
    */
-  validateFieldOnOtherChangeAtInit: boolean;
+  validateFieldOnOtherChangeAtInit?: boolean;
 
   /**
    * React children or child render callback

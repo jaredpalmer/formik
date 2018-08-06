@@ -99,8 +99,9 @@ class FastFieldInner<Props = {}, Values = {}> extends React.Component<
       setFormikState,
     } = this.props.formik;
     const { type, value, checked } = e.target;
+    let parsed;
     const val = /number|range/.test(type)
-      ? parseFloat(value)
+      ? ((parsed = parseFloat(value)), isNaN(parsed) ? '' : parsed)
       : /checkbox/.test(type) ? checked : value;
     if (validateOnChange) {
       // Field-level validation

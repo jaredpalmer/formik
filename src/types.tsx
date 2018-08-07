@@ -162,6 +162,8 @@ export interface FormikSharedConfig {
   isInitialValid?: boolean | ((props: object) => boolean | undefined);
   /** Should Formik reset the form when new initialValues change */
   enableReinitialize?: boolean;
+  /** Allow the form to be submitted with invalid fields. */
+  allowInvalidSubmission?: boolean;
 }
 
 /**

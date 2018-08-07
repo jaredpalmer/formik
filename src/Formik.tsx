@@ -249,9 +249,15 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     );
   }
 
-  runValidateHandler(values: FormikValues): Promise<FormikErrors<Values>> {
+  runValidateHandler(
+    values: FormikValues,
+    fieldReason?: string
+  ): Promise<FormikErrors<Values>> {
     return new Promise(resolve => {
-      const maybePromisedErrors = (this.props.validate as any)(values);
+      const maybePromisedErrors = (this.props.validate as any)(values, {
+        errors: this.state.errors,
+        fieldReason,
+      });
       if (maybePromisedErrors === undefined) {
         resolve({});
       } else if (isPromise(maybePromisedErrors)) {
@@ -300,7 +306,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     return Promise.all([
       this.runFieldLevelValidations(values, fieldReason),
       this.props.validationSchema ? this.runValidationSchema(values) : {},
-      this.props.validate ? this.runValidateHandler(values) : {},
+      this.props.validate ? this.runValidateHandler(values, fieldReason) : {},
     ]).then(([fieldErrors, schemaErrors, handlerErrors]) => {
       const combinedErrors = deepmerge.all<FormikErrors<Values>>([
         fieldErrors,

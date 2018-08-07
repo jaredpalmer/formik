@@ -203,7 +203,11 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
    * throws an error object where that object keys map to corresponding value.
    */
   validate?: ((
-    values: Values
+    values: Values,
+    meta: {
+      fieldReason?: string;
+      errors: FormikErrors<any>;
+    }
   ) => void | object | Promise<FormikErrors<Values>>);
 
   /**

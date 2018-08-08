@@ -206,7 +206,6 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
     values: Values,
     meta: {
       fieldReason?: string;
-      errors: FormikErrors<any>;
     }
   ) => void | object | Promise<FormikErrors<Values>>);
 
@@ -236,7 +235,8 @@ export type FormikProps<Values> = FormikSharedConfig &
       name: string,
       fns: {
         validate?: ((
-          value: any
+          value: any,
+          meta: { fieldReason?: string }
         ) => string | Function | Promise<void> | undefined);
       }
     ): void;

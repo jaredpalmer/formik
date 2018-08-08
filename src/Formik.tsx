@@ -45,7 +45,10 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
   } = {};
   fields: {
     [field: string]: {
-      validate?: ((value: any) => string | Promise<void> | undefined);
+      validate?: ((
+        value: any,
+        meta: { fieldReason?: string }
+      ) => string | Promise<void> | undefined);
     };
   };
   fieldValidatedMap: { [field: string]: boolean } = {};
@@ -178,10 +181,11 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
 
   runSingleFieldLevelValidation = (
     field: string,
-    value: void | string
+    value: void | string,
+    fieldReason?: string
   ): Promise<string | undefined | PromiseLike<any>> => {
     return new Promise(resolve =>
-      resolve(this.fields[field].validate!(value))
+      resolve(this.fields[field].validate!(value, { fieldReason }))
     ).then(
       error => {
         this.fieldLevelValidateErrors[field] = error;
@@ -226,10 +230,11 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
                 return Promise.resolve(this.fieldLevelValidateErrors[f]);
               }
             }
-            return this.runSingleFieldLevelValidation(f, getIn(values, f)).then(
-              x => x,
-              e => e
-            ); // always catch so Promise.all runs each one
+            return this.runSingleFieldLevelValidation(
+              f,
+              getIn(values, f),
+              fieldReason
+            ).then(x => x, e => e); // always catch so Promise.all runs each one
           })
         : [Promise.resolve('DO_NOT_DELETE_YOU_WILL_BE_FIRED')]; // use special case ;)
 
@@ -255,7 +260,6 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
   ): Promise<FormikErrors<Values>> {
     return new Promise(resolve => {
       const maybePromisedErrors = (this.props.validate as any)(values, {
-        errors: this.state.errors,
         fieldReason,
       });
       if (maybePromisedErrors === undefined) {

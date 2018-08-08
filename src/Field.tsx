@@ -182,7 +182,7 @@ class FieldInner<Props = {}, Values = {}> extends React.Component<
       children,
       component = 'input',
       formik,
-      shouldFieldUpdateOrEnableDefault,
+      enableDefaultUpdateFunc,
       ...props
     } = (this.props as FieldAttributes<Props> & {
       formik: FormikContext<Values>;

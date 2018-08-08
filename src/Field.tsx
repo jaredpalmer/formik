@@ -82,7 +82,11 @@ export interface FieldConfig {
   /** Inner ref */
   innerRef?: (instance: any) => void;
 
-  enableDefaultUpdateFunc?: boolean;
+  shouldFieldUpdateOrEnableDefault?:
+    | boolean
+    | ((
+        props: FieldAttributes<any> & { formik: FormikContext<any> }
+      ) => boolean);
 }
 
 export type FieldAttributes<T> = GenericFieldHTMLAttributes & FieldConfig & T;
@@ -126,7 +130,9 @@ class FieldInner<Props = {}, Values = {}> extends React.Component<
   shouldComponentUpdate(
     props: FieldAttributes<Props> & { formik: FormikContext<Values> }
   ) {
-    if (props.enableDefaultUpdateFunc) {
+    if (typeof props.shouldFieldUpdateOrEnableDefault === 'function') {
+      return props.shouldFieldUpdateOrEnableDefault(props);
+    } else if (props.shouldFieldUpdateOrEnableDefault) {
       const {
         name,
         formik: { touched, errors, fieldChangingMap },
@@ -176,7 +182,7 @@ class FieldInner<Props = {}, Values = {}> extends React.Component<
       children,
       component = 'input',
       formik,
-      enableDefaultUpdateFunc,
+      shouldFieldUpdateOrEnableDefault,
       ...props
     } = (this.props as FieldAttributes<Props> & {
       formik: FormikContext<Values>;

@@ -87,6 +87,11 @@ export interface FieldConfig {
     | ((
         props: FieldAttributes<any> & { formik: FormikContext<any> }
       ) => boolean);
+
+  /** Should field need validate again */
+  shouldValidate?: (
+    meta: { values: any; value: any; fieldReason: string }
+  ) => boolean;
 }
 
 export type FieldAttributes<T> = GenericFieldHTMLAttributes & FieldConfig & T;
@@ -124,6 +129,7 @@ class FieldInner<Props = {}, Values = {}> extends React.Component<
     // registered Field's validate fns right prior to submit
     formik.registerField(props.name, {
       validate: props.validate,
+      shouldValidate: props.shouldValidate,
     });
   }
 
@@ -160,12 +166,19 @@ class FieldInner<Props = {}, Values = {}> extends React.Component<
       this.props.formik.unregisterField(prevProps.name);
       this.props.formik.registerField(this.props.name, {
         validate: this.props.validate,
+        shouldValidate: this.props.shouldValidate,
       });
     }
 
     if (this.props.validate !== prevProps.validate) {
       this.props.formik.registerField(this.props.name, {
         validate: this.props.validate,
+      });
+    }
+
+    if (this.props.shouldValidate !== prevProps.shouldValidate) {
+      this.props.formik.registerField(this.props.name, {
+        shouldValidate: this.props.shouldValidate,
       });
     }
   }
@@ -183,6 +196,7 @@ class FieldInner<Props = {}, Values = {}> extends React.Component<
       component = 'input',
       formik,
       shouldFieldUpdateOrEnableDefault,
+      shouldValidate,
       ...props
     } = (this.props as FieldAttributes<Props> & {
       formik: FormikContext<Values>;

@@ -45,10 +45,14 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
   } = {};
   fields: {
     [field: string]: {
+      reset?: ((nextValues?: any) => void);
       validate?: ((
         value: any,
         meta: { fieldReason?: string }
       ) => string | Promise<void> | undefined);
+      shouldValidate?: (
+        meta: { values: any; value: any; fieldReason: string }
+      ) => boolean;
     };
   };
   fieldValidatedMap: { [field: string]: boolean } = {};
@@ -89,13 +93,19 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     fns: {
       reset?: ((nextValues?: any) => void);
       validate?: ((value: any) => string | Promise<void> | undefined);
+      shouldValidate?: (
+        meta: { values: any; value: any; fieldReason: string }
+      ) => boolean;
     }
   ) => {
-    this.fields[name] = fns;
+    this.fields[name] = { ...this.fields[name], ...fns };
   };
 
   unregisterField = (name: string) => {
     delete this.fields[name];
+    delete this.fieldChangingMap[name];
+    delete this.fieldValidatedMap[name];
+    delete this.fieldLevelValidateErrors[name];
   };
 
   componentDidMount() {
@@ -216,23 +226,24 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     const fieldValidations: Promise<string>[] =
       fieldKeysWithValidation.length > 0
         ? fieldKeysWithValidation.map(f => {
+            const value = getIn(values, f);
+            const { shouldValidate } = this.fields[f];
             if (
               fieldReason &&
               f !== fieldReason &&
-              !new RegExp(`^${f}[.\[]`).test(fieldReason)
+              !new RegExp(`^${f}[.\[]`).test(fieldReason) &&
+              this.fieldValidatedMap[f] &&
+              !(
+                typeof shouldValidate === 'function' &&
+                shouldValidate({ values, value, fieldReason })
+              )
             ) {
               // Use validation cache when the field not changing
-              if (
-                (!this.props.validateFieldOnOtherChangeAtInit &&
-                  this.fieldValidatedMap[f]) ||
-                this.fieldValidatedMap[fieldReason]
-              ) {
-                return Promise.resolve(this.fieldLevelValidateErrors[f]);
-              }
+              return Promise.resolve(this.fieldLevelValidateErrors[f]);
             }
             return this.runSingleFieldLevelValidation(
               f,
-              getIn(values, f),
+              value,
               fieldReason
             ).then(x => x, e => e); // always catch so Promise.all runs each one
           })

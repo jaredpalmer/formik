@@ -238,6 +238,9 @@ export type FormikProps<Values> = FormikSharedConfig &
           value: any,
           meta: { fieldReason?: string }
         ) => string | Function | Promise<void> | undefined);
+        shouldValidate?: (
+          meta: { values: any; value: any; fieldReason: string }
+        ) => boolean;
       }
     ): void;
     unregisterField(name: string): void;

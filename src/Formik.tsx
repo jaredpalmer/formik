@@ -327,7 +327,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
           });
         }
         val = /number|range/.test(type)
-          ? ((parsed = parseFloat(value)), isNaN(parsed) ? '' : parsed)
+          ? ((parsed = parseFloat(value)), isNaN(parsed) ? null : parsed)
           : /checkbox/.test(type) ? checked : value;
       }
 

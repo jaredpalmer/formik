@@ -553,7 +553,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     );
   };
 
-  setFieldError = (field: string, message: string) => {
+  setFieldError = (field: string, message: string | undefined) => {
     // Set form field by name
     this.setState(prevState => ({
       ...prevState,

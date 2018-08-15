@@ -34,7 +34,7 @@ export interface FieldProps<V = any> {
     /** Mark input as touched */
     onBlur: (e: any) => void;
     /** Value of the input */
-    value: any;
+    [x: string]: any; // 'value' or 'checked' field
     /* name of the input */
     name: string;
   };
@@ -190,10 +190,9 @@ class FieldInner<Props = {}, Values = {}> extends React.Component<
       ...restOfFormik
     } = formik;
     const field = {
-      value:
-        props.type === 'radio' || props.type === 'checkbox'
-          ? props.value // React uses checked={} for these inputs
-          : getIn(formik.values, name),
+      [props.type === 'radio' || props.type === 'checkbox'
+        ? 'checked'
+        : 'value']: getIn(formik.values, name),
       name,
       onChange: validate ? this.handleChange : formik.handleChange,
       onBlur: validate ? this.handleBlur : formik.handleBlur,

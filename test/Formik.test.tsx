@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import * as Yup from 'yup';
 import { Formik, FormikProps } from '../src';
 import { shallow, mount } from '@pisano/enzyme';
 import { sleep, noop } from './testHelpers';
@@ -1295,5 +1296,35 @@ describe('<Formik>', () => {
     expect(validate).toHaveBeenCalled();
     // so it should change
     expect(injected.isValidating).toBe(false);
+  });
+
+  it('should merge validation errors', async () => {
+    const validate = () => ({
+      users: [{ firstName: 'required' }],
+    });
+    const validationSchema = Yup.object({
+      users: Yup.array().of(
+        Yup.object({
+          lastName: Yup.mixed().required('required'),
+        })
+      ),
+    });
+    let injected: any;
+
+    const tree = shallow(
+      <Formik
+        initialValues={{ users: [{ firstName: null, lastName: null }] }}
+        validate={validate}
+        validationSchema={validationSchema}
+        onSubmit={noop}
+      >
+        {formikProps => (injected = formikProps) && null}
+      </Formik>
+    );
+
+    await injected.validateForm();
+    expect(tree.state('errors')).toEqual({
+      users: [{ firstName: 'required', lastName: 'required' }],
+    });
   });
 });

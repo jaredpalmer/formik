@@ -184,6 +184,11 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
   onSubmit: (values: Values, formikActions: FormikActions<Values>) => void;
 
   /**
+   * Change handler
+   */
+  onChange?: (values: Values, formikActions: FormikActions<Values>) => void;
+
+  /**
    * Form component to render
    */
   component?: React.ComponentType<FormikProps<Values>> | React.ReactNode;

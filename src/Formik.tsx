@@ -151,6 +151,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       if (this.props.validateOnChange) {
         this.runValidations(values);
       }
+      this.executeChange();
     });
   };
 
@@ -393,6 +394,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
           }),
           () => {
             delete this.fieldChangingMap[field as string];
+            this.executeChange();
           }
         );
 
@@ -437,6 +439,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
         if (this.props.validateOnChange && shouldValidate) {
           this.runValidations(this.state.values, field);
         }
+        this.executeChange();
       }
     );
   };
@@ -496,6 +499,11 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
 
   executeSubmit = () => {
     this.props.onSubmit(this.state.values, this.getFormikActions());
+  };
+
+  executeChange = () => {
+    const { onChange } = this.props;
+    onChange && onChange(this.state.values, this.getFormikActions());
   };
 
   handleBlur = (eventOrString: any): void | ((e: any) => void) => {
@@ -566,16 +574,21 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
 
     this.initialValues = values;
 
-    this.setState({
-      isSubmitting: false,
-      isValidating: false,
-      errors: {},
-      touched: {},
-      error: undefined,
-      status: undefined,
-      values,
-      submitCount: 0,
-    });
+    this.setState(
+      {
+        isSubmitting: false,
+        isValidating: false,
+        errors: {},
+        touched: {},
+        error: undefined,
+        status: undefined,
+        values,
+        submitCount: 0,
+      },
+      () => {
+        this.executeChange();
+      }
+    );
   };
 
   handleReset = () => {

@@ -137,7 +137,7 @@ class FieldInner<Props = {}, Values = {}> extends React.Component<
     props: FieldAttributes<Props> & { formik: FormikContext<Values> }
   ) {
     if (typeof props.shouldFieldUpdateOrEnableDefault === 'function') {
-      return props.shouldFieldUpdateOrEnableDefault.bind(this, props);
+      return props.shouldFieldUpdateOrEnableDefault.bind(this)(props);
     } else if (props.shouldFieldUpdateOrEnableDefault) {
       const {
         name,

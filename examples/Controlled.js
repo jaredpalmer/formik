@@ -20,9 +20,12 @@ class Controlled extends React.Component {
           // your controlled state whenever Formik state
           // updates. It is up to you to make sure that
           // this update works as Formik expects it to.
-          onChange={({ values /* errors, isSubmitting, etc. */ }) =>
-            this.setState(values)
-          }
+          onChange={({ values /* errors, isSubmitting, etc. */ }) => {
+            if (values) {
+              console.log(values);
+              this.setState(s => ({ ...s, ...values }));
+            }
+          }}
           onSubmit={() => {
             setTimeout(() => {
               alert(JSON.stringify(this.state, null, 2));
@@ -40,6 +43,7 @@ class Controlled extends React.Component {
               <Field name="email" placeholder="jane@acme.com" type="email" />
 
               <button type="submit">Submit</button>
+
               <pre>{JSON.stringify(this.state, null, 2)}</pre>
             </Form>
           )}

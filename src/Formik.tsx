@@ -76,20 +76,35 @@ export class Formik<Values = {}, ExtraProps = {}> extends React.Component<
     cb?: (() => void)
   ) => {
     let onStateChangeArg: Partial<FormikState<Values>> = {};
+    let nextFullState: FormikState<Values> = {} as FormikState<Values>;
+    let nextState: Partial<FormikState<Values>> = {};
+    const isStateToSetAFunction = isFunction(stateToSet);
+
+    if (!isStateToSetAFunction) {
+      if (this.props.onChange !== undefined) {
+        this.props.onChange(stateToSet as any, {
+          ...this.getState(),
+          ...stateToSet,
+        });
+      }
+    }
     // The types here are a bit whacky because we are potentially merging
     // controlled props and internal state.
     return this.setState(
       (prevState: FormikState<Values>) => {
         prevState = this.getState(prevState); // Get the merged state
-        let newStateToSet: Partial<FormikState<Values>> = isFunction(stateToSet)
-          ? stateToSet(prevState)
+
+        let newStateToSet: Partial<FormikState<Values>> = isStateToSetAFunction
+          ? (stateToSet as Function)(prevState)
           : stateToSet;
-        let nextState: Partial<FormikState<Values>> = {};
+
         Object.keys(newStateToSet).forEach((key: string) => {
           const k = key as keyof FormikState<Values>;
           if (prevState[k] !== newStateToSet[k]) {
             onStateChangeArg[k] = newStateToSet[k];
           }
+
+          nextFullState[k] = newStateToSet[k];
 
           if (!this.isControlledProp(k)) {
             nextState[k] = newStateToSet[k];
@@ -177,11 +192,11 @@ export class Formik<Values = {}, ExtraProps = {}> extends React.Component<
   }
 
   setErrors = (errors: FormikErrors<Values>) => {
-    this.setState({ errors });
+    this.internalSetState({ errors });
   };
 
   setTouched = (touched: FormikTouched<Values>) => {
-    this.setState({ touched }, () => {
+    this.internalSetState({ touched }, () => {
       if (this.props.validateOnBlur) {
         this.runValidations(this.state.values);
       }
@@ -189,7 +204,7 @@ export class Formik<Values = {}, ExtraProps = {}> extends React.Component<
   };
 
   setValues = (values: Values) => {
-    this.setState({ values }, () => {
+    this.internalSetState({ values }, () => {
       if (this.props.validateOnChange) {
         this.runValidations(values);
       }
@@ -197,7 +212,7 @@ export class Formik<Values = {}, ExtraProps = {}> extends React.Component<
   };
 
   setStatus = (status?: any) => {
-    this.setState({ status });
+    this.internalSetState({ status });
   };
 
   setError = (error: any) => {
@@ -206,24 +221,24 @@ export class Formik<Values = {}, ExtraProps = {}> extends React.Component<
         `Warning: Formik\'s setError(error) is deprecated and may be removed in future releases. Please use Formik\'s setStatus(status) instead. It works identically. For more info see https://github.com/jaredpalmer/formik#setstatus-status-any--void`
       );
     }
-    this.setState({ error });
+    this.internalSetState({ error });
   };
 
   setSubmitting = (isSubmitting: boolean) => {
-    this.setState({ isSubmitting });
+    this.internalSetState({ isSubmitting });
   };
 
   /**
    * Run field level validation
    */
   validateField = (field: string) => {
-    this.setState({ isValidating: true });
+    this.internalSetState({ isValidating: true });
     this.runSingleFieldLevelValidation(
       field,
       getIn(this.state.values, field)
     ).then(error => {
       if (this.didMount) {
-        this.setState({
+        this.internalSetState({
           errors: setIn(this.state.errors, field, error),
           isValidating: false,
         });
@@ -323,7 +338,7 @@ export class Formik<Values = {}, ExtraProps = {}> extends React.Component<
   runValidations = (
     values: FormikValues = this.state.values
   ): Promise<FormikErrors<Values>> => {
-    this.setState({ isValidating: true });
+    this.internalSetState({ isValidating: true });
     return Promise.all([
       this.runFieldLevelValidations(values),
       this.props.validationSchema ? this.runValidationSchema(values) : {},
@@ -336,7 +351,7 @@ export class Formik<Values = {}, ExtraProps = {}> extends React.Component<
       ]);
 
       if (this.didMount) {
-        this.setState({ isValidating: false, errors: combinedErrors });
+        this.internalSetState({ isValidating: false, errors: combinedErrors });
       }
 
       return combinedErrors;
@@ -391,7 +406,7 @@ export class Formik<Values = {}, ExtraProps = {}> extends React.Component<
 
       if (field) {
         // Set form fields by name
-        this.setState(prevState => ({
+        this.internalSetState(prevState => ({
           ...prevState,
           values: setIn(prevState.values, field!, val),
         }));
@@ -426,7 +441,7 @@ export class Formik<Values = {}, ExtraProps = {}> extends React.Component<
     shouldValidate: boolean = true
   ) => {
     // Set form field by name
-    this.setState(
+    this.internalSetState(
       prevState => ({
         ...prevState,
         values: setIn(prevState.values, field, value),
@@ -473,7 +488,7 @@ export class Formik<Values = {}, ExtraProps = {}> extends React.Component<
 
   submitForm = () => {
     // Recursively set all values to `true`.
-    this.setState(prevState => ({
+    this.internalSetState(prevState => ({
       touched: setNestedObjectValues<FormikTouched<Values>>(
         prevState.values,
         true
@@ -487,7 +502,7 @@ export class Formik<Values = {}, ExtraProps = {}> extends React.Component<
       if (isValid) {
         this.executeSubmit();
       } else {
-        this.setState({ isSubmitting: false });
+        this.internalSetState({ isSubmitting: false });
       }
     });
   };
@@ -512,7 +527,7 @@ export class Formik<Values = {}, ExtraProps = {}> extends React.Component<
         });
       }
 
-      this.setState(prevState => ({
+      this.internalSetState(prevState => ({
         touched: setIn(prevState.touched, field, true),
       }));
 
@@ -538,7 +553,7 @@ export class Formik<Values = {}, ExtraProps = {}> extends React.Component<
     shouldValidate: boolean = true
   ) => {
     // Set touched field by name
-    this.setState(
+    this.internalSetState(
       prevState => ({
         ...prevState,
         touched: setIn(prevState.touched, field, touched),
@@ -553,7 +568,7 @@ export class Formik<Values = {}, ExtraProps = {}> extends React.Component<
 
   setFieldError = (field: string, message: string | undefined) => {
     // Set form field by name
-    this.setState(prevState => ({
+    this.internalSetState(prevState => ({
       ...prevState,
       errors: setIn(prevState.errors, field, message),
     }));
@@ -564,7 +579,7 @@ export class Formik<Values = {}, ExtraProps = {}> extends React.Component<
 
     this.initialValues = values;
 
-    this.setState({
+    this.internalSetState({
       isSubmitting: false,
       isValidating: false,
       errors: {},
@@ -594,7 +609,7 @@ export class Formik<Values = {}, ExtraProps = {}> extends React.Component<
   };
 
   setFormikState = (s: any, callback?: (() => void)) =>
-    this.setState(s, callback);
+    this.internalSetState(s, callback);
 
   getFormikActions = (): FormikActions<Values> => {
     return {

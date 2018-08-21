@@ -25,8 +25,6 @@ import {
   cbToCb,
 } from './utils';
 
-type FormikStateKeys<Values> = keyof FormikState<Values>;
-
 export class Formik<Values = {}, ExtraProps = {}> extends React.Component<
   FormikConfig<Values> & ExtraProps,
   FormikState<Values>
@@ -87,17 +85,16 @@ export class Formik<Values = {}, ExtraProps = {}> extends React.Component<
           ? stateToSet(prevState)
           : stateToSet;
         let nextState: Partial<FormikState<Values>> = {};
-        Object.keys(newStateToSet).forEach(
-          (key: Extract<keyof FormikState<Values>, string>) => {
-            if (prevState[key] !== newStateToSet[key]) {
-              onStateChangeArg[key] = newStateToSet[key];
-            }
-
-            if (!this.isControlledProp(key)) {
-              nextState[key] = newStateToSet[key];
-            }
+        Object.keys(newStateToSet).forEach((key: string) => {
+          const k = key as keyof FormikState<Values>;
+          if (prevState[k] !== newStateToSet[k]) {
+            onStateChangeArg[k] = newStateToSet[k];
           }
-        );
+
+          if (!this.isControlledProp(k)) {
+            nextState[k] = newStateToSet[k];
+          }
+        });
 
         return nextState;
       },
@@ -191,7 +188,7 @@ export class Formik<Values = {}, ExtraProps = {}> extends React.Component<
     });
   };
 
-  setValues = (values: FormikValues) => {
+  setValues = (values: Values) => {
     this.setState({ values }, () => {
       if (this.props.validateOnChange) {
         this.runValidations(values);

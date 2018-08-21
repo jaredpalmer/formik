@@ -10,6 +10,7 @@ import SchemaValidation from '../examples/SchemaValidation';
 import SyncValidation from '../examples/SyncValidation';
 import FieldLevelValidation from '../examples/FieldLevelValidation';
 import CombinedValidations from '../examples/CombinedValidations';
+import Controlled from '../examples/Controlled';
 
 const AsyncValidationCode = require('!raw-loader!../examples/AsyncValidation');
 const ArraysCode = require('!raw-loader!../examples/Arrays');
@@ -20,6 +21,7 @@ const SchemaValidationCode = require('!raw-loader!../examples/SchemaValidation')
 const SyncValidationCode = require('!raw-loader!../examples/SyncValidation');
 const FieldLevelValidationCode = require('!raw-loader!../examples/FieldLevelValidation');
 const CombinedValidationsCode = require('!raw-loader!../examples/CombinedValidations');
+const ControlledCode = require('!raw-loader!../examples/Controlled');
 
 const Code = props => (
   <pre
@@ -130,6 +132,16 @@ storiesOf('Example', module)
           <CombinedValidations />
         </main>
         <Code>{CombinedValidationsCode}</Code>
+      </div>
+    );
+  })
+  .add('Controlled Formik', () => {
+    return (
+      <div className="story">
+        <main>
+          <Controlled />
+        </main>
+        <Code>{ControlledCode}</Code>
       </div>
     );
   });

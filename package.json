@@ -64,6 +64,7 @@
     "@types/react-dom": "^16.0.3",
     "@types/react-test-renderer": "15.5.2",
     "@types/warning": "^3.0.0",
+    "@types/yup": "^0.24.9",
     "all-contributors-cli": "^4.4.0",
     "awesome-typescript-loader": "^3.4.1",
     "cross-env": "5.0.5",

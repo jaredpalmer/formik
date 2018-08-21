@@ -49,16 +49,16 @@ to you.**
 
 ## Testimonials
 
-> "I can't believe people ever put forms in redux, or did anything else other than this."  
+> "I can't believe people ever put forms in redux, or did anything else other than this."
 > --[James Long](https://twitter.com/jlongster), Creator of Prettier and Actual Budget
 
-> ["Formik. All day. All long."](https://twitter.com/ken_wheeler/status/974676242501947397?s=20)  
+> ["Formik. All day. All long."](https://twitter.com/ken_wheeler/status/974676242501947397?s=20)
 > --[Ken Wheeler](https://twitter.com/ken_wheeler), Director of Open Source at Formidable Labs
 
-> ["Been using @jaredpalmer's Formik lately at work – this is my all-time favorite way to handle forms"](https://twitter.com/jxnblk/status/1000036895366307846)  
+> ["Been using @jaredpalmer's Formik lately at work – this is my all-time favorite way to handle forms"](https://twitter.com/jxnblk/status/1000036895366307846)
 > --[Brent Jackson](https://twitter.com/jxnblk/), Creator of Rebass, styled-system, Compositor and many more
 
-> ["Formik removes most of the moving parts involved in forms allowing me to move faster with more confidence."](https://twitter.com/tkh44/status/1000058583197732864)  
+> ["Formik removes most of the moving parts involved in forms allowing me to move faster with more confidence."](https://twitter.com/tkh44/status/1000058583197732864)
 > --[Kye Hohenberger](https://twitter.com/tkh44), Creator of Emotion
 
 ## Influences
@@ -121,7 +121,7 @@ There are two ways to use Formik:
 **Both do exactly the same thing** and share the same internal implementation.
 They just differ in their respective style....
 
-```js
+```jsx
 // Higher Order Component
 import React from 'react';
 import { withFormik } from 'formik';
@@ -211,7 +211,7 @@ const Basic = () => (
 export default Basic;
 ```
 
-```js
+```jsx
 // Render Prop
 import React from 'react';
 import { Formik } from 'formik';
@@ -433,7 +433,7 @@ user API has nested objects like so.
 When we are done we want our dialog to accept just a `user`, `updateUser`, and
 `onClose` props.
 
-```js
+```jsx
 // User.js
 import React from 'react';
 import Dialog from 'MySuperDialog';
@@ -515,7 +515,7 @@ key strokes.
 This is the **exact** same form as before, but written with `<Form />` and
 `<Field />`:
 
-```js
+```jsx
 // EditUserDialog.js
 import React from 'react';
 import Dialog from 'MySuperDialog';
@@ -570,7 +570,7 @@ you through them and what I consider to be best practices.
 Before going any further, here's a super minimal gist of how to use Formik with
 React Native that demonstrates the key differences:
 
-```js
+```jsx
 // Formik x React Native example
 import React from 'react';
 import { Button, TextInput, View } from 'react-native';
@@ -616,7 +616,7 @@ custom input element:
   `setFieldValue` as (in this case we'll match the React Native TextInput API
   and call it `this.props.onChangeText` for parity).
 
-```js
+```jsx
 // FormikReactNativeTextInput.js
 import * as React from 'react';
 import { TextInput } from 'react-native';
@@ -642,7 +642,7 @@ export default class FormikReactNativeTextInput extends React.Component {
 
 Then you could just use this custom input as follows:
 
-```tsx
+```jsx
 // MyReactNativeForm.js
 import { View, Button } from 'react-native';
 import TextInput from './FormikReactNativeTextInput';
@@ -854,7 +854,7 @@ If `isValidating` is `true` and `isSubmitting` is `true`.
 `<Formik>` is a component that helps you with building forms. It uses a render
 props pattern made popular by libraries like React Motion and React Router.
 
-```js
+```jsx
 import React from 'react';
 import { Formik } from 'formik';
 
@@ -1033,7 +1033,7 @@ Imperatively call field's [`validate`] function if specified for given field. Fo
 
 #### `component`
 
-```tsx
+```jsx
 <Formik component={ContactForm} />;
 
 const ContactForm = ({
@@ -1062,7 +1062,7 @@ don’t use both in the same `<Formik>`.
 
 #### `render: (props: FormikProps<Values>) => ReactNode`
 
-```tsx
+```jsx
 <Formik render={props => <ContactForm {...props} />} />
 
 <Formik
@@ -1087,7 +1087,7 @@ don’t use both in the same `<Formik>`.
 
 #### `children: func`
 
-```tsx
+```jsx
 <Formik children={props => <ContactForm {...props} />} />
 
 // or...
@@ -1223,7 +1223,7 @@ attribute to match up with Formik state. `<Field />` will default to an
 `component` prop. It can either be a string like `select` or another React
 component. `<Field />` can also take a `render` prop.
 
-```js
+```jsx
 import React from 'react';
 import { Formik, Field } from 'formik';
 
@@ -1399,7 +1399,7 @@ Default is `true`. Determines if form validation should or should not be run _af
 
 You can also iterate through an array of objects, by following a convention of `object[index]property` or `object.index.property` for the name attributes of `<Field />` or `<input />` elements in `<FieldArray />`.
 
-```js
+```jsx
 <Form>
   <FieldArray
     name="friends"
@@ -1473,7 +1473,7 @@ const FriendArrayErrors = errors =>
 
 For the nested field errors, you should assume that no part of the object is defined unless you've checked for it. Thus, you may want to do yourself a favor and make a custom `<ErrorMessage />` component that looks like this:
 
-```js
+```jsx
 import { Field, getIn } from 'formik';
 
 const ErrorMessage = ({ name }) => (

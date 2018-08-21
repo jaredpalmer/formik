@@ -11,7 +11,9 @@ export interface FormikValues {
  * Should be always be and object of strings, but any is allowed to support i18n libraries.
  */
 export type FormikErrors<Values> = {
-  [K in keyof Values]?: Values[K] extends object ? FormikErrors<Values[K]> : {}
+  [K in keyof Values]?: Values[K] extends object
+    ? FormikErrors<Values[K]>
+    : string
 };
 
 /**
@@ -131,7 +133,7 @@ export interface FormikActions<Values> {
  */
 export interface FormikHandlers {
   /** Form submit handler */
-  handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+  handleSubmit: (e?: React.FormEvent<HTMLFormElement>) => void;
   /** Reset form event handler  */
   handleReset: () => void;
   /** Classic React blur handler, keyed by input name */
@@ -147,7 +149,7 @@ export interface FormikHandlers {
     field: T
   ): T extends React.ChangeEvent<any>
     ? void
-    : ((e: React.ChangeEvent<any>) => void);
+    : ((e: string | React.ChangeEvent<any>) => void);
 }
 
 /**

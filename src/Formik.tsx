@@ -164,7 +164,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       field,
       getIn(this.state.values, field)
     ).then(error => {
-      if (!!error && this.didMount) {
+      if (this.didMount) {
         this.setState({
           errors: setIn(this.state.errors, field, error),
           isValidating: false,
@@ -268,11 +268,10 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       this.props.validationSchema ? this.runValidationSchema(values) : {},
       this.props.validate ? this.runValidateHandler(values) : {},
     ]).then(([fieldErrors, schemaErrors, handlerErrors]) => {
-      const combinedErrors = deepmerge.all<FormikErrors<Values>>([
-        fieldErrors,
-        schemaErrors,
-        handlerErrors,
-      ]);
+      const combinedErrors = deepmerge.all<FormikErrors<Values>>(
+        [fieldErrors, schemaErrors, handlerErrors],
+        { arrayMerge }
+      );
 
       if (this.didMount) {
         this.setState({ isValidating: false, errors: combinedErrors });
@@ -502,7 +501,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     );
   };
 
-  setFieldError = (field: string, message: string) => {
+  setFieldError = (field: string, message: string | undefined) => {
     // Set form field by name
     this.setState(prevState => ({
       ...prevState,
@@ -679,4 +678,27 @@ export function validateYupSchema<T extends FormikValues>(
     abortEarly: false,
     context: context,
   });
+}
+
+/**
+ * deepmerge array merging algorithm
+ * https://github.com/KyleAMathews/deepmerge#combine-array
+ */
+function arrayMerge(target: any[], source: any[], options: any): any[] {
+  const destination = target.slice();
+
+  source.forEach(function(e: any, i: number) {
+    if (typeof destination[i] === 'undefined') {
+      const cloneRequested = options.clone !== false;
+      const shouldClone = cloneRequested && options.isMergeableObject(e);
+      destination[i] = shouldClone
+        ? deepmerge(Array.isArray(e) ? [] : {}, e, options)
+        : e;
+    } else if (options.isMergeableObject(e)) {
+      destination[i] = deepmerge(target[i], e, options);
+    } else if (target.indexOf(e) === -1) {
+      destination.push(e);
+    }
+  });
+  return destination;
 }

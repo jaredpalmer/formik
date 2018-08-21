@@ -58,7 +58,7 @@ export interface WithFormikConfig<
   /**
    * A Yup Schema or a function that returns a Yup schema
    */
-  validationSchema?: any | ((props: Props) => any);
+  validationSchema?: {} | ((props: Props) => {});
 
   /**
    * Validation function. Must return an error object or promise that
@@ -125,7 +125,7 @@ export function withFormik<
 
       validationSchema = () => {
         return isFunction(config.validationSchema)
-          ? config.validationSchema!(this.props)
+          ? config.validationSchema(this.props)
           : config.validationSchema;
       };
 

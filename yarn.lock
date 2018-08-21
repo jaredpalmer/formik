@@ -8896,9 +8896,9 @@ typescript@*:
   version "2.6.2"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-2.6.2.tgz#3c5b6fd7f6de0914269027f03c0946758f7673a4"
 
-typescript@^3.0.0-dev.20180711:
-  version "3.0.0-dev.20180711"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.0.0-dev.20180711.tgz#aa3d44fd3e3514779d0dd92f47be297ba1f327df"
+typescript@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.0.1.tgz#43738f29585d3a87575520a4b93ab6026ef11fdb"
 
 ua-parser-js@^0.7.18:
   version "0.7.18"

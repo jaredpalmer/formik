@@ -90,7 +90,7 @@
     "tsc-watch": "^1.0.21",
     "tslint": "5.5.0",
     "tslint-react": "3.2.0",
-    "typescript": "^3.0.0-dev.20180711",
+    "typescript": "^3.0.1",
     "yup": "0.21.3"
   },
   "lint-staged": {

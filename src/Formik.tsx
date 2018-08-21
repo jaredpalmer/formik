@@ -22,17 +22,22 @@ import {
   setNestedObjectValues,
   getActiveElement,
   getIn,
+  cbToCb,
 } from './utils';
 
-export class Formik<ExtraProps = {}, Values = object> extends React.Component<
+type FormikStateKeys<Values> = keyof FormikState<Values>;
+
+export class Formik<Values = {}, ExtraProps = {}> extends React.Component<
   FormikConfig<Values> & ExtraProps,
-  FormikState<any>
+  FormikState<Values>
 > {
   static defaultProps = {
     validateOnChange: true,
     validateOnBlur: true,
     isInitialValid: false,
     enableReinitialize: false,
+    initialErrors: {},
+    initialTouched: {},
   };
 
   initialValues: Values;
@@ -49,16 +54,72 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     };
   };
 
+  getState(
+    stateToMerge: Partial<FormikState<Values>> = this.state
+  ): FormikState<Values> {
+    return Object.keys(stateToMerge).reduce((state: any, key: string) => {
+      state[key] = this.isControlledProp(key)
+        ? this.props[key as keyof FormikConfig<Values> & ExtraProps]
+        : stateToMerge[key as keyof FormikState<Values>];
+      return state;
+    }, {});
+  }
+
+  isControlledProp(key: string | keyof FormikConfig<Values> & ExtraProps) {
+    return (
+      this.props[key as keyof FormikConfig<Values> & ExtraProps] !== undefined
+    );
+  }
+
+  internalSetState = (
+    stateToSet:
+      | Partial<FormikState<Values>>
+      | ((state: FormikState<Values>) => Partial<FormikState<Values>>),
+    cb?: (() => void)
+  ) => {
+    let onStateChangeArg: Partial<FormikState<Values>> = {};
+    // The types here are a bit whacky because we are potentially merging
+    // controlled props and internal state.
+    return this.setState(
+      (prevState: FormikState<Values>) => {
+        prevState = this.getState(prevState); // Get the merged state
+        let newStateToSet: Partial<FormikState<Values>> = isFunction(stateToSet)
+          ? stateToSet(prevState)
+          : stateToSet;
+        let nextState: Partial<FormikState<Values>> = {};
+        Object.keys(newStateToSet).forEach(
+          (key: Extract<keyof FormikState<Values>, string>) => {
+            if (prevState[key] !== newStateToSet[key]) {
+              onStateChangeArg[key] = newStateToSet[key];
+            }
+
+            if (!this.isControlledProp(key)) {
+              nextState[key] = newStateToSet[key];
+            }
+          }
+        );
+
+        return nextState;
+      },
+      () => {
+        cbToCb(cb);
+        if (this.props.onChange !== undefined) {
+          this.props.onChange(onStateChangeArg, this.getState());
+        }
+      }
+    );
+  };
+
   constructor(props: FormikConfig<Values> & ExtraProps) {
     super(props);
-    this.state = {
-      values: props.initialValues || ({} as any),
-      errors: {},
-      touched: {},
+    this.state = this.getState({
+      values: this.props.initialValues,
+      errors: this.props.initialErrors,
+      touched: this.props.initialTouched,
       isSubmitting: false,
       isValidating: false,
       submitCount: 0,
-    };
+    });
     this.didMount = false;
     this.fields = {};
     this.initialValues = props.initialValues || ({} as any);

@@ -172,7 +172,14 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
    * Initial values of the form
    */
   initialValues: Values;
-
+  /**
+   * Initial errors of the form
+   */
+  initialErrors?: FormikErrors<Values>;
+  /**
+   * Initial errors of the form
+   */
+  initialTouched?: FormikTouched<Values>;
   /**
    * Reset handler
    */
@@ -182,6 +189,14 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
    * Submission handler
    */
   onSubmit: (values: Values, formikActions: FormikActions<Values>) => void;
+
+  /**
+   * Centralized change handler
+   */
+  onChange?: (
+    changedState: Partial<FormikState<Values>>,
+    state: FormikState<Values>
+  ) => void;
 
   /**
    * Form component to render

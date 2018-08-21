@@ -91,6 +91,12 @@ export function setNestedObjectValues<T>(
 
   return response;
 }
+// tslint:disable-next-line:no-empty
+export function noop() {}
+
+export function cbToCb(cb?: () => void) {
+  return typeof cb === 'function' ? cb : noop;
+}
 
 // Assertions
 

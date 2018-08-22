@@ -1,4 +1,5 @@
 import * as React from 'react';
+import cloneDeep from 'lodash.clonedeep';
 import { connect } from './connect';
 import {
   FormikContext,
@@ -125,7 +126,7 @@ class FieldArrayInner<Values = {}> extends React.Component<
 
   push = (value: any) =>
     this.updateArrayField(
-      (array: any[]) => [...(array || []), value],
+      (array: any[]) => [...(array || []), cloneDeep(value)],
       false,
       false
     );

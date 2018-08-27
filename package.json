@@ -1,7 +1,7 @@
 {
   "name": "formik",
   "description": "Forms in React, without tears",
-  "version": "1.0.3",
+  "version": "1.1.1",
   "license": "MIT",
   "author": "Jared Palmer <jared@palmer.net>",
   "repository": "jaredpalmer/formik",
@@ -64,6 +64,7 @@
     "@types/react-dom": "^16.0.3",
     "@types/react-test-renderer": "15.5.2",
     "@types/warning": "^3.0.0",
+    "@types/yup": "^0.24.9",
     "all-contributors-cli": "^4.4.0",
     "awesome-typescript-loader": "^3.4.1",
     "cross-env": "5.0.5",
@@ -89,7 +90,7 @@
     "tsc-watch": "^1.0.21",
     "tslint": "5.5.0",
     "tslint-react": "3.2.0",
-    "typescript": "^3.0.0-dev.20180711",
+    "typescript": "^3.0.1",
     "yup": "0.21.3"
   },
   "lint-staged": {

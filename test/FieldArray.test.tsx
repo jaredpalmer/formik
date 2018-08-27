@@ -95,6 +95,37 @@ describe('<FieldArray />', () => {
       const expected = ['jared', 'andrea', 'brent', 'jared'];
       expect(formikBag.values.friends).toEqual(expected);
     });
+    it('should push clone not actual referance', () => {
+      let personTemplate = { firstName: '', lastName: '' };
+      let formikBag: any;
+      let arrayHelpers: any;
+      ReactDOM.render(
+        <TestForm
+          initialValues={{ people: [] }}
+          render={(props: any) => {
+            formikBag = props;
+            return (
+              <FieldArray
+                name="people"
+                render={arrayProps => {
+                  arrayHelpers = arrayProps;
+                  return null;
+                }}
+              />
+            );
+          }}
+        />,
+        node
+      );
+
+      arrayHelpers.push(personTemplate);
+      expect(
+        formikBag.values.people[formikBag.values.people.length - 1]
+      ).not.toBe(personTemplate);
+      expect(
+        formikBag.values.people[formikBag.values.people.length - 1]
+      ).toMatchObject(personTemplate);
+    });
   });
 
   describe('props.pop()', () => {

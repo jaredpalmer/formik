@@ -11,7 +11,9 @@ export interface FormikValues {
  * Should be always be and object of strings, but any is allowed to support i18n libraries.
  */
 export type FormikErrors<Values> = {
-  [K in keyof Values]?: Values[K] extends object ? FormikErrors<Values[K]> : string
+  [K in keyof Values]?: Values[K] extends object
+    ? FormikErrors<Values[K]>
+    : string
 };
 
 /**
@@ -158,6 +160,8 @@ export interface FormikSharedConfig {
   validateOnChange?: boolean;
   /** Tells Formik to validate the form on each input's onBlur event */
   validateOnBlur?: boolean;
+  /** Tells Formik to validate the form in componentDidMount */
+  validateOnLoad?: boolean;
   /** Tell Formik if initial form values are valid or not on first render */
   isInitialValid?: boolean | ((props: object) => boolean | undefined);
   /** Should Formik reset the form when new initialValues change */

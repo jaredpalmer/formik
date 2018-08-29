@@ -248,6 +248,28 @@ describe('<Formik>', () => {
       });
     });
 
+    describe('componentDidMount', () => {
+      it('runs validations if validateOnLoad is set to true ', async () => {
+        const validate = jest.fn(noop);
+        const FormValidateOnLoad = (
+          <Formik
+            initialValues={{ name: 'jared' }}
+            onSubmit={noop}
+            validateOnLoad={true}
+            validate={validate}
+          >
+            {({ handleSubmit }) => (
+              <button
+                onClick={() => handleSubmit({} as any /* no preventDefault */)}
+              />
+            )}
+          </Formik>
+        );
+        const tree = mount(FormValidateOnLoad);
+        expect(validate).toHaveBeenCalledTimes(1);
+      });
+    });
+
     describe('handleSubmit', () => {
       it('should call preventDefault()', () => {
         const tree = shallow(BasicForm);

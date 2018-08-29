@@ -737,7 +737,7 @@ interface OtherProps {
   message: string;
 }
 
-// You may see / use InjectedFormikProps<OtherProps, FormValues> instead of what comes below. They are almost the same. InjectedFormikProps was artifact of when Formik only exported an HoC. It is also less flexible as it MUST wrap all props (it passes them through).
+// You may see / use InjectedFormikProps<OtherProps, FormValues> instead of what comes below, they are almost the same. InjectedFormikProps was artifact of when Formik only exported a HoC. It is also less flexible as it MUST wrap all props (it passes them through).
 const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
   const { touched, errors, isSubmitting, message } = props;
   return (

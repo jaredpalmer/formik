@@ -11,7 +11,9 @@ export interface FormikValues {
  * Should be always be and object of strings, but any is allowed to support i18n libraries.
  */
 export type FormikErrors<Values> = {
-  [K in keyof Values]?: Values[K] extends object ? FormikErrors<Values[K]> : string
+  [K in keyof Values]?: Values[K] extends object
+    ? FormikErrors<Values[K]>
+    : string
 };
 
 /**
@@ -222,17 +224,21 @@ export type FormikProps<Values> = FormikSharedConfig &
   FormikState<Values> &
   FormikActions<Values> &
   FormikHandlers &
-  FormikComputedProps<Values> & {
-    registerField(
-      name: string,
-      fns: {
-        validate?: ((
-          value: any
-        ) => string | Function | Promise<void> | undefined);
-      }
-    ): void;
-    unregisterField(name: string): void;
-  };
+  FormikComputedProps<Values> &
+  FormikRegistration;
+
+/** Internal Formik registration methods that get passed down as props */
+export interface FormikRegistration {
+  registerField(
+    name: string,
+    fns: {
+      validate?: ((
+        value: any
+      ) => string | Function | Promise<void> | undefined);
+    }
+  ): void;
+  unregisterField(name: string): void;
+}
 
 /**
  * State, handlers, and helpers made available to Formik's primitive components through context.

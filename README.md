@@ -1250,7 +1250,7 @@ const Example = () => (
           <Field
             name="lastName"
             render={({ field /* _form */ }) => (
-              <input {...field} placeholder="firstName" />
+              <input {...field} placeholder="lastName" />
             )}
           />
           <button type="submit">Submit</button>

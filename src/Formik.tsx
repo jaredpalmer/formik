@@ -427,7 +427,8 @@ export class Formik<Values = {}, ExtraProps = {}> extends React.Component<
       const isValid = Object.keys(combinedErrors).length === 0;
       if (isValid) {
         this.executeSubmit();
-      } else {
+      } else if (this.didMount) {
+        // ^^^ Make sure Formik is still mounted before calling setState
         this.setState({ isSubmitting: false });
       }
     });

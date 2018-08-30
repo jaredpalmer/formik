@@ -16,13 +16,9 @@ import { isFunction } from './utils';
 /**
  * State, handlers, and helpers injected as props into the wrapped form component.
  * Used with withFormik()
+ * @deprecated
  */
-export type InjectedFormikProps<Props, Values> = Props &
-  FormikState<Values> &
-  FormikActions<Values> &
-  FormikHandlers &
-  FormikComputedProps<Values> &
-  FormikRegistration;
+export type InjectedFormikProps<Props, Values> = Props & FormikProps<Values>;
 
 /**
  * Formik actions + { props }

@@ -425,10 +425,13 @@ export class Formik<Values = {}, ExtraProps = {}> extends React.Component<
 
     return this.runValidations().then(combinedErrors => {
       const isValid = Object.keys(combinedErrors).length === 0;
-      if (isValid) {
-        this.executeSubmit();
-      } else {
-        this.setState({ isSubmitting: false });
+      // Make sure Formik is still mounted.
+      if (this.didMount) {
+        if (isValid) {
+          this.executeSubmit();
+        } else {
+          this.setState({ isSubmitting: false });
+        }
       }
     });
   };

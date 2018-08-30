@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import * as Yup from 'yup';
 import { Formik, FormikProps } from '../src';
 import { shallow, mount } from '@pisano/enzyme';
-import { sleep, noop } from './testHelpers';
+import { sleep, noop, getYupFakeSchema } from './testHelpers';
 
 jest.spyOn(global.console, 'error');
 
@@ -458,16 +458,16 @@ describe('<Formik>', () => {
 
       describe('with validationSchema (ASYNC)', () => {
         it('should run validationSchema if present', async () => {
-          const validate = jest.fn(() => Promise.resolve({}));
+          expect.assertions(1);
+
+          const validationSchema = getYupFakeSchema();
           const tree = shallow(
             <Formik
               initialValues={{ name: 'jared' }}
               onSubmit={noop}
               component={Form}
-              validate={validate}
-              validationSchema={{
-                validate,
-              }}
+              validate={validationSchema.validate}
+              validationSchema={validationSchema}
             />
           );
 
@@ -476,20 +476,18 @@ describe('<Formik>', () => {
             .props()
             .submitForm();
 
-          expect(validate).toHaveBeenCalled();
+          expect(validationSchema.validate).toHaveBeenCalled();
         });
 
         it('should call validationSchema if it is a function and present', async () => {
-          const validate = jest.fn(() => Promise.resolve({}));
+          const validationSchema = getYupFakeSchema();
           const tree = shallow(
             <Formik
               initialValues={{ name: 'jared' }}
               onSubmit={noop}
               component={Form}
-              validate={validate}
-              validationSchema={() => ({
-                validate,
-              })}
+              validate={validationSchema.validate}
+              validationSchema={() => validationSchema}
             />
           );
 
@@ -498,7 +496,7 @@ describe('<Formik>', () => {
             .props()
             .submitForm();
 
-          expect(validate).toHaveBeenCalled();
+          expect(validationSchema.validate).toHaveBeenCalled();
         });
       });
     });
@@ -1187,6 +1185,51 @@ describe('<Formik>', () => {
     input.blur(); // unsets activeElement
     (global.console.error as jest.Mock<{}>).mockClear();
   });
+
+  it('should execute yup transform onSubmit', done => {
+    const defaultValue: string = 'yay';
+    const validationSchema = Yup.object().shape({
+      opensource: Yup.string().transform(function(value: string) {
+        return value ? value.toUpperCase() : value;
+      }),
+    });
+    const onSubmit = (formValues: any) => {
+      expect(formValues.opensource).toBe(defaultValue.toUpperCase());
+      done();
+    };
+
+    //TODO: find out why yup schema throw an error
+    //Emulate validate schema beacuse of `Cannot read property 'body' of null` yup error
+    validationSchema.validate = jest.fn(() => Promise.resolve({}));
+
+    const FormWithInput = () => (
+      <Formik
+        onSubmit={onSubmit}
+        initialValues={{ opensource: defaultValue }}
+        validationSchema={validationSchema}
+      >
+        {({ handleSubmit, handleChange, values }) => (
+          <form onSubmit={handleSubmit}>
+            <input
+              type="text"
+              onChange={handleChange}
+              value={values.opensource}
+              name="opensource"
+            />
+            <button type="submit">Submit</button>
+          </form>
+        )}
+      </Formik>
+    );
+    const tree = mount(<FormWithInput />);
+    const preventDefault = jest.fn();
+
+    tree.find('form').simulate('submit', {
+      preventDefault,
+    });
+    (global.console.error as jest.Mock<{}>).mockClear();
+  });
+
   it('submit count increments', async () => {
     const node = document.createElement('div');
     const onSubmit = jest.fn();

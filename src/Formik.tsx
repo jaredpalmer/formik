@@ -244,10 +244,7 @@ export class Formik<Values = {}, ExtraProps = {}> extends React.Component<
    */
   runValidationSchema = (values: FormikValues) => {
     return new Promise(resolve => {
-      const { validationSchema } = this.props;
-      const schema = isFunction(validationSchema)
-        ? validationSchema()
-        : validationSchema;
+      const schema = this.getValidationSchema();
       validateYupSchema(values, schema).then(
         () => {
           resolve({});
@@ -434,7 +431,19 @@ export class Formik<Values = {}, ExtraProps = {}> extends React.Component<
   };
 
   executeSubmit = () => {
-    this.props.onSubmit(this.state.values, this.getFormikActions());
+    const schema = this.getValidationSchema();
+    const { values } = this.state;
+    const actualizedValues = schema ? schema.cast(values) : values;
+
+    this.props.onSubmit(actualizedValues, this.getFormikActions());
+  };
+
+  getValidationSchema = () => {
+    const { validationSchema } = this.props;
+
+    return isFunction(validationSchema)
+      ? validationSchema(this.getFormikActions())
+      : validationSchema;
   };
 
   handleBlur = (eventOrString: any): void | ((e: any) => void) => {

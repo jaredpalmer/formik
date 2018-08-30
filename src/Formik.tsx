@@ -24,7 +24,7 @@ import {
   getIn,
 } from './utils';
 
-export class Formik<ExtraProps = {}, Values = object> extends React.Component<
+export class Formik<Values = {}, ExtraProps = {}> extends React.Component<
   FormikConfig<Values> & ExtraProps,
   FormikState<any>
 > {
@@ -36,7 +36,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
   };
 
   initialValues: Values;
-
+  didMount: boolean;
   hcCache: {
     [key: string]: (e: string | React.ChangeEvent<any>) => void;
   } = {};
@@ -56,8 +56,10 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       errors: {},
       touched: {},
       isSubmitting: false,
+      isValidating: false,
       submitCount: 0,
     };
+    this.didMount = false;
     this.fields = {};
     this.initialValues = props.initialValues || ({} as any);
     warning(
@@ -89,6 +91,20 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
   unregisterField = (name: string) => {
     delete this.fields[name];
   };
+
+  componentDidMount() {
+    this.didMount = true;
+  }
+
+  componentWillUnmount() {
+    // This allows us to prevent setting state on an
+    // unmounted component. This can occur if Formik is in a modal, and submission
+    // toggles show/hide, and validation of a blur field takes longer than validation
+    // before a submit.
+    // @see https://github.com/jaredpalmer/formik/issues/597
+    // @see https://reactjs.org/blog/2015/12/16/ismounted-antipattern.html
+    this.didMount = false;
+  }
 
   componentDidUpdate(prevProps: Readonly<FormikConfig<Values> & ExtraProps>) {
     // If the initialValues change, reset the form
@@ -143,12 +159,16 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
    * Run field level validation
    */
   validateField = (field: string) => {
+    this.setState({ isValidating: true });
     this.runSingleFieldLevelValidation(
       field,
       getIn(this.state.values, field)
     ).then(error => {
-      if (!!error) {
-        this.setState({ errors: setIn(this.state.errors, field, error) });
+      if (this.didMount) {
+        this.setState({
+          errors: setIn(this.state.errors, field, error),
+          isValidating: false,
+        });
       }
     });
   };
@@ -176,7 +196,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
       fieldKeysWithValidation.length > 0
         ? fieldKeysWithValidation.map(
             f =>
-              this.runSingleFieldLevelValidation(f, values[f]).then(
+              this.runSingleFieldLevelValidation(f, getIn(values, f)).then(
                 x => x,
                 e => e
               ) // always catch so Promise.all runs each one
@@ -245,18 +265,20 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
   runValidations = (
     values: FormikValues = this.state.values
   ): Promise<FormikErrors<Values>> => {
+    this.setState({ isValidating: true });
     return Promise.all([
       this.runFieldLevelValidations(values),
       this.props.validationSchema ? this.runValidationSchema(values) : {},
       this.props.validate ? this.runValidateHandler(values) : {},
     ]).then(([fieldErrors, schemaErrors, handlerErrors]) => {
-      const combinedErrors = deepmerge.all<FormikErrors<Values>>([
-        fieldErrors,
-        schemaErrors,
-        handlerErrors,
-      ]);
+      const combinedErrors = deepmerge.all<FormikErrors<Values>>(
+        [fieldErrors, schemaErrors, handlerErrors],
+        { arrayMerge }
+      );
 
-      this.setState({ errors: combinedErrors });
+      if (this.didMount) {
+        this.setState({ isValidating: false, errors: combinedErrors });
+      }
 
       return combinedErrors;
     });
@@ -402,10 +424,11 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     }));
 
     return this.runValidations().then(combinedErrors => {
-      this.setState({ isSubmitting: false });
       const isValid = Object.keys(combinedErrors).length === 0;
       if (isValid) {
         this.executeSubmit();
+      } else {
+        this.setState({ isSubmitting: false });
       }
     });
   };
@@ -469,7 +492,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
     );
   };
 
-  setFieldError = (field: string, message: string) => {
+  setFieldError = (field: string, message: string | undefined) => {
     // Set form field by name
     this.setState(prevState => ({
       ...prevState,
@@ -484,6 +507,7 @@ export class Formik<ExtraProps = {}, Values = object> extends React.Component<
 
     this.setState({
       isSubmitting: false,
+      isValidating: false,
       errors: {},
       touched: {},
       error: undefined,
@@ -645,4 +669,27 @@ export function validateYupSchema<T extends FormikValues>(
     abortEarly: false,
     context: context,
   });
+}
+
+/**
+ * deepmerge array merging algorithm
+ * https://github.com/KyleAMathews/deepmerge#combine-array
+ */
+function arrayMerge(target: any[], source: any[], options: any): any[] {
+  const destination = target.slice();
+
+  source.forEach(function(e: any, i: number) {
+    if (typeof destination[i] === 'undefined') {
+      const cloneRequested = options.clone !== false;
+      const shouldClone = cloneRequested && options.isMergeableObject(e);
+      destination[i] = shouldClone
+        ? deepmerge(Array.isArray(e) ? [] : {}, e, options)
+        : e;
+    } else if (options.isMergeableObject(e)) {
+      destination[i] = deepmerge(target[i], e, options);
+    } else if (target.indexOf(e) === -1) {
+      destination.push(e);
+    }
+  });
+  return destination;
 }

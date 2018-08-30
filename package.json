@@ -1,7 +1,7 @@
 {
   "name": "formik",
   "description": "Forms in React, without tears",
-  "version": "1.0.0-beta.5",
+  "version": "1.1.1",
   "license": "MIT",
   "author": "Jared Palmer <jared@palmer.net>",
   "repository": "jaredpalmer/formik",
@@ -43,11 +43,12 @@
   "dependencies": {
     "create-react-context": "^0.2.2",
     "deepmerge": "^2.1.1",
-    "hoist-non-react-statics": "^2.5.0",
+    "hoist-non-react-statics": "^2.5.5",
     "lodash.clonedeep": "^4.5.0",
     "lodash.topath": "4.5.2",
     "prop-types": "^15.6.1",
     "react-fast-compare": "^1.0.0",
+    "tslib": "^1.9.3",
     "warning": "^3.0.0"
   },
   "optionalDependencies": {},
@@ -63,6 +64,7 @@
     "@types/react-dom": "^16.0.3",
     "@types/react-test-renderer": "15.5.2",
     "@types/warning": "^3.0.0",
+    "@types/yup": "^0.24.9",
     "all-contributors-cli": "^4.4.0",
     "awesome-typescript-loader": "^3.4.1",
     "cross-env": "5.0.5",
@@ -73,8 +75,8 @@
     "lint-staged": "4.0.2",
     "prettier": "1.11.1",
     "raw-loader": "^0.5.1",
-    "react": "^16.3.2",
-    "react-dom": "^16.3.2",
+    "react": "^16.4.1",
+    "react-dom": "^16.4.1",
     "rimraf": "^2.6.2",
     "rollup": "^0.59.0",
     "rollup-plugin-commonjs": "^9.1.3",
@@ -88,7 +90,7 @@
     "tsc-watch": "^1.0.21",
     "tslint": "5.5.0",
     "tslint-react": "3.2.0",
-    "typescript": "2.9.1",
+    "typescript": "^3.0.1",
     "yup": "0.21.3"
   },
   "lint-staged": {
@@ -132,7 +134,7 @@
       "limit": "14 kB"
     },
     {
-      "path": "./dist/formik.es6.js",
+      "path": "./dist/formik.esm.js",
       "limit": "14 kB"
     },
     {

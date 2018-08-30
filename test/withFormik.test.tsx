@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { withFormik, InjectedFormikProps } from '../src';
+import { withFormik, FormikProps } from '../src';
 import { mount, shallow } from '@pisano/enzyme';
 
 // tslint:disable-next-line:no-empty
@@ -19,7 +19,7 @@ interface Values {
   name: string;
 }
 
-const Form: React.SFC<InjectedFormikProps<Props, Values>> = ({
+const Form: React.SFC<Props & FormikProps<Values>> = ({
   values,
   handleSubmit,
   handleChange,

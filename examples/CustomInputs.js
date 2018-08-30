@@ -126,7 +126,7 @@ const Fieldset = ({ component = 'input', render, name, label, ...rest }) => (
               ? React.createElement(component, {
                   ...field,
                   ...rest,
-                  invalid: !!error,
+                  invalid: (!!error).toString(),
                 })
               : null}
           {error && <div className="field-error">{error}</div>}

@@ -221,16 +221,16 @@ const Basic = () => (
     <h1>My Form</h1>
     <p>This can be anywhere in your application</p>
     {/*
-          The benefit of the render prop approach is that you have full access to React's
-          state, props, and composition model. Thus there is no need to map outer props
-          to values...you can just set the initial values, and if they depend on props / state
-          then--boom--you can directly access to props / state.
-          The render prop accepts your inner form component, which you can define separately or inline
-          totally up to you:
-          - `<Formik render={props => <form>...</form>}>`
-          - `<Formik component={InnerForm}>`
-          - `<Formik>{props => <form>...</form>}</Formik>` (identical to as render, just written differently)
-        */}
+                  The benefit of the render prop approach is that you have full access to React's
+                  state, props, and composition model. Thus there is no need to map outer props
+                  to values...you can just set the initial values, and if they depend on props / state
+                  then--boom--you can directly access to props / state.
+                  The render prop accepts your inner form component, which you can define separately or inline
+                  totally up to you:
+                  - `<Formik render={props => <form>...</form>}>`
+                  - `<Formik component={InnerForm}>`
+                  - `<Formik>{props => <form>...</form>}</Formik>` (identical to as render, just written differently)
+                */}
     <Formik
       initialValues={{
         email: '',
@@ -600,8 +600,7 @@ DOM and React Native are:
 1.  Formik's `props.handleSubmit` is passed to a `<Button onPress={...} />`
     instead of HTML `<form onSubmit={...} />` component (since there is no
     `<form />` element in React Native).
-2.  `<TextInput />` uses Formik's `props.handleChange(fieldName)` and `handleBlur(fieldName)` instead of directly     assigning the callbacks to props, because we have to get the `fieldName` from somewhere and with ReactNative we can't get it automatically like for web (using input name attribute). You can also use `setFieldValue(fieldName, value)` and `setTouched(fieldName, bool)` as an alternative.
-
+2.  `<TextInput />` uses Formik's `props.handleChange(fieldName)` and `handleBlur(fieldName)` instead of directly assigning the callbacks to props, because we have to get the `fieldName` from somewhere and with ReactNative we can't get it automatically like for web (using input name attribute). You can also use `setFieldValue(fieldName, value)` and `setTouched(fieldName, bool)` as an alternative.
 
 #### Avoiding new functions in render
 
@@ -737,7 +736,7 @@ interface OtherProps {
   message: string;
 }
 
-// You may see / use InjectedFormikProps<OtherProps, FormValues> instead of what comes below, they are almost the same. InjectedFormikProps was artifact of when Formik only exported a HoC. It is also less flexible as it MUST wrap all props (it passes them through).
+// Aside: You may see InjectedFormikProps<OtherProps, FormValues> instead of what comes below in older code.. InjectedFormikProps was artifact of when Formik only exported a HoC. It is also less flexible as it MUST wrap all props (it passes them through).
 const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
   const { touched, errors, isSubmitting, message } = props;
   return (

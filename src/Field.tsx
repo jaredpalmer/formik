@@ -41,7 +41,7 @@ export interface FieldProps<V = any> {
   form: FormikProps<V>; // if ppl want to restrict this for a given form, let them.
 }
 
-export interface FieldConfig {
+export interface FieldConfig<V = any> {
   /**
    * Field component to render. Can either be a string like 'select' or a component.
    */
@@ -63,7 +63,10 @@ export interface FieldConfig {
   /**
    * Validate a single field value independently
    */
-  validate?: ((value: any) => string | Promise<void> | undefined);
+  validate?: ((
+    value: any,
+    form?: FormikProps<V>
+  ) => string | Promise<void> | undefined);
 
   /**
    * Field name

@@ -27,16 +27,17 @@ describe('A <Field />', () => {
       const handleChange = jest.fn(noop);
       const setFieldError = jest.fn(noop);
       const validate = jest.fn(noop);
+      const formik = {
+        registerField: noop,
+        unregisterField: noop,
+        handleChange,
+        setFieldError,
+        validateOnChange: true,
+      };
       const tree = makeFieldTree({
         name: 'name',
         validate,
-        formik: {
-          registerField: noop,
-          unregisterField: noop,
-          handleChange,
-          setFieldError,
-          validateOnChange: true,
-        },
+        formik,
       });
       tree.find('input').simulate('change', {
         persist: noop,
@@ -47,7 +48,7 @@ describe('A <Field />', () => {
       });
       expect(handleChange).toHaveBeenCalled();
       expect(setFieldError).toHaveBeenCalled();
-      expect(validate).toHaveBeenCalled();
+      expect(validate).toHaveBeenCalledWith('ian', formik);
     });
 
     it('does NOT call validate during onChange if validateOnChange is set to false', () => {

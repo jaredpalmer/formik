@@ -16,6 +16,7 @@ import { isFunction } from './utils';
  * @deprecated  Use `OuterProps & FormikProps<Values>` instead.
  */
 export type InjectedFormikProps<Props, Values> = Props & FormikProps<Values>;
+
 /**
  * Formik actions + { props }
  */

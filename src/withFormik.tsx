@@ -3,13 +3,9 @@ import * as React from 'react';
 import { Formik } from './Formik';
 import {
   FormikActions,
-  FormikComputedProps,
-  FormikHandlers,
   FormikProps,
   FormikSharedConfig,
-  FormikState,
   FormikValues,
-  FormikRegistration,
 } from './types';
 import { isFunction } from './utils';
 

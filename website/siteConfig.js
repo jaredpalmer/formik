@@ -13,16 +13,16 @@ const users = [
   {
     caption: 'Airbnb',
     // You will need to prepend the image path with your baseUrl
-    // if it is not '/', like: '/test-site/img/formik.svg'.
-    image: '/img/logos/airbnb.svg',
+    // if it is not '/', like: '/test-site/formik/img/formik.svg'.
+    image: '/formik/img/logos/airbnb.svg',
     infoLink: 'https://airbnb.com',
     pinned: true,
   },
   {
     caption: 'Walmart',
     // You will need to prepend the image path with your baseUrl
-    // if it is not '/', like: '/test-site/img/formik.svg'.
-    image: '/img/logos/walmart.svg',
+    // if it is not '/', like: '/test-site/formik/img/formik.svg'.
+    image: '/formik/img/logos/walmart.svg',
     infoLink: 'https://walmart.com',
     pinned: true,
   },
@@ -30,31 +30,31 @@ const users = [
   {
     caption: 'OpenTable',
     // You will need to prepend the image path with your baseUrl
-    // if it is not '/', like: '/test-site/img/logos/formik.svg'.
-    image: '/img/logos/opentable.svg',
+    // if it is not '/', like: '/test-site/formik/img/logos/formik.svg'.
+    image: '/formik/img/logos/opentable.svg',
     infoLink: 'https://opentable.com',
     pinned: true,
   },
   {
     caption: 'Lyft',
     // You will need to prepend the image path with your baseUrl
-    // if it is not '/', like: '/test-site/img/logos/formik.svg'.
-    image: '/img/logos/lyft.svg',
+    // if it is not '/', like: '/test-site/formik/img/logos/formik.svg'.
+    image: '/formik/img/logos/lyft.svg',
     infoLink: 'https://lyft.com',
     pinned: true,
   },
   {
     caption: 'Nokia',
     // You will need to prepend the image path with your baseUrl
-    // if it is not '/', like: '/test-site/img/logos/formik.svg'.
-    image: '/img/logos/nokia.svg',
+    // if it is not '/', like: '/test-site/formik/img/logos/formik.svg'.
+    image: '/formik/img/logos/nokia.svg',
     infoLink: 'https://nokia.com',
   },
   {
     caption: 'Docker',
     // You will need to prepend the image path with your baseUrl
-    // if it is not '/', like: '/test-site/img/logos/formik.svg'.
-    image: '/img/logos/docker.svg',
+    // if it is not '/', like: '/test-site/formik/img/logos/formik.svg'.
+    image: '/formik/img/logos/docker.svg',
     infoLink: 'https://docker.com',
     pinned: true,
   },
@@ -63,8 +63,8 @@ const users = [
 const siteConfig = {
   title: 'Formik', // Title for your website.
   tagline: `Build forms in React, without tears.`,
-  url: 'https://jaredpalmer.com/formik', // Your website URL
-  baseUrl: '/', // Base URL for your project */
+  url: 'https://jaredpalmer.com', // Your website URL
+  baseUrl: '/formik/', // Base URL for your project */
   // For github.io type URLs, you would set the url and baseUrl like:
   //   url: 'https://facebook.github.io',
   //   baseUrl: '/test-site/',
@@ -83,7 +83,7 @@ const siteConfig = {
     { page: 'help', label: 'Help' },
     { blog: true, label: 'Blog' },
   ],
-
+  search: true,
   // If you have users set above, you add it here:
   users,
 
@@ -119,24 +119,37 @@ const siteConfig = {
 
   highlight: {
     // Highlight.js theme to use for syntax highlighting in code blocks.
-    theme: 'default',
+    theme: 'atom-one-dark',
   },
 
   // Add custom scripts here that would be placed in <script> tags.
-  scripts: ['https://buttons.github.io/buttons.js'],
+  scripts: [
+    'https://buttons.github.io/buttons.js',
+    'https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.0/clipboard.min.js',
+    '/js/code-blocks-buttons.js',
+  ],
+  stylesheets: ['/css/code-blocks-buttons.css'],
 
   // On page navigation for the current documentation page.
   onPageNav: 'separate',
   // No .html extensions for paths.
   cleanUrl: true,
-
   // Open Graph and Twitter card images.
   ogImage: 'img/docusaurus.png',
   twitterImage: 'img/docusaurus.png',
-
+  algolia: {
+    apiKey: 'my-api-key',
+    indexName: 'my-index-name',
+    algoliaOptions: {}, // Optional, if provided by Algolia
+  },
   // You may provide arbitrary config keys to be used as needed by your
   // template. For example, if you need your repo's URL...
   repoUrl: 'https://github.com/jaredpalmer/formik',
+  scrollToTop: true,
+  scrollToTopOptions: {
+    zIndex: 100,
+  },
+  enableUpdateTime: true,
 };
 
 module.exports = siteConfig;

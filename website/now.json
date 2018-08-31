@@ -1,0 +1,8 @@
+{
+  "name": "formik",
+  "type": "static",
+  "static": {
+    "trailingSlash": false
+  },
+  "alias": ["formik"]
+}

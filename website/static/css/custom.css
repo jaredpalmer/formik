@@ -18,6 +18,18 @@ h6 {
   font-size: 17px;
 }
 
+.fixedHeaderContainer .logo {
+  height: 70%;
+}
+
+.fixedHeaderContainer a {
+  padding-right: 15px;
+}
+
+.fixedHeaderContainer h3:before {
+  content: 'v'
+}
+
 .splash {
   /* min-height: 700px; */
   background: linear-gradient(#111, #222);
@@ -324,12 +336,6 @@ footer iframe {
   .splash h1 {
     font-size: 36px;
     margin-top: 0;
-  }
-
-  .fixedHeaderContainer a {
-    margin-left: auto;
-    margin-right: auto;
-    padding-right: 15px;
   }
 }
 

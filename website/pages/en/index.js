@@ -6,6 +6,11 @@
  */
 
 const React = require('react');
+const CompLibrary = require('../../core/CompLibrary');
+
+const Container = CompLibrary.Container;
+const GridBlock = CompLibrary.GridBlock;
+
 const siteConfig = require(`${process.cwd()}/siteConfig.js`);
 
 class Index extends React.Component {
@@ -24,19 +29,8 @@ class Index extends React.Component {
       <div>
         <div className="splash">
           <div className="content">
-            <h1>
-              Forms in React, without tears{' '}
-              <span
-                aria-hidden="true"
-                style={{ verticalAlign: 'middle', paddingLeft: '.25rem' }}
-              >
-                😭
-              </span>
-            </h1>
-            <h2>
-              Formik makes creating forms in React easy—that's why it's trusted
-              by teams at Airbnb, Walmart, Lyft, and thousands more.
-            </h2>
+            <h1>Formik</h1>
+            <h2>Build forms in React, without tears.</h2>
             <div className="row">
               <a
                 className="btn primary"
@@ -161,40 +155,52 @@ class Index extends React.Component {
             </a>
           </div>
         </div> */}
+
         <div style={{ background: '#eee' }}>
-          <div className="content row" style={{ background: '#eee' }}>
-            <div className="col">
-              <blockquote>
-                "Formik. All day. All long."
-                <cite>
-                  Ken Wheeler, Director of Open Source at Formidable Labs
-                </cite>
-              </blockquote>
-            </div>
-            <div className="col">
-              <blockquote>
-                I can't believe people ever put forms in redux, or did anything
-                else other than this.
-              </blockquote>
-              <p>James Long, Creator of Prettier</p>
-            </div>
-            <div className="col">
-              <blockquote>
-                "Formik removes most of the moving parts involved in forms
-                allowing me to move faster with more confidence."
-              </blockquote>
-              <p>Kye Hohenberger, Creator of Emotion</p>
-            </div>
-          </div>
+          <Container padding={['bottom', 'top']}>
+            <GridBlock
+              align="center"
+              contents={[
+                {
+                  content: 'James Long, Creator of Prettier',
+                  image: `${siteConfig.baseUrl}img/hector-ramos.png`,
+                  imageAlign: 'bottom',
+                  imageAlt: 'James Long',
+                  title:
+                    "*I can't believe people ever put forms in Redux, or did anything else other than this.*",
+                },
+                {
+                  content: `Kye Hohenberger, Creator of Emotion`,
+                  image: `${siteConfig.baseUrl}img/ricky-vetter.jpg`,
+                  imageAlign: 'bottom',
+                  imageAlt: 'Kye Hohenberger',
+                  title: `*Formik removes most of the moving parts involved in forms
+                    allowing me to move faster with more confidence.*`,
+                },
+                {
+                  content:
+                    'Ken Wheeler, Director of Open Source at Formidable Labs',
+                  image: `${siteConfig.baseUrl}img/christopher-chedeau.jpg`,
+                  imageAlign: 'bottom',
+                  imageAlt: 'Ken Wheeler',
+                  title: `*Formik. All day. All long.*`,
+                },
+              ]}
+              layout="threeColumn"
+            />
+          </Container>
         </div>
-        <div className="showcaseSection" style={{ marginBottom: 80 }}>
+
+        <div
+          className="showcaseSection"
+          style={{ marginBottom: 80, marginTop: 80 }}
+        >
           <div className="prose">
             <h2>Who's using Formik?</h2>
             <p>
               Formik has been powering forms at{' '}
               <a href="https://palmer.net">The Palmer Group</a> since 2016.
-              Formik was open sourced in 2017 and is and used by teams of all
-              sizes.
+              Formik was open sourced in 2017 and is by teams of all sizes.
             </p>
           </div>
           <div className="logos">{showcase}</div>

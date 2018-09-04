@@ -6,7 +6,7 @@ import {
   GenericFieldHTMLAttributes,
   FormikContext,
 } from './types';
-import { getIn, isEmptyChildren, isFunction, isPromise } from './utils';
+import { getIn, isEmptyChildren, isFunction } from './utils';
 
 /**
  * Note: These typings could be more restrictive, but then it would limit the
@@ -139,39 +139,6 @@ class FieldInner<Props = {}, Values = {}> extends React.Component<
     this.props.formik.unregisterField(this.props.name);
   }
 
-  handleChange = (e: React.ChangeEvent<any>) => {
-    const { handleChange, validateOnChange } = this.props.formik;
-    handleChange(e); // Call Formik's handleChange no matter what
-    if (!!validateOnChange && !!this.props.validate) {
-      this.runFieldValidations(e.target.value);
-    }
-  };
-
-  handleBlur = (e: any) => {
-    const { handleBlur, validateOnBlur } = this.props.formik;
-    handleBlur(e); // Call Formik's handleBlur no matter what
-    if (!!validateOnBlur && !!this.props.validate) {
-      this.runFieldValidations(e.target.value);
-    }
-  };
-
-  runFieldValidations = (value: any) => {
-    const { setFieldError } = this.props.formik;
-    const { name, validate } = this.props;
-    // Call validate fn
-    const maybePromise = (validate as any)(value);
-    // Check if validate it returns a Promise
-    if (isPromise(maybePromise)) {
-      (maybePromise as Promise<any>).then(
-        () => setFieldError(name, undefined as any),
-        error => setFieldError(name, error)
-      );
-    } else {
-      // Otherwise set the error
-      setFieldError(name, maybePromise);
-    }
-  };
-
   render() {
     const {
       validate,
@@ -195,8 +162,8 @@ class FieldInner<Props = {}, Values = {}> extends React.Component<
           ? props.value // React uses checked={} for these inputs
           : getIn(formik.values, name),
       name,
-      onChange: validate ? this.handleChange : formik.handleChange,
-      onBlur: validate ? this.handleBlur : formik.handleBlur,
+      onChange: formik.handleChange,
+      onBlur: formik.handleBlur,
     };
     const bag = { field, form: restOfFormik };
 

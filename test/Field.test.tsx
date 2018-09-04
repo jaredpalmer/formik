@@ -24,84 +24,62 @@ describe('A <Field />', () => {
       shallow(<Field.WrappedComponent {...props} />);
 
     it('calls validate during onChange if present', () => {
-      const handleChange = jest.fn(noop);
-      const setFieldError = jest.fn(noop);
+      const node = document.createElement('div');
+      let injected: any; /** FieldProps ;) */
       const validate = jest.fn(noop);
-      const tree = makeFieldTree({
-        name: 'name',
-        validate,
-        formik: {
-          registerField: noop,
-          unregisterField: noop,
-          handleChange,
-          setFieldError,
-          validateOnChange: true,
-        },
-      });
-      tree.find('input').simulate('change', {
-        persist: noop,
-        target: {
-          name: 'name',
-          value: 'ian',
-        },
-      });
-      expect(handleChange).toHaveBeenCalled();
-      expect(setFieldError).toHaveBeenCalled();
+      ReactDOM.render(
+        <TestForm
+          validateOnChange={true}
+          render={(_formikProps: FormikProps<TestFormValues>) => (
+            <Field name="name" validate={validate}>
+              {({ field }: any) => (injected = field) && null}
+            </Field>
+          )}
+        />,
+        node
+      );
+      const { onChange } = injected;
+      onChange({ target: { name: 'name', value: 'hello' } });
       expect(validate).toHaveBeenCalled();
     });
 
     it('does NOT call validate during onChange if validateOnChange is set to false', () => {
-      const handleChange = jest.fn(noop);
-      const setFieldError = jest.fn(noop);
+      const node = document.createElement('div');
+      let injected: any; /** FieldProps ;) */
       const validate = jest.fn(noop);
-      const tree = makeFieldTree({
-        name: 'name',
-        validate,
-        formik: {
-          registerField: noop,
-          unregisterField: noop,
-          handleChange,
-          setFieldError,
-          validateOnChange: false,
-        },
-      });
-      tree.find('input').simulate('change', {
-        persist: noop,
-        target: {
-          name: 'name',
-          value: 'ian',
-        },
-      });
-      expect(handleChange).toHaveBeenCalled();
-      expect(setFieldError).not.toHaveBeenCalled();
+      ReactDOM.render(
+        <TestForm
+          validateOnChange={false}
+          render={(_formikProps: FormikProps<TestFormValues>) => (
+            <Field name="name" validate={validate}>
+              {({ field }: any) => (injected = field) && null}
+            </Field>
+          )}
+        />,
+        node
+      );
+      const { onChange } = injected;
+      onChange({ target: { name: 'name', value: 'hello' } });
       expect(validate).not.toHaveBeenCalled();
     });
 
     it('calls validate during onBlur if present', () => {
-      const handleBlur = jest.fn(noop);
-      const setFieldError = jest.fn(noop);
+      const node = document.createElement('div');
+      let injected: any; /** FieldProps ;) */
       const validate = jest.fn(noop);
-      const tree = makeFieldTree({
-        name: 'name',
-        validate,
-        formik: {
-          registerField: noop,
-          unregisterField: noop,
-          handleBlur,
-          setFieldError,
-          validateOnBlur: true,
-        },
-      });
-      tree.find('input').simulate('blur', {
-        persist: noop,
-        target: {
-          name: 'name',
-          value: 'ian',
-        },
-      });
-
-      expect(handleBlur).toHaveBeenCalled();
-      expect(setFieldError).toHaveBeenCalled();
+      ReactDOM.render(
+        <TestForm
+          validateOnBlur={true}
+          render={(_formikProps: FormikProps<TestFormValues>) => (
+            <Field name="name" validate={validate}>
+              {({ field }: any) => (injected = field) && null}
+            </Field>
+          )}
+        />,
+        node
+      );
+      const { onBlur } = injected;
+      onBlur({ target: { name: 'name' } });
       expect(validate).toHaveBeenCalled();
     });
 
@@ -128,7 +106,6 @@ describe('A <Field />', () => {
         },
       });
       expect(handleBlur).toHaveBeenCalled();
-      expect(setFieldError).not.toHaveBeenCalled();
       expect(validate).not.toHaveBeenCalled();
     });
 

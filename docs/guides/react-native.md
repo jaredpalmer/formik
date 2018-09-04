@@ -17,24 +17,25 @@ React Native that demonstrates the key differences:
 // Formik x React Native example
 import React from 'react';
 import { Button, TextInput, View } from 'react-native';
-import { withFormik } from 'formik';
+import { Formik } from 'formik';
 
-const enhancer = withFormik({
-  /*...*/
-});
-
-const MyReactNativeForm = props => (
-  <View>
-    <TextInput
-      onChangeText={props.handleChange('email')}
-      onBlur={props.handleBlur('email')}
-      value={props.values.email}
-    />
-    <Button onPress={props.handleSubmit} title="Submit" />
-  </View>
+export const MyReactNativeForm = props => (
+  <Formik
+    initialValues={{ email: '' }}
+    onSubmit={values => console.log(values)}
+  >
+    {({ values, handleChange, handleBlur }) => (
+      <View>
+        <TextInput
+          onChangeText={props.handleChange('email')}
+          onBlur={props.handleBlur('email')}
+          value={props.values.email}
+        />
+        <Button onPress={props.handleSubmit} title="Submit" />
+      </View>
+    )}
+  </Formik>
 );
-
-export default enhancer(MyReactNativeForm);
 ```
 
 As you can see above, the notable differences between using Formik with React
@@ -44,67 +45,3 @@ DOM and React Native are:
     instead of HTML `<form onSubmit={...} />` component (since there is no
     `<form />` element in React Native).
 2.  `<TextInput />` uses Formik's `props.handleChange(fieldName)` and `handleBlur(fieldName)` instead of directly assigning the callbacks to props, because we have to get the `fieldName` from somewhere and with ReactNative we can't get it automatically like for web (using input name attribute). You can also use `setFieldValue(fieldName, value)` and `setTouched(fieldName, bool)` as an alternative.
-
-### Wrapping React Native's `<TextInput />`
-
-```jsx
-// FormikReactNativeTextInput.js
-import * as React from 'react';
-import { View, Text, TextInput } from 'react-native';
-import { FormikConsumer } from 'formik';
-
-class FormikNativeInput extends React.Component {
-  render() {
-    // we want to pass through all the props except for onChangeText
-    const { onChangeText, name, ...otherProps } = this.props;
-    return (
-      <FormikConsumer>
-        {formikProps => (
-          <View>
-            <TextInput
-              onChangeText={formikProps.handleChange(name)}
-              onBlur={formikProps.handleBlur(name)}
-              value={formikProps.values[name]}
-              {...otherProps}
-            />
-            {/* Might as well handle logic around validation errors here!*/
-            formikProps.touched[name] && formikProps.errors[name] ? (
-              <Text>{formikProps.errors[name]}</Text>
-            ) : null}
-          </View>
-        )}
-      </FormikConsumer>
-    );
-  }
-}
-```
-
-Then you could just use this custom input as follows:
-
-```jsx
-// MyReactNativeForm.js
-import { View, Button } from 'react-native';
-import FormikNativeInput from './FormikNativeInput';
-import { Formik } from 'formik';
-
-const MyReactNativeForm = props => (
-  <View>
-    <Formik
-      onSubmit={(values, actions) => {
-        setTimeout(() => {
-          console.log(JSON.stringify(values, null, 2));
-          actions.setSubmitting(false);
-        }, 1000);
-      }}
-      render={props => (
-        <View>
-          <FormikNativeInput name="email" />
-          <Button title="submit" onPress={props.handleSubmit} />
-        </View>
-      )}
-    />
-  </View>
-);
-
-export default MyReactNativeForm;
-```

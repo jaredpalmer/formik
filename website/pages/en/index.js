@@ -32,7 +32,7 @@ class Index extends React.Component {
             <h1>Formik</h1>
             <h2>Build forms in React, without tears.</h2>
             <div className="row">
-              <a className="btn primary" href="docs/overview">
+              <a className="btn primary" href="/formik/docs/overview">
                 Get Started
               </a>
               <a className="btn" href="https://github.com/jaredpalmer/formik">
@@ -180,7 +180,7 @@ class Index extends React.Component {
             </p>
           </div>
           <div className="logos">{showcase}</div>
-          <a className="btn" href="users.html">
+          <a className="btn" href="/formik/users.html">
             More Formik Users
           </a>
         </div>

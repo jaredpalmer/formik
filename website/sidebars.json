@@ -1,6 +1,6 @@
 {
   "docs": {
-    "Getting Started": ["overview", "installation", "doc3"],
+    "Getting Started": ["overview", "installation"],
     "Guides": ["guides/typescript", "guides/react-native"],
     "API Reference": ["api/formik", "api/withFormik", "api/field", "api/form", "api/connect"]
   }

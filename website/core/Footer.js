@@ -34,17 +34,19 @@ class Footer extends React.Component {
           </a>
           <div>
             <h5>Docs</h5>
-            <a href={this.docUrl('doc1.html', this.props.language)}>
+            <a href={this.docUrl('overview', this.props.language)}>
               Getting Started
             </a>
-            <a href={this.docUrl('doc2.html', this.props.language)}>Guides</a>
-            <a href={this.docUrl('doc3.html', this.props.language)}>
+            <a href={this.docUrl('guides/validation', this.props.language)}>
+              Guides
+            </a>
+            <a href={this.docUrl('api/formik', this.props.language)}>
               API Reference
             </a>
           </div>
           <div>
             <h5>Community</h5>
-            <a href={this.pageUrl('users.html', this.props.language)}>
+            <a href={this.pageUrl('users', this.props.language)}>
               User Showcase
             </a>
             <a
@@ -56,7 +58,7 @@ class Footer extends React.Component {
             </a>
             <a href="https://discordapp.com/">Project Chat</a>
             <a
-              href="https://twitter.com/"
+              href="https://twitter.com/jaredpalmer"
               target="_blank"
               rel="noreferrer noopener"
             >
@@ -81,7 +83,7 @@ class Footer extends React.Component {
           </div>
         </section>
 
-        <a
+        {/* <a
           href="https://code.facebook.com/projects/"
           target="_blank"
           rel="noreferrer noopener"
@@ -93,7 +95,7 @@ class Footer extends React.Component {
             width="170"
             height="45"
           />
-        </a>
+        </a> */}
         <section className="copyright">{this.props.config.copyright}</section>
       </footer>
     );

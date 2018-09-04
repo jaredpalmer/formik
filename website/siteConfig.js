@@ -80,9 +80,9 @@ const siteConfig = {
   headerLinks: [
     { doc: 'overview', label: 'Docs' },
     { page: 'help', label: 'Help' },
-    { blog: true, label: 'Blog' },
+    // { blog: true, label: 'Blog' },
   ],
-  search: true,
+  search: false,
   // If you have users set above, you add it here:
   users,
 

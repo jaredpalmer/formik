@@ -24,17 +24,19 @@ class Help extends React.Component {
     const supportLinks = [
       {
         content: `Learn more using the [documentation on this site.](${docUrl(
-          'doc1.html',
+          'overview.html',
           language
         )})`,
         title: 'Browse Docs',
       },
       {
-        content: 'Ask questions about the documentation and project',
+        content:
+          'Ask questions about the documentation and project on [Spectrum.chat](https://spectrum.chat/palmer) or [Reactiflux Discord](https://discordapp.com/invite/reactiflux)',
         title: 'Join the community',
       },
       {
-        content: "Find out what's new with this project",
+        content:
+          "Find out what's new with this project. Follow [@jaredpalmer](https://twitter.com/jaredpalmer) and [@eonwhite](https://twitter.com/eonwhite) on Twitter",
         title: 'Stay up to date',
       },
     ];

@@ -75,11 +75,15 @@ const siteConfig = {
   // For top-level user or org sites, the organization is still the same.
   // e.g., for the https://JoelMarcey.github.io site, it would be set like...
   //   organizationName: 'JoelMarcey'
-
+  editUrl: 'https://github.com/jaredpalmer/formik/edit/master/docs/',
   // For no header links in the top nav bar -> headerLinks: [],
   headerLinks: [
     { doc: 'overview', label: 'Docs' },
     { page: 'help', label: 'Help' },
+    {
+      href: 'https://github.com/jaredpalmer/formik',
+      label: 'GitHub',
+    },
     // { blog: true, label: 'Blog' },
   ],
   search: false,
@@ -118,9 +122,9 @@ const siteConfig = {
 
   highlight: {
     // Highlight.js theme to use for syntax highlighting in code blocks.
-    theme: 'atom-one-dark',
+    theme: 'default',
   },
-
+  usePrism: ['jsx'],
   // Add custom scripts here that would be placed in <script> tags.
   scripts: [
     'https://buttons.github.io/buttons.js',
@@ -149,6 +153,9 @@ const siteConfig = {
     zIndex: 100,
   },
   enableUpdateTime: true,
+  gaTrackingId: 'UA-55176740-4',
+  twitter: 'true',
+  twitterUsername: 'jaredpalmer',
 };
 
 module.exports = siteConfig;

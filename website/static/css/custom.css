@@ -248,7 +248,7 @@ pre code {
 pre code {
   background: none;
   box-shadow: none;
-  border-left: solid 3px #585760;
+  /* border-left: solid 3px /.#585760; */
   margin-left: 0;
   line-height: 1.4;
   border-radius: 0;

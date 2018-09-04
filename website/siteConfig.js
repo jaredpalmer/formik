@@ -126,9 +126,9 @@ const siteConfig = {
   scripts: [
     'https://buttons.github.io/buttons.js',
     'https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.0/clipboard.min.js',
-    '/js/code-blocks-buttons.js',
+    '/formik/js/code-blocks-buttons.js',
   ],
-  stylesheets: ['/css/code-blocks-buttons.css'],
+  stylesheets: ['/formik/css/code-blocks-buttons.css'],
 
   // On page navigation for the current documentation page.
   onPageNav: 'separate',

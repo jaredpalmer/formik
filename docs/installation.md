@@ -15,8 +15,6 @@ npm install formik --save
 yarn add formik
 ```
 
-Formik is compatible with React v15+ and works with ReactDOM and React Native.
-
 ## CDN
 
 If you're not using a module bundler or package manager we also have a global ("UMD") build hosted on the [unpkg.com](https://unpkg.com) CDN. Simply add the following `<script>` tag to the bottom of your HTML file:

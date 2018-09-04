@@ -154,7 +154,7 @@ const siteConfig = {
   },
   enableUpdateTime: true,
   gaTrackingId: 'UA-55176740-4',
-  twitter: 'true',
+  twitter: true,
   twitterUsername: 'jaredpalmer',
 };
 

@@ -6,7 +6,7 @@ import {
   GenericFieldHTMLAttributes,
   FormikContext,
 } from './types';
-import { getIn, isEmptyChildren, isFunction, isPromise } from './utils';
+import { getIn, isEmptyChildren, isFunction } from './utils';
 
 /**
  * Note: These typings could be more restrictive, but then it would limit the

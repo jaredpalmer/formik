@@ -229,6 +229,10 @@ a.learnmore:hover {
   opacity: 0.7;
 }
 
+.post a {
+  color: $actionColor;
+}
+
 nav.toc .toggleNav ul li a.navItemActive {
   color: $actionColor;
   opacity: 1;

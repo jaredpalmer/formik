@@ -97,118 +97,7 @@ your form via `props`. `handleChange` and `handleBlur` work exactly as
 expected--they use a `name` or `id` attribute to figure out which field to
 update.
 
-There are two ways to use Formik:
-
-* `withFormik()`: A Higher-order Component (HoC) that accepts a configuration
-  object
-* `<Formik />`: A React component with a `render` prop
-
-**Both do exactly the same thing** and share the same internal implementation.
-They just differ in their respective style....
-
 ```jsx
-// Higher Order Component
-import React from 'react';
-import { withFormik } from 'formik';
-
-// Our inner form component which receives our form's state and updater methods as props
-const InnerForm = ({
-  values,
-  errors,
-  touched,
-  handleChange,
-  handleBlur,
-  handleSubmit,
-  isSubmitting,
-}) => (
-  <form onSubmit={handleSubmit}>
-    <input
-      type="email"
-      name="email"
-      onChange={handleChange}
-      onBlur={handleBlur}
-      value={values.email}
-    />
-    {touched.email && errors.email && <div>{errors.email}</div>}
-    <input
-      type="password"
-      name="password"
-      onChange={handleChange}
-      onBlur={handleBlur}
-      value={values.password}
-    />
-    {touched.password && errors.password && <div>{errors.password}</div>}
-    <button type="submit" disabled={isSubmitting}>
-      Submit
-    </button>
-  </form>
-);
-
-// Wrap our form with the using withFormik HoC
-const MyForm = withFormik({
-  // Transform outer props into form values
-  mapPropsToValues: props => ({ email: '', password: '' }),
-  // Add a custom validation function (this can be async too!)
-  validate: (values, props) => {
-    const errors = {};
-    if (!values.email) {
-      errors.email = 'Required';
-    } else if (
-      !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)
-    ) {
-      errors.email = 'Invalid email address';
-    }
-    return errors;
-  },
-  // Submission handler
-  handleSubmit: (
-    values,
-    {
-      props,
-      setSubmitting,
-      setErrors /* setValues, setStatus, and other goodies */,
-    }
-  ) => {
-    LoginToMyApp(values).then(
-      user => {
-        setSubmitting(false);
-        // do whatevs...
-        // props.updateUser(user)
-      },
-      errors => {
-        setSubmitting(false);
-        // Maybe even transform your API's errors into the same shape as Formik's!
-        setErrors(transformMyApiErrors(errors));
-      }
-    );
-  },
-})(InnerForm);
-
-// Use <MyForm /> anywhere
-const Basic = () => (
-  <div>
-    <h1>My Form</h1>
-    <p>This can be anywhere in your application</p>
-    <MyForm />
-  </div>
-);
-
-export default Basic;
-```
-
-The benefit of the render prop approach is that you have full access to React's
-state, props, and composition model. Thus there is no need to map outer props
-to values...you can just set the initial values, and if they depend on props / state
-then--boom--you can directly access to props / state.
-The render prop accepts your inner form component, which you can define separately or inline
-totally up to you:
-
-* `<Formik render={props => <form>...</form>}>`
-* `<Formik component={InnerForm}>`
-* `<Formik>{props => <form>...</form>}</Formik>` (identical to as render, just writtendifferently)
-
-```jsx
-// Render Prop
 import React from 'react';
 import { Formik } from 'formik';
 
@@ -216,49 +105,12 @@ const Basic = () => (
   <div>
     <h1>Anywher in your app!</h1>
     <Formik
-      initialValues={{
-        email: '',
-        password: '',
-      }}
-      validate={values => {
-        // same as above, but feel free to move this into a class method now.
-        let errors = {};
-        if (!values.email) {
-          errors.email = 'Required';
-        } else if (
-          !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)
-        ) {
-          errors.email = 'Invalid email address';
-        }
-        return errors;
-      }}
-      onSubmit={(
-        values,
-        { setSubmitting, setErrors /* setValues and other goodies */ }
-      ) => {
-        LoginToMyApp(values).then(
-          user => {
-            setSubmitting(false);
-            // do whatevs...
-            // props.updateUser(user)
-          },
-          errors => {
-            setSubmitting(false);
-            // Maybe transform your API's errors into the same shape as Formik's
-            setErrors(transformMyApiErrors(errors));
-          }
-        );
+      initialValues={{ email: '', password: '' }}
+      onSubmit={values => {
+        // do something awesome
       }}
     >
-      {({
-        values,
-        errors,
-        touched,
-        handleChange,
-        handleBlur,
-        handleSubmit,
-        isSubmitting,
-      }) => (
+      {({ values, handleChange, handleBlur, handleSubmit, isSubmitting }) => (
         <form onSubmit={handleSubmit}>
           <input
             type="email"
@@ -267,7 +119,6 @@ const Basic = () => (
             onBlur={handleBlur}
             value={values.email}
           />
-          {touched.email && errors.email && <div>{errors.email}</div>}
           <input
             type="password"
             name="password"
@@ -275,7 +126,6 @@ const Basic = () => (
             onBlur={handleBlur}
             value={values.password}
           />
-          {touched.password && errors.password && <div>{errors.password}</div>}
           <button type="submit" disabled={isSubmitting}>
             Submit
           </button>
@@ -299,74 +149,25 @@ import { Formik, Form, Field } from 'formik';
 
 const Basic = () => (
   <div>
-    <h1>Anywher in your app!</h1>
+    <h1>Any place in your app!</h1>
     <Formik
-      initialValues={{
-        email: '',
-        password: '',
-      }}
-      validate={values => {
-        // same as above, but feel free to move this into a class method now.
-        let errors = {};
-        if (!values.email) {
-          errors.email = 'Required';
-        } else if (
-          !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)
-        ) {
-          errors.email = 'Invalid email address';
-        }
-        return errors;
-      }}
-      onSubmit={(
-        values,
-        { setSubmitting, setErrors, setStatus /* setValues and other goodies */ }
-      ) => {
-        LoginToMyApp(values).then(
-          user => {
-            setSubmitting(false);
-            // do whatevs...
-            // props.updateUser(user)
-          },
-          errors => {
-            setSubmitting(false);
-            // Maybe transform your API's errors into the same shape as Formik's
-            setStatus(transformMyApiErrors(errors));
-          }
-        );
+      initialValues={{ email: '', password: '' }}
+      onSubmit={values => {
+        // do something awesome
       }}
     >
-      {({ errors, touched, isSubmitting }) => (
+      {({ isSubmitting }) => (
         <Form>
           <Field type="email" name="email" />
-          {touched.email && errors.email && <div>{errors.email}</div>}
           <Field type="password" name="password" />
-          {touched.password && errors.password && <div>{errors.password}</div>}
           <button type="submit" disabled={isSubmitting}>
             Submit
           </button>
-        </form>
+        </Form>
       )}
     </Formik>
   </div>
 );
 
 export default Basic;
-```
-
-### Complementary Packages
-
-As you can see above, validation is left up to you. Feel free to write your own
-validators or use a 3rd party library. Personally, I use
-[Yup](https://github.com/jquense/yup) for object schema validation. It has an
-API that's pretty similar [Joi](https://github.com/hapijs/joi) /
-[React PropTypes](https://github.com/facebook/prop-types) but is small enough
-for the browser and fast enough for runtime usage. Because I :heart: Yup sooo
-much, Formik has a special config option / prop for Yup called
-`validationSchema` which will automatically transform Yup's validation errors
-into a pretty object whose keys match `values` and `touched`. Anyways, you
-can install Yup from npm...
-
-```sh
-npm install yup --save
-# typescript users should add the @types/yup
 ```

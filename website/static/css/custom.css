@@ -211,6 +211,7 @@ nav.toc .toggleNav .navGroup.navGroupActive h3 {
 
 .button {
   border-radius: 6px;
+  font-weight: 500;
   text-transform: none;
 }
 
@@ -231,7 +232,7 @@ a.learnmore:hover {
   opacity: 0.7;
 }
 
-.post a {
+.post a:not(.button) {
   color: $actionColor;
 }
 

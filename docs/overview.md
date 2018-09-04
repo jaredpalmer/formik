@@ -171,3 +171,5 @@ const Basic = () => (
 
 export default Basic;
 ```
+
+The combination of both props and context-based API's makes Formik very flexible. Next up, checkout some of the demos or start the tutorial.

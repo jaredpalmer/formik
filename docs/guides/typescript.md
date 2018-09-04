@@ -5,8 +5,8 @@ title: TypeScript
 
 [![TypeScript Types](https://img.shields.io/npm/types/formik.svg)](https://npm.im/formik)
 
-The Formik source code is written in TypeScript, so you can rest assured that
-types will always be up to date. As a mental model, Formik's types are very
+The Formik source code is written in TypeScript, so you can rest easy that Formik's
+types will always be up-to-date. As a mental model, Formik's type signature(s) is/are very
 similar to React Router 4's `<Route>`.
 
 #### Render props (`<Formik />` and `<Field />`)
@@ -19,7 +19,7 @@ interface MyFormValues {
   firstName: string;
 }
 
-export const MyApp: React.SFC<{} /* whatever */> = () => {
+export const MyApp: React.SFC<{} /* whatevs */> = () => {
   return (
     <div>
       <h1>My Example</h1>
@@ -115,7 +115,7 @@ const MyForm = withFormik<MyFormProps, FormValues>({
   },
 })(InnerForm);
 
-// Use <MyForm /> anywhere
+// Use <MyForm /> wherevs
 const Basic = () => (
   <div>
     <h1>My App</h1>

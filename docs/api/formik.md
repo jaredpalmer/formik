@@ -189,7 +189,7 @@ component.
 
 Imperatively call your [`validate`] or [`validateSchema`] depending on what was specified. You can optionally pass values to validate against and this modify Formik state accordingly, otherwise this will use the current `values` of the form.
 
-### `validateField: (field: string) => void`
+#### `validateField: (field: string) => void`
 
 Imperatively call field's [`validate`] function if specified for given field. Formik will use the current field value.
 

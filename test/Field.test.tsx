@@ -131,6 +131,42 @@ describe('A <Field />', () => {
       expect(setFieldError).not.toHaveBeenCalled();
       expect(validate).not.toHaveBeenCalled();
     });
+
+    it('runs validation when validateField is called (SYNC)', async () => {
+      const validate = jest.fn().mockReturnValue('Error!');
+      const FormFields = () => <Field name="name" validate={validate} />;
+
+      const tree = mount(<TestForm component={FormFields} />);
+      tree
+        .find(FormFields)
+        .props()
+        .validateField('name');
+      await Promise.resolve()
+        .then()
+        .then(); // XXX: Waiting for validateField's promise, should be fixed :(
+      tree.update();
+
+      expect(validate).toHaveBeenCalled();
+      expect(tree.find(FormFields).props().errors.name).toBe('Error!');
+    });
+
+    it('runs validation when validateField is called (ASYNC)', async () => {
+      const validate = jest.fn().mockRejectedValue('Error!');
+      const FormFields = () => <Field name="name" validate={validate} />;
+
+      const tree = mount(<TestForm component={FormFields} />);
+      tree
+        .find(FormFields)
+        .props()
+        .validateField('name');
+      await Promise.resolve()
+        .then()
+        .then(); // XXX: Waiting for validateField's promise, should be fixed :(
+      tree.update();
+
+      expect(validate).toHaveBeenCalled();
+      expect(tree.find(FormFields).props().errors.name).toBe('Error!');
+    });
   });
 
   describe('<Field component />', () => {

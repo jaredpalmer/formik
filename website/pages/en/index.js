@@ -32,14 +32,11 @@ class Index extends React.Component {
             <h1>Formik</h1>
             <h2>Build forms in React, without tears.</h2>
             <div className="row">
-              <a
-                className="btn primary"
-                href="https://www.facebook.com/fbflipper/public/mac"
-              >
+              <a className="btn primary" href="docs/overview">
                 Get Started
               </a>
-              <a className="btn" href="/docs/understand.html">
-                Learn more
+              <a className="btn" href="https://github.com/jaredpalmer/formik">
+                GitHub
               </a>
             </div>
             {/* <img
@@ -50,7 +47,7 @@ class Index extends React.Component {
             <div className="shadow" />
           </div>
         </div>
-        <div className="content row">
+        {/* <div className="content row">
           <div className="col">
             <img
               src="/img/inspector.png"
@@ -58,7 +55,6 @@ class Index extends React.Component {
             />
           </div>
           <div className="col">
-            {/* <h4>Learn once, use anywhere</h4> */}
             <h3>Declarative</h3>
             <p>
               Formik is a small collection declarative React components that
@@ -134,26 +130,6 @@ class Index extends React.Component {
               srcSet="/img/plugins.png 1x, /img/plugins@2x.png 2x"
             />
           </div>
-        </div>
-        {/* <div className="content row">
-          <div className="col">
-            <img
-              src="/img/plugins.png"
-              srcSet="/img/plugins.png 1x, /img/plugins@2x.png 2x"
-            />
-          </div>
-          <div className="col">
-            <h3>Open Source</h3>
-            <p>
-              Formik is 100% open-source and MIT licensed. This enables you to
-              see and understand how we use it, and of course join the community
-              and help improve Formik. We are excited to see what you will
-              build.
-            </p>
-            <a className="learnmore" href="/docs/js-setup.html">
-              Learn more
-            </a>
-          </div>
         </div> */}
 
         <div style={{ background: '#eee' }}>
@@ -163,26 +139,26 @@ class Index extends React.Component {
               contents={[
                 {
                   content: 'James Long, Creator of Prettier',
-                  image: `${siteConfig.baseUrl}img/hector-ramos.png`,
-                  imageAlign: 'bottom',
-                  imageAlt: 'James Long',
+                  // image: `${siteConfig.baseUrl}img/hector-ramos.png`,
+                  // imageAlign: 'bottom',
+                  // imageAlt: 'James Long',
                   title:
                     "*I can't believe people ever put forms in Redux, or did anything else other than this.*",
                 },
                 {
                   content: `Kye Hohenberger, Creator of Emotion`,
-                  image: `${siteConfig.baseUrl}img/ricky-vetter.jpg`,
-                  imageAlign: 'bottom',
-                  imageAlt: 'Kye Hohenberger',
+                  // image: `${siteConfig.baseUrl}img/ricky-vetter.jpg`,
+                  // imageAlign: 'bottom',
+                  // imageAlt: 'Kye Hohenberger',
                   title: `*Formik removes most of the moving parts involved in forms
                     allowing me to move faster with more confidence.*`,
                 },
                 {
                   content:
                     'Ken Wheeler, Director of Open Source at Formidable Labs',
-                  image: `${siteConfig.baseUrl}img/christopher-chedeau.jpg`,
-                  imageAlign: 'bottom',
-                  imageAlt: 'Ken Wheeler',
+                  // image: `${siteConfig.baseUrl}img/christopher-chedeau.jpg`,
+                  // imageAlign: 'bottom',
+                  // imageAlt: 'Ken Wheeler',
                   title: `*Formik. All day. All long.*`,
                 },
               ]}
@@ -204,7 +180,7 @@ class Index extends React.Component {
             </p>
           </div>
           <div className="logos">{showcase}</div>
-          <a className="btn" href="/users.html">
+          <a className="btn" href="users.html">
             More Formik Users
           </a>
         </div>

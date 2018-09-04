@@ -1,5 +1,5 @@
 body {
-  font-family: 'Colfax', 'San Francisco', -apple-system, BlinkMacSystemFont,
+  font-family: 'San Francisco', -apple-system, BlinkMacSystemFont,
     '.SFNSText-Regular', 'Helvetica Neue', Helvetica, sans-serif;
 }
 
@@ -9,11 +9,11 @@ h3,
 h4,
 h5,
 h6 {
-  font-weight: 700;
+  font-weight: 800;
 }
 
 .fixedHeaderContainer header h2 {
-  font-family: 'Colfax', 'San Francisco', -apple-system, BlinkMacSystemFont,
+  font-family: 'San Francisco', -apple-system, BlinkMacSystemFont,
     '.SFNSText-Regular', 'Helvetica Neue', Helvetica, sans-serif;
   font-size: 17px;
 }
@@ -37,6 +37,8 @@ h6 {
   color: white;
   position: relative;
   overflow: hidden;
+  padding-top: 50px;
+  padding-bottom: 80px;
 }
 
 .splash h1 {

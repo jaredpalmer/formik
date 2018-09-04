@@ -12,16 +12,12 @@
 const users = [
   {
     caption: 'Airbnb',
-    // You will need to prepend the image path with your baseUrl
-    // if it is not '/', like: '/test-site/formik/img/formik.svg'.
     image: '/formik/img/logos/airbnb.svg',
     infoLink: 'https://airbnb.com',
     pinned: true,
   },
   {
     caption: 'Walmart',
-    // You will need to prepend the image path with your baseUrl
-    // if it is not '/', like: '/test-site/formik/img/formik.svg'.
     image: '/formik/img/logos/walmart.svg',
     infoLink: 'https://walmart.com',
     pinned: true,
@@ -29,33 +25,26 @@ const users = [
 
   {
     caption: 'OpenTable',
-    // You will need to prepend the image path with your baseUrl
-    // if it is not '/', like: '/test-site/formik/img/logos/formik.svg'.
     image: '/formik/img/logos/opentable.svg',
     infoLink: 'https://opentable.com',
     pinned: true,
   },
   {
     caption: 'Lyft',
-    // You will need to prepend the image path with your baseUrl
-    // if it is not '/', like: '/test-site/formik/img/logos/formik.svg'.
     image: '/formik/img/logos/lyft.svg',
     infoLink: 'https://lyft.com',
     pinned: true,
   },
   {
-    caption: 'Nokia',
-    // You will need to prepend the image path with your baseUrl
-    // if it is not '/', like: '/test-site/formik/img/logos/formik.svg'.
-    image: '/formik/img/logos/nokia.svg',
-    infoLink: 'https://nokia.com',
-  },
-  {
     caption: 'Docker',
-    // You will need to prepend the image path with your baseUrl
-    // if it is not '/', like: '/test-site/formik/img/logos/formik.svg'.
     image: '/formik/img/logos/docker.svg',
     infoLink: 'https://docker.com',
+    pinned: true,
+  },
+  {
+    caption: 'Nokia',
+    image: '/formik/img/logos/nokia.svg',
+    infoLink: 'https://nokia.com',
     pinned: true,
   },
 ];

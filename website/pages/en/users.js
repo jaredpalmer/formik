@@ -34,9 +34,9 @@ class Users extends React.Component {
               <h1>Who's using Formik?</h1>
               <p>
                 Formik has been powering forms at{' '}
-                <a href="https://palmer.net">The Palmer Group</a> since 2016.
-                Formik was open sourced in 2017 and is and used by teams of all
-                sizes.
+                <a href="https://www.palmer.net">The Palmer Group</a> since
+                2016. Formik was open sourced in 2017 and is used by teams of
+                all sizes.
               </p>
             </div>
             <div className="logos">{showcase}</div>

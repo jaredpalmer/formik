@@ -175,8 +175,8 @@ class Index extends React.Component {
             <h2>Who's using Formik?</h2>
             <p>
               Formik has been powering forms at{' '}
-              <a href="https://palmer.net">The Palmer Group</a> since 2016.
-              Formik was open sourced in 2017 and is by teams of all sizes.
+              <a href="https://www.palmer.net">The Palmer Group</a> since 2016.
+              Formik was open sourced in 2017 and is used by teams of all sizes.
             </p>
           </div>
           <div className="logos">{showcase}</div>

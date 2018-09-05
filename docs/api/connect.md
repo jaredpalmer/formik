@@ -15,14 +15,14 @@ connect<OuterProps, Values = any>(Comp: React.ComponentType<OuterProps & FormikP
 
 ```jsx
 import React from 'react';
-import { connect } from 'formik';
+import { connect, getIn } from 'formik';
 
 // This component renders an error message if a field has
 // an error and it's already been touched.
 const ErrorMessage = props => {
   // All FormikProps available on props.formik!
-  const error = props.formik.errors[props.name];
-  const touch = props.formik.touched[props.name];
+  const error = getIn(props.formik.errors, props.name);
+  const touch = getIn(props.formik.touched, props.name);
   return touch && error ? error : null;
 };
 

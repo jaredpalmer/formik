@@ -27,16 +27,6 @@ class Index extends React.Component {
       <div>
         <div className="splash">
           <div className="content">
-            <h1 style={{ fontWeight: 800 }}>Formik</h1>
-            <h2>Build forms in React, without tears.</h2>
-            <div className="row">
-              <a className="btn primary" href="/formik/docs/overview">
-                Get Started
-              </a>
-              <a className="btn" href="https://github.com/jaredpalmer/formik">
-                GitHub
-              </a>
-            </div>
             <svg
               viewBox="0 0 145 127"
               xmlns="http://www.w3.org/2000/svg"
@@ -65,6 +55,22 @@ class Index extends React.Component {
                 </g>
               </g>
             </svg>
+            <div className="relative">
+              <h1 style={{ fontWeight: 800 }}>Formik</h1>
+              <h2>Build forms in React, without tears.</h2>
+              <div className="row">
+                <a className="btn primary" href="/formik/docs/overview">
+                  Get Started
+                </a>
+                <a
+                  className="btn ghost"
+                  href="https://github.com/jaredpalmer/formik"
+                >
+                  GitHub
+                </a>
+              </div>
+            </div>
+
             <div className="shadow" />
           </div>
         </div>
@@ -102,7 +108,7 @@ class Index extends React.Component {
           </Container>
         </div>
         <div className="quotes">
-          <Container padding={['bottom', 'top', 'left', 'right']}>
+          <Container padding={['bottom', 'top']}>
             <GridBlock
               align="left"
               contents={[
@@ -112,7 +118,7 @@ class Index extends React.Component {
                   // image: `${siteConfig.baseUrl}img/christopher-chedeau.jpg`,
                   // imageAlign: 'bottom',
                   // imageAlt: 'Ken Wheeler',
-                  title: `"*Formik. All day. All long.*"`,
+                  title: `*"Formik. All day. All long."*`,
                 },
                 {
                   content: 'James Long, Creator of Prettier',
@@ -120,7 +126,7 @@ class Index extends React.Component {
                   // imageAlign: 'bottom',
                   // imageAlt: 'James Long',
                   title:
-                    '"*I can\'t believe people ever put forms in Redux, or did anything else other than this.*"',
+                    '*"I can\'t believe people ever put forms in Redux, or did anything else other than this."*',
                 },
               ]}
               layout="twoColumn"
@@ -144,6 +150,21 @@ class Index extends React.Component {
           <a className="btn" href="/formik/users.html">
             More Formik Users
           </a>
+        </div>
+        <div style={{ background: '#222' }}>
+          <div className="center" style={{ paddingBottom: 40, paddingTop: 40 }}>
+            <div className="row">
+              <a className="btn primary" href="/formik/docs/overview">
+                Get Started
+              </a>
+              <a
+                className="btn ghost"
+                href="https://github.com/jaredpalmer/formik"
+              >
+                GitHub
+              </a>
+            </div>
+          </div>
         </div>
       </div>
     );

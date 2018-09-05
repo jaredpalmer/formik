@@ -222,16 +222,16 @@ const Basic = () => (
     <h1>My Form</h1>
     <p>This can be anywhere in your application</p>
     {/*
-                  The benefit of the render prop approach is that you have full access to React's
-                  state, props, and composition model. Thus there is no need to map outer props
-                  to values...you can just set the initial values, and if they depend on props / state
-                  then--boom--you can directly access to props / state.
-                  The render prop accepts your inner form component, which you can define separately or inline
-                  totally up to you:
-                  - `<Formik render={props => <form>...</form>}>`
-                  - `<Formik component={InnerForm}>`
-                  - `<Formik>{props => <form>...</form>}</Formik>` (identical to as render, just written differently)
-                */}
+                                                                                                                                                                                                                                                                          The benefit of the render prop approach is that you have full access to React's
+                                                                                                                                                                                                                                                                          state, props, and composition model. Thus there is no need to map outer props
+                                                                                                                                                                                                                                                                          to values...you can just set the initial values, and if they depend on props / state
+                                                                                                                                                                                                                                                                          then--boom--you can directly access to props / state.
+                                                                                                                                                                                                                                                                          The render prop accepts your inner form component, which you can define separately or inline
+                                                                                                                                                                                                                                                                          totally up to you:
+                                                                                                                                                                                                                                                                          - `<Formik render={props => <form>...</form>}>`
+                                                                                                                                                                                                                                                                          - `<Formik component={InnerForm}>`
+                                                                                                                                                                                                                                                                          - `<Formik>{props => <form>...</form>}</Formik>` (identical to as render, just written differently)
+                                                                                                                                                                                                                                                                        */}
     <Formik
       initialValues={{
         email: '',
@@ -324,89 +324,93 @@ npm install yup --save
 ## Table of Contents
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-- [Guides](#guides)
-  - [Basics](#basics)
-  - [React Native](#react-native)
-    - [Avoiding new functions in render](#avoiding-new-functions-in-render)
-  - [Using Formik with TypeScript](#using-formik-with-typescript)
-    - [Render props (`<Formik />` and `<Field />`)](#render-props-formik--and-field-)
-    - [`withFormik()`](#withformik)
-  - [How Form Submission Works](#how-form-submission-works)
-    - [Frequently Asked Questions](#frequently-asked-questions)
-- [API](#api)
-  - [`<Formik />`](#formik-)
-    - [Formik render methods](#formik-render-methods)
-    - [Formik props](#formik-props)
-      - [`dirty: boolean`](#dirty-boolean)
-      - [`errors: { [field: string]: string }`](#errors--field-string-string-)
-      - [`handleBlur: (e: any) => void`](#handleblur-e-any--void)
-      - [`handleChange: (e: React.ChangeEvent<any>) => void`](#handlechange-e-reactchangeeventany--void)
-      - [`handleReset: () => void`](#handlereset---void)
-      - [`handleSubmit: (e: React.FormEvent<HTMLFormEvent>) => void`](#handlesubmit-e-reactformeventhtmlformevent--void)
-      - [`isSubmitting: boolean`](#issubmitting-boolean)
-      - [`isValid: boolean`](#isvalid-boolean)
-      - [`isValidating: boolean`](#isvalidating-boolean)
-      - [`resetForm: (nextValues?: Values) => void`](#resetform-nextvalues-values--void)
-      - [`setErrors: (fields: { [field: string]: string }) => void`](#seterrors-fields--field-string-string---void)
-      - [`setFieldError: (field: string, errorMsg: string) => void`](#setfielderror-field-string-errormsg-string--void)
-      - [`setFieldTouched: (field: string, isTouched: boolean, shouldValidate?: boolean) => void`](#setfieldtouched-field-string-istouched-boolean-shouldvalidate-boolean--void)
-      - [`submitForm: () => void`](#submitform---void)
-      - [`submitCount: number`](#submitcount-number)
-      - [`setFieldValue: (field: string, value: any, shouldValidate?: boolean) => void`](#setfieldvalue-field-string-value-any-shouldvalidate-boolean--void)
-      - [`setStatus: (status?: any) => void`](#setstatus-status-any--void)
-      - [`setSubmitting: (isSubmitting: boolean) => void`](#setsubmitting-issubmitting-boolean--void)
-      - [`setTouched: (fields: { [field: string]: boolean }) => void`](#settouched-fields--field-string-boolean---void)
-      - [`setValues: (fields: { [field: string]: any }) => void`](#setvalues-fields--field-string-any---void)
-      - [`status?: any`](#status-any)
-      - [`touched: { [field: string]: boolean }`](#touched--field-string-boolean-)
-      - [`values: { [field: string]: any }`](#values--field-string-any-)
-      - [`validateForm: (values?: any) => void`](#validateform-values-any--void)
-      - [`validateField: (field: string) => void`](#validatefield-field-string--void)
-    - [`component`](#component)
-    - [`render: (props: FormikProps<Values>) => ReactNode`](#render-props-formikpropsvalues--reactnode)
-    - [`children: func`](#children-func)
-    - [`enableReinitialize?: boolean`](#enablereinitialize-boolean)
-    - [`isInitialValid?: boolean`](#isinitialvalid-boolean)
-    - [`initialValues?: Values`](#initialvalues-values)
-    - [`onReset?: (values: Values, formikBag: FormikBag) => void`](#onreset-values-values-formikbag-formikbag--void)
-    - [`onSubmit: (values: Values, formikBag: FormikBag) => void`](#onsubmit-values-values-formikbag-formikbag--void)
-    - [`validate?: (values: Values) => FormikErrors<Values> | Promise<any>`](#validate-values-values--formikerrorsvalues--promiseany)
-    - [`validateOnBlur?: boolean`](#validateonblur-boolean)
-    - [`validateOnChange?: boolean`](#validateonchange-boolean)
-    - [`validationSchema?: Schema | (() => Schema)`](#validationschema-schema----schema)
-  - [`<Field />`](#field-)
-    - [`validate?: (value: any) => undefined | string | Promise<any>`](#validate-value-any--undefined--string--promiseany)
-    - [Refs](#refs)
-  - [`<FieldArray />`](#fieldarray-)
-      - [`name: string`](#name-string)
-      - [`validateOnChange?: boolean`](#validateonchange-boolean-1)
-    - [FieldArray Array of Objects](#fieldarray-array-of-objects)
-    - [FieldArray Validation Gotchas](#fieldarray-validation-gotchas)
-    - [FieldArray Helpers](#fieldarray-helpers)
-    - [FieldArray render methods](#fieldarray-render-methods)
-      - [`render: (arrayHelpers: ArrayHelpers) => React.ReactNode`](#render-arrayhelpers-arrayhelpers--reactreactnode)
-      - [`component: React.ReactNode`](#component-reactreactnode)
-  - [`<Form />`](#form-)
-  - [`withFormik(options)`](#withformikoptions)
-    - [`options`](#options)
-      - [`displayName?: string`](#displayname-string)
-      - [`enableReinitialize?: boolean`](#enablereinitialize-boolean-1)
-      - [`handleSubmit: (values: Values, formikBag: FormikBag) => void`](#handlesubmit-values-values-formikbag-formikbag--void)
-        - [The "FormikBag":](#the-formikbag)
-      - [`isInitialValid?: boolean | (props: Props) => boolean`](#isinitialvalid-boolean--props-props--boolean)
-      - [`mapPropsToValues?: (props: Props) => Values`](#mappropstovalues-props-props--values)
-      - [`validate?: (values: Values, props: Props) => FormikErrors<Values> | Promise<any>`](#validate-values-values-props-props--formikerrorsvalues--promiseany)
-      - [`validateOnBlur?: boolean`](#validateonblur-boolean-1)
-      - [`validateOnChange?: boolean`](#validateonchange-boolean-2)
-      - [`validationSchema?: Schema | ((props: Props) => Schema)`](#validationschema-schema--props-props--schema)
-    - [Injected props and methods](#injected-props-and-methods)
-  - [`connect()`](#connect)
-- [Organizations and projects using Formik](#organizations-and-projects-using-formik)
-- [Authors](#authors)
-- [Contributors](#contributors)
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+* [Guides](#guides)
+  * [Basics](#basics)
+  * [React Native](#react-native)
+    * [Avoiding new functions in render](#avoiding-new-functions-in-render)
+  * [Using Formik with TypeScript](#using-formik-with-typescript)
+    * [Render props (`<Formik />` and `<Field />`)](#render-props-formik--and-field-)
+    * [`withFormik()`](#withformik)
+  * [How Form Submission Works](#how-form-submission-works)
+    * [Frequently Asked Questions](#frequently-asked-questions)
+* [API](#api)
+  * [`<Formik />`](#formik-)
+    * [Formik render methods](#formik-render-methods)
+    * [Formik props](#formik-props)
+      * [`dirty: boolean`](#dirty-boolean)
+      * [`errors: { [field: string]: string }`](#errors--field-string-string-)
+      * [`handleBlur: (e: any) => void`](#handleblur-e-any--void)
+      * [`handleChange: (e: React.ChangeEvent<any>) => void`](#handlechange-e-reactchangeeventany--void)
+      * [`handleReset: () => void`](#handlereset---void)
+      * [`handleSubmit: (e: React.FormEvent<HTMLFormEvent>) => void`](#handlesubmit-e-reactformeventhtmlformevent--void)
+      * [`isSubmitting: boolean`](#issubmitting-boolean)
+      * [`isValid: boolean`](#isvalid-boolean)
+      * [`isValidating: boolean`](#isvalidating-boolean)
+      * [`resetForm: (nextValues?: Values) => void`](#resetform-nextvalues-values--void)
+      * [`setErrors: (fields: { [field: string]: string }) => void`](#seterrors-fields--field-string-string---void)
+      * [`setFieldError: (field: string, errorMsg: string) => void`](#setfielderror-field-string-errormsg-string--void)
+      * [`setFieldTouched: (field: string, isTouched: boolean, shouldValidate?: boolean) => void`](#setfieldtouched-field-string-istouched-boolean-shouldvalidate-boolean--void)
+      * [`submitForm: () => void`](#submitform---void)
+      * [`submitCount: number`](#submitcount-number)
+      * [`setFieldValue: (field: string, value: any, shouldValidate?: boolean) => void`](#setfieldvalue-field-string-value-any-shouldvalidate-boolean--void)
+      * [`setStatus: (status?: any) => void`](#setstatus-status-any--void)
+      * [`setSubmitting: (isSubmitting: boolean) => void`](#setsubmitting-issubmitting-boolean--void)
+      * [`setTouched: (fields: { [field: string]: boolean }) => void`](#settouched-fields--field-string-boolean---void)
+      * [`setValues: (fields: { [field: string]: any }) => void`](#setvalues-fields--field-string-any---void)
+      * [`status?: any`](#status-any)
+      * [`touched: { [field: string]: boolean }`](#touched--field-string-boolean-)
+      * [`values: { [field: string]: any }`](#values--field-string-any-)
+      * [`validateForm: (values?: any) => void`](#validateform-values-any--void)
+      * [`validateField: (field: string) => void`](#validatefield-field-string--void)
+    * [`component`](#component)
+    * [`render: (props: FormikProps<Values>) => ReactNode`](#render-props-formikpropsvalues--reactnode)
+    * [`children: func`](#children-func)
+    * [`enableReinitialize?: boolean`](#enablereinitialize-boolean)
+    * [`isInitialValid?: boolean`](#isinitialvalid-boolean)
+    * [`initialValues?: Values`](#initialvalues-values)
+    * [`onReset?: (values: Values, formikBag: FormikBag) => void`](#onreset-values-values-formikbag-formikbag--void)
+    * [`onSubmit: (values: Values, formikBag: FormikBag) => void`](#onsubmit-values-values-formikbag-formikbag--void)
+    * [`validate?: (values: Values) => FormikErrors<Values> | Promise<any>`](#validate-values-values--formikerrorsvalues--promiseany)
+    * [`validateOnBlur?: boolean`](#validateonblur-boolean)
+    * [`validateOnChange?: boolean`](#validateonchange-boolean)
+    * [`validationSchema?: Schema | (() => Schema)`](#validationschema-schema----schema)
+  * [`<Field />`](#field-)
+    * [`validate?: (value: any) => undefined | string | Promise<any>`](#validate-value-any--undefined--string--promiseany)
+    * [Refs](#refs)
+  * [`<FastField />`](#fastfield-)
+    * [`<Field>` vs. `<FastField>` Example](#field-vs-fastfield-example)
+  * [`<FieldArray />`](#fieldarray-)
+    * [`name: string`](#name-string)
+    * [`validateOnChange?: boolean`](#validateonchange-boolean-1)
+    * [FieldArray Array of Objects](#fieldarray-array-of-objects)
+    * [FieldArray Validation Gotchas](#fieldarray-validation-gotchas)
+    * [FieldArray Helpers](#fieldarray-helpers)
+    * [FieldArray render methods](#fieldarray-render-methods)
+      * [`render: (arrayHelpers: ArrayHelpers) => React.ReactNode`](#render-arrayhelpers-arrayhelpers--reactreactnode)
+      * [`component: React.ReactNode`](#component-reactreactnode)
+  * [`<Form />`](#form-)
+  * [`withFormik(options)`](#withformikoptions)
+    * [`options`](#options)
+      * [`displayName?: string`](#displayname-string)
+      * [`enableReinitialize?: boolean`](#enablereinitialize-boolean-1)
+      * [`handleSubmit: (values: Values, formikBag: FormikBag) => void`](#handlesubmit-values-values-formikbag-formikbag--void)
+        * [The "FormikBag":](#the-formikbag)
+      * [`isInitialValid?: boolean | (props: Props) => boolean`](#isinitialvalid-boolean--props-props--boolean)
+      * [`mapPropsToValues?: (props: Props) => Values`](#mappropstovalues-props-props--values)
+      * [`validate?: (values: Values, props: Props) => FormikErrors<Values> | Promise<any>`](#validate-values-values-props-props--formikerrorsvalues--promiseany)
+      * [`validateOnBlur?: boolean`](#validateonblur-boolean-1)
+      * [`validateOnChange?: boolean`](#validateonchange-boolean-2)
+      * [`validationSchema?: Schema | ((props: Props) => Schema)`](#validationschema-schema--props-props--schema)
+    * [Injected props and methods](#injected-props-and-methods)
+  * [`connect()`](#connect)
+* [Organizations and projects using Formik](#organizations-and-projects-using-formik)
+* [Authors](#authors)
+* [Contributors](#contributors)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -1321,6 +1325,126 @@ slightly relaxed and allow you to return a `Function` (e.g. `i18n('invalid')`).
 
 When you are **not** using a custom component and you need to access the underlying DOM node created by `Field` (e.g. to call `focus`), pass the callback to the `innerRef` prop instead.
 
+### `<FastField />`
+
+`<FastField />` is an optimized version of `<Field />` meant to be used on large forms. `<FastField />` has the same exact API as `<Field>`, but implements `shouldComponentUpdate` internally to block all additional re-renders unless there are direct updates to the `<FastField>`'s relevant parts/slice of Formik state.
+
+For example, `<FastField name="firstName" />` will only re-render when there are:
+
+* Changes to `values.firstName`, `errors.firstName`, or `touched.firstName`. This is determined by shallow comparison. Note: dotpaths are supported.
+* A prop is added/removed to the `<FastField name="firstName" />`
+* The `name` prop changes
+
+Other than for these aforementioned situations, `<FastField />` will not rerender. However, all updates triggered by a `<FastField>` will trigger re-renders to other "vanilla" `<Field>` components.
+
+**When to use**
+
+If a `<Field>` is "independent" of all other `<Field>`'s in your form, can use `<FastField>`. More specifically, if the `<Field />` does not change behavior/style/or render anything that is based on updates to another `<Field>` or `<FastField>`'s slice of Formik state AND it does not rely on other parts of top-level`<Formik>` state (e.g. `isSubmitting`, `isValidating`, `submitCount`), then you can use `<FastField>` as a drop-in replacement to `<Field />`.
+
+#### `<Field>` vs. `<FastField>` Example
+
+```js
+import React from 'react';
+import { Formik, Field, FastField, Form } from 'formik';
+
+const Basic = () => (
+  <div>
+    <h1>Sign Up</h1>
+    <Formik
+      initialValues={{
+        firstName: '',
+        lastName: '',
+        email: '',
+      }}
+      validationSchema={Yup.object().shape({
+        firstName: Yup.string().required(),
+        middleInitial: Yup.string(),
+        lastName: Yup.string().required(),
+        email: Yup.string()
+          .email()
+          .required(),
+      })}
+      onSubmit={values => {
+        setTimeout(() => {
+          alert(JSON.stringify(values, null, 2));
+        }, 500);
+      }}
+      render={formikProps => (
+        <Form>
+          {/** This <FastField> only updates for changes made to
+           values.firstName, touched.firstName, errors.firstName */}
+          <label htmlFor="firstName">First Name</label>
+          <FastField name="firstName" placeholder="Weezy" />
+
+          {/** Updates for all changes because it's from the
+           top-level formikProps which get all updates */}
+          {form.touched.firstName &&
+            form.errors.firstName && <div>{form.errors.firstName}</div>}
+
+          <label htmlFor="middleInitial">Middle Initial</label>
+          <FastField
+            name="middleInitial"
+            placeholder="F"
+            render={({ field, form }) => (
+              <div>
+                <input {...field} />
+                {/**
+                 * This updates normally because it's from the same slice of Formik state,
+                 * i.e. path to the object matches the name of this <FastField />
+                 */}
+                {form.touched.middleInitial ? form.errors.middleInitial : null}
+
+                {/** This won't ever update since it's coming from
+                 from another <Field>/<FastField>'s (i.e. firstName's) slice   */}
+                {form.touched.firstName && form.errors.firstName
+                  ? form.errors.firstName
+                  : null}
+
+                {/* This doesn't update either */}
+                {form.submitCount}
+
+                {/* Imperative methods still work as expected */}
+                <button
+                  type="button"
+                  onClick={form.setFieldValue('middleInitial', 'J')}
+                >
+                  J
+                </button>
+              </div>
+            )}
+          />
+
+          {/** Updates for all changes to Formik state
+           and all changes by all <Field>s and <FastField>s */}
+          <label htmlFor="lastName">LastName</label>
+          <Field
+            name="lastName"
+            placeholder="Baby"
+            render={({ field, form }) => (
+              <div>
+                <input {...field} />
+                {/** Works because this is inside
+                 of a <Field/>, which gets all updates */}
+                {form.touched.firstName && form.errors.firstName
+                  ? form.errors.firstName
+                  : null}
+              </div>
+            )}
+          />
+
+          {/** Updates for all changes to Formik state and
+           all changes by all <Field>s and <FastField>s */}
+          <label htmlFor="email">Email</label>
+          <Field name="email" placeholder="jane@acme.com" type="email" />
+
+          <button type="submit">Submit</button>
+        </Form>
+      )}
+    />
+  </div>
+);
+```
+
 ### `<FieldArray />`
 
 `<FieldArray />` is a component that helps with common array/list manipulations. You pass it a `name` property with the path to the key within `values` that holds the relevant array. `<FieldArray />` will then give you access to array helper methods via render props. For convenience, calling these methods will trigger validation and also manage `touched` for you.
@@ -1771,10 +1895,12 @@ Formik is made with <3 thanks to these wonderful people
 ([emoji key](https://github.com/kentcdodds/all-contributors#emoji-key)):
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+
 <!-- prettier-ignore -->
 | [<img src="https://avatars2.githubusercontent.com/u/4060187?v=4" width="100px;"/><br /><sub><b>Jared Palmer</b></sub>](http://jaredpalmer.com)<br />[💬](#question-jaredpalmer "Answering Questions") [💻](https://github.com/jaredpalmer/formik/commits?author=jaredpalmer "Code") [🎨](#design-jaredpalmer "Design") [📖](https://github.com/jaredpalmer/formik/commits?author=jaredpalmer "Documentation") [💡](#example-jaredpalmer "Examples") [🤔](#ideas-jaredpalmer "Ideas, Planning, & Feedback") [👀](#review-jaredpalmer "Reviewed Pull Requests") [⚠️](https://github.com/jaredpalmer/formik/commits?author=jaredpalmer "Tests") | [<img src="https://avatars0.githubusercontent.com/u/109324?v=4" width="100px;"/><br /><sub><b>Ian White</b></sub>](https://www.stardog.io)<br />[💬](#question-eonwhite "Answering Questions") [🐛](https://github.com/jaredpalmer/formik/issues?q=author%3Aeonwhite "Bug reports") [💻](https://github.com/jaredpalmer/formik/commits?author=eonwhite "Code") [📖](https://github.com/jaredpalmer/formik/commits?author=eonwhite "Documentation") [🤔](#ideas-eonwhite "Ideas, Planning, & Feedback") [👀](#review-eonwhite "Reviewed Pull Requests") | [<img src="https://avatars0.githubusercontent.com/u/829963?v=4" width="100px;"/><br /><sub><b>Andrej Badin</b></sub>](http://andrejbadin.com)<br />[💬](#question-Andreyco "Answering Questions") [🐛](https://github.com/jaredpalmer/formik/issues?q=author%3AAndreyco "Bug reports") [📖](https://github.com/jaredpalmer/formik/commits?author=Andreyco "Documentation") | [<img src="https://avatars2.githubusercontent.com/u/91115?v=4" width="100px;"/><br /><sub><b>Adam Howard</b></sub>](http://adz.co.de)<br />[💬](#question-skattyadz "Answering Questions") [🐛](https://github.com/jaredpalmer/formik/issues?q=author%3Askattyadz "Bug reports") [🤔](#ideas-skattyadz "Ideas, Planning, & Feedback") [👀](#review-skattyadz "Reviewed Pull Requests") | [<img src="https://avatars1.githubusercontent.com/u/6711845?v=4" width="100px;"/><br /><sub><b>Vlad Shcherbin</b></sub>](https://github.com/VladShcherbin)<br />[💬](#question-VladShcherbin "Answering Questions") [🐛](https://github.com/jaredpalmer/formik/issues?q=author%3AVladShcherbin "Bug reports") [🤔](#ideas-VladShcherbin "Ideas, Planning, & Feedback") | [<img src="https://avatars3.githubusercontent.com/u/383212?v=4" width="100px;"/><br /><sub><b>Brikou CARRE</b></sub>](https://github.com/brikou)<br />[🐛](https://github.com/jaredpalmer/formik/issues?q=author%3Abrikou "Bug reports") [📖](https://github.com/jaredpalmer/formik/commits?author=brikou "Documentation") | [<img src="https://avatars0.githubusercontent.com/u/5314713?v=4" width="100px;"/><br /><sub><b>Sam Kvale</b></sub>](http://skvale.github.io)<br />[🐛](https://github.com/jaredpalmer/formik/issues?q=author%3Askvale "Bug reports") [💻](https://github.com/jaredpalmer/formik/commits?author=skvale "Code") [⚠️](https://github.com/jaredpalmer/formik/commits?author=skvale "Tests") |
 | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
 | [<img src="https://avatars0.githubusercontent.com/u/13765558?v=4" width="100px;"/><br /><sub><b>Jon Tansey</b></sub>](http://jon.tansey.info)<br />[🐛](https://github.com/jaredpalmer/formik/issues?q=author%3Ajontansey "Bug reports") [💻](https://github.com/jaredpalmer/formik/commits?author=jontansey "Code") | [<img src="https://avatars0.githubusercontent.com/u/6819171?v=4" width="100px;"/><br /><sub><b>Tyler Martinez</b></sub>](http://slightlytyler.com)<br />[🐛](https://github.com/jaredpalmer/formik/issues?q=author%3Aslightlytyler "Bug reports") [📖](https://github.com/jaredpalmer/formik/commits?author=slightlytyler "Documentation") |
+
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 This project follows the

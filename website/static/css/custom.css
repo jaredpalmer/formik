@@ -309,6 +309,10 @@ footer iframe {
     margin-top: 20px;
   }
 
+  .splash .content svg {
+    display: none;
+  }
+
   .content.row {
     margin-top: 0px;
     margin-bottom: 0px;

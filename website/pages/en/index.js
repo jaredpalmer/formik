@@ -29,7 +29,6 @@ class Index extends React.Component {
           <div className="content">
             <svg
               viewBox="0 0 145 127"
-              xmlns="http://www.w3.org/2000/svg"
               aria-hidden="true"
               style={{
                 height: 145 * 3,
@@ -37,7 +36,7 @@ class Index extends React.Component {
                 position: 'absolute',
                 right: '36%',
                 bottom: 30,
-                opacity: 0.05,
+                opacity: 0.03,
               }}
             >
               <g id="Stickers" fill="none" fillRule="evenodd">

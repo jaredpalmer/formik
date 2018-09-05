@@ -373,3 +373,8 @@ footer iframe {
 .prose a {
   color: #008cf2;
 }
+
+.quotes {
+  background: #f8f8f8 url(/formik/img/pattern.png) 50% 50% no-repeat;
+  background-size: cover;
+}

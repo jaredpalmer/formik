@@ -92,6 +92,7 @@ You can also try before you buy with this
 * [Working with 3rd-party inputs #2: Draft.js](https://codesandbox.io/s/QW1rqjBLl)
 * [Accessing React lifecycle functions](https://codesandbox.io/s/pgD4DLypy)
 * [React Native](https://snack.expo.io/Bk9pPK87X)
+* [TypeScript](https://codesandbox.io/s/8y578o8152)
 
 ## Talks
 

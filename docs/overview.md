@@ -77,8 +77,7 @@ If you're not using a module bundler or package manager we also have a global ("
 <script src="https://unpkg.com/formik/dist/formik.umd.production.js"></script>
 ```
 
-Once you've added this you will have access to the `window.Formik.<Insert_Component_Here>` variables. For example,
-to use `<Field />`, you would write `var Field = window.Formik.Field` and in your React code use `<Field>` or `React.createElement(Field, ...)`.
+Once you've added this you will have access to the `window.Formik.<Insert_Component_Name_Here>` variables.
 
 > This installation/usage requires the [React CDN script bundles](https://reactjs.org/docs/cdn-links.html) to be on the page as well.
 

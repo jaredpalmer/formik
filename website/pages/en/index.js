@@ -1,5 +1,5 @@
 /**
- * Copyright 2018-present Facebook.
+ * Copyright 2018-present Jared Palmer.
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  * @format
@@ -7,12 +7,10 @@
 
 const React = require('react');
 const CompLibrary = require('../../core/CompLibrary');
-
 const Container = CompLibrary.Container;
 const GridBlock = CompLibrary.GridBlock;
-
 const siteConfig = require(`${process.cwd()}/siteConfig.js`);
-const Carousel = require('nuka-carousel').default;
+
 class Index extends React.Component {
   render() {
     if ((siteConfig.users || []).length === 0) {
@@ -83,9 +81,6 @@ class Index extends React.Component {
                   handling submission--so you don't have to. This means you spend
                   less time wiring up state and change handlers and more time
                   focusing on your business logic.`,
-                  // image: `${siteConfig.baseUrl}img/hector-ramos.png`,
-                  // imageAlign: 'bottom',
-                  // imageAlt: 'James Long',
                 },
                 {
                   title: 'Intuitive',
@@ -94,18 +89,12 @@ class Index extends React.Component {
                   React framework and away from magic, Formik makes debugging,
                   testing, and reasoning about your forms a breeze. If you know
                   React, and you know a bit about forms, you know Formik!`,
-                  // image: `${siteConfig.baseUrl}img/hector-ramos.png`,
-                  // imageAlign: 'bottom',
-                  // imageAlt: 'James Long',
                 },
                 {
                   title: 'Adoptable',
                   content: `Since form state is inherently local and ephemeral, Formik does not use external state mangement librares
                   like Redux or MobX. This also makes Formik is easy
                   to adopt incrementally and keeps bundle size to a minimum.`,
-                  // image: `${siteConfig.baseUrl}img/hector-ramos.png`,
-                  // imageAlign: 'bottom',
-                  // imageAlt: 'James Long',
                 },
               ]}
               layout="threeColumn"
@@ -113,26 +102,10 @@ class Index extends React.Component {
           </Container>
         </div>
         <div className="quotes">
-          <Container padding={['bottom', 'top']}>
+          <Container padding={['bottom', 'top', 'left', 'right']}>
             <GridBlock
-              align="center"
+              align="left"
               contents={[
-                {
-                  content: 'James Long, Creator of Prettier',
-                  // image: `${siteConfig.baseUrl}img/hector-ramos.png`,
-                  // imageAlign: 'bottom',
-                  // imageAlt: 'James Long',
-                  title:
-                    '"*I can\'t believe people ever put forms in Redux, or did anything else other than this.*"',
-                },
-                {
-                  content: `Kye Hohenberger, Creator of Emotion`,
-                  // image: `${siteConfig.baseUrl}img/ricky-vetter.jpg`,
-                  // imageAlign: 'bottom',
-                  // imageAlt: 'Kye Hohenberger',
-                  title: `"*Formik removes most of the moving parts involved in forms
-                    allowing me to move faster with more confidence.*"`,
-                },
                 {
                   content:
                     'Ken Wheeler, Director of Open Source at Formidable Labs',
@@ -141,8 +114,16 @@ class Index extends React.Component {
                   // imageAlt: 'Ken Wheeler',
                   title: `"*Formik. All day. All long.*"`,
                 },
+                {
+                  content: 'James Long, Creator of Prettier',
+                  // image: `${siteConfig.baseUrl}img/hector-ramos.png`,
+                  // imageAlign: 'bottom',
+                  // imageAlt: 'James Long',
+                  title:
+                    '"*I can\'t believe people ever put forms in Redux, or did anything else other than this.*"',
+                },
               ]}
-              layout="threeColumn"
+              layout="twoColumn"
             />
           </Container>
         </div>

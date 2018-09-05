@@ -130,8 +130,8 @@ const siteConfig = {
   ogImage: 'img/docusaurus.png',
   twitterImage: 'img/docusaurus.png',
   algolia: {
-    apiKey: 'my-api-key',
-    indexName: 'my-index-name',
+    apiKey: '32fabc38a054677ee9b24e69d699fbd0',
+    indexName: 'formik',
     algoliaOptions: {}, // Optional, if provided by Algolia
   },
   // You may provide arbitrary config keys to be used as needed by your

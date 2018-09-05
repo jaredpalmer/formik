@@ -1,6 +1,6 @@
 ---
 id: connect
-title: connect
+title: connect()
 ---
 
 `connect()` is a higher-order component (HoC) that allows you to hook anything into Formik's context. It is used internally to construct `<Field>` and `<Form>`, but you can use it to build out new components as your needs change.

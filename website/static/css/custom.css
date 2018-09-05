@@ -43,7 +43,7 @@ h6 {
 
 .splash h1 {
   color: white;
-  font-size: 44px;
+  font-size: 56px;
   line-height: 100%;
   margin-top: 15px;
   margin-bottom: 25px;
@@ -56,7 +56,7 @@ h6 {
   font-weight: 300;
   margin-left: auto;
   margin-right: auto;
-  margin-bottom: 50px;
+  margin-bottom: 40px;
   font-size: 20px;
   line-height: 140%;
   max-width: 750px;
@@ -66,40 +66,40 @@ h6 {
 .btn {
   display: inline-block;
   padding: 7px 20px;
-  border-radius: 6px;
   margin: 0 10px;
+  font-weight: 500;
   border: 1px solid #585760;
   transition: all 200ms ease-out;
 }
 
 .btn:hover {
+  cursor: pointer;
   color: #fff;
   border-color: #111;
   background-color: #111;
 }
 
-.splash .btn {
+.btn.ghost {
   color: white;
   display: inline-block;
   padding: 7px 20px;
-  border-radius: 6px;
   margin: 0 10px;
   border: 1px solid white;
 }
 
-.splash .btn:hover {
+.btn.ghost:hover {
   background-color: #fff;
   border-color: #fff;
   color: #000;
 }
 
-.splash .btn.primary {
+.btn.primary {
   background-color: #fff;
   border-color: #fff;
   color: #000;
 }
 
-.splash .btn.primary:hover {
+.btn.primary:hover {
   opacity: .8;
 }
 
@@ -117,26 +117,8 @@ h6 {
   text-align: center;
 }
 
-@keyframes slideIn {
-  0% {
-    transform: translate(-50%, -320px);
-    opacity: 0;
-  }
-
-  100% {
-    transform: translate(-50%, -360px);
-    opacity: 1;
-  }
-}
-
-.splashScreen {
-  width: 100%;
-  position: absolute;
-  left: 50%;
-  top: 100%;
-  animation: 0.6s ease-out 0.2s 1 slideIn forwards;
-  width: 1116px;
-  max-width: 100%;
+.relative {
+  position: relative;
 }
 
 .content {
@@ -210,9 +192,9 @@ nav.toc .toggleNav .navGroup.navGroupActive h3 {
 }
 
 .button {
-  border-radius: 6px;
   font-weight: 500;
   text-transform: none;
+  border-radius: 0;
 }
 
 .sitemap {
@@ -327,6 +309,10 @@ footer iframe {
     margin-top: 20px;
   }
 
+  .splash .content svg {
+    display: none;
+  }
+
   .content.row {
     margin-top: 0px;
     margin-bottom: 0px;
@@ -372,4 +358,9 @@ footer iframe {
 
 .prose a {
   color: #008cf2;
+}
+
+.quotes {
+  background: #f8f8f8 url(/formik/img/pattern.png) 50% 50% no-repeat;
+  background-size: cover;
 }

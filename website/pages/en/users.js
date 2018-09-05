@@ -1,8 +1,8 @@
 /**
- * Copyright (c) 2017-present, Facebook, Inc.
- *
+ * Copyright 2017-present Jared Palmer.
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
+ * @format
  */
 
 const React = require('react');
@@ -34,9 +34,9 @@ class Users extends React.Component {
               <h1>Who's using Formik?</h1>
               <p>
                 Formik has been powering forms at{' '}
-                <a href="https://www.palmer.net">The Palmer Group</a> since
-                2016. Formik was open sourced in 2017 and is used by teams of
-                all sizes.
+                <a href="http://www.palmer.net">The Palmer Group</a> since 2016.
+                Formik was open sourced in 2017 and is used by teams of all
+                sizes.
               </p>
             </div>
             <div className="logos">{showcase}</div>

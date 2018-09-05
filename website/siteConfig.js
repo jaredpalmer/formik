@@ -45,7 +45,6 @@ const users = [
     caption: 'Nokia',
     image: '/formik/img/logos/nokia.svg',
     infoLink: 'https://nokia.com',
-    pinned: true,
   },
 ];
 

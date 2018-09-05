@@ -42,6 +42,7 @@ class Index extends React.Component {
             <svg
               viewBox="0 0 145 127"
               xmlns="http://www.w3.org/2000/svg"
+              aria-hidden="true"
               style={{
                 height: 145 * 3,
                 height: 127 * 3,

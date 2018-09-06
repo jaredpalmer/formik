@@ -1,6 +1,7 @@
 ---
 id: formik
 title: Formik
+sidebar_label: <Formik />
 ---
 
 `<Formik>` is a component that helps you with building forms. It uses a render

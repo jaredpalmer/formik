@@ -1,6 +1,7 @@
 ---
 id: withFormik
 title: withFormik
+sidebar_label: withFormik()
 ---
 
 Create a higher-order React component class that passes props and form handlers

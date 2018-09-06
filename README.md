@@ -54,7 +54,7 @@ to you.**
 * [Get Help](https://jaredpalmer.co/formik/help)
 * [Release Notes](https://github.com/jaredpalmer/formik/releases)
 
-### In-browser Playgrounds
+## In-browser Playgrounds
 
 You can play with Formik in your web browser with these live online playgrounds.
 

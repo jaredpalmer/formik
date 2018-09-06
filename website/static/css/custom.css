@@ -9,7 +9,7 @@ h3,
 h4,
 h5,
 h6 {
-  font-weight: 800;
+  font-weight: bold;
 }
 
 .fixedHeaderContainer header h2 {
@@ -201,9 +201,6 @@ nav.toc .toggleNav .navGroup.navGroupActive h3 {
   width: 100%;
 }
 
-/* .docsNavContainer {
-  margin-top: 65px;
-} */
 a.learnmore {
   display: inline-block;
   margin-top: 10px;
@@ -225,7 +222,7 @@ nav.toc .toggleNav ul li a.navItemActive {
 
 code,
 pre code {
-  font-size: 0.85em;
+  font-size: 0.75em;
   margin-left: 2px;
   margin-right: 2px;
 }
@@ -233,13 +230,12 @@ pre code {
 pre code {
   background: none;
   box-shadow: none;
-  /* border-left: solid 3px /.#585760; */
+  border-left: solid 3px #ddd;
   margin-left: 0;
   line-height: 1.4;
   border-radius: 0;
 }
 
-/* 
 .mainContainer {
   font-size: 1em;
   line-height: 100%;
@@ -248,16 +244,15 @@ pre code {
 .mainContainer .wrapper .post h1,
 .mainContainer .wrapper .post h2,
 .mainContainer .wrapper .post h3 {
-  font-weight: 400;
+  font-weight: bold;
 }
 
 .mainContainer .wrapper .post h2 {
-  font-weight: 300;
-  font-size: 28px;
+  font-weight: bold;
 }
 
 .mainContainer .wrapper .post h1 {
-  font-weight: 300;
+  font-weight: bold;
 }
 
 .mainContainer .wrapper .post *:not(h2)+h2,
@@ -269,7 +264,7 @@ pre code {
 .blockElement p,
 .mainContainer .wrapper ul li,
 .mainContainer .wrapper ol li {
-  line-height: 1.4;
+  line-height: 1.5;
 }
 
 .mainContainer article a {
@@ -278,7 +273,8 @@ pre code {
 
 .mainContainer article a:hover {
   opacity: 0.8;
-} */
+}
+
 footer .sitemap .nav-home,
 footer .fbOpenSource {
   opacity: 1;
@@ -363,4 +359,19 @@ footer iframe {
 .quotes {
   background: #f8f8f8 url(/formik/img/pattern.png) 50% 50% no-repeat;
   background-size: cover;
+}
+
+.hljs .comment {
+  opacity: .7
+}
+
+.hljs {
+  background: #fbfbfb;
+  box-shadow: 0 0 0 1px inset #eee;
+  font-size: 13px;
+}
+
+code[class*="language-"],
+pre[class*="language-"] {
+  font-family: Menlo, Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace
 }

@@ -48,6 +48,7 @@ It is common practice to only show an input's errors in the UI if it has been vi
 Disable whatever is triggering submission if `isSubmitting` is `true`.
 
 </details>
+
 <details>
 <summary>How do I know when my form is validating before submit?</summary>
 

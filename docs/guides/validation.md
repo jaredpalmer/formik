@@ -133,7 +133,126 @@ For more information about `<Formik validationSchema>`, see the API reference.
 
 ### Field-level Validation
 
-Formik supports field-level validation through via the `<Field>` component's `validate` prop.
+#### `validate`
+
+Formik supports field-level validation via the `<Field>`/`<FastField>` components' `validate` prop. This function can be synchronous or asynchronous (return a Promise). It will run after any `onChange` and `onBlur` by default. This behvaior can be altered at the top level `<Formik/>` component using the `validateOnChange` and `validateOnBlur` props respectively. In addition to change/blur, all field-level validations are run at the beginning of a submission attempt and then the results are deeply merged with any top-level validation results.
+
+```jsx
+import React from 'react';
+import { Formik, Form, Field } from 'formik';
+import Yup from 'yup';
+
+function validateEmail(value) {
+  let error;
+  if (!value) {
+    error = 'Required';
+  } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value)) {
+    error = 'Invalid email address';
+  }
+  return error;
+}
+
+function validateUsername(value) {
+  let error;
+  if (value === 'admin') {
+    error = 'Nice try!';
+  }
+  return error;
+}
+
+export const FieldLevelValidationExample = () => (
+  <div>
+    <h1>Signup</h1>
+    <Formik
+      initialValues={{
+        username: '',
+        email: '',
+      }}
+      onSubmit={values => {
+        // same shape as initial values
+        console.log(values);
+      }}
+    >
+      {({ errors, touched, isValidating }) => (
+        <Form>
+          <Field name="email" validate={validateEmail} />
+          {errors.email && touched.email && <div>{errors.email}</div>}
+
+          <Field name="username" validate={validateUsername} />
+          {errors.username && touched.username && <div>{errors.username}</div>}
+
+          <button type="submit">Submit</button>
+        </Form>
+      )}
+    </Formik>
+  </div>
+);
+```
+
+### Manually Triggering Validation
+
+You can manually trigger both form-level and field-level validation with Formik using the `validateForm` and `validateField` methods respectively.
+
+```jsx
+import React from 'react';
+import { Formik, Form, Field } from 'formik';
+import Yup from 'yup';
+
+function validateEmail(value) {
+  let error;
+  if (!value) {
+    error = 'Required';
+  } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value)) {
+    error = 'Invalid email address';
+  }
+  return error;
+}
+
+function validateUsername(value) {
+  let error;
+  if (value === 'admin') {
+    error = 'Nice try!';
+  }
+  return error;
+}
+
+export const FieldLevelValidationExample = () => (
+  <div>
+    <h1>Signup</h1>
+    <Formik
+      initialValues={{
+        username: '',
+        email: '',
+      }}
+      onSubmit={values => {
+        // same shape as initial values
+        console.log(values);
+      }}
+    >
+      {({ errors, touched }) => (
+        <Form>
+          <Field name="email" validate={validateEmail} />
+          {errors.email && touched.email && <div>{errors.email}</div>}
+
+          <Field name="username" validate={validateUsername} />
+          {errors.username && touched.username && <div>{errors.username}</div>}
+          {/** Trigger field-level validation
+           imperatively */}
+          <button type="button" onClick={() => validateField('username')}>
+            Check Username
+          </button>
+          {/** Trigger form-level validation
+           imperatively */}
+          <button type="button" onClick={() => validateForm().then(() => console.log(blah)))}>
+            Validate All
+          </button>
+          <button type="submit">Submit</button>
+        </Form>
+      )}
+    </Formik>
+  </div>
+);
+```
 
 ## When Does Validation Run?
 
@@ -164,3 +283,26 @@ There are also imperative helper methods provided to you via Formik's render/inj
 ## Displaying Error Messages
 
 @todo
+
+## Frequently Asked Questions
+
+<details>
+<summary>How do I determine if my form is validating?</summary>
+
+If `isValidating` prop is `true`
+
+</details>
+
+<details>
+<summary>Can I return `null` as an error message?</summary>
+
+No. Use `undefined` instead. Formik uses `undefined` to represent empty states. If you use `null`, several parts of Formik's computed props (e.g. `isValid` for example), will not work as expected.
+
+</details>
+
+<details>
+<summary>How do I test validation?</summary>
+
+Formik has extensive unit tests for Yup validation so you do not need to test that. However, if you are rolling your own validation functions, you should simply unit test those. If you do need to test Formik's execution you should use the imperative `validateForm` and `validateField` methods respectively.
+
+</details>

@@ -87,6 +87,9 @@ const siteConfig = {
   colors: {
     primaryColor: '#111',
     secondaryColor: '#111',
+    grayDarker: '#333',
+    gray: '#555',
+    grayLighter: '#888',
     accentColor: '#785BA3',
     actionColor: '#008cf2',
   },
@@ -112,7 +115,7 @@ const siteConfig = {
     // Highlight.js theme to use for syntax highlighting in code blocks.
     theme: 'default',
   },
-  usePrism: ['jsx'],
+  usePrism: ['jsx', 'typescript'],
   // Add custom scripts here that would be placed in <script> tags.
   scripts: [
     'https://buttons.github.io/buttons.js',
@@ -126,8 +129,8 @@ const siteConfig = {
   // No .html extensions for paths.
   cleanUrl: true,
   // Open Graph and Twitter card images.
-  ogImage: 'img/docusaurus.png',
-  twitterImage: 'img/docusaurus.png',
+  ogImage: 'img/formik-og.png',
+  twitterImage: 'img/formik-twitter.png',
   algolia: {
     apiKey: '32fabc38a054677ee9b24e69d699fbd0',
     indexName: 'formik',

@@ -5,18 +5,16 @@ title: <FastField />
 
 ## Before we start
 
-`<FastField />` is meant for performance _optimization_. However, you really do not need to use it until you do.
-
-> **WARNING: Only proceed if you are familiar with how React's [`shouldComponentUpdate()`](https://reactjs.org/docs/react-component.html#shouldcomponentupdate) works. You have been warned.**
+`<FastField />` is meant for performance _optimization_. However, you really do not need to use it until you do. Only proceed if you are familiar with how React's [`shouldComponentUpdate()`](https://reactjs.org/docs/react-component.html#shouldcomponentupdate) works. You have been warned.\*\*
 
 **No. Seriously. Please review the following parts of the official React documentation before continuing**
 
 * [React `shouldComponentUpdate()` Reference](https://reactjs.org/docs/react-component.html#shouldcomponentupdate)
-* [`shouldComponentUpdate` in Action(https://reactjs.org/docs/optimizing-performance.html#shouldcomponentupdate-in-action)
+* [`shouldComponentUpdate` in Action](https://reactjs.org/docs/optimizing-performance.html#shouldcomponentupdate-in-action)
 
 ## Overview
 
-`<FastField />` is an optimized version of `<Field />` meant to be used on large forms (~30+ fields) or when a field has very expensive validation requirements. `<FastField />` has the same exact API as `<Field>`, but implements `shouldComponentUpdate()` internally to block all additional re-renders unless there are direct updates to the `<FastField>`'s relevant parts/slice of Formik state.
+`<FastField />` is an optimized version of `<Field />` meant to be used on large forms (~30+ fields) or when a field has very expensive validation requirements. `<FastField />` has the same exact API as `<Field>`, but implements `shouldComponentUpdate()` internally to block all additional re-renders unless there are direct updates to the `<FastField />`'s relevant parts/slice of Formik state.
 
 For example, `<FastField name="firstName" />` will only re-render when there are:
 
@@ -24,13 +22,13 @@ For example, `<FastField name="firstName" />` will only re-render when there are
 * A prop is added/removed to the `<FastField name="firstName" />`
 * The `name` prop changes
 
-Other than for these aforementioned situations, `<FastField />` will not re-render when other parts of of Formik state change. However, all updates triggered by a `<FastField>` will trigger re-renders to other "vanilla" `<Field>` components.
+Other than for these aforementioned situations, `<FastField />` will not re-render when other parts of of Formik state change. However, all updates triggered by a `<FastField />` will trigger re-renders to other "vanilla" `<Field />` components.
 
-## When to use `<FastField>`
+## When to use `<FastField />`
 
-**If a `<Field>` is "independent" of all other `<Field>`'s in your form, then you can use `<FastField />`**.
+**If a `<Field />` is "independent" of all other `<Field />`'s in your form, then you can use `<FastField />`**.
 
-More specifically, if the `<Field />` does not change behavior or render anything that is based on updates to another `<Field>` or `<FastField>`'s slice of Formik state AND it does not rely on other parts of top-level `<Formik>` state (e.g. `isSubmitting`, `isValidating`, `submitCount`), then you can use `<FastField>` as a drop-in replacement to `<Field />`.
+More specifically, if the `<Field />` does not change behavior or render anything that is based on updates to another `<Field />` or `<FastField />`'s slice of Formik state AND it does not rely on other parts of top-level `<Formik />` state (e.g. `isSubmitting`, `isValidating`, `submitCount`), then you can use `<FastField />` as a drop-in replacement to `<Field />`.
 
 ## Example
 

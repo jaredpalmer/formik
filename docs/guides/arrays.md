@@ -7,7 +7,7 @@ Formik has support for nested objects and arrays out of the box. These 2 subject
 
 ## Nested Objects
 
-The `name` and `id` props in Formik can use lodash-like dot paths to reference nested Formik values. This means that you do not need to flatten out your form's values anymore.
+The `name` props in Formik can use lodash-like dot paths to reference nested Formik values. This means that you do not need to flatten out your form's values anymore.
 
 ```jsx
 import React from 'react';

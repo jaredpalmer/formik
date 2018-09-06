@@ -27,7 +27,7 @@ component props change (using deep equality).
 
 ### `handleSubmit: (values: Values, formikBag: FormikBag) => void`
 
-Your form submission handler. It is passed your forms [`values`] and the
+Your form submission handler. It is passed your forms `values` and the
 "FormikBag", which includes an object containing a subset of the
 [injected props and methods](#injected-props-and-methods) (i.e. all the methods
 with names that start with `set<Thing>` + `resetForm`) and any props that were
@@ -36,22 +36,22 @@ passed to the the wrapped component.
 #### The "FormikBag":
 
 * `props` (props passed to the wrapped component)
-* [`resetForm`]
-* [`setErrors`]
-* [`setFieldError`]
-* [`setFieldTouched`]
-* [`setFieldValue`]
-* [`setStatus`]
-* [`setSubmitting`]
-* [`setTouched`]
-* [`setValues`]
+* `resetForm`
+* `setErrors`
+* `setFieldError`
+* `setFieldTouched`
+* `setFieldValue`
+* `setStatus`
+* `setSubmitting`
+* `setTouched`
+* `setValues`
 
-Note: [`errors`], [`touched`], [`status`] and all event handlers are NOT
+Note: `errors`, `touched`, `status` and all event handlers are NOT
 included in the `FormikBag`.
 
 ### `isInitialValid?: boolean | (props: Props) => boolean`
 
-Default is `false`. Control the initial value of [`isValid`] prop prior to
+Default is `false`. Control the initial value of `isValid` prop prior to
 mount. You can also pass a function. Useful for situations when you want to
 enable/disable a submit and reset buttons on initial mount.
 
@@ -59,9 +59,9 @@ enable/disable a submit and reset buttons on initial mount.
 
 If this option is specified, then Formik will transfer its results into
 updatable form state and make these values available to the new component as
-[`props.values`][`values`]. If `mapPropsToValues` is not specified, then Formik
+`props.values`. If `mapPropsToValues` is not specified, then Formik
 will map all props that are not functions to the inner component's
-[`props.values`][`values`]. That is, if you omit it, Formik will only pass
+`props.values`. That is, if you omit it, Formik will only pass
 `props` where `typeof props[k] !== 'function'`, where `k` is some key.
 
 Even if your form is not receiving any props from its parent, use
@@ -69,12 +69,12 @@ Even if your form is not receiving any props from its parent, use
 
 ### `validate?: (values: Values, props: Props) => FormikErrors<Values> | Promise<any>`
 
-_Note: I suggest using [`validationSchema`] and Yup for validation. However,
+_Note: I suggest using `validationSchema` and Yup for validation. However,
 `validate` is a dependency-free, straightforward way to validate your forms._
 
-Validate the form's [`values`] with function. This function can either be:
+Validate the form's `values` with function. This function can either be:
 
-1.  Synchronous and return an [`errors`] object.
+1.  Synchronous and return an `errors` object.
 
 ```js
 // Synchronous validation
@@ -93,7 +93,7 @@ const validate = (values, props) => {
 };
 ```
 
-* Asynchronous and return a Promise that's error is an [`errors`] object
+* Asynchronous and return a Promise that's error is an `errors` object
 
 ```js
 // Async Validation
@@ -116,21 +116,21 @@ const validate = (values, props) => {
 ### `validateOnBlur?: boolean`
 
 Default is `true`. Use this option to run validations on `blur` events. More
-specifically, when either [`handleBlur`], [`setFieldTouched`], or [`setTouched`]
+specifically, when either `handleBlur`, `setFieldTouched`, or `setTouched`
 are called.
 
 ### `validateOnChange?: boolean`
 
 Default is `true`. Use this option to tell Formik to run validations on `change`
 events and `change`-related methods. More specifically, when either
-[`handleChange`], [`setFieldValue`], or [`setValues`] are called.
+`handleChange`, `setFieldValue`, or `setValues` are called.
 
 ### `validationSchema?: Schema | ((props: Props) => Schema)`
 
 [A Yup schema](https://github.com/jquense/yup) or a function that returns a Yup
 schema. This is used for validation. Errors are mapped by key to the inner
-component's [`errors`]. Its keys should match those of [`values`].
+component's `errors`. Its keys should match those of `values`.
 
 ## Injected props and methods
 
-These are identical to the props of `<Formik render={props => ...} />`
+These are identical to the props of [`<Formik render={props => ...} />`](formik#formik-render-methods-and-props)

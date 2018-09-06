@@ -222,7 +222,7 @@ nav.toc .toggleNav ul li a.navItemActive {
 
 code,
 pre code {
-  font-size: 0.75em;
+  font-size: 0.8em;
   margin-left: 2px;
   margin-right: 2px;
 }
@@ -234,37 +234,6 @@ pre code {
   margin-left: 0;
   line-height: 1.4;
   border-radius: 0;
-}
-
-.mainContainer {
-  font-size: 1em;
-  line-height: 100%;
-}
-
-.mainContainer .wrapper .post h1,
-.mainContainer .wrapper .post h2,
-.mainContainer .wrapper .post h3 {
-  font-weight: bold;
-}
-
-.mainContainer .wrapper .post h2 {
-  font-weight: bold;
-}
-
-.mainContainer .wrapper .post h1 {
-  font-weight: bold;
-}
-
-.mainContainer .wrapper .post *:not(h2)+h2,
-.mainContainer .wrapper .post *:not(h2)+h3 {
-  margin-top: 40px;
-}
-
-.mainContainer .wrapper p,
-.blockElement p,
-.mainContainer .wrapper ul li,
-.mainContainer .wrapper ol li {
-  line-height: 1.5;
 }
 
 .mainContainer article a {

@@ -22,10 +22,10 @@ annoying parts:
 By colocating all of the above in one place, Formik will keep things
 organized--making testing, refactoring, and reasoning about your forms a breeze.
 
-## Docs
+<div id="handleblur-e-any--void"></div>
+<div id="handlechange-e-any--void"></div>
 
-<div id="handleblur-e-any--void">test</div>
-<div id="handlechange-e-any--void" />
+## Docs
 
 * [Get Started](https://jaredpalmer.com/formik/docs/overview)
 * [API Reference](https://jaredpalmer.com//formik/docs/api/formik)

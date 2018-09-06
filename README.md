@@ -25,10 +25,10 @@ organized--making testing, refactoring, and reasoning about your forms a breeze.
 ## Docs
 
 * [**View the docs here**](https://jaredpalmer.com/formik)
-* [Get Started](https://jaredpalmer.com/docs/overview)
-* [API Reference](https://jaredpalmer.com/docs/api/formik)
-* [Articles / Tutorials](https://jaredpalmer.com/docs/resources)
-* [Get Help](https://jaredpalmer.com/help)
+* [Get Started](https://jaredpalmer.com/formik/docs/overview)
+* [API Reference](https://jaredpalmer.com//formik/docs/api/formik)
+* [Articles / Tutorials](https://jaredpalmer.com/formik/docs/resources)
+* [Get Help](https://jaredpalmer.co/formik/help)
 * [Release Notes](https://github.com/jaredpalmer/formik/releases)
 
 ## Demos

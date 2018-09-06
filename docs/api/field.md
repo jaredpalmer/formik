@@ -1,7 +1,6 @@
 ---
 id: field
-title: Field
-sidebar_label: <Field />
+title: <Field />
 ---
 
 `<Field />` will automagically hook up inputs to Formik. It uses the `name`

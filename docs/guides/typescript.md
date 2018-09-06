@@ -11,7 +11,7 @@ similar to React Router 4's `<Route>`.
 
 #### Render props (`<Formik />` and `<Field />`)
 
-```tsx
+```typescript
 import * as React from 'react';
 import { Formik, FormikProps, Form, Field, FieldProps } from 'formik';
 
@@ -19,7 +19,7 @@ interface MyFormValues {
   firstName: string;
 }
 
-export const MyApp: React.SFC<{} /* whatevs */> = () => {
+export const MyApp: React.SFC<{}> = () => {
   return (
     <div>
       <h1>My Example</h1>
@@ -49,7 +49,7 @@ export const MyApp: React.SFC<{} /* whatevs */> = () => {
 
 #### `withFormik()`
 
-```tsx
+```typescript
 import React from 'react';
 import * as Yup from 'yup';
 import { withFormik, FormikProps, FormikErrors, Form, Field } from 'formik';

@@ -364,3 +364,19 @@ footer iframe {
   background: #f8f8f8 url(/formik/img/pattern.png) 50% 50% no-repeat;
   background-size: cover;
 }
+
+.hljs .comment {
+  opacity: .7
+}
+
+.hljs {
+  background: #fbfbfb;
+  box-shadow: 0 0 0 1px inset #eee;
+  font-size: 13px;
+}
+
+code[class*="language-"],
+pre[class*="language-"] {
+  font-size: 13px;
+  font-family: Menlo, Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace
+}

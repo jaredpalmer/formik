@@ -299,6 +299,8 @@ If `isValidating` prop is `true`
 No. Use `undefined` instead. Formik uses `undefined` to represent empty states. If you use `null`, several parts of Formik's computed props (e.g. `isValid` for example), will not work as expected.
 
 </details>
+
+<details>
 <summary>How do I test validation?</summary>
 
 Formik has extensive unit tests for Yup validation so you do not need to test that. However, if you are rolling your own validation functions, you should simply unit test those. If you do need to test Formik's execution you should use the imperative `validateForm` and `validateField` methods respectively.

@@ -88,7 +88,7 @@ You can play with Formik in your web browser with these live online playgrounds.
 * CodeSandbox (ReactDOM) https://codesandbox.io/s/zKrK5YLDZ
 * Expo Snack (React Native) https://snack.expo.io/Bk9pPK87X
 
-## The gist
+## The Gist
 
 Formik keeps track of your form's state and then exposes it plus a few reusable
 methods and event handlers (`handleChange`, `handleBlur`, and `handleSubmit`) to
@@ -105,11 +105,34 @@ const Basic = () => (
     <h1>Anywher in your app!</h1>
     <Formik
       initialValues={{ email: '', password: '' }}
-      onSubmit={values => {
-        // do something awesome
+      validate={values => {
+        let errors = {};
+        if (!values.email) {
+          errors.email = 'Required';
+        } else if (
+          !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)
+        ) {
+          errors.email = 'Invalid email address';
+        }
+        return errors;
+      }}
+      onSubmit={(values, { setSubmitting }) => {
+        setTimeout(() => {
+          alert(JSON.stringify(values, null, 2));
+          setSubmitting(false);
+        }, 400);
       }}
     >
-      {({ values, handleChange, handleBlur, handleSubmit, isSubmitting }) => (
+      {({
+        values,
+        errors,
+        touched,
+        handleChange,
+        handleBlur,
+        handleSubmit,
+        isSubmitting,
+        /* and other goodies */
+      }) => (
         <form onSubmit={handleSubmit}>
           <input
             type="email"
@@ -118,6 +141,7 @@ const Basic = () => (
             onBlur={handleBlur}
             value={values.email}
           />
+          {errors.email && touched.email && errors.email}
           <input
             type="password"
             name="password"
@@ -125,6 +149,7 @@ const Basic = () => (
             onBlur={handleBlur}
             value={values.password}
           />
+          {errors.password && touched.password && errors.password}
           <button type="submit" disabled={isSubmitting}>
             Submit
           </button>
@@ -137,9 +162,9 @@ const Basic = () => (
 export default Basic;
 ```
 
-### Staying DRY
+### Reducing boilerplate
 
-The code above is very explicit about exactly what Formik is doing with respect to passing props. However, to save you time, Formik comes with a few extra components to make life easier: `<Form>` and `<Field>`.
+The code above is very explicit about exactly what Formik is doing.`onChange` -> `handleChange`, `onBlur` -> `handleBlur`, and so on. However, to save you time, Formik comes with a few extra components to make life easier and less verbose: `<Form />` and `<Field />`. They use React context to hook into the parent `<Formik />` state/methods.
 
 ```jsx
 // Render Prop
@@ -151,14 +176,30 @@ const Basic = () => (
     <h1>Any place in your app!</h1>
     <Formik
       initialValues={{ email: '', password: '' }}
-      onSubmit={values => {
-        // do something awesome
+      validate={values => {
+        let errors = {};
+        if (!values.email) {
+          errors.email = 'Required';
+        } else if (
+          !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)
+        ) {
+          errors.email = 'Invalid email address';
+        }
+        return errors;
+      }}
+      onSubmit={(values, { setSubmitting }) => {
+        setTimeout(() => {
+          alert(JSON.stringify(values, null, 2));
+          setSubmitting(false);
+        }, 400);
       }}
     >
-      {({ isSubmitting }) => (
+      {({ errors, touched, isSubmitting }) => (
         <Form>
           <Field type="email" name="email" />
+          {errors.email && touched.email && errors.email}
           <Field type="password" name="password" />
+          {errors.password && touched.password && errors.password}
           <button type="submit" disabled={isSubmitting}>
             Submit
           </button>
@@ -171,4 +212,19 @@ const Basic = () => (
 export default Basic;
 ```
 
-The combination of both props and context-based API's makes Formik very flexible. Next up, checkout some of the demos or start the tutorial.
+### Complementary Packages
+
+As you can see above, validation is left up to you. Feel free to write your own
+validators or use a 3rd party library. Personally, I use
+[Yup](https://github.com/jquense/yup) for object schema validation. It has an
+API that's pretty similar [Joi](https://github.com/hapijs/joi) /
+[React PropTypes](https://github.com/facebook/prop-types) but is small enough
+for the browser and fast enough for runtime usage. Because I :heart: Yup sooo
+much, Formik has a special config option / prop for Yup called
+[`validationSchema`] which will automatically transform Yup's validation errors
+into a pretty object whose keys match [`values`] and [`touched`]. Anyways, you
+can install Yup from npm...
+
+```
+npm install yup --save
+```

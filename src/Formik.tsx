@@ -10,6 +10,7 @@ import {
   FormikState,
   FormikTouched,
   FormikValues,
+  FormikProps,
   FormikContext,
 } from './types';
 import {
@@ -47,7 +48,7 @@ export class Formik<Values = {}, ExtraProps = {}> extends React.Component<
     [field: string]: {
       validate?: ((
         value: any,
-        formikBag?: any
+        formikBag?: FormikProps<Values>
       ) => string | Promise<void> | undefined);
     };
   };
@@ -87,7 +88,7 @@ export class Formik<Values = {}, ExtraProps = {}> extends React.Component<
       reset?: ((nextValues?: any) => void);
       validate?: ((
         value: any,
-        formikBag?: any
+        formikBag?: FormikProps<Values>
       ) => string | Promise<void> | undefined);
     }
   ) => {
@@ -183,7 +184,7 @@ export class Formik<Values = {}, ExtraProps = {}> extends React.Component<
   runSingleFieldLevelValidation = (
     field: string,
     value: void | string,
-    formikBag: any
+    formikBag: FormikProps<Values>
   ): Promise<string> => {
     return new Promise(resolve =>
       resolve(this.fields[field].validate!(value, formikBag))
@@ -578,7 +579,7 @@ export class Formik<Values = {}, ExtraProps = {}> extends React.Component<
     };
   };
 
-  getFormikBag = () => {
+  getFormikBag = (): FormikProps<Values> => {
     return {
       ...this.state,
       ...this.getFormikActions(),
@@ -592,7 +593,7 @@ export class Formik<Values = {}, ExtraProps = {}> extends React.Component<
       handleSubmit: this.handleSubmit,
       validateOnChange: this.props.validateOnChange,
       validateOnBlur: this.props.validateOnBlur,
-    };
+    } as any;
   };
 
   getFormikContext = (): FormikContext<any> => {

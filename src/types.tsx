@@ -234,7 +234,7 @@ export interface FormikRegistration<Values> {
     fns: {
       validate?: ((
         value: any,
-        form?: FormikProps<Values>
+        formikBag?: FormikProps<Values>
       ) => string | Function | Promise<void> | undefined);
     }
   ): void;

@@ -45,7 +45,10 @@ export class Formik<Values = {}, ExtraProps = {}> extends React.Component<
   } = {};
   fields: {
     [field: string]: {
-      validate?: ((value: any) => string | Promise<void> | undefined);
+      validate?: ((
+        value: any,
+        formik: any
+      ) => string | Promise<void> | undefined);
     };
   };
 
@@ -82,7 +85,10 @@ export class Formik<Values = {}, ExtraProps = {}> extends React.Component<
     name: string,
     fns: {
       reset?: ((nextValues?: any) => void);
-      validate?: ((value: any) => string | Promise<void> | undefined);
+      validate?: ((
+        value: any,
+        formikBag: any
+      ) => string | Promise<void> | undefined);
     }
   ) => {
     this.fields[name] = fns;
@@ -162,7 +168,8 @@ export class Formik<Values = {}, ExtraProps = {}> extends React.Component<
     this.setState({ isValidating: true });
     this.runSingleFieldLevelValidation(
       field,
-      getIn(this.state.values, field)
+      getIn(this.state.values, field),
+      this.getFormikBag()
     ).then(error => {
       if (this.didMount) {
         this.setState({
@@ -175,9 +182,12 @@ export class Formik<Values = {}, ExtraProps = {}> extends React.Component<
 
   runSingleFieldLevelValidation = (
     field: string,
-    value: void | string
-  ): Promise<string | undefined | PromiseLike<any>> => {
-    return new Promise(resolve => resolve(this.fields[field].validate!(value)));
+    value: void | string,
+    formikBag: any
+  ): Promise<string> => {
+    return new Promise(resolve =>
+      resolve(this.fields[field].validate!(value, formikBag))
+    ).then(x => x, e => e);
   };
 
   runFieldLevelValidations(
@@ -191,15 +201,12 @@ export class Formik<Values = {}, ExtraProps = {}> extends React.Component<
         isFunction(this.fields[f].validate)
     );
 
+    const formikBag = this.getFormikBag();
     // Construct an array with all of the field validation functions
     const fieldValidations: Promise<string>[] =
       fieldKeysWithValidation.length > 0
-        ? fieldKeysWithValidation.map(
-            f =>
-              this.runSingleFieldLevelValidation(f, getIn(values, f)).then(
-                x => x,
-                e => e
-              ) // always catch so Promise.all runs each one
+        ? fieldKeysWithValidation.map(f =>
+            this.runSingleFieldLevelValidation(f, getIn(values, f), formikBag)
           )
         : [Promise.resolve('DO_NOT_DELETE_YOU_WILL_BE_FIRED')]; // use special case ;)
 
@@ -427,7 +434,8 @@ export class Formik<Values = {}, ExtraProps = {}> extends React.Component<
       const isValid = Object.keys(combinedErrors).length === 0;
       if (isValid) {
         this.executeSubmit();
-      } else {
+      } else if (this.didMount) {
+        // ^^^ Make sure Formik is still mounted before calling setState
         this.setState({ isSubmitting: false });
       }
     });

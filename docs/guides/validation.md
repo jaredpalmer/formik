@@ -229,7 +229,7 @@ export const FieldLevelValidationExample = () => (
         console.log(values);
       }}
     >
-      {({ errors, touched }) => (
+      {({ errors, touched, validateField, validateForm }) => (
         <Form>
           <Field name="email" validate={validateEmail} />
           {errors.email && touched.email && <div>{errors.email}</div>}

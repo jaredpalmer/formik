@@ -1,5 +1,5 @@
 import React from 'react';
-import Yup from 'yup';
+import * as Yup from 'yup';
 import { withFormik } from '../src/formik';
 
 const formikEnhancer = withFormik({

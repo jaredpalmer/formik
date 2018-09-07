@@ -1,31 +1,10 @@
 {
+  "extends": "./tsconfig.base.json",
+  "include": ["src", "./typings.d.ts", "types", "test"],
   "compilerOptions": {
-    "allowSyntheticDefaultImports": true,
-    "declaration": true,
-    "declarationDir": "dist",
-    "emitDecoratorMetadata": false,
-    "experimentalDecorators": false,
-    "importHelpers": true,
-    "jsx": "react",
-    "lib": ["es2015", "dom"],
-    "module": "es2015",
-    "moduleResolution": "node",
-    "noFallthroughCasesInSwitch": true,
-    "noImplicitAny": true,
-    "noImplicitReturns": true,
-    "noImplicitThis": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "outDir": "compiled",
-    "pretty": true,
-    "removeComments": true,
-    "sourceMap": true,
-    "strict": true,
-    "strictNullChecks": true,
-    "stripInternal": true,
-    "target": "es5",
-    "typeRoots": ["node_modules/@types"]
-  },
-  "include": ["src", "./typings.d.ts"],
-  "exclude": ["node_modules", "dist"]
+    "baseUrl": "./",
+    "paths": {
+      "formik": ["src/"]
+    }
+  }
 }

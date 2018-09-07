@@ -1,5 +1,24 @@
 language: node_js
 node_js:
   - '8'
+  - '10'
+env:
+  - CI=true
+cache: yarn
+git:
+  depth: 5
 script:
-  - yarn test -- --runInBand --no-cache --coverage
+  - yarn test -- --runInBand --no-cache --coverage && yarn size
+before_deploy: npm i -g now # Install Now CLI on Travis
+deploy:
+  - provider: script # Run a custom deployment script which we will define below
+    script: cd website && yarn install && yarn build && cd build && now --token $NOW_TOKEN --team palmer
+    skip_cleanup: true
+    on:
+      all_branches: true
+      master: false
+  - provider: script
+    script: cd website && yarn install && yarn build && cd build && now --token=$NOW_TOKEN --team palmer && now alias --token=$NOW_TOKEN --team palmer
+    skip_cleanup: true
+    on:
+      master: true

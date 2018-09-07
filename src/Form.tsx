@@ -1,9 +1,15 @@
-import * as PropTypes from 'prop-types';
 import * as React from 'react';
+import { connect } from './connect';
 
-export const Form: React.SFC<any> = (props, context) =>
-  <form onSubmit={context.formik.handleSubmit} {...props} />;
+export type FormikFormProps = Pick<
+  React.FormHTMLAttributes<HTMLFormElement>,
+  Exclude<keyof React.FormHTMLAttributes<HTMLFormElement>, 'onSubmit'>
+>;
 
-Form.contextTypes = {
-  formik: PropTypes.object,
-};
+export const Form = connect<FormikFormProps>(
+  ({ formik: { handleSubmit }, ...props }) => (
+    <form onSubmit={handleSubmit} {...props} />
+  )
+);
+
+Form.displayName = 'Form';

@@ -1,28 +1,21 @@
+import hoistNonReactStatics from 'hoist-non-react-statics';
 import * as React from 'react';
-
+import { Formik } from './Formik';
 import {
-  Formik,
   FormikActions,
-  FormikComputedProps,
-  FormikHandlers,
   FormikProps,
   FormikSharedConfig,
-  FormikState,
   FormikValues,
-} from './formik';
-
-import { hoistNonReactStatics } from './hoistStatics';
+} from './types';
 import { isFunction } from './utils';
 
 /**
  * State, handlers, and helpers injected as props into the wrapped form component.
  * Used with withFormik()
+ *
+ * @deprecated  Use `OuterProps & FormikProps<Values>` instead.
  */
-export type InjectedFormikProps<Props, Values> = Props &
-  FormikState<Values> &
-  FormikActions<Values> &
-  FormikHandlers &
-  FormikComputedProps<Values>;
+export type InjectedFormikProps<Props, Values> = Props & FormikProps<Values>;
 
 /**
  * Formik actions + { props }
@@ -42,13 +35,13 @@ export interface WithFormikConfig<
    */
   displayName?: string;
 
-  /** 
-   * Submission handler 
+  /**
+   * Submission handler
    */
   handleSubmit: (values: Values, formikBag: FormikBag<Props, Values>) => void;
 
-  /** 
-   * Map props to the form values 
+  /**
+   * Map props to the form values
    */
   mapPropsToValues?: (props: Props) => Values;
 
@@ -57,16 +50,16 @@ export interface WithFormikConfig<
    */
   mapValuesToPayload?: (values: Values) => DeprecatedPayload;
 
-  /** 
-   * A Yup Schema or a function that returns a Yup schema 
+  /**
+   * A Yup Schema or a function that returns a Yup schema
    */
   validationSchema?: any | ((props: Props) => any);
 
-  /** 
-   * Validation function. Must return an error object or promise that 
+  /**
+   * Validation function. Must return an error object or promise that
    * throws an error object where that object keys map to corresponding value.
    */
-  validate?: (values: any, props: Props) => void | object | Promise<any>;
+  validate?: (values: Values, props: Props) => void | object | Promise<any>;
 }
 
 export type CompositeComponent<P> =
@@ -74,9 +67,7 @@ export type CompositeComponent<P> =
   | React.StatelessComponent<P>;
 
 export interface ComponentDecorator<TOwnProps, TMergedProps> {
-  (component: CompositeComponent<TMergedProps>): React.ComponentClass<
-    TOwnProps
-  >;
+  (component: CompositeComponent<TMergedProps>): React.ComponentType<TOwnProps>;
 }
 
 export interface InferableComponentDecorator<TOwnProps> {
@@ -87,12 +78,12 @@ export interface InferableComponentDecorator<TOwnProps> {
  * A public higher-order component to access the imperative API
  */
 export function withFormik<
-  Props,
+  OuterProps,
   Values extends FormikValues,
   Payload = Values
 >({
-  mapPropsToValues = (vanillaProps: any) => {
-    let val: FormikValues = {} as FormikValues;
+  mapPropsToValues = (vanillaProps: OuterProps): Values => {
+    let val: Values = {} as Values;
     for (let k in vanillaProps) {
       if (
         vanillaProps.hasOwnProperty(k) &&
@@ -101,19 +92,28 @@ export function withFormik<
         val[k] = vanillaProps[k];
       }
     }
-    return val;
+    return val as Values;
   },
-  ...config,
-}: WithFormikConfig<Props, Values, Payload>): ComponentDecorator<
-  Props,
-  InjectedFormikProps<Props, Values>
+  ...config
+}: WithFormikConfig<OuterProps, Values, Payload>): ComponentDecorator<
+  OuterProps,
+  OuterProps & FormikProps<Values>
 > {
-  return function createFormik(Component: CompositeComponent<Props>) {
+  return function createFormik(
+    Component: CompositeComponent<OuterProps & FormikProps<Values>>
+  ): React.ComponentClass<OuterProps> {
+    const componentDisplayName =
+      Component.displayName ||
+      Component.name ||
+      (Component.constructor && Component.constructor.name) ||
+      'Component';
     /**
      * We need to use closures here for to provide the wrapped component's props to
-     * the respective withFormik config methods. 
+     * the respective withFormik config methods.
      */
-    class C extends React.Component<Props, {}> {
+    class C extends React.Component<OuterProps, {}> {
+      static displayName = `WithFormik(${componentDisplayName})`;
+
       validate = (values: Values): void | object | Promise<any> => {
         return config.validate!(values, this.props);
       };
@@ -125,7 +125,7 @@ export function withFormik<
       };
 
       handleSubmit = (values: Values, actions: FormikActions<Values>) => {
-        return config.handleSubmit(values as Values, {
+        return config.handleSubmit(values, {
           ...actions,
           props: this.props,
         });
@@ -141,21 +141,21 @@ export function withFormik<
       render() {
         return (
           <Formik
-            {...this.props}
+            {...this.props as any}
             {...config}
             validate={config.validate && this.validate}
             validationSchema={config.validationSchema && this.validationSchema}
             initialValues={mapPropsToValues(this.props)}
-            onSubmit={this.handleSubmit}
+            onSubmit={this.handleSubmit as any}
             render={this.renderFormComponent}
           />
         );
       }
     }
 
-    return hoistNonReactStatics<Props>(
-      C as any,
-      Component as React.ComponentClass<InjectedFormikProps<Props, Values>> // cast type to ComponentClass (even if SFC)
-    ) as React.ComponentClass<Props>;
+    return hoistNonReactStatics<OuterProps, OuterProps & FormikProps<Values>>(
+      C,
+      Component as React.ComponentClass<OuterProps & FormikProps<Values>> // cast type to ComponentClass (even if SFC)
+    ) as React.ComponentClass<OuterProps>;
   };
 }

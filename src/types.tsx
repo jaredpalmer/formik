@@ -96,7 +96,7 @@ export interface FormikActions<Values> {
     shouldValidate?: boolean
   ): void;
   /** Validate form values */
-  validateForm(values?: any): void;
+  validateForm(values?: any): Promise<FormikErrors<Values>>;
   /** Validate field value */
   validateField(field: string): void;
   /** Reset form */

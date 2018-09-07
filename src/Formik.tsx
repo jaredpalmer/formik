@@ -47,7 +47,7 @@ export class Formik<Values = {}, ExtraProps = {}> extends React.Component<
     [field: string]: {
       validate?: ((
         value: any,
-        formik: any
+        formikBag?: any
       ) => string | Promise<void> | undefined);
     };
   };
@@ -87,7 +87,7 @@ export class Formik<Values = {}, ExtraProps = {}> extends React.Component<
       reset?: ((nextValues?: any) => void);
       validate?: ((
         value: any,
-        formikBag: any
+        formikBag?: any
       ) => string | Promise<void> | undefined);
     }
   ) => {

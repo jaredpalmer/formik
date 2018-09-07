@@ -225,15 +225,16 @@ export type FormikProps<Values> = FormikSharedConfig &
   FormikActions<Values> &
   FormikHandlers &
   FormikComputedProps<Values> &
-  FormikRegistration;
+  FormikRegistration<Values>;
 
 /** Internal Formik registration methods that get passed down as props */
-export interface FormikRegistration {
+export interface FormikRegistration<Values> {
   registerField(
     name: string,
     fns: {
       validate?: ((
-        value: any
+        value: any,
+        form?: FormikProps<Values>
       ) => string | Function | Promise<void> | undefined);
     }
   ): void;

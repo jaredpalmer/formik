@@ -46,6 +46,11 @@ const users = [
     image: '/formik/img/logos/nokia.svg',
     infoLink: 'https://nokia.com',
   },
+  {
+    caption: 'RVshare',
+    image: '/formik/img/logos/rvshare.svg',
+    infoLink: 'https://rvshare.com',
+  },
 ];
 
 const siteConfig = {

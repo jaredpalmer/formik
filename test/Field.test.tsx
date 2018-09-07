@@ -40,7 +40,10 @@ describe('A <Field />', () => {
       );
       const { onChange } = injected;
       onChange({ target: { name: 'name', value: 'hello' } });
-      expect(validate).toHaveBeenCalled();
+      expect(validate).toHaveBeenCalledWith(
+        'hello',
+        expect.objectContaining({})
+      );
     });
 
     it('does NOT call validate during onChange if validateOnChange is set to false', () => {

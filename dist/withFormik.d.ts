@@ -1,18 +1,12 @@
-/// <reference types="react" />
 import * as React from 'react';
 import {
   FormikActions,
-  FormikComputedProps,
-  FormikHandlers,
+  FormikProps,
   FormikSharedConfig,
-  FormikState,
   FormikValues,
-} from './formik';
+} from './types';
 export declare type InjectedFormikProps<Props, Values> = Props &
-  FormikState<Values> &
-  FormikActions<Values> &
-  FormikHandlers &
-  FormikComputedProps<Values>;
+  FormikProps<Values>;
 export declare type FormikBag<P, V> = {
   props: P;
 } & FormikActions<V>;
@@ -26,27 +20,25 @@ export interface WithFormikConfig<
   mapPropsToValues?: (props: Props) => Values;
   mapValuesToPayload?: (values: Values) => DeprecatedPayload;
   validationSchema?: any | ((props: Props) => any);
-  validate?: (values: any, props: Props) => void | object | Promise<any>;
+  validate?: (values: Values, props: Props) => void | object | Promise<any>;
 }
 export declare type CompositeComponent<P> =
   | React.ComponentClass<P>
   | React.StatelessComponent<P>;
 export interface ComponentDecorator<TOwnProps, TMergedProps> {
-  (component: CompositeComponent<TMergedProps>): React.ComponentClass<
-    TOwnProps
-  >;
+  (component: CompositeComponent<TMergedProps>): React.ComponentType<TOwnProps>;
 }
 export interface InferableComponentDecorator<TOwnProps> {
   <T extends CompositeComponent<TOwnProps>>(component: T): T;
 }
 export declare function withFormik<
-  Props,
+  OuterProps,
   Values extends FormikValues,
   Payload = Values
 >({
   mapPropsToValues,
-  ...config,
-}: WithFormikConfig<Props, Values, Payload>): ComponentDecorator<
-  Props,
-  InjectedFormikProps<Props, Values>
->
+  ...config
+}: WithFormikConfig<OuterProps, Values, Payload>): ComponentDecorator<
+  OuterProps,
+  OuterProps & FormikProps<Values>
+>;

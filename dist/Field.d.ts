@@ -1,11 +1,5 @@
-/// <reference types="react" />
-import * as PropTypes from 'prop-types';
 import * as React from 'react';
-import { FormikProps } from './formik';
-export declare type GenericFieldHTMLAttributes =
-  | React.InputHTMLAttributes<HTMLInputElement>
-  | React.SelectHTMLAttributes<HTMLSelectElement>
-  | React.TextareaHTMLAttributes<HTMLTextAreaElement>;
+import { FormikProps, GenericFieldHTMLAttributes } from './types';
 export interface FieldProps<V = any> {
   field: {
     onChange: (e: React.ChangeEvent<any>) => void;
@@ -16,29 +10,21 @@ export interface FieldProps<V = any> {
   form: FormikProps<V>;
 }
 export interface FieldConfig {
-  component?: string | React.ComponentType<FieldProps<any> | void>;
+  component?:
+    | string
+    | React.ComponentType<FieldProps<any>>
+    | React.ComponentType<void>;
   render?: ((props: FieldProps<any>) => React.ReactNode);
-  children?: ((props: FieldProps<any>) => React.ReactNode);
+  children?: ((props: FieldProps<any>) => React.ReactNode) | React.ReactNode;
+  validate?: ((value: any) => string | Promise<void> | undefined);
   name: string;
   type?: string;
   value?: any;
+  innerRef?: (instance: any) => void;
 }
-export declare type FieldAttributes = GenericFieldHTMLAttributes & FieldConfig;
-export declare class Field<
-  Props extends FieldAttributes = any
-> extends React.Component<Props, {}> {
-  static contextTypes: {
-    formik: PropTypes.Requireable<any>;
-  };
-  static defaultProps: {
-    component: string;
-  };
-  static propTypes: {
-    name: PropTypes.Validator<any>;
-    component: PropTypes.Requireable<any>;
-    render: PropTypes.Requireable<any>;
-    children: PropTypes.Requireable<any>;
-  };
-  componentWillMount(): void;
-  render(): any;
-}
+export declare type FieldAttributes<T> = GenericFieldHTMLAttributes &
+  FieldConfig &
+  T;
+export declare const Field: React.ComponentClass<any> & {
+  WrappedComponent: React.ComponentClass<any>;
+};

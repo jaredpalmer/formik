@@ -78,7 +78,7 @@ npm install yup --save
 ```jsx
 import React from 'react';
 import { Formik, Form, Field } from 'formik';
-import Yup from 'yup';
+import * as Yup from "yup";
 
 const SignupSchema = Yup.object().shape({
   firstName: Yup.string()
@@ -140,7 +140,7 @@ Formik supports field-level validation via the `<Field>`/`<FastField>` component
 ```jsx
 import React from 'react';
 import { Formik, Form, Field } from 'formik';
-import Yup from 'yup';
+import * as Yup from "yup";
 
 function validateEmail(value) {
   let error;
@@ -196,7 +196,7 @@ You can manually trigger both form-level and field-level validation with Formik 
 ```jsx
 import React from 'react';
 import { Formik, Form, Field } from 'formik';
-import Yup from 'yup';
+import * as Yup from "yup";
 
 function validateEmail(value) {
   let error;

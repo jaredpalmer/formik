@@ -69,6 +69,23 @@ describe('<FieldArray />', () => {
     );
   });
 
+  it('renders with name as props', () => {
+    ReactDOM.render(
+      <TestForm
+        render={() => (
+          <FieldArray
+            name="friends"
+            render={arrayProps => {
+              expect(arrayProps.name).toBe('friends');
+              return null;
+            }}
+          />
+        )}
+      />,
+      node
+    );
+  });
+
   describe('props.push()', () => {
     it('should add a value to the end of the field array', () => {
       let formikBag: any;

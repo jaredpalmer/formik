@@ -364,6 +364,9 @@ export class Formik<Values = {}, ExtraProps = {}> extends React.Component<
     value: any,
     shouldValidate: boolean = true
   ) => {
+    if (!this.didMount) {
+      return;
+    }
     // Set form field by name
     this.setState(
       prevState => ({

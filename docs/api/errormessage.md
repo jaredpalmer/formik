@@ -7,7 +7,7 @@ title: <ErrorMessage />
 
 ## Example
 
-```jsx
+```diff
 import React from 'react';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from "yup";

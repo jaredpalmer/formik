@@ -42,12 +42,12 @@ export const ValidationSchemaExample = () => (
 -           {errors.name && touched.name ? (
 -            <div>{errors.name}</div>
 -          ) : null}
-+         <ErrorMessage name="firstName" />
++         <ErrorMessage name="name" />
           <Field name="email" type="email" />
 -           {errors.email && touched.email ? (
 -            <div>{errors.email}</div>
 -          ) : null}
-+         <ErrorMessage name="firstName" />
++         <ErrorMessage name="email" />
           <button type="submit">Submit</button>
         </Form>
       )}

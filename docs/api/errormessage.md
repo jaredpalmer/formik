@@ -70,13 +70,40 @@ export const ValidationSchemaExample = () => (
 
 `children?: React.ReactNode | ((message: string) => React.ReactNode)`
 
-Either JSX or a function that returns a valid React element. Same as `render`. Will only be called when the field has been touched and an error exists.
+Either JSX or a function that returns a valid React element. Will only be called when the field has been touched and an error exists.
+
+```jsx
+// the render callback will only be called when the
+// field has been touched and an error exists and subsequent updates.
+<ErrorMessage name="email">
+  {msg => <div>{msg}</div>}
+</ErrorMessage>
+
+<ErrorMessage name="email">
+ <div>This will render when there's an error on email and it's been visited</div>
+</ErrorMessage>
+```
 
 ### `component`
 
 `component?: string | React.ComponentType<FieldProps>`
 
 Either a React component or the name of an HTML element to render. If not specified, `<ErrorMessage>` will just return a string.
+
+```jsx
+<ErrorMessage component="div" name="email" />
+// --> {touched.email && error.email ? <div>{error.email}</div> : null}
+
+<ErrorMessage component="span" name="email" />
+// --> {touched.email && error.email ? <span>{error.email}</span> : null}
+
+<ErrorMessage component={Custom} name="email" />
+// --> {touched.email && error.email ? <Custom>{error.email}</Custom> : null}
+
+<ErrorMessage name="email" />
+// This will return a string. React 16+.
+// --> {touched.email && error.email ? error.email : null}
+```
 
 ### `name`
 
@@ -90,3 +117,9 @@ A field's name in Formik state. To access nested objects or arrays, name can als
 `render?: (error: string) => React.ReactNode`
 
 A function that returns a valid React element. Will only be called when the field has been touched and an error exists.
+
+```jsx
+// the render callback will only be called when the
+// field has been touched and an error exists and subsequent updates.
+<ErrorMessage name="email" render={msg => <div>{msg}</div>} />
+```

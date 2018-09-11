@@ -136,12 +136,8 @@ export interface FormikHandlers {
   handleSubmit: (e?: React.FormEvent<HTMLFormElement>) => void;
   /** Reset form event handler  */
   handleReset: () => void;
-  /** Classic React blur handler, keyed by input name */
-  handleBlur(e: any): void;
   /** Preact-like linkState. Will return a handleBlur function. */
-  handleBlur<T = string | any>(
-    fieldOrEvent: T
-  ): T extends string ? ((e: any) => void) : void;
+  handleBlur<T>(fieldOrEvent: T): T extends string ? ((e: any) => void) : void;
   /** Classic React change handler, keyed by input name */
   handleChange(e: React.ChangeEvent<any>): void;
   /** Preact-like linkState. Will return a handleChange function.  */

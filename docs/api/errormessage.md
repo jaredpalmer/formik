@@ -68,20 +68,14 @@ export const ValidationSchemaExample = () => (
 
 ### `children`
 
-`children?: React.ReactNode | ((message: string) => React.ReactNode)`
+`children?: ((message: string) => React.ReactNode)`
 
-Either JSX or a function that returns a valid React element. Will only be called when the field has been touched and an error exists.
+A function that returns a valid React element. Will only be called when the field has been touched and an error exists.
 
 ```jsx
 // the render callback will only be called when the
 // field has been touched and an error exists and subsequent updates.
-<ErrorMessage name="email">
-  {msg => <div>{msg}</div>}
-</ErrorMessage>
-
-<ErrorMessage name="email">
- <div>This will render when there's an error on email and it's been visited</div>
-</ErrorMessage>
+<ErrorMessage name="email">{msg => <div>{msg}</div>}</ErrorMessage>
 ```
 
 ### `component`

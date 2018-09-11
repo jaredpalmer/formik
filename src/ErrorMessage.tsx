@@ -6,8 +6,8 @@ import { connect } from './connect';
 export interface ErrorMessageProps {
   name: string;
   component?: string | React.ComponentType;
-  children?: React.ReactNode | ((errorMessage: string) => React.ReactNode);
-  render?: React.ReactNode | ((errorMessage: string) => React.ReactNode);
+  children?: ((errorMessage: string) => React.ReactNode);
+  render?: ((errorMessage: string) => React.ReactNode);
 }
 
 class ErrorMessageImpl extends React.Component<
@@ -39,7 +39,7 @@ class ErrorMessageImpl extends React.Component<
       ? render
         ? isFunction(render) ? render(error) : null
         : children
-          ? isFunction(children) ? children(error) : children
+          ? isFunction(children) ? children(error) : null
           : component
             ? React.createElement(component, rest as any, error)
             : error

@@ -152,7 +152,9 @@ export class Formik<Values = {}, ExtraProps = {}> extends React.Component<
   };
 
   setSubmitting = (isSubmitting: boolean) => {
-    this.setState({ isSubmitting });
+    if (this.didMount) {
+      this.setState({ isSubmitting });
+    }
   };
 
   /**
@@ -364,6 +366,9 @@ export class Formik<Values = {}, ExtraProps = {}> extends React.Component<
     value: any,
     shouldValidate: boolean = true
   ) => {
+    if (!this.didMount) {
+      return;
+    }
     // Set form field by name
     this.setState(
       prevState => ({

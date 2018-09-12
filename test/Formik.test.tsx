@@ -1,7 +1,11 @@
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
+import * as Yup from 'yup';
 import { Formik, FormikProps } from '../src';
-import { shallow, mount } from 'enzyme';
+import { shallow, mount } from '@pisano/enzyme';
 import { sleep, noop } from './testHelpers';
+
+jest.spyOn(global.console, 'error');
 
 interface Values {
   name: string;
@@ -9,6 +13,7 @@ interface Values {
 
 const Form: React.SFC<FormikProps<Values>> = ({
   values,
+  touched,
   handleSubmit,
   handleChange,
   handleBlur,
@@ -25,7 +30,7 @@ const Form: React.SFC<FormikProps<Values>> = ({
         value={values.name}
         name="name"
       />
-      {errors.name && <div id="feedback">{errors.name}</div>}
+      {touched.name && errors.name && <div id="feedback">{errors.name}</div>}
       {isSubmitting && <div id="submitting">Submitting</div>}
       {status &&
         !!status.myStatusMessage && (
@@ -68,6 +73,7 @@ describe('<Formik>', () => {
     expect(tree.find(Form).props().errors).toEqual({});
     expect(tree.find(Form).props().dirty).toBe(false);
     expect(tree.find(Form).props().isValid).toBe(false);
+    expect(tree.find(Form).props().submitCount).toBe(0);
   });
 
   describe('FormikHandlers', () => {
@@ -260,7 +266,11 @@ describe('<Formik>', () => {
         const FormNoEvent = (
           <Formik initialValues={{ name: 'jared' }} onSubmit={noop}>
             {({ handleSubmit }) => (
-              <button onClick={() => handleSubmit(/* undefined event */)} />
+              <button
+                onClick={() =>
+                  handleSubmit(undefined as any /* undefined event */)
+                }
+              />
             )}
           </Formik>
         );
@@ -276,7 +286,7 @@ describe('<Formik>', () => {
           <Formik initialValues={{ name: 'jared' }} onSubmit={noop}>
             {({ handleSubmit }) => (
               <button
-                onClick={() => handleSubmit({} /* no preventDefault */)}
+                onClick={() => handleSubmit({} as any /* no preventDefault */)}
               />
             )}
           </Formik>
@@ -328,7 +338,7 @@ describe('<Formik>', () => {
       });
 
       describe('with validate (SYNC)', () => {
-        it('should call validate if present', () => {
+        it('should call validate if present', async () => {
           const validate = jest.fn().mockReturnValue({});
           const tree = shallow(
             <Formik
@@ -338,17 +348,14 @@ describe('<Formik>', () => {
               validate={validate}
             />
           );
-          tree
+          await tree
             .find(Form)
-            .dive()
-            .find('form')
-            .simulate('submit', {
-              preventDefault: noop,
-            });
+            .props()
+            .submitForm();
           expect(validate).toHaveBeenCalled();
         });
 
-        it('should submit the form if valid', () => {
+        it('should submit the form if valid', async () => {
           const onSubmit = jest.fn();
           const tree = shallow(
             <Formik
@@ -358,17 +365,14 @@ describe('<Formik>', () => {
               validate={noop}
             />
           );
-          tree
+          await tree
             .find(Form)
-            .dive()
-            .find('form')
-            .simulate('submit', {
-              preventDefault: noop,
-            });
+            .props()
+            .submitForm();
           expect(onSubmit).toHaveBeenCalled();
         });
 
-        it('should not submit the form if invalid', () => {
+        it('should not submit the form if invalid', async () => {
           const validate = jest.fn().mockReturnValue({ name: 'Error!' });
           const onSubmit = jest.fn();
 
@@ -380,20 +384,18 @@ describe('<Formik>', () => {
               validate={validate}
             />
           );
-          tree
+          await tree
             .find(Form)
-            .dive()
-            .find('form')
-            .simulate('submit', {
-              preventDefault: noop,
-            });
+            .props()
+            .submitForm();
+
           expect(validate).toHaveBeenCalled();
           expect(onSubmit).not.toHaveBeenCalled();
         });
       });
 
       describe('with validate (ASYNC)', () => {
-        it('should call validate if present', () => {
+        it('should call validate if present', async () => {
           const validate = jest.fn(() => Promise.resolve({}));
 
           const tree = shallow(
@@ -404,13 +406,10 @@ describe('<Formik>', () => {
               validate={validate}
             />
           );
-          tree
+          await tree
             .find(Form)
-            .dive()
-            .find('form')
-            .simulate('submit', {
-              preventDefault: noop,
-            });
+            .props()
+            .submitForm();
           expect(validate).toHaveBeenCalled();
         });
 
@@ -458,7 +457,7 @@ describe('<Formik>', () => {
       });
 
       describe('with validationSchema (ASYNC)', () => {
-        it('should run validationSchema if present', () => {
+        it('should run validationSchema if present', async () => {
           const validate = jest.fn(() => Promise.resolve({}));
           const tree = shallow(
             <Formik
@@ -471,17 +470,16 @@ describe('<Formik>', () => {
               }}
             />
           );
-          tree
+
+          await tree
             .find(Form)
-            .dive()
-            .find('form')
-            .simulate('submit', {
-              preventDefault: noop,
-            });
+            .props()
+            .submitForm();
+
           expect(validate).toHaveBeenCalled();
         });
 
-        it('should call validationSchema if it is a function and present', () => {
+        it('should call validationSchema if it is a function and present', async () => {
           const validate = jest.fn(() => Promise.resolve({}));
           const tree = shallow(
             <Formik
@@ -494,13 +492,12 @@ describe('<Formik>', () => {
               })}
             />
           );
-          tree
+
+          await tree
             .find(Form)
-            .dive()
-            .find('form')
-            .simulate('submit', {
-              preventDefault: noop,
-            });
+            .props()
+            .submitForm();
+
           expect(validate).toHaveBeenCalled();
         });
       });
@@ -852,9 +849,24 @@ describe('<Formik>', () => {
       expect(tree.find(Form).props().dirty).toBe(true);
       expect(tree.find(Form).props().isValid).toBe(true);
     });
+
+    it('should increase submitCount after submitting the form', async () => {
+      const tree = shallow(BasicForm);
+      expect(tree.find(Form).props().submitCount).toBe(0);
+      await tree
+        .find(Form)
+        .props()
+        .submitForm();
+      expect(
+        tree
+          .update()
+          .find(Form)
+          .props().submitCount
+      ).toBe(1);
+    });
   });
 
-  describe('componentWillReceiveProps', () => {
+  describe('componentDidUpdate', () => {
     let form: any, initialValues: any;
     beforeEach(() => {
       initialValues = {
@@ -872,7 +884,7 @@ describe('<Formik>', () => {
 
     it('should not resetForm if new initialValues are the same as previous', () => {
       const newInitialValues = Object.assign({}, initialValues);
-      form.componentWillReceiveProps({
+      form.componentDidUpdate({
         initialValues: newInitialValues,
         onSubmit: jest.fn(),
       });
@@ -884,7 +896,7 @@ describe('<Formik>', () => {
         ...initialValues,
         watchers: ['jared', 'ian', 'sam'],
       };
-      form.componentWillReceiveProps({
+      form.componentDidUpdate({
         initialValues: newInitialValues,
         onSubmit: jest.fn(),
       });
@@ -896,7 +908,7 @@ describe('<Formik>', () => {
         ...initialValues,
         github: { repoUrl: 'different' },
       };
-      form.componentWillReceiveProps({
+      form.componentDidUpdate({
         initialValues: newInitialValues,
         onSubmit: jest.fn(),
       });
@@ -913,7 +925,7 @@ describe('<Formik>', () => {
         ...initialValues,
         watchers: ['jared', 'ian', 'sam'],
       };
-      form.componentWillReceiveProps({
+      form.componentDidUpdate({
         initialValues: newInitialValues,
         onSubmit: jest.fn(),
       });
@@ -1043,6 +1055,276 @@ describe('<Formik>', () => {
           .find(Form)
           .props().dirty
       ).toEqual(false);
+    });
+
+    it('should reset submitCount', () => {
+      const tree = mount(<WithState />);
+
+      tree
+        .find(Form)
+        .props()
+        .handleSubmit();
+
+      expect(
+        tree
+          .update()
+          .find(Form)
+          .props().submitCount
+      ).toEqual(1);
+
+      tree
+        .find(Form)
+        .props()
+        .handleReset();
+
+      expect(
+        tree
+          .update()
+          .find(Form)
+          .props().submitCount
+      ).toEqual(0);
+    });
+  });
+
+  it('should warn against buttons with unspecified type', () => {
+    const FormWithNoButtonType = () => (
+      <Formik onSubmit={noop} initialValues={{ opensource: 'yay' }}>
+        {({ handleSubmit, handleChange, values }) => (
+          <form onSubmit={handleSubmit}>
+            <input
+              type="text"
+              onChange={handleChange}
+              value={values.opensource}
+              name="name"
+            />
+            <button>Submit</button>
+          </form>
+        )}
+      </Formik>
+    );
+    const tree = mount(<FormWithNoButtonType />);
+    const preventDefault = jest.fn();
+    const button = tree.find('button').getDOMNode();
+
+    button.focus(); // sets activeElement
+    tree.find('form').simulate('submit', {
+      preventDefault,
+    });
+    expect(global.console.error).toHaveBeenCalledWith(
+      expect.stringMatching(
+        /Warning: You submitted a Formik form using a button with an unspecified `type./
+      )
+    );
+
+    button.blur(); // unsets activeElement
+    (global.console.error as jest.Mock<{}>).mockClear();
+  });
+
+  it('should not warn when button has type submit', () => {
+    const FormWithValidButtonType = () => (
+      <Formik onSubmit={noop} initialValues={{ opensource: 'yay' }}>
+        {({ handleSubmit, handleChange, values }) => (
+          <form onSubmit={handleSubmit}>
+            <input
+              type="text"
+              onChange={handleChange}
+              value={values.opensource}
+              name="name"
+            />
+            <button type="submit">Submit</button>
+          </form>
+        )}
+      </Formik>
+    );
+    const tree = mount(<FormWithValidButtonType />);
+    const preventDefault = jest.fn();
+    const button = tree.find('button').getDOMNode();
+
+    button.focus(); // sets activeElement
+    tree.find('form').simulate('submit', {
+      preventDefault,
+    });
+    expect(global.console.error).not.toHaveBeenCalledWith(
+      expect.stringMatching(
+        /Warning: You submitted a Formik form using a button with an unspecified type./
+      )
+    );
+
+    button.blur(); // unsets activeElement
+    (global.console.error as jest.Mock<{}>).mockClear();
+  });
+
+  it('should not warn when activeElement is not a button', () => {
+    const FormWithInput = () => (
+      <Formik onSubmit={noop} initialValues={{ opensource: 'yay' }}>
+        {({ handleSubmit, handleChange, values }) => (
+          <form onSubmit={handleSubmit}>
+            <input
+              type="text"
+              onChange={handleChange}
+              value={values.opensource}
+              name="name"
+            />
+            <button type="submit">Submit</button>
+          </form>
+        )}
+      </Formik>
+    );
+    const tree = mount(<FormWithInput />);
+    const preventDefault = jest.fn();
+    const input = tree.find('input').getDOMNode();
+
+    input.focus(); // sets activeElement
+    tree.find('form').simulate('submit', {
+      preventDefault,
+    });
+    expect(global.console.error).not.toHaveBeenCalledWith(
+      expect.stringMatching(
+        /Warning: You submitted a Formik form using a button with an unspecified type./
+      )
+    );
+
+    input.blur(); // unsets activeElement
+    (global.console.error as jest.Mock<{}>).mockClear();
+  });
+  it('submit count increments', async () => {
+    const node = document.createElement('div');
+    const onSubmit = jest.fn();
+    let injected: any;
+    ReactDOM.render(
+      <Formik onSubmit={onSubmit} initialValues={{ opensource: 'yay' }}>
+        {formikProps => (injected = formikProps) && null}
+      </Formik>,
+      node
+    );
+
+    expect(injected.submitCount).toEqual(0);
+    await injected.submitForm();
+    expect(onSubmit).toHaveBeenCalled();
+    expect(injected.submitCount).toEqual(1);
+  });
+
+  it('isValidating is fired when submit is attempted', async () => {
+    const node = document.createElement('div');
+    const onSubmit = jest.fn();
+    const validate = jest.fn(() => ({ opensource: 'no ' }));
+    let injected: any;
+    ReactDOM.render(
+      <Formik
+        onSubmit={onSubmit}
+        validate={validate}
+        initialValues={{ opensource: 'yay' }}
+      >
+        {formikProps => (injected = formikProps) && null}
+      </Formik>,
+      node
+    );
+
+    expect(injected.submitCount).toEqual(0);
+    expect(injected.isSubmitting).toBe(false);
+    expect(injected.isValidating).toBe(false);
+    // we call set isValidating synchronously
+    const validatePromise = injected.submitForm();
+    // so it should change
+    expect(injected.isSubmitting).toBe(true);
+    expect(injected.isValidating).toBe(true);
+    // do it again async
+    await validatePromise;
+    // now both should be false because validation failed
+    expect(injected.isSubmitting).toBe(false);
+    expect(injected.isValidating).toBe(false);
+    expect(validate).toHaveBeenCalled();
+    expect(onSubmit).not.toHaveBeenCalled();
+    expect(injected.submitCount).toEqual(1);
+  });
+
+  it('isSubmitting is fired when submit is attempted', async () => {
+    const node = document.createElement('div');
+    const onSubmit = jest.fn();
+    const validate = jest.fn(() => ({}));
+    let injected: any;
+    ReactDOM.render(
+      <Formik
+        onSubmit={onSubmit}
+        validate={validate}
+        initialValues={{ opensource: 'yay' }}
+      >
+        {formikProps => (injected = formikProps) && null}
+      </Formik>,
+      node
+    );
+
+    expect(injected.submitCount).toEqual(0);
+    expect(injected.isSubmitting).toBe(false);
+    expect(injected.isValidating).toBe(false);
+    // we call set isValidating synchronously
+    const validatePromise = injected.submitForm();
+    // so it should change
+    expect(injected.isSubmitting).toBe(true);
+    expect(injected.isValidating).toBe(true);
+    // do it again async
+    await validatePromise;
+    // done validating
+    expect(injected.isValidating).toBe(false);
+    // now run submit
+    expect(injected.isSubmitting).toBe(true);
+    expect(validate).toHaveBeenCalled();
+    expect(onSubmit).toHaveBeenCalled();
+    expect(injected.submitCount).toEqual(1);
+  });
+
+  it('isValidating is fired validation is run', async () => {
+    const node = document.createElement('div');
+    const validate = jest.fn(() => ({ opensource: 'no' }));
+    let injected: any;
+    ReactDOM.render(
+      <Formik
+        onSubmit={noop}
+        validate={validate}
+        initialValues={{ opensource: 'yay' }}
+      >
+        {formikProps => (injected = formikProps) && null}
+      </Formik>,
+      node
+    );
+
+    expect(injected.isValidating).toBe(false);
+    // we call set isValidating synchronously
+    const validatePromise = injected.validateForm();
+    expect(injected.isValidating).toBe(true);
+    await validatePromise;
+    expect(validate).toHaveBeenCalled();
+    // so it should change
+    expect(injected.isValidating).toBe(false);
+  });
+
+  it('should merge validation errors', async () => {
+    const validate = () => ({
+      users: [{ firstName: 'required' }],
+    });
+    const validationSchema = Yup.object({
+      users: Yup.array().of(
+        Yup.object({
+          lastName: Yup.mixed().required('required'),
+        })
+      ),
+    });
+    let injected: any;
+
+    const tree = shallow(
+      <Formik
+        initialValues={{ users: [{ firstName: null, lastName: null }] }}
+        validate={validate}
+        validationSchema={validationSchema}
+        onSubmit={noop}
+      >
+        {formikProps => (injected = formikProps) && null}
+      </Formik>
+    );
+
+    await injected.validateForm();
+    expect(tree.state('errors')).toEqual({
+      users: [{ firstName: 'required', lastName: 'required' }],
     });
   });
 });

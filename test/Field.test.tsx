@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Formik, Field, FieldProps, FormikProps } from '../src';
 
-import { shallow } from 'enzyme';
+import { shallow, mount } from '@pisano/enzyme';
 import { noop } from './testHelpers';
 
 interface TestFormValues {
@@ -20,78 +20,66 @@ const TestForm: React.SFC<any> = p => (
 
 describe('A <Field />', () => {
   describe('<Field validate>', () => {
-    const makeFieldTree = (props: any, ctx: any) =>
-      shallow(<Field {...props} />, { context: { formik: ctx } });
+    const makeFieldTree = (props: any) =>
+      shallow(<Field.WrappedComponent {...props} />);
 
     it('calls validate during onChange if present', () => {
-      const handleChange = jest.fn(noop);
-      const setFieldError = jest.fn(noop);
+      const node = document.createElement('div');
+      let injected: any; /** FieldProps ;) */
       const validate = jest.fn(noop);
-      const tree = makeFieldTree(
-        { name: 'name', validate },
-        {
-          handleChange,
-          setFieldError,
-          validateOnChange: true,
-        }
+      ReactDOM.render(
+        <TestForm
+          validateOnChange={true}
+          render={(_formikProps: FormikProps<TestFormValues>) => (
+            <Field name="name" validate={validate}>
+              {({ field }: any) => (injected = field) && null}
+            </Field>
+          )}
+        />,
+        node
       );
-      tree.find('input').simulate('change', {
-        persist: noop,
-        target: {
-          name: 'name',
-          value: 'ian',
-        },
-      });
-      expect(handleChange).toHaveBeenCalled();
-      expect(setFieldError).toHaveBeenCalled();
+      const { onChange } = injected;
+      onChange({ target: { name: 'name', value: 'hello' } });
       expect(validate).toHaveBeenCalled();
     });
 
     it('does NOT call validate during onChange if validateOnChange is set to false', () => {
-      const handleChange = jest.fn(noop);
-      const setFieldError = jest.fn(noop);
+      const node = document.createElement('div');
+      let injected: any; /** FieldProps ;) */
       const validate = jest.fn(noop);
-      const tree = makeFieldTree(
-        { name: 'name', validate },
-        {
-          handleChange,
-          setFieldError,
-          validateOnChange: false,
-        }
+      ReactDOM.render(
+        <TestForm
+          validateOnChange={false}
+          render={(_formikProps: FormikProps<TestFormValues>) => (
+            <Field name="name" validate={validate}>
+              {({ field }: any) => (injected = field) && null}
+            </Field>
+          )}
+        />,
+        node
       );
-      tree.find('input').simulate('change', {
-        persist: noop,
-        target: {
-          name: 'name',
-          value: 'ian',
-        },
-      });
-      expect(handleChange).toHaveBeenCalled();
-      expect(setFieldError).not.toHaveBeenCalled();
+      const { onChange } = injected;
+      onChange({ target: { name: 'name', value: 'hello' } });
       expect(validate).not.toHaveBeenCalled();
     });
 
     it('calls validate during onBlur if present', () => {
-      const handleBlur = jest.fn(noop);
-      const setFieldError = jest.fn(noop);
+      const node = document.createElement('div');
+      let injected: any; /** FieldProps ;) */
       const validate = jest.fn(noop);
-      const tree = makeFieldTree(
-        { name: 'name', validate },
-        {
-          handleBlur,
-          setFieldError,
-          validateOnBlur: true,
-        }
+      ReactDOM.render(
+        <TestForm
+          validateOnBlur={true}
+          render={(_formikProps: FormikProps<TestFormValues>) => (
+            <Field name="name" validate={validate}>
+              {({ field }: any) => (injected = field) && null}
+            </Field>
+          )}
+        />,
+        node
       );
-      tree.find('input').simulate('blur', {
-        persist: noop,
-        target: {
-          name: 'name',
-          value: 'ian',
-        },
-      });
-      expect(handleBlur).toHaveBeenCalled();
-      expect(setFieldError).toHaveBeenCalled();
+      const { onBlur } = injected;
+      onBlur({ target: { name: 'name' } });
       expect(validate).toHaveBeenCalled();
     });
 
@@ -99,14 +87,17 @@ describe('A <Field />', () => {
       const handleBlur = jest.fn(noop);
       const setFieldError = jest.fn(noop);
       const validate = jest.fn(noop);
-      const tree = makeFieldTree(
-        { name: 'name', validate },
-        {
+      const tree = makeFieldTree({
+        name: 'name',
+        validate,
+        formik: {
+          registerField: noop,
+          unregisterField: noop,
           handleBlur,
           setFieldError,
           validateOnBlur: false,
-        }
-      );
+        },
+      });
       tree.find('input').simulate('blur', {
         persist: noop,
         target: {
@@ -115,8 +106,43 @@ describe('A <Field />', () => {
         },
       });
       expect(handleBlur).toHaveBeenCalled();
-      expect(setFieldError).not.toHaveBeenCalled();
       expect(validate).not.toHaveBeenCalled();
+    });
+
+    it('runs validation when validateField is called (SYNC)', async () => {
+      const validate = jest.fn().mockReturnValue('Error!');
+      const FormFields = () => <Field name="name" validate={validate} />;
+
+      const tree = mount(<TestForm component={FormFields} />);
+      tree
+        .find(FormFields)
+        .props()
+        .validateField('name');
+      await Promise.resolve()
+        .then()
+        .then(); // XXX: Waiting for validateField's promise, should be fixed :(
+      tree.update();
+
+      expect(validate).toHaveBeenCalled();
+      expect(tree.find(FormFields).props().errors.name).toBe('Error!');
+    });
+
+    it('runs validation when validateField is called (ASYNC)', async () => {
+      const validate = jest.fn().mockRejectedValue('Error!');
+      const FormFields = () => <Field name="name" validate={validate} />;
+
+      const tree = mount(<TestForm component={FormFields} />);
+      tree
+        .find(FormFields)
+        .props()
+        .validateField('name');
+      await Promise.resolve()
+        .then()
+        .then(); // XXX: Waiting for validateField's promise, should be fixed :(
+      tree.update();
+
+      expect(validate).toHaveBeenCalled();
+      expect(tree.find(FormFields).props().errors.name).toBe('Error!');
     });
   });
 
@@ -178,6 +204,37 @@ describe('A <Field />', () => {
       expect(actual.field.onChange).toBe(handleChange);
       expect(actual.field.onBlur).toBe(handleBlur);
       expect(actual.form).toEqual(injected);
+    });
+
+    it('assigns innerRef as a ref to string components', () => {
+      const innerRef = jest.fn();
+      const tree = mount(
+        <Field.WrappedComponent
+          name="name"
+          innerRef={innerRef}
+          formik={{ registerField: noop }}
+        />
+      );
+      const element = tree.find('input').instance();
+      expect(innerRef).toHaveBeenCalledWith(element);
+    });
+
+    it('forwards innerRef to React component', () => {
+      let actual: any; /** FieldProps ;) */
+      const Component: React.SFC<FieldProps> = props =>
+        (actual = props) && null;
+
+      const innerRef = jest.fn();
+
+      ReactDOM.render(
+        <TestForm
+          render={() => (
+            <Field name="name" component={Component} innerRef={innerRef} />
+          )}
+        />,
+        node
+      );
+      expect(actual.innerRef).toBe(innerRef);
     });
   });
 

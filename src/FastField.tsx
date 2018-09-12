@@ -1,93 +1,97 @@
-import * as PropTypes from 'prop-types';
 import * as React from 'react';
-import { validateYupSchema, yupToFormErrors, FormikProps } from './Formik';
-import { getIn, isPromise, setIn, isFunction, isEmptyChildren } from './utils';
 import warning from 'warning';
-import { FieldAttributes, FieldConfig, FieldProps } from './Field';
-import isEqual from 'lodash.isequal';
+import { connect } from './connect';
+import {
+  FormikProps,
+  GenericFieldHTMLAttributes,
+  FormikContext,
+} from './types';
+import { getIn, isEmptyChildren, isFunction } from './utils';
 
-export interface FastFieldState {
-  value: any;
-  error?: string;
+export interface FastFieldProps<V = any> {
+  field: {
+    /** Classic React change handler, keyed by input name */
+    onChange: (e: React.ChangeEvent<any>) => void;
+    /** Mark input as touched */
+    onBlur: (e: any) => void;
+    /** Value of the input */
+    value: any;
+    /* name of the input */
+    name: string;
+  };
+  form: FormikProps<V>; // if ppl want to restrict this for a given form, let them.
 }
 
-/** @private Returns whether two objects are deeply equal **excluding** a key / dot path */
-function isEqualExceptForKey(a: any, b: any, path: string) {
-  return isEqual(setIn(a, path, undefined), setIn(b, path, undefined));
+export interface FastFieldConfig<T> {
+  /**
+   * Field component to render. Can either be a string like 'select' or a component.
+   */
+  component?:
+    | string
+    | React.ComponentType<FastFieldProps<any>>
+    | React.ComponentType<void>;
+
+  /**
+   * Render prop (works like React router's <Route render={props =>} />)
+   */
+  render?: ((props: FastFieldProps<any>) => React.ReactNode);
+
+  /**
+   * Children render function <Field name>{props => ...}</Field>)
+   */
+  children?:
+    | ((props: FastFieldProps<any>) => React.ReactNode)
+    | React.ReactNode;
+
+  /**
+   * Validate a single field value independently
+   */
+  validate?: ((value: any) => string | Promise<void> | undefined);
+
+  /** Override FastField's default shouldComponentUpdate */
+  shouldUpdate?: (
+    props: T & GenericFieldHTMLAttributes & { formik: FormikContext<any> }
+  ) => boolean;
+
+  /**
+   * Field name
+   */
+  name: string;
+
+  /** HTML input type */
+  type?: string;
+
+  /** Field value */
+  value?: any;
+
+  /** Inner ref */
+  innerRef?: (instance: any) => void;
 }
+
+export type FastFieldAttributes<T> = GenericFieldHTMLAttributes &
+  FastFieldConfig<T> &
+  T;
 
 /**
  * Custom Field component for quickly hooking into Formik
  * context and wiring up forms.
  */
-export class FastField<
-  Props extends FieldAttributes = any
-> extends React.Component<Props, FastFieldState> {
-  static contextTypes = {
-    formik: PropTypes.object,
-  };
-
-  static propTypes = {
-    name: PropTypes.string.isRequired,
-    component: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
-    render: PropTypes.func,
-    children: PropTypes.oneOfType([PropTypes.func, PropTypes.node]),
-    validate: PropTypes.func,
-  };
-
-  reset: Function;
-  constructor(props: Props, context: any) {
-    super(props);
-    this.state = {
-      value: getIn(context.formik.values, props.name),
-      error: getIn(context.formik.errors, props.name),
-    };
-
-    this.reset = () =>
-      this.setState({
-        value: getIn(context.formik.values, props.name),
-        error: getIn(context.formik.errors, props.name),
-      });
-
-    context.formik.registerField(props.name, this.reset);
-  }
-
-  componentWillReceiveProps(
-    nextProps: Props,
-    nextContext: { formik: FormikProps<any> }
+class FastFieldInner<Values = {}, Props = {}> extends React.Component<
+  FastFieldAttributes<Props> & { formik: FormikContext<Values> },
+  {}
+> {
+  constructor(
+    props: FastFieldAttributes<Props> & { formik: FormikContext<Values> }
   ) {
-    const nextFieldValue = getIn(nextContext.formik.values, nextProps.name);
-    const nextFieldError = getIn(nextContext.formik.errors, nextProps.name);
-
-    let nextState: any;
-
-    if (nextFieldValue !== this.state.value) {
-      nextState = { value: nextFieldValue };
-    }
-
-    if (nextFieldError !== this.state.error) {
-      nextState = { ...nextState, error: nextFieldError };
-    }
-
-    if (nextState) {
-      this.setState(s => ({ ...s, ...nextState }));
-    }
-  }
-
-  componentWillUnmount() {
-    this.context.formik.unregisterField(this.props.name);
-  }
-
-  componentWillMount() {
-    const { render, children, component } = this.props;
-
+    super(props);
+    const { render, children, component } = props;
     warning(
       !(component && render),
       'You should not use <FastField component> and <FastField render> in the same <FastField> component; <FastField component> will be ignored'
     );
 
     warning(
-      !(this.props.component && children && isFunction(children)),
+      !(component && children && isFunction(children)),
       'You should not use <FastField component> and <FastField children> as a function in the same <FastField> component; <FastField component> will be ignored.'
     );
 
@@ -97,160 +101,52 @@ export class FastField<
     );
   }
 
-  handleChange = (e: React.ChangeEvent<any>) => {
-    e.persist();
-    const {
-      validateOnChange,
-      validate,
-      values,
-      validationSchema,
-      errors,
-      setFormikState,
-    } = this.context.formik;
-    const { type, value, checked } = e.target;
-    const val = /number|range/.test(type)
-      ? parseFloat(value)
-      : /checkbox/.test(type) ? checked : value;
-    if (validateOnChange) {
-      // Field-level validation
-      if (this.props.validate) {
-        const maybePromise = (this.props.validate as any)(value);
-        if (isPromise(maybePromise)) {
-          this.setState({ value: val });
-          (maybePromise as any).then(
-            () => this.setState({ error: undefined }),
-            (error: string) => this.setState({ error })
-          );
-        } else {
-          this.setState({ value: val, error: maybePromise });
-        }
-      } else if (validate) {
-        // Top-level validate
-        const maybePromise = (validate as any)(
-          setIn(values, this.props.name, val)
-        );
-
-        if (isPromise(maybePromise)) {
-          this.setState({ value: val });
-          (maybePromise as any).then(
-            () => this.setState({ error: undefined }),
-            (error: any) => {
-              // Here we diff the errors object relative to Formik parents except for
-              // the Field's key. If they are equal, the field's validation function is
-              // has no inter-field side-effects and we only need to update local state
-              // otherwise we need to lift up the update to the parent (causing a full form render)
-              if (isEqualExceptForKey(maybePromise, errors, this.props.name)) {
-                this.setState({ error: getIn(error, this.props.name) });
-              } else {
-                setFormikState((prevState: any) => ({
-                  ...prevState,
-                  errors: error,
-                  // touched: setIn(prevState.touched, name, true),
-                }));
-              }
-            }
-          );
-        } else {
-          // Handle the same diff situation
-          // @todo refactor
-          if (isEqualExceptForKey(maybePromise, errors, this.props.name)) {
-            this.setState({
-              value: val,
-              error: getIn(maybePromise, this.props.name),
-            });
-          } else {
-            this.setState({
-              value: val,
-            });
-            setFormikState((prevState: any) => ({
-              ...prevState,
-              errors: maybePromise,
-            }));
-          }
-        }
-      } else if (validationSchema) {
-        // Top-level validationsSchema
-        const schema = isFunction(validationSchema)
-          ? validationSchema()
-          : validationSchema;
-        const mergedValues = setIn(values, this.props.name, val);
-        // try to validate with yup synchronously if possible...saves a render.
-        try {
-          validateYupSchema(mergedValues, schema, true);
-          this.setState({
-            value: val,
-            error: undefined,
-          });
-        } catch (e) {
-          if (e.name === 'ValidationError') {
-            this.setState({
-              value: val,
-              error: getIn(yupToFormErrors(e), this.props.name),
-            });
-          } else {
-            this.setState({
-              value: val,
-            });
-            // try yup async validation
-            validateYupSchema(mergedValues, schema).then(
-              () => this.setState({ error: undefined }),
-              (err: any) =>
-                this.setState(s => ({
-                  ...s,
-                  error: getIn(yupToFormErrors(err), this.props.name),
-                }))
-            );
-          }
-        }
-      } else {
-        this.setState({ value: val });
-      }
+  shouldComponentUpdate(
+    props: FastFieldAttributes<Props> & { formik: FormikContext<Values> }
+  ) {
+    if (this.props.shouldUpdate) {
+      return this.props.shouldUpdate(props);
+    } else if (
+      getIn(this.props.formik.values, this.props.name) !==
+        getIn(props.formik.values, this.props.name) ||
+      getIn(this.props.formik.errors, this.props.name) !==
+        getIn(props.formik.errors, this.props.name) ||
+      getIn(this.props.formik.touched, this.props.name) !==
+        getIn(props.formik.touched, this.props.name) ||
+      Object.keys(this.props).length !== Object.keys(props).length
+    ) {
+      return true;
     } else {
-      this.setState({ value: val });
+      return false;
     }
-  };
+  }
 
-  handleBlur = () => {
-    const { validateOnBlur, setFormikState } = this.context.formik;
-    const { name, validate } = this.props;
+  componentDidMount() {
+    this.props.formik.registerField(this.props.name, {
+      validate: this.props.validate,
+    });
+  }
 
-    // @todo refactor
-    if (validateOnBlur && validate) {
-      const maybePromise = (validate as any)(this.state.value);
-      if (isPromise(maybePromise)) {
-        (maybePromise as Promise<any>).then(
-          () =>
-            setFormikState((prevState: any) => ({
-              ...prevState,
-              values: setIn(prevState.values, name, this.state.value),
-              errors: setIn(prevState.errors, name, undefined),
-              touched: setIn(prevState.touched, name, true),
-            })),
-          error =>
-            setFormikState((prevState: any) => ({
-              ...prevState,
-              values: setIn(prevState.values, name, this.state.value),
-              errors: setIn(prevState.errors, name, error),
-              touched: setIn(prevState.touched, name, true),
-            }))
-        );
-      } else {
-        setFormikState((prevState: any) => ({
-          ...prevState,
-          values: setIn(prevState.values, name, this.state.value),
-          errors: setIn(prevState.errors, name, maybePromise),
-          touched: setIn(prevState.touched, name, true),
-        }));
-      }
-    } else {
-      setFormikState((prevState: any) => ({
-        ...prevState,
-        errors: setIn(prevState.errors, name, this.state.error),
-        values: setIn(prevState.values, name, this.state.value),
-        touched: setIn(prevState.touched, name, true),
-      }));
+  componentDidUpdate(
+    prevProps: FastFieldAttributes<Props> & { formik: FormikContext<Values> }
+  ) {
+    if (this.props.name !== prevProps.name) {
+      this.props.formik.unregisterField(prevProps.name);
+      this.props.formik.registerField(this.props.name, {
+        validate: this.props.validate,
+      });
     }
-  };
+
+    if (this.props.validate !== prevProps.validate) {
+      this.props.formik.registerField(this.props.name, {
+        validate: this.props.validate,
+      });
+    }
+  }
+
+  componentWillUnmount() {
+    this.props.formik.unregisterField(this.props.name);
+  }
 
   render() {
     const {
@@ -259,41 +155,41 @@ export class FastField<
       render,
       children,
       component = 'input',
+      formik,
       ...props
-    } = this.props as FieldConfig;
-
-    const { formik } = this.context;
+    } = (this.props as FastFieldAttributes<Props> & {
+      formik: FormikContext<Values>;
+    }) as any;
+    const {
+      validate: _validate,
+      validationSchema: _validationSchema,
+      ...restOfFormik
+    } = formik;
     const field = {
       value:
         props.type === 'radio' || props.type === 'checkbox'
           ? props.value // React uses checked={} for these inputs
-          : this.state.value,
+          : getIn(formik.values, name),
       name,
-      onChange: this.handleChange,
-      onBlur: this.handleBlur,
+      onChange: formik.handleChange,
+      onBlur: formik.handleBlur,
     };
-    const bag = {
-      field,
-      form: formik,
-      meta: { touched: getIn(formik.touched, name), error: this.state.error },
-    };
+    const bag = { field, form: restOfFormik };
 
     if (render) {
-      return (render as (
-        props: FieldProps<any> & {
-          meta: { error?: string; touched?: boolean };
-        }
-      ) => React.ReactNode)(bag);
+      return (render as any)(bag);
     }
 
     if (isFunction(children)) {
-      return (children as (props: FieldProps<any>) => React.ReactNode)(bag);
+      return (children as (props: FastFieldProps<any>) => React.ReactNode)(bag);
     }
 
     if (typeof component === 'string') {
+      const { innerRef, ...rest } = props;
       return React.createElement(component as any, {
+        ref: innerRef,
         ...field,
-        ...props,
+        ...rest,
         children,
       });
     }
@@ -305,3 +201,5 @@ export class FastField<
     });
   }
 }
+
+export const FastField = connect<FastFieldAttributes<any>, any>(FastFieldInner);

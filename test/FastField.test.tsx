@@ -1,9 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { Formik, FastField as Field, FieldProps, FormikProps } from '../src';
 
-import { FastField as Field, FieldProps, Formik, FormikProps } from '../src';
-
-import { shallow } from 'enzyme';
+import { shallow, mount } from '@pisano/enzyme';
 import { noop } from './testHelpers';
 
 interface TestFormValues {
@@ -21,86 +20,84 @@ const TestForm: React.SFC<any> = p => (
 
 describe('A <Field />', () => {
   describe('<Field validate>', () => {
-    const makeFieldTree = (props: any, ctx: any) =>
-      shallow(<Field {...props} />, { context: { formik: ctx } });
+    const makeFieldTree = (props: any) =>
+      shallow(<Field.WrappedComponent {...props} />);
 
     it('calls validate during onChange if present', () => {
-      const registerField = jest.fn(noop);
+      const node = document.createElement('div');
+      let injected: any; /** FieldProps ;) */
       const validate = jest.fn(noop);
-      const tree = makeFieldTree(
-        { name: 'name', validate },
-        {
-          registerField,
-          validateOnChange: true,
-        }
+      ReactDOM.render(
+        <TestForm
+          validateOnChange={true}
+          render={(_formikProps: FormikProps<TestFormValues>) => (
+            <Field name="name" validate={validate}>
+              {({ field }: any) => (injected = field) && null}
+            </Field>
+          )}
+        />,
+        node
       );
-      tree.find('input').simulate('change', {
-        persist: noop,
-        target: {
-          name: 'name',
-          value: 'ian',
-        },
-      });
+      const { onChange } = injected;
+      onChange({ target: { name: 'name', value: 'hello' } });
       expect(validate).toHaveBeenCalled();
     });
 
     it('does NOT call validate during onChange if validateOnChange is set to false', () => {
-      const registerField = jest.fn(noop);
+      const node = document.createElement('div');
+      let injected: any; /** FieldProps ;) */
       const validate = jest.fn(noop);
-      const tree = makeFieldTree(
-        { name: 'name', validate },
-        {
-          registerField,
-          validateOnChange: false,
-        }
+      ReactDOM.render(
+        <TestForm
+          validateOnChange={false}
+          render={(_formikProps: FormikProps<TestFormValues>) => (
+            <Field name="name" validate={validate}>
+              {({ field }: any) => (injected = field) && null}
+            </Field>
+          )}
+        />,
+        node
       );
-      tree.find('input').simulate('change', {
-        persist: noop,
-        target: {
-          name: 'name',
-          value: 'ian',
-        },
-      });
-
+      const { onChange } = injected;
+      onChange({ target: { name: 'name', value: 'hello' } });
       expect(validate).not.toHaveBeenCalled();
     });
 
     it('calls validate during onBlur if present', () => {
+      const node = document.createElement('div');
+      let injected: any; /** FieldProps ;) */
       const validate = jest.fn(noop);
-      const registerField = jest.fn(noop);
-      const setFormikState = jest.fn(noop);
-      const tree = makeFieldTree(
-        { name: 'name', validate },
-        {
-          registerField,
-          setFormikState,
-          validateOnBlur: true,
-        }
+      ReactDOM.render(
+        <TestForm
+          validateOnBlur={true}
+          render={(_formikProps: FormikProps<TestFormValues>) => (
+            <Field name="name" validate={validate}>
+              {({ field }: any) => (injected = field) && null}
+            </Field>
+          )}
+        />,
+        node
       );
-      tree.find('input').simulate('blur', {
-        persist: noop,
-        target: {
-          name: 'name',
-          value: 'ian',
-        },
-      });
-      expect(setFormikState).toHaveBeenCalled();
-      expect(registerField).toHaveBeenCalled();
+      const { onBlur } = injected;
+      onBlur({ target: { name: 'name' } });
       expect(validate).toHaveBeenCalled();
     });
 
     it('does NOT call validate during onBlur if validateOnBlur is set to false', () => {
+      const handleBlur = jest.fn(noop);
+      const setFieldError = jest.fn(noop);
       const validate = jest.fn(noop);
-      const registerField = jest.fn(noop);
-      const setFormikState = jest.fn(noop);
-      const tree = makeFieldTree(
-        { name: 'name', validate },
-        {
-          setFormikState,
-          registerField,
+      const tree = makeFieldTree({
+        name: 'name',
+        validate,
+        formik: {
+          registerField: noop,
+          unregisterField: noop,
+          handleBlur,
+          setFieldError,
           validateOnBlur: false,
-        }
-      );
+        },
+      });
       tree.find('input').simulate('blur', {
         persist: noop,
         target: {
@@ -108,8 +105,44 @@ describe('A <Field />', () => {
           value: 'ian',
         },
       });
-      expect(setFormikState).toHaveBeenCalled();
+      expect(handleBlur).toHaveBeenCalled();
       expect(validate).not.toHaveBeenCalled();
+    });
+
+    it('runs validation when validateField is called (SYNC)', async () => {
+      const validate = jest.fn().mockReturnValue('Error!');
+      const FormFields = () => <Field name="name" validate={validate} />;
+
+      const tree = mount(<TestForm component={FormFields} />);
+      tree
+        .find(FormFields)
+        .props()
+        .validateField('name');
+      await Promise.resolve()
+        .then()
+        .then(); // XXX: Waiting for validateField's promise, should be fixed :(
+      tree.update();
+
+      expect(validate).toHaveBeenCalled();
+      expect(tree.find(FormFields).props().errors.name).toBe('Error!');
+    });
+
+    it('runs validation when validateField is called (ASYNC)', async () => {
+      const validate = jest.fn().mockRejectedValue('Error!');
+      const FormFields = () => <Field name="name" validate={validate} />;
+
+      const tree = mount(<TestForm component={FormFields} />);
+      tree
+        .find(FormFields)
+        .props()
+        .validateField('name');
+      await Promise.resolve()
+        .then()
+        .then(); // XXX: Waiting for validateField's promise, should be fixed :(
+      tree.update();
+
+      expect(validate).toHaveBeenCalled();
+      expect(tree.find(FormFields).props().errors.name).toBe('Error!');
     });
   });
 
@@ -150,9 +183,9 @@ describe('A <Field />', () => {
     });
 
     it('receives { field, form } props', () => {
-      let actual: any; /** FieldProps<any> ;) */
-      let injected: any; /** FieldProps<any> ;) */
-      const Component: React.SFC<FieldProps<any>> = props =>
+      let actual: any; /** FieldProps ;) */
+      let injected: any; /** FieldProps ;) */
+      const Component: React.SFC<FieldProps> = props =>
         (actual = props) && null;
 
       ReactDOM.render(
@@ -165,10 +198,43 @@ describe('A <Field />', () => {
         />,
         node
       );
-
+      const { handleBlur, handleChange } = injected;
       expect(actual.field.name).toBe('name');
       expect(actual.field.value).toBe('jared');
+      expect(actual.field.onChange).toBe(handleChange);
+      expect(actual.field.onBlur).toBe(handleBlur);
       expect(actual.form).toEqual(injected);
+    });
+
+    it('assigns innerRef as a ref to string components', () => {
+      const innerRef = jest.fn();
+      const tree = mount(
+        <Field.WrappedComponent
+          name="name"
+          innerRef={innerRef}
+          formik={{ registerField: noop }}
+        />
+      );
+      const element = tree.find('input').instance();
+      expect(innerRef).toHaveBeenCalledWith(element);
+    });
+
+    it('forwards innerRef to React component', () => {
+      let actual: any; /** FieldProps ;) */
+      const Component: React.SFC<FieldProps> = props =>
+        (actual = props) && null;
+
+      const innerRef = jest.fn();
+
+      ReactDOM.render(
+        <TestForm
+          render={() => (
+            <Field name="name" component={Component} innerRef={innerRef} />
+          )}
+        />,
+        node
+      );
+      expect(actual.innerRef).toBe(innerRef);
     });
   });
 
@@ -200,9 +266,12 @@ describe('A <Field />', () => {
               placeholder={placeholder}
               name="name"
               testingAnArbitraryProp="thing"
-              render={({ field, form }: FieldProps<any>) => {
+              render={({ field, form }: FieldProps) => {
+                const { handleBlur, handleChange } = formikProps;
                 expect(field.name).toBe('name');
                 expect(field.value).toBe('jared');
+                expect(field.onChange).toBe(handleChange);
+                expect(field.onBlur).toBe(handleBlur);
                 expect(form).toEqual(formikProps);
 
                 return null;
@@ -272,14 +341,14 @@ describe('A <Field />', () => {
       );
 
       expect(output).toContain(
-        'Warning: You should not use <FastField component> and <FastField children> as a function in the same <FastField> component; <FastField component> will be ignored.'
+        'You should not use <FastField component> and <FastField children> as a function in the same <FastField> component; <FastField component> will be ignored.'
       );
     });
 
-    it('warns if both non-string component and children as a function', () => {
+    it('warns if both non-string component and children children as a function', () => {
       let output = '';
       let actual;
-      const Component: React.SFC<FieldProps<any>> = props =>
+      const Component: React.SFC<FieldProps> = props =>
         (actual = props) && null;
 
       (global as any).console = {
@@ -298,7 +367,7 @@ describe('A <Field />', () => {
       );
 
       expect(output).toContain(
-        'Warning: You should not use <FastField component> and <FastField children> as a function in the same <FastField> component; <FastField component> will be ignored.'
+        'You should not use <FastField component> and <FastField children> as a function in the same <FastField> component; <FastField component> will be ignored.'
       );
     });
 
@@ -323,14 +392,14 @@ describe('A <Field />', () => {
       );
 
       expect(output).toContain(
-        'Warning: You should not use <FastField component> and <FastField render> in the same <FastField> component; <FastField component> will be ignored'
+        'You should not use <FastField component> and <FastField render> in the same <FastField> component; <FastField component> will be ignored'
       );
     });
 
     it('warns if both non-string component and render', () => {
       let output = '';
       let actual;
-      const Component: React.SFC<FieldProps<any>> = props =>
+      const Component: React.SFC<FieldProps> = props =>
         (actual = props) && null;
 
       (global as any).console = {
@@ -351,7 +420,7 @@ describe('A <Field />', () => {
       );
 
       expect(output).toContain(
-        'Warning: You should not use <FastField component> and <FastField render> in the same <FastField> component; <FastField component> will be ignored'
+        'You should not use <FastField component> and <FastField render> in the same <FastField> component; <FastField component> will be ignored'
       );
     });
 
@@ -374,7 +443,7 @@ describe('A <Field />', () => {
       );
 
       expect(output).toContain(
-        'Warning: You should not use <FastField render> and <FastField children> in the same <FastField> component; <FastField children> will be ignored'
+        'You should not use <FastField render> and <FastField children> in the same <FastField> component; <FastField children> will be ignored'
       );
     });
 
@@ -392,7 +461,7 @@ describe('A <Field />', () => {
     it('receives { field, form } props', () => {
       let actual: any;
       let injected: any;
-      const Component: React.SFC<FieldProps<any>> = props =>
+      const Component: React.SFC<FieldProps> = props =>
         (actual = props) && null;
 
       ReactDOM.render(
@@ -405,7 +474,10 @@ describe('A <Field />', () => {
         />,
         node
       );
+      const { handleBlur, handleChange } = injected;
       expect(actual.field.name).toBe('name');
+      expect(actual.field.onChange).toBe(handleChange);
+      expect(actual.field.onBlur).toBe(handleBlur);
       expect(actual.field.value).toBe('jared');
       expect(actual.form).toEqual(injected);
     });
@@ -413,7 +485,7 @@ describe('A <Field />', () => {
     it('can resolve bracket paths', () => {
       let actual: any;
       let injected: any;
-      const Component: React.SFC<FieldProps<any>> = props =>
+      const Component: React.SFC<FieldProps> = props =>
         (actual = props) && null;
 
       ReactDOM.render(
@@ -433,7 +505,7 @@ describe('A <Field />', () => {
     it('can resolve mixed dot and bracket paths', () => {
       let actual: any;
       let injected: any;
-      const Component: React.SFC<FieldProps<any>> = props =>
+      const Component: React.SFC<FieldProps> = props =>
         (actual = props) && null;
 
       ReactDOM.render(
@@ -453,7 +525,7 @@ describe('A <Field />', () => {
     it('can resolve mixed dot and bracket paths II', () => {
       let actual: any;
       let injected: any;
-      const Component: React.SFC<FieldProps<any>> = props =>
+      const Component: React.SFC<FieldProps> = props =>
         (actual = props) && null;
 
       ReactDOM.render(

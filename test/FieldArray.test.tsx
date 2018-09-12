@@ -69,6 +69,23 @@ describe('<FieldArray />', () => {
     );
   });
 
+  it('renders with name as props', () => {
+    ReactDOM.render(
+      <TestForm
+        render={() => (
+          <FieldArray
+            name="friends"
+            render={arrayProps => {
+              expect(arrayProps.name).toBe('friends');
+              return null;
+            }}
+          />
+        )}
+      />,
+      node
+    );
+  });
+
   describe('props.push()', () => {
     it('should add a value to the end of the field array', () => {
       let formikBag: any;
@@ -94,6 +111,37 @@ describe('<FieldArray />', () => {
       arrayHelpers.push('jared');
       const expected = ['jared', 'andrea', 'brent', 'jared'];
       expect(formikBag.values.friends).toEqual(expected);
+    });
+    it('should push clone not actual referance', () => {
+      let personTemplate = { firstName: '', lastName: '' };
+      let formikBag: any;
+      let arrayHelpers: any;
+      ReactDOM.render(
+        <TestForm
+          initialValues={{ people: [] }}
+          render={(props: any) => {
+            formikBag = props;
+            return (
+              <FieldArray
+                name="people"
+                render={arrayProps => {
+                  arrayHelpers = arrayProps;
+                  return null;
+                }}
+              />
+            );
+          }}
+        />,
+        node
+      );
+
+      arrayHelpers.push(personTemplate);
+      expect(
+        formikBag.values.people[formikBag.values.people.length - 1]
+      ).not.toBe(personTemplate);
+      expect(
+        formikBag.values.people[formikBag.values.people.length - 1]
+      ).toMatchObject(personTemplate);
     });
   });
 
@@ -178,6 +226,34 @@ describe('<FieldArray />', () => {
 
       arrayHelpers.insert(1, 'brian');
       const expected = ['jared', 'brian', 'andrea', 'brent'];
+      expect(formikBag.values.friends).toEqual(expected);
+    });
+  });
+
+  describe('props.replace()', () => {
+    it('should replace a value at given index of field array', () => {
+      let formikBag: any;
+      let arrayHelpers: any;
+      ReactDOM.render(
+        <TestForm
+          render={(props: any) => {
+            formikBag = props;
+            return (
+              <FieldArray
+                name="friends"
+                render={arrayProps => {
+                  arrayHelpers = arrayProps;
+                  return null;
+                }}
+              />
+            );
+          }}
+        />,
+        node
+      );
+
+      arrayHelpers.replace(1, 'brian');
+      const expected = ['jared', 'brian', 'brent'];
       expect(formikBag.values.friends).toEqual(expected);
     });
   });

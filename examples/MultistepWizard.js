@@ -48,7 +48,7 @@ class Wizard extends React.Component {
     const { page } = this.state;
     const isLastPage = page === React.Children.count(children) - 1;
     if (isLastPage) {
-      return onSubmit(values);
+      return onSubmit(values, bag);
     } else {
       this.next(values);
       bag.setSubmitting(false);
@@ -64,6 +64,7 @@ class Wizard extends React.Component {
       <Formik
         initialValues={values}
         enableReinitialize={false}
+        validate={this.validate}
         onSubmit={this.handleSubmit}
         render={({ values, handleSubmit, isSubmitting, handleReset }) => (
           <form onSubmit={handleSubmit}>
@@ -168,3 +169,5 @@ const App = () => (
     </Wizard>
   </div>
 );
+
+export default App

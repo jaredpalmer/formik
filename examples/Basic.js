@@ -1,88 +1,36 @@
-import * as React from 'react';
+import React from 'react';
+import { Formik, Field, Form } from 'formik';
 
-import { Field, Form, Formik } from '../src/formik';
-
-// ALL OF THESE ARE THE SAME...
-
-// 1: component={}
-export const BasicComponentPropExample = () =>
+const Basic = () => (
   <div>
-    <h1>My Cool Form</h1>
+    <h1>Sign Up</h1>
     <Formik
-      onSubmit={values => console.log(values)}
-      initialValues={{ firstName: '', lastName: '', email: '' }}
-      component={MyFormHelpers}
-    />
-  </div>;
+      initialValues={{
+        firstName: '',
+        lastName: '',
+        email: '',
+      }}
+      onSubmit={values => {
+        setTimeout(() => {
+          alert(JSON.stringify(values, null, 2));
+        }, 500);
+      }}
+      render={() => (
+        <Form>
+          <label htmlFor="firstName">First Name</label>
+          <Field name="firstName" placeholder="Jane" />
 
-export const MyFormWithHelpers = props =>
-  <Form className="whatever">
-    <Field name="firstName" placeholder="First Name" />
-    <Field name="lastName" placeholder="Last Name" />
-    <Field name="email" type="email" placeholder="Email Address" />
-    <button type="submit">Submit</button>
-  </Form>;
+          <label htmlFor="lastName">Last Name</label>
+          <Field name="lastName" placeholder="Doe" />
 
-// This is the same as MyFormWithHelper but just by passing props instead of
-// using context.
-export const MyFormWithoutHelpers = props =>
-  <form className="whatever" onSubmit={props.handleSubmit}>
-    <input
-      name="firstName"
-      placeholder="First Name"
-      onChange={props.handleChange}
-      onBlur={props.handleBlur}
-      value={props.values.firstName}
-    />
-    <input
-      name="lastName"
-      placeholder="Last Name"
-      onChange={props.handleChange}
-      onBlur={props.handleBlur}
-      value={props.values.lastName}
-    />
-    <input
-      name="email"
-      type="email"
-      placeholder="Email Address"
-      onChange={props.handleChange}
-      onBlur={props.handleBlur}
-      value={props.values.email}
-    />
-    <button type="submit">Submit</button>
-  </form>;
+          <label htmlFor="email">Email</label>
+          <Field name="email" placeholder="jane@acme.com" type="email" />
 
-// 2: render={(props) => ...}
-export const BasicRenderPropExample = () =>
-  <div>
-    <h1>My Cool Form</h1>
-    <Formik
-      onSubmit={values => console.log(values)}
-      initialValues={{ firstName: '', lastName: '', email: '' }}
-      render={props =>
-        <Form className="whatever">
-          <Field name="firstName" placeholder="First Name" />
-          <Field name="lastName" placeholder="Last Name" />
-          <Field name="email" type="email" placeholder="Email Address" />
           <button type="submit">Submit</button>
-        </Form>}
+        </Form>
+      )}
     />
-  </div>;
+  </div>
+);
 
-// 3: React children
-export const BasicChildrenPropExample = () =>
-  <div>
-    <h1>My Cool Form</h1>
-    <Formik
-      onSubmit={values => console.log(values)}
-      initialValues={{ firstName: '', lastName: '', email: '' }}
-    >
-      {props =>
-        <Form className="whatever">
-          <Field name="firstName" placeholder="First Name" />
-          <Field name="lastName" placeholder="Last Name" />
-          <Field name="email" type="email" placeholder="Email Address" />
-          <button type="submit">Submit</button>
-        </Form>}
-    </Formik>
-  </div>;
+export default Basic;

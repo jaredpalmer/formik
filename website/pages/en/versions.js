@@ -35,15 +35,15 @@ function Versions() {
               <tr>
                 <th>{latestVersion}</th>
                 <td>
-                  <a href="">Documentation</a>
+                  <a href="/docs/overview">Documentation</a>
                 </td>
                 <td>
-                  <a href="">Release Notes</a>
+                  <a href={repoUrl + '/releases'}>Release Notes</a>
                 </td>
               </tr>
             </tbody>
           </table>
-          <p>
+          {/* <p>
             This is the version that is configured automatically when you first
             install this project.
           </p>
@@ -56,12 +56,13 @@ function Versions() {
                   <a href="">Documentation</a>
                 </td>
                 <td>
-                  <a href="">Release Notes</a>
+                  <a href={repoUrl + '/releases/tag/v' + version}>
+                    Release Notes
+                  </a>
                 </td>
               </tr>
             </tbody>
-          </table>
-          <p>Other text describing this section.</p>
+          </table> */}
           <h3 id="archive">Past Versions</h3>
           <table className="versions">
             <tbody>
@@ -74,7 +75,9 @@ function Versions() {
                         <a href="">Documentation</a>
                       </td>
                       <td>
-                        <a href="">Release Notes</a>
+                        <a href={repoUrl + '/releases/tag/v' + version}>
+                          Release Notes
+                        </a>
                       </td>
                     </tr>
                   )

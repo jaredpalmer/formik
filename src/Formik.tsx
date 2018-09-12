@@ -366,21 +366,20 @@ export class Formik<Values = {}, ExtraProps = {}> extends React.Component<
     value: any,
     shouldValidate: boolean = true
   ) => {
-    if (!this.didMount) {
-      return;
-    }
-    // Set form field by name
-    this.setState(
-      prevState => ({
-        ...prevState,
-        values: setIn(prevState.values, field, value),
-      }),
-      () => {
-        if (this.props.validateOnChange && shouldValidate) {
-          this.runValidations(this.state.values);
+    if (this.didMount) {
+      // Set form field by name
+      this.setState(
+        prevState => ({
+          ...prevState,
+          values: setIn(prevState.values, field, value),
+        }),
+        () => {
+          if (this.props.validateOnChange && shouldValidate) {
+            this.runValidations(this.state.values);
+          }
         }
-      }
-    );
+      );
+    }
   };
 
   handleSubmit = (e: React.FormEvent<HTMLFormElement> | undefined) => {

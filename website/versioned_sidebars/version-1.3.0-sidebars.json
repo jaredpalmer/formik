@@ -1,0 +1,26 @@
+{
+  "version-1.3.0-docs": {
+    "Getting Started": [
+      "version-1.3.0-overview",
+      "version-1.3.0-tutorial",
+      "version-1.3.0-resources"
+    ],
+    "Guides": [
+      "version-1.3.0-guides/validation",
+      "version-1.3.0-guides/arrays",
+      "version-1.3.0-guides/typescript",
+      "version-1.3.0-guides/react-native",
+      "version-1.3.0-guides/form-submission"
+    ],
+    "API Reference": [
+      "version-1.3.0-api/formik",
+      "version-1.3.0-api/withFormik",
+      "version-1.3.0-api/field",
+      "version-1.3.0-api/fieldarray",
+      "version-1.3.0-api/form",
+      "version-1.3.0-api/errormessage",
+      "version-1.3.0-api/connect",
+      "version-1.3.0-api/fastfield"
+    ]
+  }
+}

@@ -1,5 +1,5 @@
 ---
-id: version-1.2.0-react-native
+id: version-1.3.0-react-native
 title: React Native
 original_id: react-native
 ---

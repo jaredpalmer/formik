@@ -24,7 +24,7 @@ export const MyReactNativeForm = props => (
     initialValues={{ email: '' }}
     onSubmit={values => console.log(values)}
   >
-    {({ values, handleChange, handleBlur }) => (
+    {props => (
       <View>
         <TextInput
           onChangeText={props.handleChange('email')}

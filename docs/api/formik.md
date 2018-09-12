@@ -288,7 +288,7 @@ enable/disable a submit and reset buttons on initial mount.
 ### `initialValues?: Values`
 
 Initial field values of the form, Formik will make these values available to
-render methods component as ` props.values``values `.
+render methods component as `values`.
 
 Even if your form is empty by default, you must initialize all fields with
 initial values otherwise React will throw an error saying that you have changed

@@ -1313,7 +1313,7 @@ describe('<Formik>', () => {
 
     const tree = shallow(
       <Formik
-        initialValues={{ users: [{ firstName: null, lastName: null }] }}
+        initialValues={{ users: [{ firstName: '', lastName: '' }] }}
         validate={validate}
         validationSchema={validationSchema}
         onSubmit={noop}

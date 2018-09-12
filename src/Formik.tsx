@@ -26,7 +26,7 @@ import {
 
 export class Formik<Values = {}, ExtraProps = {}> extends React.Component<
   FormikConfig<Values> & ExtraProps,
-  FormikState<any>
+  FormikState<Values>
 > {
   static defaultProps = {
     validateOnChange: true,
@@ -130,7 +130,7 @@ export class Formik<Values = {}, ExtraProps = {}> extends React.Component<
     });
   };
 
-  setValues = (values: FormikValues) => {
+  setValues = (values: FormikState<Values>['values']) => {
     this.setState({ values }, () => {
       if (this.props.validateOnChange) {
         this.runValidations(values);
@@ -607,10 +607,10 @@ export class Formik<Values = {}, ExtraProps = {}> extends React.Component<
         {component
           ? React.createElement(component as any, props)
           : render
-            ? (render as any)(props)
+            ? render(props)
             : children // children come last, always called
-              ? typeof children === 'function'
-                ? (children as any)(props)
+              ? isFunction(children)
+                ? children(props)
                 : !isEmptyChildren(children)
                   ? React.Children.only(children)
                   : null

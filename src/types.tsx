@@ -183,7 +183,11 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
   /**
    * Submission handler
    */
-  onSubmit: (values: Values, formikActions: FormikActions<Values>) => void;
+  onSubmit: (
+    values: Values,
+    formikActions: FormikActions<Values>,
+    isSubmitting: boolean
+  ) => void;
 
   /**
    * Form component to render

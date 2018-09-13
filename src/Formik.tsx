@@ -437,7 +437,11 @@ export class Formik<Values = {}, ExtraProps = {}> extends React.Component<
   };
 
   executeSubmit = () => {
-    this.props.onSubmit(this.state.values, this.getFormikActions());
+    this.props.onSubmit(
+      this.state.values,
+      this.getFormikActions(),
+      this.state.isSubmitting
+    );
   };
 
   handleBlur = (eventOrString: any): void | ((e: any) => void) => {

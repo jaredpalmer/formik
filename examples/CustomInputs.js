@@ -1,6 +1,7 @@
 import React from 'react';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
+import { Debug } from './Debug';
 
 // By combining a vanilla <label> plus Formik's <Field> and <ErrorMessage>,
 // we can abstract a generic "Fieldset" component for most of our inputs.
@@ -73,7 +74,7 @@ const SignUp = () => (
 
           <button
             type="reset"
-            className="reset"
+            className="secondary"
             disabled={isSubmitting}
             onClick={handleReset}
           >
@@ -81,6 +82,7 @@ const SignUp = () => (
           </button>
 
           <button type="submit">Submit</button>
+          <Debug />
         </Form>
       )}
     />

@@ -149,7 +149,8 @@ main {
     0 0 0 3px rgba(255, 0, 0, 0.1);
 }
 
-.formik-example .fieldset.fieldset--error label {
+.formik-example .fieldset.fieldset--error label,
+.field-error {
   color: red;
 }
 

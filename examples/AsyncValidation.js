@@ -1,5 +1,6 @@
 import React from 'react';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
+import { Debug } from './Debug';
 
 // Async Validation
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
@@ -41,6 +42,7 @@ const Username = () => (
           <Field name="username" type="text" />
           <ErrorMessage name="username" />
           <button type="submit">Submit</button>
+          <Debug />
         </Form>
       )}
     />

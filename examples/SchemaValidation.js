@@ -1,6 +1,7 @@
 import React from 'react';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
+import { Debug } from './Debug';
 
 // While you can use any validation library (or write you own), Formik
 // comes with special support for Yup by @jquense. It has a builder API like
@@ -59,6 +60,7 @@ const SignUp = () => (
           <ErrorMessage name="email" component="div" className="field-error" />
 
           <button type="submit">Submit</button>
+          <Debug />
         </Form>
       )}
     />

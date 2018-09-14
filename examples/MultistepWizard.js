@@ -1,5 +1,6 @@
 import React from 'react';
 import { Formik, Field, ErrorMessage } from 'formik';
+import { Debug } from './Debug';
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -62,7 +63,11 @@ class Wizard extends React.Component {
             {activePage}
             <div className="buttons">
               {page > 0 && (
-                <button type="button" onClick={this.previous}>
+                <button
+                  type="button"
+                  className="secondary"
+                  onClick={this.previous}
+                >
                   « Previous
                 </button>
               )}
@@ -75,7 +80,7 @@ class Wizard extends React.Component {
               )}
             </div>
 
-            <pre>{JSON.stringify(values, null, 2)}</pre>
+            <Debug />
           </form>
         )}
       />
@@ -110,7 +115,11 @@ const App = () => (
             placeholder="First Name"
             validate={required}
           />
-          <ErrorMessage name="firstName" />
+          <ErrorMessage
+            name="firstName"
+            component="div"
+            className="field-error"
+          />
         </div>
         <div>
           <label>Last Name</label>
@@ -121,7 +130,11 @@ const App = () => (
             placeholder="Last Name"
             validate={required}
           />
-          <ErrorMessage name="lastName" />
+          <ErrorMessage
+            name="lastName"
+            component="div"
+            className="field-error"
+          />
         </div>
       </Wizard.Page>
       <Wizard.Page
@@ -144,17 +157,21 @@ const App = () => (
             type="email"
             placeholder="Email"
           />
-          <ErrorMessage name="email" />
+          <ErrorMessage name="email" component="div" className="field-error" />
         </div>
         <div>
           <label>Favorite Color</label>
           <Field name="favoriteColor" component="select">
-            <option />
+            <option value="">Select a Color</option>
             <option value="#ff0000">❤️ Red</option>
             <option value="#00ff00">💚 Green</option>
             <option value="#0000ff">💙 Blue</option>
           </Field>
-          <ErrorMessage name="favoriteColor" />
+          <ErrorMessage
+            name="favoriteColor"
+            component="div"
+            className="field-error"
+          />
         </div>
       </Wizard.Page>
     </Wizard>

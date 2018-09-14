@@ -1,5 +1,6 @@
 import React from 'react';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
+import { Debug } from './Debug';
 
 const isRequired = message => value => (!!value ? undefined : message);
 
@@ -40,21 +41,9 @@ const FieldLevelValidation = () => (
             />
             <ErrorMessage name="email" />
           </div>
-          <div>
-            <pre>
-              Errors:<br />
-              {JSON.stringify(errors, null, 2)}
-            </pre>
-          </div>
-          <div>
-            <pre>
-              Touched:<br />
-              {JSON.stringify(touched, null, 2)}
-            </pre>
-          </div>
 
           <div>
-            <div>username actions</div>
+            <div>username field actions</div>
             <button
               type="button"
               onClick={() => {
@@ -89,6 +78,7 @@ const FieldLevelValidation = () => (
             </button>
             <button type="submit">Submit</button>
           </div>
+          <Debug />
         </Form>
       )}
     />

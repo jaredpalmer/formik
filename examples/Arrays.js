@@ -1,5 +1,6 @@
 import React from 'react';
 import { Formik, Field, Form, ErrorMessage, FieldArray } from 'formik';
+import { Debug } from './Debug';
 
 const initialValues = {
   friends: [
@@ -76,6 +77,7 @@ const SignIn = () => (
             )}
           />
           <button type="submit">Invite</button>
+          <Debug />
         </Form>
       )}
     />

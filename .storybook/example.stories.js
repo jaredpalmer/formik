@@ -24,11 +24,7 @@ const CombinedValidationsCode = require('!raw-loader!../examples/CombinedValidat
 const Code = props => (
   <pre
     style={{
-      position: 'absolute',
-      top: 12,
-      right: 12,
-      bottom: 12,
-      width: 500,
+      background: '#fafafa',
       border: '1px solid #eee',
       borderRadius: 4,
       overflowX: 'scroll',
@@ -36,7 +32,7 @@ const Code = props => (
       lineHeight: 1.4,
       boxSizing: 'border-box',
       padding: 12,
-      margin: 0,
+      margin: 12,
     }}
     {...props}
   />
@@ -45,7 +41,7 @@ const Code = props => (
 storiesOf('Example', module)
   .add('Basic', () => {
     return (
-      <div className="story">
+      <div className="formik-example">
         <main>
           <Basic />
         </main>
@@ -55,7 +51,7 @@ storiesOf('Example', module)
   })
   .add('Arrays', () => {
     return (
-      <div className="story">
+      <div className="formik-example">
         <main>
           <Arrays />
         </main>
@@ -65,7 +61,7 @@ storiesOf('Example', module)
   })
   .add('AsyncValidation', () => {
     return (
-      <div className="story">
+      <div className="formik-example">
         <main>
           <AsyncValidation />
         </main>
@@ -75,7 +71,7 @@ storiesOf('Example', module)
   })
   .add('CustomInputs', () => {
     return (
-      <div className="story">
+      <div className="formik-example">
         <main>
           <CustomImputs />
         </main>
@@ -85,7 +81,7 @@ storiesOf('Example', module)
   })
   .add('MultistepWizard', () => {
     return (
-      <div className="story">
+      <div className="formik-example">
         <main>
           <MultistepWizard />
         </main>
@@ -95,7 +91,7 @@ storiesOf('Example', module)
   })
   .add('SchemaValidation', () => {
     return (
-      <div className="story">
+      <div className="formik-example">
         <main>
           <SchemaValidation />
         </main>
@@ -105,7 +101,7 @@ storiesOf('Example', module)
   })
   .add('SyncValidation', () => {
     return (
-      <div className="story">
+      <div className="formik-example">
         <main>
           <SyncValidation />
         </main>
@@ -115,7 +111,7 @@ storiesOf('Example', module)
   })
   .add('FieldLevelValidation', () => {
     return (
-      <div className="story">
+      <div className="formik-example">
         <main>
           <FieldLevelValidation />
         </main>
@@ -125,7 +121,7 @@ storiesOf('Example', module)
   })
   .add('CombinedValidations', () => {
     return (
-      <div className="story">
+      <div className="formik-example">
         <main>
           <CombinedValidations />
         </main>

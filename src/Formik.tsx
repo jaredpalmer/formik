@@ -362,7 +362,10 @@ export class Formik<Values = object, ExtraProps = {}> extends React.Component<
     value: any,
     shouldValidate: boolean = true
   ) => {
-    if (this.didMount) {
+    return new Promise(resolve => {
+      if (!this.didMount) {
+        resolve();
+      }
       // Set form field by name
       this.setState(
         prevState => ({
@@ -371,11 +374,13 @@ export class Formik<Values = object, ExtraProps = {}> extends React.Component<
         }),
         () => {
           if (this.props.validateOnChange && shouldValidate) {
-            this.runValidations(this.state.values);
+            this.runValidations(this.state.values).then(() => resolve());
+          } else {
+            resolve();
           }
         }
       );
-    }
+    });
   };
 
   handleSubmit = (e: React.FormEvent<HTMLFormElement> | undefined) => {

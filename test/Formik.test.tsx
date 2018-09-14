@@ -569,6 +569,48 @@ describe('<Formik>', () => {
       ).toEqual('ian');
     });
 
+    it('setFieldValue promise is called succesfully with no validation', async () => {
+      const tree = shallow(BasicForm);
+      await tree
+        .find(Form)
+        .props()
+        .setFieldValue('name', 'ian', false);
+
+      expect(
+        tree
+          .update()
+          .find(Form)
+          .props().values.name
+      ).toEqual('ian');
+    });
+
+    it('setFieldValue promise is called succesfully with validation after validation', async () => {
+      const validate = jest.fn().mockReturnValue({});
+
+      const tree = shallow(
+        <Formik
+          initialValues={{ name: 'jared' }}
+          onSubmit={noop}
+          component={Form}
+          validate={validate}
+        />
+      );
+
+      await tree
+        .find(Form)
+        .props()
+        .setFieldValue('name', 'ian');
+
+      expect(
+        tree
+          .update()
+          .find(Form)
+          .props().values.name
+      ).toEqual('ian');
+
+      expect(validate).toHaveBeenCalled();
+    });
+
     it('setFieldValue should run validations when validateOnChange is true', () => {
       const validate = jest.fn().mockReturnValue({});
 

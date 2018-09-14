@@ -9,6 +9,7 @@ legacy.d.ts
 .idea
 *.orig
 .DS_Store
+.vscode/
 
 node_modules
 

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Formik, Field, FastField, Form } from 'formik';
+import { Debug } from './Debug';
 
 class Input extends React.Component {
   renders = 0;
@@ -45,6 +46,7 @@ const Basic = () => (
           />
 
           <button type="submit">Submit</button>
+          <Debug />
         </Form>
       )}
     />

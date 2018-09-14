@@ -1,5 +1,6 @@
 import React from 'react';
-import { Formik, Field, Form, FieldArray } from 'formik';
+import { Formik, Field, Form, ErrorMessage, FieldArray } from 'formik';
+import { Debug } from './Debug';
 
 const initialValues = {
   friends: [
@@ -19,7 +20,7 @@ const SignIn = () => (
           alert(JSON.stringify(values, null, 2));
         }, 500);
       }}
-      render={({ values, errors, touched }) => (
+      render={({ values }) => (
         <Form>
           <FieldArray
             name="friends"
@@ -35,15 +36,11 @@ const SignIn = () => (
                           placeholder="Jane Doe"
                           type="text"
                         />
-                        {errors.friends &&
-                          errors.friends[index] &&
-                          errors.friends[index].name &&
-                          touched.friends &&
-                          touched.friends[index].name && (
-                            <div className="field-error">
-                              {errors.friends[index].name}
-                            </div>
-                          )}
+                        <ErrorMessage
+                          name={`friends.${index}.name`}
+                          component="div"
+                          className="field-error"
+                        />
                       </div>
                       <div className="col">
                         <label htmlFor={`friends.${index}.email`}>Email</label>
@@ -52,15 +49,11 @@ const SignIn = () => (
                           placeholder="jane@acme.com"
                           type="email"
                         />
-                        {errors.friends &&
-                          errors.friends[index] &&
-                          errors.friends[index].email &&
-                          touched.friends &&
-                          touched.friends[index].email && (
-                            <div className="field-error">
-                              {errors.friends[index].email}
-                            </div>
-                          )}
+                        <ErrorMessage
+                          name={`friends.${index}.name`}
+                          component="div"
+                          className="field-error"
+                        />
                       </div>
                       <div className="col">
                         <button
@@ -83,7 +76,8 @@ const SignIn = () => (
               </div>
             )}
           />
-          <button type="submit">Sign In</button>
+          <button type="submit">Invite</button>
+          <Debug />
         </Form>
       )}
     />

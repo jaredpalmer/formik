@@ -1,6 +1,7 @@
 import React from 'react';
 import * as Yup from 'yup';
 import { withFormik } from '../src/formik';
+import { Debug } from './Debug';
 
 const formikEnhancer = withFormik({
   mapPropsToValues: props => ({ email: props.user.email }),
@@ -31,27 +32,12 @@ const MyForm = props => {
     handleReset,
   } = props;
   return (
-    <form onSubmit={handleSubmit}>
-      <label htmlFor="email" style={{ display: 'block' }}>
-        Email
-      </label>
-      <input
-        id="email"
-        placeholder="Enter your email"
-        type="text"
-        value={values.email}
-        onChange={handleChange}
-        onBlur={handleBlur}
-        className={
-          errors.email && touched.email ? 'text-input error' : 'text-input'
-        }
-      />
-      {errors.email &&
-        touched.email &&
-        <div className="input-feedback">
-          {errors.email}
-        </div>}
-
+    <Form>
+      <label htmlFor="email">Email</label>
+      <Field name="email" placeholder="jane@acme.com" type="email" />
+      <div>
+        <ErrorMessage name="email" />
+      </div>
       <button
         type="button"
         className="outline"
@@ -63,7 +49,8 @@ const MyForm = props => {
       <button type="submit" disabled={isSubmitting}>
         Submit
       </button>
-    </form>
+      <Debug />
+    </Form>
   );
 };
 

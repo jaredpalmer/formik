@@ -1,6 +1,7 @@
 import React from 'react';
-import { Formik, Field, Form } from 'formik';
+import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
+import { Debug } from './Debug';
 
 const Schema = Yup.object().shape({
   email: Yup.string().required('This field is required'),
@@ -51,10 +52,7 @@ const FieldLevelValidation = () => (
               type="text"
               placeholder="username"
             />
-            {errors.username &&
-              touched.username && (
-                <div className="field-error">{errors.username}</div>
-              )}
+            <ErrorMessage name="username" />
           </div>
           <br />
           <div>
@@ -64,10 +62,7 @@ const FieldLevelValidation = () => (
               type="text"
               placeholder="email"
             />
-            {errors.email &&
-              touched.email && (
-                <div className="field-error">{errors.email}</div>
-              )}
+            <ErrorMessage name="email" />
           </div>
           <br />
           <div>
@@ -77,12 +72,11 @@ const FieldLevelValidation = () => (
               type="text"
               placeholder="zip"
             />
-            {errors.zip &&
-              touched.zip && <div className="field-error">{errors.zip}</div>}
+            <ErrorMessage name="zip" />
           </div>
           <br />
-
           <button type="submit">Submit</button>
+          <Debug />
         </Form>
       )}
     />

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Formik, Field, Form } from 'formik';
+import { Debug } from './Debug';
 
 const Basic = () => (
   <div>
@@ -25,8 +26,8 @@ const Basic = () => (
 
           <label htmlFor="email">Email</label>
           <Field name="email" placeholder="jane@acme.com" type="email" />
-
           <button type="submit">Submit</button>
+          <Debug />
         </Form>
       )}
     />

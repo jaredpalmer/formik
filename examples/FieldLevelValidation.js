@@ -1,5 +1,5 @@
 import React from 'react';
-import { Formik, Field, Form } from 'formik';
+import { Formik, Field, Form, ErrorMessage } from 'formik';
 
 const isRequired = message => value => (!!value ? undefined : message);
 
@@ -28,10 +28,7 @@ const FieldLevelValidation = () => (
               type="text"
               placeholder="Username"
             />
-            {errors.username &&
-              touched.username && (
-                <div className="field-error">{errors.username}</div>
-              )}
+            <ErrorMessage name="username" />
           </div>
           <br />
           <div>
@@ -41,10 +38,7 @@ const FieldLevelValidation = () => (
               type="text"
               placeholder="Email"
             />
-            {errors.email &&
-              touched.email && (
-                <div className="field-error">{errors.email}</div>
-              )}
+            <ErrorMessage name="email" />
           </div>
           <div>
             <pre>

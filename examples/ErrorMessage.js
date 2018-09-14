@@ -39,24 +39,23 @@ const SignUp = () => (
         <Form>
           <label htmlFor="firstName">First Name</label>
           <Field name="firstName" placeholder="Jane" type="text" />
-
           <ErrorMessage
             name="firstName"
             component="div"
             className="field-error"
           />
-
+         
           <label htmlFor="lastName">Last Name</label>
-          <Field name="lastName" placeholder="Doe" type="text" />
-          <ErrorMessage
-            name="lastName"
-            component="div"
-            className="field-error"
-          />
+          <Field name="lastName" placeholder="Doe" type="text" />          
+          <ErrorMessage name="firstName">
+            {(msg /** this is the same as the above */ ) =>                        
+              <div className="field-error">{msg}</div>
+            }
+          </ErrorMessage>
 
           <label htmlFor="email">Email</label>
           <Field name="email" placeholder="jane@acme.com" type="email" />
-          <ErrorMessage name="email" component="div" className="field-error" />
+          <ErrorMessage name="email" component={} className="field-error" />
 
           <button type="submit">Submit</button>
         </Form>

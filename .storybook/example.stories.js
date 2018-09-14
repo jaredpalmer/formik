@@ -73,7 +73,7 @@ storiesOf('Example', module)
       </div>
     );
   })
-  .add('CustomImputs', () => {
+  .add('CustomInputs', () => {
     return (
       <div className="story">
         <main>

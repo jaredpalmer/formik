@@ -1,18 +1,9 @@
 import React from 'react';
-import { Formik, Field } from 'formik';
+import { Formik, Field, ErrorMessage } from 'formik';
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 const required = value => (value ? undefined : 'Required');
-
-const Error = ({ name }) => (
-  <Field
-    name={name}
-    render={({ form: { touched, errors } }) =>
-      touched[name] && errors[name] ? <span>{errors[name]}</span> : null
-    }
-  />
-);
 
 class Wizard extends React.Component {
   static Page = ({ children }) => children;
@@ -119,7 +110,7 @@ const App = () => (
             placeholder="First Name"
             validate={required}
           />
-          <Error name="firstName" />
+          <ErrorMessage name="firstName" />
         </div>
         <div>
           <label>Last Name</label>
@@ -130,7 +121,7 @@ const App = () => (
             placeholder="Last Name"
             validate={required}
           />
-          <Error name="lastName" />
+          <ErrorMessage name="lastName" />
         </div>
       </Wizard.Page>
       <Wizard.Page
@@ -153,7 +144,7 @@ const App = () => (
             type="email"
             placeholder="Email"
           />
-          <Error name="email" />
+          <ErrorMessage name="email" />
         </div>
         <div>
           <label>Favorite Color</label>
@@ -163,11 +154,11 @@ const App = () => (
             <option value="#00ff00">💚 Green</option>
             <option value="#0000ff">💙 Blue</option>
           </Field>
-          <Error name="favoriteColor" />
+          <ErrorMessage name="favoriteColor" />
         </div>
       </Wizard.Page>
     </Wizard>
   </div>
 );
 
-export default App
+export default App;

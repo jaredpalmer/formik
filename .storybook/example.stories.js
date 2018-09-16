@@ -7,6 +7,7 @@ import Arrays from '../examples/Arrays';
 import Basic from '../examples/Basic.js';
 import CustomInputs from '../examples/CustomInputs';
 import ErrorMessage from '../examples/ErrorMessage';
+import FastField from '../examples/FastField';
 import MultistepWizard from '../examples/MultistepWizard';
 import SchemaValidation from '../examples/SchemaValidation';
 import SyncValidation from '../examples/SyncValidation';
@@ -18,6 +19,7 @@ const ArraysCode = require('!raw-loader!../examples/Arrays');
 const BasicCode = require('!raw-loader!../examples/Basic.js');
 const CustomInputsCode = require('!raw-loader!../examples/CustomInputs');
 const ErrorMessageCode = require('!raw-loader!../examples/ErrorMessage');
+const FastFieldCode = require('!raw-loader!../examples/FastField');
 const MultistepWizardCode = require('!raw-loader!../examples/MultistepWizard');
 const SchemaValidationCode = require('!raw-loader!../examples/SchemaValidation');
 const SyncValidationCode = require('!raw-loader!../examples/SyncValidation');
@@ -114,6 +116,16 @@ storiesOf('Example', module)
           <ErrorMessage />
         </main>
         <Code>{cleanExample(ErrorMessageCode)}</Code>
+      </div>
+    );
+  })
+  .add('FastField', () => {
+    return (
+      <div className="formik-example">
+        <main>
+          <FastField />
+        </main>
+        <Code>{cleanExample(FastFieldCode)}</Code>
       </div>
     );
   })

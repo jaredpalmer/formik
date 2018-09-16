@@ -1,5 +1,5 @@
 import React from 'react';
-import { Formik, Field, FastField, Form } from 'formik';
+import { Formik, FastField, Form } from 'formik';
 import { Debug } from './Debug';
 
 class Input extends React.Component {
@@ -8,8 +8,8 @@ class Input extends React.Component {
     const { field, form, ...rest } = this.props;
     return (
       <div>
-        {this.renders++}
         <input {...field} {...rest} />
+        <p># of renders: {this.renders++}</p>
       </div>
     );
   }
@@ -24,18 +24,30 @@ const Basic = () => (
         lastName: '',
         email: '',
       }}
-      onSubmit={values => {
+      onSubmit={(values, { setSubmitting }) => {
         setTimeout(() => {
+          setSubmitting(false);
+
           alert(JSON.stringify(values, null, 2));
         }, 500);
       }}
-      render={() => (
+      render={({ isSubmitting }) => (
         <Form>
           <label htmlFor="firstName">First Name</label>
-          <FastField name="firstName" placeholder="Jane" component={Input} />
+          <FastField
+            name="firstName"
+            placeholder="Jane"
+            component={Input}
+            disabled={isSubmitting}
+          />
 
           <label htmlFor="lastName">Last Name</label>
-          <FastField name="lastName" placeholder="Doe" component={Input} />
+          <FastField
+            name="lastName"
+            placeholder="Doe"
+            component={Input}
+            disabled={isSubmitting}
+          />
 
           <label htmlFor="email">Email</label>
           <FastField
@@ -43,6 +55,7 @@ const Basic = () => (
             placeholder="jane@acme.com"
             type="email"
             component={Input}
+            disabled={isSubmitting}
           />
 
           <button type="submit">Submit</button>

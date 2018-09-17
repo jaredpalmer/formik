@@ -48,7 +48,7 @@ You can play with Formik in your web browser with these live online playgrounds.
 * [Working with 3rd-party inputs #1: react-select](https://codesandbox.io/s/jRzE53pqR)
 * [Working with 3rd-party inputs #2: Draft.js](https://codesandbox.io/s/QW1rqjBLl)
 * [Accessing React lifecycle functions](https://codesandbox.io/s/pgD4DLypy)
-* [React Native](https://snack.expo.io/Bk9pPK87X)
+* [React Native](https://snack.expo.io/@ferrannp/react-native-x-formik)
 * [TypeScript](https://codesandbox.io/s/8y578o8152)
 
 ## Organizations and projects using Formik

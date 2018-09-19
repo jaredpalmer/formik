@@ -1,5 +1,6 @@
 import React from 'react';
-import { Formik, Field, Form } from 'formik';
+import { Formik, Field, Form, ErrorMessage } from 'formik';
+import { Debug } from './Debug';
 
 // Async Validation
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
@@ -39,13 +40,9 @@ const Username = () => (
         <Form>
           <label htmlFor="username">Username</label>
           <Field name="username" type="text" />
-
-          {errors.username &&
-            touched.username && (
-              <div className="field-error">{errors.username}</div>
-            )}
-
+          <ErrorMessage name="username" />
           <button type="submit">Submit</button>
+          <Debug />
         </Form>
       )}
     />

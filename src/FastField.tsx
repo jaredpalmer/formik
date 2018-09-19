@@ -113,7 +113,8 @@ class FastFieldInner<Values = {}, Props = {}> extends React.Component<
         getIn(props.formik.errors, this.props.name) ||
       getIn(this.props.formik.touched, this.props.name) !==
         getIn(props.formik.touched, this.props.name) ||
-      Object.keys(this.props).length !== Object.keys(props).length
+      Object.keys(this.props).length !== Object.keys(props).length ||
+      this.props.formik.isSubmitting !== props.formik.isSubmitting
     ) {
       return true;
     } else {

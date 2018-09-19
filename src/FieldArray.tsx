@@ -103,12 +103,20 @@ class FieldArrayInner<Values = {}> extends React.Component<
   updateArrayField = (
     fn: Function,
     alterTouched: boolean,
-    alterErrors: boolean
+    alterErrors: boolean,
+    alterFocused: boolean
   ) => {
     const {
       name,
       validateOnChange,
-      formik: { setFormikState, validateForm, values, touched, errors },
+      formik: {
+        setFormikState,
+        validateForm,
+        values,
+        touched,
+        errors,
+        focused,
+      },
     } = this.props;
     setFormikState(
       (prevState: FormikState<any>) => ({
@@ -120,6 +128,9 @@ class FieldArrayInner<Values = {}> extends React.Component<
         touched: alterTouched
           ? setIn(prevState.touched, name, fn(getIn(touched, name)))
           : prevState.touched,
+        focused: alterFocused
+          ? setIn(prevState.focused, name, fn(getIn(focused, name)))
+          : prevState.focused,
       }),
       () => {
         if (validateOnChange) {
@@ -133,6 +144,7 @@ class FieldArrayInner<Values = {}> extends React.Component<
     this.updateArrayField(
       (array: any[]) => [...(array || []), cloneDeep(value)],
       false,
+      false,
       false
     );
 
@@ -141,6 +153,7 @@ class FieldArrayInner<Values = {}> extends React.Component<
   swap = (indexA: number, indexB: number) =>
     this.updateArrayField(
       (array: any[]) => swap(array, indexA, indexB),
+      false,
       false,
       false
     );
@@ -152,6 +165,7 @@ class FieldArrayInner<Values = {}> extends React.Component<
     this.updateArrayField(
       (array: any[]) => move(array, from, to),
       false,
+      false,
       false
     );
 
@@ -161,6 +175,7 @@ class FieldArrayInner<Values = {}> extends React.Component<
     this.updateArrayField(
       (array: any[]) => insert(array, index, value),
       false,
+      false,
       false
     );
 
@@ -169,6 +184,7 @@ class FieldArrayInner<Values = {}> extends React.Component<
   replace = (index: number, value: any) =>
     this.updateArrayField(
       (array: any[]) => replace(array, index, value),
+      false,
       false,
       false
     );
@@ -183,6 +199,7 @@ class FieldArrayInner<Values = {}> extends React.Component<
         arr = array ? [value, ...array] : [value];
         return arr;
       },
+      false,
       false,
       false
     );
@@ -207,7 +224,8 @@ class FieldArrayInner<Values = {}> extends React.Component<
         return copy;
       },
       true,
-      true
+      true,
+      false
     );
 
     return result;
@@ -228,7 +246,8 @@ class FieldArrayInner<Values = {}> extends React.Component<
         return tmp;
       },
       true,
-      true
+      true,
+      false
     );
 
     return result;

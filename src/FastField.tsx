@@ -12,8 +12,10 @@ export interface FastFieldProps<V = any> {
   field: {
     /** Classic React change handler, keyed by input name */
     onChange: (e: React.ChangeEvent<any>) => void;
-    /** Mark input as touched */
+    /** Mark input as touched and focus off */
     onBlur: (e: any) => void;
+    /** Mark input as focused */
+    onFocus: (e: any) => void;
     /** Value of the input */
     value: any;
     /* name of the input */
@@ -113,6 +115,8 @@ class FastFieldInner<Values = {}, Props = {}> extends React.Component<
         getIn(props.formik.errors, this.props.name) ||
       getIn(this.props.formik.touched, this.props.name) !==
         getIn(props.formik.touched, this.props.name) ||
+      getIn(this.props.formik.focused, this.props.name) !==
+        getIn(props.formik.focused, this.props.name) ||
       Object.keys(this.props).length !== Object.keys(props).length
     ) {
       return true;
@@ -173,6 +177,7 @@ class FastFieldInner<Values = {}, Props = {}> extends React.Component<
       name,
       onChange: formik.handleChange,
       onBlur: formik.handleBlur,
+      onFocus: formik.handleFocus,
     };
     const bag = { field, form: restOfFormik };
 

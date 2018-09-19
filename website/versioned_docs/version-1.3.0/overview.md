@@ -1,5 +1,5 @@
 ---
-id: version-1.2.0-overview
+id: version-1.3.0-overview
 title: Overview
 original_id: overview
 ---
@@ -165,7 +165,7 @@ export default Basic;
 
 ### Reducing boilerplate
 
-The code above is very explicit about exactly what Formik is doing.`onChange` -> `handleChange`, `onBlur` -> `handleBlur`, and so on. However, to save you time, Formik comes with a few extra components to make life easier and less verbose: `<Form />` and `<Field />`. They use React context to hook into the parent `<Formik />` state/methods.
+The code above is very explicit about exactly what Formik is doing.`onChange` -> `handleChange`, `onBlur` -> `handleBlur`, and so on. However, to save you time, Formik comes with a few extra components to make life easier and less verbose: `<Form />`, `<Field />`, and `<ErrorMessage />`. They use React context to hook into the parent `<Formik />` state/methods.
 
 ```jsx
 // Render Prop
@@ -195,12 +195,12 @@ const Basic = () => (
         }, 400);
       }}
     >
-      {({ errors, touched, isSubmitting }) => (
+      {({ isSubmitting }) => (
         <Form>
           <Field type="email" name="email" />
-          {errors.email && touched.email && errors.email}
+          <ErrorMessage name="email" component="div"/>
           <Field type="password" name="password" />
-          {errors.password && touched.password && errors.password}
+          <ErrorMessage name="password" component="div" />
           <button type="submit" disabled={isSubmitting}>
             Submit
           </button>

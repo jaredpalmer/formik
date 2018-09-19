@@ -17,6 +17,7 @@ const Form: React.SFC<FormikProps<Values>> = ({
   handleSubmit,
   handleChange,
   handleBlur,
+  handleFocus,
   status,
   errors,
   isSubmitting,
@@ -27,6 +28,7 @@ const Form: React.SFC<FormikProps<Values>> = ({
         type="text"
         onChange={handleChange}
         onBlur={handleBlur}
+        onFocus={handleFocus}
         value={values.name}
         name="name"
       />
@@ -201,6 +203,23 @@ describe('<Formik>', () => {
             },
           });
         expect(tree.update().state().touched).toEqual({ name: true });
+      });
+
+      it('sets focused state to false', () => {
+        const tree = shallow(BasicForm);
+
+        // Simulate a blur event in the inner Form component's input
+        tree
+          .find(Form)
+          .dive()
+          .find('input')
+          .simulate('blur', {
+            persist: noop,
+            target: {
+              id: 'name',
+            },
+          });
+        expect(tree.update().state().focused).toEqual({ name: false });
       });
 
       it('updates touched state via `name` instead of `id` attribute when both are present', () => {
@@ -502,6 +521,43 @@ describe('<Formik>', () => {
         });
       });
     });
+
+    describe('handleFocus', () => {
+      it('sets focused state to false', () => {
+        const tree = shallow(BasicForm);
+
+        // Simulate a blur event in the inner Form component's input
+        tree
+          .find(Form)
+          .dive()
+          .find('input')
+          .simulate('focus', {
+            persist: noop,
+            target: {
+              id: 'name',
+            },
+          });
+        expect(tree.update().state().focused).toEqual({ name: true });
+      });
+
+      it('updates focused state via `name` instead of `id` attribute when both are present', () => {
+        const tree = shallow(BasicForm);
+
+        // Simulate a blur event in the inner Form component's input
+        tree
+          .find(Form)
+          .dive()
+          .find('input')
+          .simulate('focus', {
+            persist: noop,
+            target: {
+              id: 'person-1-name-blah',
+              name: 'name',
+            },
+          });
+        expect(tree.update().state().focused).toEqual({ name: true });
+      });
+    });
   });
 
   describe('FormikActions', () => {
@@ -774,6 +830,42 @@ describe('<Formik>', () => {
           .props().status
       ).toEqual(status);
     });
+
+    it('setFieldFocus sets the focus of the field', () => {
+      const tree = shallow(BasicForm);
+      tree
+        .find(Form)
+        .props()
+        .setFieldFocused('name', true);
+      expect(
+        tree
+          .update()
+          .find(Form)
+          .props().focused
+      ).toEqual({ name: true });
+      expect(
+        tree
+          .update()
+          .find(Form)
+          .props().dirty
+      ).toBe(false);
+      tree
+        .find(Form)
+        .props()
+        .setFieldFocused('name', false);
+      expect(
+        tree
+          .update()
+          .find(Form)
+          .props().focused
+      ).toEqual({ name: false });
+      expect(
+        tree
+          .update()
+          .find(Form)
+          .props().dirty
+      ).toBe(false);
+    });
   });
 
   describe('FormikComputedProps', () => {
@@ -958,6 +1050,7 @@ describe('<Formik>', () => {
           setErrors: expect.any(Function),
           setFieldError: expect.any(Function),
           setFieldTouched: expect.any(Function),
+          setFieldFocused: expect.any(Function),
           setFieldValue: expect.any(Function),
           setStatus: expect.any(Function),
           setSubmitting: expect.any(Function),
@@ -1013,6 +1106,7 @@ describe('<Formik>', () => {
           setErrors: expect.any(Function),
           setFieldError: expect.any(Function),
           setFieldTouched: expect.any(Function),
+          setFieldFocused: expect.any(Function),
           setFieldValue: expect.any(Function),
           setStatus: expect.any(Function),
           setSubmitting: expect.any(Function),

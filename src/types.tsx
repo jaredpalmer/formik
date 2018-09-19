@@ -26,6 +26,15 @@ export type FormikTouched<Values> = {
 };
 
 /**
+ * An object containing focus state of the form whose keys correspond to FormikValues.
+ */
+export type FormikFocused<Values> = {
+  [K in keyof Values]?: Values[K] extends object
+    ? FormikFocused<Values[K]>
+    : boolean
+};
+
+/**
  * Formik state tree
  */
 export interface FormikState<Values> {
@@ -40,6 +49,8 @@ export interface FormikState<Values> {
   errors: FormikErrors<Values>;
   /** map of field names to whether the field has been touched */
   touched: FormikTouched<Values>;
+  /** map of field names to whether the field is focused */
+  focused: FormikFocused<Values>;
   /** whether the form is currently validating */
   isValidating: boolean;
   /** whether the form is currently submitting */
@@ -89,6 +100,8 @@ export interface FormikActions<Values> {
   ): void;
   /** Set error message of a form field directly */
   setFieldError(field: keyof Values & string, message: string): void;
+  /** Set whether field is focused */
+  setFieldFocused(field: keyof Values & string, isFocused?: boolean): void;
   /** Set whether field has been touched directly */
   setFieldTouched(
     field: keyof Values & string,
@@ -140,6 +153,12 @@ export interface FormikHandlers {
   handleBlur(e: any): void;
   /** Preact-like linkState. Will return a handleBlur function. */
   handleBlur<T = string | any>(
+    fieldOrEvent: T
+  ): T extends string ? ((e: any) => void) : void;
+  /** Classic React focus handler */
+  handleFocus(e: any): void;
+  /** Preact-like linkState. Will return a handleFocus function */
+  handleFocus<T = string | any>(
     fieldOrEvent: T
   ): T extends string ? ((e: any) => void) : void;
   /** Classic React change handler, keyed by input name */

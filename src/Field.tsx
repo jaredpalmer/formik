@@ -33,6 +33,8 @@ export interface FieldProps<V = any> {
     onChange: (e: React.ChangeEvent<any>) => void;
     /** Mark input as touched */
     onBlur: (e: any) => void;
+    /** Mark input as focused */
+    onFocus: (e: any) => void;
     /** Value of the input */
     value: any;
     /* name of the input */
@@ -164,6 +166,7 @@ class FieldInner<Props = {}, Values = {}> extends React.Component<
       name,
       onChange: formik.handleChange,
       onBlur: formik.handleBlur,
+      onFocus: formik.handleFocus,
     };
     const bag = { field, form: restOfFormik };
 

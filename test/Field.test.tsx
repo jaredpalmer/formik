@@ -198,11 +198,12 @@ describe('A <Field />', () => {
         />,
         node
       );
-      const { handleBlur, handleChange } = injected;
+      const { handleBlur, handleChange, handleFocus } = injected;
       expect(actual.field.name).toBe('name');
       expect(actual.field.value).toBe('jared');
       expect(actual.field.onChange).toBe(handleChange);
       expect(actual.field.onBlur).toBe(handleBlur);
+      expect(actual.field.onFocus).toBe(handleFocus);
       expect(actual.form).toEqual(injected);
     });
 
@@ -267,11 +268,12 @@ describe('A <Field />', () => {
               name="name"
               testingAnArbitraryProp="thing"
               render={({ field, form }: FieldProps) => {
-                const { handleBlur, handleChange } = formikProps;
+                const { handleBlur, handleChange, handleFocus } = formikProps;
                 expect(field.name).toBe('name');
                 expect(field.value).toBe('jared');
                 expect(field.onChange).toBe(handleChange);
                 expect(field.onBlur).toBe(handleBlur);
+                expect(field.onFocus).toBe(handleFocus);
                 expect(form).toEqual(formikProps);
 
                 return null;

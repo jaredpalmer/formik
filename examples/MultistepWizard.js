@@ -43,6 +43,7 @@ class Wizard extends React.Component {
       return onSubmit(values, bag);
     } else {
       this.next(values);
+      bag.setTouched({});
       bag.setSubmitting(false);
     }
   };

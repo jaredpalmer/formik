@@ -531,9 +531,18 @@ export class Formik<Values = {}, ExtraProps = {}> extends React.Component<
         });
       }
 
-      this.setState(prevState => ({
-        focused: setIn(prevState.focused, field, true),
-      }));
+      this.setState(prevState => {
+        return {
+          focused: setIn(
+            Object.keys(prevState.focused).reduce(
+              (acc: object, key: string) => ({ ...acc, [key]: false }),
+              {}
+            ),
+            field,
+            true
+          ),
+        };
+      });
     };
 
     if (isString(eventOrString)) {

@@ -67,7 +67,7 @@ export const FriendList = () => (
 
 ### `name: string`
 
-The name or path to the relevant key in [`values`].
+The name or path to the relevant key in [`values`](api/formik.md#values-field-string-any).
 
 ### `validateOnChange?: boolean`
 
@@ -109,7 +109,7 @@ You can also iterate through an array of objects, by following a convention of `
 
 Validation can be tricky with `<FieldArray>`.
 
-If you use [`validationSchema`] and your form has array validation requirements (like a min length) as well as nested array field requirements, displaying errors can be tricky. Formik/Yup will show validation errors inside out. For example,
+If you use [`validationSchema`](api/formik.md#validationschema-schema-schema) and your form has array validation requirements (like a min length) as well as nested array field requirements, displaying errors can be tricky. Formik/Yup will show validation errors inside out. For example,
 
 ```js
 const schema = Yup.object().shape({

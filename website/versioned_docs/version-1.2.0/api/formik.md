@@ -99,11 +99,11 @@ to `<button onClick={handleReset}>...</button>`
 
 #### `handleSubmit: (e: React.FormEvent<HTMLFormEvent>) => void`
 
-Submit handler. This should be passed to `<form onSubmit={props.handleSubmit}>...</form>`. To learn more about the submission process, see [How Form Submission Works](#how-form-submission-works).
+Submit handler. This should be passed to `<form onSubmit={props.handleSubmit}>...</form>`. To learn more about the submission process, see [Form Submission](guides/form-submission.md).
 
 #### `isSubmitting: boolean`
 
-Submitting state of the form. Returns `true` if submission is in progress and `false` otherwise. IMPORTANT: Formik will set this to `true` as soon as submission is _attempted_. To learn more about the submission process, see [How Form Submission Works](#how-form-submission-works).
+Submitting state of the form. Returns `true` if submission is in progress and `false` otherwise. IMPORTANT: Formik will set this to `true` as soon as submission is _attempted_. To learn more about the submission process, see [Form Submission](guides/form-submission.md).
 
 #### `isValid: boolean`
 
@@ -112,7 +112,7 @@ Returns `true` if the there are no `errors`, or the result of
 
 #### `isValidating: boolean`
 
-Returns `true` if Formik is running any validation function, `false` otherwise. To learn more about what happens with `isValidating` during the submission process, see [How Form Submission Works](#how-form-submission-works).
+Returns `true` if Formik is running any validation function, `false` otherwise. To learn more about what happens with `isValidating` during the submission process, see [Form Submission](guides/form-submission.md).
 
 #### `resetForm: (nextValues?: Values) => void`
 
@@ -141,8 +141,8 @@ Trigger a form submission.
 
 #### `submitCount: number`
 
-Number of times user tried to submit the form. Increases when `handleSubmit`(#handlesubmit-values-values-formikbag-formikbag--void) is called, resets after calling
-`handleReset`(#handlereset---void). `submitCount` is readonly computed property and should not be mutated directly.
+Number of times user tried to submit the form. Increases when [`handleSubmit`](#handlesubmit-e-reactformevent-htmlformevent-void) is called, resets after calling
+[`handleReset`](#handlereset-void). `submitCount` is readonly computed property and should not be mutated directly.
 
 #### `setFieldValue: (field: string, value: any, shouldValidate?: boolean) => void`
 
@@ -174,7 +174,7 @@ otherwise be expressed/stored with other methods. This is useful for capturing
 and passing through API responses to your inner component.
 
 `status` should only be modifed by calling
-`setStatus: (status?: any) => void`(#setstatus-status-any--void)
+[`setStatus`](#setstatus-status-any-void).
 
 #### `touched: { [field: string]: boolean }`
 

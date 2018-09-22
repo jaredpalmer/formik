@@ -86,7 +86,7 @@ export type FieldAttributes<T> = GenericFieldHTMLAttributes & FieldConfig & T;
  * Custom Field component for quickly hooking into Formik
  * context and wiring up forms.
  */
-class FieldInner<Props = {}, Values = {}> extends React.Component<
+class FieldInner<Values = {}, Props = {}> extends React.Component<
   FieldAttributes<Props> & { formik: FormikContext<Values> },
   {}
 > {
@@ -94,8 +94,7 @@ class FieldInner<Props = {}, Values = {}> extends React.Component<
     props: FieldAttributes<Props> & { formik: FormikContext<Values> }
   ) {
     super(props);
-
-    const { render, children, component, formik } = props;
+    const { render, children, component } = props;
     warning(
       !(component && render),
       'You should not use <Field component> and <Field render> in the same <Field> component; <Field component> will be ignored'
@@ -110,12 +109,12 @@ class FieldInner<Props = {}, Values = {}> extends React.Component<
       !(render && children && !isEmptyChildren(children)),
       'You should not use <Field render> and <Field children> in the same <Field> component; <Field children> will be ignored'
     );
+  }
 
+  componentDidMount() {
     // Register the Field with the parent Formik. Parent will cycle through
     // registered Field's validate fns right prior to submit
-    formik.registerField(props.name, {
-      validate: props.validate,
-    });
+    this.props.formik.registerField(this.props.name, this);
   }
 
   componentDidUpdate(
@@ -123,15 +122,11 @@ class FieldInner<Props = {}, Values = {}> extends React.Component<
   ) {
     if (this.props.name !== prevProps.name) {
       this.props.formik.unregisterField(prevProps.name);
-      this.props.formik.registerField(this.props.name, {
-        validate: this.props.validate,
-      });
+      this.props.formik.registerField(this.props.name, this);
     }
 
     if (this.props.validate !== prevProps.validate) {
-      this.props.formik.registerField(this.props.name, {
-        validate: this.props.validate,
-      });
+      this.props.formik.registerField(this.props.name, this);
     }
   }
 

@@ -123,9 +123,9 @@ class FastFieldInner<Values = {}, Props = {}> extends React.Component<
   }
 
   componentDidMount() {
-    this.props.formik.registerField(this.props.name, {
-      validate: this.props.validate,
-    });
+    // Register the Field with the parent Formik. Parent will cycle through
+    // registered Field's validate fns right prior to submit
+    this.props.formik.registerField(this.props.name, this);
   }
 
   componentDidUpdate(
@@ -133,15 +133,11 @@ class FastFieldInner<Values = {}, Props = {}> extends React.Component<
   ) {
     if (this.props.name !== prevProps.name) {
       this.props.formik.unregisterField(prevProps.name);
-      this.props.formik.registerField(this.props.name, {
-        validate: this.props.validate,
-      });
+      this.props.formik.registerField(this.props.name, this);
     }
 
     if (this.props.validate !== prevProps.validate) {
-      this.props.formik.registerField(this.props.name, {
-        validate: this.props.validate,
-      });
+      this.props.formik.registerField(this.props.name, this);
     }
   }
 

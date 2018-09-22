@@ -35,7 +35,9 @@ function Versions() {
               <tr>
                 <th>{latestVersion}</th>
                 <td>
-                  <a href="/docs/overview">Documentation</a>
+                  <a href={`${siteConfig.baseUrl}docs/overview`}>
+                    Documentation
+                  </a>
                 </td>
                 <td>
                   <a href={repoUrl + '/releases'}>Release Notes</a>
@@ -72,7 +74,11 @@ function Versions() {
                     <tr>
                       <th>{version}</th>
                       <td>
-                        <a href="">Documentation</a>
+                        <a
+                          href={`${siteConfig.baseUrl}docs/${version}/overview`}
+                        >
+                          Documentation
+                        </a>
                       </td>
                       <td>
                         <a href={repoUrl + '/releases/tag/v' + version}>

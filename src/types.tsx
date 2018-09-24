@@ -11,7 +11,9 @@ export interface FormikValues {
  * Should be always be and object of strings, but any is allowed to support i18n libraries.
  */
 export type FormikErrors<Values> = {
-  [K in keyof Values]?: Values[K] extends object ? FormikErrors<Values[K]> : {}
+  [K in keyof Values]?: Values[K] extends object
+    ? FormikErrors<Values[K]>
+    : string
 };
 
 /**
@@ -38,6 +40,8 @@ export interface FormikState<Values> {
   errors: FormikErrors<Values>;
   /** map of field names to whether the field has been touched */
   touched: FormikTouched<Values>;
+  /** whether the form is currently validating */
+  isValidating: boolean;
   /** whether the form is currently submitting */
   isSubmitting: boolean;
   /** Top level status state, in case you need it */
@@ -79,27 +83,22 @@ export interface FormikActions<Values> {
   setValues(values: Values): void;
   /** Set value of form field directly */
   setFieldValue(
-    field: keyof Values,
+    field: keyof Values & string,
     value: any,
     shouldValidate?: boolean
   ): void;
-  setFieldValue(field: string, value: any, shouldValidate?: boolean): void;
   /** Set error message of a form field directly */
-  setFieldError(field: keyof Values, message: string): void;
-  setFieldError(field: string, message: string): void;
+  setFieldError(field: keyof Values & string, message: string): void;
   /** Set whether field has been touched directly */
   setFieldTouched(
-    field: keyof Values,
-    isTouched?: boolean,
-    shouldValidate?: boolean
-  ): void;
-  setFieldTouched(
-    field: string,
+    field: keyof Values & string,
     isTouched?: boolean,
     shouldValidate?: boolean
   ): void;
   /** Validate form values */
-  validateForm(values?: any): void;
+  validateForm(values?: any): Promise<FormikErrors<Values>>;
+  /** Validate field value */
+  validateField(field: string): void;
   /** Reset form */
   resetForm(nextValues?: any): void;
   /** Submit the form imperatively */
@@ -134,7 +133,7 @@ export interface FormikActions<Values> {
  */
 export interface FormikHandlers {
   /** Form submit handler */
-  handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+  handleSubmit: (e?: React.FormEvent<HTMLFormElement>) => void;
   /** Reset form event handler  */
   handleReset: () => void;
   /** Classic React blur handler, keyed by input name */
@@ -150,7 +149,7 @@ export interface FormikHandlers {
     field: T
   ): T extends React.ChangeEvent<any>
     ? void
-    : ((e: React.ChangeEvent<any>) => void);
+    : ((e: string | React.ChangeEvent<any>) => void);
 }
 
 /**
@@ -225,10 +224,14 @@ export type FormikProps<Values> = FormikSharedConfig &
   FormikState<Values> &
   FormikActions<Values> &
   FormikHandlers &
-  FormikComputedProps<Values> & {
-    registerField(name: string, resetFn: ((nextValues?: any) => void)): void;
-    unregisterField(name: string): void;
-  };
+  FormikComputedProps<Values> &
+  FormikRegistration;
+
+/** Internal Formik registration methods that get passed down as props */
+export interface FormikRegistration {
+  registerField(name: string, Comp: React.Component<any>): void;
+  unregisterField(name: string): void;
+}
 
 /**
  * State, handlers, and helpers made available to Formik's primitive components through context.

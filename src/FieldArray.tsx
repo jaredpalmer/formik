@@ -1,4 +1,5 @@
 import * as React from 'react';
+import cloneDeep from 'lodash.clonedeep';
 import { connect } from './connect';
 import {
   FormikContext,
@@ -8,12 +9,17 @@ import {
 } from './types';
 import { getIn, isEmptyChildren, isFunction, setIn } from './utils';
 
+export type FieldArrayRenderProps = ArrayHelpers & {
+  form: FormikProps<any>;
+  name: string;
+};
+
 export type FieldArrayConfig = {
   /** Really the path to the array field to be updated */
   name: string;
   /** Should field array validate the form AFTER array updates/changes? */
   validateOnChange?: boolean;
-} & SharedRenderProps<ArrayHelpers & { form: FormikProps<any> }>;
+} & SharedRenderProps<FieldArrayRenderProps>;
 export interface ArrayHelpers {
   /** Imperatively add a value to the end of an array */
   push: (obj: any) => void;
@@ -125,7 +131,7 @@ class FieldArrayInner<Values = {}> extends React.Component<
 
   push = (value: any) =>
     this.updateArrayField(
-      (array: any[]) => [...(array || []), value],
+      (array: any[]) => [...(array || []), cloneDeep(value)],
       false,
       false
     );
@@ -262,7 +268,11 @@ class FieldArrayInner<Values = {}> extends React.Component<
       },
     } = this.props;
 
-    const props = { ...arrayHelpers, form: restOfFormik, name };
+    const props: FieldArrayRenderProps = {
+      ...arrayHelpers,
+      form: restOfFormik,
+      name,
+    };
 
     return component
       ? React.createElement(component as any, props)

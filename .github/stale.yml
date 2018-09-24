@@ -1,0 +1,17 @@
+# Number of days of inactivity before an issue becomes stale
+daysUntilStale: 60
+# Number of days of inactivity before a stale issue is closed
+daysUntilClose: 7
+# Issues with these labels will never be considered stale
+exemptLabels:
+  - pinned
+  - security
+# Label to use when marking an issue as stale
+staleLabel: stale
+# Comment to post when marking an issue as stale. Set to `false` to disable
+markComment: >
+  Hola! So here's the deal, between open source and my day job and life and what not, I have a lot to manage, so I use a GitHub bot to automate a few things here and there. This particular GitHub bot is going to mark this as stale because it has not had
+  recent activity for a while. It will be closed if no further activity occurs in a few days. Do not take this personally--seriously--this is a completely automated action. If this is a mistake, just make a comment, DM me, send a carrier pidgeon, or a smoke signal. 
+# Comment to post when closing a stale issue. Set to `false` to disable
+closeComment: >
+  ProBot automatically closed this due to inactivity. Holler if this is a mistake, and we'll re-open it.

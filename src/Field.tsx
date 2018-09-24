@@ -6,7 +6,7 @@ import {
   GenericFieldHTMLAttributes,
   FormikContext,
 } from './types';
-import { getIn, isEmptyChildren, isFunction, isPromise } from './utils';
+import { getIn, isEmptyChildren, isFunction } from './utils';
 
 /**
  * Note: These typings could be more restrictive, but then it would limit the
@@ -63,7 +63,7 @@ export interface FieldConfig {
   /**
    * Validate a single field value independently
    */
-  validate?: ((value: any) => string | Function | Promise<void> | undefined);
+  validate?: ((value: any) => string | Promise<void> | undefined);
 
   /**
    * Field name
@@ -86,7 +86,7 @@ export type FieldAttributes<T> = GenericFieldHTMLAttributes & FieldConfig & T;
  * Custom Field component for quickly hooking into Formik
  * context and wiring up forms.
  */
-class FieldInner<Props = {}, Values = {}> extends React.Component<
+class FieldInner<Values = {}, Props = {}> extends React.Component<
   FieldAttributes<Props> & { formik: FormikContext<Values> },
   {}
 > {
@@ -94,7 +94,7 @@ class FieldInner<Props = {}, Values = {}> extends React.Component<
     props: FieldAttributes<Props> & { formik: FormikContext<Values> }
   ) {
     super(props);
-    const { render, children, component } = this.props;
+    const { render, children, component } = props;
     warning(
       !(component && render),
       'You should not use <Field component> and <Field render> in the same <Field> component; <Field component> will be ignored'
@@ -111,38 +111,28 @@ class FieldInner<Props = {}, Values = {}> extends React.Component<
     );
   }
 
-  handleChange = (e: React.ChangeEvent<any>) => {
-    const { handleChange, validateOnChange } = this.props.formik;
-    handleChange(e); // Call Formik's handleChange no matter what
-    if (!!validateOnChange && !!this.props.validate) {
-      this.runFieldValidations(e.target.value);
-    }
-  };
+  componentDidMount() {
+    // Register the Field with the parent Formik. Parent will cycle through
+    // registered Field's validate fns right prior to submit
+    this.props.formik.registerField(this.props.name, this);
+  }
 
-  handleBlur = (e: any) => {
-    const { handleBlur, validateOnBlur } = this.props.formik;
-    handleBlur(e); // Call Formik's handleBlur no matter what
-    if (!!validateOnBlur && !!this.props.validate) {
-      this.runFieldValidations(e.target.value);
+  componentDidUpdate(
+    prevProps: FieldAttributes<Props> & { formik: FormikContext<Values> }
+  ) {
+    if (this.props.name !== prevProps.name) {
+      this.props.formik.unregisterField(prevProps.name);
+      this.props.formik.registerField(this.props.name, this);
     }
-  };
 
-  runFieldValidations = (value: any) => {
-    const { setFieldError } = this.props.formik;
-    const { name, validate } = this.props;
-    // Call validate fn
-    const maybePromise = (validate as any)(value);
-    // Check if validate it returns a Promise
-    if (isPromise(maybePromise)) {
-      (maybePromise as Promise<any>).then(
-        () => setFieldError(name, undefined as any),
-        error => setFieldError(name, error)
-      );
-    } else {
-      // Otherwise set the error
-      setFieldError(name, maybePromise);
+    if (this.props.validate !== prevProps.validate) {
+      this.props.formik.registerField(this.props.name, this);
     }
-  };
+  }
+
+  componentWillUnmount() {
+    this.props.formik.unregisterField(this.props.name);
+  }
 
   render() {
     const {
@@ -167,8 +157,8 @@ class FieldInner<Props = {}, Values = {}> extends React.Component<
           ? props.value // React uses checked={} for these inputs
           : getIn(formik.values, name),
       name,
-      onChange: validate ? this.handleChange : formik.handleChange,
-      onBlur: validate ? this.handleBlur : formik.handleBlur,
+      onChange: formik.handleChange,
+      onBlur: formik.handleBlur,
     };
     const bag = { field, form: restOfFormik };
 

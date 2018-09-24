@@ -43,8 +43,21 @@ export function setIn(obj: any, path: string, value: any): any {
     }
   }
 
-  resVal[pathArray[i]] = value;
-  return { ...obj, ...res };
+  if (value === undefined) {
+    delete resVal[pathArray[i]];
+  } else {
+    resVal[pathArray[i]] = value;
+  }
+
+  const result = { ...obj, ...res };
+
+  // If the path array has a single element, the loop did not run.
+  // Deleting on `resVal` had no effect in this scenario, so we delete on the result instead.
+  if (i === 0 && value === undefined) {
+    delete result[pathArray[i]];
+  }
+
+  return result;
 }
 
 /**
@@ -105,7 +118,7 @@ export const isEmptyChildren = (children: any): boolean =>
   React.Children.count(children) === 0;
 
 /** @private is the given object/value a promise? */
-export const isPromise = (value: any): boolean =>
+export const isPromise = (value: any): value is PromiseLike<any> =>
   isObject(value) && isFunction(value.then);
 
 /**

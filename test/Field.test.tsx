@@ -24,78 +24,62 @@ describe('A <Field />', () => {
       shallow(<Field.WrappedComponent {...props} />);
 
     it('calls validate during onChange if present', () => {
-      const handleChange = jest.fn(noop);
-      const setFieldError = jest.fn(noop);
+      const node = document.createElement('div');
+      let injected: any; /** FieldProps ;) */
       const validate = jest.fn(noop);
-      const tree = makeFieldTree({
-        name: 'name',
-        validate,
-        formik: {
-          handleChange,
-          setFieldError,
-          validateOnChange: true,
-        },
-      });
-      tree.find('input').simulate('change', {
-        persist: noop,
-        target: {
-          name: 'name',
-          value: 'ian',
-        },
-      });
-      expect(handleChange).toHaveBeenCalled();
-      expect(setFieldError).toHaveBeenCalled();
+      ReactDOM.render(
+        <TestForm
+          validateOnChange={true}
+          render={(_formikProps: FormikProps<TestFormValues>) => (
+            <Field name="name" validate={validate}>
+              {({ field }: any) => (injected = field) && null}
+            </Field>
+          )}
+        />,
+        node
+      );
+      const { onChange } = injected;
+      onChange({ target: { name: 'name', value: 'hello' } });
       expect(validate).toHaveBeenCalled();
     });
 
     it('does NOT call validate during onChange if validateOnChange is set to false', () => {
-      const handleChange = jest.fn(noop);
-      const setFieldError = jest.fn(noop);
+      const node = document.createElement('div');
+      let injected: any; /** FieldProps ;) */
       const validate = jest.fn(noop);
-      const tree = makeFieldTree({
-        name: 'name',
-        validate,
-        formik: {
-          handleChange,
-          setFieldError,
-          validateOnChange: false,
-        },
-      });
-      tree.find('input').simulate('change', {
-        persist: noop,
-        target: {
-          name: 'name',
-          value: 'ian',
-        },
-      });
-      expect(handleChange).toHaveBeenCalled();
-      expect(setFieldError).not.toHaveBeenCalled();
+      ReactDOM.render(
+        <TestForm
+          validateOnChange={false}
+          render={(_formikProps: FormikProps<TestFormValues>) => (
+            <Field name="name" validate={validate}>
+              {({ field }: any) => (injected = field) && null}
+            </Field>
+          )}
+        />,
+        node
+      );
+      const { onChange } = injected;
+      onChange({ target: { name: 'name', value: 'hello' } });
       expect(validate).not.toHaveBeenCalled();
     });
 
     it('calls validate during onBlur if present', () => {
-      const handleBlur = jest.fn(noop);
-      const setFieldError = jest.fn(noop);
+      const node = document.createElement('div');
+      let injected: any; /** FieldProps ;) */
       const validate = jest.fn(noop);
-      const tree = makeFieldTree({
-        name: 'name',
-        validate,
-        formik: {
-          handleBlur,
-          setFieldError,
-          validateOnBlur: true,
-        },
-      });
-      tree.find('input').simulate('blur', {
-        persist: noop,
-        target: {
-          name: 'name',
-          value: 'ian',
-        },
-      });
-
-      expect(handleBlur).toHaveBeenCalled();
-      expect(setFieldError).toHaveBeenCalled();
+      ReactDOM.render(
+        <TestForm
+          validateOnBlur={true}
+          render={(_formikProps: FormikProps<TestFormValues>) => (
+            <Field name="name" validate={validate}>
+              {({ field }: any) => (injected = field) && null}
+            </Field>
+          )}
+        />,
+        node
+      );
+      const { onBlur } = injected;
+      onBlur({ target: { name: 'name' } });
       expect(validate).toHaveBeenCalled();
     });
 
@@ -107,6 +91,8 @@ describe('A <Field />', () => {
         name: 'name',
         validate,
         formik: {
+          registerField: noop,
+          unregisterField: noop,
           handleBlur,
           setFieldError,
           validateOnBlur: false,
@@ -120,8 +106,43 @@ describe('A <Field />', () => {
         },
       });
       expect(handleBlur).toHaveBeenCalled();
-      expect(setFieldError).not.toHaveBeenCalled();
       expect(validate).not.toHaveBeenCalled();
+    });
+
+    it('runs validation when validateField is called (SYNC)', async () => {
+      const validate = jest.fn().mockReturnValue('Error!');
+      const FormFields = () => <Field name="name" validate={validate} />;
+
+      const tree = mount(<TestForm component={FormFields} />);
+      tree
+        .find(FormFields)
+        .props()
+        .validateField('name');
+      await Promise.resolve()
+        .then()
+        .then(); // XXX: Waiting for validateField's promise, should be fixed :(
+      tree.update();
+
+      expect(validate).toHaveBeenCalled();
+      expect(tree.find(FormFields).props().errors.name).toBe('Error!');
+    });
+
+    it('runs validation when validateField is called (ASYNC)', async () => {
+      const validate = jest.fn().mockRejectedValue('Error!');
+      const FormFields = () => <Field name="name" validate={validate} />;
+
+      const tree = mount(<TestForm component={FormFields} />);
+      tree
+        .find(FormFields)
+        .props()
+        .validateField('name');
+      await Promise.resolve()
+        .then()
+        .then(); // XXX: Waiting for validateField's promise, should be fixed :(
+      tree.update();
+
+      expect(validate).toHaveBeenCalled();
+      expect(tree.find(FormFields).props().errors.name).toBe('Error!');
     });
   });
 
@@ -187,9 +208,13 @@ describe('A <Field />', () => {
 
     it('assigns innerRef as a ref to string components', () => {
       const innerRef = jest.fn();
-      const tree = mount(<Field name="name" innerRef={innerRef} />, {
-        context: { formik: {} },
-      });
+      const tree = mount(
+        <Field.WrappedComponent
+          name="name"
+          innerRef={innerRef}
+          formik={{ registerField: noop }}
+        />
+      );
       const element = tree.find('input').instance();
       expect(innerRef).toHaveBeenCalledWith(element);
     });

@@ -136,7 +136,7 @@ For more information about `<Formik validationSchema>`, see the API reference.
 
 #### `validate`
 
-Formik supports field-level validation via the `<Field>`/`<FastField>` components' `validate` prop. This function can be synchronous or asynchronous (return a Promise). It will run after any `onChange` and `onBlur` by default. This behvaior can be altered at the top level `<Formik/>` component using the `validateOnChange` and `validateOnBlur` props respectively. In addition to change/blur, all field-level validations are run at the beginning of a submission attempt and then the results are deeply merged with any top-level validation results.
+Formik supports field-level validation via the `<Field>`/`<FastField>` components' `validate` prop. This function can be synchronous or asynchronous (return a Promise). It will run after any `onChange` and `onBlur` by default. This behavior can be altered at the top level `<Formik/>` component using the `validateOnChange` and `validateOnBlur` props respectively. In addition to change/blur, all field-level validations are run at the beginning of a submission attempt and then the results are deeply merged with any top-level validation results.
 
 ```jsx
 import React from 'react';

@@ -136,7 +136,7 @@ So...to display `'Must have friends'` and `'Minimum of 3 friends'` (our example'
 
 **_Bad_**
 
-```js
+```jsx
 // within a `FieldArray`'s render
 const FriendArrayErrors = errors =>
   errors.friends ? <div>{errors.friends}</div> : null; // app will crash
@@ -144,7 +144,7 @@ const FriendArrayErrors = errors =>
 
 **_Good_**
 
-```js
+```jsx
 // within a `FieldArray`'s render
 const FriendArrayErrors = errors =>
   typeof errors.friends === 'string' ? <div>{errors.friends}</div> : null;

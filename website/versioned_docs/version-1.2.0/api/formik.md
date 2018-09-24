@@ -108,7 +108,7 @@ Submitting state of the form. Returns `true` if submission is in progress and `f
 #### `isValid: boolean`
 
 Returns `true` if the there are no `errors`, or the result of
-`isInitialValid` the form if is in "pristine" condition (i.e. not `dirty`)).
+`isInitialValid` the form if is in "pristine" condition (i.e. not `dirty`).
 
 #### `isValidating: boolean`
 

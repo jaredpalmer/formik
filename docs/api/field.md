@@ -215,7 +215,7 @@ You can run independent field-level validations by passing a function to the
   This works like Formik's `validate`, but instead of returning an `errors`
   object, it's just a `string`.
 
-```js
+```jsx
 import React from 'react';
 import { Formik, Form, Field } from 'formik';
 

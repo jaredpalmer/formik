@@ -32,7 +32,7 @@ More specifically, if the `<Field />` does not change behavior or render anythin
 
 ## Example
 
-```js
+```jsx
 import React from 'react';
 import { Formik, Field, FastField, Form } from 'formik';
 

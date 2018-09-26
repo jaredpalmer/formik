@@ -1,6 +1,7 @@
 ---
 id: withFormik
 title: withFormik()
+custom_edit_url: https://github.com/jaredpalmer/formik/edit/master/docs/api/withFormik.md
 ---
 
 Create a higher-order React component class that passes props and form handlers

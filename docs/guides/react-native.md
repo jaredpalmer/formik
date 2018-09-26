@@ -1,6 +1,7 @@
 ---
 id: react-native
 title: React Native
+custom_edit_url: https://github.com/jaredpalmer/formik/edit/master/docs/guides/react-native.md
 ---
 
 **Formik is 100% compatible with React Native and React Native Web.** However,

@@ -1,6 +1,7 @@
 ---
 id: form
 title: <Form />
+custom_edit_url: https://github.com/jaredpalmer/formik/edit/master/docs/api/form.md
 ---
 
 Form is a small wrapper around an HTML `<form>` element that automatically hooks into Formik's `handleSubmit`. All other props are passed directly through to the DOM node.
@@ -12,4 +13,3 @@ Form is a small wrapper around an HTML `<form>` element that automatically hooks
 // is identical to this...
 <form onSubmit={formikProps.handleSubmit} {...props} />
 ```
-

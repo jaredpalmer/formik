@@ -1,6 +1,7 @@
 ---
 id: validation
 title: Validation
+custom_edit_url: https://github.com/jaredpalmer/formik/edit/master/docs/guides/validation.md
 ---
 
 Formik is designed to manage forms with complex validation with ease. Formik supports synchronous and asynchronous
@@ -78,7 +79,7 @@ npm install yup --save
 ```jsx
 import React from 'react';
 import { Formik, Form, Field } from 'formik';
-import * as Yup from "yup";
+import * as Yup from 'yup';
 
 const SignupSchema = Yup.object().shape({
   firstName: Yup.string()
@@ -140,7 +141,7 @@ Formik supports field-level validation via the `<Field>`/`<FastField>` component
 ```jsx
 import React from 'react';
 import { Formik, Form, Field } from 'formik';
-import * as Yup from "yup";
+import * as Yup from 'yup';
 
 function validateEmail(value) {
   let error;

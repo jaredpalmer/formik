@@ -39,6 +39,10 @@ By now, you might be thinking, "Why didn't you just use
 minimal API that does the really really annoying stuff, and leaves the rest up
 to you.**
 
+---
+
+My talk at React Alicante goes much deeper into Formik's motivation and philosophy, introduces the library (by watching me build a mini version of it), and demos how to build a non-trivial form (with arrays, custom inputs, etc.) using the real thing.
+
 ## Influences
 
 Formik started by expanding on
@@ -197,7 +201,7 @@ const Basic = () => (
       {({ isSubmitting }) => (
         <Form>
           <Field type="email" name="email" />
-          <ErrorMessage name="email" component="div"/>
+          <ErrorMessage name="email" component="div" />
           <Field type="password" name="password" />
           <ErrorMessage name="password" component="div" />
           <button type="submit" disabled={isSubmitting}>

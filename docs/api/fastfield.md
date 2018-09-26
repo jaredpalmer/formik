@@ -19,7 +19,7 @@ custom_edit_url: https://github.com/jaredpalmer/formik/edit/master/docs/api/fast
 
 For example, `<FastField name="firstName" />` will only re-render when there are:
 
-* Changes to `values.firstName`, `errors.firstName`, or `touched.firstName`. This is determined by shallow comparison. Note: dotpaths are supported.
+* Changes to `values.firstName`, `errors.firstName`, `touched.firstName`, or `isSubmitting`. This is determined by shallow comparison. Note: dotpaths are supported.
 * A prop is added/removed to the `<FastField name="firstName" />`
 * The `name` prop changes
 
@@ -29,11 +29,11 @@ Other than for these aforementioned situations, `<FastField />` will not re-rend
 
 **If a `<Field />` is "independent" of all other `<Field />`'s in your form, then you can use `<FastField />`**.
 
-More specifically, if the `<Field />` does not change behavior or render anything that is based on updates to another `<Field />` or `<FastField />`'s slice of Formik state AND it does not rely on other parts of top-level `<Formik />` state (e.g. `isSubmitting`, `isValidating`, `submitCount`), then you can use `<FastField />` as a drop-in replacement to `<Field />`.
+More specifically, if the `<Field />` does not change behavior or render anything that is based on updates to another `<Field />` or `<FastField />`'s slice of Formik state AND it does not rely on other parts of top-level `<Formik />` state (e.g. `isValidating`, `submitCount`), then you can use `<FastField />` as a drop-in replacement to `<Field />`.
 
 ## Example
 
-```js
+```jsx
 import React from 'react';
 import { Formik, Field, FastField, Form } from 'formik';
 

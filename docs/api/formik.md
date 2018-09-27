@@ -52,7 +52,7 @@ const BasicExample = () => (
 
 ## Props
 
-### Formik render methods and props
+### Formik&trade; render methods and props
 
 There are three ways to render things with `<Formik />`
 
@@ -200,12 +200,13 @@ Imperatively call field's `validate` function if specified for given field. Form
 <Formik component={ContactForm} />;
 
 const ContactForm = ({
-  handleSubmit,
-  handleChange,
-  handleBlur,
-  values,
-  errors,
+handleSubmit,
+handleChange,
+handleBlur,
+values,
+errors,
 }) => (
+
   <form onSubmit={handleSubmit}>
     <input
       type="text"
@@ -229,22 +230,23 @@ don’t use both in the same `<Formik>`.
 <Formik render={props => <ContactForm {...props} />} />
 
 <Formik
-  render={({ handleSubmit, handleChange, handleBlur, values, errors }) => (
-    <form onSubmit={handleSubmit}>
-      <input
+render={({ handleSubmit, handleChange, handleBlur, values, errors }) => (
+
+<form onSubmit={handleSubmit}>
+<input
         type="text"
         onChange={handleChange}
         onBlur={handleBlur}
         value={values.name}
         name="name"
       />
-      {errors.name &&
-        <div>
-          {errors.name}
-        </div>}
-      <button type="submit">Submit</button>
-    </form>
-  )}
+{errors.name &&
+<div>
+{errors.name}
+</div>}
+<button type="submit">Submit</button>
+</form>
+)}
 />
 ```
 

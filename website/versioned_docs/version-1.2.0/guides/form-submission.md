@@ -6,7 +6,7 @@ original_id: form-submission
 
 ## Submission Phases
 
-To submit a form in Formik, you need to somehow fire off the provided `handleSubmit(e)` or `submitForm` prop. When you call either of these methods, Formik will execute the following _(pseudo code)_ each time:
+To submit a form in Formik&trade;, you need to somehow fire off the provided `handleSubmit(e)` or `submitForm` prop. When you call either of these methods, Formik&trade; will execute the following _(pseudo code)_ each time:
 
 ### Pre-submit
 
@@ -37,9 +37,9 @@ If `isValidating` is `false` and `isSubmitting` is `true`.
 </details>
 
 <details>
-<summary>Why does Formik touch all fields before submit?</summary>
+<summary>Why does Formik&trade; touch all fields before submit?</summary>
 
-It is common practice to only show an input's errors in the UI if it has been visited (a.k.a "touched"). Before submitting a form, Formik touches all fields so that all errors that may have been hidden will now be visible.
+It is common practice to only show an input's errors in the UI if it has been visited (a.k.a "touched"). Before submitting a form, Formik&trade;touches all fields so that all errors that may have been hidden will now be visible.
 
 </details>
 

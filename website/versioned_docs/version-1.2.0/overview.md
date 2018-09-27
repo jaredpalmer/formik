@@ -7,19 +7,19 @@ original_id: overview
 Let's face it, forms are really verbose in
 [React](https://github.com/facebook/react). To make matters worse, most form
 helpers do wayyyy too much magic and often have a significant performance cost
-associated with them. Formik is a small library that helps you with the 3 most
+associated with them. Formik&trade; is a small library that helps you with the 3 most
 annoying parts:
 
 1.  Getting values in and out of form state
 2.  Validation and error messages
 3.  Handling form submission
 
-By colocating all of the above in one place, Formik will keep things
+By colocating all of the above in one place, Formik&trade;will keep things
 organized--making testing, refactoring, and reasoning about your forms a breeze.
 
 ## Motivation
 
-I ([@jaredpalmer](https://twitter.com/jaredpalmer)) wrote Formik while building a large internal administrative dashboard with
+I ([@jaredpalmer](https://twitter.com/jaredpalmer)) wrote Formik&trade;while building a large internal administrative dashboard with
 [@eonwhite](https://twitter.com/eonwhite). With around ~30 unique forms, it
 quickly became obvious that we could benefit by standardizing not just our input
 components but also the way in which data flowed through our forms.
@@ -34,26 +34,26 @@ By now, you might be thinking, "Why didn't you just use
 2.  Redux-Form calls your entire top-level Redux reducer multiple times ON EVERY
     SINGLE KEYSTROKE. This is fine for small apps, but as your Redux app grows,
     input latency will continue to increase if you use Redux-Form.
-3.  Redux-Form is 22.5 kB minified gzipped (Formik is 12.7 kB)
+3.  Redux-Form is 22.5 kB minified gzipped (Formik&trade; is 12.7 kB)
 
-**My goal with Formik was to create a scalable, performant, form helper with a
+**My goal with Formik&trade; was to create a scalable, performant, form helper with a
 minimal API that does the really really annoying stuff, and leaves the rest up
 to you.**
 
 ## Influences
 
-Formik started by expanding on
+Formik&trade; started by expanding on
 [this little higher order component](https://github.com/jxnblk/rebass-recomposed/blob/master/src/withForm.js)
 by [Brent Jackson](https://github.com/jxnblk), some naming conventions from
 Redux-Form, and (most recently) the render props approach popularized by
 [React-Motion](https://github.com/chenglou/react-motion) and
 [React-Router 4](https://github.com/ReactTraining/react-router). Whether you
-have used any of the above or not, Formik only takes a few minutes to get
+have used any of the above or not, Formik&trade; only takes a few minutes to get
 started with.
 
 ## Installation
 
-You can install Formik with [NPM](https://npmjs.com),
+You can install Formik&trade; with [NPM](https://npmjs.com),
 [Yarn](https://yarnpkg.com), or a good ol' `<script>` via
 [unpkg.com](https://unpkg.com).
 
@@ -65,10 +65,10 @@ npm install formik --save
 yarn add formik
 ```
 
-Formik is compatible with React v15+ and works with ReactDOM and React Native.
+Formik&trade; is compatible with React v15+ and works with ReactDOM and React Native.
 
 You can also try before you buy with this
-**[demo of Formik on CodeSandbox.io](https://codesandbox.io/s/zKrK5YLDZ)**
+**[demo of Formik&trade; on CodeSandbox.io](https://codesandbox.io/s/zKrK5YLDZ)**
 
 ### CDN
 
@@ -84,14 +84,14 @@ Once you've added this you will have access to the `window.Formik.<Insert_Compon
 
 ### In-browser Playgrounds
 
-You can play with Formik in your web browser with these live online playgrounds.
+You can play with Formik&trade;in your web browser with these live online playgrounds.
 
 * CodeSandbox (ReactDOM) https://codesandbox.io/s/zKrK5YLDZ
 * Expo Snack (React Native) https://snack.expo.io/Bk9pPK87X
 
 ## The Gist
 
-Formik keeps track of your form's state and then exposes it plus a few reusable
+Formik&trade;keeps track of your form's state and then exposes it plus a few reusable
 methods and event handlers (`handleChange`, `handleBlur`, and `handleSubmit`) to
 your form via `props`. `handleChange` and `handleBlur` work exactly as
 expected--they use a `name` or `id` attribute to figure out which field to
@@ -165,7 +165,7 @@ export default Basic;
 
 ### Reducing boilerplate
 
-The code above is very explicit about exactly what Formik is doing. `onChange` -> `handleChange`, `onBlur` -> `handleBlur`, and so on. However, to save you time, Formik comes with a few extra components to make life easier and less verbose: `<Form />` and `<Field />`. They use React context to hook into the parent `<Formik />` state/methods.
+The code above is very explicit about exactly what Formik&trade; is doing. `onChange` -> `handleChange`, `onBlur` -> `handleBlur`, and so on. However, to save you time, Formik&trade;comes with a few extra components to make life easier and less verbose: `<Form />` and `<Field />`. They use React context to hook into the parent `<Formik />` state/methods.
 
 ```jsx
 // Render Prop
@@ -221,7 +221,7 @@ validators or use a 3rd party library. Personally, I use
 API that's pretty similar [Joi](https://github.com/hapijs/joi) /
 [React PropTypes](https://github.com/facebook/prop-types) but is small enough
 for the browser and fast enough for runtime usage. Because I :heart: Yup sooo
-much, Formik has a special config option / prop for Yup called
+much, Formik&trade; has a special config option / prop for Yup called
 [`validationSchema`](api/formik.md#validationschema-schema-schema) which will
 automatically transform Yup's validation errors into a pretty object whose keys
 match [`values`](api/formik.md#values-field-string-any) and

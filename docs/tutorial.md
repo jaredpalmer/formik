@@ -94,7 +94,7 @@ const EditUserDialog = ({ user, updateUser, onClose }) => {
 };
 ```
 
-To make writing forms less verbose. Formik comes with a few helpers to save you
+To make writing forms less verbose. Formik&trade;comes with a few helpers to save you
 key strokes.
 
 * `<Field>`

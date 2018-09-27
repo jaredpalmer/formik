@@ -4,14 +4,14 @@ title: React Native
 original_id: react-native
 ---
 
-**Formik is 100% compatible with React Native and React Native Web.** However,
+**Formik&trade; is 100% compatible with React Native and React Native Web.** However,
 because of differences between ReactDOM's and React Native's handling of forms
 and text input, there are some differences to be aware of. This section will walk
 you through them and what we consider to be best practices.
 
 ### The gist
 
-Before going any further, here's a super minimal gist of how to use Formik with
+Before going any further, here's a super minimal gist of how to use Formik&trade; with
 React Native that demonstrates the key differences:
 
 ```jsx
@@ -39,7 +39,7 @@ export const MyReactNativeForm = props => (
 );
 ```
 
-As you can see above, the notable differences between using Formik with React
+As you can see above, the notable differences between using Formik&trade; with React
 DOM and React Native are:
 
 1.  Formik's `props.handleSubmit` is passed to a `<Button onPress={...} />`

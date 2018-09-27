@@ -5,7 +5,7 @@ original_id: field
 ---
 
 `<Field />` will automagically hook up inputs to Formik. It uses the `name`
-attribute to match up with Formik state. `<Field />` will default to an HTML
+attribute to match up with Formik&trade; state. `<Field />` will default to an HTML
 `<input />` element.
 
 ## Field render props
@@ -21,7 +21,7 @@ Aside from string-only `component`, each render prop is passed the same props fo
 Field's render props are an object containing:
 
 * `field`: An object containing `onChange`, `onBlur`, `name`, and `value` of the field
-* `form`: The Formik bag.
+* `form`: The Formik&trade; bag.
 * Any other props passed to field
 
 ## Example
@@ -165,7 +165,7 @@ When you are **not** using a custom component and you need to access the underly
 `name: string`
 **Required**
 
-A field's name in Formik state. To access nested objects or arrays, name can also accept lodash-like dot path like `social.facebook` or `friends[0].firstName`
+A field's name in Formik&trade; state. To access nested objects or arrays, name can also accept lodash-like dot path like `social.facebook` or `friends[0].firstName`
 
 ### `render`
 

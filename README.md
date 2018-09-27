@@ -1,4 +1,4 @@
-![](https://user-images.githubusercontent.com/4060187/27243721-3b5219d0-52b1-11e7-96f1-dae8391a3ef6.png)
+![Formik Logo](./.github/repo-banner.png)
 
 [![Build Status](https://travis-ci.org/jaredpalmer/formik.svg?branch=master)](https://travis-ci.org/jaredpalmer/formik)
 [![Stable Release](https://img.shields.io/npm/v/formik.svg)](https://npm.im/formik)
@@ -12,7 +12,7 @@
 Let's face it, forms are really verbose in
 [React](https://github.com/facebook/react). To make matters worse, most form
 helpers do wayyyy too much magic and often have a significant performance cost
-associated with them. Formik is a small library that helps you with the 3 most
+associated with them. Formik&trade; is a small library that helps you with the 3 most
 annoying parts:
 
 1.  Getting values in and out of form state
@@ -35,7 +35,7 @@ organized--making testing, refactoring, and reasoning about your forms a breeze.
 
 ## In-browser Playgrounds
 
-You can play with Formik in your web browser with these live online playgrounds.
+You can play with Formik&trade; in your web browser with these live online playgrounds.
 
 * CodeSandbox (ReactDOM) https://codesandbox.io/s/zKrK5YLDZ
 * Expo Snack (React Native) https://snack.expo.io/Bk9pPK87X
@@ -51,9 +51,9 @@ You can play with Formik in your web browser with these live online playgrounds.
 * [React Native](https://snack.expo.io/@ferrannp/react-native-x-formik)
 * [TypeScript](https://codesandbox.io/s/8y578o8152)
 
-## Organizations and projects using Formik
+## Organizations and projects using Formik&trade;
 
-[List of organizations and projects using Formik](https://github.com/jaredpalmer/formik/issues/87)
+[List of organizations and projects using Formik&trade;](https://github.com/jaredpalmer/formik/issues/87)
 
 ## Authors
 
@@ -62,7 +62,7 @@ You can play with Formik in your web browser with these live online playgrounds.
 
 ## Contributors
 
-Formik is made with <3 thanks to these wonderful people
+Formik&trade; is made with <3 thanks to these wonderful people
 ([emoji key](https://github.com/kentcdodds/all-contributors#emoji-key)):
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->

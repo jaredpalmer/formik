@@ -4,11 +4,11 @@ title: Arrays and Nested Objects
 original_id: arrays
 ---
 
-Formik has support for nested objects and arrays out of the box. These 2 subjects are somewhat related because they both leverage the same syntax.
+Formik&trade; has support for nested objects and arrays out of the box. These 2 subjects are somewhat related because they both leverage the same syntax.
 
 ## Nested Objects
 
-The `name` props in Formik can use lodash-like dot paths to reference nested Formik values. This means that you do not need to flatten out your form's values anymore.
+The `name` props in Formik&trade; can use lodash-like dot paths to reference nested Formik&trade;values. This means that you do not need to flatten out your form's values anymore.
 
 ```jsx
 import React from 'react';
@@ -39,7 +39,7 @@ export const NestedExample = () => (
 
 ## Arrays
 
-Formik also has support for arrays and arrays of objects out of the box. Using lodash-like bracket syntax for `name` string you can quickly build fields for items in a list.
+Formik&trade; also has support for arrays and arrays of objects out of the box. Using lodash-like bracket syntax for `name` string you can quickly build fields for items in a list.
 
 ```jsx
 import React from 'react';

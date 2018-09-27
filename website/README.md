@@ -1,1 +1,1 @@
-# Formik Website.
+# Formik&trade; Website.

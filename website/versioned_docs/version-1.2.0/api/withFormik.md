@@ -23,7 +23,7 @@ class components (e.g. `class XXXXX extends React.Component {..}`).
 
 ### `enableReinitialize?: boolean`
 
-Default is `false`. Control whether Formik should reset the form if the wrapped
+Default is `false`. Control whether Formik&trade; should reset the form if the wrapped
 component props change (using deep equality).
 
 ### `handleSubmit: (values: Values, formikBag: FormikBag) => void`
@@ -58,11 +58,11 @@ enable/disable a submit and reset buttons on initial mount.
 
 ### `mapPropsToValues?: (props: Props) => Values`
 
-If this option is specified, then Formik will transfer its results into
+If this option is specified, then Formik&trade; will transfer its results into
 updatable form state and make these values available to the new component as
 `props.values`. If `mapPropsToValues` is not specified, then Formik
 will map all props that are not functions to the inner component's
-`props.values`. That is, if you omit it, Formik will only pass
+`props.values`. That is, if you omit it, Formik&trade; will only pass
 `props` where `typeof props[k] !== 'function'`, where `k` is some key.
 
 Even if your form is not receiving any props from its parent, use
@@ -122,7 +122,7 @@ are called.
 
 ### `validateOnChange?: boolean`
 
-Default is `true`. Use this option to tell Formik to run validations on `change`
+Default is `true`. Use this option to tell Formik&trade; to run validations on `change`
 events and `change`-related methods. More specifically, when either
 `handleChange`, `setFieldValue`, or `setValues` are called.
 

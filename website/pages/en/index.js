@@ -55,7 +55,7 @@ class Index extends React.Component {
               </g>
             </svg>
             <div className="relative">
-              <h1 style={{ fontWeight: 800 }}>Formik</h1>
+              <h1 style={{ fontWeight: 800 }}>Formik&trade;</h1>
               <h2>Build forms in React, without tears.</h2>
               <div className="row">
                 <a className="btn primary" href="/formik/docs/overview">
@@ -80,7 +80,7 @@ class Index extends React.Component {
               contents={[
                 {
                   title: 'Declarative',
-                  content: `Formik takes care
+                  content: `Formik&trade; takes care
                   of the repetitive and annoying stuff--keeping track of
                   values/errors/visited fields, orchestrating validation, and
                   handling submission--so you don't have to. This means you spend
@@ -91,14 +91,14 @@ class Index extends React.Component {
                   title: 'Intuitive',
                   content: `No fancy subscriptions or observables under the
                   hood, just plain React state and props. By staying within the core
-                  React framework and away from magic, Formik makes debugging,
+                  React framework and away from magic, Formik&trade; makes debugging,
                   testing, and reasoning about your forms a breeze. If you know
-                  React, and you know a bit about forms, you know Formik!`,
+                  React, and you know a bit about forms, you know Formik&trade;!`,
                 },
                 {
                   title: 'Adoptable',
-                  content: `Since form state is inherently local and ephemeral, Formik does not use external state mangement librares
-                  like Redux or MobX. This also makes Formik is easy
+                  content: `Since form state is inherently local and ephemeral, Formik&trade; does not use external state mangement librares
+                  like Redux or MobX. This also makes Formik&trade; is easy
                   to adopt incrementally and keeps bundle size to a minimum.`,
                 },
               ]}
@@ -117,7 +117,7 @@ class Index extends React.Component {
                   // image: `${siteConfig.baseUrl}img/christopher-chedeau.jpg`,
                   // imageAlign: 'bottom',
                   // imageAlt: 'Ken Wheeler',
-                  title: `*"Formik. All day. All long."*`,
+                  title: `*"Formik&trade;. All day. All long."*`,
                 },
                 {
                   content: 'James Long, Creator of Prettier',
@@ -138,16 +138,16 @@ class Index extends React.Component {
           style={{ marginBottom: 80, marginTop: 80 }}
         >
           <div className="prose">
-            <h2>Who's using Formik?</h2>
+            <h2>Who's using Formik&trade;?</h2>
             <p>
-              Formik has been powering forms at{' '}
+              Formik&trade; has been powering forms at{' '}
               <a href="http://www.palmer.net">The Palmer Group</a> since 2016.
               Formik was open sourced in 2017 and is used by teams of all sizes.
             </p>
           </div>
           <div className="logos">{showcase}</div>
           <a className="btn" href="/formik/users.html">
-            More Formik Users
+            More Formik&trade; Users
           </a>
         </div>
         <div style={{ background: '#222' }}>

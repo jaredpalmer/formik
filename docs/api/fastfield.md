@@ -65,12 +65,10 @@ const Basic = () => (
            values.firstName, touched.firstName, errors.firstName */}
           <label htmlFor="firstName">First Name</label>
           <FastField name="firstName" placeholder="Weezy" />
-
           {/** Updates for all changes because it's from the
            top-level formikProps which get all updates */}
           {form.touched.firstName &&
             form.errors.firstName && <div>{form.errors.firstName}</div>}
-
           <label htmlFor="middleInitial">Middle Initial</label>
           <FastField
             name="middleInitial"
@@ -78,7 +76,7 @@ const Basic = () => (
             render={({ field, form }) => (
               <div>
                 <input {...field} />
-                {/**
+                {/**Formik
                  * This updates normally because it's from the same slice of Formik state,
                  * i.e. path to the object matches the name of this <FastField />
                  */}
@@ -103,7 +101,6 @@ const Basic = () => (
               </div>
             )}
           />
-
           {/** Updates for all changes to Formik state
            and all changes by all <Field>s and <FastField>s */}
           <label htmlFor="lastName">LastName</label>
@@ -121,12 +118,10 @@ const Basic = () => (
               </div>
             )}
           />
-
           {/** Updates for all changes to Formik state and
            all changes by all <Field>s and <FastField>s */}
           <label htmlFor="email">Email</label>
           <Field name="email" placeholder="jane@acme.com" type="email" />
-
           <button type="submit">Submit</button>
         </Form>
       )}

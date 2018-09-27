@@ -52,7 +52,7 @@ const BasicExample = () => (
 
 ## Props
 
-### Formik render methods and props
+### Formik&trade; render methods and props
 
 There are three ways to render things with `<Formik />`
 
@@ -71,7 +71,7 @@ Returns `true` if values are not deeply equal from initial values, `false` other
 
 Form validation errors. Should match the shape of your form's `values` defined
 in `initialValues`. If you are using `validationSchema` (which you should be),
-keys and shape will match your schema exactly. Internally, Formik transforms raw
+keys and shape will match your schema exactly. Internally, Formik&trade; transforms raw
 [Yup validation errors](https://github.com/jquense/yup#validationerrorerrors-string--arraystring-value-any-path-string)
 on your behalf. If you are using `validate`, then that function will determine
 the `errors` objects shape.
@@ -103,7 +103,7 @@ Submit handler. This should be passed to `<form onSubmit={props.handleSubmit}>..
 
 #### `isSubmitting: boolean`
 
-Submitting state of the form. Returns `true` if submission is in progress and `false` otherwise. IMPORTANT: Formik will set this to `true` as soon as submission is _attempted_. To learn more about the submission process, see [Form Submission](guides/form-submission.md).
+Submitting state of the form. Returns `true` if submission is in progress and `false` otherwise. IMPORTANT: Formik&trade;will set this to `true` as soon as submission is _attempted_. To learn more about the submission process, see [Form Submission](guides/form-submission.md).
 
 #### `isValid: boolean`
 
@@ -112,7 +112,7 @@ Returns `true` if the there are no `errors`, or the result of
 
 #### `isValidating: boolean`
 
-Returns `true` if Formik is running any validation function, `false` otherwise. To learn more about what happens with `isValidating` during the submission process, see [Form Submission](guides/form-submission.md).
+Returns `true` if Formik&trade; is running any validation function, `false` otherwise. To learn more about what happens with `isValidating` during the submission process, see [Form Submission](guides/form-submission.md).
 
 #### `resetForm: (nextValues?: Values) => void`
 
@@ -188,11 +188,11 @@ component.
 
 #### `validateForm: (values?: any) => Promise<FormikErrors<Values>>`
 
-Imperatively call your `validate` or `validateSchema` depending on what was specified. You can optionally pass values to validate against and this modify Formik state accordingly, otherwise this will use the current `values` of the form.
+Imperatively call your `validate` or `validateSchema` depending on what was specified. You can optionally pass values to validate against and this modify Formik&trade; state accordingly, otherwise this will use the current `values` of the form.
 
 #### `validateField: (field: string) => void`
 
-Imperatively call field's `validate` function if specified for given field. Formik will use the current field value.
+Imperatively call field's `validate` function if specified for given field. Formik&trade; will use the current field value.
 
 ### `component`
 

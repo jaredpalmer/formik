@@ -105,7 +105,7 @@ Either a React component or the name of an HTML element to render. If not specif
 `name: string`
 **Required**
 
-A field's name in Formik state. To access nested objects or arrays, name can also accept lodash-like dot path like `social.facebook` or `friends[0].firstName`
+A field's name in Formik&trade; state. To access nested objects or arrays, name can also accept lodash-like dot path like `social.facebook` or `friends[0].firstName`
 
 ### `render`
 

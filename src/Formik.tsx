@@ -614,7 +614,7 @@ export class Formik<Values = {}, ExtraProps = {}> extends React.Component<
               ? isFunction(children)
                 ? (children as ((
                     props: FormikProps<Values>
-                  ) => React.ReactNode))(props)
+                  ) => React.ReactNode))(props as FormikProps<Values>)
                 : !isEmptyChildren(children)
                   ? React.Children.only(children)
                   : null

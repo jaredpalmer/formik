@@ -169,7 +169,7 @@ export interface FormikSharedConfig {
 /**
  * <Formik /> props
  */
-export interface FormikConfig<Values> extends FormikSharedConfig {
+export interface FormikCommonConfig<Values> extends FormikSharedConfig {
   /**
    * Initial values of the form
    */
@@ -184,17 +184,6 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
    * Submission handler
    */
   onSubmit: (values: Values, formikActions: FormikActions<Values>) => void;
-
-  /**
-   * Form component to render
-   */
-  component?: React.ComponentType<FormikProps<Values>> | React.ReactNode;
-
-  /**
-   * Render prop (works like React router's <Route render={props =>} />)
-   */
-  render?: ((props: FormikProps<Values>) => React.ReactNode);
-
   /**
    * A Yup Schema or a function that returns a Yup schema
    */
@@ -207,15 +196,29 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
   validate?: ((
     values: Values
   ) => void | object | Promise<FormikErrors<Values>>);
-
-  /**
-   * React children or child render callback
-   */
-  children?:
-    | ((props: FormikProps<Values>) => React.ReactNode)
-    | React.ReactNode;
 }
 
+export type FormikConfig<Values> =
+  | {
+      /**
+       * Form component to render
+       */
+      component: React.ComponentType<FormikProps<Values>> | React.ReactNode;
+    } & FormikCommonConfig<Values>
+  | {
+      /**
+       * Render prop (works like React router's <Route render={props =>} />)
+       */
+      render: ((props: FormikProps<Values>) => React.ReactNode);
+    } & FormikCommonConfig<Values>
+  | {
+      /**
+       * React children or child render callback
+       */
+      children:
+        | ((props: FormikProps<Values>) => React.ReactNode)
+        | React.ReactNode;
+    } & FormikCommonConfig<Values>;
 /**
  * State, handlers, and helpers made available to form component or render prop
  * of <Formik/>.

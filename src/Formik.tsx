@@ -11,6 +11,7 @@ import {
   FormikTouched,
   FormikValues,
   FormikContext,
+  FormikProps,
 } from './types';
 import {
   isEmptyChildren,
@@ -595,6 +596,7 @@ export class Formik<Values = {}, ExtraProps = {}> extends React.Component<
       ...this.getFormikBag(),
       validationSchema: this.props.validationSchema,
       validate: this.props.validate,
+      initialValues: this.initialValues,
     };
   };
 
@@ -608,9 +610,11 @@ export class Formik<Values = {}, ExtraProps = {}> extends React.Component<
           ? React.createElement(component as any, props)
           : render
             ? render(props)
-            : children // children come last, always called
+            : !!children // children come last, always called
               ? isFunction(children)
-                ? children(props)
+                ? (children as ((
+                    props: FormikProps<Values>
+                  ) => React.ReactNode))(props)
                 : !isEmptyChildren(children)
                   ? React.Children.only(children)
                   : null

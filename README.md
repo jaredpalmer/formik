@@ -1,4 +1,4 @@
-![](./github/repo-banner.png)
+![Formik Logo](./.github/repo-banner.png)
 
 [![Build Status](https://travis-ci.org/jaredpalmer/formik.svg?branch=master)](https://travis-ci.org/jaredpalmer/formik)
 [![Stable Release](https://img.shields.io/npm/v/formik.svg)](https://npm.im/formik)

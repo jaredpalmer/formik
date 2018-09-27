@@ -31,16 +31,16 @@ class Users extends React.Component {
         <Container padding={['bottom']}>
           <div className="showcaseSection">
             <div className="prose">
-              <h1>Who's using Formik?</h1>
+              <h1>Who's using Formik&trade;?</h1>
               <p>
-                Formik has been powering forms at{' '}
+                Formik&trade; has been powering forms at{' '}
                 <a href="http://www.palmer.net">The Palmer Group</a> since 2016.
                 Formik was open sourced in 2017 and is used by teams of all
                 sizes.
               </p>
             </div>
             <div className="logos">{showcase}</div>
-            <p>Are you using this Formik?</p>
+            <p>Are you using this Formik&trade;?</p>
             <a href={editUrl} className="button">
               Add your company
             </a>

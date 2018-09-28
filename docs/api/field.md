@@ -171,7 +171,7 @@ A field's name in Formik state. To access nested objects or arrays, name can als
 
 `render?: (props: FieldProps) => React.ReactNode`
 
-A function that returns a React.
+A function that returns one or more JSX elements.
 
 ```jsx
 // Renders an HTML <input> by default

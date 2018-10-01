@@ -1,6 +1,7 @@
 ---
 id: field
 title: <Field />
+custom_edit_url: https://github.com/jaredpalmer/formik/edit/master/docs/api/field.md
 ---
 
 `<Field />` will automagically hook up inputs to Formik. It uses the `name`
@@ -170,7 +171,7 @@ A field's name in Formik state. To access nested objects or arrays, name can als
 
 `render?: (props: FieldProps) => React.ReactNode`
 
-A function that returns a React.
+A function that returns one or more JSX elements.
 
 ```jsx
 // Renders an HTML <input> by default
@@ -215,7 +216,7 @@ You can run independent field-level validations by passing a function to the
   This works like Formik's `validate`, but instead of returning an `errors`
   object, it's just a `string`.
 
-```js
+```jsx
 import React from 'react';
 import { Formik, Form, Field } from 'formik';
 

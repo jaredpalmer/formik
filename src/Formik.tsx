@@ -24,7 +24,7 @@ import {
   getIn,
 } from './utils';
 
-export class Formik<Values = {}, ExtraProps = {}> extends React.Component<
+export class Formik<Values = object, ExtraProps = {}> extends React.Component<
   FormikConfig<Values> & ExtraProps,
   FormikState<any>
 > {
@@ -47,9 +47,7 @@ export class Formik<Values = {}, ExtraProps = {}> extends React.Component<
     [key: string]: (e: any) => void;
   } = {};
   fields: {
-    [field: string]: {
-      validate?: ((value: any) => string | Promise<void> | undefined);
-    };
+    [field: string]: React.Component<any>;
   };
 
   constructor(props: FormikConfig<Values> & ExtraProps) {
@@ -82,14 +80,8 @@ export class Formik<Values = {}, ExtraProps = {}> extends React.Component<
     );
   }
 
-  registerField = (
-    name: string,
-    fns: {
-      reset?: ((nextValues?: any) => void);
-      validate?: ((value: any) => string | Promise<void> | undefined);
-    }
-  ) => {
-    this.fields[name] = fns;
+  registerField = (name: string, Comp: React.Component<any>) => {
+    this.fields[name] = Comp;
   };
 
   unregisterField = (name: string) => {
@@ -184,7 +176,7 @@ export class Formik<Values = {}, ExtraProps = {}> extends React.Component<
     value: void | string
   ): Promise<string> => {
     return new Promise(resolve =>
-      resolve(this.fields[field].validate!(value))
+      resolve(this.fields[field].props.validate(value))
     ).then(x => x, e => e);
   };
 
@@ -195,8 +187,8 @@ export class Formik<Values = {}, ExtraProps = {}> extends React.Component<
       f =>
         this.fields &&
         this.fields[f] &&
-        this.fields[f].validate &&
-        isFunction(this.fields[f].validate)
+        this.fields[f].props.validate &&
+        isFunction(this.fields[f].props.validate)
     );
 
     // Construct an array with all of the field validation functions
@@ -336,14 +328,17 @@ export class Formik<Values = {}, ExtraProps = {}> extends React.Component<
 
       if (field) {
         // Set form fields by name
-        this.setState(prevState => ({
-          ...prevState,
-          values: setIn(prevState.values, field!, val),
-        }));
-
-        if (this.props.validateOnChange) {
-          this.runValidations(setIn(this.state.values, field, val));
-        }
+        this.setState(
+          prevState => ({
+            ...prevState,
+            values: setIn(prevState.values, field!, val),
+          }),
+          () => {
+            if (this.props.validateOnChange) {
+              this.runValidations(setIn(this.state.values, field!, val));
+            }
+          }
+        );
       }
     };
 
@@ -700,6 +695,9 @@ function warnAboutMissingIdentifier({
  */
 export function yupToFormErrors<Values>(yupError: any): FormikErrors<Values> {
   let errors: any = {} as FormikErrors<Values>;
+  if (yupError.inner.length === 0) {
+    return setIn(errors, yupError.path, yupError.message);
+  }
   for (let err of yupError.inner) {
     if (!errors[err.path]) {
       errors = setIn(errors, err.path, err.message);

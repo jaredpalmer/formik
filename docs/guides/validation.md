@@ -1,6 +1,7 @@
 ---
 id: validation
 title: Validation
+custom_edit_url: https://github.com/jaredpalmer/formik/edit/master/docs/guides/validation.md
 ---
 
 Formik is designed to manage forms with complex validation with ease. Formik supports synchronous and asynchronous
@@ -78,7 +79,7 @@ npm install yup --save
 ```jsx
 import React from 'react';
 import { Formik, Form, Field } from 'formik';
-import * as Yup from "yup";
+import * as Yup from 'yup';
 
 const SignupSchema = Yup.object().shape({
   firstName: Yup.string()
@@ -135,12 +136,12 @@ For more information about `<Formik validationSchema>`, see the API reference.
 
 #### `validate`
 
-Formik supports field-level validation via the `<Field>`/`<FastField>` components' `validate` prop. This function can be synchronous or asynchronous (return a Promise). It will run after any `onChange` and `onBlur` by default. This behvaior can be altered at the top level `<Formik/>` component using the `validateOnChange` and `validateOnBlur` props respectively. In addition to change/blur, all field-level validations are run at the beginning of a submission attempt and then the results are deeply merged with any top-level validation results.
+Formik supports field-level validation via the `<Field>`/`<FastField>` components' `validate` prop. This function can be synchronous or asynchronous (return a Promise). It will run after any `onChange` and `onBlur` by default. This behavior can be altered at the top level `<Formik/>` component using the `validateOnChange` and `validateOnBlur` props respectively. In addition to change/blur, all field-level validations are run at the beginning of a submission attempt and then the results are deeply merged with any top-level validation results.
 
 ```jsx
 import React from 'react';
 import { Formik, Form, Field } from 'formik';
-import * as Yup from "yup";
+import * as Yup from 'yup';
 
 function validateEmail(value) {
   let error;

@@ -1,6 +1,7 @@
 ---
 id: withFormik
 title: withFormik()
+custom_edit_url: https://github.com/jaredpalmer/formik/edit/master/docs/api/withFormik.md
 ---
 
 Create a higher-order React component class that passes props and form handlers
@@ -133,4 +134,4 @@ component's `errors`. Its keys should match those of `values`.
 
 ## Injected props and methods
 
-These are identical to the props of [`<Formik render={props => ...} />`](formik#formik-render-methods-and-props)
+These are identical to the props of [`<Formik render={props => ...} />`](api/formik.md#formik-render-methods-and-props)

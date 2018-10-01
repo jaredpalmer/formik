@@ -79,7 +79,8 @@ const siteConfig = {
     },
     // { blog: true, label: 'Blog' },
   ],
-  search: false,
+  noIndex: false,
+  search: true,
   // If you have users set above, you add it here:
   users,
 

@@ -153,8 +153,8 @@ class FieldArrayInner<Values = {}> extends React.Component<
   swap = (indexA: number, indexB: number) =>
     this.updateArrayField(
       (array: any[]) => swap(array, indexA, indexB),
-      false,
-      false,
+      true,
+      true,
       false
     );
 
@@ -164,8 +164,8 @@ class FieldArrayInner<Values = {}> extends React.Component<
   move = (from: number, to: number) =>
     this.updateArrayField(
       (array: any[]) => move(array, from, to),
-      false,
-      false,
+      true,
+      true,
       false
     );
 
@@ -174,8 +174,8 @@ class FieldArrayInner<Values = {}> extends React.Component<
   insert = (index: number, value: any) =>
     this.updateArrayField(
       (array: any[]) => insert(array, index, value),
-      false,
-      false,
+      true,
+      true,
       false
     );
 
@@ -193,17 +193,18 @@ class FieldArrayInner<Values = {}> extends React.Component<
     this.replace(index, value);
 
   unshift = (value: any) => {
-    let arr = [];
+    let length = -1;
     this.updateArrayField(
       (array: any[]) => {
-        arr = array ? [value, ...array] : [value];
+        const arr = array ? [value, ...array] : [value];
+        if (length < 0) length = arr.length;
         return arr;
       },
-      false,
-      false,
+      true,
+      true,
       false
     );
-    return arr.length;
+    return length;
   };
 
   handleUnshift = (value: any) => () => this.unshift(value);

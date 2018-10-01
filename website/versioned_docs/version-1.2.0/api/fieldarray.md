@@ -68,7 +68,7 @@ export const FriendList = () => (
 
 ### `name: string`
 
-The name or path to the relevant key in [`values`].
+The name or path to the relevant key in [`values`](api/formik.md#values-field-string-any).
 
 ### `validateOnChange?: boolean`
 
@@ -110,7 +110,7 @@ You can also iterate through an array of objects, by following a convention of `
 
 Validation can be tricky with `<FieldArray>`.
 
-If you use [`validationSchema`] and your form has array validation requirements (like a min length) as well as nested array field requirements, displaying errors can be tricky. Formik/Yup will show validation errors inside out. For example,
+If you use [`validationSchema`](api/formik.md#validationschema-schema-schema) and your form has array validation requirements (like a min length) as well as nested array field requirements, displaying errors can be tricky. Formik/Yup will show validation errors inside out. For example,
 
 ```js
 const schema = Yup.object().shape({
@@ -136,7 +136,7 @@ So...to display `'Must have friends'` and `'Minimum of 3 friends'` (our example'
 
 **_Bad_**
 
-```js
+```jsx
 // within a `FieldArray`'s render
 const FriendArrayErrors = errors =>
   errors.friends ? <div>{errors.friends}</div> : null; // app will crash
@@ -144,7 +144,7 @@ const FriendArrayErrors = errors =>
 
 **_Good_**
 
-```js
+```jsx
 // within a `FieldArray`'s render
 const FriendArrayErrors = errors =>
   typeof errors.friends === 'string' ? <div>{errors.friends}</div> : null;
@@ -183,6 +183,7 @@ The following methods are made available via render props.
 * `unshift: (value: any) => number`: Add an element to the beginning of an array and return its length
 * `remove<T>(index: number): T | undefined`: Remove an element at an index of an array and return it
 * `pop<T>(): T | undefined`: Remove and return value from the end of the array
+* `replace: (index: number, value: any) => void`: Replace a value at the given index into the array
 
 ## FieldArray render methods
 

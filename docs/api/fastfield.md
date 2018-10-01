@@ -1,6 +1,7 @@
 ---
 id: fastfield
 title: <FastField />
+custom_edit_url: https://github.com/jaredpalmer/formik/edit/master/docs/api/fastfield.md
 ---
 
 ## Before we start
@@ -32,7 +33,7 @@ More specifically, if the `<Field />` does not change behavior or render anythin
 
 ## Example
 
-```js
+```jsx
 import React from 'react';
 import { Formik, Field, FastField, Form } from 'formik';
 

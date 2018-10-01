@@ -100,4 +100,7 @@ function Versions() {
   );
 }
 
+Versions.title = 'Formik Versions';
+Versions.description = 'Formik Versions and Releases';
+
 module.exports = Versions;

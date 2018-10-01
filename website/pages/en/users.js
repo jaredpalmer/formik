@@ -51,4 +51,6 @@ class Users extends React.Component {
   }
 }
 
+Users.title = 'Users';
+Users.description = 'Companies and Projects Using Formik in Production.';
 module.exports = Users;

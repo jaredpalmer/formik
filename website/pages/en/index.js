@@ -170,4 +170,5 @@ class Index extends React.Component {
   }
 }
 
+Index.description = 'Build forms in React, without the tears.';
 module.exports = Index;

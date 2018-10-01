@@ -24,7 +24,7 @@ import {
   getIn,
 } from './utils';
 
-export class Formik<Values = {}, ExtraProps = {}> extends React.Component<
+export class Formik<Values = object, ExtraProps = {}> extends React.Component<
   FormikConfig<Values> & ExtraProps,
   FormikState<any>
 > {
@@ -324,14 +324,17 @@ export class Formik<Values = {}, ExtraProps = {}> extends React.Component<
 
       if (field) {
         // Set form fields by name
-        this.setState(prevState => ({
-          ...prevState,
-          values: setIn(prevState.values, field!, val),
-        }));
-
-        if (this.props.validateOnChange) {
-          this.runValidations(setIn(this.state.values, field, val));
-        }
+        this.setState(
+          prevState => ({
+            ...prevState,
+            values: setIn(prevState.values, field!, val),
+          }),
+          () => {
+            if (this.props.validateOnChange) {
+              this.runValidations(setIn(this.state.values, field!, val));
+            }
+          }
+        );
       }
     };
 
@@ -637,7 +640,7 @@ function warnAboutMissingIdentifier({
 export function yupToFormErrors<Values>(yupError: any): FormikErrors<Values> {
   let errors: any = {} as FormikErrors<Values>;
   if (yupError.inner.length === 0) {
-    return setIn(errors, yupError.path, yupError.message)
+    return setIn(errors, yupError.path, yupError.message);
   }
   for (let err of yupError.inner) {
     if (!errors[err.path]) {

@@ -44,9 +44,7 @@ to you.**
 
 My talk at React Alicante goes much deeper into Formik's motivation and philosophy, introduces the library (by watching me build a mini version of it), and demos how to build a non-trivial form (with arrays, custom inputs, etc.) using the real thing.
 
-<!-- <iframe width="560" height="315" src="https://www.youtube.com/watch?v=oiNtnehlaTo" frameborder="0" title="Taming Forms in React - Jared Palmer" allowfullscreen></iframe> -->
-
-<iframe width="600" height="315" src="https://www.youtube.com/embed/oiNtnehlaTo" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+<iframe width="600" height="315" src="https://www.youtube.com/embed/oiNtnehlaTo" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen title="Taming Forms in React - Jared Palmer"></iframe>
 
 ## Influences
 

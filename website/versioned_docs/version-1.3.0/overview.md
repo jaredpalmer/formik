@@ -176,7 +176,7 @@ The code above is very explicit about exactly what Formik is doing. `onChange` -
 ```jsx
 // Render Prop
 import React from 'react';
-import { Formik, Form, Field } from 'formik';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
 
 const Basic = () => (
   <div>

@@ -1305,13 +1305,15 @@ describe('<Formik>', () => {
     const validationSchema = Yup.object({
       users: Yup.array().of(
         Yup.object({
-          lastName: Yup.mixed().required('required'),
+          lastName: Yup.string().required('required'),
         })
       ),
     });
     let injected: any;
 
-    const tree = shallow(
+    const node = document.createElement('div');
+
+    ReactDOM.render(
       <Formik
         initialValues={{ users: [{ firstName: '', lastName: '' }] }}
         validate={validate}
@@ -1319,11 +1321,12 @@ describe('<Formik>', () => {
         onSubmit={noop}
       >
         {formikProps => (injected = formikProps) && null}
-      </Formik>
+      </Formik>,
+      node
     );
 
     await injected.validateForm();
-    expect(tree.state('errors')).toEqual({
+    expect(injected.errors).toEqual({
       users: [{ firstName: 'required', lastName: 'required' }],
     });
   });

@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import { withFormik, FormikProps } from '../src';
-import { mount, shallow } from '@pisano/enzyme';
+import { mount, shallow } from 'enzyme';
 
 // tslint:disable-next-line:no-empty
 const noop = () => {};

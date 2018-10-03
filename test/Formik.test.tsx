@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import * as Yup from 'yup';
 import { Formik, FormikProps } from '../src';
-import { shallow, mount } from '@pisano/enzyme';
+import { shallow, mount } from 'enzyme';
 import { sleep, noop } from './testHelpers';
 
 jest.spyOn(global.console, 'error');

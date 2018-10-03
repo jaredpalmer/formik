@@ -610,7 +610,7 @@ export class Formik<Values = {}, ExtraProps = {}> extends React.Component<
           ? React.createElement(component as any, props)
           : render
             ? render(props)
-            : !!children // children come last, always called
+            : children // children come last, always called
               ? isFunction(children)
                 ? (children as ((
                     props: FormikProps<Values>

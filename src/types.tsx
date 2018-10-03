@@ -169,7 +169,23 @@ export interface FormikSharedConfig {
 /**
  * <Formik /> props
  */
-export interface FormikCommonConfig<Values> extends FormikSharedConfig {
+export interface FormikConfig<Values> extends FormikSharedConfig {
+  /**
+   * Form component to render
+   */
+  component?: React.ComponentType<FormikProps<Values>> | React.ReactNode;
+
+  /**
+   * Render prop (works like React router's <Route render={props =>} />)
+   */
+  render?: ((props: FormikProps<Values>) => React.ReactNode);
+
+  /**
+   * React children or child render callback
+   */
+  children?:
+    | ((props: FormikProps<Values>) => React.ReactNode)
+    | React.ReactNode;
   /**
    * Initial values of the form
    */
@@ -198,27 +214,6 @@ export interface FormikCommonConfig<Values> extends FormikSharedConfig {
   ) => void | object | Promise<FormikErrors<Values>>);
 }
 
-export type FormikConfig<Values> =
-  | {
-      /**
-       * Form component to render
-       */
-      component: React.ComponentType<FormikProps<Values>> | React.ReactNode;
-    } & FormikCommonConfig<Values>
-  | {
-      /**
-       * Render prop (works like React router's <Route render={props =>} />)
-       */
-      render: ((props: FormikProps<Values>) => React.ReactNode);
-    } & FormikCommonConfig<Values>
-  | {
-      /**
-       * React children or child render callback
-       */
-      children:
-        | ((props: FormikProps<Values>) => React.ReactNode)
-        | React.ReactNode;
-    } & FormikCommonConfig<Values>;
 /**
  * State, handlers, and helpers made available to form component or render prop
  * of <Formik/>.

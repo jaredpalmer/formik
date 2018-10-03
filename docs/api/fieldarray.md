@@ -191,6 +191,7 @@ There are three ways to render things with `<FieldArray />`
 
 * `<FieldArray name="..." component>`
 * `<FieldArray name="..." render>`
+* `<FieldArray name="..." children>`
 
 ### `render: (arrayHelpers: ArrayHelpers) => React.ReactNode`
 
@@ -250,5 +251,33 @@ export const MyDynamicForm = ({
  <Form>
   {/**  whatever you need to do */}
  </Form>
+);
+```
+
+### `children: func`
+
+```jsx
+import React from 'react';
+import { Formik, Form, Field, FieldArray } from 'formik'
+
+
+export const FriendList = () => (
+  <div>
+    <h1>Friend List</h1>
+    <Formik
+      initialValues={{ friends: ['jared', 'ian', 'brent'] }}
+      onSubmit={...}
+      render={formikProps => (
+        <FieldArray name="friends">
+          {({ move, swap, push, insert, unshift, pop, form }) => {
+            return (
+              <Form>
+                {/*... use these however you want */}
+              </Form>
+            );
+          }}
+        <FieldArray/>
+    />
+  </div>
 );
 ```

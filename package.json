@@ -52,6 +52,10 @@
     "warning": "^3.0.0"
   },
   "optionalDependencies": {},
+  "resolutions": {
+    "@types/react": "16.4.14",
+    "@types/react-dom": "16.0.7"
+  },
   "devDependencies": {
     "@pisano/enzyme": "^3.3.0-pisano.public.1",
     "@pisano/enzyme-adapter-react-16": "^1.1.1-pisano.public.1",
@@ -60,8 +64,8 @@
     "@types/jest": "^22.2.3",
     "@types/lodash.clonedeep": "^4.5.3",
     "@types/lodash.topath": "4.5.3",
-    "@types/react": "16.0.28",
-    "@types/react-dom": "^16.0.3",
+    "@types/react": "^16.4.14",
+    "@types/react-dom": "^16.0.7",
     "@types/react-test-renderer": "15.5.2",
     "@types/warning": "^3.0.0",
     "@types/yup": "^0.24.9",
@@ -69,14 +73,16 @@
     "awesome-typescript-loader": "^3.4.1",
     "cross-env": "5.0.5",
     "doctoc": "^1.3.0",
+    "enzyme": "^3.6.0",
+    "enzyme-adapter-react-16": "^1.5.0",
     "husky": "0.14.3",
     "jest": "^23.1.0",
     "jest-cli": "^23.1.0",
     "lint-staged": "4.0.2",
     "prettier": "1.11.1",
     "raw-loader": "^0.5.1",
-    "react": "^16.4.1",
-    "react-dom": "^16.4.1",
+    "react": "^16.5.0",
+    "react-dom": "^16.5.0",
     "rimraf": "^2.6.2",
     "rollup": "^0.59.0",
     "rollup-plugin-commonjs": "^9.1.3",
@@ -88,9 +94,9 @@
     "size-limit": "^0.17.0",
     "ts-jest": "^22.4.6",
     "tsc-watch": "^1.0.21",
-    "tslint": "5.5.0",
-    "tslint-react": "3.2.0",
-    "typescript": "^3.0.1",
+    "tslint": "^5.11.0",
+    "tslint-react": "^3.6.0",
+    "typescript": "^3.1.1",
     "yup": "0.21.3"
   },
   "lint-staged": {

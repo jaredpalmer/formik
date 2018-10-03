@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import * as Yup from 'yup';
 import { Formik, FormikProps } from '../src';
-import { shallow, mount } from '@pisano/enzyme';
+import { shallow, mount } from 'enzyme';
 import { sleep, noop } from './testHelpers';
 
 jest.spyOn(global.console, 'error');
@@ -1305,25 +1305,28 @@ describe('<Formik>', () => {
     const validationSchema = Yup.object({
       users: Yup.array().of(
         Yup.object({
-          lastName: Yup.mixed().required('required'),
+          lastName: Yup.string().required('required'),
         })
       ),
     });
     let injected: any;
 
-    const tree = shallow(
+    const node = document.createElement('div');
+
+    ReactDOM.render(
       <Formik
-        initialValues={{ users: [{ firstName: null, lastName: null }] }}
+        initialValues={{ users: [{ firstName: '', lastName: '' }] }}
         validate={validate}
         validationSchema={validationSchema}
         onSubmit={noop}
       >
         {formikProps => (injected = formikProps) && null}
-      </Formik>
+      </Formik>,
+      node
     );
 
     await injected.validateForm();
-    expect(tree.state('errors')).toEqual({
+    expect(injected.errors).toEqual({
       users: [{ firstName: 'required', lastName: 'required' }],
     });
   });

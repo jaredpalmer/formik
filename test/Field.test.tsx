@@ -282,6 +282,32 @@ describe('A <Field />', () => {
         node
       );
     });
+
+    it('receives { field, form, ...additionalProps } props', () => {
+      ReactDOM.render(
+        <TestForm
+          render={(formikProps: FormikProps<TestFormValues>) => (
+            <Field
+              placeholder={placeholder}
+              name="name"
+              testingAnArbitraryProp="thing"
+              render={({ field, form, ...additionalProps }: FieldProps) => {
+                const { handleBlur, handleChange } = formikProps;
+                expect(field.name).toBe('name');
+                expect(field.value).toBe('jared');
+                expect(field.onChange).toBe(handleChange);
+                expect(field.onBlur).toBe(handleBlur);
+                expect(form).toEqual(formikProps);
+                expect(additionalProps.testingAnArbitraryProp).toEqual('thing');
+
+                return null;
+              }}
+            />
+          )}
+        />,
+        node
+      );
+    });
   });
 
   describe('<Field children />', () => {

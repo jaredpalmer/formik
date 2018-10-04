@@ -39,6 +39,7 @@ export interface FieldProps<V = any> {
     name: string;
   };
   form: FormikProps<V>; // if ppl want to restrict this for a given form, let them.
+  [key: string]: any; // Additional props
 }
 
 export interface FieldConfig {
@@ -163,7 +164,7 @@ class FieldInner<Values = {}, Props = {}> extends React.Component<
     const bag = { field, form: restOfFormik };
 
     if (render) {
-      return (render as any)(bag);
+      return (render as any)({ ...bag, ...props });
     }
 
     if (isFunction(children)) {

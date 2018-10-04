@@ -30,7 +30,7 @@ organized--making testing, refactoring, and reasoning about your forms a breeze.
 * [Get Started](https://jaredpalmer.com/formik/docs/overview)
 * [API Reference](https://jaredpalmer.com//formik/docs/api/formik)
 * [Articles / Tutorials](https://jaredpalmer.com/formik/docs/resources)
-* [Get Help](https://jaredpalmer.co/formik/help)
+* [Get Help](https://jaredpalmer.com/formik/help)
 * [Release Notes](https://github.com/jaredpalmer/formik/releases)
 
 ## In-browser Playgrounds

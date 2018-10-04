@@ -1,4 +1,9 @@
-import { setIn, setNestedObjectValues, isPromise } from '../src/utils';
+import {
+  setIn,
+  setNestedObjectValues,
+  isPromise,
+  setAllIn,
+} from '../src/utils';
 
 describe('utils', () => {
   describe('setNestedObjectValues', () => {
@@ -221,6 +226,59 @@ describe('utils', () => {
       const newObj = setIn(obj, 'a.x.c', 'value');
       expect(obj).toEqual({ x: 'y' });
       expect(newObj).toEqual({ x: 'y', a: { x: { c: 'value' } } });
+    });
+  });
+
+  describe('setAllIn', () => {
+    it('supports setting base tier values to given', () => {
+      const obj = { x: true, y: true };
+      const newObj = setAllIn(obj, false);
+      expect(obj).toEqual({ x: true, y: true });
+      expect(newObj).toEqual({ x: false, y: false });
+    });
+
+    it('supports setting nested objects', () => {
+      const obj = { x: true, y: { z: true } };
+      const newObj = setAllIn(obj, false);
+      expect(obj).toEqual({ x: true, y: { z: true } });
+      expect(newObj).toEqual({ x: false, y: { z: false } });
+    });
+
+    it('supports deeply nested objects', () => {
+      const obj = {
+        x: true,
+        y: {
+          z: true,
+          a: {
+            0: { a: true, b: true },
+            1: { a: true, b: true },
+            2: { a: true, b: true },
+          },
+        },
+      };
+      const newObj = setAllIn(obj, false);
+      expect(obj).toEqual({
+        x: true,
+        y: {
+          z: true,
+          a: {
+            0: { a: true, b: true },
+            1: { a: true, b: true },
+            2: { a: true, b: true },
+          },
+        },
+      });
+      expect(newObj).toEqual({
+        x: false,
+        y: {
+          z: false,
+          a: {
+            0: { a: false, b: false },
+            1: { a: false, b: false },
+            2: { a: false, b: false },
+          },
+        },
+      });
     });
   });
 

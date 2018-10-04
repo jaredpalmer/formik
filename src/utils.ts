@@ -61,6 +61,20 @@ export function setIn(obj: any, path: string, value: any): any {
 }
 
 /**
+ * Deeply set all values in an object.
+ */
+
+export function setAllIn(obj: any, value: any): any {
+  return Object.keys(obj).reduce((acc: object, key: string) => {
+    if (isObject(obj[key])) {
+      return { ...acc, [key]: setAllIn(obj[key], value) };
+    }
+
+    return { ...acc, [key]: value };
+  }, {});
+}
+
+/**
  * Recursively a set the same value for all keys and arrays nested object, cloning
  * @param object
  * @param value

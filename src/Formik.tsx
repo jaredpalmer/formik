@@ -19,6 +19,7 @@ import {
   isPromise,
   isString,
   setIn,
+  setAllIn,
   setNestedObjectValues,
   getActiveElement,
   getIn,
@@ -273,7 +274,12 @@ export class Formik<Values = object, ExtraProps = {}> extends React.Component<
       );
 
       if (this.didMount) {
-        this.setState({ isValidating: false, errors: combinedErrors });
+        this.setState(prevState =>
+          Object.assign({}, prevState, {
+            isValidating: false,
+            errors: Object.assign({}, prevState.errors, combinedErrors),
+          })
+        );
       }
 
       return combinedErrors;
@@ -499,14 +505,14 @@ export class Formik<Values = object, ExtraProps = {}> extends React.Component<
     // Set form field by name
     this.setState(prevState => ({
       ...prevState,
-      errors: setIn(prevState.errors, field, message),
+      errors: Object.assign({}, prevState.errors, { [field]: message }),
     }));
   };
 
   setFieldFocused = (field: string, focused: boolean = false) => {
     this.setState(prevState => ({
       ...prevState,
-      focused: setIn(prevState.focused, field, focused),
+      focused: setIn(setAllIn(prevState.focused, false), field, focused),
     }));
   };
 
@@ -528,14 +534,7 @@ export class Formik<Values = object, ExtraProps = {}> extends React.Component<
 
       this.setState(prevState => {
         return {
-          focused: setIn(
-            Object.keys(prevState.focused).reduce(
-              (acc: object, key: string) => ({ ...acc, [key]: false }),
-              {}
-            ),
-            field,
-            true
-          ),
+          focused: setIn(setAllIn(prevState.focused, false), field, true),
         };
       });
     };

@@ -275,12 +275,7 @@ export class Formik<Values = object, ExtraProps = {}> extends React.Component<
       );
 
       if (this.didMount) {
-        this.setState(prevState =>
-          Object.assign({}, prevState, {
-            isValidating: false,
-            errors: Object.assign({}, prevState.errors, combinedErrors),
-          })
-        );
+        this.setState({ isValidating: false, errors: combinedErrors });
       }
 
       return combinedErrors;
@@ -506,7 +501,7 @@ export class Formik<Values = object, ExtraProps = {}> extends React.Component<
     // Set form field by name
     this.setState(prevState => ({
       ...prevState,
-      errors: Object.assign({}, prevState.errors, { [field]: message }),
+      errors: setIn(prevState.errors, field, message),
     }));
   };
 

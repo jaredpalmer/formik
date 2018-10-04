@@ -56,5 +56,6 @@ class Help extends React.Component {
     );
   }
 }
-
+Help.title = 'Help';
+Help.description = 'Get Help with Formik.';
 module.exports = Help;

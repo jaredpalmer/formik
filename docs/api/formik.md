@@ -130,10 +130,10 @@ Set `errors` imperatively.
 Set the error message of a field imperatively. `field` should match the key of
 `errors` you wish to update. Useful for creating custom input error handlers.
 
-#### `setFieldTouched: (field: string, isTouched: boolean, shouldValidate?: boolean) => void`
+#### `setFieldTouched: (field: string, isTouched?: boolean, shouldValidate?: boolean) => void`
 
 Set the touched state of a field imperatively. `field` should match the key of
-`touched` you wish to update. Useful for creating custom input blur handlers. Calling this method will trigger validation to run if `validateOnBlur` is set to `true` (which it is by default). You can also explicitly prevent/skip validation by passing a third argument as `false`.
+`touched` you wish to update. Useful for creating custom input blur handlers. Calling this method will trigger validation to run if `validateOnBlur` is set to `true` (which it is by default). `isTouched` defaults to `true` if not specified. You can also explicitly prevent/skip validation by passing a third argument as `false`.
 
 #### `submitForm: () => void`
 

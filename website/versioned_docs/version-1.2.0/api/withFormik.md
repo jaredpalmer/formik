@@ -25,14 +25,13 @@ const MyForm = props => {
   return (
     <form onSubmit={handleSubmit}>
       <input
-        id="name"
         type="text"
-        value={values.name}
         onChange={handleChange}
         onBlur={handleBlur}
+        value={values.name}
+        name="name"
       />
-      {errors.name &&
-        touched.name && <div className="input-feedback">{errors.name}</div>}
+      {errors.name && touched.name && <div id="feedback">{errors.name}</div>}
       <button type="submit">Submit</button>
     </form>
   );

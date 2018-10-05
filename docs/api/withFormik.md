@@ -10,8 +10,8 @@ Create a higher-order React component class that passes props and form handlers
 ## Example
 
 ```jsx
-import React from "react";
-import { withFormik } from "formik";
+import React from 'react';
+import { withFormik } from 'formik';
 
 const MyForm = props => {
   const {
@@ -20,35 +20,32 @@ const MyForm = props => {
     errors,
     handleChange,
     handleBlur,
-    handleSubmit
+    handleSubmit,
   } = props;
   return (
     <form onSubmit={handleSubmit}>
       <input
-        id="name"
         type="text"
-        value={values.name}
         onChange={handleChange}
         onBlur={handleBlur}
+        value={values.name}
+        name="name"
       />
-      {errors.name &&
-        touched.name && <div className="input-feedback">{errors.name}</div>}
-      <button type="submit">
-        Submit
-      </button>
+      {errors.name && touched.name && <div id="feedback">{errors.name}</div>}
+      <button type="submit">Submit</button>
     </form>
   );
 };
 
 const MyEnhancedForm = withFormik({
-  mapPropsToValues: () => ({ name: "" }),
+  mapPropsToValues: () => ({ name: '' }),
 
   // Custom sync validation
   validate: values => {
     const errors = {};
 
     if (!values.name) {
-      errors.name = "Required";
+      errors.name = 'Required';
     }
 
     return errors;
@@ -61,7 +58,7 @@ const MyEnhancedForm = withFormik({
     }, 1000);
   },
 
-  displayName: "BasicForm"
+  displayName: 'BasicForm',
 })(MyForm);
 ```
 

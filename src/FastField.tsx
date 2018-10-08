@@ -50,7 +50,8 @@ export interface FastFieldConfig<T> {
 
   /** Override FastField's default shouldComponentUpdate */
   shouldUpdate?: (
-    props: T & GenericFieldHTMLAttributes & { formik: FormikContext<any> }
+    nextProps: T & GenericFieldHTMLAttributes & { formik: FormikContext<any> },
+    props: {}
   ) => boolean;
 
   /**
@@ -105,7 +106,7 @@ class FastFieldInner<Values = {}, Props = {}> extends React.Component<
     props: FastFieldAttributes<Props> & { formik: FormikContext<Values> }
   ) {
     if (this.props.shouldUpdate) {
-      return this.props.shouldUpdate(props);
+      return this.props.shouldUpdate(props, this.props);
     } else if (
       getIn(this.props.formik.values, this.props.name) !==
         getIn(props.formik.values, this.props.name) ||

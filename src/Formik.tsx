@@ -25,7 +25,10 @@ import {
   getIn,
 } from './utils';
 
-export class Formik<Values = object, ExtraProps = {}> extends React.Component<
+export default class Formik<
+  Values = object,
+  ExtraProps = {}
+> extends React.Component<
   FormikConfig<Values> & ExtraProps,
   FormikState<Values>
 > {

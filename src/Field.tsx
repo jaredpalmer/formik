@@ -1,6 +1,6 @@
 import * as React from 'react';
 import warning from 'warning';
-import { connect } from './connect';
+import connect from './connect';
 import {
   FormikProps,
   GenericFieldHTMLAttributes,
@@ -188,4 +188,4 @@ class FieldInner<Values = {}, Props = {}> extends React.Component<
   }
 }
 
-export const Field = connect<FieldAttributes<any>, any>(FieldInner);
+export default connect<FieldAttributes<any>, any>(FieldInner);

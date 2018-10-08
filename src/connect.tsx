@@ -12,7 +12,7 @@ export const {
  * Connect any component to Formik context, and inject as a prop called `formik`;
  * @param Comp React Component
  */
-export function connect<OuterProps, Values = {}>(
+export default function connect<OuterProps, Values = {}>(
   Comp: React.ComponentType<OuterProps & { formik: FormikContext<Values> }>
 ) {
   const C: React.SFC<OuterProps> = (props: OuterProps) => (

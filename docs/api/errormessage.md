@@ -10,7 +10,7 @@ custom_edit_url: https://github.com/jaredpalmer/formik/edit/master/docs/api/erro
 
 ```diff
 import React from 'react';
-import { Formik, Form, Field } from 'formik';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from "yup";
 
 const SignupSchema = Yup.object().shape({

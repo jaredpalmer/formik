@@ -2,6 +2,7 @@ import commonjs from 'rollup-plugin-commonjs';
 import replace from 'rollup-plugin-replace';
 import resolve from 'rollup-plugin-node-resolve';
 import sourceMaps from 'rollup-plugin-sourcemaps';
+import babel from 'rollup-plugin-babel';
 import { uglify } from 'rollup-plugin-uglify';
 import { sizeSnapshot } from 'rollup-plugin-size-snapshot';
 import pkg from './package.json';
@@ -101,6 +102,13 @@ export default [
         sourcemap: true,
       },
     ],
-    plugins: [resolve(), sizeSnapshot(), sourceMaps()],
+    plugins: [
+      resolve(),
+      babel({
+        plugins: ['babel-plugin-annotate-pure-calls'],
+      }),
+      sizeSnapshot(),
+      sourceMaps(),
+    ],
   },
 ];

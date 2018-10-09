@@ -15,21 +15,21 @@
     "gzipped": 5533
   },
   "dist/index.js": {
-    "bundled": 41589,
+    "bundled": 38223,
     "minified": 21696,
     "gzipped": 5577
   },
   "dist/formik.esm.js": {
-    "bundled": 40381,
+    "bundled": 37015,
     "minified": 20594,
     "gzipped": 5405,
     "treeshaked": {
       "rollup": {
-        "code": 16176,
+        "code": 628,
         "import_statements": 345
       },
       "webpack": {
-        "code": 18196
+        "code": 3269
       }
     }
   }

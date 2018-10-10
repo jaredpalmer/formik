@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { FormikContext } from './types';
 import { getIn, isFunction } from './utils';
-import { connect } from './connect';
+import connect from './connect';
 
 export interface ErrorMessageProps {
   name: string;
@@ -47,7 +47,7 @@ class ErrorMessageImpl extends React.Component<
   }
 }
 
-export const ErrorMessage = connect<
+export default connect<
   ErrorMessageProps,
   ErrorMessageProps & { formik: FormikContext<any> }
 >(ErrorMessageImpl);

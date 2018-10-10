@@ -1,6 +1,6 @@
 import * as React from 'react';
 import cloneDeep from 'lodash.clonedeep';
-import { connect } from './connect';
+import connect from './connect';
 import {
   FormikContext,
   FormikState,
@@ -149,11 +149,7 @@ class FieldArrayInner<Values = {}> extends React.Component<
     this.swap(indexA, indexB);
 
   move = (from: number, to: number) =>
-    this.updateArrayField(
-      (array: any[]) => move(array, from, to),
-      true,
-      true
-    );
+    this.updateArrayField((array: any[]) => move(array, from, to), true, true);
 
   handleMove = (from: number, to: number) => () => this.move(from, to);
 
@@ -287,4 +283,4 @@ class FieldArrayInner<Values = {}> extends React.Component<
   }
 }
 
-export const FieldArray = connect<FieldArrayConfig, any>(FieldArrayInner);
+export default connect<FieldArrayConfig, any>(FieldArrayInner);

@@ -1,6 +1,6 @@
 import hoistNonReactStatics from 'hoist-non-react-statics';
 import * as React from 'react';
-import { Formik } from './Formik';
+import Formik from './Formik';
 import {
   FormikActions,
   FormikProps,
@@ -77,11 +77,7 @@ export interface InferableComponentDecorator<TOwnProps> {
 /**
  * A public higher-order component to access the imperative API
  */
-export function withFormik<
-  OuterProps,
-  Values extends FormikValues,
-  Payload = Values
->({
+function withFormik<OuterProps, Values extends FormikValues, Payload = Values>({
   mapPropsToValues = (vanillaProps: OuterProps): Values => {
     let val: Values = {} as Values;
     for (let k in vanillaProps) {
@@ -160,3 +156,5 @@ export function withFormik<
     ) as React.ComponentClass<OuterProps>;
   };
 }
+
+export default withFormik;

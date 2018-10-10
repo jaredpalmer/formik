@@ -33,7 +33,6 @@ export const Debug = () => (
             fontSize: '.65rem',
             padding: '.25rem .5rem',
             overflowX: 'scroll',
-            fontSize: 11,
           }}
         >
           {JSON.stringify(rest, null, 2)}

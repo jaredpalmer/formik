@@ -139,9 +139,10 @@ export function withFormik<
       };
 
       render() {
+        const { children, ...props } = this.props as any;
         return (
           <Formik
-            {...this.props as any}
+            {...props}
             {...config}
             validate={config.validate && this.validate}
             validationSchema={config.validationSchema && this.validationSchema}

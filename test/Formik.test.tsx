@@ -203,6 +203,36 @@ describe('<Formik>', () => {
         expect(tree.update().state().touched).toEqual({ name: true });
       });
 
+      it('does NOT change state if field is already touched', async () => {
+        const tree = shallow(BasicForm);
+
+        const input = tree
+          .find(Form)
+          .dive()
+          .find('input');
+
+        // Simulate first blur event
+        input.simulate('blur', {
+          persist: noop,
+          target: {
+            id: 'name',
+          },
+        });
+
+        await sleep(0); // wait for scheduled tasks
+        const touchedState = tree.state();
+
+        // Simulate second blur event
+        input.simulate('blur', {
+          persist: noop,
+          target: {
+            id: 'name',
+          },
+        });
+
+        expect(tree.state()).toBe(touchedState);
+      });
+
       it('updates touched state via `name` instead of `id` attribute when both are present', () => {
         const tree = shallow(BasicForm);
 
@@ -1296,6 +1326,51 @@ describe('<Formik>', () => {
     expect(validate).toHaveBeenCalled();
     // so it should change
     expect(injected.isValidating).toBe(false);
+  });
+
+  it('should NOT change errors in state if validator returns the same error', async () => {
+    const validationErrors = { name: 'no' };
+    const validate = jest.fn(() => validationErrors);
+    const tree = shallow(
+      <Formik
+        initialValues={{ name: '' }}
+        onSubmit={noop}
+        component={Form}
+        validate={validate}
+      />
+    );
+
+    const input = tree
+      .find(Form)
+      .dive()
+      .find('input');
+
+    // First change should call validator and set errors
+    input.simulate('change', {
+      persist: noop,
+      target: {
+        id: 'name',
+        value: 'jared',
+      },
+    });
+
+    await sleep(0); // wait for scheduled tasks
+    expect(validate).toHaveBeenCalledTimes(1);
+    const errors = tree.state().errors;
+    expect(errors).toEqual({ name: 'no' });
+
+    // Second change should also call validator but should not touch errors
+    input.simulate('change', {
+      persist: noop,
+      target: {
+        id: 'name',
+        value: 'ian',
+      },
+    });
+
+    await sleep(0); // wait for scheduled tasks
+    expect(validate).toHaveBeenCalledTimes(2);
+    expect(tree.state().errors).toBe(errors);
   });
 
   it('should merge validation errors', async () => {

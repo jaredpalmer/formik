@@ -1,4 +1,9 @@
-import { setIn, setNestedObjectValues, isPromise } from '../src/utils';
+import {
+  setIn,
+  setNestedObjectValues,
+  isPromise,
+  getStateUpdater,
+} from '../src/utils';
 
 describe('utils', () => {
   describe('setNestedObjectValues', () => {
@@ -134,7 +139,7 @@ describe('utils', () => {
       expect(newObj).toEqual({ x: 'y', flat: 'value' });
     });
 
-    it('keep the same object if nothing is changed', () => {
+    it('keeps the same object if nothing is changed', () => {
       const obj = { x: 'y' };
       const newObj = setIn(obj, 'x', 'y');
       expect(obj).toBe(newObj);
@@ -250,6 +255,24 @@ describe('utils', () => {
 
       expect(isPromise(undefined)).toEqual(false);
       expect(isPromise(null)).toEqual(false);
+    });
+  });
+
+  describe('getStateUpdater', () => {
+    const updater = getStateUpdater('x.y', 'z');
+
+    it('returns null', () => {
+      const state = { x: { y: 'z' } };
+      const newState = updater(state);
+
+      expect(newState).toBe(null);
+    });
+
+    it('returns new state', () => {
+      const state = { x: { y: 'a' } };
+      const newState = updater(state);
+
+      expect(newState).toEqual({ x: { y: 'z' } });
     });
   });
 });

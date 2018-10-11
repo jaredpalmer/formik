@@ -97,6 +97,21 @@ export function setNestedObjectValues<T>(
   return response;
 }
 
+/**
+ * Creates a function-updater which updates state only if something is really changed
+ * @param path
+ * @param value
+ */
+export function getStateUpdater<T>(
+  path: string,
+  value: any
+): (prevState: T) => T | null {
+  return (prevState: T) => {
+    const newState = setIn(prevState, path, value);
+    return prevState === newState ? null : newState;
+  };
+}
+
 // Assertions
 
 /** @private is the given object a Function? */

@@ -134,6 +134,12 @@ describe('utils', () => {
       expect(newObj).toEqual({ x: 'y', flat: 'value' });
     });
 
+    it('keep the same object if nothing is changed', () => {
+      const obj = { x: 'y' };
+      const newObj = setIn(obj, 'x', 'y');
+      expect(obj).toBe(newObj);
+    });
+
     it('removes flat value', () => {
       const obj = { x: 'y' };
       const newObj = setIn(obj, 'x', undefined);

@@ -43,6 +43,11 @@ export function setIn(obj: any, path: string, value: any): any {
     }
   }
 
+  // Return original object if new value is the same as current
+  if ((i === 0 ? obj : resVal)[pathArray[i]] === value) {
+    return obj;
+  }
+
   if (value === undefined) {
     delete resVal[pathArray[i]];
   } else {

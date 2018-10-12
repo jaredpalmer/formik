@@ -114,10 +114,10 @@ class FieldArrayInner<Values = {}> extends React.Component<
       (prevState: FormikState<any>) => ({
         ...prevState,
         values: setIn(prevState.values, name, fn(getIn(values, name))),
-        errors: alterErrors
+        errors: (alterErrors && !!getIn(errors, name))
           ? setIn(prevState.errors, name, fn(getIn(errors, name)))
           : prevState.errors,
-        touched: alterTouched
+        touched: (alterTouched && !!getIn(touched, name))
           ? setIn(prevState.touched, name, fn(getIn(touched, name)))
           : prevState.touched,
       }),

@@ -135,15 +135,6 @@ export class Formik<Values = object, ExtraProps = {}> extends React.Component<
     this.setState({ status });
   };
 
-  setError = (error: any) => {
-    if (process.env.NODE_ENV !== 'production') {
-      console.warn(
-        `Warning: Formik\'s setError(error) is deprecated and may be removed in future releases. Please use Formik\'s setStatus(status) instead. It works identically. For more info see https://github.com/jaredpalmer/formik#setstatus-status-any--void`
-      );
-    }
-    this.setState({ error });
-  };
-
   setSubmitting = (isSubmitting: boolean) => {
     if (this.didMount) {
       this.setState({ isSubmitting });
@@ -542,7 +533,6 @@ export class Formik<Values = object, ExtraProps = {}> extends React.Component<
       submitForm: this.submitForm,
       validateForm: this.runValidations,
       validateField: this.validateField,
-      setError: this.setError,
       setErrors: this.setErrors,
       setFieldError: this.setFieldError,
       setFieldTouched: this.setFieldTouched,

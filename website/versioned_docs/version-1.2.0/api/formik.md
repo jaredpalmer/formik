@@ -173,7 +173,7 @@ A top-level status object that you can use to represent form state that can't
 otherwise be expressed/stored with other methods. This is useful for capturing
 and passing through API responses to your inner component.
 
-`status` should only be modifed by calling
+`status` should only be modified by calling
 [`setStatus`](#setstatus-status-any-void).
 
 #### `touched: { [field: string]: boolean }`

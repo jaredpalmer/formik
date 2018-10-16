@@ -1,7 +1,7 @@
 ---
 id: typescript
 title: TypeScript
-custom_edit_url: https://github.com/jaredpalmer/formik/edit/master/docs/guides/react-native.md
+custom_edit_url: https://github.com/jaredpalmer/formik/edit/master/docs/guides/typescript.md
 ---
 
 [![TypeScript Types](https://img.shields.io/npm/types/formik.svg)](https://npm.im/formik)

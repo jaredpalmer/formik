@@ -1,6 +1,7 @@
 ---
 id: version-1.2.0-arrays
 title: Arrays and Nested Objects
+custom_edit_url: https://github.com/jaredpalmer/formik/edit/master/docs/guides/arrays.md
 original_id: arrays
 ---
 

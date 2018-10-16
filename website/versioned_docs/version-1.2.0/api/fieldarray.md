@@ -1,6 +1,7 @@
 ---
 id: version-1.2.0-fieldarray
 title: <FieldArray />
+custom_edit_url: https://github.com/jaredpalmer/formik/edit/master/docs/api/fieldarray.md
 original_id: fieldarray
 ---
 

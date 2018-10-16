@@ -1,6 +1,7 @@
 ---
 id: version-1.2.0-withFormik
 title: withFormik()
+custom_edit_url: https://github.com/jaredpalmer/formik/edit/master/docs/api/withFormik.md
 original_id: withFormik
 ---
 

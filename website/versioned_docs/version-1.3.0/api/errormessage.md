@@ -1,6 +1,7 @@
 ---
 id: version-1.3.0-errormessage
 title: <ErrorMessage />
+custom_edit_url: https://github.com/jaredpalmer/formik/edit/master/docs/api/errormessage.md
 original_id: errormessage
 ---
 

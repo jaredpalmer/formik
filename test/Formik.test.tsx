@@ -774,6 +774,20 @@ describe('<Formik>', () => {
           .props().status
       ).toEqual(status);
     });
+
+    it('setFieldStatus sets status object by key', async () => {
+      const tree = shallow(BasicForm);
+      tree
+        .find(Form)
+        .props()
+        .setFieldStatus('name', 'Required');
+      expect(
+        tree
+          .update()
+          .find(Form)
+          .props().status.name
+      ).toEqual('Required');
+    });
   });
 
   describe('FormikComputedProps', () => {

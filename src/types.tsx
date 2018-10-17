@@ -84,6 +84,8 @@ export interface FormikActions<Values> {
   ): void;
   /** Set error message of a form field directly */
   setFieldError(field: keyof Values & string, message: string): void;
+  /** Set status message of a form field directly */
+  setFieldStatus(field: keyof Values & string, message: string): void;
   /** Set whether field has been touched directly */
   setFieldTouched(
     field: keyof Values & string,

@@ -490,6 +490,14 @@ export class Formik<Values = object, ExtraProps = {}> extends React.Component<
     }));
   };
 
+  setFieldStatus = (field: string, message: string | undefined) => {
+    // Set form status by name
+    this.setState(prevState => ({
+      ...prevState,
+      status: setIn(prevState.status || {}, field, message),
+    }));
+  };
+
   resetForm = (nextValues?: Values) => {
     const values = nextValues ? nextValues : this.props.initialValues;
 
@@ -537,6 +545,7 @@ export class Formik<Values = object, ExtraProps = {}> extends React.Component<
       setFieldError: this.setFieldError,
       setFieldTouched: this.setFieldTouched,
       setFieldValue: this.setFieldValue,
+      setFieldStatus: this.setFieldStatus,
       setStatus: this.setStatus,
       setSubmitting: this.setSubmitting,
       setTouched: this.setTouched,

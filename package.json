@@ -100,7 +100,6 @@
     "rollup-plugin-sourcemaps": "^0.4.2",
     "rollup-plugin-uglify": "^6.0.0",
     "size-limit": "^0.17.0",
-    "sonarqube-scanner": "^2.1.2",
     "ts-jest": "^22.4.6",
     "tsc-watch": "^1.0.21",
     "tslint": "^5.11.0",

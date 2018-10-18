@@ -1,5 +1,5 @@
 {
-  "extends": ["tslint-react"],
+  "extends": ["tslint-react", "tslint-sonarts"],
   "rules": {
     "jsx-wrap-multiline": false,
     "align": [true, "parameters", "statements"],

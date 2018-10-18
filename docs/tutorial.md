@@ -168,7 +168,7 @@ This is better, but that all those `errors` and `touched` logic is still quite r
 // EditUserDialog.js
 import React from 'react';
 import Dialog from 'MySuperDialog';
-import { Formik, Field, Form } from 'formik';
+import { Formik, Field, Form, ErrorMessage } from 'formik';
 
 const EditUserDialog = ({ user, updateUser, onClose }) => {
   return (

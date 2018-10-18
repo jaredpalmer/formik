@@ -9,19 +9,6 @@ git:
   depth: 5
 script:
   - yarn lint && yarn coverage -- --runInBand --no-cache && yarn size
-before_deploy: npm i -g now # Install Now CLI on Travis
-deploy:
-  - provider: script # Run a custom deployment script which we will define below
-    script: cd website && yarn install && yarn build && cp now.json build/now.json && cd build && now --token $NOW_TOKEN --team palmer
-    skip_cleanup: true
-    on:
-      all_branches: true
-      master: false
-  - provider: script
-    script: cd website && yarn install && yarn build && cp now.json build/now.json && cd build && now --token=$NOW_TOKEN --team palmer && now alias --token=$NOW_TOKEN --team palmer
-    skip_cleanup: true
-    on:
-      master: true
 addons:
   sonarcloud:
     organization: "acao-github" # the key of the org you chose at step #3

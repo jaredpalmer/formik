@@ -237,6 +237,7 @@ export const FriendList = () => (
           name="friends"
           component={MyDynamicForm}
         />
+      )}
     />
   </div>
 );
@@ -277,6 +278,7 @@ export const FriendList = () => (
             );
           }}
         <FieldArray/>
+      )}
     />
   </div>
 );

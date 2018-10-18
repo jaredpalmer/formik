@@ -20,3 +20,9 @@ website/build/
 website/yarn.lock
 website/node_modules
 website/i18n/*
+
+
+.size-snapshot.json
+.scannerwork
+test-report.xml
+tslint-report.json

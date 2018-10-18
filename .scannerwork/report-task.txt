@@ -1,7 +1,7 @@
 organization=acao-github
 projectKey=acao_formik
 serverUrl=https://sonarcloud.io
-serverVersion=7.4.0.18036
+serverVersion=7.4.0.18616
 dashboardUrl=https://sonarcloud.io/dashboard?id=acao_formik
-ceTaskId=AWaIJBXwsMFctKgAbe_U
-ceTaskUrl=https://sonarcloud.io/api/ce/task?id=AWaIJBXwsMFctKgAbe_U
+ceTaskId=AWaI1DEp8skk8kHpw6kE
+ceTaskUrl=https://sonarcloud.io/api/ce/task?id=AWaI1DEp8skk8kHpw6kE

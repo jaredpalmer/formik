@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { connect } from './connect';
 
-export type FormikAnotherFormProps = Pick<
+export type FormikOtherFormProps = Pick<
   React.FormHTMLAttributes<HTMLFormElement>,
   Exclude<
     keyof React.FormHTMLAttributes<HTMLFormElement>,
@@ -9,7 +9,7 @@ export type FormikAnotherFormProps = Pick<
   >
 >;
 
-export const AnotherForm = connect<FormikAnotherFormProps>(
+export const OtherForm = connect<FormikOtherFormProps>(
   ({ formik: { handleReset, handleSubmit }, ...props }) => (
     <React.Fragment>
       <h2>Another Form</h2>
@@ -18,4 +18,4 @@ export const AnotherForm = connect<FormikAnotherFormProps>(
   )
 );
 
-AnotherForm.displayName = 'AnotherForm';
+OtherForm.displayName = 'OtherForm';

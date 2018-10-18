@@ -8,7 +8,7 @@ cache: yarn
 git:
   depth: 5
 script:
-  - yarn lint && yarn coverage -- --runInBand --coverage && yarn size
+  - yarn lint && yarn coverage -- --runInBand --no-cache && yarn size
 before_deploy: npm i -g now # Install Now CLI on Travis
 deploy:
   - provider: script # Run a custom deployment script which we will define below

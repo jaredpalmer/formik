@@ -24,5 +24,4 @@ website/i18n/*
 
 .size-snapshot.json
 .scannerwork
-test-report.xml
 tslint-report.json

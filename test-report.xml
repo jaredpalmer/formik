@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testExecutions version="1">
+  <file path="/Users/rikkis/scratch/formik/test/Formik.test.tsx">
+    <testCase name="&lt;Formik&gt; should initialize Formik state and pass down props" duration="10"/>
+    <testCase name="&lt;Formik&gt; FormikHandlers handleChange sets values state" duration="9"/>
+    <testCase name="&lt;Formik&gt; FormikHandlers handleChange updates values state via `name` instead of `id` attribute when both are present" duration="2"/>
+    <testCase name="&lt;Formik&gt; FormikHandlers handleChange runs validations if validateOnChange is set to true" duration="3"/>
+    <testCase name="&lt;Formik&gt; FormikHandlers handleChange does NOT run validations if validateOnChange is set to false" duration="1"/>
+    <testCase name="&lt;Formik&gt; FormikHandlers handleBlur sets touched state" duration="2"/>
+    <testCase name="&lt;Formik&gt; FormikHandlers handleBlur updates touched state via `name` instead of `id` attribute when both are present" duration="2"/>
+    <testCase name="&lt;Formik&gt; FormikHandlers handleBlur runs validations if validateOnBlur is set to true " duration="2"/>
+    <testCase name="&lt;Formik&gt; FormikHandlers handleSubmit should call preventDefault()" duration="2"/>
+    <testCase name="&lt;Formik&gt; FormikHandlers handleSubmit should not error if called without an object" duration="27"/>
+    <testCase name="&lt;Formik&gt; FormikHandlers handleSubmit should not error if called without preventDefault property" duration="3"/>
+    <testCase name="&lt;Formik&gt; FormikHandlers handleSubmit should touch all fields" duration="1"/>
+    <testCase name="&lt;Formik&gt; FormikHandlers handleSubmit should push submission state changes to child component" duration="4"/>
+    <testCase name="&lt;Formik&gt; FormikHandlers handleSubmit with validate (SYNC) should call validate if present" duration="1"/>
+    <testCase name="&lt;Formik&gt; FormikHandlers handleSubmit with validate (SYNC) should submit the form if valid" duration="1"/>
+    <testCase name="&lt;Formik&gt; FormikHandlers handleSubmit with validate (SYNC) should not submit the form if invalid" duration="2"/>
+    <testCase name="&lt;Formik&gt; FormikHandlers handleSubmit with validate (ASYNC) should call validate if present" duration="1"/>
+    <testCase name="&lt;Formik&gt; FormikHandlers handleSubmit with validate (ASYNC) should submit the form if valid" duration="4"/>
+    <testCase name="&lt;Formik&gt; FormikHandlers handleSubmit with validate (ASYNC) should not submit the form if invalid" duration="27"/>
+    <testCase name="&lt;Formik&gt; FormikHandlers handleSubmit with validationSchema (ASYNC) should run validationSchema if present" duration="2"/>
+    <testCase name="&lt;Formik&gt; FormikHandlers handleSubmit with validationSchema (ASYNC) should call validationSchema if it is a function and present" duration="2"/>
+    <testCase name="&lt;Formik&gt; FormikActions setValues sets values" duration="3"/>
+    <testCase name="&lt;Formik&gt; FormikActions setValues should run validations when validateOnChange is true" duration="1"/>
+    <testCase name="&lt;Formik&gt; FormikActions setValues should NOT run validations when validateOnChange is false" duration="1"/>
+    <testCase name="&lt;Formik&gt; FormikActions setFieldValue sets value by key" duration="2"/>
+    <testCase name="&lt;Formik&gt; FormikActions setFieldValue should run validations when validateOnChange is true" duration="1"/>
+    <testCase name="&lt;Formik&gt; FormikActions setFieldValue should NOT run validations when validateOnChange is false" duration="1"/>
+    <testCase name="&lt;Formik&gt; FormikActions setTouched sets touched" duration="1"/>
+    <testCase name="&lt;Formik&gt; FormikActions setTouched should NOT run validations by default" duration="1"/>
+    <testCase name="&lt;Formik&gt; FormikActions setTouched should run validations when validateOnBlur is true" duration="1"/>
+    <testCase name="&lt;Formik&gt; FormikActions setFieldTouched sets touched by key" duration="2"/>
+    <testCase name="&lt;Formik&gt; FormikActions setFieldTouched should run validations when validateOnBlur is true" duration="1"/>
+    <testCase name="&lt;Formik&gt; FormikActions setFieldTouched should NOT run validations when validateOnBlur is true" duration="1"/>
+    <testCase name="&lt;Formik&gt; FormikActions setErrors sets error object" duration="1"/>
+    <testCase name="&lt;Formik&gt; FormikActions setFieldError sets error by key" duration="1"/>
+    <testCase name="&lt;Formik&gt; FormikActions setStatus sets status object" duration="0"/>
+    <testCase name="&lt;Formik&gt; FormikComputedProps should compute dirty as soon as any input is touched" duration="1"/>
+    <testCase name="&lt;Formik&gt; FormikComputedProps should compute isValid if isInitialValid is present and returns true" duration="0"/>
+    <testCase name="&lt;Formik&gt; FormikComputedProps should compute isValid if isInitialValid is present and returns false" duration="1"/>
+    <testCase name="&lt;Formik&gt; FormikComputedProps should compute isValid if isInitialValid boolean is present and set to true" duration="0"/>
+    <testCase name="&lt;Formik&gt; FormikComputedProps should compute isValid if isInitialValid is present and set to false" duration="1"/>
+    <testCase name="&lt;Formik&gt; FormikComputedProps should compute isValid if the form is dirty and there are errors" duration="1"/>
+    <testCase name="&lt;Formik&gt; FormikComputedProps should compute isValid if the form is dirty and there are not errors" duration="0"/>
+    <testCase name="&lt;Formik&gt; FormikComputedProps should increase submitCount after submitting the form" duration="1"/>
+    <testCase name="&lt;Formik&gt; componentDidUpdate should not resetForm if new initialValues are the same as previous" duration="0"/>
+    <testCase name="&lt;Formik&gt; componentDidUpdate should resetForm if new initialValues are different than previous" duration="1"/>
+    <testCase name="&lt;Formik&gt; componentDidUpdate should resetForm if new initialValues are deeply different than previous" duration="0"/>
+    <testCase name="&lt;Formik&gt; componentDidUpdate should NOT resetForm without enableReinitialize flag" duration="0"/>
+    <testCase name="&lt;Formik&gt; handleReset should call onReset with values and actions when form is reset" duration="2"/>
+    <testCase name="&lt;Formik&gt; handleReset should not error resetting form if onReset is not a prop" duration="1"/>
+    <testCase name="&lt;Formik&gt; handleReset should call onReset with values and actions when onReset is a promise" duration="0"/>
+    <testCase name="&lt;Formik&gt; handleReset should reset dirty flag even if initialValues has changed" duration="12"/>
+    <testCase name="&lt;Formik&gt; handleReset should reset submitCount" duration="6"/>
+    <testCase name="&lt;Formik&gt; should warn against buttons with unspecified type" duration="8"/>
+    <testCase name="&lt;Formik&gt; should not warn when button has type submit" duration="3"/>
+    <testCase name="&lt;Formik&gt; should not warn when activeElement is not a button" duration="4"/>
+    <testCase name="&lt;Formik&gt; submit count increments" duration="2"/>
+    <testCase name="&lt;Formik&gt; isValidating is fired when submit is attempted" duration="3"/>
+    <testCase name="&lt;Formik&gt; isSubmitting is fired when submit is attempted" duration="2"/>
+    <testCase name="&lt;Formik&gt; isValidating is fired validation is run" duration="1"/>
+    <testCase name="&lt;Formik&gt; should merge validation errors" duration="9"/>
+  </file>
+  <file path="/Users/rikkis/scratch/formik/test/withFormik.test.tsx">
+    <testCase name="withFormik() should initialize Formik state and pass down props" duration="11"/>
+    <testCase name="withFormik() should correctly set displayName" duration="2"/>
+    <testCase name="withFormik() FormikHandlers handleChange sets values state" duration="6"/>
+    <testCase name="withFormik() FormikHandlers handleChange updates values state via `name` instead of `id` attribute when both are present" duration="5"/>
+    <testCase name="withFormik() FormikHandlers handleChange runs validations by default (validate)" duration="3"/>
+    <testCase name="withFormik() FormikHandlers handleChange does NOT run validations if validateOnChange is false (validate)" duration="2"/>
+    <testCase name="withFormik() FormikHandlers handleChange runs validations by default (validationSchema)" duration="2"/>
+    <testCase name="withFormik() FormikHandlers handleChange does NOT run validations if validateOnChange is false (validationSchema)" duration="2"/>
+    <testCase name="withFormik() FormikHandlers handleBlur sets touched state" duration="4"/>
+    <testCase name="withFormik() FormikHandlers handleBlur updates touched state via `name` instead of `id` attribute when both are present" duration="3"/>
+    <testCase name="withFormik() FormikHandlers handleBlur runs validations by default (validate)" duration="2"/>
+    <testCase name="withFormik() FormikHandlers handleBlur runs validations by default (validationSchema)" duration="2"/>
+    <testCase name="withFormik() FormikHandlers handleSubmit should call preventDefault()" duration="4"/>
+    <testCase name="withFormik() FormikHandlers handleSubmit should touch all fields" duration="4"/>
+    <testCase name="withFormik() FormikHandlers handleSubmit should push submission state changes to child component" duration="7"/>
+    <testCase name="withFormik() FormikHandlers handleSubmit with validate (SYNC) should call validate if present" duration="5"/>
+    <testCase name="withFormik() FormikHandlers handleSubmit with validate (SYNC) should submit the form if valid" duration="8"/>
+    <testCase name="withFormik() FormikHandlers handleSubmit with validate (SYNC) should not submit the form if invalid" duration="6"/>
+    <testCase name="withFormik() FormikHandlers handleSubmit with validate (ASYNC) should call validate if present" duration="4"/>
+    <testCase name="withFormik() FormikHandlers handleSubmit with validate (ASYNC) should submit the form if valid" duration="4"/>
+    <testCase name="withFormik() FormikHandlers handleSubmit with validate (ASYNC) should not submit the form if invalid" duration="33"/>
+    <testCase name="withFormik() FormikHandlers handleSubmit with validationSchema (ASYNC) should run validationSchema if present" duration="6"/>
+    <testCase name="withFormik() FormikHandlers handleSubmit with validationSchema (ASYNC) should call validationSchema if it is a function and present" duration="5"/>
+  </file>
+  <file path="/Users/rikkis/scratch/formik/test/Field.test.tsx">
+    <testCase name="A &lt;Field /&gt; &lt;Field validate&gt; calls validate during onChange if present" duration="4"/>
+    <testCase name="A &lt;Field /&gt; &lt;Field validate&gt; does NOT call validate during onChange if validateOnChange is set to false" duration="2"/>
+    <testCase name="A &lt;Field /&gt; &lt;Field validate&gt; calls validate during onBlur if present" duration="1"/>
+    <testCase name="A &lt;Field /&gt; &lt;Field validate&gt; does NOT call validate during onBlur if validateOnBlur is set to false" duration="2"/>
+    <testCase name="A &lt;Field /&gt; &lt;Field validate&gt; runs validation when validateField is called (SYNC)" duration="8"/>
+    <testCase name="A &lt;Field /&gt; &lt;Field validate&gt; runs validation when validateField is called (ASYNC)" duration="4"/>
+    <testCase name="A &lt;Field /&gt; &lt;Field component /&gt; renders an &lt;input /&gt; by default" duration="3"/>
+    <testCase name="A &lt;Field /&gt; &lt;Field component /&gt; renders the component" duration="2"/>
+    <testCase name="A &lt;Field /&gt; &lt;Field component /&gt; renders string components" duration="2"/>
+    <testCase name="A &lt;Field /&gt; &lt;Field component /&gt; receives { field, form } props" duration="2"/>
+    <testCase name="A &lt;Field /&gt; &lt;Field component /&gt; assigns innerRef as a ref to string components" duration="2"/>
+    <testCase name="A &lt;Field /&gt; &lt;Field component /&gt; forwards innerRef to React component" duration="1"/>
+    <testCase name="A &lt;Field /&gt; &lt;Field render /&gt; renders its return value" duration="2"/>
+    <testCase name="A &lt;Field /&gt; &lt;Field render /&gt; receives { field, form } props" duration="1"/>
+    <testCase name="A &lt;Field /&gt; &lt;Field children /&gt; renders a function" duration="6"/>
+    <testCase name="A &lt;Field /&gt; &lt;Field children /&gt; renders a child element" duration="5"/>
+    <testCase name="A &lt;Field /&gt; &lt;Field children /&gt; warns if both string component and children as a function" duration="2"/>
+    <testCase name="A &lt;Field /&gt; &lt;Field children /&gt; warns if both non-string component and children children as a function" duration="1"/>
+    <testCase name="A &lt;Field /&gt; &lt;Field children /&gt; warns if both string component and render" duration="2"/>
+    <testCase name="A &lt;Field /&gt; &lt;Field children /&gt; warns if both non-string component and render" duration="1"/>
+    <testCase name="A &lt;Field /&gt; &lt;Field children /&gt; warns if both children and render" duration="2"/>
+    <testCase name="A &lt;Field /&gt; &lt;Field children /&gt; renders a child function" duration="1"/>
+    <testCase name="A &lt;Field /&gt; &lt;Field children /&gt; receives { field, form } props" duration="2"/>
+    <testCase name="A &lt;Field /&gt; &lt;Field children /&gt; can resolve bracket paths" duration="2"/>
+    <testCase name="A &lt;Field /&gt; &lt;Field children /&gt; can resolve mixed dot and bracket paths" duration="1"/>
+    <testCase name="A &lt;Field /&gt; &lt;Field children /&gt; can resolve mixed dot and bracket paths II" duration="1"/>
+  </file>
+  <file path="/Users/rikkis/scratch/formik/test/FastField.test.tsx">
+    <testCase name="A &lt;Field /&gt; &lt;Field validate&gt; calls validate during onChange if present" duration="4"/>
+    <testCase name="A &lt;Field /&gt; &lt;Field validate&gt; does NOT call validate during onChange if validateOnChange is set to false" duration="1"/>
+    <testCase name="A &lt;Field /&gt; &lt;Field validate&gt; calls validate during onBlur if present" duration="2"/>
+    <testCase name="A &lt;Field /&gt; &lt;Field validate&gt; does NOT call validate during onBlur if validateOnBlur is set to false" duration="1"/>
+    <testCase name="A &lt;Field /&gt; &lt;Field validate&gt; runs validation when validateField is called (SYNC)" duration="9"/>
+    <testCase name="A &lt;Field /&gt; &lt;Field validate&gt; runs validation when validateField is called (ASYNC)" duration="3"/>
+    <testCase name="A &lt;Field /&gt; &lt;Field component /&gt; renders an &lt;input /&gt; by default" duration="2"/>
+    <testCase name="A &lt;Field /&gt; &lt;Field component /&gt; renders the component" duration="2"/>
+    <testCase name="A &lt;Field /&gt; &lt;Field component /&gt; renders string components" duration="1"/>
+    <testCase name="A &lt;Field /&gt; &lt;Field component /&gt; receives { field, form } props" duration="2"/>
+    <testCase name="A &lt;Field /&gt; &lt;Field component /&gt; assigns innerRef as a ref to string components" duration="1"/>
+    <testCase name="A &lt;Field /&gt; &lt;Field component /&gt; forwards innerRef to React component" duration="2"/>
+    <testCase name="A &lt;Field /&gt; &lt;Field render /&gt; renders its return value" duration="1"/>
+    <testCase name="A &lt;Field /&gt; &lt;Field render /&gt; receives { field, form } props" duration="6"/>
+    <testCase name="A &lt;Field /&gt; &lt;Field children /&gt; renders a function" duration="2"/>
+    <testCase name="A &lt;Field /&gt; &lt;Field children /&gt; renders a child element" duration="2"/>
+    <testCase name="A &lt;Field /&gt; &lt;Field children /&gt; warns if both string component and children as a function" duration="2"/>
+    <testCase name="A &lt;Field /&gt; &lt;Field children /&gt; warns if both non-string component and children children as a function" duration="2"/>
+    <testCase name="A &lt;Field /&gt; &lt;Field children /&gt; warns if both string component and render" duration="2"/>
+    <testCase name="A &lt;Field /&gt; &lt;Field children /&gt; warns if both non-string component and render" duration="1"/>
+    <testCase name="A &lt;Field /&gt; &lt;Field children /&gt; warns if both children and render" duration="1"/>
+    <testCase name="A &lt;Field /&gt; &lt;Field children /&gt; renders a child function" duration="2"/>
+    <testCase name="A &lt;Field /&gt; &lt;Field children /&gt; receives { field, form } props" duration="2"/>
+    <testCase name="A &lt;Field /&gt; &lt;Field children /&gt; can resolve bracket paths" duration="1"/>
+    <testCase name="A &lt;Field /&gt; &lt;Field children /&gt; can resolve mixed dot and bracket paths" duration="2"/>
+    <testCase name="A &lt;Field /&gt; &lt;Field children /&gt; can resolve mixed dot and bracket paths II" duration="1"/>
+  </file>
+  <file path="/Users/rikkis/scratch/formik/test/FieldArray.test.tsx">
+    <testCase name="&lt;FieldArray /&gt; renders component with array helpers as props" duration="3"/>
+    <testCase name="&lt;FieldArray /&gt; renders with render callback with array helpers as props" duration="2"/>
+    <testCase name="&lt;FieldArray /&gt; renders with &quot;children as a function&quot; with array helpers as props" duration="1"/>
+    <testCase name="&lt;FieldArray /&gt; renders with name as props" duration="2"/>
+    <testCase name="&lt;FieldArray /&gt; props.push() should add a value to the end of the field array" duration="3"/>
+    <testCase name="&lt;FieldArray /&gt; props.push() should push clone not actual referance" duration="4"/>
+    <testCase name="&lt;FieldArray /&gt; props.pop() should remove and return the last value from the field array" duration="3"/>
+    <testCase name="&lt;FieldArray /&gt; props.swap() should swap two values in field array" duration="3"/>
+    <testCase name="&lt;FieldArray /&gt; props.insert() should insert a value at given index of field array" duration="3"/>
+    <testCase name="&lt;FieldArray /&gt; props.replace() should replace a value at given index of field array" duration="5"/>
+    <testCase name="&lt;FieldArray /&gt; props.unshift() should add a value to start of field array and return its length" duration="4"/>
+    <testCase name="&lt;FieldArray /&gt; props.remove() should remove a value at given index of field array" duration="3"/>
+  </file>
+  <file path="/Users/rikkis/scratch/formik/test/yupHelpers.test.ts">
+    <testCase name="Yup helpers yupToFormErrors() should transform Yup ValidationErrors into an object" duration="2"/>
+    <testCase name="Yup helpers validateYupSchema() should validate" duration="1"/>
+    <testCase name="Yup helpers validateYupSchema() should stringify all values" duration="0"/>
+  </file>
+  <file path="/Users/rikkis/scratch/formik/test/ErrorMessage.test.tsx">
+    <testCase name="&lt;ErrorMessage /&gt; renders with children as a function" duration="6"/>
+  </file>
+  <file path="/Users/rikkis/scratch/formik/test/utils.test.tsx">
+    <testCase name="utils setNestedObjectValues sets value flat object" duration="0"/>
+    <testCase name="utils setNestedObjectValues sets value of nested object" duration="1"/>
+    <testCase name="utils setNestedObjectValues sets value of nested flat array items" duration="0"/>
+    <testCase name="utils setNestedObjectValues sets value of nested complex array items" duration="1"/>
+    <testCase name="utils setNestedObjectValues sets value of nested mixed array items" duration="0"/>
+    <testCase name="utils setIn sets flat value" duration="1"/>
+    <testCase name="utils setIn keep the same object if nothing is changed" duration="0"/>
+    <testCase name="utils setIn removes flat value" duration="1"/>
+    <testCase name="utils setIn sets nested value" duration="0"/>
+    <testCase name="utils setIn updates nested value" duration="1"/>
+    <testCase name="utils setIn removes nested value" duration="0"/>
+    <testCase name="utils setIn updates deep nested value" duration="1"/>
+    <testCase name="utils setIn removes deep nested value" duration="0"/>
+    <testCase name="utils setIn sets new array" duration="0"/>
+    <testCase name="utils setIn updates nested array value" duration="1"/>
+    <testCase name="utils setIn adds new item to nested array" duration="1"/>
+    <testCase name="utils setIn sticks to object with int key when defined" duration="0"/>
+    <testCase name="utils setIn supports bracket path" duration="1"/>
+    <testCase name="utils setIn supports path containing key of the object" duration="0"/>
+    <testCase name="utils isPromise verifies that a value is a promise" duration="0"/>
+    <testCase name="utils isPromise verifies that a value is not a promise" duration="0"/>
+  </file>
+  <file path="/Users/rikkis/scratch/formik/test/types.test.tsx">
+    <testCase name="Formik Types FormikTouched it should infer nested object structure of touched property from Values" duration="0"/>
+    <testCase name="Formik Types FormikTouched it should infer nested object structure of error property from Values" duration="1"/>
+  </file>
+</testExecutions>

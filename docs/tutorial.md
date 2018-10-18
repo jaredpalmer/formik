@@ -29,7 +29,7 @@ user API has nested objects like so.
 ```
 
 ```jsx
-// User.js
+// EditUserDialog.js
 import React from 'react';
 import Dialog from 'MyImaginaryDialogComponent'; // this isn't a real package, just imagine it exists.
 import { Formik } from 'formik';

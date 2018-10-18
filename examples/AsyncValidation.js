@@ -5,7 +5,7 @@ import { Debug } from './Debug';
 // Async Validation
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-const validate = (values, props) => {
+const validate = (values) => {
   return sleep(300).then(() => {
     let errors = {};
 

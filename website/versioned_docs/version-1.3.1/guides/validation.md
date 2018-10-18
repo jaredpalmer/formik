@@ -27,7 +27,7 @@ There are 2 ways to do form-level validation with Formik:
 
 ```js
 // Synchronous validation
-const validate = (values, props) => {
+const validate = (values) => {
   let errors = {};
 
   if (!values.email) {
@@ -44,7 +44,7 @@ const validate = (values, props) => {
 // Async Validation
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-const validate = (values, props) => {
+const validate = (values) => {
   return sleep(2000).then(() => {
     let errors = {};
     if (['admin', 'null', 'god'].includes(values.username)) {

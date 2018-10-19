@@ -56,10 +56,14 @@ const Form: React.SFC<Props & FormikProps<Values>> = ({
   );
 };
 
+const defaultOptions = {
+  mapPropsToValues: ({ user }: any) => ({ ...user }),
+  handleSubmit: noop,
+};
+
 const FormFactory = (options = {}) =>
   withFormik<Props, Values, Values>({
-    mapPropsToValues: ({ user }) => ({ ...user }),
-    handleSubmit: noop,
+    ...defaultOptions,
     ...options,
   })(Form);
 
@@ -473,6 +477,46 @@ describe('withFormik()', () => {
           expect(validate).toHaveBeenCalled();
         });
       });
+    });
+  });
+
+  describe('namespace', () => {
+    it('should provide formikProps under a "formik" prop', () => {
+      const NSForm = ({ formik }: any) => {
+        return <form onSubmit={formik.onSubmit} />;
+      };
+      const NamespaceForm = withFormik({ namespace: true, ...defaultOptions })(
+        NSForm
+      );
+      const tree = mount(<NamespaceForm user={{ name: 'jared' }} />);
+      expect(tree.find(NSForm).props().formik.isSubmitting).toBe(false);
+      expect(tree.find(NSForm).props().formik.touched).toEqual({});
+      expect(tree.find(NSForm).props().formik.values).toEqual({
+        name: 'jared',
+      });
+      expect(tree.find(NSForm).props().formik.errors).toEqual({});
+      expect(tree.find(NSForm).props().formik.dirty).toBe(false);
+      expect(tree.find(NSForm).props().formik.isValid).toBe(false);
+      expect(tree.find(NSForm).props().isSubmitting).toBeUndefined();
+    });
+    it('should be possible to define a customNamespace', () => {
+      const NSForm = ({ formikProps }: any) => {
+        return <form onSubmit={formikProps.onSubmit} />;
+      };
+      const NamespaceForm = withFormik({
+        namespace: 'formikProps',
+        ...defaultOptions,
+      })(NSForm);
+      const tree = mount(<NamespaceForm user={{ name: 'jared' }} />);
+      expect(tree.find(NSForm).props().formikProps.isSubmitting).toBe(false);
+      expect(tree.find(NSForm).props().formikProps.touched).toEqual({});
+      expect(tree.find(NSForm).props().formikProps.values).toEqual({
+        name: 'jared',
+      });
+      expect(tree.find(NSForm).props().formikProps.errors).toEqual({});
+      expect(tree.find(NSForm).props().formikProps.dirty).toBe(false);
+      expect(tree.find(NSForm).props().formikProps.isValid).toBe(false);
+      expect(tree.find(NSForm).props().isSubmitting).toBeUndefined();
     });
   });
 });

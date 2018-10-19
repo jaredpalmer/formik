@@ -60,6 +60,12 @@ export interface WithFormikConfig<
    * throws an error object where that object keys map to corresponding value.
    */
   validate?: (values: Values, props: Props) => void | object | Promise<any>;
+
+  /**
+   * If specified, provides all Formik props as a single prop, rather than spreading
+   * them on the wrapped component. Specifying a string will provide them as that prop.
+   */
+  namespace?: boolean | string;
 }
 
 export type CompositeComponent<P> =
@@ -135,6 +141,14 @@ export function withFormik<
        * Just avoiding a render callback for perf here
        */
       renderFormComponent = (formikProps: FormikProps<Values>) => {
+        if (config.namespace) {
+          const namespace =
+            config.namespace === true ? 'formik' : config.namespace;
+          const toSpread: any = {
+            [namespace]: formikProps,
+          };
+          return <Component {...this.props} {...toSpread} />;
+        }
         return <Component {...this.props} {...formikProps} />;
       };
 

@@ -1,12 +1,12 @@
 version: 2
 
 defaults: &defaults
-  working_directory: ~/repo
+  working_directory: ~/formik
   docker:
     - image: circleci/node:8.9.1
 
 jobs:
-  test:
+  test_and_build:
     <<: *defaults
     steps:
        - checkout
@@ -35,24 +35,24 @@ jobs:
           key: v2-dependencies-{{ .Branch }}-{{ checksum "yarn.lock" }}
 
       - persist_to_workspace:
-          root: ~/repo
+          root: ~/formik
           paths: .
-  deployNpm:
+  deploy_npm:
     <<: *defaults
     steps:
       - attach_workspace:
-          at: ~/repo
+          at: ~/formik
       - run:
           name: Authenticate with registry
-          command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/repo/.npmrc
+          command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/formik/.npmrc
       - run:
           name: Publish package
           command: npm publish
-  deployDocs:
+  deploy_docs:
     <<: *defaults
     steps:
       - attach_workspace:
-          at: ~/repo
+          at: ~/formik
       - run:
           name: Install Now CLI
           command: sudo npm install --global --unsafe-perm now
@@ -70,18 +70,19 @@ jobs:
             else
               cp now.json build/now.json && cd build && now --token=$NOW_TOKEN --team palmer              
             fi
+
 workflows:
   version: 2
-  test-deploy:
+  test_build_deploy:
     jobs:
-      - test:
+      - test_and_build:
           filters:
             tags:
               only: /^v.*/
-      - deployDocs:
+      - deploy_docs:
           requires:
             - test
-      - deployNpm:
+      - deploy_npm:
           requires:
             - test
           filters:

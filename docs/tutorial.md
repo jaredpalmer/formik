@@ -199,7 +199,7 @@ const EditUserDialog = ({ user, updateUser, onClose }) => {
               {errorMessage => <div className="error">{errorMessage}</div>}
             </ErrorMessage>
             <Field type="text" name="social.twitter" />
-            <ErrorMessage name="social.twitter" className="error" component="div">  
+            <ErrorMessage name="social.twitter" className="error" component="div"/>  
             {status && status.msg && <div>{status.msg}</div>}
             <button type="submit" disabled={isSubmitting}>
               Submit

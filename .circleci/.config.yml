@@ -16,8 +16,9 @@ jobs:
        - checkout
        - restore_cache:
           keys:
-          - v1-dependencies-{{ checksum "package.json" }}
-          - v1-dependencies-
+          - v2-dependencies-{{ .Branch }}-{{ checksum "yarn.lock" }}
+           # Fallback in case checksum fails
+          - v2-dependencies-{{ .Branch }}-
 
        - run:
           name: Install Dependencies
@@ -34,7 +35,8 @@ jobs:
       - save_cache:
           paths:
             - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}
+            - website/node_modules
+          key: v2-dependencies-{{ .Branch }}-{{ checksum "yarn.lock" }}
 
       - persist_to_workspace:
           root: ~/repo

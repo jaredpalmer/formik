@@ -1,0 +1,93 @@
+# Javascript Node CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-javascript/ for more details
+#
+version: 2
+
+defaults: &defaults
+  working_directory: ~/repo
+  docker:
+    - image: circleci/node:8.9.1
+
+jobs:
+  test:
+    <<: *defaults
+    steps:
+       - checkout
+       - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "package.json" }}
+          - v1-dependencies-
+
+       - run:
+          name: Install Dependencies
+          command: yarn install --frozen-lockfile
+      
+      - run:
+          name: Test
+          command: yarn test --runInBand --no-cache --coverage
+      
+      - run: 
+         name: Build package
+         command: yarn build
+
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
+
+      - persist_to_workspace:
+          root: ~/repo
+          paths: .
+  deployNpm:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/repo
+      - run:
+          name: Authenticate with registry
+          command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/repo/.npmrc
+      - run:
+          name: Publish package
+          command: npm publish
+  deployDocs:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/repo
+      - run:
+          name: Install Now CLI
+          command: sudo npm install --global --unsafe-perm now
+      - run: 
+         name: Install Docs dependencies
+         command: cd website && yarn install --frozen-lockfile
+      - run: 
+         name: Build Docs
+         command: cd website && yarn build
+      - run:
+          name: Deploy Docs
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then 
+              cp now.json build/now.json && cd build && now --token=$NOW_TOKEN --team palmer && now alias --token=$NOW_TOKEN --team palmer            
+            else
+              cp now.json build/now.json && cd build && now --token=$NOW_TOKEN --team palmer              
+            fi
+workflows:
+  version: 2
+  test-deploy:
+    jobs:
+      - test:
+          filters:
+            tags:
+              only: /^v.*/
+      - deployDocs:
+          requires:
+            - test
+      - deployNpm:
+          requires:
+            - test
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/

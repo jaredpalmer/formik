@@ -1,8 +1,7 @@
 ![](https://user-images.githubusercontent.com/4060187/27243721-3b5219d0-52b1-11e7-96f1-dae8391a3ef6.png)
 
-[![Build Status](https://travis-ci.org/jaredpalmer/formik.svg?branch=master)](https://travis-ci.org/jaredpalmer/formik)
+[![CircleCI](https://circleci.com/gh/jaredpalmer/formik.svg?style=svg)](https://circleci.com/gh/jaredpalmer/formik)
 [![Stable Release](https://img.shields.io/npm/v/formik.svg)](https://npm.im/formik)
-[![Next Release](https://img.shields.io/npm/v/formik/next.svg)](https://www.npmjs.com/package/formik/v/next)
 [![Blazing Fast](https://badgen.now.sh/badge/speed/blazing%20%F0%9F%94%A5/green)](https://npm.im/formik)
 [![gzip size](http://img.badgesize.io/https://unpkg.com/formik@latest/dist/formik.umd.production.js?compression=gzip)](https://unpkg.com/formik@latest/dist/formik.umd.production.js)
 [![license](https://badgen.now.sh/badge/license/MIT)](./LICENSE)

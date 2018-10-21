@@ -83,11 +83,3 @@ workflows:
               only: /^.*canary.*($|\b)/
             branches:
               ignore: /.*/
-      # - publish-stable:
-      #     requires:
-      #       - test
-      #     filters:
-      #       tags:
-      #         only: /^v(\d+\.)?(\d+\.)?(\*|\d+)$/
-      #       branches:
-      #         ignore: /.*/

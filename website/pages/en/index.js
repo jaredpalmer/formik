@@ -97,9 +97,10 @@ class Index extends React.Component {
                 },
                 {
                   title: 'Adoptable',
-                  content: `Since form state is inherently local and ephemeral, Formik does not use external state mangement librares
-                  like Redux or MobX. This also makes Formik is easy
-                  to adopt incrementally and keeps bundle size to a minimum.`,
+                  content: `Since form state is inherently local and ephemeral, Formik 
+                  does not use external state management libraries like Redux or MobX.
+                  This also makes Formik easy to adopt incrementally and keeps bundle
+                  size to a minimum.`,
                 },
               ]}
               layout="threeColumn"

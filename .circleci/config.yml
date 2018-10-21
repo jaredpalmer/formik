@@ -71,10 +71,7 @@ workflows:
   version: 2
   test-deploy:
     jobs:
-      - test:
-          filters:
-            tags:
-              only: /.*/
+      - test
       - deploy-docs:
           requires:
             - test

@@ -12,9 +12,9 @@ jobs:
        - checkout
        - restore_cache:
           keys:
-          - v2-dependencies-{{ .Branch }}-{{ checksum "yarn.lock" }}
-           # Fallback in case checksum fails
-          - v2-dependencies-{{ .Branch }}-
+            - v2-dependencies-{{ .Branch }}-{{ checksum "yarn.lock" }}
+            # Fallback in case checksum fails
+            - v2-dependencies-{{ .Branch }}-
 
        - run:
           name: Install Dependencies

@@ -307,7 +307,7 @@ Your optional form reset handler. It is passed your forms `values` and the
 
 Your form submission handler. It is passed your forms `values` and the
 "FormikBag", which includes an object containing a subset of the
-[injected props and methods](#injected-props-and-methods) (i.e. all the methods
+[injected props and methods](#formik-render-methods-and-props) (i.e. all the methods
 with names that start with `set<Thing>` + `resetForm`) and any props that were
 passed to the the wrapped component.
 

@@ -79,6 +79,8 @@ workflows:
           requires:
             - test
           filters:
+            branches:
+              ignore: /.*/
             tags:
               only: /^v.*canary.*($|\b)/
       # - publish-stable:

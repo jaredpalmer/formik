@@ -77,7 +77,7 @@ workflows:
             - test
       - publish-canary:
           requires:
-            - upload
+            - test
           filters:
             tags:
               only: /^v.*canary.*($|\b)/

@@ -1,88 +1,56 @@
 version: 2
 
 defaults: &defaults
-  working_directory: ~/formik
+  working_directory: ~/repo
   docker:
     - image: circleci/node:8.9.1
 
 jobs:
-  test_and_build:
+  test:
     <<: *defaults
     steps:
-       - checkout
-       - restore_cache:
-          keys:
-            - v2-dependencies-{{ .Branch }}-{{ checksum "yarn.lock" }}
-            # Fallback in case checksum fails
-            - v2-dependencies-{{ .Branch }}-
+      - checkout
 
-       - run:
-          name: Install Dependencies
-          command: yarn install --frozen-lockfile
-      
+      - restore_cache:
+          keys:
+            - v1-dependencies-
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
+
+      - run: npm install
       - run:
-          name: Test
-          command: yarn test --runInBand --no-cache --coverage
-      
-      - run: 
-         name: Build package
-         command: yarn build
+          name: Run tests
+          command: npm test
 
       - save_cache:
           paths:
             - node_modules
-            - website/node_modules
-          key: v2-dependencies-{{ .Branch }}-{{ checksum "yarn.lock" }}
+          key: v1-dependencies-
 
       - persist_to_workspace:
-          root: ~/formik
+          root: ~/repo
           paths: .
-  deploy_npm:
+  deploy:
     <<: *defaults
     steps:
       - attach_workspace:
-          at: ~/formik
+          at: ~/repo
       - run:
           name: Authenticate with registry
-          command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/formik/.npmrc
+          command: echo "//registry.npmjs.org/:_authToken=$npm_TOKEN" > ~/repo/.npmrc
       - run:
           name: Publish package
           command: npm publish
-  deploy_docs:
-    <<: *defaults
-    steps:
-      - attach_workspace:
-          at: ~/formik
-      - run:
-          name: Install Now CLI
-          command: sudo npm install --global --unsafe-perm now
-      - run: 
-         name: Install Docs dependencies
-         command: cd website && yarn install --frozen-lockfile
-      - run: 
-         name: Build Docs
-         command: cd website && yarn build
-      - run:
-          name: Deploy Docs
-          command: |
-            if [ "${CIRCLE_BRANCH}" == "master" ]; then 
-              cp now.json build/now.json && cd build && now --token=$NOW_TOKEN --team palmer && now alias --token=$NOW_TOKEN --team palmer            
-            else
-              cp now.json build/now.json && cd build && now --token=$NOW_TOKEN --team palmer              
-            fi
 
 workflows:
   version: 2
-  test_build_deploy:
+  test-deploy:
     jobs:
-      - test_and_build:
+      - test:
           filters:
             tags:
               only: /^v.*/
-      - deploy_docs:
-          requires:
-            - test
-      - deploy_npm:
+      - deploy:
           requires:
             - test
           filters:

@@ -10,10 +10,9 @@ jobs:
     <<: *defaults
     steps:
       - checkout
-
       - restore_cache:
           keys:
-            - v1-dependencies-
+            - v1-dependencies-{{ checksum "yarn.lock" }}
             # fallback to using the latest cache if no exact match is found
             - v1-dependencies-
 
@@ -28,12 +27,12 @@ jobs:
       - save_cache:
           paths:
             - node_modules
-          key: v1-dependencies-
+          key: v1-dependencies-{{ checksum "yarn.lock" }}
 
       - persist_to_workspace:
           root: ~/repo
           paths: .
-  deploy-npm:
+  publish-canary:
     <<: *defaults
     steps:
       - attach_workspace:
@@ -42,8 +41,8 @@ jobs:
           name: Authenticate with registry
           command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/repo/.npmrc
       - run:
-          name: Publish package
-          command: npm publish
+          name: Publish package to canary channel
+          command: npm publish --tag canary
 
   deploy-docs:
     <<: *defaults
@@ -75,15 +74,21 @@ workflows:
       - test:
           filters:
             tags:
-              only: /^v.*/
+              only: /.*/
       - deploy-docs:
           requires:
             - test
-      - deploy-npm:
+      - publish-canary:
           requires:
-            - test
+            - upload
           filters:
             tags:
-              only: /^v.*/
-            branches:
-              ignore: /.*/
+              only: /^v.*canary.*($|\b)/
+      # - publish-stable:
+      #     requires:
+      #       - test
+      #     filters:
+      #       tags:
+      #         only: /^v(\d+\.)?(\d+\.)?(\*|\d+)$/
+      #       branches:
+      #         ignore: /.*/

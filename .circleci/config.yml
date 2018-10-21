@@ -79,10 +79,10 @@ workflows:
           requires:
             - test
           filters:
+            tags:
+              only: /^.*canary.*($|\b)/
             branches:
               ignore: /.*/
-            tags:
-              only: /^v.*canary.*($|\b)/
       # - publish-stable:
       #     requires:
       #       - test

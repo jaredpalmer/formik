@@ -17,10 +17,13 @@ jobs:
             # fallback to using the latest cache if no exact match is found
             - v1-dependencies-
 
-      - run: yarn install
+      - run:
+          name: Install and build package
+          command: yarn install --frozen-lockfile
+
       - run:
           name: Run tests
-          command: yarn test
+          command: yarn test --runInBand --no-cache --coverage
 
       - save_cache:
           paths:
@@ -30,7 +33,7 @@ jobs:
       - persist_to_workspace:
           root: ~/repo
           paths: .
-  deploy:
+  deploy-npm:
     <<: *defaults
     steps:
       - attach_workspace:
@@ -42,6 +45,29 @@ jobs:
           name: Publish package
           command: npm publish
 
+  deploy-docs:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/repo
+      - run:
+          name: Install Now CLI
+          command: sudo npm install --global --unsafe-perm now
+      - run:
+          name: Install Docs dependencies
+          command: cd website && yarn install --frozen-lockfile
+      - run:
+          name: Build Docs
+          command: cd website && yarn build
+      - run:
+          name: Deploy Docs
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then 
+              cp now.json build/now.json && cd build && now --token=$NOW_TOKEN --team palmer && now alias --token=$NOW_TOKEN --team palmer            
+            else
+              cp now.json build/now.json && cd build && now --token=$NOW_TOKEN --team palmer              
+            fi
+
 workflows:
   version: 2
   test-deploy:
@@ -50,7 +76,10 @@ workflows:
           filters:
             tags:
               only: /^v.*/
-      - deploy:
+      - deploy-docs:
+          requires:
+            - test
+      - deploy-npm:
           requires:
             - test
           filters:

@@ -63,9 +63,9 @@ jobs:
           name: Deploy Docs
           command: |
             if [ "${CIRCLE_BRANCH}" == "master" ]; then 
-              cp now.json build/now.json && cd build && now --token=$NOW_TOKEN --team palmer && now alias --token=$NOW_TOKEN --team palmer            
+              cd website && cp now.json build/now.json && cd build && now --token=$NOW_TOKEN --team palmer && now alias --token=$NOW_TOKEN --team palmer            
             else
-              cp now.json build/now.json && cd build && now --token=$NOW_TOKEN --team palmer              
+              cd website && cp now.json build/now.json && cd build && now --token=$NOW_TOKEN --team palmer              
             fi
 
 workflows:

@@ -47,7 +47,6 @@ const SignUp = () => (
             placeholder="jane@acme.com"
           />
           <Fieldset
-            componnet="select"
             name="color"
             label="Favorite Color"
             component="select"

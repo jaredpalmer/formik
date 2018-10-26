@@ -1,6 +1,7 @@
 ---
 id: react-native
 title: React Native
+custom_edit_url: https://github.com/jaredpalmer/formik/edit/master/docs/guides/react-native.md
 ---
 
 **Formik is 100% compatible with React Native and React Native Web.** However,
@@ -24,7 +25,7 @@ export const MyReactNativeForm = props => (
     initialValues={{ email: '' }}
     onSubmit={values => console.log(values)}
   >
-    {({ values, handleChange, handleBlur }) => (
+    {props => (
       <View>
         <TextInput
           onChangeText={props.handleChange('email')}

@@ -3,6 +3,16 @@ id: tutorial
 title: Tutorial
 ---
 
+## Learn Formik by Building it.
+
+My talk at React Alicante is really the best way to get started. It introduces the library (by watching me build a mini version of it) and demos how to build a non-trivial form (with arrays, custom inputs, etc.) using the real thing. It's around 45 minutes long.
+
+<iframe width="800" height="315" src="https://www.youtube.com/embed/oiNtnehlaTo" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen title="Taming Forms in React - Jared Palmer"></iframe>
+
+## Basics
+
+_If you just want to jump into some code, here's a quick walkthrough of the basics..._
+
 Imagine you want to build a form that lets you edit user data. However, your
 user API has nested objects like so.
 
@@ -18,13 +28,10 @@ user API has nested objects like so.
 }
 ```
 
-When we are done we want our dialog to accept just a `user`, `updateUser`, and
-`onClose` props.
-
 ```jsx
-// User.js
+// EditUserDialog.js
 import React from 'react';
-import Dialog from 'MySuperDialog';
+import Dialog from 'MyImaginaryDialogComponent'; // this isn't a real package, just imagine it exists.
 import { Formik } from 'formik';
 
 const EditUserDialog = ({ user, updateUser, onClose }) => {
@@ -34,20 +41,23 @@ const EditUserDialog = ({ user, updateUser, onClose }) => {
       <Formik
         initialValues={user /** { email, social } */}
         onSubmit={(values, actions) => {
-          CallMyApi(user.id, values).then(
+          MyImaginaryRestApiCall(user.id, values).then(
             updatedUser => {
               actions.setSubmitting(false);
-              updateUser(updatedUser), onClose();
+              updateUser(updatedUser);
+              onClose();
             },
             error => {
               actions.setSubmitting(false);
-              actions.setErrors(transformMyAPIErrorToAnObject(error));
+              actions.setErrors(transformMyRestApiErrorsToAnObject(error));
+              actions.setStatus({ msg: 'Set some arbitrary status or data' });
             }
           );
         }}
         render={({
           values,
           errors,
+          status,
           touched,
           handleBlur,
           handleChange,
@@ -83,6 +93,7 @@ const EditUserDialog = ({ user, updateUser, onClose }) => {
             {errors.social &&
               errors.social.twitter &&
               touched.twitter && <div>{errors.social.twitter}</div>}
+            {status && status.msg && <div>{status.msg}</div>}
             <button type="submit" disabled={isSubmitting}>
               Submit
             </button>
@@ -116,14 +127,16 @@ const EditUserDialog = ({ user, updateUser, onClose }) => {
       <Formik
         initialValues={user /** { email, social } */}
         onSubmit={(values, actions) => {
-          CallMyApi(user.id, values).then(
+          MyImaginaryRestApiCall(user.id, values).then(
             updatedUser => {
               actions.setSubmitting(false);
-              updateUser(updatedUser), onClose();
+              updateUser(updatedUser);
+              onClose();
             },
             error => {
               actions.setSubmitting(false);
-              actions.setErrors(transformMyAPIErrorToAnObject(error));
+              actions.setErrors(transformMyRestApiErrorsToAnObject(error));
+              actions.setStatus({ msg: 'Set some arbitrary status or data' });
             }
           );
         }}
@@ -137,6 +150,57 @@ const EditUserDialog = ({ user, updateUser, onClose }) => {
             <Field type="text" name="social.twitter" />
             {errors.social.twitter &&
               touched.social.twitter && <div>{errors.social.twitter}</div>}
+            {status && status.msg && <div>{status.msg}</div>}
+            <button type="submit" disabled={isSubmitting}>
+              Submit
+            </button>
+          </Form>
+        )}
+      />
+    </Dialog>
+  );
+};
+```
+
+This is better, but that all those `errors` and `touched` logic is still quite repetitive. Formik has a component just for this called `<ErrorMessage>` which can simplify things even more. It accepts a render prop or a component prop for maximum flexibility.
+
+```jsx
+// EditUserDialog.js
+import React from 'react';
+import Dialog from 'MySuperDialog';
+import { Formik, Field, Form, ErrorMessage } from 'formik';
+
+const EditUserDialog = ({ user, updateUser, onClose }) => {
+  return (
+    <Dialog onClose={onClose}>
+      <h1>Edit User</h1>
+      <Formik
+        initialValues={user /** { email, social } */}
+        onSubmit={(values, actions) => {
+          MyImaginaryRestApiCall(user.id, values).then(
+            updatedUser => {
+              actions.setSubmitting(false);
+              updateUser(updatedUser);
+              onClose();
+            },
+            error => {
+              actions.setSubmitting(false);
+              actions.setErrors(transformMyRestApiErrorsToAnObject(error));
+              actions.setStatus({ msg: 'Set some arbitrary status or data' });
+            }
+          );
+        }}
+        render={({ errors, touched, isSubmitting }) => (
+          <Form>
+            <Field type="email" name="email" />
+            <ErrorMessage name="email" component="div">  
+            <Field type="text" className="error" name="social.facebook" />
+            <ErrorMessage name="social.facebook">
+              {errorMessage => <div className="error">{errorMessage}</div>}
+            </ErrorMessage>
+            <Field type="text" name="social.twitter" />
+            <ErrorMessage name="social.twitter" className="error" component="div"/>  
+            {status && status.msg && <div>{status.msg}</div>}
             <button type="submit" disabled={isSubmitting}>
               Submit
             </button>

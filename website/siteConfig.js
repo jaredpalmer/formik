@@ -46,6 +46,11 @@ const users = [
     image: '/formik/img/logos/nokia.svg',
     infoLink: 'https://nokia.com',
   },
+  {
+    caption: 'RVshare',
+    image: '/formik/img/logos/rvshare.svg',
+    infoLink: 'https://rvshare.com',
+  },
 ];
 
 const siteConfig = {
@@ -74,7 +79,8 @@ const siteConfig = {
     },
     // { blog: true, label: 'Blog' },
   ],
-  search: false,
+  noIndex: false,
+  search: true,
   // If you have users set above, you add it here:
   users,
 
@@ -134,7 +140,9 @@ const siteConfig = {
   algolia: {
     apiKey: '32fabc38a054677ee9b24e69d699fbd0',
     indexName: 'formik',
-    algoliaOptions: {}, // Optional, if provided by Algolia
+    algoliaOptions: {
+      facetFilters: ['version:VERSION'],
+    },
   },
   // You may provide arbitrary config keys to be used as needed by your
   // template. For example, if you need your repo's URL...

@@ -96,7 +96,7 @@ export interface FormikActions<Values> {
     shouldValidate?: boolean
   ): void;
   /** Validate form values */
-  validateForm(values?: any): void;
+  validateForm(values?: any): Promise<FormikErrors<Values>>;
   /** Validate field value */
   validateField(field: string): void;
   /** Reset form */
@@ -171,6 +171,22 @@ export interface FormikSharedConfig {
  */
 export interface FormikConfig<Values> extends FormikSharedConfig {
   /**
+   * Form component to render
+   */
+  component?: React.ComponentType<FormikProps<Values>> | React.ReactNode;
+
+  /**
+   * Render prop (works like React router's <Route render={props =>} />)
+   */
+  render?: ((props: FormikProps<Values>) => React.ReactNode);
+
+  /**
+   * React children or child render callback
+   */
+  children?:
+    | ((props: FormikProps<Values>) => React.ReactNode)
+    | React.ReactNode;
+  /**
    * Initial values of the form
    */
   initialValues: Values;
@@ -184,17 +200,6 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
    * Submission handler
    */
   onSubmit: (values: Values, formikActions: FormikActions<Values>) => void;
-
-  /**
-   * Form component to render
-   */
-  component?: React.ComponentType<FormikProps<Values>> | React.ReactNode;
-
-  /**
-   * Render prop (works like React router's <Route render={props =>} />)
-   */
-  render?: ((props: FormikProps<Values>) => React.ReactNode);
-
   /**
    * A Yup Schema or a function that returns a Yup schema
    */
@@ -207,13 +212,6 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
   validate?: ((
     values: Values
   ) => void | object | Promise<FormikErrors<Values>>);
-
-  /**
-   * React children or child render callback
-   */
-  children?:
-    | ((props: FormikProps<Values>) => React.ReactNode)
-    | React.ReactNode;
 }
 
 /**
@@ -225,19 +223,11 @@ export type FormikProps<Values> = FormikSharedConfig &
   FormikActions<Values> &
   FormikHandlers &
   FormikComputedProps<Values> &
-  FormikRegistration<Values>;
+  FormikRegistration;
 
 /** Internal Formik registration methods that get passed down as props */
-export interface FormikRegistration<Values> {
-  registerField(
-    name: string,
-    fns: {
-      validate?: ((
-        value: any,
-        formikBag?: FormikProps<Values>
-      ) => string | Function | Promise<void> | undefined);
-    }
-  ): void;
+export interface FormikRegistration {
+  registerField(name: string, Comp: React.Component<any>): void;
   unregisterField(name: string): void;
 }
 

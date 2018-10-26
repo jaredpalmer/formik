@@ -3,12 +3,15 @@ import { connect } from './connect';
 
 export type FormikFormProps = Pick<
   React.FormHTMLAttributes<HTMLFormElement>,
-  Exclude<keyof React.FormHTMLAttributes<HTMLFormElement>, 'onSubmit'>
+  Exclude<
+    keyof React.FormHTMLAttributes<HTMLFormElement>,
+    'onReset' | 'onSubmit'
+  >
 >;
 
 export const Form = connect<FormikFormProps>(
-  ({ formik: { handleSubmit }, ...props }) => (
-    <form onSubmit={handleSubmit} {...props} />
+  ({ formik: { handleReset, handleSubmit }, ...props }) => (
+    <form onReset={handleReset} onSubmit={handleSubmit} {...props} />
   )
 );
 

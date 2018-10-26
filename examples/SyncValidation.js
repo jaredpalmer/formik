@@ -1,5 +1,6 @@
 import React from 'react';
-import { Formik, Field, Form } from 'formik';
+import { Formik, Field, Form, ErrorMessage } from 'formik';
+import { Debug } from './Debug';
 
 const validate = values => {
   let errors = {};
@@ -29,14 +30,13 @@ const SignIn = () => (
         <Form>
           <label htmlFor="email">Email</label>
           <Field name="email" placeholder="john@acme.com" type="email" />
-
-          {errors.email &&
-            touched.email && <div className="field-error">{errors.email}</div>}
-
+          <div className="field-error">
+            <ErrorMessage name="email" />
+          </div>
           <label htmlFor="password">Password</label>
           <Field name="password" type="password" />
-
           <button type="submit">Sign In</button>
+          <Debug />
         </Form>
       )}
     />

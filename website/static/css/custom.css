@@ -26,10 +26,6 @@ h6 {
   padding-right: 15px;
 }
 
-.fixedHeaderContainer h3:before {
-  content: 'v'
-}
-
 .splash {
   /* min-height: 700px; */
   background: linear-gradient(#111, #222);

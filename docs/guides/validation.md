@@ -1,6 +1,7 @@
 ---
 id: validation
 title: Validation
+custom_edit_url: https://github.com/jaredpalmer/formik/edit/master/docs/guides/validation.md
 ---
 
 Formik is designed to manage forms with complex validation with ease. Formik supports synchronous and asynchronous
@@ -25,7 +26,7 @@ There are 2 ways to do form-level validation with Formik:
 
 ```js
 // Synchronous validation
-const validate = (values, props) => {
+const validate = (values, props /* only available when using withFormik */) => {
   let errors = {};
 
   if (!values.email) {
@@ -42,7 +43,7 @@ const validate = (values, props) => {
 // Async Validation
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-const validate = (values, props) => {
+const validate = (values, props /* only available when using withFormik */) => {
   return sleep(2000).then(() => {
     let errors = {};
     if (['admin', 'null', 'god'].includes(values.username)) {
@@ -63,7 +64,7 @@ For more information about `<Formik validate>`, see the API reference.
 As you can see above, validation is left up to you. Feel free to write your own
 validators or use a 3rd party library. At The Palmer Group, we use
 [Yup](https://github.com/jquense/yup) for object schema validation. It has an
-API that's pretty similar [Joi](https://github.com/hapijs/joi) and
+API that's pretty similar to [Joi](https://github.com/hapijs/joi) and
 [React PropTypes](https://github.com/facebook/prop-types) but is small enough
 for the browser and fast enough for runtime usage. Because we :heart: Yup sooo
 much, Formik has a special config option / prop for Yup object schemas called `validationSchema` which will automatically transform Yup's validation errors into a pretty object whose keys match `values` and `touched`. This symmetry makes it easy to manage business logic around error messages.
@@ -78,7 +79,7 @@ npm install yup --save
 ```jsx
 import React from 'react';
 import { Formik, Form, Field } from 'formik';
-import Yup from 'yup';
+import * as Yup from 'yup';
 
 const SignupSchema = Yup.object().shape({
   firstName: Yup.string()
@@ -135,12 +136,12 @@ For more information about `<Formik validationSchema>`, see the API reference.
 
 #### `validate`
 
-Formik supports field-level validation via the `<Field>`/`<FastField>` components' `validate` prop. This function can be synchronous or asynchronous (return a Promise). It will run after any `onChange` and `onBlur` by default. This behvaior can be altered at the top level `<Formik/>` component using the `validateOnChange` and `validateOnBlur` props respectively. In addition to change/blur, all field-level validations are run at the beginning of a submission attempt and then the results are deeply merged with any top-level validation results.
+Formik supports field-level validation via the `<Field>`/`<FastField>` components' `validate` prop. This function can be synchronous or asynchronous (return a Promise). It will run after any `onChange` and `onBlur` by default. This behavior can be altered at the top level `<Formik/>` component using the `validateOnChange` and `validateOnBlur` props respectively. In addition to change/blur, all field-level validations are run at the beginning of a submission attempt and then the results are deeply merged with any top-level validation results.
 
 ```jsx
 import React from 'react';
 import { Formik, Form, Field } from 'formik';
-import Yup from 'yup';
+import * as Yup from 'yup';
 
 function validateEmail(value) {
   let error;
@@ -196,7 +197,7 @@ You can manually trigger both form-level and field-level validation with Formik 
 ```jsx
 import React from 'react';
 import { Formik, Form, Field } from 'formik';
-import Yup from 'yup';
+import * as Yup from "yup";
 
 function validateEmail(value) {
   let error;
@@ -229,7 +230,7 @@ export const FieldLevelValidationExample = () => (
         console.log(values);
       }}
     >
-      {({ errors, touched }) => (
+      {({ errors, touched, validateField, validateForm }) => (
         <Form>
           <Field name="email" validate={validateEmail} />
           {errors.email && touched.email && <div>{errors.email}</div>}

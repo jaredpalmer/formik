@@ -50,7 +50,8 @@ export interface FastFieldConfig<T> {
 
   /** Override FastField's default shouldComponentUpdate */
   shouldUpdate?: (
-    props: T & GenericFieldHTMLAttributes & { formik: FormikContext<any> }
+    nextProps: T & GenericFieldHTMLAttributes & { formik: FormikContext<any> },
+    props: {}
   ) => boolean;
 
   /**
@@ -105,7 +106,7 @@ class FastFieldInner<Values = {}, Props = {}> extends React.Component<
     props: FastFieldAttributes<Props> & { formik: FormikContext<Values> }
   ) {
     if (this.props.shouldUpdate) {
-      return this.props.shouldUpdate(props);
+      return this.props.shouldUpdate(props, this.props);
     } else if (
       getIn(this.props.formik.values, this.props.name) !==
         getIn(props.formik.values, this.props.name) ||
@@ -113,7 +114,8 @@ class FastFieldInner<Values = {}, Props = {}> extends React.Component<
         getIn(props.formik.errors, this.props.name) ||
       getIn(this.props.formik.touched, this.props.name) !==
         getIn(props.formik.touched, this.props.name) ||
-      Object.keys(this.props).length !== Object.keys(props).length
+      Object.keys(this.props).length !== Object.keys(props).length ||
+      this.props.formik.isSubmitting !== props.formik.isSubmitting
     ) {
       return true;
     } else {
@@ -122,9 +124,9 @@ class FastFieldInner<Values = {}, Props = {}> extends React.Component<
   }
 
   componentDidMount() {
-    this.props.formik.registerField(this.props.name, {
-      validate: this.props.validate,
-    });
+    // Register the Field with the parent Formik. Parent will cycle through
+    // registered Field's validate fns right prior to submit
+    this.props.formik.registerField(this.props.name, this);
   }
 
   componentDidUpdate(
@@ -132,15 +134,11 @@ class FastFieldInner<Values = {}, Props = {}> extends React.Component<
   ) {
     if (this.props.name !== prevProps.name) {
       this.props.formik.unregisterField(prevProps.name);
-      this.props.formik.registerField(this.props.name, {
-        validate: this.props.validate,
-      });
+      this.props.formik.registerField(this.props.name, this);
     }
 
     if (this.props.validate !== prevProps.validate) {
-      this.props.formik.registerField(this.props.name, {
-        validate: this.props.validate,
-      });
+      this.props.formik.registerField(this.props.name, this);
     }
   }
 

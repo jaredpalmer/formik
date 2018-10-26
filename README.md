@@ -1,8 +1,7 @@
 ![](https://user-images.githubusercontent.com/4060187/27243721-3b5219d0-52b1-11e7-96f1-dae8391a3ef6.png)
 
-[![Build Status](https://travis-ci.org/jaredpalmer/formik.svg?branch=master)](https://travis-ci.org/jaredpalmer/formik)
+[![CircleCI](https://circleci.com/gh/jaredpalmer/formik.svg?style=svg)](https://circleci.com/gh/jaredpalmer/formik)
 [![Stable Release](https://img.shields.io/npm/v/formik.svg)](https://npm.im/formik)
-[![Next Release](https://img.shields.io/npm/v/formik/next.svg)](https://www.npmjs.com/package/formik/v/next)
 [![Blazing Fast](https://badgen.now.sh/badge/speed/blazing%20%F0%9F%94%A5/green)](https://npm.im/formik)
 [![gzip size](http://img.badgesize.io/https://unpkg.com/formik@latest/dist/formik.umd.production.js?compression=gzip)](https://unpkg.com/formik@latest/dist/formik.umd.production.js)
 [![license](https://badgen.now.sh/badge/license/MIT)](./LICENSE)
@@ -30,7 +29,7 @@ organized--making testing, refactoring, and reasoning about your forms a breeze.
 * [Get Started](https://jaredpalmer.com/formik/docs/overview)
 * [API Reference](https://jaredpalmer.com//formik/docs/api/formik)
 * [Articles / Tutorials](https://jaredpalmer.com/formik/docs/resources)
-* [Get Help](https://jaredpalmer.co/formik/help)
+* [Get Help](https://jaredpalmer.com/formik/help)
 * [Release Notes](https://github.com/jaredpalmer/formik/releases)
 
 ## In-browser Playgrounds
@@ -48,7 +47,7 @@ You can play with Formik in your web browser with these live online playgrounds.
 * [Working with 3rd-party inputs #1: react-select](https://codesandbox.io/s/jRzE53pqR)
 * [Working with 3rd-party inputs #2: Draft.js](https://codesandbox.io/s/QW1rqjBLl)
 * [Accessing React lifecycle functions](https://codesandbox.io/s/pgD4DLypy)
-* [React Native](https://snack.expo.io/Bk9pPK87X)
+* [React Native](https://snack.expo.io/@ferrannp/react-native-x-formik)
 * [TypeScript](https://codesandbox.io/s/8y578o8152)
 
 ## Organizations and projects using Formik

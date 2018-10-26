@@ -1,6 +1,7 @@
 ---
 id: formik
 title: <Formik />
+custom_edit_url: https://github.com/jaredpalmer/formik/edit/master/docs/api/formik.md
 ---
 
 `<Formik>` is a component that helps you with building forms. It uses a render
@@ -98,20 +99,20 @@ to `<button onClick={handleReset}>...</button>`
 
 #### `handleSubmit: (e: React.FormEvent<HTMLFormEvent>) => void`
 
-Submit handler. This should be passed to `<form onSubmit={props.handleSubmit}>...</form>`. To learn more about the submission process, see [How Form Submission Works](#how-form-submission-works).
+Submit handler. This should be passed to `<form onSubmit={props.handleSubmit}>...</form>`. To learn more about the submission process, see [Form Submission](guides/form-submission.md).
 
 #### `isSubmitting: boolean`
 
-Submitting state of the form. Returns `true` if submission is in progress and `false` otherwise. IMPORTANT: Formik will set this to `true` as soon as submission is _attempted_. To learn more about the submission process, see [How Form Submission Works](#how-form-submission-works).
+Submitting state of the form. Returns `true` if submission is in progress and `false` otherwise. IMPORTANT: Formik will set this to `true` as soon as submission is _attempted_. To learn more about the submission process, see [Form Submission](guides/form-submission.md).
 
 #### `isValid: boolean`
 
 Returns `true` if the there are no `errors`, or the result of
-`isInitialValid` the form if is in "pristine" condition (i.e. not `dirty`)).
+`isInitialValid` the form if is in "pristine" condition (i.e. not `dirty`).
 
 #### `isValidating: boolean`
 
-Returns `true` if Formik is running any validation function, `false` otherwise. To learn more about what happens with `isValidating` during the submission process, see [How Form Submission Works](#how-form-submission-works).
+Returns `true` if Formik is running any validation function, `false` otherwise. To learn more about what happens with `isValidating` during the submission process, see [Form Submission](guides/form-submission.md).
 
 #### `resetForm: (nextValues?: Values) => void`
 
@@ -129,10 +130,10 @@ Set `errors` imperatively.
 Set the error message of a field imperatively. `field` should match the key of
 `errors` you wish to update. Useful for creating custom input error handlers.
 
-#### `setFieldTouched: (field: string, isTouched: boolean, shouldValidate?: boolean) => void`
+#### `setFieldTouched: (field: string, isTouched?: boolean, shouldValidate?: boolean) => void`
 
 Set the touched state of a field imperatively. `field` should match the key of
-`touched` you wish to update. Useful for creating custom input blur handlers. Calling this method will trigger validation to run if `validateOnBlur` is set to `true` (which it is by default). You can also explicitly prevent/skip validation by passing a third argument as `false`.
+`touched` you wish to update. Useful for creating custom input blur handlers. Calling this method will trigger validation to run if `validateOnBlur` is set to `true` (which it is by default). `isTouched` defaults to `true` if not specified. You can also explicitly prevent/skip validation by passing a third argument as `false`.
 
 #### `submitForm: () => void`
 
@@ -140,8 +141,8 @@ Trigger a form submission.
 
 #### `submitCount: number`
 
-Number of times user tried to submit the form. Increases when `handleSubmit`(#handlesubmit-values-values-formikbag-formikbag--void) is called, resets after calling
-`handleReset`(#handlereset---void). `submitCount` is readonly computed property and should not be mutated directly.
+Number of times user tried to submit the form. Increases when [`handleSubmit`](#handlesubmit-e-reactformevent-htmlformevent-void) is called, resets after calling
+[`handleReset`](#handlereset-void). `submitCount` is readonly computed property and should not be mutated directly.
 
 #### `setFieldValue: (field: string, value: any, shouldValidate?: boolean) => void`
 
@@ -172,8 +173,8 @@ A top-level status object that you can use to represent form state that can't
 otherwise be expressed/stored with other methods. This is useful for capturing
 and passing through API responses to your inner component.
 
-`status` should only be modifed by calling
-`setStatus: (status?: any) => void`(#setstatus-status-any--void)
+`status` should only be modified by calling
+[`setStatus`](#setstatus-status-any-void).
 
 #### `touched: { [field: string]: boolean }`
 
@@ -185,7 +186,7 @@ Your form's values. Will have the shape of the result of `mapPropsToValues`
 (if specified) or all props that are not functions passed to your wrapped
 component.
 
-#### `validateForm: (values?: any) => void`
+#### `validateForm: (values?: any) => Promise<FormikErrors<Values>>`
 
 Imperatively call your `validate` or `validateSchema` depending on what was specified. You can optionally pass values to validate against and this modify Formik state accordingly, otherwise this will use the current `values` of the form.
 
@@ -288,7 +289,7 @@ enable/disable a submit and reset buttons on initial mount.
 ### `initialValues?: Values`
 
 Initial field values of the form, Formik will make these values available to
-render methods component as ` props.values``values `.
+render methods component as `values`.
 
 Even if your form is empty by default, you must initialize all fields with
 initial values otherwise React will throw an error saying that you have changed
@@ -306,7 +307,7 @@ Your optional form reset handler. It is passed your forms `values` and the
 
 Your form submission handler. It is passed your forms `values` and the
 "FormikBag", which includes an object containing a subset of the
-[injected props and methods](#injected-props-and-methods) (i.e. all the methods
+[injected props and methods](#formik-render-methods-and-props) (i.e. all the methods
 with names that start with `set<Thing>` + `resetForm`) and any props that were
 passed to the the wrapped component.
 
@@ -324,7 +325,7 @@ Validate the form's `values` with function. This function can either be:
 
 ```js
 // Synchronous validation
-const validate = (values, props) => {
+const validate = (values) => {
   let errors = {};
 
   if (!values.email) {
@@ -345,7 +346,7 @@ const validate = (values, props) => {
 // Async Validation
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-const validate = (values, props) => {
+const validate = (values) => {
   return sleep(2000).then(() => {
     let errors = {};
     if (['admin', 'null', 'god'].includes(values.username)) {

@@ -1,6 +1,7 @@
 import React from 'react';
-import { Formik, Field, Form } from 'formik';
+import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
+import { Debug } from './Debug';
 
 // While you can use any validation library (or write you own), Formik
 // comes with special support for Yup by @jquense. It has a builder API like
@@ -40,26 +41,26 @@ const SignUp = () => (
           <label htmlFor="firstName">First Name</label>
           <Field name="firstName" placeholder="Jane" type="text" />
 
-          {errors.firstName &&
-            touched.firstName && (
-              <div className="field-error">{errors.firstName}</div>
-            )}
+          <ErrorMessage
+            name="firstName"
+            component="div"
+            className="field-error"
+          />
 
           <label htmlFor="lastName">Last Name</label>
           <Field name="lastName" placeholder="Doe" type="text" />
-
-          {errors.lastName &&
-            touched.lastName && (
-              <div className="field-error">{errors.lastName}</div>
-            )}
+          <ErrorMessage
+            name="lastName"
+            component="div"
+            className="field-error"
+          />
 
           <label htmlFor="email">Email</label>
           <Field name="email" placeholder="jane@acme.com" type="email" />
-
-          {errors.email &&
-            touched.email && <div className="field-error">{errors.email}</div>}
+          <ErrorMessage name="email" component="div" className="field-error" />
 
           <button type="submit">Submit</button>
+          <Debug />
         </Form>
       )}
     />

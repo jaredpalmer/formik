@@ -11,18 +11,18 @@ export interface FormikValues {
  * Should be always be and object of strings, but any is allowed to support i18n libraries.
  */
 export type FormikErrors<Values> = {
-  [K in keyof Values]?: Values[K] extends object
-    ? FormikErrors<Values[K]>
-    : string
+  [K in keyof Values]?: Values[K] extends any[]
+    ? FormikErrors<Values[K][number]>[]
+    : Values[K] extends object ? FormikErrors<Values[K]> : string
 };
 
 /**
  * An object containing touched state of the form whose keys correspond to FormikValues.
  */
 export type FormikTouched<Values> = {
-  [K in keyof Values]?: Values[K] extends object
-    ? FormikTouched<Values[K]>
-    : boolean
+  [K in keyof Values]?: Values[K] extends any[]
+    ? FormikTouched<Values[K][number]>[]
+    : Values[K] extends object ? FormikTouched<Values[K]> : string
 };
 
 /**

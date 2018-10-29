@@ -1,7 +1,9 @@
 import * as React from 'react';
 import { connect } from './connect';
 
-export type FormikFormProps = Pick<
+export type FormikFormProps = {
+  innerRef: (instance: any) => void;
+} & Pick<
   React.FormHTMLAttributes<HTMLFormElement>,
   Exclude<
     keyof React.FormHTMLAttributes<HTMLFormElement>,
@@ -10,8 +12,13 @@ export type FormikFormProps = Pick<
 >;
 
 export const Form = connect<FormikFormProps>(
-  ({ formik: { handleReset, handleSubmit }, ...props }) => (
-    <form onReset={handleReset} onSubmit={handleSubmit} {...props} />
+  ({ formik: { handleReset, handleSubmit }, innerRef, ...props }) => (
+    <form
+      onReset={handleReset}
+      onSubmit={handleSubmit}
+      ref={innerRef}
+      {...props}
+    />
   )
 );
 

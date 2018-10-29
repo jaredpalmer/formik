@@ -189,7 +189,7 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
   /**
    * Initial values of the form
    */
-  initialValues: Values;
+  initialValues?: Values;
 
   /**
    * Reset handler

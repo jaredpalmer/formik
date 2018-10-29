@@ -198,9 +198,44 @@ describe('A <Field />', () => {
         />,
         node
       );
-      const { handleBlur, handleChange } = injected;
       expect(actual.field.name).toBe('name');
       expect(actual.field.value).toBe('jared');
+
+      const { handleBlur, handleChange } = injected;
+      expect(actual.field.onChange).toBe(handleChange);
+      expect(actual.field.onBlur).toBe(handleBlur);
+      expect(actual.form).toEqual(injected);
+    });
+
+    it('receives { field, form } props - no initialValues', () => {
+      const TestFormNoInitialValues: React.SFC<any> = p => (
+        <Formik
+          onSubmit={noop}
+          // omitted: initialValues={{ }}
+          {...p}
+        />
+      );
+
+      let actual: any; /** FieldProps ;) */
+      let injected: any; /** FieldProps ;) */
+      const Component: React.SFC<FieldProps> = props =>
+        (actual = props) && null;
+
+      ReactDOM.render(
+        <TestFormNoInitialValues
+          render={(formikProps: FormikProps<TestFormValues>) =>
+            (injected = formikProps) && (
+              <Field name="name" component={Component} />
+            )
+          }
+        />,
+        node
+      );
+      expect(actual.field.name).toBe('name');
+      expect(actual.field.value).toBe('');
+      expect(actual.form.initialValues.name).toBe('');
+
+      const { handleBlur, handleChange } = injected;
       expect(actual.field.onChange).toBe(handleChange);
       expect(actual.field.onBlur).toBe(handleBlur);
       expect(actual.form).toEqual(injected);
@@ -345,7 +380,7 @@ describe('A <Field />', () => {
       );
     });
 
-    it('warns if both non-string component and children children as a function', () => {
+    it('warns if both non-string component and children as a function', () => {
       let output = '';
       let actual;
       const Component: React.SFC<FieldProps> = props =>

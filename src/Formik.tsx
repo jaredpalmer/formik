@@ -25,6 +25,8 @@ import {
   getIn,
 } from './utils';
 
+const DEFAULT_INITIAL_VALUE = '';
+
 export class Formik<Values = object, ExtraProps = {}> extends React.Component<
   FormikConfig<Values> & ExtraProps,
   FormikState<Values>
@@ -79,6 +81,18 @@ export class Formik<Values = object, ExtraProps = {}> extends React.Component<
 
   registerField = (name: string, Comp: React.Component<any>) => {
     this.fields[name] = Comp;
+
+    if (!getIn(this.initialValues, name)) {
+      this.initialValues = setIn(
+        this.initialValues,
+        name,
+        DEFAULT_INITIAL_VALUE
+      );
+      this.setState(prevState => ({
+        ...prevState,
+        values: setIn(prevState.values, name, DEFAULT_INITIAL_VALUE),
+      }));
+    }
   };
 
   unregisterField = (name: string) => {

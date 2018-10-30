@@ -2,7 +2,7 @@ import * as React from 'react';
 import cloneDeep from 'lodash.clonedeep';
 import { connect } from './connect';
 import {
-  FormikContext,
+  FormikCtx,
   FormikState,
   SharedRenderProps,
   FormikProps,
@@ -86,14 +86,14 @@ export const replace = (array: any[], index: number, value: any) => {
   return copy;
 };
 class FieldArrayInner<Values = {}> extends React.Component<
-  FieldArrayConfig & { formik: FormikContext<Values> },
+  FieldArrayConfig & { formik: FormikCtx<Values> },
   {}
 > {
   static defaultProps = {
     validateOnChange: true,
   };
 
-  constructor(props: FieldArrayConfig & { formik: FormikContext<Values> }) {
+  constructor(props: FieldArrayConfig & { formik: FormikCtx<Values> }) {
     super(props);
     // We need TypeScript generics on these, so we'll bind them in the constructor
     this.remove = this.remove.bind(this);
@@ -149,11 +149,7 @@ class FieldArrayInner<Values = {}> extends React.Component<
     this.swap(indexA, indexB);
 
   move = (from: number, to: number) =>
-    this.updateArrayField(
-      (array: any[]) => move(array, from, to),
-      true,
-      true
-    );
+    this.updateArrayField((array: any[]) => move(array, from, to), true, true);
 
   handleMove = (from: number, to: number) => () => this.move(from, to);
 

@@ -1,11 +1,7 @@
 import * as React from 'react';
 import warning from 'warning';
 import { connect } from './connect';
-import {
-  FormikProps,
-  GenericFieldHTMLAttributes,
-  FormikContext,
-} from './types';
+import { FormikProps, GenericFieldHTMLAttributes, FormikCtx } from './types';
 import { getIn, isEmptyChildren, isFunction } from './utils';
 
 /**
@@ -87,12 +83,10 @@ export type FieldAttributes<T> = GenericFieldHTMLAttributes & FieldConfig & T;
  * context and wiring up forms.
  */
 class FieldInner<Values = {}, Props = {}> extends React.Component<
-  FieldAttributes<Props> & { formik: FormikContext<Values> },
+  FieldAttributes<Props> & { formik: FormikCtx<Values> },
   {}
 > {
-  constructor(
-    props: FieldAttributes<Props> & { formik: FormikContext<Values> }
-  ) {
+  constructor(props: FieldAttributes<Props> & { formik: FormikCtx<Values> }) {
     super(props);
     const { render, children, component } = props;
     warning(
@@ -118,7 +112,7 @@ class FieldInner<Values = {}, Props = {}> extends React.Component<
   }
 
   componentDidUpdate(
-    prevProps: FieldAttributes<Props> & { formik: FormikContext<Values> }
+    prevProps: FieldAttributes<Props> & { formik: FormikCtx<Values> }
   ) {
     if (this.props.name !== prevProps.name) {
       this.props.formik.unregisterField(prevProps.name);
@@ -144,7 +138,7 @@ class FieldInner<Values = {}, Props = {}> extends React.Component<
       formik,
       ...props
     } = (this.props as FieldAttributes<Props> & {
-      formik: FormikContext<Values>;
+      formik: FormikCtx<Values>;
     }) as any;
     const {
       validate: _validate,

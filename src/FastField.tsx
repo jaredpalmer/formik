@@ -1,11 +1,7 @@
 import * as React from 'react';
 import warning from 'warning';
 import { connect } from './connect';
-import {
-  FormikProps,
-  GenericFieldHTMLAttributes,
-  FormikContext,
-} from './types';
+import { FormikProps, GenericFieldHTMLAttributes, FormikCtx } from './types';
 import { getIn, isEmptyChildren, isFunction } from './utils';
 
 export interface FastFieldProps<V = any> {
@@ -50,7 +46,7 @@ export interface FastFieldConfig<T> {
 
   /** Override FastField's default shouldComponentUpdate */
   shouldUpdate?: (
-    nextProps: T & GenericFieldHTMLAttributes & { formik: FormikContext<any> },
+    nextProps: T & GenericFieldHTMLAttributes & { formik: FormikCtx<any> },
     props: {}
   ) => boolean;
 
@@ -78,11 +74,11 @@ export type FastFieldAttributes<T> = GenericFieldHTMLAttributes &
  * context and wiring up forms.
  */
 class FastFieldInner<Values = {}, Props = {}> extends React.Component<
-  FastFieldAttributes<Props> & { formik: FormikContext<Values> },
+  FastFieldAttributes<Props> & { formik: FormikCtx<Values> },
   {}
 > {
   constructor(
-    props: FastFieldAttributes<Props> & { formik: FormikContext<Values> }
+    props: FastFieldAttributes<Props> & { formik: FormikCtx<Values> }
   ) {
     super(props);
     const { render, children, component } = props;
@@ -103,7 +99,7 @@ class FastFieldInner<Values = {}, Props = {}> extends React.Component<
   }
 
   shouldComponentUpdate(
-    props: FastFieldAttributes<Props> & { formik: FormikContext<Values> }
+    props: FastFieldAttributes<Props> & { formik: FormikCtx<Values> }
   ) {
     if (this.props.shouldUpdate) {
       return this.props.shouldUpdate(props, this.props);
@@ -130,7 +126,7 @@ class FastFieldInner<Values = {}, Props = {}> extends React.Component<
   }
 
   componentDidUpdate(
-    prevProps: FastFieldAttributes<Props> & { formik: FormikContext<Values> }
+    prevProps: FastFieldAttributes<Props> & { formik: FormikCtx<Values> }
   ) {
     if (this.props.name !== prevProps.name) {
       this.props.formik.unregisterField(prevProps.name);
@@ -156,7 +152,7 @@ class FastFieldInner<Values = {}, Props = {}> extends React.Component<
       formik,
       ...props
     } = (this.props as FastFieldAttributes<Props> & {
-      formik: FormikContext<Values>;
+      formik: FormikCtx<Values>;
     }) as any;
     const {
       validate: _validate,

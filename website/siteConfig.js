@@ -51,6 +51,11 @@ const users = [
     image: '/formik/img/logos/rvshare.svg',
     infoLink: 'https://rvshare.com',
   },
+  {
+    caption: 'Extendi',
+    image: '/formik/img/logos/extendi.svg',
+    infoLink: 'https://www.extendi.it',
+  },
 ];
 
 const siteConfig = {

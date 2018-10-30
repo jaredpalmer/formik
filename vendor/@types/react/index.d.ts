@@ -55,7 +55,7 @@ declare namespace React {
   type Key = string | number;
 
   interface RefObject<T> {
-    readonly current: T | null;
+    current: T | null;
   }
 
   type Ref<T> =

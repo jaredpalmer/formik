@@ -38,7 +38,8 @@
     "start-website": "cd website && yarn start",
     "build-website": "cd website && yarn install && yarn build",
     "gen-docs": "all-contributors generate && doctoc README.md",
-    "size": "size-limit"
+    "size": "size-limit",
+    "postinstall": "cp -rf ./vendor/@types/react/ ./node_modules/@types/react/"
   },
   "dependencies": {
     "create-react-context": "^0.2.2",
@@ -53,8 +54,8 @@
   },
   "optionalDependencies": {},
   "resolutions": {
-    "@types/react": "16.4.14",
-    "@types/react-dom": "16.0.7"
+    "@types/react": "16.4.18",
+    "@types/react-dom": "16.0.9"
   },
   "devDependencies": {
     "@babel/core": "^7.1.2",
@@ -65,8 +66,8 @@
     "@types/jest": "^22.2.3",
     "@types/lodash.clonedeep": "^4.5.3",
     "@types/lodash.topath": "4.5.3",
-    "@types/react": "^16.4.14",
-    "@types/react-dom": "^16.0.7",
+    "@types/react": "^16.4.18",
+    "@types/react-dom": "^16.0.9",
     "@types/react-test-renderer": "15.5.2",
     "@types/warning": "^3.0.0",
     "@types/yup": "^0.24.9",
@@ -83,8 +84,8 @@
     "lint-staged": "4.0.2",
     "prettier": "1.11.1",
     "raw-loader": "^0.5.1",
-    "react": "^16.5.0",
-    "react-dom": "^16.5.0",
+    "react": "^16.6.0",
+    "react-dom": "^16.6.0",
     "rimraf": "^2.6.2",
     "rollup": "^0.66.4",
     "rollup-plugin-babel": "^4.0.3",
@@ -99,7 +100,7 @@
     "tsc-watch": "^1.0.21",
     "tslint": "^5.11.0",
     "tslint-react": "^3.6.0",
-    "typescript": "^3.1.1",
+    "typescript": "^3.1.4",
     "yup": "0.21.3"
   },
   "lint-staged": {
@@ -137,8 +138,7 @@
       "json"
     ]
   },
-  "size-limit": [
-    {
+  "size-limit": [{
       "path": "./dist/index.js",
       "limit": "14 kB"
     },

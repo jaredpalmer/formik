@@ -34,7 +34,12 @@ const Example = () => (
   <div>
     <h1>My Form</h1>
     <Formik
-      initialValues={{ email: '', color: 'red', firstName: '' }}
+      initialValues={{
+        email: '',
+        color: 'red',
+        firstName: '',
+        lastName: '',
+        likesCats: false }}
       onSubmit={(values, actions) => {
         setTimeout(() => {
           alert(JSON.stringify(values, null, 2));
@@ -56,6 +61,8 @@ const Example = () => (
               <input {...field} placeholder="lastName" />
             )}
           />
+          <label htmlFor="likesCats">I like cats</label>
+          <Field type="checkbox" name="likesCats" />
           <button type="submit">Submit</button>
         </form>
       )}

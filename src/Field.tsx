@@ -159,6 +159,10 @@ class FieldInner<Values = {}, Props = {}> extends React.Component<
       name,
       onChange: formik.handleChange,
       onBlur: formik.handleBlur,
+      checked:
+        props.type === 'radio' || props.type === 'checkbox'
+          ? getIn(formik.values, name)
+          : undefined,
     };
     const bag = { field, form: restOfFormik };
 

@@ -13,7 +13,11 @@ interface TestFormValues {
 const TestForm: React.SFC<any> = p => (
   <Formik
     onSubmit={noop}
-    initialValues={{ name: 'jared', email: 'hello@reason.nyc' }}
+    initialValues={{
+      name: 'jared',
+      email: 'hello@reason.nyc',
+      isAwesome: true,
+    }}
     {...p}
   />
 );
@@ -180,6 +184,16 @@ describe('A <Field />', () => {
       );
 
       expect((node.firstChild as HTMLTextAreaElement).name).toBe('name');
+    });
+
+    it('renders checkbox type with initialValues', () => {
+      ReactDOM.render(
+        <TestForm render={() => <Field type="checkbox" name="isAwesome" />} />,
+        node
+      );
+
+      expect((node.firstChild as HTMLInputElement).name).toBe('isAwesome');
+      expect((node.firstChild as HTMLInputElement).checked).toBe(true);
     });
 
     it('receives { field, form } props', () => {
@@ -350,6 +364,7 @@ describe('A <Field />', () => {
       let actual;
       const Component: React.SFC<FieldProps> = props =>
         (actual = props) && null;
+      actual;
 
       (global as any).console = {
         error: jest.fn(input => (output += input)),
@@ -401,6 +416,7 @@ describe('A <Field />', () => {
       let actual;
       const Component: React.SFC<FieldProps> = props =>
         (actual = props) && null;
+      actual;
 
       (global as any).console = {
         error: jest.fn(input => (output += input)),
@@ -487,6 +503,8 @@ describe('A <Field />', () => {
       let injected: any;
       const Component: React.SFC<FieldProps> = props =>
         (actual = props) && null;
+      actual;
+      injected;
 
       ReactDOM.render(
         <TestForm
@@ -507,6 +525,8 @@ describe('A <Field />', () => {
       let injected: any;
       const Component: React.SFC<FieldProps> = props =>
         (actual = props) && null;
+      actual;
+      injected;
 
       ReactDOM.render(
         <TestForm
@@ -527,7 +547,8 @@ describe('A <Field />', () => {
       let injected: any;
       const Component: React.SFC<FieldProps> = props =>
         (actual = props) && null;
-
+      actual;
+      injected;
       ReactDOM.render(
         <TestForm
           initialValues={{ user: { superPowers: ['Surging', 'Binding'] } }}

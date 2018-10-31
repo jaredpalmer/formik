@@ -10,6 +10,7 @@ const Basic = () => (
         firstName: '',
         lastName: '',
         email: '',
+        terms: false
       }}
       onSubmit={values => {
         setTimeout(() => {
@@ -26,6 +27,10 @@ const Basic = () => (
 
           <label htmlFor="email">Email</label>
           <Field name="email" placeholder="jane@acme.com" type="email" />
+          
+          <label htmlFor="terms">I accept the terms and conditions</label>
+          <Field name="terms" type="checkbox" />
+          
           <button type="submit">Submit</button>
           <Debug />
         </Form>

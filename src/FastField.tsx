@@ -172,9 +172,11 @@ class FastFieldInner<Values = {}, Props = {}> extends React.Component<
       onChange: formik.handleChange,
       onBlur: formik.handleBlur,
       checked:
-        props.type === 'radio' || props.type === 'checkbox'
+        props.type === 'checkbox'
           ? getIn(formik.values, name)
-          : undefined,
+          : props.type === 'radio'
+            ? getIn(formik.values, name) === props.value
+            : undefined,
     };
     const bag = { field, form: restOfFormik };
 

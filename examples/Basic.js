@@ -10,7 +10,8 @@ const Basic = () => (
         firstName: '',
         lastName: '',
         email: '',
-        terms: false
+        terms: false,
+        favoriteColor: "green"
       }}
       onSubmit={values => {
         setTimeout(() => {
@@ -30,6 +31,10 @@ const Basic = () => (
           
           <label htmlFor="terms">I accept the terms and conditions</label>
           <Field name="terms" type="checkbox" />
+          
+          <div>Favorite color:</div>
+          <label><Field name="favoriteColor" type="radio" value="red" />Red</label>
+          <label><Field name="favoriteColor" type="radio" value="green" />Green</label>
           
           <button type="submit">Submit</button>
           <Debug />

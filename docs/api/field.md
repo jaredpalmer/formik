@@ -63,6 +63,16 @@ const Example = () => (
           />
           <label htmlFor="likesCats">I like cats</label>
           <Field type="checkbox" name="likesCats" />
+          
+          <label htmlFor="likesCats">I like cats</label>
+          
+          <div>Contact me via:</div>
+          <label>Email
+            <Field type="radio" name="contact" value="email" />
+          </label>
+          <label>SMS
+            <Field type="radio" name="contact" value="sms" />
+          </label>
           <button type="submit">Submit</button>
         </form>
       )}

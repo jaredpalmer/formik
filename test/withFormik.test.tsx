@@ -428,7 +428,7 @@ describe('withFormik()', () => {
           const ValidateForm = withFormik<Props, Values, Values>({
             validate: () =>
               sleep(25).then(() => {
-                throw { name: 'error!' };
+                return { name: 'error!' };
               }),
             mapPropsToValues: ({ user }) => ({ ...user }),
             handleSubmit,

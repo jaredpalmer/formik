@@ -218,14 +218,9 @@ export class Formik<Values = object, ExtraProps = {}> extends React.Component<
       if (maybePromisedErrors === undefined) {
         resolve({});
       } else if (isPromise(maybePromisedErrors)) {
-        (maybePromisedErrors as Promise<any>).then(
-          () => {
-            resolve({});
-          },
-          errors => {
-            resolve(errors);
-          }
-        );
+        (maybePromisedErrors as Promise<any>).then(errors => {
+          resolve(errors);
+        });
       } else {
         resolve(maybePromisedErrors);
       }

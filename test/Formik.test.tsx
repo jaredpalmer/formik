@@ -442,7 +442,7 @@ describe('<Formik>', () => {
               component={Form}
               validate={() =>
                 sleep(25).then(() => {
-                  throw { name: 'error!' };
+                  return { name: 'error!' };
                 })
               }
             />

@@ -9,23 +9,37 @@ import {
   FormikValues,
   FormikProps,
 } from './types';
-import { isFunction, isString, setIn, isEmptyChildren } from './utils';
+import {
+  isFunction,
+  isString,
+  setIn,
+  isEmptyChildren,
+  isPromise,
+  setNestedObjectValues,
+  getActiveElement,
+  getIn,
+} from './utils';
 import { FormikProvider } from './FormikContext';
+import warning from 'warning';
 
 const defer = (cb?: () => void) => Promise.resolve().then(cb);
 
 // We already used FormikActions. So we'll go all Elm-y, and use Message.
 type FormikMessage<Values> =
   | { type: 'SUBMIT_ATTEMPT' }
-  | { type: 'SUBMIT_FAILURE'; payload: FormikErrors<Values> }
+  | { type: 'SUBMIT_FAILURE' }
   | { type: 'SUBMIT_SUCESS' }
   | { type: 'SET_ISVALIDATING'; payload: boolean }
   | { type: 'SET_ISSUBMITTING'; payload: boolean }
   | { type: 'SET_VALUES'; payload: Values }
+  | { type: 'SET_FIELD_VALUE'; payload: { field: string; value?: any } }
+  | { type: 'SET_FIELD_TOUCHED'; payload: { field: string; value?: boolean } }
+  | { type: 'SET_FIELD_ERROR'; payload: { field: string; value?: string } }
   | { type: 'SET_TOUCHED'; payload: FormikTouched<Values> }
   | { type: 'SET_ERRORS'; payload: FormikErrors<Values> }
   | { type: 'SET_STATUS'; payload: any }
-  | { type: 'SET_FORMIK_STATE'; payload: FormikState<Values> };
+  | { type: 'SET_FORMIK_STATE'; payload: FormikState<Values> }
+  | { type: 'RESET_FORM'; payload: FormikState<Values> };
 
 // State reducer
 function formikReducer<Values>(
@@ -45,8 +59,39 @@ function formikReducer<Values>(
       return { ...state, isValidating: msg.payload };
     case 'SET_ISSUBMITTING':
       return { ...state, isSubmitting: msg.payload };
+    case 'SET_FIELD_VALUE':
+      return {
+        ...state,
+        values: setIn(state.values, msg.payload.field, msg.payload.value),
+      };
+    case 'SET_FIELD_TOUCHED':
+      return {
+        ...state,
+        touched: setIn(state.touched, msg.payload.field, msg.payload.value),
+      };
+    case 'SET_FIELD_ERROR':
+      return {
+        ...state,
+        errors: setIn(state.errors, msg.payload.field, msg.payload.value),
+      };
+    case 'RESET_FORM':
     case 'SET_FORMIK_STATE':
       return { ...state, ...msg.payload };
+    case 'SUBMIT_ATTEMPT':
+      return {
+        ...state,
+        touched: setNestedObjectValues<FormikTouched<Values>>(
+          state.values,
+          true
+        ),
+        isSubmitting: true,
+        submitCount: state.submitCount + 1,
+      };
+    case 'SUBMIT_FAILURE':
+      return {
+        ...state,
+        isSubmitting: false,
+      };
     default:
       return state;
   }
@@ -56,6 +101,15 @@ export function useFormik<Values = object, ExtraProps = {}>(
   props: FormikConfig<Values> & ExtraProps
 ) {
   const initialValues = React.useRef(props.initialValues);
+
+  const didMount = React.useRef<boolean>(false);
+  React.useEffect(() => {
+    didMount.current = true;
+    return function unMount() {
+      didMount.current = false;
+    };
+  }, []);
+
   const fields = React.useRef<{
     [field: string]: {
       validate: (value: any) => string | Promise<string> | undefined;
@@ -79,6 +133,22 @@ export function useFormik<Values = object, ExtraProps = {}>(
     isValidating: false,
     submitCount: 0,
   });
+
+  const imperativeMethods = {
+    resetForm,
+    submitForm,
+    validateForm,
+    validateField,
+    setErrors,
+    setFieldError,
+    setFieldTouched,
+    setFieldValue,
+    setStatus,
+    setSubmitting,
+    setTouched,
+    setValues,
+    setFormikState,
+  };
 
   function registerField(name: string, validate: any) {
     if (fields.current !== null) {
@@ -117,13 +187,13 @@ export function useFormik<Values = object, ExtraProps = {}>(
       }
 
       dispatch({
-        type: 'SET_TOUCHED',
-        payload: setIn(state.touched, field, true),
+        type: 'SET_FIELD_TOUCHED',
+        payload: { field, value: true },
       });
 
       if (props.validateOnBlur) {
         defer(() => {
-          runValidations(state.values);
+          validateForm(state.values);
         });
       }
     }
@@ -179,11 +249,10 @@ export function useFormik<Values = object, ExtraProps = {}>(
 
       if (field) {
         // Set form fields by name
-        const nextValues = setIn(state.values, field!, val);
-        dispatch({ type: 'SET_VALUES', payload: nextValues });
+        dispatch({ type: 'SET_FIELD_VALUE', payload: { field, value: val } });
         if (props.validateOnChange) {
           defer(() => {
-            runValidations(nextValues);
+            validateForm(setIn(state.values, field!, val));
           });
         }
       }
@@ -191,15 +260,77 @@ export function useFormik<Values = object, ExtraProps = {}>(
   }
 
   function handleReset() {
-    throw new Error('not yet implemented');
+    if (props.onReset) {
+      const maybePromisedOnReset = (props.onReset as any)(
+        state.values,
+        imperativeMethods
+      );
+
+      if (isPromise(maybePromisedOnReset)) {
+        (maybePromisedOnReset as Promise<any>).then(resetForm);
+      } else {
+        resetForm();
+      }
+    } else {
+      resetForm();
+    }
   }
 
-  function handleSubmit() {
-    throw new Error('not yet implemented');
+  function handleSubmit(e: React.FormEvent<HTMLFormElement> | undefined) {
+    if (e && e.preventDefault) {
+      e.preventDefault();
+    }
+
+    // Warn if form submission is triggered by a <button> without a
+    // specified `type` attribute during development. This mitigates
+    // a common gotcha in forms with both reset and submit buttons,
+    // where the dev forgets to add type="button" to the reset button.
+    if (
+      process.env.NODE_ENV !== 'production' &&
+      typeof document !== 'undefined'
+    ) {
+      // Safely get the active element (works with IE)
+      const activeElement = getActiveElement();
+      if (
+        activeElement !== null &&
+        activeElement instanceof HTMLButtonElement
+      ) {
+        warning(
+          !!(
+            activeElement.attributes &&
+            activeElement.attributes.getNamedItem('type')
+          ),
+          'You submitted a Formik form using a button with an unspecified `type` attribute.  Most browsers default button elements to `type="submit"`. If this is not a submit button, please add `type="button"`.'
+        );
+      }
+    }
+
+    submitForm();
   }
 
-  function resetForm() {
-    throw new Error('not yet implemented');
+  function executeSubmit() {
+    props.onSubmit(state.values, imperativeMethods);
+  }
+
+  function resetForm(nextValues?: Values) {
+    const values = nextValues
+      ? nextValues
+      : initialValues.current !== null
+        ? initialValues.current
+        : props.initialValues;
+    initialValues.current = values;
+    dispatch({
+      type: 'RESET_FORM',
+      payload: {
+        isSubmitting: false,
+        isValidating: false,
+        errors: {},
+        touched: {},
+        status: undefined,
+        values,
+        submitCount: 0,
+      },
+    });
   }
 
   function setTouched(touched: FormikTouched<Values>) {
@@ -214,10 +345,10 @@ export function useFormik<Values = object, ExtraProps = {}>(
     dispatch({ type: 'SET_VALUES', payload: values });
   }
 
-  function setFieldError(field: string, message: string | undefined) {
+  function setFieldError(field: string, value: string | undefined) {
     dispatch({
-      type: 'SET_ERRORS',
-      payload: setIn(state.errors, field, message),
+      type: 'SET_FIELD_ERROR',
+      payload: { field, value },
     });
   }
 
@@ -226,14 +357,16 @@ export function useFormik<Values = object, ExtraProps = {}>(
     value: any,
     shouldValidate: boolean = true
   ) {
-    const nextValues = setIn(state.values, field, value);
     dispatch({
-      type: 'SET_VALUES',
-      payload: nextValues,
+      type: 'SET_FIELD_VALUE',
+      payload: {
+        field,
+        value,
+      },
     });
     if (props.validateOnChange && shouldValidate) {
       defer(() => {
-        runValidations(state.values);
+        validateForm(setIn(state.values, field, value));
       });
     }
   }
@@ -250,13 +383,171 @@ export function useFormik<Values = object, ExtraProps = {}>(
     });
     if (props.validateOnBlur && shouldValidate) {
       defer(() => {
-        runValidations(state.values);
+        validateForm(state.values);
       });
     }
   }
 
-  function runValidations(values: Values) {
-    return;
+  function validateField(name: string) {
+    // This will efficiently validate a single field by avoiding state
+    // changes if the validation function is synchronous. It's different from
+    // what is called when using validateForm.
+    if (
+      fields.current !== null &&
+      fields.current[name] &&
+      fields.current[name].validate &&
+      isFunction(fields.current[name].validate)
+    ) {
+      const value = getIn(state.values, name);
+      const validateFn = fields.current[name].validate;
+      if (isPromise(validateFn)) {
+        // Only flip isValidating if the function is async.
+        dispatch({ type: 'SET_ISVALIDATING', payload: true });
+        return (validateFn as any)(value)
+          .then((x: any) => x, (e: any) => e)
+          .then((error: string) => {
+            dispatch({
+              type: 'SET_FIELD_ERROR',
+              payload: { field: name, value: error },
+            });
+            dispatch({ type: 'SET_ISVALIDATING', payload: true });
+          });
+      } else {
+        const error = validateFn(value);
+        dispatch({
+          type: 'SET_FIELD_ERROR',
+          payload: {
+            field: name,
+            value: error as string | undefined,
+          },
+        });
+        return Promise.resolve(error as string | undefined);
+      }
+    } else {
+      return Promise.resolve();
+    }
+  }
+
+  function runSingleFieldLevelValidationAsPromise(
+    field: string,
+    value: void | string
+  ): Promise<string> {
+    return new Promise(resolve => {
+      if (
+        fields.current !== null &&
+        fields.current[name] &&
+        fields.current[name].validate &&
+        isFunction(fields.current[name].validate)
+      ) {
+        resolve(fields.current[field].validate(value));
+      }
+    }).then(x => x, e => e);
+  }
+
+  function runFieldLevelValidations(
+    values: Values
+  ): Promise<FormikErrors<Values>> {
+    if (fields.current === null) {
+      return Promise.resolve({});
+    }
+    const fieldKeysWithValidation: string[] = Object.keys(
+      fields.current
+    ).filter(
+      f =>
+        fields.current !== null &&
+        fields.current[f] &&
+        fields.current[f].validate &&
+        isFunction(fields.current[f].validate)
+    );
+
+    // Construct an array with all of the field validation functions
+    const fieldValidations: Promise<string>[] =
+      fieldKeysWithValidation.length > 0
+        ? fieldKeysWithValidation.map(f =>
+            runSingleFieldLevelValidationAsPromise(f, getIn(values, f))
+          )
+        : [Promise.resolve('DO_NOT_DELETE_YOU_WILL_BE_FIRED')]; // use special case ;)
+
+    return Promise.all(fieldValidations).then((fieldErrorsList: string[]) =>
+      fieldErrorsList.reduce(
+        (prev, curr, index) => {
+          if (curr === 'DO_NOT_DELETE_YOU_WILL_BE_FIRED') {
+            return prev;
+          }
+          if (!!curr) {
+            prev = setIn(prev, fieldKeysWithValidation[index], curr);
+          }
+          return prev;
+        },
+        {} as FormikErrors<Values>
+      )
+    );
+  }
+
+  function runValidateHandler(values: Values): Promise<FormikErrors<Values>> {
+    return new Promise(resolve => {
+      const maybePromisedErrors = (props.validate as any)(values);
+      if (maybePromisedErrors === undefined) {
+        resolve({});
+      } else if (isPromise(maybePromisedErrors)) {
+        (maybePromisedErrors as Promise<any>).then(
+          () => {
+            resolve({});
+          },
+          errors => {
+            resolve(errors);
+          }
+        );
+      } else {
+        resolve(maybePromisedErrors);
+      }
+    });
+  }
+
+  /**
+   * Run validation against a Yup schema and optionally run a function if successful
+   */
+  function validateFormchema(values: Values) {
+    return new Promise(resolve => {
+      const { validationSchema } = props;
+      const schema = isFunction(validationSchema)
+        ? validationSchema()
+        : validationSchema;
+      validateYupSchema(values, schema).then(
+        () => {
+          resolve({});
+        },
+        (err: any) => {
+          resolve(yupToFormErrors(err));
+        }
+      );
+    });
+  }
+
+  /**
+   * Run all validations methods and update state accordingly
+   */
+  function validateForm(
+    values: Values = state.values
+  ): Promise<FormikErrors<Values>> {
+    dispatch({ type: 'SET_ISVALIDATING', payload: true });
+    return Promise.all([
+      runFieldLevelValidations(values),
+      props.validationSchema ? validateFormchema(values) : {},
+      props.validate ? runValidateHandler(values) : {},
+    ]).then(([fieldErrors, schemaErrors, handlerErrors]) => {
+      const combinedErrors = deepmerge.all<FormikErrors<Values>>(
+        [fieldErrors, schemaErrors, handlerErrors],
+        { arrayMerge }
+      );
+
+      if (didMount) {
+        dispatch({ type: 'SET_ISVALIDATING', payload: true });
+        dispatch({ type: 'SET_ERRORS', payload: combinedErrors });
+      }
+
+      return combinedErrors;
+    });
   }
 
   function setFormikState<K extends keyof FormikState<Values>>(
@@ -280,8 +571,18 @@ export function useFormik<Values = object, ExtraProps = {}>(
   }
 
   function submitForm() {
-    throw new Error('not yet implemented');
+    dispatch({ type: 'SUBMIT_ATTEMPT' });
+    return validateForm().then((combinedErrors: FormikErrors<Values>) => {
+      const isValid = Object.keys(combinedErrors).length === 0;
+      if (isValid) {
+        executeSubmit();
+      } else if (didMount.current) {
+        // ^^^ Make sure Formik is still mounted before calling setState
+        dispatch({ type: 'SUBMIT_FAILURE' });
+      }
+    });
   }
+
   const dirty = React.useMemo(() => !isEqual(initialValues, state.values), [
     initialValues,
     state.values,

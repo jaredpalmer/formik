@@ -1,7 +1,8 @@
 import * as React from 'react';
 import hoistNonReactStatics from 'hoist-non-react-statics';
+
 import { FormikCtx } from './types';
-import { useFormikContext } from './FormikContext';
+import { FormikConsumer } from './FormikContext';
 
 /**
  * Connect any component to Formik context, and inject as a prop called `formik`;
@@ -10,10 +11,11 @@ import { useFormikContext } from './FormikContext';
 export function connect<OuterProps, Values = {}>(
   Comp: React.ComponentType<OuterProps & { formik: FormikCtx<Values> }>
 ) {
-  const C: React.SFC<OuterProps> = (props: OuterProps) => {
-    const formik = useFormikContext<Values>();
-    return <Comp {...props} formik={formik} />;
-  };
+  const C: React.SFC<OuterProps> = (props: OuterProps) => (
+    <FormikConsumer>
+      {formik => <Comp {...props} formik={formik} />}
+    </FormikConsumer>
+  );
   // Assign Comp to C.WrappedComponent so we can access the inner component in tests
   // For example, <Field.WrappedComponent /> gets us <FieldInner/>
   (C as React.SFC<OuterProps> & {

@@ -22,6 +22,7 @@ import {
 import { FormikProvider } from './FormikContext';
 import warning from 'warning';
 
+// We will eventually use scheduler's callback/deferredUpdate whenever that lands
 const defer = (cb?: () => void) => Promise.resolve().then(cb);
 
 // We already used FormikActions. So we'll go all Elm-y, and use Message.

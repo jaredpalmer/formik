@@ -123,8 +123,7 @@ export interface FormikActions<Values> {
   setFieldTouched(field: string, isTouched?: boolean): void;
   /** Set Formik state, careful! */
   setFormikState<K extends keyof FormikState<Values>>(
-    state: Pick<FormikState<Values>, K>,
-    callback?: () => any
+    state: Pick<FormikState<Values>, K>
   ): void;
 }
 

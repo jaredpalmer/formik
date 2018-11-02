@@ -23,7 +23,7 @@ import { FormikProvider } from './FormikContext';
 import warning from 'warning';
 
 // We will eventually use scheduler's callback/deferredUpdate whenever that lands
-const defer = (cb?: () => void) => Promise.resolve().then(cb);
+const defer = (cb: () => void) => Promise.resolve().then(cb);
 
 // We already used FormikActions. So we'll go all Elm-y, and use Message.
 type FormikMessage<Values> =
@@ -101,6 +101,13 @@ function formikReducer<Values>(
 export function useFormik<Values = object, ExtraProps = {}>(
   props: FormikConfig<Values> & ExtraProps
 ) {
+  const {
+    validateOnChange = true,
+    validateOnBlur = true,
+    isInitialValid = false,
+    // enableReinitialize = false, @todo
+  } = props;
+
   const initialValues = React.useRef(props.initialValues);
 
   const didMount = React.useRef<boolean>(false);
@@ -251,7 +258,7 @@ export function useFormik<Values = object, ExtraProps = {}>(
       if (field) {
         // Set form fields by name
         dispatch({ type: 'SET_FIELD_VALUE', payload: { field, value: val } });
-        if (props.validateOnChange) {
+        if (validateOnChange) {
           defer(() => {
             validateForm(setIn(state.values, field!, val));
           });
@@ -365,7 +372,7 @@ export function useFormik<Values = object, ExtraProps = {}>(
         value,
       },
     });
-    if (props.validateOnChange && shouldValidate) {
+    if (validateOnChange && shouldValidate) {
       defer(() => {
         validateForm(setIn(state.values, field, value));
       });
@@ -382,7 +389,7 @@ export function useFormik<Values = object, ExtraProps = {}>(
       type: 'SET_TOUCHED',
       payload: nextTouched,
     });
-    if (props.validateOnBlur && shouldValidate) {
+    if (validateOnBlur && shouldValidate) {
       defer(() => {
         validateForm(state.values);
       });
@@ -508,7 +515,7 @@ export function useFormik<Values = object, ExtraProps = {}>(
   /**
    * Run validation against a Yup schema and optionally run a function if successful
    */
-  function validateFormchema(values: Values) {
+  function validateFormSchema(values: Values) {
     return new Promise(resolve => {
       const { validationSchema } = props;
       const schema = isFunction(validationSchema)
@@ -534,7 +541,7 @@ export function useFormik<Values = object, ExtraProps = {}>(
     dispatch({ type: 'SET_ISVALIDATING', payload: true });
     return Promise.all([
       runFieldLevelValidations(values),
-      props.validationSchema ? validateFormchema(values) : {},
+      props.validationSchema ? validateFormSchema(values) : {},
       props.validate ? runValidateHandler(values) : {},
     ]).then(([fieldErrors, schemaErrors, handlerErrors]) => {
       const combinedErrors = deepmerge.all<FormikErrors<Values>>(
@@ -542,7 +549,7 @@ export function useFormik<Values = object, ExtraProps = {}>(
         { arrayMerge }
       );
 
-      if (didMount) {
+      if (didMount.current) {
         dispatch({ type: 'SET_ISVALIDATING', payload: true });
         dispatch({ type: 'SET_ERRORS', payload: combinedErrors });
       }
@@ -593,12 +600,10 @@ export function useFormik<Values = object, ExtraProps = {}>(
     () =>
       dirty
         ? state.errors && Object.keys(state.errors).length === 0
-        : props.isInitialValid !== false && isFunction(props.isInitialValid)
-          ? (props.isInitialValid as (props: FormikConfig<Values>) => boolean)(
-              props
-            )
-          : (props.isInitialValid as boolean),
-    [state.errors, props.isInitialValid]
+        : isInitialValid !== false && isFunction(isInitialValid)
+          ? (isInitialValid as (props: FormikConfig<Values>) => boolean)(props)
+          : (isInitialValid as boolean),
+    [state.errors, isInitialValid]
   );
   const ctx = {
     ...state,
@@ -618,6 +623,8 @@ export function useFormik<Values = object, ExtraProps = {}>(
     setTouched,
     setValues,
     submitForm,
+    validateForm,
+    validateField,
     isValid,
     dirty,
     unregisterField,

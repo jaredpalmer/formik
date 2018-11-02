@@ -47,7 +47,7 @@ function formikReducer<Values>(
   }
 }
 
-export function Formik<Values = object, ExtraProps = {}>(
+export function useFormik<Values = object, ExtraProps = {}>(
   props: FormikConfig<Values> & ExtraProps
 ) {
   const initialValues = React.useRef(props.initialValues);
@@ -155,7 +155,7 @@ export function Formik<Values = object, ExtraProps = {}>(
   );
   const ctx = {
     ...state,
-    initialValues,
+    initialValues: initialValues.current || props.initialValues,
     handleBlur,
     handleChange,
     handleReset,
@@ -177,9 +177,16 @@ export function Formik<Values = object, ExtraProps = {}>(
     registerField,
   };
 
+  return ctx;
+}
+
+export function Formik<Values = object, ExtraProps = {}>(
+  props: FormikConfig<Values> & ExtraProps
+) {
+  const [formikbag] = useFormik<Values, ExtraProps>(props);
   return (
-    <FormikContext.Provider value={ctx}>
-      {props.children}
+    <FormikContext.Provider value={formikbag}>
+      {isFunction(props.children) ? props.children(formikbag) : props.children}
     </FormikContext.Provider>
   );
 }

@@ -183,7 +183,7 @@ export function useFormik<Values = object, ExtraProps = {}>(
 export function Formik<Values = object, ExtraProps = {}>(
   props: FormikConfig<Values> & ExtraProps
 ) {
-  const [formikbag] = useFormik<Values, ExtraProps>(props);
+  const formikbag = useFormik<Values, ExtraProps>(props);
   return (
     <FormikContext.Provider value={formikbag}>
       {isFunction(props.children) ? props.children(formikbag) : props.children}

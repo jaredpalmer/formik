@@ -107,26 +107,19 @@ class FieldArrayInner<Values = {}> extends React.Component<
   ) => {
     const {
       name,
-      validateOnChange,
-      formik: { setFormikState, validateForm, values, touched, errors },
+      formik: { setFormikState, values, touched, errors },
     } = this.props;
-    setFormikState(
-      (prevState: FormikState<any>) => ({
-        ...prevState,
-        values: setIn(prevState.values, name, fn(getIn(values, name))),
-        errors: alterErrors
-          ? setIn(prevState.errors, name, fn(getIn(errors, name)))
-          : prevState.errors,
-        touched: alterTouched
-          ? setIn(prevState.touched, name, fn(getIn(touched, name)))
-          : prevState.touched,
-      }),
-      () => {
-        if (validateOnChange) {
-          validateForm();
-        }
-      }
-    );
+    setFormikState((prevState: FormikState<any>) => ({
+      ...prevState,
+      values: setIn(prevState.values, name, fn(getIn(values, name))),
+      errors: alterErrors
+        ? setIn(prevState.errors, name, fn(getIn(errors, name)))
+        : prevState.errors,
+      touched: alterTouched
+        ? setIn(prevState.touched, name, fn(getIn(touched, name)))
+        : prevState.touched,
+    }));
+    // @todo validateOnChange
   };
 
   push = (value: any) =>
@@ -177,7 +170,9 @@ class FieldArrayInner<Values = {}> extends React.Component<
     this.updateArrayField(
       (array: any[]) => {
         const arr = array ? [value, ...array] : [value];
-        if (length < 0) length = arr.length;
+        if (length < 0) {
+          length = arr.length;
+        }
         return arr;
       },
       true,

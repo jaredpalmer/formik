@@ -20,7 +20,12 @@ class Index extends React.Component {
     const editUrl = `${siteConfig.repoUrl}/edit/master/website/siteConfig.js`;
     const showcase = siteConfig.users.filter(u => !!u.pinned).map(user => (
       <a href={user.infoLink} key={user.infoLink}>
-        <img src={user.image} alt={user.caption} title={user.caption} />
+        <img
+          src={user.image}
+          alt={user.caption}
+          title={user.caption}
+          style={user.style}
+        />
       </a>
     ));
     return (

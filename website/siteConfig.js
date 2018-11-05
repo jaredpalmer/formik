@@ -11,6 +11,15 @@
 // List of projects/orgs using your project for the users page.
 const users = [
   {
+    caption: 'The Palmer Group',
+    image: '/formik/img/logos/palmer.svg',
+    infoLink: 'https://palmer.net',
+    pinned: true,
+    style: {
+      maxWidth: 50,
+    },
+  },
+  {
     caption: 'Airbnb',
     image: '/formik/img/logos/airbnb.svg',
     infoLink: 'https://airbnb.com',
@@ -42,9 +51,37 @@ const users = [
     pinned: true,
   },
   {
+    caption: 'Viacom',
+    image: '/formik/img/logos/viacom.svg',
+    infoLink: 'https://viacom.com',
+    pinned: true,
+  },
+  {
     caption: 'Nokia',
     image: '/formik/img/logos/nokia.svg',
     infoLink: 'https://nokia.com',
+    pinned: true,
+  },
+  {
+    caption: 'Sony',
+    image: '/formik/img/logos/sony.svg',
+    infoLink: 'https://sony.com',
+    pinned: true,
+  },
+  {
+    caption: 'Postmates',
+    image: '/formik/img/logos/postmates.svg',
+    infoLink: 'https://postmates.com',
+  },
+  {
+    caption: 'Capsule Health',
+    image: '/formik/img/logos/capsule.svg',
+    infoLink: 'https://capsulecares.com',
+  },
+  {
+    caption: 'Frame.io',
+    image: '/formik/img/logos/frameio.png',
+    infoLink: 'https://frame.io',
   },
   {
     caption: 'RVshare',
@@ -120,7 +157,7 @@ const siteConfig = {
   */
 
   // This copyright info is used in /core/Footer.js and blog RSS/Atom feeds.
-  copyright: `Copyright © ${new Date().getFullYear()} Jared Palmer`,
+  copyright: `Copyright © ${new Date().getFullYear()} Jared Palmer. All Rights Reserved.`,
 
   highlight: {
     // Highlight.js theme to use for syntax highlighting in code blocks.

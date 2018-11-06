@@ -364,7 +364,6 @@ describe('A <Field />', () => {
       let actual;
       const Component: React.SFC<FieldProps> = props =>
         (actual = props) && null;
-      actual;
 
       (global as any).console = {
         error: jest.fn(input => (output += input)),
@@ -416,7 +415,6 @@ describe('A <Field />', () => {
       let actual;
       const Component: React.SFC<FieldProps> = props =>
         (actual = props) && null;
-      actual;
 
       (global as any).console = {
         error: jest.fn(input => (output += input)),
@@ -503,8 +501,6 @@ describe('A <Field />', () => {
       let injected: any;
       const Component: React.SFC<FieldProps> = props =>
         (actual = props) && null;
-      actual;
-      injected;
 
       ReactDOM.render(
         <TestForm
@@ -525,8 +521,6 @@ describe('A <Field />', () => {
       let injected: any;
       const Component: React.SFC<FieldProps> = props =>
         (actual = props) && null;
-      actual;
-      injected;
 
       ReactDOM.render(
         <TestForm
@@ -547,8 +541,6 @@ describe('A <Field />', () => {
       let injected: any;
       const Component: React.SFC<FieldProps> = props =>
         (actual = props) && null;
-      actual;
-      injected;
       ReactDOM.render(
         <TestForm
           initialValues={{ user: { superPowers: ['Surging', 'Binding'] } }}

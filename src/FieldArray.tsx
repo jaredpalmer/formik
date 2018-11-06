@@ -149,11 +149,7 @@ class FieldArrayInner<Values = {}> extends React.Component<
     this.swap(indexA, indexB);
 
   move = (from: number, to: number) =>
-    this.updateArrayField(
-      (array: any[]) => move(array, from, to),
-      true,
-      true
-    );
+    this.updateArrayField((array: any[]) => move(array, from, to), true, true);
 
   handleMove = (from: number, to: number) => () => this.move(from, to);
 

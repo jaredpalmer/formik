@@ -541,6 +541,7 @@ describe('A <Field />', () => {
       let injected: any;
       const Component: React.SFC<FieldProps> = props =>
         (actual = props) && null;
+
       ReactDOM.render(
         <TestForm
           initialValues={{ user: { superPowers: ['Surging', 'Binding'] } }}

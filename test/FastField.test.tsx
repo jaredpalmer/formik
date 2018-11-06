@@ -364,6 +364,7 @@ describe('A <Field />', () => {
       let actual;
       const Component: React.SFC<FieldProps> = props =>
         (actual = props) && null;
+
       (global as any).console = {
         error: jest.fn(input => (output += input)),
       };
@@ -487,6 +488,7 @@ describe('A <Field />', () => {
         />,
         node
       );
+
       const { handleBlur, handleChange } = injected;
       expect(actual.field.name).toBe('name');
       expect(actual.field.onChange).toBe(handleChange);
@@ -500,6 +502,7 @@ describe('A <Field />', () => {
       let injected: any;
       const Component: React.SFC<FieldProps> = props =>
         (actual = props) && null;
+
       ReactDOM.render(
         <TestForm
           initialValues={{ user: { superPowers: ['Surging', 'Binding'] } }}

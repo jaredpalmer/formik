@@ -181,7 +181,7 @@ describe('<Formik> alt', () => {
       );
       const input = getByTestId('name-input');
 
-      expect(injected.values.name).toEqual(undefined);
+      expect(injected.values.name).toEqual('jared');
       fireEvent.change(input, {
         target: {
           name: 'name',
@@ -189,7 +189,7 @@ describe('<Formik> alt', () => {
         },
       });
 
-      expect(injected.values.name).toEqual(true);
+      expect(injected.values.name).toEqual('ian');
     });
 
     it('runs validations by default', async () => {

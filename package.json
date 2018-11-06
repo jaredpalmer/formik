@@ -85,6 +85,7 @@
     "raw-loader": "^0.5.1",
     "react": "^16.5.0",
     "react-dom": "^16.5.0",
+    "react-testing-library": "^5.2.3",
     "rimraf": "^2.6.2",
     "rollup": "^0.66.4",
     "rollup-plugin-babel": "^4.0.3",

@@ -113,6 +113,35 @@ describe('<Formik> alt', () => {
       expect(injected.values.name).toEqual('ian');
     });
 
+    it('updates values when passed a string (overloaded)', async () => {
+      let injected: any;
+      const { getByTestId } = render(
+        <Formik initialValues={InitialValues} onSubmit={noop}>
+          {formikProps =>
+            (injected = formikProps) && (
+              <input
+                onChange={formikProps.handleChange('name')}
+                data-testid="name-input"
+              />
+            )
+          }
+        </Formik>
+      );
+      const input = getByTestId('name-input');
+
+      expect(injected.values.name).toEqual(InitialValues.name);
+
+      fireEvent.change(input, {
+        persist: noop,
+        target: {
+          name: 'name',
+          value: 'ian',
+        },
+      });
+
+      expect(injected.values.name).toEqual('ian');
+    });
+
     it('updates values via `name` instead of `id` attribute when both are present', async () => {
       let injected: any;
       const { getByTestId } = render(
@@ -136,11 +165,43 @@ describe('<Formik> alt', () => {
       expect(injected.values.name).toEqual('ian');
     });
 
-    it('runs validate by default', async () => {
-      const validate = jest.fn(noop);
+    it('updates values when passed a string (overloaded)', async () => {
+      let injected: any;
+      const { getByTestId } = render(
+        <Formik initialValues={InitialValues} onSubmit={noop}>
+          {formikProps =>
+            (injected = formikProps) && (
+              <input
+                onChange={formikProps.handleChange('name')}
+                data-testid="name-input"
+              />
+            )
+          }
+        </Formik>
+      );
+      const input = getByTestId('name-input');
+
+      expect(injected.values.name).toEqual(undefined);
+      fireEvent.change(input, {
+        target: {
+          name: 'name',
+          value: 'ian',
+        },
+      });
+
+      expect(injected.values.name).toEqual(true);
+    });
+
+    it('runs validations by default', async () => {
+      const validate = jest.fn(() => Promise.resolve());
+      // let's just recycle here
+      const validationSchema = {
+        validate,
+      };
       const { getByTestId } = render(
         <Formik
           validate={validate}
+          validationSchema={validationSchema}
           initialValues={InitialValues}
           onSubmit={noop}
           component={Form}
@@ -154,10 +215,10 @@ describe('<Formik> alt', () => {
           value: 'ian',
         },
       });
-      expect(validate).toHaveBeenCalled();
+      expect(validate).toHaveBeenCalledTimes(2);
     });
 
-    it('runs validate if validateOnChange is true', async () => {
+    it('runs validations if validateOnChange is true', async () => {
       const validate = jest.fn(() => Promise.resolve());
       // let's just recycle here
       const validationSchema = {
@@ -184,7 +245,7 @@ describe('<Formik> alt', () => {
       expect(validate).toHaveBeenCalledTimes(2);
     });
 
-    it('does NOT run validation if validateOnChange is false', async () => {
+    it('does NOT run validations if validateOnChange is false', async () => {
       const validate = jest.fn(() => Promise.resolve());
       const validationSchema = {
         validate,
@@ -210,73 +271,162 @@ describe('<Formik> alt', () => {
       expect(validate).not.toHaveBeenCalled();
     });
   });
+
+  describe('handleBlur', () => {
+    it('sets touched state', async () => {
+      let injected: any;
+      const { getByTestId } = render(
+        <Formik initialValues={InitialValues} onSubmit={noop}>
+          {formikProps => (injected = formikProps) && <Form {...formikProps} />}
+        </Formik>
+      );
+      const input = getByTestId('name-input');
+      expect(injected.touched.name).toEqual(undefined);
+      fireEvent.blur(input, {
+        target: {
+          name: 'name',
+        },
+      });
+      expect(injected.touched.name).toEqual(true);
+    });
+
+    it('updates touched state via `name` instead of `id` attribute when both are present', async () => {
+      let injected: any;
+      const { getByTestId } = render(
+        <Formik initialValues={InitialValues} onSubmit={noop}>
+          {formikProps => (injected = formikProps) && <Form {...formikProps} />}
+        </Formik>
+      );
+      const input = getByTestId('name-input');
+      expect(injected.touched.name).toEqual(undefined);
+      fireEvent.blur(input, {
+        target: {
+          id: 'blah',
+          name: 'name',
+        },
+      });
+      expect(injected.touched.name).toEqual(true);
+    });
+
+    it('updates touched when passed a string (overloaded)', async () => {
+      let injected: any;
+      const { getByTestId } = render(
+        <Formik initialValues={InitialValues} onSubmit={noop}>
+          {formikProps =>
+            (injected = formikProps) && (
+              <input
+                onBlur={formikProps.handleBlur('name')}
+                data-testid="name-input"
+              />
+            )
+          }
+        </Formik>
+      );
+      const input = getByTestId('name-input');
+
+      expect(injected.touched.name).toEqual(undefined);
+      fireEvent.blur(input, {
+        target: {
+          name: 'name',
+          value: 'ian',
+        },
+      });
+
+      expect(injected.touched.name).toEqual(true);
+    });
+
+    it('runs validate by default', async () => {
+      const validate = jest.fn(noop);
+      const { getByTestId } = render(
+        <Formik
+          validate={validate}
+          initialValues={InitialValues}
+          onSubmit={noop}
+          component={Form}
+        />
+      );
+      const input = getByTestId('name-input');
+      fireEvent.blur(input, {
+        target: {
+          name: 'name',
+        },
+      });
+      expect(validate).toHaveBeenCalled();
+    });
+
+    it('runs validations by default', async () => {
+      const validate = jest.fn(() => Promise.resolve());
+      const validationSchema = {
+        validate,
+      };
+      const { getByTestId } = render(
+        <Formik
+          validate={validate}
+          validationSchema={validationSchema}
+          initialValues={InitialValues}
+          onSubmit={noop}
+          component={Form}
+        />
+      );
+      const input = getByTestId('name-input');
+      fireEvent.blur(input, {
+        target: {
+          name: 'name',
+        },
+      });
+      expect(validate).toHaveBeenCalledTimes(2);
+    });
+    it('runs validations if validateOnBlur is true', async () => {
+      const validate = jest.fn(() => Promise.resolve());
+      const validationSchema = {
+        validate,
+      };
+      const { getByTestId } = render(
+        <Formik
+          validate={validate}
+          validationSchema={validationSchema}
+          initialValues={InitialValues}
+          validateOnBlur={true}
+          onSubmit={noop}
+          component={Form}
+        />
+      );
+      const input = getByTestId('name-input');
+      fireEvent.blur(input, {
+        target: {
+          name: 'name',
+        },
+      });
+      expect(validate).toHaveBeenCalledTimes(2);
+    });
+    it('dost NOT run validations if validateOnBlur is false', async () => {
+      const validate = jest.fn(() => Promise.resolve());
+      const validationSchema = {
+        validate,
+      };
+      const { getByTestId } = render(
+        <Formik
+          validate={validate}
+          validationSchema={validationSchema}
+          initialValues={InitialValues}
+          validateOnBlur={false}
+          onSubmit={noop}
+          component={Form}
+        />
+      );
+      const input = getByTestId('name-input');
+      fireEvent.blur(input, {
+        target: {
+          name: 'name',
+        },
+      });
+      expect(validate).not.toHaveBeenCalled();
+    });
+  });
 });
 
 describe('<Formik>', () => {
   describe('FormikHandlers', () => {
-    describe('handleBlur', () => {
-      it('sets touched state', () => {
-        const tree = shallow(BasicForm);
-
-        // Simulate a blur event in the inner Form component's input
-        tree
-          .find(Form)
-          .dive()
-          .find('input')
-          .simulate('blur', {
-            persist: noop,
-            target: {
-              id: 'name',
-            },
-          });
-        expect(tree.update().state().touched).toEqual({ name: true });
-      });
-
-      it('updates touched state via `name` instead of `id` attribute when both are present', () => {
-        const tree = shallow(BasicForm);
-
-        // Simulate a blur event in the inner Form component's input
-        tree
-          .find(Form)
-          .dive()
-          .find('input')
-          .simulate('blur', {
-            persist: noop,
-            target: {
-              id: 'person-1-name-blah',
-              name: 'name',
-            },
-          });
-        expect(tree.update().state().touched).toEqual({ name: true });
-      });
-
-      it('runs validations if validateOnBlur is set to true ', async () => {
-        const validate = jest.fn(noop);
-
-        const tree = shallow(
-          <Formik
-            initialValues={{ name: 'jared' }}
-            onSubmit={noop}
-            component={Form}
-            validate={validate}
-            validateOnBlur={true}
-          />
-        );
-
-        tree
-          .find(Form)
-          .dive()
-          .find('input')
-          .simulate('blur', {
-            persist: noop,
-            target: {
-              name: 'name',
-            },
-          });
-        expect(validate).toHaveBeenCalledTimes(1);
-      });
-    });
-
     describe('handleSubmit', () => {
       it('should call preventDefault()', () => {
         const tree = shallow(BasicForm);

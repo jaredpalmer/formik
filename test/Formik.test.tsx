@@ -47,11 +47,15 @@ const Form: React.SFC<FormikProps<Values>> = ({
 
 const InitialValues = { name: 'jared' };
 
-const renderFormik = ({ ref, ...props }: any = {}) => {
+const renderFormik = (props: any = {}) => {
+  const ref = React.createRef<Formik>();
   let injected: any;
   return {
     getProps() {
       return injected;
+    },
+    getRef() {
+      return ref;
     },
     ...render(
       <Formik
@@ -70,24 +74,24 @@ const renderFormik = ({ ref, ...props }: any = {}) => {
 //   <Formik initialValues={{ name: 'jared' }} onSubmit={noop} component={Form} />
 // );
 
-class WithState extends React.Component<{}, { data: { name: string } }> {
-  constructor(props: {}) {
-    super(props);
-    this.state = {
-      data: { name: 'ivan' },
-    };
-  }
+// class WithState extends React.Component<{}, { data: { name: string } }> {
+//   constructor(props: {}) {
+//     super(props);
+//     this.state = {
+//       data: { name: 'ivan' },
+//     };
+//   }
 
-  render() {
-    return (
-      <Formik
-        initialValues={this.state.data}
-        onSubmit={noop}
-        component={Form}
-      />
-    );
-  }
-}
+//   render() {
+//     return (
+//       <Formik
+//         initialValues={this.state.data}
+//         onSubmit={noop}
+//         component={Form}
+//       />
+//     );
+//   }
+// }
 
 describe('<Formik> alt', () => {
   const InitialValues = { name: 'jared' };
@@ -1139,6 +1143,75 @@ describe('<Formik> alt', () => {
     });
   });
 
+  describe('componentDidUpdate', () => {
+    let formik: any, initialValues: any;
+    beforeEach(() => {
+      initialValues = {
+        name: 'formik',
+        github: { repoUrl: 'https://github.com/jaredpalmer/formik' },
+        watchers: ['ian', 'sam'],
+      };
+
+      const { getRef } = renderFormik({
+        initialValues,
+        enableReinitialize: true,
+      });
+      formik = getRef();
+      formik.current.resetForm = jest.fn();
+    });
+
+    it('should not resetForm if new initialValues are the same as previous', () => {
+      const newInitialValues = Object.assign({}, initialValues);
+      formik.current.componentDidUpdate({
+        initialValues: newInitialValues,
+        onSubmit: noop,
+      });
+      expect(formik.current.resetForm).not.toHaveBeenCalled();
+    });
+
+    it('should resetForm if new initialValues are different than previous', () => {
+      const newInitialValues = {
+        ...initialValues,
+        watchers: ['jared', 'ian', 'sam'],
+      };
+      formik.current.componentDidUpdate({
+        initialValues: newInitialValues,
+        onSubmit: noop,
+      });
+      expect(formik.current.resetForm).toHaveBeenCalled();
+    });
+
+    it('should resetForm if new initialValues are deeply different than previous', () => {
+      const newInitialValues = {
+        ...initialValues,
+        github: { repoUrl: 'different' },
+      };
+      formik.current.componentDidUpdate({
+        initialValues: newInitialValues,
+        onSubmit: noop,
+      });
+      expect(formik.current.resetForm).toHaveBeenCalled();
+    });
+
+    it('should NOT resetForm without enableReinitialize flag', () => {
+      const { getRef } = renderFormik({
+        initialValues,
+      });
+      formik = getRef();
+      formik.current.resetForm = jest.fn();
+
+      const newInitialValues = {
+        ...initialValues,
+        watchers: ['jared', 'ian', 'sam'],
+      };
+      formik.current.componentDidUpdate({
+        initialValues: newInitialValues,
+        onSubmit: noop,
+      });
+      expect(formik.current.resetForm).not.toHaveBeenCalled();
+    });
+  });
+
   it('should warn against buttons with unspecified type', () => {
     const { getByText, getByTestId } = render(
       <Formik onSubmit={noop} initialValues={{ opensource: 'yay' }}>
@@ -1348,71 +1421,4 @@ describe('<Formik> alt', () => {
   });
 });
 
-describe('<Formik>', () => {
-  describe('componentDidUpdate', () => {
-    let form: any, initialValues: any;
-    beforeEach(() => {
-      initialValues = {
-        name: 'formik',
-        github: { repoUrl: 'https://github.com/jaredpalmer/formik' },
-        watchers: ['ian', 'sam'],
-      };
-      form = new Formik({
-        initialValues,
-        onSubmit: jest.fn(),
-        enableReinitialize: true,
-      });
-      form.resetForm = jest.fn();
-    });
-
-    it('should not resetForm if new initialValues are the same as previous', () => {
-      const newInitialValues = Object.assign({}, initialValues);
-      form.componentDidUpdate({
-        initialValues: newInitialValues,
-        onSubmit: jest.fn(),
-      });
-      expect(form.resetForm).not.toHaveBeenCalled();
-    });
-
-    it('should resetForm if new initialValues are different than previous', () => {
-      const newInitialValues = {
-        ...initialValues,
-        watchers: ['jared', 'ian', 'sam'],
-      };
-      form.componentDidUpdate({
-        initialValues: newInitialValues,
-        onSubmit: jest.fn(),
-      });
-      expect(form.resetForm).toHaveBeenCalled();
-    });
-
-    it('should resetForm if new initialValues are deeply different than previous', () => {
-      const newInitialValues = {
-        ...initialValues,
-        github: { repoUrl: 'different' },
-      };
-      form.componentDidUpdate({
-        initialValues: newInitialValues,
-        onSubmit: jest.fn(),
-      });
-      expect(form.resetForm).toHaveBeenCalled();
-    });
-
-    it('should NOT resetForm without enableReinitialize flag', () => {
-      form = new Formik({
-        initialValues,
-        onSubmit: jest.fn(),
-      });
-      form.resetForm = jest.fn();
-      const newInitialValues = {
-        ...initialValues,
-        watchers: ['jared', 'ian', 'sam'],
-      };
-      form.componentDidUpdate({
-        initialValues: newInitialValues,
-        onSubmit: jest.fn(),
-      });
-      expect(form.resetForm).not.toHaveBeenCalled();
-    });
-  });
-});
+describe('<Formik>', () => {});

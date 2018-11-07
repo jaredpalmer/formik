@@ -1138,6 +1138,214 @@ describe('<Formik> alt', () => {
       expect(getProps().submitCount).toEqual(0);
     });
   });
+
+  it('should warn against buttons with unspecified type', () => {
+    const { getByText, getByTestId } = render(
+      <Formik onSubmit={noop} initialValues={{ opensource: 'yay' }}>
+        {({ handleSubmit, handleChange, values }) => (
+          <form onSubmit={handleSubmit} data-testid="form">
+            <input
+              type="text"
+              onChange={handleChange}
+              value={values.opensource}
+              name="name"
+            />
+            <button>Submit</button>
+          </form>
+        )}
+      </Formik>
+    );
+
+    const button = getByText('Submit');
+    button.focus(); // sets activeElement
+
+    fireEvent.submit(getByTestId('form'));
+
+    expect(global.console.error).toHaveBeenCalledWith(
+      expect.stringMatching(
+        /Warning: You submitted a Formik form using a button with an unspecified `type./
+      )
+    );
+
+    button.blur(); // unsets activeElement
+    (global.console.error as jest.Mock<{}>).mockClear();
+  });
+
+  it('should not warn when button has type submit', () => {
+    const { getByText, getByTestId } = render(
+      <Formik onSubmit={noop} initialValues={{ opensource: 'yay' }}>
+        {({ handleSubmit, handleChange, values }) => (
+          <form onSubmit={handleSubmit} data-testid="form">
+            <input
+              type="text"
+              onChange={handleChange}
+              value={values.opensource}
+              name="name"
+            />
+            <button type="submit">Submit</button>
+          </form>
+        )}
+      </Formik>
+    );
+
+    const button = getByText('Submit');
+    button.focus(); // sets activeElement
+
+    fireEvent.submit(getByTestId('form'));
+
+    expect(global.console.error).not.toHaveBeenCalledWith(
+      expect.stringMatching(
+        /Warning: You submitted a Formik form using a button with an unspecified type./
+      )
+    );
+
+    button.blur(); // unsets activeElement
+    (global.console.error as jest.Mock<{}>).mockClear();
+  });
+
+  it('should not warn when activeElement is not a button', () => {
+    const { getByTestId } = render(
+      <Formik onSubmit={noop} initialValues={{ opensource: 'yay' }}>
+        {({ handleSubmit, handleChange, values }) => (
+          <form onSubmit={handleSubmit} data-testid="form">
+            <input
+              type="text"
+              onChange={handleChange}
+              value={values.opensource}
+              name="name"
+              data-testid="name-input"
+            />
+            <button type="submit">Submit</button>
+          </form>
+        )}
+      </Formik>
+    );
+    const input = getByTestId('name-input');
+    input.focus(); // sets activeElement
+
+    fireEvent.submit(getByTestId('form'));
+
+    expect(global.console.error).not.toHaveBeenCalledWith(
+      expect.stringMatching(
+        /Warning: You submitted a Formik form using a button with an unspecified type./
+      )
+    );
+
+    input.blur(); // unsets activeElement
+    (global.console.error as jest.Mock<{}>).mockClear();
+  });
+
+  it('submit count increments', async () => {
+    const onSubmit = jest.fn();
+
+    const { getProps } = renderFormik({
+      onSubmit,
+      initialValues: { opensource: 'yay' },
+    });
+
+    expect(getProps().submitCount).toEqual(0);
+    await getProps().submitForm();
+    expect(onSubmit).toHaveBeenCalled();
+    expect(getProps().submitCount).toEqual(1);
+  });
+
+  it('isValidating is fired when submit is attempted', async () => {
+    const onSubmit = jest.fn();
+    const validate = jest.fn(() => ({ opensource: 'no ' }));
+
+    const { getProps } = renderFormik({
+      onSubmit,
+      initialValues: { opensource: 'yay' },
+      validate,
+    });
+
+    expect(getProps().submitCount).toEqual(0);
+    expect(getProps().isSubmitting).toBe(false);
+    expect(getProps().isValidating).toBe(false);
+    // we call set isValidating synchronously
+    const validatePromise = getProps().submitForm();
+    // so it should change
+    expect(getProps().isSubmitting).toBe(true);
+    expect(getProps().isValidating).toBe(true);
+    // do it again async
+    await validatePromise;
+    // now both should be false because validation failed
+    expect(getProps().isSubmitting).toBe(false);
+    expect(getProps().isValidating).toBe(false);
+    expect(validate).toHaveBeenCalled();
+    expect(onSubmit).not.toHaveBeenCalled();
+    expect(getProps().submitCount).toEqual(1);
+  });
+
+  it('isSubmitting is fired when submit is attempted', async () => {
+    const onSubmit = jest.fn();
+    const validate = jest.fn(() => ({}));
+
+    const { getProps } = renderFormik({
+      onSubmit,
+      validate,
+    });
+
+    expect(getProps().submitCount).toEqual(0);
+    expect(getProps().isSubmitting).toBe(false);
+    expect(getProps().isValidating).toBe(false);
+    // we call set isValidating synchronously
+    const validatePromise = getProps().submitForm();
+    // so it should change
+    expect(getProps().isSubmitting).toBe(true);
+    expect(getProps().isValidating).toBe(true);
+    // do it again async
+    await validatePromise;
+    // done validating
+    expect(getProps().isValidating).toBe(false);
+    // now run submit
+    expect(getProps().isSubmitting).toBe(true);
+    expect(validate).toHaveBeenCalled();
+    expect(onSubmit).toHaveBeenCalled();
+    expect(getProps().submitCount).toEqual(1);
+  });
+
+  it('isValidating is fired validation is run', async () => {
+    const validate = jest.fn(() => ({ opensource: 'no' }));
+
+    const { getProps } = renderFormik({
+      initialValues: { opensource: 'yay' },
+      validate,
+    });
+
+    expect(getProps().isValidating).toBe(false);
+    // we call set isValidating synchronously
+    const validatePromise = getProps().validateForm();
+    expect(getProps().isValidating).toBe(true);
+    await validatePromise;
+    expect(validate).toHaveBeenCalled();
+    // so it should change
+    expect(getProps().isValidating).toBe(false);
+  });
+
+  it('should merge validation errors', async () => {
+    const validate = () => ({
+      users: [{ firstName: 'required' }],
+    });
+    const validationSchema = Yup.object({
+      users: Yup.array().of(
+        Yup.object({
+          lastName: Yup.string().required('required'),
+        })
+      ),
+    });
+
+    const { getProps } = renderFormik({
+      initialValues: { users: [{ firstName: '', lastName: '' }] },
+      validate,
+      validationSchema,
+    });
+
+    await getProps().validateForm();
+    expect(getProps().errors).toEqual({
+      users: [{ firstName: 'required', lastName: 'required' }],
+    });
+  });
 });
 
 describe('<Formik>', () => {
@@ -1205,251 +1413,6 @@ describe('<Formik>', () => {
         onSubmit: jest.fn(),
       });
       expect(form.resetForm).not.toHaveBeenCalled();
-    });
-  });
-
-  it('should warn against buttons with unspecified type', () => {
-    const FormWithNoButtonType = () => (
-      <Formik onSubmit={noop} initialValues={{ opensource: 'yay' }}>
-        {({ handleSubmit, handleChange, values }) => (
-          <form onSubmit={handleSubmit}>
-            <input
-              type="text"
-              onChange={handleChange}
-              value={values.opensource}
-              name="name"
-            />
-            <button>Submit</button>
-          </form>
-        )}
-      </Formik>
-    );
-    const tree = mount(<FormWithNoButtonType />);
-    const preventDefault = jest.fn();
-    const button = tree.find('button').getDOMNode();
-
-    button.focus(); // sets activeElement
-    tree.find('form').simulate('submit', {
-      preventDefault,
-    });
-    expect(global.console.error).toHaveBeenCalledWith(
-      expect.stringMatching(
-        /Warning: You submitted a Formik form using a button with an unspecified `type./
-      )
-    );
-
-    button.blur(); // unsets activeElement
-    (global.console.error as jest.Mock<{}>).mockClear();
-  });
-
-  it('should not warn when button has type submit', () => {
-    const FormWithValidButtonType = () => (
-      <Formik onSubmit={noop} initialValues={{ opensource: 'yay' }}>
-        {({ handleSubmit, handleChange, values }) => (
-          <form onSubmit={handleSubmit}>
-            <input
-              type="text"
-              onChange={handleChange}
-              value={values.opensource}
-              name="name"
-            />
-            <button type="submit">Submit</button>
-          </form>
-        )}
-      </Formik>
-    );
-    const tree = mount(<FormWithValidButtonType />);
-    const preventDefault = jest.fn();
-    const button = tree.find('button').getDOMNode();
-
-    button.focus(); // sets activeElement
-    tree.find('form').simulate('submit', {
-      preventDefault,
-    });
-    expect(global.console.error).not.toHaveBeenCalledWith(
-      expect.stringMatching(
-        /Warning: You submitted a Formik form using a button with an unspecified type./
-      )
-    );
-
-    button.blur(); // unsets activeElement
-    (global.console.error as jest.Mock<{}>).mockClear();
-  });
-
-  it('should not warn when activeElement is not a button', () => {
-    const FormWithInput = () => (
-      <Formik onSubmit={noop} initialValues={{ opensource: 'yay' }}>
-        {({ handleSubmit, handleChange, values }) => (
-          <form onSubmit={handleSubmit}>
-            <input
-              type="text"
-              onChange={handleChange}
-              value={values.opensource}
-              name="name"
-            />
-            <button type="submit">Submit</button>
-          </form>
-        )}
-      </Formik>
-    );
-    const tree = mount(<FormWithInput />);
-    const preventDefault = jest.fn();
-    const input = tree.find('input').getDOMNode();
-
-    input.focus(); // sets activeElement
-    tree.find('form').simulate('submit', {
-      preventDefault,
-    });
-    expect(global.console.error).not.toHaveBeenCalledWith(
-      expect.stringMatching(
-        /Warning: You submitted a Formik form using a button with an unspecified type./
-      )
-    );
-
-    input.blur(); // unsets activeElement
-    (global.console.error as jest.Mock<{}>).mockClear();
-  });
-  it('submit count increments', async () => {
-    const node = document.createElement('div');
-    const onSubmit = jest.fn();
-    let injected: any;
-    ReactDOM.render(
-      <Formik onSubmit={onSubmit} initialValues={{ opensource: 'yay' }}>
-        {formikProps => (injected = formikProps) && null}
-      </Formik>,
-      node
-    );
-
-    expect(injected.submitCount).toEqual(0);
-    await injected.submitForm();
-    expect(onSubmit).toHaveBeenCalled();
-    expect(injected.submitCount).toEqual(1);
-  });
-
-  it('isValidating is fired when submit is attempted', async () => {
-    const node = document.createElement('div');
-    const onSubmit = jest.fn();
-    const validate = jest.fn(() => ({ opensource: 'no ' }));
-    let injected: any;
-    ReactDOM.render(
-      <Formik
-        onSubmit={onSubmit}
-        validate={validate}
-        initialValues={{ opensource: 'yay' }}
-      >
-        {formikProps => (injected = formikProps) && null}
-      </Formik>,
-      node
-    );
-
-    expect(injected.submitCount).toEqual(0);
-    expect(injected.isSubmitting).toBe(false);
-    expect(injected.isValidating).toBe(false);
-    // we call set isValidating synchronously
-    const validatePromise = injected.submitForm();
-    // so it should change
-    expect(injected.isSubmitting).toBe(true);
-    expect(injected.isValidating).toBe(true);
-    // do it again async
-    await validatePromise;
-    // now both should be false because validation failed
-    expect(injected.isSubmitting).toBe(false);
-    expect(injected.isValidating).toBe(false);
-    expect(validate).toHaveBeenCalled();
-    expect(onSubmit).not.toHaveBeenCalled();
-    expect(injected.submitCount).toEqual(1);
-  });
-
-  it('isSubmitting is fired when submit is attempted', async () => {
-    const node = document.createElement('div');
-    const onSubmit = jest.fn();
-    const validate = jest.fn(() => ({}));
-    let injected: any;
-    ReactDOM.render(
-      <Formik
-        onSubmit={onSubmit}
-        validate={validate}
-        initialValues={{ opensource: 'yay' }}
-      >
-        {formikProps => (injected = formikProps) && null}
-      </Formik>,
-      node
-    );
-
-    expect(injected.submitCount).toEqual(0);
-    expect(injected.isSubmitting).toBe(false);
-    expect(injected.isValidating).toBe(false);
-    // we call set isValidating synchronously
-    const validatePromise = injected.submitForm();
-    // so it should change
-    expect(injected.isSubmitting).toBe(true);
-    expect(injected.isValidating).toBe(true);
-    // do it again async
-    await validatePromise;
-    // done validating
-    expect(injected.isValidating).toBe(false);
-    // now run submit
-    expect(injected.isSubmitting).toBe(true);
-    expect(validate).toHaveBeenCalled();
-    expect(onSubmit).toHaveBeenCalled();
-    expect(injected.submitCount).toEqual(1);
-  });
-
-  it('isValidating is fired validation is run', async () => {
-    const node = document.createElement('div');
-    const validate = jest.fn(() => ({ opensource: 'no' }));
-    let injected: any;
-    ReactDOM.render(
-      <Formik
-        onSubmit={noop}
-        validate={validate}
-        initialValues={{ opensource: 'yay' }}
-      >
-        {formikProps => (injected = formikProps) && null}
-      </Formik>,
-      node
-    );
-
-    expect(injected.isValidating).toBe(false);
-    // we call set isValidating synchronously
-    const validatePromise = injected.validateForm();
-    expect(injected.isValidating).toBe(true);
-    await validatePromise;
-    expect(validate).toHaveBeenCalled();
-    // so it should change
-    expect(injected.isValidating).toBe(false);
-  });
-
-  it('should merge validation errors', async () => {
-    const validate = () => ({
-      users: [{ firstName: 'required' }],
-    });
-    const validationSchema = Yup.object({
-      users: Yup.array().of(
-        Yup.object({
-          lastName: Yup.string().required('required'),
-        })
-      ),
-    });
-    let injected: any;
-
-    const node = document.createElement('div');
-
-    ReactDOM.render(
-      <Formik
-        initialValues={{ users: [{ firstName: '', lastName: '' }] }}
-        validate={validate}
-        validationSchema={validationSchema}
-        onSubmit={noop}
-      >
-        {formikProps => (injected = formikProps) && null}
-      </Formik>,
-      node
-    );
-
-    await injected.validateForm();
-    expect(injected.errors).toEqual({
-      users: [{ firstName: 'required', lastName: 'required' }],
     });
   });
 });

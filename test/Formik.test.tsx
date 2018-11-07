@@ -917,99 +917,131 @@ describe('<Formik> alt', () => {
       });
     });
   });
-});
 
-describe('<Formik>', () => {
   describe('FormikComputedProps', () => {
     it('should compute dirty as soon as any input is touched', () => {
-      const tree = shallow(BasicForm);
-      expect(tree.find(Form).props().dirty).toBe(false);
-      tree.setState({ values: { name: 'ian' } });
-      expect(tree.find(Form).props().dirty).toBe(true);
+      let injected: any;
+      render(
+        <Formik initialValues={InitialValues} onSubmit={noop}>
+          {formikProps => (injected = formikProps) && <Form {...formikProps} />}
+        </Formik>
+      );
+
+      expect(injected.dirty).toBeFalsy();
+      injected.setValues({ name: 'ian' });
+      expect(injected.dirty).toBeTruthy();
     });
 
     it('should compute isValid if isInitialValid is present and returns true', () => {
-      const tree = shallow(
+      let injected: any;
+      render(
         <Formik
-          initialValues={{ name: 'jared' }}
+          initialValues={InitialValues}
           onSubmit={noop}
-          component={Form}
           isInitialValid={() => true}
-        />
+        >
+          {formikProps => (injected = formikProps) && <Form {...formikProps} />}
+        </Formik>
       );
-      expect(tree.find(Form).props().dirty).toBe(false);
-      expect(tree.find(Form).props().isValid).toBe(true);
+
+      expect(injected.dirty).toBeFalsy();
+      expect(injected.isValid).toBeTruthy();
     });
 
     it('should compute isValid if isInitialValid is present and returns false', () => {
-      const tree = shallow(
+      let injected: any;
+      render(
         <Formik
-          initialValues={{ name: 'jared' }}
+          initialValues={InitialValues}
           onSubmit={noop}
-          component={Form}
           isInitialValid={() => false}
-        />
+        >
+          {formikProps => (injected = formikProps) && <Form {...formikProps} />}
+        </Formik>
       );
-      expect(tree.find(Form).props().dirty).toBe(false);
-      expect(tree.find(Form).props().isValid).toBe(false);
+
+      expect(injected.dirty).toBeFalsy();
+      expect(injected.isValid).toBeFalsy();
     });
 
     it('should compute isValid if isInitialValid boolean is present and set to true', () => {
-      const tree = shallow(
+      let injected: any;
+      render(
         <Formik
-          initialValues={{ name: 'jared' }}
+          initialValues={InitialValues}
           onSubmit={noop}
-          component={Form}
           isInitialValid={true}
-        />
+        >
+          {formikProps => (injected = formikProps) && <Form {...formikProps} />}
+        </Formik>
       );
-      expect(tree.find(Form).props().dirty).toBe(false);
-      expect(tree.find(Form).props().isValid).toBe(true);
+
+      expect(injected.dirty).toBeFalsy();
+      expect(injected.isValid).toBeTruthy();
     });
 
     it('should compute isValid if isInitialValid is present and set to false', () => {
-      const tree = shallow(
+      let injected: any;
+      render(
         <Formik
-          initialValues={{ name: 'jared' }}
+          initialValues={InitialValues}
           onSubmit={noop}
-          component={Form}
           isInitialValid={false}
-        />
+        >
+          {formikProps => (injected = formikProps) && <Form {...formikProps} />}
+        </Formik>
       );
-      expect(tree.find(Form).props().dirty).toBe(false);
-      expect(tree.find(Form).props().isValid).toBe(false);
+
+      expect(injected.dirty).toBeFalsy();
+      expect(injected.isValid).toBeFalsy();
     });
 
     it('should compute isValid if the form is dirty and there are errors', () => {
-      const tree = shallow(BasicForm);
-      tree.setState({ values: { name: 'ian' }, errors: { name: 'Required!' } });
-      expect(tree.find(Form).props().dirty).toBe(true);
-      expect(tree.find(Form).props().isValid).toBe(false);
+      let injected: any;
+      render(
+        <Formik initialValues={InitialValues} onSubmit={noop}>
+          {formikProps => (injected = formikProps) && <Form {...formikProps} />}
+        </Formik>
+      );
+
+      injected.setValues({ name: 'ian' });
+      injected.setErrors({ name: 'Required!' });
+
+      expect(injected.dirty).toBeTruthy();
+      expect(injected.isValid).toBeFalsy();
     });
 
     it('should compute isValid if the form is dirty and there are not errors', () => {
-      const tree = shallow(BasicForm);
-      tree.setState({ values: { name: 'ian' } });
-      expect(tree.find(Form).props().dirty).toBe(true);
-      expect(tree.find(Form).props().isValid).toBe(true);
+      let injected: any;
+      render(
+        <Formik initialValues={InitialValues} onSubmit={noop}>
+          {formikProps => (injected = formikProps) && <Form {...formikProps} />}
+        </Formik>
+      );
+
+      injected.setValues({ name: 'ian' });
+
+      expect(injected.dirty).toBeTruthy();
+      expect(injected.isValid).toBeTruthy();
     });
 
-    it('should increase submitCount after submitting the form', async () => {
-      const tree = shallow(BasicForm);
-      expect(tree.find(Form).props().submitCount).toBe(0);
-      await tree
-        .find(Form)
-        .props()
-        .submitForm();
-      expect(
-        tree
-          .update()
-          .find(Form)
-          .props().submitCount
-      ).toBe(1);
+    it('should increase submitCount after submitting the form', () => {
+      let injected: any;
+      const { getByTestId } = render(
+        <Formik initialValues={InitialValues} onSubmit={noop}>
+          {formikProps => (injected = formikProps) && <Form {...formikProps} />}
+        </Formik>
+      );
+      const form = getByTestId('form');
+
+      expect(injected.submitCount).toBe(0);
+      fireEvent.submit(form);
+      expect(injected.submitCount).toBe(1);
     });
   });
+});
 
+describe('<Formik>', () => {
   describe('componentDidUpdate', () => {
     let form: any, initialValues: any;
     beforeEach(() => {

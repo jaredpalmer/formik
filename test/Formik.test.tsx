@@ -4,7 +4,7 @@ import * as Yup from 'yup';
 import { Formik, FormikProps } from '../src';
 import { shallow, mount } from 'enzyme';
 import { sleep, noop } from './testHelpers';
-import { render, cleanup, fireEvent } from 'react-testing-library';
+import { render, cleanup, fireEvent, wait } from 'react-testing-library';
 
 jest.spyOn(global.console, 'error');
 
@@ -45,9 +45,30 @@ const Form: React.SFC<FormikProps<Values>> = ({
   );
 };
 
-const BasicForm = (
-  <Formik initialValues={{ name: 'jared' }} onSubmit={noop} component={Form} />
-);
+const InitialValues = { name: 'jared' };
+
+const renderFormik = ({ ref, ...props }: any = {}) => {
+  let injected: any;
+  return {
+    getProps() {
+      return injected;
+    },
+    ...render(
+      <Formik
+        initialValues={InitialValues}
+        onSubmit={noop}
+        ref={ref}
+        {...props}
+      >
+        {formikProps => (injected = formikProps) && <Form {...formikProps} />}
+      </Formik>
+    ),
+  };
+};
+
+// const BasicForm = (
+//   <Formik initialValues={{ name: 'jared' }} onSubmit={noop} component={Form} />
+// );
 
 class WithState extends React.Component<{}, { data: { name: string } }> {
   constructor(props: {}) {
@@ -1039,6 +1060,86 @@ describe('<Formik> alt', () => {
       expect(injected.submitCount).toBe(1);
     });
   });
+
+  describe('handleReset', () => {
+    it('should call onReset with values and actions when form is reset', () => {
+      const onReset = jest.fn();
+      const { getProps } = renderFormik({
+        onReset,
+      });
+
+      getProps().handleReset();
+
+      expect(onReset).toHaveBeenCalledWith(
+        { name: 'jared' },
+        expect.objectContaining({
+          resetForm: expect.any(Function),
+          setError: expect.any(Function),
+          setErrors: expect.any(Function),
+          setFieldError: expect.any(Function),
+          setFieldTouched: expect.any(Function),
+          setFieldValue: expect.any(Function),
+          setStatus: expect.any(Function),
+          setSubmitting: expect.any(Function),
+          setTouched: expect.any(Function),
+          setValues: expect.any(Function),
+          submitForm: expect.any(Function),
+        })
+      );
+    });
+
+    it('should not error resetting form if onReset is not a prop', () => {
+      const { getProps } = renderFormik();
+      getProps().handleReset();
+      expect(true);
+    });
+
+    it('should call onReset with values and actions when onReset is a promise', async () => {
+      const ref = React.createRef<Formik>();
+      const onReset = jest.fn(() => Promise.resolve('data'));
+
+      const { getProps } = renderFormik({
+        ref,
+        onReset,
+      });
+
+      ref.current!.resetForm = jest.fn();
+
+      getProps().handleReset();
+
+      await wait(() =>
+        expect(ref.current!.resetForm).toHaveBeenCalledWith('data')
+      );
+    });
+
+    it('should reset dirty flag even if initialValues has changed', () => {
+      const { getProps, getByTestId } = renderFormik();
+
+      expect(getProps().dirty).toBeFalsy();
+
+      fireEvent.change(getByTestId('name-input'), {
+        persist: noop,
+        target: {
+          name: 'name',
+          value: 'Pavel',
+        },
+      });
+      expect(getProps().dirty).toBeTruthy();
+
+      getProps().handleReset();
+      expect(getProps().dirty).toBeFalsy();
+    });
+
+    it('should reset submitCount', () => {
+      const { getProps } = renderFormik();
+
+      getProps().handleSubmit();
+      expect(getProps().submitCount).toEqual(1);
+
+      getProps().handleReset();
+      expect(getProps().submitCount).toEqual(0);
+    });
+  });
 });
 
 describe('<Formik>', () => {
@@ -1106,159 +1207,6 @@ describe('<Formik>', () => {
         onSubmit: jest.fn(),
       });
       expect(form.resetForm).not.toHaveBeenCalled();
-    });
-  });
-
-  describe('handleReset', () => {
-    it('should call onReset with values and actions when form is reset', async () => {
-      const onReset = jest.fn();
-
-      const tree = shallow(
-        <Formik
-          initialValues={{ name: 'jared' }}
-          onSubmit={jest.fn()}
-          onReset={onReset}
-          component={Form}
-        />
-      );
-      await tree
-        .find(Form)
-        .props()
-        .handleReset();
-
-      expect(onReset).toHaveBeenCalledWith(
-        { name: 'jared' },
-        expect.objectContaining({
-          resetForm: expect.any(Function),
-          setError: expect.any(Function),
-          setErrors: expect.any(Function),
-          setFieldError: expect.any(Function),
-          setFieldTouched: expect.any(Function),
-          setFieldValue: expect.any(Function),
-          setStatus: expect.any(Function),
-          setSubmitting: expect.any(Function),
-          setTouched: expect.any(Function),
-          setValues: expect.any(Function),
-          submitForm: expect.any(Function),
-        })
-      );
-    });
-
-    it('should not error resetting form if onReset is not a prop', async () => {
-      const onSubmit = jest.fn();
-
-      const tree = shallow(
-        <Formik
-          initialValues={{ name: 'bar' }}
-          onSubmit={onSubmit}
-          component={Form}
-        />
-      );
-      await tree
-        .find(Form)
-        .props()
-        .handleReset();
-
-      expect(true);
-    });
-
-    it('should call onReset with values and actions when onReset is a promise', async () => {
-      const onReset = jest.fn(() => Promise.resolve('data'));
-
-      const tree = shallow(
-        <Formik
-          initialValues={{ name: 'jared' }}
-          onSubmit={jest.fn()}
-          onReset={onReset}
-          component={Form}
-        />
-      );
-
-      (tree.instance() as any).resetForm = jest.fn();
-
-      await tree
-        .find(Form)
-        .props()
-        .handleReset();
-
-      expect(onReset).toHaveBeenCalledWith(
-        { name: 'jared' },
-        expect.objectContaining({
-          resetForm: expect.any(Function),
-          setError: expect.any(Function),
-          setErrors: expect.any(Function),
-          setFieldError: expect.any(Function),
-          setFieldTouched: expect.any(Function),
-          setFieldValue: expect.any(Function),
-          setStatus: expect.any(Function),
-          setSubmitting: expect.any(Function),
-          setTouched: expect.any(Function),
-          setValues: expect.any(Function),
-          submitForm: expect.any(Function),
-        })
-      );
-
-      expect((tree.instance() as any).resetForm).toHaveBeenCalledWith('data');
-    });
-
-    it('should reset dirty flag even if initialValues has changed', async () => {
-      const tree = mount(<WithState />);
-      expect(tree.find(Form).props().dirty).toEqual(false);
-
-      tree
-        .find(Form)
-        .find('input')
-        .simulate('change', {
-          persist: noop,
-          target: {
-            id: 'name',
-            value: 'Ian',
-          },
-        });
-
-      expect(tree.find(Form).props().dirty).toEqual(true);
-
-      tree.setState({ data: { name: 'Jared' } });
-
-      await tree
-        .find(Form)
-        .props()
-        .handleReset();
-
-      expect(
-        tree
-          .update()
-          .find(Form)
-          .props().dirty
-      ).toEqual(false);
-    });
-
-    it('should reset submitCount', () => {
-      const tree = mount(<WithState />);
-
-      tree
-        .find(Form)
-        .props()
-        .handleSubmit();
-
-      expect(
-        tree
-          .update()
-          .find(Form)
-          .props().submitCount
-      ).toEqual(1);
-
-      tree
-        .find(Form)
-        .props()
-        .handleReset();
-
-      expect(
-        tree
-          .update()
-          .find(Form)
-          .props().submitCount
-      ).toEqual(0);
     });
   });
 

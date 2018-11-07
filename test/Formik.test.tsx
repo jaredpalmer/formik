@@ -653,6 +653,269 @@ describe('<Formik> alt', () => {
         expect(validate).toHaveBeenCalled();
       });
     });
+
+    describe('FormikActions', () => {
+      it('setValues sets values', () => {
+        let injected: any;
+        render(
+          <Formik initialValues={InitialValues} onSubmit={noop}>
+            {formikProps =>
+              (injected = formikProps) && <Form {...formikProps} />
+            }
+          </Formik>
+        );
+
+        injected.setValues({ name: 'ian' });
+        expect(injected.values.name).toEqual('ian');
+      });
+
+      it('setValues should run validations when validateOnChange is true (default)', () => {
+        const validate = jest.fn(() => ({}));
+        let injected: any;
+        render(
+          <Formik
+            initialValues={{ name: 'jared' }}
+            onSubmit={noop}
+            validate={validate}
+            validateOnChange={true}
+          >
+            {formikProps =>
+              (injected = formikProps) && <Form {...formikProps} />
+            }
+          </Formik>
+        );
+        injected.setValues({ name: 'ian' });
+        expect(validate).toHaveBeenCalled();
+      });
+
+      it('setValues should NOT run validations when validateOnChange is false', () => {
+        const validate = jest.fn();
+        let injected: any;
+        render(
+          <Formik
+            initialValues={{ name: 'jared' }}
+            onSubmit={noop}
+            validate={validate}
+            validateOnChange={false}
+          >
+            {formikProps =>
+              (injected = formikProps) && <Form {...formikProps} />
+            }
+          </Formik>
+        );
+        injected.setValues({ name: 'ian' });
+        expect(validate).not.toHaveBeenCalled();
+      });
+
+      it('setFieldValue sets value by key', () => {
+        let injected: any;
+        render(
+          <Formik initialValues={InitialValues} onSubmit={noop}>
+            {formikProps =>
+              (injected = formikProps) && <Form {...formikProps} />
+            }
+          </Formik>
+        );
+
+        injected.setFieldValue('name', 'ian');
+        expect(injected.values.name).toEqual('ian');
+      });
+
+      it('setFieldValue should run validations when validateOnChange is true (default)', () => {
+        const validate = jest.fn(() => ({}));
+
+        let injected: any;
+        render(
+          <Formik
+            initialValues={InitialValues}
+            onSubmit={noop}
+            validate={validate}
+          >
+            {formikProps =>
+              (injected = formikProps) && <Form {...formikProps} />
+            }
+          </Formik>
+        );
+
+        injected.setFieldValue('name', 'ian');
+        expect(validate).toHaveBeenCalled();
+      });
+
+      it('setFieldValue should NOT run validations when validateOnChange is false', () => {
+        const validate = jest.fn();
+        let injected: any;
+        render(
+          <Formik
+            initialValues={InitialValues}
+            onSubmit={noop}
+            validate={validate}
+            validateOnChange={false}
+          >
+            {formikProps =>
+              (injected = formikProps) && <Form {...formikProps} />
+            }
+          </Formik>
+        );
+
+        injected.setFieldValue('name', 'ian');
+        expect(validate).not.toHaveBeenCalled();
+      });
+
+      it('setTouched sets touched', () => {
+        let injected: any;
+        render(
+          <Formik initialValues={InitialValues} onSubmit={noop}>
+            {formikProps =>
+              (injected = formikProps) && <Form {...formikProps} />
+            }
+          </Formik>
+        );
+
+        injected.setTouched({ name: true });
+        expect(injected.touched).toEqual({ name: true });
+      });
+
+      it('setTouched should NOT run validations when validateOnChange is true (default)', () => {
+        const validate = jest.fn(() => ({}));
+        let injected: any;
+        render(
+          <Formik
+            initialValues={InitialValues}
+            onSubmit={noop}
+            validate={validate}
+          >
+            {formikProps =>
+              (injected = formikProps) && <Form {...formikProps} />
+            }
+          </Formik>
+        );
+
+        injected.setTouched({ name: true });
+        expect(validate).toHaveBeenCalled();
+      });
+
+      it('setTouched should run validations when validateOnBlur is false', () => {
+        const validate = jest.fn(() => ({}));
+        let injected: any;
+        render(
+          <Formik
+            initialValues={InitialValues}
+            onSubmit={noop}
+            validate={validate}
+            validateOnBlur={false}
+          >
+            {formikProps =>
+              (injected = formikProps) && <Form {...formikProps} />
+            }
+          </Formik>
+        );
+
+        injected.setTouched({ name: true });
+        expect(validate).not.toHaveBeenCalled();
+      });
+
+      it('setFieldTouched sets touched by key', () => {
+        let injected: any;
+        render(
+          <Formik initialValues={InitialValues} onSubmit={noop}>
+            {formikProps =>
+              (injected = formikProps) && <Form {...formikProps} />
+            }
+          </Formik>
+        );
+
+        injected.setFieldTouched('name', true);
+        expect(injected.touched).toEqual({ name: true });
+        expect(injected.dirty).toBe(false);
+
+        injected.setFieldTouched('name', false);
+        expect(injected.touched).toEqual({ name: false });
+        expect(injected.dirty).toBe(false);
+      });
+
+      it('setFieldTouched should run validations when validateOnBlur is true (default)', () => {
+        const validate = jest.fn(() => ({}));
+        let injected: any;
+        render(
+          <Formik
+            initialValues={InitialValues}
+            onSubmit={noop}
+            validate={validate}
+          >
+            {formikProps =>
+              (injected = formikProps) && <Form {...formikProps} />
+            }
+          </Formik>
+        );
+
+        injected.setFieldTouched('name', true);
+        expect(validate).toHaveBeenCalled();
+      });
+
+      it('setFieldTouched should NOT run validations when validateOnBlur is false', () => {
+        const validate = jest.fn(() => ({}));
+        let injected: any;
+        render(
+          <Formik
+            initialValues={InitialValues}
+            onSubmit={noop}
+            validate={validate}
+            validateOnBlur={false}
+          >
+            {formikProps =>
+              (injected = formikProps) && <Form {...formikProps} />
+            }
+          </Formik>
+        );
+
+        injected.setFieldTouched('name', true);
+        expect(validate).not.toHaveBeenCalled();
+      });
+
+      it('setErrors sets error object', () => {
+        let injected: any;
+        render(
+          <Formik initialValues={InitialValues} onSubmit={noop}>
+            {formikProps =>
+              (injected = formikProps) && <Form {...formikProps} />
+            }
+          </Formik>
+        );
+
+        injected.setErrors({ name: 'Required' });
+        expect(injected.errors.name).toEqual('Required');
+      });
+
+      it('setFieldError sets error by key', () => {
+        let injected: any;
+        render(
+          <Formik initialValues={InitialValues} onSubmit={noop}>
+            {formikProps =>
+              (injected = formikProps) && <Form {...formikProps} />
+            }
+          </Formik>
+        );
+
+        injected.setFieldError('name', 'Required');
+        expect(injected.errors.name).toEqual('Required');
+      });
+
+      it('setStatus sets status object', () => {
+        let injected: any;
+        render(
+          <Formik initialValues={InitialValues} onSubmit={noop}>
+            {formikProps =>
+              (injected = formikProps) && <Form {...formikProps} />
+            }
+          </Formik>
+        );
+
+        const status = 'status';
+        injected.setStatus(status);
+
+        expect(injected.status).toEqual(status);
+      });
+    });
   });
 });
 

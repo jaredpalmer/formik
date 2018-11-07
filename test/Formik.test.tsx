@@ -533,7 +533,7 @@ describe('<Formik> alt', () => {
       expect(injected.isSubmitting).toBeTruthy();
     });
 
-    describe('with validate (SYNC)', () => {
+    describe('with validate (SYNC)', async () => {
       it('should call validate if present', () => {
         const validate = jest.fn(() => ({}));
         const { getByTestId } = render(
@@ -549,7 +549,7 @@ describe('<Formik> alt', () => {
         expect(validate).toHaveBeenCalled();
       });
 
-      it('should submit the form if valid', () => {
+      it('should submit the form if valid', async () => {
         const onSubmit = jest.fn();
         const validate = jest.fn(() => ({}));
 
@@ -563,8 +563,7 @@ describe('<Formik> alt', () => {
         );
         const form = getByTestId('form');
         fireEvent.submit(form);
-        // TODO: for some reason it's not being called
-        expect(onSubmit).toBeCalled();
+        await wait(() => expect(onSubmit).toBeCalled());
       });
 
       it('should not submit the form if invalid', () => {
@@ -615,8 +614,7 @@ describe('<Formik> alt', () => {
         );
         const form = getByTestId('form');
         fireEvent.submit(form);
-        // TODO: for some reason it's not being called
-        expect(onSubmit).toBeCalled();
+        await wait(() => expect(onSubmit).toBeCalled());
       });
 
       it('should not submit the form if invalid', async () => {

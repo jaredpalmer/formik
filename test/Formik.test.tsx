@@ -1,9 +1,7 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import * as Yup from 'yup';
 import { Formik, FormikProps } from '../src';
-import { shallow, mount } from 'enzyme';
-import { sleep, noop } from './testHelpers';
+import { noop } from './testHelpers';
 import { render, cleanup, fireEvent, wait } from 'react-testing-library';
 
 jest.spyOn(global.console, 'error');
@@ -47,7 +45,7 @@ const Form: React.SFC<FormikProps<Values>> = ({
 
 const InitialValues = { name: 'jared' };
 
-const renderFormik = (props: any = {}) => {
+const renderFormik = (props: any) => {
   const ref = React.createRef<Formik>();
   let injected: any;
   return {
@@ -70,30 +68,7 @@ const renderFormik = (props: any = {}) => {
   };
 };
 
-// const BasicForm = (
-//   <Formik initialValues={{ name: 'jared' }} onSubmit={noop} component={Form} />
-// );
-
-// class WithState extends React.Component<{}, { data: { name: string } }> {
-//   constructor(props: {}) {
-//     super(props);
-//     this.state = {
-//       data: { name: 'ivan' },
-//     };
-//   }
-
-//   render() {
-//     return (
-//       <Formik
-//         initialValues={this.state.data}
-//         onSubmit={noop}
-//         component={Form}
-//       />
-//     );
-//   }
-// }
-
-describe('<Formik> alt', () => {
+describe('<Formik>', () => {
   const InitialValues = { name: 'jared' };
   // Cleanup the dom after each test.
   // https://github.com/kentcdodds/react-testing-library#example
@@ -1420,5 +1395,3 @@ describe('<Formik> alt', () => {
     });
   });
 });
-
-describe('<Formik>', () => {});

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as Yup from 'yup';
-import { Formik, FormikProps } from '../src';
+import { Formik, FormikProps, FormikConfig, FormikValues } from '../src';
 import { noop } from './testHelpers';
 import { render, cleanup, fireEvent, wait } from 'react-testing-library';
 
@@ -10,7 +10,7 @@ interface Values {
   name: string;
 }
 
-const Form: React.SFC<FormikProps<Values>> = ({
+function Form({
   values,
   touched,
   handleSubmit,
@@ -19,7 +19,7 @@ const Form: React.SFC<FormikProps<Values>> = ({
   status,
   errors,
   isSubmitting,
-}) => {
+}: FormikProps<Values>) {
   return (
     <form onSubmit={handleSubmit} data-testid="form">
       <input
@@ -41,15 +41,15 @@ const Form: React.SFC<FormikProps<Values>> = ({
       </button>
     </form>
   );
-};
+}
 
-const InitialValues = { name: 'jared' };
+const InitialValues: Values = { name: 'jared' };
 
-const renderFormik = (props: any) => {
+function renderFormik<V>(props?: Partial<FormikConfig<V>>) {
   const ref = React.createRef<Formik>();
   let injected: any;
   return {
-    getProps() {
+    getProps(): FormikProps<V> {
       return injected;
     },
     getRef() {
@@ -57,19 +57,22 @@ const renderFormik = (props: any) => {
     },
     ...render(
       <Formik
-        initialValues={InitialValues}
-        onSubmit={noop}
-        ref={ref}
+        ref={ref as any}
+        onSubmit={noop as any}
+        initialValues={InitialValues as any}
         {...props}
       >
-        {formikProps => (injected = formikProps) && <Form {...formikProps} />}
+        {(formikProps: FormikProps<V>) =>
+          (injected = formikProps) && (
+            <Form {...(formikProps as unknown) as FormikProps<Values>} />
+          )
+        }
       </Formik>
     ),
   };
-};
+}
 
 describe('<Formik>', () => {
-  const InitialValues = { name: 'jared' };
   // Cleanup the dom after each test.
   // https://github.com/kentcdodds/react-testing-library#example
   afterEach(cleanup);
@@ -1042,6 +1045,8 @@ describe('<Formik>', () => {
     it('should call onReset with values and actions when form is reset', () => {
       const onReset = jest.fn();
       const { getProps } = renderFormik({
+        initialValues: InitialValues,
+        onSubmit: noop,
         onReset,
       });
 
@@ -1288,7 +1293,6 @@ describe('<Formik>', () => {
 
     const { getProps } = renderFormik({
       onSubmit,
-      initialValues: { opensource: 'yay' },
     });
 
     expect(getProps().submitCount).toEqual(0);
@@ -1299,11 +1303,10 @@ describe('<Formik>', () => {
 
   it('isValidating is fired when submit is attempted', async () => {
     const onSubmit = jest.fn();
-    const validate = jest.fn(() => ({ opensource: 'no ' }));
+    const validate = jest.fn(() => ({ name: 'no' }));
 
     const { getProps } = renderFormik({
       onSubmit,
-      initialValues: { opensource: 'yay' },
       validate,
     });
 
@@ -1354,10 +1357,8 @@ describe('<Formik>', () => {
   });
 
   it('isValidating is fired validation is run', async () => {
-    const validate = jest.fn(() => ({ opensource: 'no' }));
-
+    const validate = jest.fn(() => ({ name: 'no' }));
     const { getProps } = renderFormik({
-      initialValues: { opensource: 'yay' },
       validate,
     });
 

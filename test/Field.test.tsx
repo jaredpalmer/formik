@@ -16,7 +16,10 @@ import { noop } from './testHelpers';
 const initialValues = { name: 'jared', email: 'hello@reason.nyc' };
 type Values = typeof initialValues;
 
-function renderForm(ui: any, props?: Partial<FormikConfig<Values>>) {
+function renderForm(
+  ui?: React.ReactNode,
+  props?: Partial<FormikConfig<Values>>
+) {
   let injected: FormikProps<Values>;
 
   return {
@@ -25,7 +28,9 @@ function renderForm(ui: any, props?: Partial<FormikConfig<Values>>) {
     },
     ...render(
       <Formik onSubmit={noop} initialValues={initialValues} {...props}>
-        {(formikProps: FormikProps<Values>) => (injected = formikProps) && ui}
+        {(formikProps: FormikProps<Values>) =>
+          (injected = formikProps) && ui ? ui : null
+        }
       </Formik>
     ),
   };

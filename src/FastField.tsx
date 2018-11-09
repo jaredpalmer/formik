@@ -59,6 +59,9 @@ export interface FastFieldConfig<T> {
    */
   name: string;
 
+  /** HTML class */
+  className?: string;
+
   /** HTML input type */
   type?: string;
 

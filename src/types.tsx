@@ -40,6 +40,8 @@ export interface FormikState<Values> {
   errors: FormikErrors<Values>;
   /** map of field names to whether the field has been touched */
   touched: FormikTouched<Values>;
+  /** Name of the field which trigger the last update event */
+  lastTouched?: string;
   /** whether the form is currently validating */
   isValidating: boolean;
   /** whether the form is currently submitting */

@@ -329,6 +329,7 @@ export class Formik<Values = object, ExtraProps = {}> extends React.Component<
           prevState => ({
             ...prevState,
             values: setIn(prevState.values, field!, val),
+            lastTouched: field,
           }),
           () => {
             if (this.props.validateOnChange) {
@@ -454,6 +455,7 @@ export class Formik<Values = object, ExtraProps = {}> extends React.Component<
 
       this.setState(prevState => ({
         touched: setIn(prevState.touched, field, true),
+        lastTouched: field,
       }));
 
       if (this.props.validateOnBlur) {
@@ -482,6 +484,7 @@ export class Formik<Values = object, ExtraProps = {}> extends React.Component<
       prevState => ({
         ...prevState,
         touched: setIn(prevState.touched, field, touched),
+        lastTouched: field,
       }),
       () => {
         if (this.props.validateOnBlur && shouldValidate) {
@@ -509,6 +512,7 @@ export class Formik<Values = object, ExtraProps = {}> extends React.Component<
       isValidating: false,
       errors: {},
       touched: {},
+      lastTouched: undefined,
       error: undefined,
       status: undefined,
       values,

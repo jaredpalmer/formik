@@ -1,5 +1,4 @@
-declare module 'enzyme';
-declare module 'enzyme-adapter-react-16';
+declare module 'react-testing-library';
 declare module 'react-lifecycles-compat' {
   import React from 'react';
   export function polyfill<P>(

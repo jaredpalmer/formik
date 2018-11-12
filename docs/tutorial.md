@@ -140,7 +140,7 @@ const EditUserDialog = ({ user, updateUser, onClose }) => {
             }
           );
         }}
-        render={({ errors, touched, isSubmitting }) => (
+        render={({ errors, status, touched, isSubmitting }) => (
           <Form>
             <Field type="email" name="email" />
             {errors.email && touched.email && <div>{errors.email}</div>}
@@ -190,7 +190,7 @@ const EditUserDialog = ({ user, updateUser, onClose }) => {
             }
           );
         }}
-        render={({ errors, touched, isSubmitting }) => (
+        render={({ errors, status, touched, isSubmitting }) => (
           <Form>
             <Field type="email" name="email" />
             <ErrorMessage name="email" component="div">  

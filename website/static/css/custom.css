@@ -243,6 +243,12 @@ pre code {
 footer .sitemap .nav-home,
 footer .fbOpenSource {
   opacity: 1;
+  text-align: center;
+
+}
+
+.nav-footer .fbOpenSource {
+  margin: 1em auto 2em;
 }
 
 footer iframe {

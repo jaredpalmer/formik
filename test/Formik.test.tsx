@@ -578,9 +578,6 @@ describe('<Formik>', () => {
         await wait(() => {
           expect(validate).toHaveBeenCalled();
         });
-
-        getProps().setFieldValue('name', 'ian');
-        expect(validate).not.toHaveBeenCalled();
       });
 
       it('setFieldValue should NOT run validations when validateOnChange is false', async () => {

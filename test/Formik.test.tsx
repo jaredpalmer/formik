@@ -47,29 +47,39 @@ function Form({
 const InitialValues: Values = { name: 'jared' };
 
 function renderFormik<V>(props?: Partial<FormikConfig<V>>) {
-  const ref = React.createRef<Formik>();
   let injected: any;
+  const { rerender, ...rest } = render(
+    <Formik
+      onSubmit={noop as any}
+      initialValues={InitialValues as any}
+      {...props}
+    >
+      {(formikProps: FormikProps<V>) =>
+        (injected = formikProps) && (
+          <Form {...(formikProps as unknown) as FormikProps<Values>} />
+        )
+      }
+    </Formik>
+  );
   return {
     getProps(): FormikProps<V> {
       return injected;
     },
-    getRef() {
-      return ref;
-    },
-    ...render(
-      <Formik
-        ref={ref as any}
-        onSubmit={noop as any}
-        initialValues={InitialValues as any}
-        {...props}
-      >
-        {(formikProps: FormikProps<V>) =>
-          (injected = formikProps) && (
-            <Form {...(formikProps as unknown) as FormikProps<Values>} />
-          )
-        }
-      </Formik>
-    ),
+    ...rest,
+    rerender: () =>
+      rerender(
+        <Formik
+          onSubmit={noop as any}
+          initialValues={InitialValues as any}
+          {...props}
+        >
+          {(formikProps: FormikProps<V>) =>
+            (injected = formikProps) && (
+              <Form {...(formikProps as unknown) as FormikProps<Values>} />
+            )
+          }
+        </Formik>
+      ),
   };
 }
 
@@ -183,47 +193,51 @@ describe('<Formik>', () => {
       expect(injected.values.name).toEqual('ian');
     });
 
-    it('runs validations by default', () => {
+    it('runs validations by default', async () => {
       const validate = jest.fn(() => Promise.resolve());
       const validationSchema = {
         validate,
       };
-      const { getByTestId } = renderFormik({
+      const { getByTestId, rerender } = renderFormik({
         validate,
         validationSchema,
       });
 
-      const input = getByTestId('name-input');
-      fireEvent.change(input, {
+      fireEvent.change(getByTestId('name-input'), {
         persist: noop,
         target: {
           name: 'name',
           value: 'ian',
         },
       });
-      expect(validate).toHaveBeenCalledTimes(2);
+      rerender();
+      await wait(() => {
+        expect(validate).toHaveBeenCalledTimes(2);
+      });
     });
 
-    it('does NOT run validations if validateOnChange is false', () => {
+    it('does NOT run validations if validateOnChange is false', async () => {
       const validate = jest.fn(() => Promise.resolve());
       const validationSchema = {
         validate,
       };
-      const { getByTestId } = renderFormik({
+      const { getByTestId, rerender } = renderFormik({
         validate,
         validationSchema,
         validateOnChange: false,
       });
 
-      const input = getByTestId('name-input');
-      fireEvent.change(input, {
+      fireEvent.change(getByTestId('name-input'), {
         persist: noop,
         target: {
           name: 'name',
           value: 'ian',
         },
       });
-      expect(validate).not.toHaveBeenCalled();
+      rerender();
+      await wait(() => {
+        expect(validate).not.toHaveBeenCalled();
+      });
     });
   });
 
@@ -282,72 +296,81 @@ describe('<Formik>', () => {
       expect(injected.touched.name).toEqual(true);
     });
 
-    it('runs validate by default', () => {
+    it('runs validate by default', async () => {
       const validate = jest.fn(noop);
-      const { getByTestId } = renderFormik({ validate });
+      const { getByTestId, rerender } = renderFormik({ validate });
 
-      const input = getByTestId('name-input');
-      fireEvent.blur(input, {
+      fireEvent.blur(getByTestId('name-input'), {
         target: {
           name: 'name',
         },
       });
-      expect(validate).toHaveBeenCalled();
-    });
-
-    it('runs validations by default', () => {
-      const validate = jest.fn(() => Promise.resolve());
-      const validationSchema = {
-        validate,
-      };
-      const { getByTestId } = renderFormik({ validate, validationSchema });
-
-      const input = getByTestId('name-input');
-      fireEvent.blur(input, {
-        target: {
-          name: 'name',
-        },
+      rerender();
+      await wait(() => {
+        expect(validate).toHaveBeenCalled();
       });
-      expect(validate).toHaveBeenCalledTimes(2);
     });
 
-    it('runs validations if validateOnBlur is true (default)', () => {
+    it('runs validations by default', async () => {
       const validate = jest.fn(() => Promise.resolve());
       const validationSchema = {
         validate,
       };
-      const { getByTestId } = renderFormik({
+      const { getByTestId, rerender } = renderFormik({
         validate,
         validationSchema,
       });
 
-      const input = getByTestId('name-input');
-      fireEvent.blur(input, {
+      fireEvent.blur(getByTestId('name-input'), {
         target: {
           name: 'name',
         },
       });
-      expect(validate).toHaveBeenCalledTimes(2);
+      rerender();
+      await wait(() => {
+        expect(validate).toHaveBeenCalledTimes(2);
+      });
     });
 
-    it('dost NOT run validations if validateOnBlur is false', () => {
+    it('runs validations if validateOnBlur is true (default)', async () => {
       const validate = jest.fn(() => Promise.resolve());
       const validationSchema = {
         validate,
       };
-      const { getByTestId } = renderFormik({
+      const { getByTestId, rerender } = renderFormik({
+        validate,
+        validationSchema,
+      });
+
+      fireEvent.blur(getByTestId('name-input'), {
+        target: {
+          name: 'name',
+        },
+      });
+      rerender();
+      await wait(() => {
+        expect(validate).toHaveBeenCalledTimes(2);
+      });
+    });
+
+    it('dost NOT run validations if validateOnBlur is false', async () => {
+      const validate = jest.fn(() => Promise.resolve());
+      const validationSchema = {
+        validate,
+      };
+      const { getByTestId, rerender } = renderFormik({
         validate,
         validationSchema,
         validateOnBlur: false,
       });
 
-      const input = getByTestId('name-input');
-      fireEvent.blur(input, {
+      fireEvent.blur(getByTestId('name-input'), {
         target: {
           name: 'name',
         },
       });
-      expect(validate).not.toHaveBeenCalled();
+      rerender();
+      await wait(() => expect(validate).not.toHaveBeenCalled());
     });
   });
 
@@ -518,49 +541,63 @@ describe('<Formik>', () => {
         expect(getProps().values.name).toEqual('ian');
       });
 
-      it('setValues should run validations when validateOnChange is true (default)', () => {
+      it('setValues should run validations when validateOnChange is true (default)', async () => {
         const validate = jest.fn(() => ({}));
-        const { getProps } = renderFormik({ validate });
+        const { getProps, rerender } = renderFormik({ validate });
 
         getProps().setValues({ name: 'ian' });
-        expect(validate).toHaveBeenCalled();
+        rerender();
+        await wait(() => {
+          expect(validate).toHaveBeenCalled();
+        });
       });
-
-      it('setValues should NOT run validations when validateOnChange is false', () => {
+      it('setValues should NOT run validations when validateOnChange is false', async () => {
         const validate = jest.fn();
-        const { getProps } = renderFormik({
+        const { getProps, rerender } = renderFormik({
           validate,
           validateOnChange: false,
         });
 
         getProps().setValues({ name: 'ian' });
-        expect(validate).not.toHaveBeenCalled();
+        rerender();
+        await wait(() => {
+          expect(validate).not.toHaveBeenCalled();
+        });
       });
 
-      it('setFieldValue sets value by key', () => {
-        const { getProps } = renderFormik();
+      it('setFieldValue sets value by key', async () => {
+        const { getProps, rerender } = renderFormik();
 
         getProps().setFieldValue('name', 'ian');
-        expect(getProps().values.name).toEqual('ian');
+        rerender();
+        await wait(() => {
+          expect(getProps().values.name).toEqual('ian');
+        });
       });
 
-      it('setFieldValue should run validations when validateOnChange is true (default)', () => {
+      it('setFieldValue should run validations when validateOnChange is true (default)', async () => {
         const validate = jest.fn(() => ({}));
-        const { getProps } = renderFormik({ validate });
+        const { getProps, rerender } = renderFormik({ validate });
 
         getProps().setFieldValue('name', 'ian');
-        expect(validate).toHaveBeenCalled();
+        rerender();
+        await wait(() => {
+          expect(validate).toHaveBeenCalled();
+        });
       });
 
-      it('setFieldValue should NOT run validations when validateOnChange is false', () => {
+      it('setFieldValue should NOT run validations when validateOnChange is false', async () => {
         const validate = jest.fn();
-        const { getProps } = renderFormik({
+        const { getProps, rerender } = renderFormik({
           validate,
           validateOnChange: false,
         });
 
         getProps().setFieldValue('name', 'ian');
-        expect(validate).not.toHaveBeenCalled();
+        rerender();
+        await wait(() => {
+          expect(validate).not.toHaveBeenCalled();
+        });
       });
 
       it('setTouched sets touched', () => {
@@ -570,20 +607,25 @@ describe('<Formik>', () => {
         expect(getProps().touched).toEqual({ name: true });
       });
 
-      it('setTouched should NOT run validations when validateOnChange is true (default)', () => {
+      it('setTouched should NOT run validations when validateOnChange is true (default)', async () => {
         const validate = jest.fn(() => ({}));
-        const { getProps } = renderFormik({ validate });
+        const { getProps, rerender } = renderFormik({ validate });
 
         getProps().setTouched({ name: true });
-        expect(validate).toHaveBeenCalled();
+        rerender();
+        await wait(() => expect(validate).toHaveBeenCalled());
       });
 
-      it('setTouched should run validations when validateOnBlur is false', () => {
+      it('setTouched should run validations when validateOnBlur is false', async () => {
         const validate = jest.fn(() => ({}));
-        const { getProps } = renderFormik({ validate, validateOnBlur: false });
+        const { getProps, rerender } = renderFormik({
+          validate,
+          validateOnBlur: false,
+        });
 
         getProps().setTouched({ name: true });
-        expect(validate).not.toHaveBeenCalled();
+        rerender();
+        await wait(() => expect(validate).not.toHaveBeenCalled());
       });
 
       it('setFieldTouched sets touched by key', () => {
@@ -598,20 +640,25 @@ describe('<Formik>', () => {
         expect(getProps().dirty).toBe(false);
       });
 
-      it('setFieldTouched should run validations when validateOnBlur is true (default)', () => {
+      it('setFieldTouched should run validations when validateOnBlur is true (default)', async () => {
         const validate = jest.fn(() => ({}));
-        const { getProps } = renderFormik({ validate });
+        const { getProps, rerender } = renderFormik({ validate });
 
         getProps().setFieldTouched('name', true);
-        expect(validate).toHaveBeenCalled();
+        rerender();
+        await wait(() => expect(validate).toHaveBeenCalled());
       });
 
-      it('setFieldTouched should NOT run validations when validateOnBlur is false', () => {
+      it('setFieldTouched should NOT run validations when validateOnBlur is false', async () => {
         const validate = jest.fn(() => ({}));
-        const { getProps } = renderFormik({ validate, validateOnBlur: false });
+        const { getProps, rerender } = renderFormik({
+          validate,
+          validateOnBlur: false,
+        });
 
         getProps().setFieldTouched('name', true);
-        expect(validate).not.toHaveBeenCalled();
+        rerender();
+        await wait(() => expect(validate).not.toHaveBeenCalled());
       });
 
       it('setErrors sets error object', () => {
@@ -719,7 +766,6 @@ describe('<Formik>', () => {
         { name: 'jared' },
         expect.objectContaining({
           resetForm: expect.any(Function),
-          setError: expect.any(Function),
           setErrors: expect.any(Function),
           setFieldError: expect.any(Function),
           setFieldTouched: expect.any(Function),
@@ -739,23 +785,23 @@ describe('<Formik>', () => {
       expect(true);
     });
 
-    it('should call onReset with values and actions when onReset is a promise', async () => {
-      const ref = React.createRef<Formik>();
-      const onReset = jest.fn(() => Promise.resolve('data'));
+    // it('should call onReset with values and actions when onReset is a promise', async () => {
+    //   const ref = React.createRef<Formik>();
+    //   const onReset = jest.fn(() => Promise.resolve('data'));
 
-      const { getProps } = renderFormik({
-        ref,
-        onReset,
-      });
+    //   const { getProps } = renderFormik({
+    //     ref,
+    //     onReset,
+    //   });
 
-      ref.current!.resetForm = jest.fn();
+    //   ref.current!.resetForm = jest.fn();
 
-      getProps().handleReset();
+    //   getProps().handleReset();
 
-      await wait(() =>
-        expect(ref.current!.resetForm).toHaveBeenCalledWith('data')
-      );
-    });
+    //   await wait(() =>
+    //     expect(ref.current!.resetForm).toHaveBeenCalledWith('data')
+    //   );
+    // });
 
     it('should reset dirty flag even if initialValues has changed', () => {
       const { getProps, getByTestId } = renderFormik();
@@ -787,74 +833,74 @@ describe('<Formik>', () => {
     });
   });
 
-  describe('componentDidUpdate', () => {
-    let formik: any, initialValues: any;
-    beforeEach(() => {
-      initialValues = {
-        name: 'formik',
-        github: { repoUrl: 'https://github.com/jaredpalmer/formik' },
-        watchers: ['ian', 'sam'],
-      };
+  // describe('componentDidUpdate', () => {
+  //   let formik: any, initialValues: any;
+  //   beforeEach(() => {
+  //     initialValues = {
+  //       name: 'formik',
+  //       github: { repoUrl: 'https://github.com/jaredpalmer/formik' },
+  //       watchers: ['ian', 'sam'],
+  //     };
 
-      const { getRef } = renderFormik({
-        initialValues,
-        enableReinitialize: true,
-      });
-      formik = getRef();
-      formik.current.resetForm = jest.fn();
-    });
+  //     const { getRef } = renderFormik({
+  //       initialValues,
+  //       enableReinitialize: true,
+  //     });
+  //     formik = getRef();
+  //     formik.current.resetForm = jest.fn();
+  //   });
 
-    it('should not resetForm if new initialValues are the same as previous', () => {
-      const newInitialValues = Object.assign({}, initialValues);
-      formik.current.componentDidUpdate({
-        initialValues: newInitialValues,
-        onSubmit: noop,
-      });
-      expect(formik.current.resetForm).not.toHaveBeenCalled();
-    });
+  //   it('should not resetForm if new initialValues are the same as previous', () => {
+  //     const newInitialValues = Object.assign({}, initialValues);
+  //     formik.current.componentDidUpdate({
+  //       initialValues: newInitialValues,
+  //       onSubmit: noop,
+  //     });
+  //     expect(formik.current.resetForm).not.toHaveBeenCalled();
+  //   });
 
-    it('should resetForm if new initialValues are different than previous', () => {
-      const newInitialValues = {
-        ...initialValues,
-        watchers: ['jared', 'ian', 'sam'],
-      };
-      formik.current.componentDidUpdate({
-        initialValues: newInitialValues,
-        onSubmit: noop,
-      });
-      expect(formik.current.resetForm).toHaveBeenCalled();
-    });
+  //   it('should resetForm if new initialValues are different than previous', () => {
+  //     const newInitialValues = {
+  //       ...initialValues,
+  //       watchers: ['jared', 'ian', 'sam'],
+  //     };
+  //     formik.current.componentDidUpdate({
+  //       initialValues: newInitialValues,
+  //       onSubmit: noop,
+  //     });
+  //     expect(formik.current.resetForm).toHaveBeenCalled();
+  //   });
 
-    it('should resetForm if new initialValues are deeply different than previous', () => {
-      const newInitialValues = {
-        ...initialValues,
-        github: { repoUrl: 'different' },
-      };
-      formik.current.componentDidUpdate({
-        initialValues: newInitialValues,
-        onSubmit: noop,
-      });
-      expect(formik.current.resetForm).toHaveBeenCalled();
-    });
+  //   it('should resetForm if new initialValues are deeply different than previous', () => {
+  //     const newInitialValues = {
+  //       ...initialValues,
+  //       github: { repoUrl: 'different' },
+  //     };
+  //     formik.current.componentDidUpdate({
+  //       initialValues: newInitialValues,
+  //       onSubmit: noop,
+  //     });
+  //     expect(formik.current.resetForm).toHaveBeenCalled();
+  //   });
 
-    it('should NOT resetForm without enableReinitialize flag', () => {
-      const { getRef } = renderFormik({
-        initialValues,
-      });
-      formik = getRef();
-      formik.current.resetForm = jest.fn();
+  //   it('should NOT resetForm without enableReinitialize flag', () => {
+  //     const { getRef } = renderFormik({
+  //       initialValues,
+  //     });
+  //     formik = getRef();
+  //     formik.current.resetForm = jest.fn();
 
-      const newInitialValues = {
-        ...initialValues,
-        watchers: ['jared', 'ian', 'sam'],
-      };
-      formik.current.componentDidUpdate({
-        initialValues: newInitialValues,
-        onSubmit: noop,
-      });
-      expect(formik.current.resetForm).not.toHaveBeenCalled();
-    });
-  });
+  //     const newInitialValues = {
+  //       ...initialValues,
+  //       watchers: ['jared', 'ian', 'sam'],
+  //     };
+  //     formik.current.componentDidUpdate({
+  //       initialValues: newInitialValues,
+  //       onSubmit: noop,
+  //     });
+  //     expect(formik.current.resetForm).not.toHaveBeenCalled();
+  //   });
+  // });
 
   it('should warn against buttons with unspecified type', () => {
     const { getByText, getByTestId } = render(

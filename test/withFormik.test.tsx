@@ -89,7 +89,6 @@ describe('withFormik()', () => {
       isValidating: false,
       registerField: expect.any(Function),
       resetForm: expect.any(Function),
-      setError: expect.any(Function),
       setErrors: expect.any(Function),
       setFieldError: expect.any(Function),
       setFieldTouched: expect.any(Function),
@@ -168,7 +167,6 @@ describe('withFormik()', () => {
         {
           props: myProps,
           resetForm: expect.any(Function),
-          setError: expect.any(Function),
           setErrors: expect.any(Function),
           setFieldError: expect.any(Function),
           setFieldTouched: expect.any(Function),

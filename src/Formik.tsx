@@ -86,6 +86,7 @@ function formikReducer<Values>(
           true
         ),
         isSubmitting: true,
+        isValidating: true,
         submitCount: state.submitCount + 1,
       };
     case 'SUBMIT_FAILURE':
@@ -98,26 +99,15 @@ function formikReducer<Values>(
   }
 }
 
-export function useFormik<Values = object, ExtraProps = {}>(
-  props: FormikConfig<Values> & ExtraProps
-) {
-  const {
-    validateOnChange = true,
-    validateOnBlur = true,
-    isInitialValid = false,
-    // enableReinitialize = false, @todo
-  } = props;
-
+export function useFormik<Values = object>({
+  validateOnChange = true,
+  validateOnBlur = true,
+  isInitialValid = false,
+  ...rest
+}: FormikConfig<Values>) {
+  const props = { validateOnChange, validateOnBlur, isInitialValid, ...rest };
   const initialValues = React.useRef(props.initialValues);
-
   const didMount = React.useRef<boolean>(false);
-  React.useEffect(() => {
-    didMount.current = true;
-    return function unMount() {
-      didMount.current = false;
-    };
-  }, []);
-
   const fields = React.useRef<{
     [field: string]: {
       validate: (value: any) => string | Promise<string> | undefined;
@@ -141,6 +131,35 @@ export function useFormik<Values = object, ExtraProps = {}>(
     isValidating: false,
     submitCount: 0,
   });
+
+  React.useEffect(
+    () => {
+      if (!!didMount.current && !!validateOnChange && !state.isSubmitting) {
+        defer(() => {
+          validateForm(state.values);
+        });
+      }
+    },
+    [state.values, validateOnChange, state.isSubmitting]
+  );
+
+  React.useEffect(
+    () => {
+      if (!!didMount.current && !!validateOnBlur && !state.isSubmitting) {
+        defer(() => {
+          validateForm(state.values);
+        });
+      }
+    },
+    [state.touched, validateOnBlur, state.isSubmitting]
+  );
+
+  React.useEffect(() => {
+    didMount.current = true;
+    return function unMount() {
+      didMount.current = false;
+    };
+  }, []);
 
   const imperativeMethods = {
     resetForm,
@@ -198,12 +217,6 @@ export function useFormik<Values = object, ExtraProps = {}>(
         type: 'SET_FIELD_TOUCHED',
         payload: { field, value: true },
       });
-
-      if (props.validateOnBlur) {
-        defer(() => {
-          validateForm(state.values);
-        });
-      }
     }
   }
 
@@ -258,11 +271,6 @@ export function useFormik<Values = object, ExtraProps = {}>(
       if (field) {
         // Set form fields by name
         dispatch({ type: 'SET_FIELD_VALUE', payload: { field, value: val } });
-        if (validateOnChange) {
-          defer(() => {
-            validateForm(setIn(state.values, field!, val));
-          });
-        }
       }
     }
   }
@@ -372,11 +380,6 @@ export function useFormik<Values = object, ExtraProps = {}>(
         value,
       },
     });
-    if (validateOnChange && shouldValidate) {
-      defer(() => {
-        validateForm(setIn(state.values, field, value));
-      });
-    }
   }
 
   function setFieldTouched(
@@ -389,11 +392,6 @@ export function useFormik<Values = object, ExtraProps = {}>(
       type: 'SET_TOUCHED',
       payload: nextTouched,
     });
-    if (validateOnBlur && shouldValidate) {
-      defer(() => {
-        validateForm(state.values);
-      });
-    }
   }
 
   function validateField(name: string) {
@@ -550,7 +548,7 @@ export function useFormik<Values = object, ExtraProps = {}>(
       );
 
       if (didMount.current) {
-        dispatch({ type: 'SET_ISVALIDATING', payload: true });
+        dispatch({ type: 'SET_ISVALIDATING', payload: false });
         dispatch({ type: 'SET_ERRORS', payload: combinedErrors });
       }
 
@@ -591,10 +589,10 @@ export function useFormik<Values = object, ExtraProps = {}>(
     });
   }
 
-  const dirty = React.useMemo(() => !isEqual(initialValues, state.values), [
-    initialValues,
-    state.values,
-  ]);
+  const dirty = React.useMemo(
+    () => !isEqual(initialValues.current, state.values),
+    [initialValues.current, state.values]
+  );
 
   const isValid = React.useMemo(
     () =>
@@ -603,7 +601,7 @@ export function useFormik<Values = object, ExtraProps = {}>(
         : isInitialValid !== false && isFunction(isInitialValid)
           ? (isInitialValid as (props: FormikConfig<Values>) => boolean)(props)
           : (isInitialValid as boolean),
-    [state.errors, isInitialValid]
+    [state.errors, dirty, isInitialValid]
   );
   const ctx = {
     ...state,
@@ -637,7 +635,7 @@ export function useFormik<Values = object, ExtraProps = {}>(
 export function Formik<Values = object, ExtraProps = {}>(
   props: FormikConfig<Values> & ExtraProps
 ) {
-  const formikbag = useFormik<Values, ExtraProps>(props);
+  const formikbag = useFormik<Values>(props);
   const { component, children, render } = props;
   return (
     <FormikProvider value={formikbag}>

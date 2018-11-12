@@ -358,16 +358,10 @@ describe('<Formik>', () => {
       const validationSchema = {
         validate,
       };
-      const { getByTestId, rerender } = renderFormik({
+      const { rerender } = renderFormik({
         validate,
         validationSchema,
         validateOnBlur: false,
-      });
-
-      fireEvent.blur(getByTestId('name-input'), {
-        target: {
-          name: 'name',
-        },
       });
       rerender();
       await wait(() => expect(validate).not.toHaveBeenCalled());
@@ -584,6 +578,9 @@ describe('<Formik>', () => {
         await wait(() => {
           expect(validate).toHaveBeenCalled();
         });
+
+        getProps().setFieldValue('name', 'ian');
+        expect(validate).not.toHaveBeenCalled();
       });
 
       it('setFieldValue should NOT run validations when validateOnChange is false', async () => {

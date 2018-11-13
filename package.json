@@ -18,7 +18,9 @@
   "main": "dist/index.js",
   "module": "dist/formik.esm.js",
   "typings": "dist/index.d.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "peerDependencies": {
     "react": ">=15"
   },
@@ -78,8 +80,8 @@
     "lint-staged": "4.0.2",
     "prettier": "1.11.1",
     "raw-loader": "^0.5.1",
-    "react": "^16.7.0-alpha.0",
-    "react-dom": "^16.7.0-alpha.0",
+    "react": "^16.7.0-alpha.2",
+    "react-dom": "^16.7.0-alpha.2",
     "react-testing-library": "^5.2.3",
     "rimraf": "^2.6.2",
     "rollup": "^0.66.4",
@@ -110,15 +112,27 @@
     "semi": true
   },
   "jest": {
-    "collectCoverageFrom": ["src/**/*.{ts,tsx}"],
+    "collectCoverageFrom": [
+      "src/**/*.{ts,tsx}"
+    ],
     "transform": {
       ".(ts|tsx)": "<rootDir>/node_modules/ts-jest/preprocessor.js"
     },
-    "testMatch": ["<rootDir>/test/**/?(*.)(spec|test).ts?(x)"],
-    "transformIgnorePatterns": ["[/\\\\]node_modules[/\\\\].+\\.(js|jsx)$"],
-    "moduleFileExtensions": ["ts", "tsx", "js", "json"]
+    "testMatch": [
+      "<rootDir>/test/**/?(*.)(spec|test).ts?(x)"
+    ],
+    "transformIgnorePatterns": [
+      "[/\\\\]node_modules[/\\\\].+\\.(js|jsx)$"
+    ],
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "json"
+    ]
   },
-  "size-limit": [{
+  "size-limit": [
+    {
       "path": "./dist/index.js",
       "limit": "14 kB"
     },

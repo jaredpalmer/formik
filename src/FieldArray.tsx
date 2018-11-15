@@ -102,8 +102,8 @@ class FieldArrayInner<Values = {}> extends React.Component<
 
   updateArrayField = (
     fn: Function,
-    alterTouched: boolean,
-    alterErrors: boolean
+    alterTouched: boolean | Function,
+    alterErrors: boolean | Function
   ) => {
     const {
       name,
@@ -111,16 +111,26 @@ class FieldArrayInner<Values = {}> extends React.Component<
       formik: { setFormikState, validateForm, values, touched, errors },
     } = this.props;
     setFormikState(
-      (prevState: FormikState<any>) => ({
-        ...prevState,
-        values: setIn(prevState.values, name, fn(getIn(values, name))),
-        errors: alterErrors
-          ? setIn(prevState.errors, name, fn(getIn(errors, name)))
-          : prevState.errors,
-        touched: alterTouched
-          ? setIn(prevState.touched, name, fn(getIn(touched, name)))
-          : prevState.touched,
-      }),
+      (prevState: FormikState<any>) => {
+        let updateErrors = typeof alterErrors === 'function' ? alterErrors : fn;
+        let updateTouched =
+          typeof alterTouched === 'function' ? alterTouched : fn;
+
+        return {
+          ...prevState,
+          values: setIn(prevState.values, name, fn(getIn(values, name))),
+          errors: alterErrors
+            ? setIn(prevState.errors, name, updateErrors(getIn(errors, name)))
+            : prevState.errors,
+          touched: updateTouched
+            ? setIn(
+                prevState.touched,
+                name,
+                updateTouched(getIn(touched, name))
+              )
+            : prevState.touched,
+        };
+      },
       () => {
         if (validateOnChange) {
           validateForm();
@@ -149,19 +159,15 @@ class FieldArrayInner<Values = {}> extends React.Component<
     this.swap(indexA, indexB);
 
   move = (from: number, to: number) =>
-    this.updateArrayField(
-      (array: any[]) => move(array, from, to),
-      true,
-      true
-    );
+    this.updateArrayField((array: any[]) => move(array, from, to), true, true);
 
   handleMove = (from: number, to: number) => () => this.move(from, to);
 
   insert = (index: number, value: any) =>
     this.updateArrayField(
       (array: any[]) => insert(array, index, value),
-      true,
-      true
+      (array: any[]) => insert(array, index, null),
+      (array: any[]) => insert(array, index, null)
     );
 
   handleInsert = (index: number, value: any) => () => this.insert(index, value);
@@ -184,8 +190,16 @@ class FieldArrayInner<Values = {}> extends React.Component<
         if (length < 0) length = arr.length;
         return arr;
       },
-      true,
-      true
+      (array: any[]) => {
+        const arr = array ? [null, ...array] : [null];
+        if (length < 0) length = arr.length;
+        return arr;
+      },
+      (array: any[]) => {
+        const arr = array ? [null, ...array] : [null];
+        if (length < 0) length = arr.length;
+        return arr;
+      }
     );
     return length;
   };

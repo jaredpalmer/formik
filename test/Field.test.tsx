@@ -8,7 +8,6 @@ import {
   FieldConfig,
   FormikProps,
   FormikConfig,
-  FastFieldProps,
 } from '../src';
 
 import { noop } from './testHelpers';
@@ -28,6 +27,7 @@ function renderForm(
       }
     </Formik>
   );
+
   return {
     getFormProps(): FormikProps<Values> {
       return injected;
@@ -45,16 +45,18 @@ function renderForm(
 }
 
 const createRenderField = (
-  FieldComponent: React.ComponentClass<FieldConfig>
+  FieldComponent: React.ComponentType<FieldConfig>
 ) => (
   props: Partial<FieldConfig> = {},
   formProps?: Partial<FormikConfig<Values>>
 ) => {
-  let injected: FieldProps | FastFieldProps;
+  let injected: FieldProps;
 
   if (!props.children && !props.render && !props.component) {
-    props.children = (fieldProps: FieldProps | FastFieldProps) =>
-      (injected = fieldProps) && null;
+    props.children = (fieldProps: FieldProps) =>
+      (injected = fieldProps) && (
+        <input {...fieldProps.field} name="name" data-testid="name-input" />
+      );
   }
 
   return {
@@ -76,8 +78,8 @@ function cases(
   tester: (arg: typeof renderField | typeof renderFastField) => void
 ) {
   describe(title, () => {
-    it('<Field />', async () => Promise.resolve(tester(renderField)));
     it('<FastField />', async () => Promise.resolve(tester(renderFastField)));
+    it('<Field />', async () => Promise.resolve(tester(renderField)));
   });
 }
 
@@ -197,10 +199,15 @@ describe('Field / FastField', () => {
   describe('validate', () => {
     cases('calls validate during onChange if present', async renderField => {
       const validate = jest.fn();
-      const { getByTestId, rerender } = renderField({ validate });
+      const { getByTestId, rerender } = renderField({
+        validate,
+        component: 'input',
+      });
+      rerender();
       fireEvent.change(getByTestId('name-input'), {
         target: { name: 'name', value: 'hello' },
       });
+
       rerender();
       await wait(() => {
         expect(validate).toHaveBeenCalled();
@@ -212,10 +219,10 @@ describe('Field / FastField', () => {
       async renderField => {
         const validate = jest.fn();
         const { getByTestId, rerender } = renderField(
-          { validate },
+          { validate, component: 'input' },
           { validateOnChange: false }
         );
-
+        rerender();
         fireEvent.change(getByTestId('name-input'), {
           target: { name: 'name', value: 'hello' },
         });
@@ -228,8 +235,11 @@ describe('Field / FastField', () => {
 
     cases('calls validate during onBlur if present', async renderField => {
       const validate = jest.fn();
-      const { getByTestId, rerender } = renderField({ validate });
-
+      const { getByTestId, rerender } = renderField({
+        validate,
+        component: 'input',
+      });
+      rerender();
       fireEvent.blur(getByTestId('name-input'), {
         target: { name: 'name' },
       });
@@ -244,9 +254,11 @@ describe('Field / FastField', () => {
       async renderField => {
         const validate = jest.fn();
         const { getByTestId, rerender } = renderField(
-          { validate },
+          { validate, component: 'input' },
           { validateOnBlur: false }
         );
+
+        rerender();
         fireEvent.blur(getByTestId('name-input'), {
           target: { name: 'name' },
         });
@@ -260,8 +272,11 @@ describe('Field / FastField', () => {
       'runs validation when validateField is called (SYNC)',
       async renderField => {
         const validate = jest.fn(() => 'Error!');
-        const { getFormProps, rerender } = renderField({ validate });
-
+        const { getFormProps, rerender } = renderField({
+          validate,
+          component: 'input',
+        });
+        rerender();
         getFormProps().validateField('name');
         rerender();
         await wait(() => {
@@ -275,89 +290,20 @@ describe('Field / FastField', () => {
       'runs validation when validateField is called (ASYNC)',
       async renderField => {
         const validate = jest.fn(() => Promise.resolve('Error!'));
-        const { getFormProps, rerender } = renderField({ validate });
+        const { getFormProps, rerender } = renderField({
+          validate,
+          component: 'input',
+        });
 
-        getFormProps().validateField('name');
-        expect(validate).toHaveBeenCalled();
+        rerender();
+        await getFormProps().validateField('name');
         rerender();
         await wait(() => {
+          expect(validate).toHaveBeenCalled();
           expect(getFormProps().errors.name).toBe('Error!');
         });
       }
     );
-  });
-
-  describe('warnings', () => {
-    cases(
-      'warns if both string component and children as a function',
-      renderField => {
-        global.console.error = jest.fn();
-
-        renderField({
-          component: 'select',
-          children: () => <option value="Jared">{TEXT}</option>,
-        });
-
-        expect((global.console.error as jest.Mock).mock.calls[0][0]).toContain(
-          'Warning:'
-        );
-      }
-    );
-
-    cases(
-      'warns if both non-string component and children children as a function',
-      renderField => {
-        global.console.error = jest.fn();
-
-        renderField({
-          component: () => null,
-          children: () => <option value="Jared">{TEXT}</option>,
-        });
-
-        expect((global.console.error as jest.Mock).mock.calls[0][0]).toContain(
-          'Warning:'
-        );
-      }
-    );
-
-    cases('warns if both string component and render', renderField => {
-      global.console.error = jest.fn();
-
-      renderField({
-        component: 'textarea',
-        render: () => <option value="Jared">{TEXT}</option>,
-      });
-
-      expect((global.console.error as jest.Mock).mock.calls[0][0]).toContain(
-        'Warning:'
-      );
-    });
-
-    cases('warns if both non-string component and render', renderField => {
-      global.console.error = jest.fn();
-
-      renderField({
-        component: () => null,
-        render: () => <option value="Jared">{TEXT}</option>,
-      });
-
-      expect((global.console.error as jest.Mock).mock.calls[0][0]).toContain(
-        'Warning:'
-      );
-    });
-
-    cases('warns if both children and render', renderField => {
-      global.console.error = jest.fn();
-
-      renderField({
-        children: <div>{TEXT}</div>,
-        render: () => <div>{TEXT}</div>,
-      });
-
-      expect((global.console.error as jest.Mock).mock.calls[0][0]).toContain(
-        'Warning:'
-      );
-    });
   });
 
   cases('can resolve bracket paths', renderField => {
@@ -380,7 +326,8 @@ describe('Field / FastField', () => {
 
   cases('can resolve mixed dot and bracket paths II', renderField => {
     const { getProps } = renderField(
-      { name: 'user[superPowers].1' },
+      // tslint:disable-next-line:quotemark
+      { name: "user['superPowers'].1" },
       { initialValues: { user: { superPowers: ['Surging', 'Binding'] } } } // TODO: fix generic type
     );
 

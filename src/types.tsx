@@ -222,11 +222,32 @@ export type FormikProps<Values> = FormikSharedConfig &
   FormikActions<Values> &
   FormikHandlers &
   FormikComputedProps<Values> &
-  FormikRegistration;
+  FormikRegistration & {
+    getFieldProps(
+      name: string,
+      type?: string
+    ): [
+      {
+        value: any;
+        name: string;
+        onChange: ((e: React.ChangeEvent<any>) => void);
+        onBlur: ((e: any) => void);
+      },
+      {
+        value: any;
+        error?: string | undefined;
+        touch: boolean;
+        initialValue?: any;
+      }
+    ];
+  };
 
 /** Internal Formik registration methods that get passed down as props */
 export interface FormikRegistration {
-  registerField(name: string, Comp: React.Component<any>): void;
+  registerField(
+    name: string,
+    fns: { validate?: ((value: any) => string | Promise<void> | undefined) }
+  ): void;
   unregisterField(name: string): void;
 }
 

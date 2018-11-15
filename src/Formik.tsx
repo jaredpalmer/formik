@@ -135,9 +135,7 @@ export function useFormik<Values = object>({
   React.useEffect(
     () => {
       if (!!didMount.current && !!validateOnChange && !state.isSubmitting) {
-        defer(() => {
-          validateForm(state.values);
-        });
+        validateForm(state.values);
       }
     },
     [state.values, validateOnChange, state.isSubmitting]
@@ -146,9 +144,7 @@ export function useFormik<Values = object>({
   React.useEffect(
     () => {
       if (!!didMount.current && !!validateOnBlur && !state.isSubmitting) {
-        defer(() => {
-          validateForm(state.values);
-        });
+        validateForm(state.values);
       }
     },
     [state.touched, validateOnBlur, state.isSubmitting]
@@ -177,7 +173,7 @@ export function useFormik<Values = object>({
     setFormikState,
   };
 
-  function registerField(name: string, validate: any) {
+  function registerField(name: string, { validate }: any) {
     if (fields.current !== null) {
       fields.current[name] = {
         validate,
@@ -370,8 +366,8 @@ export function useFormik<Values = object>({
 
   function setFieldValue(
     field: string,
-    value: any,
-    shouldValidate: boolean = true
+    value: any
+    // shouldValidate: boolean = true
   ) {
     dispatch({
       type: 'SET_FIELD_VALUE',
@@ -384,13 +380,15 @@ export function useFormik<Values = object>({
 
   function setFieldTouched(
     field: string,
-    touched: boolean = true,
-    shouldValidate: boolean = true
+    touched: boolean = true
+    // shouldValidate: boolean = true
   ) {
-    const nextTouched = setIn(state.touched, field, touched);
     dispatch({
-      type: 'SET_TOUCHED',
-      payload: nextTouched,
+      type: 'SET_FIELD_TOUCHED',
+      payload: {
+        field,
+        value: touched,
+      },
     });
   }
 
@@ -398,6 +396,7 @@ export function useFormik<Values = object>({
     // This will efficiently validate a single field by avoiding state
     // changes if the validation function is synchronous. It's different from
     // what is called when using validateForm.
+
     if (
       fields.current !== null &&
       fields.current[name] &&
@@ -405,29 +404,28 @@ export function useFormik<Values = object>({
       isFunction(fields.current[name].validate)
     ) {
       const value = getIn(state.values, name);
-      const validateFn = fields.current[name].validate;
-      if (isPromise(validateFn)) {
+      const maybePromise = fields.current[name].validate(value);
+      if (isPromise(maybePromise)) {
         // Only flip isValidating if the function is async.
         dispatch({ type: 'SET_ISVALIDATING', payload: true });
-        return (validateFn as any)(value)
+        return maybePromise
           .then((x: any) => x, (e: any) => e)
           .then((error: string) => {
             dispatch({
               type: 'SET_FIELD_ERROR',
               payload: { field: name, value: error },
             });
-            dispatch({ type: 'SET_ISVALIDATING', payload: true });
+            dispatch({ type: 'SET_ISVALIDATING', payload: false });
           });
       } else {
-        const error = validateFn(value);
         dispatch({
           type: 'SET_FIELD_ERROR',
           payload: {
             field: name,
-            value: error as string | undefined,
+            value: maybePromise as string | undefined,
           },
         });
-        return Promise.resolve(error as string | undefined);
+        return Promise.resolve(maybePromise as string | undefined);
       }
     } else {
       return Promise.resolve();
@@ -490,9 +488,12 @@ export function useFormik<Values = object>({
     );
   }
 
-  function runValidateHandler(values: Values): Promise<FormikErrors<Values>> {
+  function runValidateHandler(
+    values: Values,
+    field?: string
+  ): Promise<FormikErrors<Values>> {
     return new Promise(resolve => {
-      const maybePromisedErrors = (props.validate as any)(values);
+      const maybePromisedErrors = (props.validate as any)(values, field);
       if (maybePromisedErrors === undefined) {
         resolve({});
       } else if (isPromise(maybePromisedErrors)) {
@@ -513,13 +514,17 @@ export function useFormik<Values = object>({
   /**
    * Run validation against a Yup schema and optionally run a function if successful
    */
-  function validateFormSchema(values: Values) {
+  function runValidationSchema(values: Values, field?: string) {
     return new Promise(resolve => {
       const { validationSchema } = props;
       const schema = isFunction(validationSchema)
-        ? validationSchema()
+        ? validationSchema(field)
         : validationSchema;
-      validateYupSchema(values, schema).then(
+      let promise =
+        field && schema.validateAt
+          ? schema.validateAt(field, values)
+          : validateYupSchema(values, schema);
+      promise.then(
         () => {
           resolve({});
         },
@@ -534,13 +539,14 @@ export function useFormik<Values = object>({
    * Run all validations methods and update state accordingly
    */
   function validateForm(
-    values: Values = state.values
+    values: Values = state.values,
+    field?: string
   ): Promise<FormikErrors<Values>> {
     dispatch({ type: 'SET_ISVALIDATING', payload: true });
     return Promise.all([
       runFieldLevelValidations(values),
-      props.validationSchema ? validateFormSchema(values) : {},
-      props.validate ? runValidateHandler(values) : {},
+      props.validationSchema ? runValidationSchema(values, field) : {},
+      props.validate ? runValidateHandler(values, field) : {},
     ]).then(([fieldErrors, schemaErrors, handlerErrors]) => {
       const combinedErrors = deepmerge.all<FormikErrors<Values>>(
         [fieldErrors, schemaErrors, handlerErrors],
@@ -589,6 +595,50 @@ export function useFormik<Values = object>({
     });
   }
 
+  function getFieldProps(
+    name: string,
+    type: string
+  ): [
+    {
+      value: any;
+      name: string;
+      onChange: ((e: React.ChangeEvent<any>) => void);
+      onBlur: ((e: any) => void);
+    },
+    {
+      value: any;
+      error?: string | undefined;
+      touch: boolean;
+      initialValue?: any;
+    }
+  ] {
+    const field = {
+      name,
+      value:
+        type && (type === 'radio' || type === 'checkbox')
+          ? undefined // React uses checked={} for these inputs
+          : getIn(state.values, name),
+      onChange: handleChange,
+      onBlur: handleBlur,
+    };
+
+    return [field, getFieldMeta(name)];
+  }
+
+  function getFieldMeta(name: string) {
+    return {
+      value: getIn(state.values, name),
+      error: getIn(state.errors, name),
+      touch: getIn(state.touched, name),
+      initialValue: getIn(initialValues.current, name),
+    } as {
+      value: any;
+      error?: string;
+      touch: boolean;
+      initialValue?: any;
+    };
+  }
+
   const dirty = React.useMemo(
     () => !isEqual(initialValues.current, state.values),
     [initialValues.current, state.values]
@@ -603,6 +653,7 @@ export function useFormik<Values = object>({
           : (isInitialValid as boolean),
     [state.errors, dirty, isInitialValid]
   );
+
   const ctx = {
     ...state,
     initialValues: initialValues.current || props.initialValues,
@@ -627,6 +678,7 @@ export function useFormik<Values = object>({
     dirty,
     unregisterField,
     registerField,
+    getFieldProps,
   };
 
   return ctx;

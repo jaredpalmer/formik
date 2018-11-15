@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { mount } from 'enzyme';
+
 import { FieldArray, Formik, isFunction } from '../src';
 
 // tslint:disable-next-line:no-empty
@@ -116,7 +116,7 @@ describe('<FieldArray />', () => {
 
     it('should add multiple values to the end of the field array', () => {
       let formikBag: any;
-
+      let addFriendsFn: any;
       const AddFriendsButton = (arrayProps: any) => {
         const addFriends = () => {
           arrayProps.push('john');
@@ -125,10 +125,12 @@ describe('<FieldArray />', () => {
           arrayProps.push('ringo');
         };
 
+        addFriendsFn = addFriends;
+
         return <button type="button" onClick={addFriends} />;
       };
 
-      const tree = mount(
+      const tree = ReactDOM.render(
         <TestForm
           render={(props: any) => {
             formikBag = props;
@@ -138,7 +140,7 @@ describe('<FieldArray />', () => {
         node
       );
 
-      tree.find('button').simulate('click');
+      addFriendsFn();
       const expected = [
         'jared',
         'andrea',

@@ -181,7 +181,9 @@ class FieldArrayInner<Values = {}> extends React.Component<
     this.updateArrayField(
       (array: any[]) => {
         const arr = array ? [value, ...array] : [value];
-        if (length < 0) length = arr.length;
+        if (length < 0) {
+          length = arr.length;
+        }
         return arr;
       },
       true,

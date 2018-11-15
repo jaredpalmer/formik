@@ -108,17 +108,21 @@ class FieldArrayInner<Values = {}> extends React.Component<
     const {
       name,
       validateOnChange,
-      formik: { setFormikState, validateForm, values, touched, errors },
+      formik: { setFormikState, validateForm },
     } = this.props;
     setFormikState(
       (prevState: FormikState<any>) => ({
         ...prevState,
-        values: setIn(prevState.values, name, fn(getIn(values, name))),
+        values: setIn(
+          prevState.values,
+          name,
+          fn(getIn(prevState.values, name))
+        ),
         errors: alterErrors
-          ? setIn(prevState.errors, name, fn(getIn(errors, name)))
+          ? setIn(prevState.errors, name, fn(getIn(prevState.errors, name)))
           : prevState.errors,
         touched: alterTouched
-          ? setIn(prevState.touched, name, fn(getIn(touched, name)))
+          ? setIn(prevState.touched, name, fn(getIn(prevState.touched, name)))
           : prevState.touched,
       }),
       () => {
@@ -149,11 +153,7 @@ class FieldArrayInner<Values = {}> extends React.Component<
     this.swap(indexA, indexB);
 
   move = (from: number, to: number) =>
-    this.updateArrayField(
-      (array: any[]) => move(array, from, to),
-      true,
-      true
-    );
+    this.updateArrayField((array: any[]) => move(array, from, to), true, true);
 
   handleMove = (from: number, to: number) => () => this.move(from, to);
 

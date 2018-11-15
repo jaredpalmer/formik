@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { mount } from 'enzyme';
 import { FieldArray, Formik, isFunction } from '../src';
 
 // tslint:disable-next-line:no-empty
@@ -112,6 +113,44 @@ describe('<FieldArray />', () => {
       const expected = ['jared', 'andrea', 'brent', 'jared'];
       expect(formikBag.values.friends).toEqual(expected);
     });
+
+    it('should add multiple values to the end of the field array', () => {
+      let formikBag: any;
+
+      const AddFriendsButton = (arrayProps: any) => {
+        const addFriends = () => {
+          arrayProps.push('john');
+          arrayProps.push('paul');
+          arrayProps.push('george');
+          arrayProps.push('ringo');
+        };
+
+        return <button type="button" onClick={addFriends} />;
+      };
+
+      const tree = mount(
+        <TestForm
+          render={(props: any) => {
+            formikBag = props;
+            return <FieldArray name="friends" render={AddFriendsButton} />;
+          }}
+        />,
+        node
+      );
+
+      tree.find('button').simulate('click');
+      const expected = [
+        'jared',
+        'andrea',
+        'brent',
+        'john',
+        'paul',
+        'george',
+        'ringo',
+      ];
+      expect(formikBag.values.friends).toEqual(expected);
+    });
+
     it('should push clone not actual referance', () => {
       let personTemplate = { firstName: '', lastName: '' };
       let formikBag: any;

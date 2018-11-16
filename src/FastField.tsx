@@ -166,11 +166,9 @@ class FastFieldInner<Values = {}, Props = {}> extends React.Component<
       validationSchema: _validationSchema,
       ...restOfFormik
     } = formik;
+
     const field = {
-      value:
-        props.type === 'radio' || props.type === 'checkbox'
-          ? props.value // React uses checked={} for these inputs
-          : getIn(formik.values, name),
+      value: getIn(formik.values, name),
       name,
       onChange: formik.handleChange,
       onBlur: formik.handleBlur,
@@ -186,11 +184,23 @@ class FastFieldInner<Values = {}, Props = {}> extends React.Component<
     }
 
     if (typeof component === 'string') {
-      const { innerRef, ...rest } = props;
+      const { innerRef, ...restProps } = props;
+      const { value, ...restField } = field;
+      const valueProp: { checked?: boolean; value?: typeof value } = {};
+
+      if (props.type === 'radio') {
+        valueProp.checked = value === props.value;
+      } else if (props.type === 'checkbox') {
+        valueProp.checked = value;
+      } else {
+        valueProp.value = value;
+      }
+
       return React.createElement(component as any, {
         ref: innerRef,
-        ...field,
-        ...rest,
+        ...restField,
+        ...restProps,
+        ...valueProp,
         children,
       });
     }

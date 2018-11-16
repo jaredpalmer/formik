@@ -169,23 +169,18 @@ class FieldInner<Values = {}, Props = {}> extends React.Component<
     }
 
     if (typeof component === 'string') {
-      const { innerRef, ...restProps } = props;
+      const { innerRef, type, ...restProps } = props;
       const { value, ...restField } = field;
-      const valueProp: { checked?: boolean; value?: typeof value } = {};
-
-      if (props.type === 'radio') {
-        valueProp.checked = value === props.value;
-      } else if (props.type === 'checkbox') {
-        valueProp.checked = value;
-      } else {
-        valueProp.value = value;
-      }
 
       return React.createElement(component as any, {
+        type,
         ref: innerRef,
         ...restField,
         ...restProps,
-        ...valueProp,
+        ...{
+          [type === 'radio' || type === 'checkbox' ? 'checked' : 'value']:
+            type === 'radio' ? props.value === value : value,
+        },
         children,
       });
     }

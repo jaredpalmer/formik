@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { cleanup, render, wait } from 'react-testing-library';
+import { fireEvent, cleanup, render, wait } from 'react-testing-library';
+
 import {
   Formik,
   Field,
@@ -10,7 +11,6 @@ import {
   FormikConfig,
   FastFieldProps,
 } from '../src';
-
 import { noop } from './testHelpers';
 
 const initialValues = { name: 'jared', email: 'hello@reason.nyc' };
@@ -53,7 +53,10 @@ const createRenderField = (
     getProps() {
       return injected;
     },
-    ...renderForm(<FieldComponent name="name" {...props} />, formProps),
+    ...renderForm(
+      <FieldComponent data-testid="input" name="name" {...props} />,
+      formProps
+    ),
   };
 };
 
@@ -180,6 +183,46 @@ describe('Field / FastField', () => {
       const innerRef = jest.fn();
       renderField({ component: Component, innerRef });
       expect(injected.innerRef).toBe(innerRef);
+    });
+
+    cases('handles type="checkbox"', renderField => {
+      const initialValues: any = {
+        name: false,
+      };
+      const { getByTestId } = renderField(
+        {
+          type: 'checkbox',
+          component: 'input',
+        },
+        { initialValues }
+      );
+
+      const input = getByTestId('input') as HTMLInputElement;
+
+      expect(input.checked).toBeFalsy();
+      fireEvent.click(input);
+      expect(input.checked).toBeTruthy();
+    });
+
+    cases('handles type="radio"', renderField => {
+      const initialValues: any = {
+        name: '',
+      };
+      const { getByTestId, debug } = renderField(
+        {
+          type: 'radio',
+          component: 'input',
+          value: 'hello',
+        },
+        { initialValues }
+      );
+
+      const input = getByTestId('input') as HTMLInputElement;
+
+      expect(input.value).toBe('hello');
+      expect(input.checked).toBeFalsy();
+      fireEvent.click(input);
+      expect(input.checked).toBeTruthy();
     });
   });
 

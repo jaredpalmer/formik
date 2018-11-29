@@ -44,7 +44,7 @@ You can play with Formik in your web browser with these live online playgrounds.
 * [Basics](https://codesandbox.io/s/zKrK5YLDZ)
 * [Sync Validation](https://codesandbox.io/s/q8yRqQMp)
 * [Building your own input primitives](https://codesandbox.io/s/qJR4ykJk)
-* Working with 3rd-party inputs #1:
+* Working with 3rd-party inputs:
   - [react-select-v1](https://codesandbox.io/s/jRzE53pqR)
   - [react-select-v2](https://codesandbox.io/s/73jj9zom96)
   - [Draft.js](https://codesandbox.io/s/QW1rqjBLl)

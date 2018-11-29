@@ -163,11 +163,14 @@ class FieldInner<Values = {}, Props = {}> extends React.Component<
     const bag = { field, form: restOfFormik };
 
     if (render) {
-      return (render as any)(bag);
+      return (render as any)({ ...bag, ...props });
     }
 
     if (isFunction(children)) {
-      return (children as (props: FieldProps<any>) => React.ReactNode)(bag);
+      return (children as (props: FieldProps<any>) => React.ReactNode)({
+        ...bag,
+        ...props,
+      });
     }
 
     if (typeof component === 'string') {

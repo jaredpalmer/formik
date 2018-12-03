@@ -518,6 +518,15 @@ describe('<Formik>', () => {
         expect(getProps().values.name).toEqual('ian');
       });
 
+      it('setValues executes a callback', () => {
+        const { getProps } = renderFormik();
+        const mockCallback = jest.fn();
+
+        getProps().setValues({ name: 'rachel' }, mockCallback);
+        expect(getProps().values.name).toEqual('rachel');
+        expect(mockCallback.mock.calls.length).toEqual(1);
+      });
+
       it('setValues should run validations when validateOnChange is true (default)', () => {
         const validate = jest.fn(() => ({}));
         const { getProps } = renderFormik({ validate });
@@ -544,6 +553,15 @@ describe('<Formik>', () => {
         expect(getProps().values.name).toEqual('ian');
       });
 
+      it('setFieldValue executes a callback', () => {
+        const { getProps } = renderFormik();
+        const mockCallback = jest.fn();
+
+        getProps().setFieldValue('name', 'rachel', true, mockCallback);
+        expect(getProps().values.name).toEqual('rachel');
+        expect(mockCallback.mock.calls.length).toEqual(1);
+      });
+
       it('setFieldValue should run validations when validateOnChange is true (default)', () => {
         const validate = jest.fn(() => ({}));
         const { getProps } = renderFormik({ validate });
@@ -568,6 +586,14 @@ describe('<Formik>', () => {
 
         getProps().setTouched({ name: true });
         expect(getProps().touched).toEqual({ name: true });
+      });
+
+      it('setTouched accepts and calls a callback function', () => {
+        const { getProps } = renderFormik();
+        const mockCallback = jest.fn();
+
+        getProps().setTouched({ name: true }, mockCallback);
+        expect(mockCallback.mock.calls.length).toEqual(1);
       });
 
       it('setTouched should NOT run validations when validateOnChange is true (default)', () => {
@@ -621,11 +647,29 @@ describe('<Formik>', () => {
         expect(getProps().errors.name).toEqual('Required');
       });
 
+      it('setErrors executes the callback', () => {
+        const { getProps } = renderFormik();
+
+        const mockCallback = jest.fn();
+        getProps().setErrors({ name: 'Required' }, mockCallback);
+        expect(getProps().errors.name).toEqual('Required');
+        expect(mockCallback.mock.calls.length).toEqual(1);
+      });
+
       it('setFieldError sets error by key', () => {
         const { getProps } = renderFormik();
 
         getProps().setFieldError('name', 'Required');
         expect(getProps().errors.name).toEqual('Required');
+      });
+
+      it('setFieldError sets executes the callback', () => {
+        const { getProps } = renderFormik();
+        const mockCallback = jest.fn();
+
+        getProps().setFieldError('name', 'Required', mockCallback);
+        expect(getProps().errors.name).toEqual('Required');
+        expect(mockCallback.mock.calls.length).toEqual(1);
       });
 
       it('setStatus sets status object', () => {

@@ -111,42 +111,51 @@ export class Formik<Values = object, ExtraProps = {}> extends React.Component<
     }
   }
 
-  setErrors = (errors: FormikErrors<Values>) => {
-    this.setState({ errors });
+  setErrors = (errors: FormikErrors<Values>, callback?: (() => void)) => {
+    this.setState({ errors }, callback);
   };
 
-  setTouched = (touched: FormikTouched<Values>) => {
+  setTouched = (touched: FormikTouched<Values>, callback?: (() => void)) => {
     this.setState({ touched }, () => {
       if (this.props.validateOnBlur) {
         this.runValidations(this.state.values);
       }
-    });
-  };
-
-  setValues = (values: FormikState<Values>['values']) => {
-    this.setState({ values }, () => {
-      if (this.props.validateOnChange) {
-        this.runValidations(values);
+      if (callback) {
+        callback();
       }
     });
   };
 
-  setStatus = (status?: any) => {
-    this.setState({ status });
+  setValues = (
+    values: FormikState<Values>['values'],
+    callback?: (() => void)
+  ) => {
+    this.setState({ values }, () => {
+      if (this.props.validateOnChange) {
+        this.runValidations(values);
+      }
+      if (callback) {
+        callback();
+      }
+    });
   };
 
-  setError = (error: any) => {
+  setStatus = (status?: any, callback?: (() => void)) => {
+    this.setState({ status }, callback);
+  };
+
+  setError = (error: any, callback?: (() => void)) => {
     if (process.env.NODE_ENV !== 'production') {
       console.warn(
         `Warning: Formik\'s setError(error) is deprecated and may be removed in future releases. Please use Formik\'s setStatus(status) instead. It works identically. For more info see https://github.com/jaredpalmer/formik#setstatus-status-any--void`
       );
     }
-    this.setState({ error });
+    this.setState({ error }, callback);
   };
 
-  setSubmitting = (isSubmitting: boolean) => {
+  setSubmitting = (isSubmitting: boolean, callback?: (() => void)) => {
     if (this.didMount) {
-      this.setState({ isSubmitting });
+      this.setState({ isSubmitting }, callback);
     }
   };
 
@@ -360,7 +369,8 @@ export class Formik<Values = object, ExtraProps = {}> extends React.Component<
   setFieldValue = (
     field: string,
     value: any,
-    shouldValidate: boolean = true
+    shouldValidate: boolean = true,
+    callback?: (() => void)
   ) => {
     if (this.didMount) {
       // Set form field by name
@@ -372,6 +382,9 @@ export class Formik<Values = object, ExtraProps = {}> extends React.Component<
         () => {
           if (this.props.validateOnChange && shouldValidate) {
             this.runValidations(this.state.values);
+          }
+          if (callback) {
+            callback();
           }
         }
       );
@@ -475,7 +488,8 @@ export class Formik<Values = object, ExtraProps = {}> extends React.Component<
   setFieldTouched = (
     field: string,
     touched: boolean = true,
-    shouldValidate: boolean = true
+    shouldValidate: boolean = true,
+    callback?: (() => void)
   ) => {
     // Set touched field by name
     this.setState(
@@ -487,16 +501,26 @@ export class Formik<Values = object, ExtraProps = {}> extends React.Component<
         if (this.props.validateOnBlur && shouldValidate) {
           this.runValidations(this.state.values);
         }
+        if (callback) {
+          callback();
+        }
       }
     );
   };
 
-  setFieldError = (field: string, message: string | undefined) => {
+  setFieldError = (
+    field: string,
+    message: string | undefined,
+    callback?: (() => void)
+  ) => {
     // Set form field by name
-    this.setState(prevState => ({
-      ...prevState,
-      errors: setIn(prevState.errors, field, message),
-    }));
+    this.setState(
+      prevState => ({
+        ...prevState,
+        errors: setIn(prevState.errors, field, message),
+      }),
+      callback
+    );
   };
 
   resetForm = (nextValues?: Values) => {

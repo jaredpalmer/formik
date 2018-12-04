@@ -370,8 +370,8 @@ export function useFormik<Values = object>({
 
   function setFieldValue(
     field: string,
-    value: any,
-    shouldValidate: boolean = true
+    value: any
+    // shouldValidate: boolean = true
   ) {
     dispatch({
       type: 'SET_FIELD_VALUE',
@@ -384,8 +384,8 @@ export function useFormik<Values = object>({
 
   function setFieldTouched(
     field: string,
-    touched: boolean = true,
-    shouldValidate: boolean = true
+    touched: boolean = true
+    // shouldValidate: boolean = true
   ) {
     const nextTouched = setIn(state.touched, field, touched);
     dispatch({

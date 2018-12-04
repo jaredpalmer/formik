@@ -38,8 +38,7 @@
     "start-website": "cd website && yarn start",
     "build-website": "cd website && yarn install && yarn build",
     "gen-docs": "all-contributors generate && doctoc README.md",
-    "size": "size-limit",
-    "postinstall": "cp -rf ./vendor/@types/react/ ./node_modules/@types/react/"
+    "size": "size-limit"
   },
   "dependencies": {
     "create-react-context": "^0.2.2",
@@ -54,8 +53,8 @@
   },
   "optionalDependencies": {},
   "resolutions": {
-    "@types/react": "16.4.18",
-    "@types/react-dom": "16.0.9"
+    "@types/react": "16.7.13",
+    "@types/react-dom": "16.0.11"
   },
   "devDependencies": {
     "@babel/core": "^7.1.2",
@@ -64,8 +63,8 @@
     "@types/jest": "^22.2.3",
     "@types/lodash.clonedeep": "^4.5.3",
     "@types/lodash.topath": "4.5.3",
-    "@types/react": "^16.4.18",
-    "@types/react-dom": "^16.0.9",
+    "@types/react": "^16.7.13",
+    "@types/react-dom": "^16.0.11",
     "@types/react-test-renderer": "15.5.2",
     "@types/warning": "^3.0.0",
     "@types/yup": "^0.24.9",
@@ -131,8 +130,7 @@
       "json"
     ]
   },
-  "size-limit": [
-    {
+  "size-limit": [{
       "path": "./dist/index.js",
       "limit": "14 kB"
     },

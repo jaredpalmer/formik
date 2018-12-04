@@ -20,11 +20,19 @@ export function connect<OuterProps, Values = {}>(
       {formik => <Comp {...props} formik={formik} />}
     </FormikConsumer>
   );
+  const componentDisplayName =
+    Comp.displayName ||
+    Comp.name ||
+    (Comp.constructor && Comp.constructor.name) ||
+    'Component';
+
   // Assign Comp to C.WrappedComponent so we can access the inner component in tests
   // For example, <Field.WrappedComponent /> gets us <FieldInner/>
   (C as React.SFC<OuterProps> & {
     WrappedComponent: React.ReactNode;
   }).WrappedComponent = Comp;
+
+  C.displayName = `FormikConnect(${componentDisplayName})`;
 
   return hoistNonReactStatics<
     OuterProps,

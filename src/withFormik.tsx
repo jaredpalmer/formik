@@ -89,7 +89,8 @@ export function withFormik<
         vanillaProps.hasOwnProperty(k) &&
         typeof vanillaProps[k] !== 'function'
       ) {
-        val[k] = vanillaProps[k];
+        // @todo TypeScript fix
+        (val as any)[k] = vanillaProps[k];
       }
     }
     return val as Values;

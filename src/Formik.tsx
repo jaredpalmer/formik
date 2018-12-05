@@ -562,9 +562,9 @@ export function useFormik<Values = object>({
     });
   }
 
-  function setFormikState<K extends keyof FormikState<Values>>(
+  function setFormikState(
     stateOrCb:
-      | Pick<FormikState<Values>, K>
+      | FormikState<Values>
       | ((state: FormikState<Values>) => FormikState<Values>)
   ): void {
     if (isFunction(stateOrCb)) {

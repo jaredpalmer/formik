@@ -104,12 +104,10 @@ export interface FormikHelpers<Values> {
   /** Submit the form imperatively */
   submitForm(): void;
   /** Set Formik state, careful! */
-  setFormikState<K extends keyof FormikState<Values>>(
-    f: (
-      prevState: Readonly<FormikState<Values>>,
-      props: any
-    ) => Pick<FormikState<Values>, K>,
-    callback?: () => any
+  setFormikState(
+    f:
+      | FormikState<Values>
+      | ((prevState: FormikState<Values>) => FormikState<Values>)
   ): void;
 }
 
@@ -122,8 +120,10 @@ export interface FormikActions<Values> {
   /** Set whether field has been touched directly */
   setFieldTouched(field: string, isTouched?: boolean): void;
   /** Set Formik state, careful! */
-  setFormikState<K extends keyof FormikState<Values>>(
-    state: Pick<FormikState<Values>, K>
+  setFormikState(
+    f:
+      | FormikState<Values>
+      | ((prevState: FormikState<Values>) => FormikState<Values>)
   ): void;
 }
 

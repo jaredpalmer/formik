@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { FormikProps, GenericFieldHTMLAttributes } from './types';
 import { useFormikContext } from './FormikContext';
+import { isFunction } from 'util';
 
 /**
  * Note: These typings could be more restrictive, but then it would limit the

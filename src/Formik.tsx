@@ -178,7 +178,7 @@ export function useFormik<Values = object>({
     }
   }
 
-  function unregisterField() {
+  function unregisterField(name: string) {
     if (fields.current !== null) {
       delete fields.current[name];
     }
@@ -430,7 +430,7 @@ export function useFormik<Values = object>({
   }
 
   function runSingleFieldLevelValidationAsPromise(
-    field: string,
+    name: string,
     value: void | string
   ): Promise<string> {
     return new Promise(resolve => {
@@ -440,7 +440,7 @@ export function useFormik<Values = object>({
         fields.current[name].validate &&
         isFunction(fields.current[name].validate)
       ) {
-        resolve(fields.current[field].validate(value));
+        resolve(fields.current[name].validate(value));
       }
     }).then(x => x, e => e);
   }
@@ -582,8 +582,8 @@ export function useFormik<Values = object>({
   function submitForm() {
     dispatch({ type: 'SUBMIT_ATTEMPT' });
     return validateForm().then((combinedErrors: FormikErrors<Values>) => {
-      const isValid = Object.keys(combinedErrors).length === 0;
-      if (isValid) {
+      const isActuallyValid = Object.keys(combinedErrors).length === 0;
+      if (isActuallyValid) {
         executeSubmit();
       } else if (didMount.current) {
         // ^^^ Make sure Formik is still mounted before calling setState

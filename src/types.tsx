@@ -68,11 +68,6 @@ export interface FormikComputedProps<Values> {
 export interface FormikHelpers<Values> {
   /** Manually set top level status. */
   setStatus(status?: any): void;
-  /**
-   * Manually set top level error
-   * @deprecated since 0.8.0
-   */
-  setError(e: any): void;
   /** Manually set errors object */
   setErrors(errors: FormikErrors<Values>): void;
   /** Manually set isSubmitting */
@@ -103,22 +98,6 @@ export interface FormikHelpers<Values> {
   resetForm(nextValues?: any): void;
   /** Submit the form imperatively */
   submitForm(): void;
-  /** Set Formik state, careful! */
-  setFormikState(
-    f:
-      | FormikState<Values>
-      | ((prevState: FormikState<Values>) => FormikState<Values>)
-  ): void;
-}
-
-/** Overloded methods / types */
-export interface FormikActions<Values> {
-  /** Set value of form field directly */
-  setFieldValue(field: string, value: any): void;
-  /** Set error message of a form field directly */
-  setFieldError(field: string, message: string): void;
-  /** Set whether field has been touched directly */
-  setFieldTouched(field: string, isTouched?: boolean): void;
   /** Set Formik state, careful! */
   setFormikState(
     f:
@@ -193,12 +172,12 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
   /**
    * Reset handler
    */
-  onReset?: (values: Values, formikActions: FormikActions<Values>) => void;
+  onReset?: (values: Values, formikHelpers: FormikHelpers<Values>) => void;
 
   /**
    * Submission handler
    */
-  onSubmit: (values: Values, formikActions: FormikActions<Values>) => void;
+  onSubmit: (values: Values, formikHelpers: FormikHelpers<Values>) => void;
   /**
    * A Yup Schema or a function that returns a Yup schema
    */
@@ -219,7 +198,7 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
  */
 export type FormikProps<Values> = FormikSharedConfig &
   FormikState<Values> &
-  FormikActions<Values> &
+  FormikHelpers<Values> &
   FormikHandlers &
   FormikComputedProps<Values> &
   FormikRegistration & {

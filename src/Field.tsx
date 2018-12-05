@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { FormikProps, GenericFieldHTMLAttributes } from './types';
 import { useFormikContext } from './FormikContext';
-import { isFunction } from 'util';
+import { isFunction } from './utils';
 
 /**
  * Note: These typings could be more restrictive, but then it would limit the
@@ -77,10 +77,10 @@ export interface FieldConfig {
 
 export type FieldAttributes<T> = GenericFieldHTMLAttributes & FieldConfig & T;
 
-export function useField(props: FieldConfig) {
+export function useField(name: string, type?: string) {
   const formik = useFormikContext();
 
-  return formik.getFieldProps(props.name, props.type);
+  return formik.getFieldProps(name, type);
 }
 
 export function Field({

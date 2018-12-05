@@ -1034,7 +1034,7 @@ describe('<Formik>', () => {
 
   it('isSubmitting is fired when submit is attempted', async () => {
     const onSubmit = jest.fn();
-    const validate = jest.fn(() => ({}));
+    const validate = jest.fn(() => Promise.resolve({}));
 
     const { getProps } = renderFormik({
       onSubmit,

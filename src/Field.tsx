@@ -1,8 +1,7 @@
 import * as React from 'react';
-import warning from 'warning';
-import { connect } from './connect';
-import { FormikProps, GenericFieldHTMLAttributes, FormikCtx } from './types';
-import { getIn, isEmptyChildren, isFunction } from './utils';
+import { FormikProps, GenericFieldHTMLAttributes } from './types';
+import { useFormikContext } from './FormikContext';
+import { isFunction } from './utils';
 
 /**
  * Note: These typings could be more restrictive, but then it would limit the
@@ -78,108 +77,85 @@ export interface FieldConfig {
 
 export type FieldAttributes<T> = GenericFieldHTMLAttributes & FieldConfig & T;
 
-/**
- * Custom Field component for quickly hooking into Formik
- * context and wiring up forms.
- */
-class FieldInner<Values = {}, Props = {}> extends React.Component<
-  FieldAttributes<Props> & { formik: FormikCtx<Values> },
-  {}
-> {
-  constructor(props: FieldAttributes<Props> & { formik: FormikCtx<Values> }) {
-    super(props);
-    const { render, children, component } = props;
-    warning(
-      !(component && render),
-      'You should not use <Field component> and <Field render> in the same <Field> component; <Field component> will be ignored'
-    );
+export function useField(name: string, type?: string) {
+  const formik = useFormikContext();
 
-    warning(
-      !(component && children && isFunction(children)),
-      'You should not use <Field component> and <Field children> as a function in the same <Field> component; <Field component> will be ignored.'
-    );
+  return formik.getFieldProps(name, type);
+}
 
-    warning(
-      !(render && children && !isEmptyChildren(children)),
-      'You should not use <Field render> and <Field children> in the same <Field> component; <Field children> will be ignored'
-    );
-  }
-
-  componentDidMount() {
-    // Register the Field with the parent Formik. Parent will cycle through
-    // registered Field's validate fns right prior to submit
-    this.props.formik.registerField(this.props.name, this);
-  }
-
-  componentDidUpdate(
-    prevProps: FieldAttributes<Props> & { formik: FormikCtx<Values> }
-  ) {
-    if (this.props.name !== prevProps.name) {
-      this.props.formik.unregisterField(prevProps.name);
-      this.props.formik.registerField(this.props.name, this);
-    }
-
-    if (this.props.validate !== prevProps.validate) {
-      this.props.formik.registerField(this.props.name, this);
-    }
-  }
-
-  componentWillUnmount() {
-    this.props.formik.unregisterField(this.props.name);
-  }
-
-  render() {
-    const {
-      validate,
-      name,
-      render,
-      children,
-      component = 'input',
-      formik,
-      ...props
-    } = (this.props as FieldAttributes<Props> & {
-      formik: FormikCtx<Values>;
-    }) as any;
-    const {
-      validate: _validate,
-      validationSchema: _validationSchema,
-      ...restOfFormik
-    } = formik;
-    const field = {
-      value:
-        props.type === 'radio' || props.type === 'checkbox'
-          ? props.value // React uses checked={} for these inputs
-          : getIn(formik.values, name),
-      name,
-      onChange: formik.handleChange,
-      onBlur: formik.handleBlur,
-    };
-    const bag = { field, form: restOfFormik };
-
-    if (render) {
-      return (render as any)(bag);
-    }
-
-    if (isFunction(children)) {
-      return (children as (props: FieldProps<any>) => React.ReactNode)(bag);
-    }
-
-    if (typeof component === 'string') {
-      const { innerRef, ...rest } = props;
-      return React.createElement(component as any, {
-        ref: innerRef,
-        ...field,
-        ...rest,
-        children,
+export function Field({
+  validate,
+  name,
+  render,
+  children,
+  component = 'input',
+  ...props
+}: FieldAttributes<any>) {
+  const {
+    validate: _validate,
+    validationSchema: _validationSchema,
+    ...formik
+  } = useFormikContext();
+  React.useEffect(
+    () => {
+      formik.registerField(props.name, {
+        validate: props.validate,
       });
-    }
+      return () => {
+        formik.unregisterField(props.name);
+      };
+    },
+    [props.name, props.validate]
+  );
+  const [field] = formik.getFieldProps(name, props.type);
+  const bag = { field, form: formik };
 
-    return React.createElement(component as any, {
-      ...bag,
-      ...props,
+  if (render) {
+    return render(bag);
+  }
+
+  if (isFunction(children)) {
+    return children(bag);
+  }
+
+  if (typeof component === 'string') {
+    const { innerRef, ...rest } = props;
+    return React.createElement(component, {
+      ref: innerRef,
+      ...field,
+      ...rest,
       children,
     });
   }
-}
 
-export const Field = connect<FieldAttributes<any>, any>(FieldInner);
+  return React.createElement(component, {
+    ...bag,
+    ...props,
+    children,
+  });
+}
+export const FastField = Field;
+// export const FastField = (React as any).memo(
+//   connect(
+//     ({
+//       formik: _formik,
+//       ...props
+//     }: FieldAttributes<any> & { formik: FormikCtx<any> }) => {
+//       console.log(props['data-testid']);
+//       return <Field {...props} />;
+//     }
+//   ),
+//   (props: any, nextProps: any) => {
+//     return (
+//       Object.keys(nextProps).length === Object.keys(props).length ||
+//       props.formik.isSubmitting === nextProps.formik.isSubmitting ||
+//       props === nextProps ||
+//       getIn(nextProps.formik.values, nextProps.name) ===
+//         getIn(props.formik.values, nextProps.name) ||
+//       getIn(nextProps.formik.errors, nextProps.name) ===
+//         getIn(props.formik.errors, nextProps.name) ||
+//       getIn(nextProps.formik.touched, nextProps.name) ===
+//         getIn(props.formik.touched, nextProps.name)
+//     );
+//   }
+// );

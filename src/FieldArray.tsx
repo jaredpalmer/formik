@@ -96,8 +96,9 @@ class FieldArrayInner<Values = {}> extends React.Component<
   constructor(props: FieldArrayConfig & { formik: FormikCtx<Values> }) {
     super(props);
     // We need TypeScript generics on these, so we'll bind them in the constructor
-    this.remove = this.remove.bind(this);
-    this.pop = this.pop.bind(this);
+    // @todo Fix TS 3.2.1
+    this.remove = this.remove.bind(this) as any;
+    this.pop = this.pop.bind(this) as any;
   }
 
   updateArrayField = (
@@ -202,7 +203,7 @@ class FieldArrayInner<Values = {}> extends React.Component<
       true
     );
 
-    return result;
+    return result as T;
   }
 
   handleRemove = (index: number) => () => this.remove<any>(index);
@@ -223,7 +224,7 @@ class FieldArrayInner<Values = {}> extends React.Component<
       true
     );
 
-    return result;
+    return result as T;
   }
 
   handlePop = () => () => this.pop<any>();

@@ -2,7 +2,7 @@ import hoistNonReactStatics from 'hoist-non-react-statics';
 import * as React from 'react';
 import { Formik } from './Formik';
 import {
-  FormikActions,
+  FormikHelpers,
   FormikProps,
   FormikSharedConfig,
   FormikValues,
@@ -20,7 +20,7 @@ export type InjectedFormikProps<Props, Values> = Props & FormikProps<Values>;
 /**
  * Formik actions + { props }
  */
-export type FormikBag<P, V> = { props: P } & FormikActions<V>;
+export type FormikBag<P, V> = { props: P } & FormikHelpers<V>;
 
 /**
  * withFormik() configuration options. Backwards compatible.
@@ -89,7 +89,8 @@ export function withFormik<
         vanillaProps.hasOwnProperty(k) &&
         typeof vanillaProps[k] !== 'function'
       ) {
-        val[k] = vanillaProps[k];
+        // @todo TypeScript fix
+        (val as any)[k] = vanillaProps[k];
       }
     }
     return val as Values;
@@ -124,7 +125,7 @@ export function withFormik<
           : config.validationSchema;
       };
 
-      handleSubmit = (values: Values, actions: FormikActions<Values>) => {
+      handleSubmit = (values: Values, actions: FormikHelpers<Values>) => {
         return config.handleSubmit(values, {
           ...actions,
           props: this.props,

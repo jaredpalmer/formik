@@ -445,46 +445,6 @@ export function useFormik<Values = object>({
     }).then(x => x, e => e);
   }
 
-  function runFieldLevelValidations(
-    values: Values
-  ): Promise<FormikErrors<Values>> {
-    if (fields.current === null) {
-      return Promise.resolve({});
-    }
-    const fieldKeysWithValidation: string[] = Object.keys(
-      fields.current
-    ).filter(
-      f =>
-        fields.current !== null &&
-        fields.current[f] &&
-        fields.current[f].validate &&
-        isFunction(fields.current[f].validate)
-    );
-
-    // Construct an array with all of the field validation functions
-    const fieldValidations: Promise<string>[] =
-      fieldKeysWithValidation.length > 0
-        ? fieldKeysWithValidation.map(f =>
-            runSingleFieldLevelValidationAsPromise(f, getIn(values, f))
-          )
-        : [Promise.resolve('DO_NOT_DELETE_YOU_WILL_BE_FIRED')]; // use special case ;)
-
-    return Promise.all(fieldValidations).then((fieldErrorsList: string[]) =>
-      fieldErrorsList.reduce(
-        (prev, curr, index) => {
-          if (curr === 'DO_NOT_DELETE_YOU_WILL_BE_FIRED') {
-            return prev;
-          }
-          if (!!curr) {
-            prev = setIn(prev, fieldKeysWithValidation[index], curr);
-          }
-          return prev;
-        },
-        {} as FormikErrors<Values>
-      )
-    );
-  }
-
   function runValidateHandler(
     values: Values,
     field?: string
@@ -541,12 +501,11 @@ export function useFormik<Values = object>({
   ): Promise<FormikErrors<Values>> {
     dispatch({ type: 'SET_ISVALIDATING', payload: true });
     return Promise.all([
-      runFieldLevelValidations(values),
       props.validationSchema ? runValidationSchema(values, field) : {},
       props.validate ? runValidateHandler(values, field) : {},
-    ]).then(([fieldErrors, schemaErrors, handlerErrors]) => {
+    ]).then(([fieldErrors, schemaErrors]) => {
       const combinedErrors = deepmerge.all<FormikErrors<Values>>(
-        [fieldErrors, schemaErrors, handlerErrors],
+        [fieldErrors, schemaErrors],
         { arrayMerge }
       );
 

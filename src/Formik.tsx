@@ -676,6 +676,8 @@ export function useFormik<Values = object>({
     unregisterField,
     registerField,
     getFieldProps,
+    validateOnBlur,
+    validateOnChange,
   };
 
   return ctx;

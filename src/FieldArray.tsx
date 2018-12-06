@@ -106,18 +106,15 @@ class FieldArrayInner<Values = {}> extends React.Component<
     alterTouched: boolean,
     alterErrors: boolean
   ) => {
-    const {
-      name,
-      formik: { setFormikState, values, touched, errors },
-    } = this.props;
+    const { name, formik: { setFormikState } } = this.props;
     setFormikState((prevState: FormikState<any>) => ({
       ...prevState,
-      values: setIn(prevState.values, name, fn(getIn(values, name))),
+      values: setIn(prevState.values, name, fn(getIn(prevState.values, name))),
       errors: alterErrors
-        ? setIn(prevState.errors, name, fn(getIn(errors, name)))
+        ? setIn(prevState.errors, name, fn(getIn(prevState.errors, name)))
         : prevState.errors,
       touched: alterTouched
-        ? setIn(prevState.touched, name, fn(getIn(touched, name)))
+        ? setIn(prevState.touched, name, fn(getIn(prevState.touched, name)))
         : prevState.touched,
     }));
     // @todo validateOnChange

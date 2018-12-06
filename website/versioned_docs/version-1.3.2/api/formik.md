@@ -1,7 +1,8 @@
 ---
-id: formik
+id: version-1.3.2-formik
 title: <Formik />
 custom_edit_url: https://github.com/jaredpalmer/formik/edit/master/docs/api/formik.md
+original_id: formik
 ---
 
 `<Formik>` is a component that helps you with building forms. It uses a render
@@ -309,7 +310,7 @@ Your form submission handler. It is passed your forms `values` and the
 "FormikBag", which includes an object containing a subset of the
 [injected props and methods](#formik-render-methods-and-props) (i.e. all the methods
 with names that start with `set<Thing>` + `resetForm`) and any props that were
-passed to the wrapped component.
+passed to the the wrapped component.
 
 Note: `errors`, `touched`, `status` and all event handlers are NOT
 included in the `FormikBag`.

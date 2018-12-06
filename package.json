@@ -22,7 +22,7 @@
     "dist"
   ],
   "peerDependencies": {
-    "react": ">=15"
+    "react": "^16.7.0-alpha.0"
   },
   "scripts": {
     "test": "jest --env=jsdom",
@@ -130,8 +130,7 @@
       "json"
     ]
   },
-  "size-limit": [
-    {
+  "size-limit": [{
       "path": "./dist/index.js",
       "limit": "14 kB"
     },

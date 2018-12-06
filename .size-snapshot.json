@@ -19,11 +19,6 @@
     "minified": 21763,
     "gzipped": 5576
   },
-  "dist/index.js": {
-    "bundled": 38641,
-    "minified": 21911,
-    "gzipped": 5619
-  },
   "dist/formik.esm.js": {
     "bundled": 37921,
     "minified": 21175,

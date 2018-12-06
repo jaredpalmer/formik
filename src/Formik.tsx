@@ -18,11 +18,11 @@ import {
   setNestedObjectValues,
   getActiveElement,
   getIn,
-  debounce,
+  // debounce,
 } from './utils';
 import { FormikProvider } from './FormikContext';
 import warning from 'warning';
-
+const Scheduler = require('scheduler');
 // We already used FormikActions. So we'll go all Elm-y, and use Message.
 type FormikMessage<Values> =
   | { type: 'SUBMIT_ATTEMPT' }
@@ -107,11 +107,9 @@ export function useFormik<Values = object>({
   const props = { validateOnChange, validateOnBlur, isInitialValid, ...rest };
   const initialValues = React.useRef(props.initialValues);
   const didMount = React.useRef<boolean>(false);
-  const fields = React.useRef<{
-    [field: string]: {
-      validate: (value: any) => string | Promise<string> | undefined;
-    };
-  }>({});
+
+  const validator = React.useRef<any>(null);
+
   React.useEffect(
     () => {
       initialValues.current = props.initialValues;
@@ -134,10 +132,10 @@ export function useFormik<Values = object>({
   // Validation is expensive. Running it on change isn't efficient, so we debounce
   // it. In the future, we will also mark change-triggered validation as low-priority
   // with scheduler
-  const debouncedValidateForm: any = debounce(
-    validateForm,
-    debounceValidationMs
-  );
+  // const debouncedValidateForm: any = debounce(
+  //   validateForm,
+  //   debounceValidationMs
+  // );
 
   React.useEffect(
     () => {
@@ -147,7 +145,12 @@ export function useFormik<Values = object>({
         !state.isSubmitting &&
         (props.validate || props.validationSchema)
       ) {
-        debouncedValidateForm(state.values);
+        if (validator.current !== null) {
+          Scheduler.unstable_cancelCallback(validator.current);
+        }
+        validator.current = Scheduler.unstable_scheduleCallback(() => {
+          validateForm(state.values);
+        });
       }
     },
     [state.values, validateOnChange, state.isSubmitting]
@@ -178,7 +181,6 @@ export function useFormik<Values = object>({
     resetForm,
     submitForm,
     validateForm,
-    validateField,
     setErrors,
     setFieldError,
     setFieldTouched,
@@ -189,20 +191,6 @@ export function useFormik<Values = object>({
     setValues,
     setFormikState,
   };
-
-  function registerField(name: string, { validate }: any) {
-    if (fields.current !== null) {
-      fields.current[name] = {
-        validate,
-      };
-    }
-  }
-
-  function unregisterField(name: string) {
-    if (fields.current !== null) {
-      delete fields.current[name];
-    }
-  }
 
   function handleBlur(eventOrString: any): void | ((e: any) => void) {
     if (isString(eventOrString)) {
@@ -409,62 +397,6 @@ export function useFormik<Values = object>({
     });
   }
 
-  function validateField(name: string) {
-    // This will efficiently validate a single field by avoiding state
-    // changes if the validation function is synchronous. It's different from
-    // what is called when using validateForm.
-
-    if (
-      fields.current !== null &&
-      fields.current[name] &&
-      fields.current[name].validate &&
-      isFunction(fields.current[name].validate)
-    ) {
-      const value = getIn(state.values, name);
-      const maybePromise = fields.current[name].validate(value);
-      if (isPromise(maybePromise)) {
-        // Only flip isValidating if the function is async.
-        dispatch({ type: 'SET_ISVALIDATING', payload: true });
-        return maybePromise
-          .then((x: any) => x, (e: any) => e)
-          .then((error: string) => {
-            dispatch({
-              type: 'SET_FIELD_ERROR',
-              payload: { field: name, value: error },
-            });
-            dispatch({ type: 'SET_ISVALIDATING', payload: false });
-          });
-      } else {
-        dispatch({
-          type: 'SET_FIELD_ERROR',
-          payload: {
-            field: name,
-            value: maybePromise as string | undefined,
-          },
-        });
-        return Promise.resolve(maybePromise as string | undefined);
-      }
-    } else {
-      return Promise.resolve();
-    }
-  }
-
-  // function runSingleFieldLevelValidationAsPromise(
-  //   name: string,
-  //   value: void | string
-  // ): Promise<string> {
-  //   return new Promise(resolve => {
-  //     if (
-  //       fields.current !== null &&
-  //       fields.current[name] &&
-  //       fields.current[name].validate &&
-  //       isFunction(fields.current[name].validate)
-  //     ) {
-  //       resolve(fields.current[name].validate(value));
-  //     }
-  //   }).then(x => x, e => e);
-  // }
-
   function runValidateHandler(
     values: Values,
     field?: string
@@ -653,11 +585,8 @@ export function useFormik<Values = object>({
     setValues,
     submitForm,
     validateForm,
-    validateField,
     isValid,
     dirty,
-    unregisterField,
-    registerField,
     getFieldProps,
     validateOnBlur,
     validateOnChange,

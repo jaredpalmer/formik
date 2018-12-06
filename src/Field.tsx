@@ -56,11 +56,6 @@ export interface FieldConfig {
   children?: ((props: FieldProps<any>) => React.ReactNode) | React.ReactNode;
 
   /**
-   * Validate a single field value independently
-   */
-  validate?: ((value: any) => string | Promise<void> | undefined);
-
-  /**
    * Field name
    */
   name: string;
@@ -96,17 +91,6 @@ export function Field({
     validationSchema: _validationSchema,
     ...formik
   } = useFormikContext();
-  React.useEffect(
-    () => {
-      formik.registerField(props.name, {
-        validate: props.validate,
-      });
-      return () => {
-        formik.unregisterField(props.name);
-      };
-    },
-    [props.name, props.validate]
-  );
   const [field] = formik.getFieldProps(name, props.type);
   const bag = { field, form: formik };
 
@@ -134,28 +118,5 @@ export function Field({
     children,
   });
 }
+
 export const FastField = Field;
-// export const FastField = (React as any).memo(
-//   connect(
-//     ({
-//       formik: _formik,
-//       ...props
-//     }: FieldAttributes<any> & { formik: FormikCtx<any> }) => {
-//       console.log(props['data-testid']);
-//       return <Field {...props} />;
-//     }
-//   ),
-//   (props: any, nextProps: any) => {
-//     return (
-//       Object.keys(nextProps).length === Object.keys(props).length ||
-//       props.formik.isSubmitting === nextProps.formik.isSubmitting ||
-//       props === nextProps ||
-//       getIn(nextProps.formik.values, nextProps.name) ===
-//         getIn(props.formik.values, nextProps.name) ||
-//       getIn(nextProps.formik.errors, nextProps.name) ===
-//         getIn(props.formik.errors, nextProps.name) ||
-//       getIn(nextProps.formik.touched, nextProps.name) ===
-//         getIn(props.formik.touched, nextProps.name)
-//     );
-//   }
-// );

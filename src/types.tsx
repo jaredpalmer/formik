@@ -92,8 +92,6 @@ export interface FormikHelpers<Values> {
   ): void;
   /** Validate form values */
   validateForm(values?: any): Promise<FormikErrors<Values>>;
-  /** Validate field value */
-  validateField(field: string): void;
   /** Reset form */
   resetForm(nextValues?: any): void;
   /** Submit the form imperatively */
@@ -221,17 +219,9 @@ export type FormikProps<Values> = FormikSharedConfig &
   FormikState<Values> &
   FormikHelpers<Values> &
   FormikHandlers &
-  FormikComputedProps<Values> &
-  FormikRegistration;
+  FormikComputedProps<Values>;
 
 /** Internal Formik registration methods that get passed down as props */
-export interface FormikRegistration {
-  registerField(
-    name: string,
-    fns: { validate?: ((value: any) => string | Promise<void> | undefined) }
-  ): void;
-  unregisterField(name: string): void;
-}
 
 /**
  * State, handlers, and helpers made available to Formik's primitive components through context.

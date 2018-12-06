@@ -10,6 +10,14 @@ import pkg from './package.json';
 const input = './compiled/index.js';
 const external = id => !id.startsWith('.') && !id.startsWith('/');
 const replacements = [{ original: 'lodash', replacement: 'lodash-es' }];
+const babelOptions = {
+  exclude: /node_modules/,
+  plugins: [
+    'annotate-pure-calls',
+    'dev-expression',
+    ['transform-rename-import', { replacements }],
+  ],
+};
 
 const buildUmd = ({ env }) => ({
   input,
@@ -31,9 +39,7 @@ const buildUmd = ({ env }) => ({
 
   plugins: [
     resolve(),
-    babel({
-      plugins: [['transform-rename-import', { replacements }]],
-    }),
+    babel(babelOptions),
     replace({
       'process.env.NODE_ENV': JSON.stringify(env),
     }),
@@ -99,16 +105,6 @@ export default [
         sourcemap: true,
       },
     ],
-    plugins: [
-      resolve(),
-      babel({
-        plugins: [
-          'annotate-pure-calls',
-          ['transform-rename-import', { replacements }],
-        ],
-      }),
-      sizeSnapshot(),
-      sourceMaps(),
-    ],
+    plugins: [resolve(), babel(babelOptions), sizeSnapshot(), sourceMaps()],
   },
 ];

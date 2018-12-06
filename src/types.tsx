@@ -115,7 +115,7 @@ export interface FormikHandlers {
   /** Reset form event handler  */
   handleReset: () => void;
   /** Classic React blur handler, keyed by input name */
-  handleBlur(e: any): void;
+  handleBlur(e: React.FocusEvent<any>): void;
   /** Preact-like linkState. Will return a handleBlur function. */
   handleBlur<T = string | any>(
     fieldOrEvent: T
@@ -128,6 +128,24 @@ export interface FormikHandlers {
   ): T extends React.ChangeEvent<any>
     ? void
     : ((e: string | React.ChangeEvent<any>) => void);
+
+  getFieldProps(
+    name: string,
+    type?: string
+  ): [
+    {
+      value: any;
+      name: string;
+      onChange: ((e: React.ChangeEvent<any>) => void);
+      onBlur: ((e: any) => void);
+    },
+    {
+      value: any;
+      error?: string | undefined;
+      touch: boolean;
+      initialValue?: any;
+    }
+  ];
 }
 
 /**
@@ -190,6 +208,9 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
   validate?: ((
     values: Values
   ) => void | object | Promise<FormikErrors<Values>>);
+
+  /** Ms to debounce change-trigged validation calls */
+  debounceValidationMs?: number;
 }
 
 /**
@@ -201,25 +222,7 @@ export type FormikProps<Values> = FormikSharedConfig &
   FormikHelpers<Values> &
   FormikHandlers &
   FormikComputedProps<Values> &
-  FormikRegistration & {
-    getFieldProps(
-      name: string,
-      type?: string
-    ): [
-      {
-        value: any;
-        name: string;
-        onChange: ((e: React.ChangeEvent<any>) => void);
-        onBlur: ((e: any) => void);
-      },
-      {
-        value: any;
-        error?: string | undefined;
-        touch: boolean;
-        initialValue?: any;
-      }
-    ];
-  };
+  FormikRegistration;
 
 /** Internal Formik registration methods that get passed down as props */
 export interface FormikRegistration {

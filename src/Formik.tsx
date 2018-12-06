@@ -18,6 +18,7 @@ import {
   setNestedObjectValues,
   getActiveElement,
   getIn,
+  debounce,
 } from './utils';
 import { FormikProvider } from './FormikContext';
 import warning from 'warning';
@@ -100,6 +101,7 @@ export function useFormik<Values = object>({
   validateOnChange = true,
   validateOnBlur = true,
   isInitialValid = false,
+  debounceValidationMs = 300,
   ...rest
 }: FormikConfig<Values>) {
   const props = { validateOnChange, validateOnBlur, isInitialValid, ...rest };
@@ -129,10 +131,23 @@ export function useFormik<Values = object>({
     submitCount: 0,
   });
 
+  // Validation is expensive. Running it on change isn't efficient, so we debounce
+  // it. In the future, we will also mark change-triggered validation as low-priority
+  // with scheduler
+  const debouncedValidateForm: any = debounce(
+    validateForm,
+    debounceValidationMs
+  );
+
   React.useEffect(
     () => {
-      if (!!didMount.current && !!validateOnChange && !state.isSubmitting) {
-        validateForm(state.values);
+      if (
+        !!didMount.current &&
+        !!validateOnChange &&
+        !state.isSubmitting &&
+        (props.validate || props.validationSchema)
+      ) {
+        debouncedValidateForm(state.values);
       }
     },
     [state.values, validateOnChange, state.isSubmitting]
@@ -140,7 +155,12 @@ export function useFormik<Values = object>({
 
   React.useEffect(
     () => {
-      if (!!didMount.current && !!validateOnBlur && !state.isSubmitting) {
+      if (
+        !!didMount.current &&
+        !!validateOnBlur &&
+        !state.isSubmitting &&
+        (props.validate || props.validationSchema)
+      ) {
         validateForm(state.values);
       }
     },
@@ -429,21 +449,21 @@ export function useFormik<Values = object>({
     }
   }
 
-  function runSingleFieldLevelValidationAsPromise(
-    name: string,
-    value: void | string
-  ): Promise<string> {
-    return new Promise(resolve => {
-      if (
-        fields.current !== null &&
-        fields.current[name] &&
-        fields.current[name].validate &&
-        isFunction(fields.current[name].validate)
-      ) {
-        resolve(fields.current[name].validate(value));
-      }
-    }).then(x => x, e => e);
-  }
+  // function runSingleFieldLevelValidationAsPromise(
+  //   name: string,
+  //   value: void | string
+  // ): Promise<string> {
+  //   return new Promise(resolve => {
+  //     if (
+  //       fields.current !== null &&
+  //       fields.current[name] &&
+  //       fields.current[name].validate &&
+  //       isFunction(fields.current[name].validate)
+  //     ) {
+  //       resolve(fields.current[name].validate(value));
+  //     }
+  //   }).then(x => x, e => e);
+  // }
 
   function runValidateHandler(
     values: Values,
@@ -499,23 +519,27 @@ export function useFormik<Values = object>({
     values: Values = state.values,
     field?: string
   ): Promise<FormikErrors<Values>> {
-    dispatch({ type: 'SET_ISVALIDATING', payload: true });
-    return Promise.all([
-      props.validationSchema ? runValidationSchema(values, field) : {},
-      props.validate ? runValidateHandler(values, field) : {},
-    ]).then(([fieldErrors, schemaErrors]) => {
-      const combinedErrors = deepmerge.all<FormikErrors<Values>>(
-        [fieldErrors, schemaErrors],
-        { arrayMerge }
-      );
+    if (props.validationSchema || props.validate) {
+      dispatch({ type: 'SET_ISVALIDATING', payload: true });
+      return Promise.all([
+        props.validationSchema ? runValidationSchema(values, field) : {},
+        props.validate ? runValidateHandler(values, field) : {},
+      ]).then(([fieldErrors, schemaErrors]) => {
+        const combinedErrors = deepmerge.all<FormikErrors<Values>>(
+          [fieldErrors, schemaErrors],
+          { arrayMerge }
+        );
 
-      if (didMount.current) {
-        dispatch({ type: 'SET_ISVALIDATING', payload: false });
-        dispatch({ type: 'SET_ERRORS', payload: combinedErrors });
-      }
+        if (didMount.current) {
+          dispatch({ type: 'SET_ISVALIDATING', payload: false });
+          dispatch({ type: 'SET_ERRORS', payload: combinedErrors });
+        }
 
-      return combinedErrors;
-    });
+        return combinedErrors;
+      });
+    } else {
+      return Promise.resolve({});
+    }
   }
 
   function setFormikState(

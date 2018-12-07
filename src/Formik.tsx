@@ -267,8 +267,9 @@ export class Formik<Values = object, ExtraProps = {}> extends React.Component<
   ): Promise<FormikErrors<Values>> => {
     if (this.validator) {
       this.validator();
+    } else {
+      this.setState({ isValidating: true });
     }
-    this.setState({ isValidating: true });
     const [promise, cancel] = makeCancelable(
       Promise.all([
         this.runFieldLevelValidations(values),

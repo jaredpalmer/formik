@@ -19,7 +19,6 @@ import {
   getActiveElement,
   getIn,
   makeCancelable,
-  // debounce,
 } from './utils';
 import { FormikProvider } from './FormikContext';
 import warning from 'warning';
@@ -28,6 +27,8 @@ import warning from 'warning';
 type FormikMessage<Values> =
   | { type: 'SUBMIT_ATTEMPT' }
   | { type: 'SUBMIT_FAILURE' }
+  | { type: 'VALIDATE_START' }
+  | { type: 'VALIDATE_END'; payload: FormikErrors<Values> }
   | { type: 'SUBMIT_SUCESS' }
   | { type: 'SET_ISVALIDATING'; payload: boolean }
   | { type: 'SET_ISSUBMITTING'; payload: boolean }
@@ -57,6 +58,10 @@ function formikReducer<Values>(
       return { ...state, status: msg.payload };
     case 'SET_ISVALIDATING':
       return { ...state, isValidating: msg.payload };
+    case 'VALIDATE_START':
+      return { ...state, isValidating: true };
+    case 'VALIDATE_END':
+      return { ...state, isValidating: false, errors: msg.payload };
     case 'SET_ISSUBMITTING':
       return { ...state, isSubmitting: msg.payload };
     case 'SET_FIELD_VALUE':
@@ -102,7 +107,6 @@ export function useFormik<Values = object>({
   validateOnChange = true,
   validateOnBlur = true,
   isInitialValid = false,
-  debounceValidationMs = 300,
   ...rest
 }: FormikConfig<Values>) {
   const props = { validateOnChange, validateOnBlur, isInitialValid, ...rest };
@@ -127,16 +131,19 @@ export function useFormik<Values = object>({
     submitCount: 0,
   });
 
+  const runValidationAsEffect = () => {
+    dispatch({ type: 'VALIDATE_START' });
+    let [validate, cancel] = validateFormWithCancellation(state.values);
+    validate.then(errors => {
+      dispatch({ type: 'VALIDATE_END', payload: errors });
+    });
+    return () => cancel();
+  };
+
   React.useEffect(
     () => {
       if (!!validateOnChange && !state.isSubmitting) {
-        dispatch({ type: 'SET_ISVALIDATING', payload: true });
-        let [validate, cancel] = validateFormWithCancellation(state.values);
-        validate.then(errors => {
-          dispatch({ type: 'SET_ISVALIDATING', payload: false });
-          dispatch({ type: 'SET_ERRORS', payload: errors });
-        });
-        return () => cancel();
+        return runValidationAsEffect();
       }
       return;
     },
@@ -146,13 +153,7 @@ export function useFormik<Values = object>({
   React.useEffect(
     () => {
       if (!!validateOnBlur && !state.isSubmitting) {
-        dispatch({ type: 'SET_ISVALIDATING', payload: true });
-        let [validate, cancel] = validateFormWithCancellation(state.values);
-        validate.then(errors => {
-          dispatch({ type: 'SET_ISVALIDATING', payload: false });
-          dispatch({ type: 'SET_ERRORS', payload: errors });
-        });
-        return () => cancel();
+        return runValidationAsEffect();
       }
       return;
     },
@@ -487,7 +488,8 @@ export function useFormik<Values = object>({
 
   function submitForm() {
     dispatch({ type: 'SUBMIT_ATTEMPT' });
-    return validateForm().then((combinedErrors: FormikErrors<Values>) => {
+    const [promise] = validateFormWithCancellation(state.values);
+    return promise.then((combinedErrors: FormikErrors<Values>) => {
       const isActuallyValid = Object.keys(combinedErrors).length === 0;
       if (isActuallyValid) {
         executeSubmit();

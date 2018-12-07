@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { FormikProps, GenericFieldHTMLAttributes } from './types';
 import { useFormikContext } from './FormikContext';
-import { isFunction } from './utils';
+import { isFunction, getIn } from './utils';
+import { connect } from './connect';
 
 /**
  * Note: These typings could be more restrictive, but then it would limit the
@@ -78,6 +79,27 @@ export function useField(name: string, type?: string) {
   return formik.getFieldProps(name, type);
 }
 
+export const FastField = React.memo(
+  connect((props: FieldAttributes<any>) => {
+    return <Field {...props} />;
+  }),
+  (props, nextProps) => {
+    if (
+      getIn(nextProps.formik.values, nextProps.name) !==
+        getIn(props.formik.values, nextProps.name) ||
+      getIn(nextProps.formik.errors, nextProps.name) !==
+        getIn(props.formik.errors, nextProps.name) ||
+      getIn(nextProps.formik.touched, nextProps.name) !==
+        getIn(props.formik.touched, nextProps.name) ||
+      Object.keys(nextProps).length !== Object.keys(props).length ||
+      nextProps.formik.isSubmitting !== props.formik.isSubmitting
+    ) {
+      return true;
+    }
+    return false;
+  }
+);
+
 export function Field({
   validate,
   name,
@@ -118,5 +140,3 @@ export function Field({
     children,
   });
 }
-
-export const FastField = Field;

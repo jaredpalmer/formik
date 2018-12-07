@@ -206,9 +206,6 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
   validate?: ((
     values: Values
   ) => void | object | Promise<FormikErrors<Values>>);
-
-  /** Ms to debounce change-trigged validation calls */
-  debounceValidationMs?: number;
 }
 
 /**

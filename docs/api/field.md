@@ -174,30 +174,33 @@ A field's name in Formik state. To access nested objects or arrays, name can als
 A function that returns one or more JSX elements.
 
 ```jsx
-// Renders an HTML <input> by default
-<Field name="lastName" placeholder="Last Name"/>
+// Renders an HTML <input> and passes FieldProps field property
+<Field
+  name="firstName"
+  render={({ field /* { name, value, onChange, onBlur } */ }) => (
+    <input {...field} type="text" placeholder="firstName" />
+  )}
+/>
 
-// Renders an HTML <select>
-<Field name="color" component="select" placeholder="Favorite Color">
-  <option value="red">Red</option>
-  <option value="green">Green</option>
-  <option value="blue">Blue</option>
-</Field>
+// Renders an HTML <input> and disables it while form is submitting
+<Field
+  name="lastName"
+  render={({ field, form: { isSubmitting } }) => (
+    <input {...field} disabled={isSubmitting} type="text" placeholder="lastName" />
+  )}
+/>
 
-// Renders a CustomInputComponent
-<Field name="firstName" component={CustomInputComponent} placeholder="First Name"/>
-
-const CustomInputComponent = ({
-  field, // { name, value, onChange, onBlur }
-  form: { touched, errors }, // also values, setXXXX, handleXXXX, dirty, isValid, status, etc.
-  ...props
-}) => (
-  <div>
-    <input type="text" {...field} {...props} />
-    {touched[field.name] &&
-      errors[field.name] && <div className="error">{errors[field.name]}</div>}
-  </div>
-);
+// Renders an HTML <input> with custom error <div> element
+<Field
+  name="lastName"
+  render={({ field, form: { touched, errors } }) => (
+    <div>
+      <input {...field} type="text" placeholder="lastName" />
+      {touched[field.name] &&
+        errors[field.name] && <div className="error">{errors[field.name]}</div>}
+    </div>
+  )}
+/>
 ```
 
 ### `validate`

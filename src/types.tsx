@@ -127,7 +127,7 @@ export interface FormikHandlers {
 
   getFieldProps(
     name: string,
-    type?: string
+    props: any
   ): [
     {
       value: any;

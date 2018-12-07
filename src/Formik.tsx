@@ -133,16 +133,11 @@ export function useFormik<Values = object>({
   React.useEffect(
     () => {
       if (!!validateOnChange && !state.isSubmitting) {
-        if (props.validate && isPromise(props.validate)) {
-          return runValidationAsEffect();
-        }
-        if (props.validate && isPromise(props.validate)) {
-          return runValidationAsEffect();
-        }
+        return runValidationAsEffect();
       }
       return;
     },
-    [state.values, validateOnChange, state.isSubmitting]
+    [state.values, state.isSubmitting]
   );
 
   React.useEffect(
@@ -152,7 +147,7 @@ export function useFormik<Values = object>({
       }
       return;
     },
-    [state.touched, validateOnBlur, state.isSubmitting]
+    [state.touched, state.isSubmitting]
   );
 
   const imperativeMethods = {
@@ -494,11 +489,12 @@ export function useFormik<Values = object>({
   }
 
   function getFieldProps(
-    name: string,
-    type: string
+    fieldName: string,
+    props: any = {}
   ): [
     {
       value: any;
+      checked?: boolean;
       name: string;
       onChange: ((e: React.ChangeEvent<any>) => void);
       onBlur: ((e: any) => void);
@@ -510,17 +506,21 @@ export function useFormik<Values = object>({
       initialValue?: any;
     }
   ] {
+    const { type, value } = props;
+    const isRadioLike =
+      type && value && (type === 'radio' || type === 'checkbox');
+    const fieldValue = getIn(state.values, fieldName);
     const field = {
-      name,
-      value:
-        type && (type === 'radio' || type === 'checkbox')
-          ? undefined // React uses checked={} for these inputs
-          : getIn(state.values, name),
+      name: fieldName,
+      value: !!isRadioLike ? value : fieldValue,
+      [!!isRadioLike ? 'checked' : 'value']: isRadioLike
+        ? value === fieldValue // React uses checked={} for these inputs
+        : fieldValue,
       onChange: handleChange,
       onBlur: handleBlur,
     };
 
-    return [field, getFieldMeta(name)];
+    return [field, getFieldMeta(fieldName)];
   }
 
   function getFieldMeta(name: string) {

@@ -282,10 +282,12 @@ export class Formik<Values = object, ExtraProps = {}> extends React.Component<
       })
     );
     this.validator = cancel;
-    return promise.then((combinedErrors: FormikErrors<Values>) => {
-      this.setState({ isValidating: false, errors: combinedErrors });
-      return combinedErrors;
-    });
+    return promise
+      .then((combinedErrors: FormikErrors<Values>) => {
+        this.setState({ isValidating: false, errors: combinedErrors });
+        return combinedErrors;
+      })
+      .catch(x => x);
   };
 
   handleChange = (

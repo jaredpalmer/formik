@@ -18,11 +18,12 @@ import {
   setNestedObjectValues,
   getActiveElement,
   getIn,
+  makeCancelable,
   // debounce,
 } from './utils';
 import { FormikProvider } from './FormikContext';
 import warning from 'warning';
-const Scheduler = require('scheduler');
+
 // We already used FormikActions. So we'll go all Elm-y, and use Message.
 type FormikMessage<Values> =
   | { type: 'SUBMIT_ATTEMPT' }
@@ -106,9 +107,6 @@ export function useFormik<Values = object>({
 }: FormikConfig<Values>) {
   const props = { validateOnChange, validateOnBlur, isInitialValid, ...rest };
   const initialValues = React.useRef(props.initialValues);
-  const didMount = React.useRef<boolean>(false);
-
-  const validator = React.useRef<any>(null);
 
   React.useEffect(
     () => {
@@ -129,53 +127,37 @@ export function useFormik<Values = object>({
     submitCount: 0,
   });
 
-  // Validation is expensive. Running it on change isn't efficient, so we debounce
-  // it. In the future, we will also mark change-triggered validation as low-priority
-  // with scheduler
-  // const debouncedValidateForm: any = debounce(
-  //   validateForm,
-  //   debounceValidationMs
-  // );
-
   React.useEffect(
     () => {
-      if (
-        !!didMount.current &&
-        !!validateOnChange &&
-        !state.isSubmitting &&
-        (props.validate || props.validationSchema)
-      ) {
-        if (validator.current !== null) {
-          Scheduler.unstable_cancelCallback(validator.current);
-        }
-        validator.current = Scheduler.unstable_scheduleCallback(() => {
-          validateForm(state.values);
+      if (!!validateOnChange && !state.isSubmitting) {
+        dispatch({ type: 'SET_ISVALIDATING', payload: true });
+        let [validate, cancel] = validateFormWithCancellation(state.values);
+        validate.then(errors => {
+          dispatch({ type: 'SET_ISVALIDATING', payload: false });
+          dispatch({ type: 'SET_ERRORS', payload: errors });
         });
+        return () => cancel();
       }
+      return;
     },
     [state.values, validateOnChange, state.isSubmitting]
   );
 
   React.useEffect(
     () => {
-      if (
-        !!didMount.current &&
-        !!validateOnBlur &&
-        !state.isSubmitting &&
-        (props.validate || props.validationSchema)
-      ) {
-        validateForm(state.values);
+      if (!!validateOnBlur && !state.isSubmitting) {
+        dispatch({ type: 'SET_ISVALIDATING', payload: true });
+        let [validate, cancel] = validateFormWithCancellation(state.values);
+        validate.then(errors => {
+          dispatch({ type: 'SET_ISVALIDATING', payload: false });
+          dispatch({ type: 'SET_ERRORS', payload: errors });
+        });
+        return () => cancel();
       }
+      return;
     },
     [state.touched, validateOnBlur, state.isSubmitting]
   );
-
-  React.useEffect(() => {
-    didMount.current = true;
-    return function unMount() {
-      didMount.current = false;
-    };
-  }, []);
 
   const imperativeMethods = {
     resetForm,
@@ -447,13 +429,13 @@ export function useFormik<Values = object>({
   /**
    * Run all validations methods and update state accordingly
    */
-  function validateForm(
+  function validateFormWithCancellation(
     values: Values = state.values,
     field?: string
-  ): Promise<FormikErrors<Values>> {
+  ): [Promise<FormikErrors<Values>>, () => void] {
+    let promise = Promise.resolve({});
     if (props.validationSchema || props.validate) {
-      dispatch({ type: 'SET_ISVALIDATING', payload: true });
-      return Promise.all([
+      promise = Promise.all([
         props.validationSchema ? runValidationSchema(values, field) : {},
         props.validate ? runValidateHandler(values, field) : {},
       ]).then(([fieldErrors, schemaErrors]) => {
@@ -461,17 +443,26 @@ export function useFormik<Values = object>({
           [fieldErrors, schemaErrors],
           { arrayMerge }
         );
-
-        if (didMount.current) {
-          dispatch({ type: 'SET_ISVALIDATING', payload: false });
-          dispatch({ type: 'SET_ERRORS', payload: combinedErrors });
-        }
-
         return combinedErrors;
       });
-    } else {
-      return Promise.resolve({});
     }
+    return makeCancelable<Promise<FormikErrors<Values>>>(promise);
+  }
+
+  /**
+   * Run all validations methods and update state accordingly
+   */
+  function validateForm(
+    values: Values = state.values,
+    field?: string
+  ): Promise<FormikErrors<Values>> {
+    dispatch({ type: 'SET_ISVALIDATING', payload: true });
+    const [promise] = validateFormWithCancellation(values, field);
+    return promise.then(errors => {
+      dispatch({ type: 'SET_ISVALIDATING', payload: false });
+      dispatch({ type: 'SET_ERRORS', payload: errors });
+      return errors;
+    });
   }
 
   function setFormikState(
@@ -500,7 +491,7 @@ export function useFormik<Values = object>({
       const isActuallyValid = Object.keys(combinedErrors).length === 0;
       if (isActuallyValid) {
         executeSubmit();
-      } else if (didMount.current) {
+      } else {
         // ^^^ Make sure Formik is still mounted before calling setState
         dispatch({ type: 'SUBMIT_FAILURE' });
       }

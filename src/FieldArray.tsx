@@ -96,8 +96,8 @@ class FieldArrayInner<Values = {}> extends React.Component<
   constructor(props: FieldArrayConfig & { formik: FormikContext<Values> }) {
     super(props);
     // We need TypeScript generics on these, so we'll bind them in the constructor
-    this.remove = this.remove.bind(this);
-    this.pop = this.pop.bind(this);
+    this.remove = this.remove.bind(this) as any;
+    this.pop = this.pop.bind(this) as any;
   }
 
   updateArrayField = (

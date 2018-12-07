@@ -101,7 +101,7 @@ export class Formik<Values = object, ExtraProps = {}> extends React.Component<
     this.didMount = false;
 
     // Cancel validation on unmount.
-    if (this.validator !== null) {
+    if (this.validator) {
       this.validator();
     }
   }
@@ -265,7 +265,7 @@ export class Formik<Values = object, ExtraProps = {}> extends React.Component<
   runValidations = (
     values: FormikValues = this.state.values
   ): Promise<FormikErrors<Values>> => {
-    if (this.validator !== null) {
+    if (this.validator) {
       this.validator();
     }
     this.setState({ isValidating: true });

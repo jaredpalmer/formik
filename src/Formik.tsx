@@ -421,14 +421,13 @@ export function useFormik<Values = object>({
    * Run all validations methods and update state accordingly
    */
   function validateFormWithCancellation(
-    values: Values = state.values,
-    field?: string
+    values: Values = state.values
   ): [Promise<FormikErrors<Values>>, () => void] {
     let promise = Promise.resolve({});
     if (props.validationSchema || props.validate) {
       promise = Promise.all([
-        props.validationSchema ? runValidationSchema(values, field) : {},
-        props.validate ? runValidateHandler(values, field) : {},
+        props.validationSchema ? runValidationSchema(values) : {},
+        props.validate ? runValidateHandler(values) : {},
       ]).then(([fieldErrors, schemaErrors]) => {
         const combinedErrors = deepmerge.all<FormikErrors<Values>>(
           [fieldErrors, schemaErrors],
@@ -444,10 +443,9 @@ export function useFormik<Values = object>({
    * Run all validations methods and update state accordingly
    */
   function validateForm(
-    values: Values = state.values,
-    field?: string
+    values: Values = state.values
   ): Promise<FormikErrors<Values>> {
-    const [promise] = validateFormWithCancellation(values, field);
+    const [promise] = validateFormWithCancellation(values);
     return promise.then(errors => {
       dispatch({ type: 'SET_ERRORS', payload: errors });
       return errors;

@@ -124,9 +124,11 @@ export function useFormik<Values = object>({
 
   const runValidationAsEffect = () => {
     let [validate, cancel] = validateFormWithCancellation(state.values);
-    validate.then(errors => {
-      dispatch({ type: 'SET_ERRORS', payload: errors });
-    });
+    validate
+      .then(errors => {
+        dispatch({ type: 'SET_ERRORS', payload: errors });
+      })
+      .catch(x => x);
     return () => cancel();
   };
 

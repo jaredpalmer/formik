@@ -27,8 +27,6 @@ import warning from 'warning';
 type FormikMessage<Values> =
   | { type: 'SUBMIT_ATTEMPT' }
   | { type: 'SUBMIT_FAILURE' }
-  | { type: 'VALIDATE_START' }
-  | { type: 'VALIDATE_END'; payload: FormikErrors<Values> }
   | { type: 'SUBMIT_SUCESS' }
   | { type: 'SET_ISSUBMITTING'; payload: boolean }
   | { type: 'SET_VALUES'; payload: Values }

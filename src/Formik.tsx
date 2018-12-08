@@ -23,6 +23,7 @@ import {
   setNestedObjectValues,
   getActiveElement,
   getIn,
+  makeCancelable,
 } from './utils';
 
 export class Formik<Values = object, ExtraProps = {}> extends React.Component<
@@ -47,6 +48,7 @@ export class Formik<Values = object, ExtraProps = {}> extends React.Component<
   fields: {
     [field: string]: React.Component<any>;
   };
+  validator: any;
 
   constructor(props: FormikConfig<Values> & ExtraProps) {
     super(props);
@@ -97,6 +99,11 @@ export class Formik<Values = object, ExtraProps = {}> extends React.Component<
     // @see https://github.com/jaredpalmer/formik/issues/597
     // @see https://reactjs.org/blog/2015/12/16/ismounted-antipattern.html
     this.didMount = false;
+
+    // Cancel validation on unmount.
+    if (this.validator) {
+      this.validator();
+    }
   }
 
   componentDidUpdate(prevProps: Readonly<FormikConfig<Values> & ExtraProps>) {
@@ -258,23 +265,30 @@ export class Formik<Values = object, ExtraProps = {}> extends React.Component<
   runValidations = (
     values: FormikValues = this.state.values
   ): Promise<FormikErrors<Values>> => {
-    this.setState({ isValidating: true });
-    return Promise.all([
-      this.runFieldLevelValidations(values),
-      this.props.validationSchema ? this.runValidationSchema(values) : {},
-      this.props.validate ? this.runValidateHandler(values) : {},
-    ]).then(([fieldErrors, schemaErrors, handlerErrors]) => {
-      const combinedErrors = deepmerge.all<FormikErrors<Values>>(
-        [fieldErrors, schemaErrors, handlerErrors],
-        { arrayMerge }
-      );
-
-      if (this.didMount) {
+    if (this.validator) {
+      this.validator();
+    } else {
+      this.setState({ isValidating: true });
+    }
+    const [promise, cancel] = makeCancelable(
+      Promise.all([
+        this.runFieldLevelValidations(values),
+        this.props.validationSchema ? this.runValidationSchema(values) : {},
+        this.props.validate ? this.runValidateHandler(values) : {},
+      ]).then(([fieldErrors, schemaErrors, handlerErrors]) => {
+        return deepmerge.all<FormikErrors<Values>>(
+          [fieldErrors, schemaErrors, handlerErrors],
+          { arrayMerge }
+        );
+      })
+    );
+    this.validator = cancel;
+    return promise
+      .then((combinedErrors: FormikErrors<Values>) => {
         this.setState({ isValidating: false, errors: combinedErrors });
-      }
-
-      return combinedErrors;
-    });
+        return combinedErrors;
+      })
+      .catch(x => x);
   };
 
   handleChange = (

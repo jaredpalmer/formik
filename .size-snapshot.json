@@ -22,7 +22,7 @@
   "dist/formik.esm.js": {
     "bundled": 38805,
     "minified": 21612,
-    "gzipped": 5577,
+    "gzipped": 5575,
     "treeshaked": {
       "rollup": {
         "code": 766,

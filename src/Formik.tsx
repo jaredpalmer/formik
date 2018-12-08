@@ -267,9 +267,8 @@ export class Formik<Values = object, ExtraProps = {}> extends React.Component<
   ): Promise<FormikErrors<Values>> => {
     if (this.validator) {
       this.validator();
-    } else {
-      this.setState({ isValidating: true });
     }
+
     const [promise, cancel] = makeCancelable(
       Promise.all([
         this.runFieldLevelValidations(values),
@@ -432,10 +431,11 @@ export class Formik<Values = object, ExtraProps = {}> extends React.Component<
         true
       ),
       isSubmitting: true,
+      isValidating: true,
       submitCount: prevState.submitCount + 1,
     }));
 
-    return this.runValidations().then(combinedErrors => {
+    return this.runValidations(this.state.values).then(combinedErrors => {
       const isValid = Object.keys(combinedErrors).length === 0;
       if (isValid) {
         this.executeSubmit();
@@ -550,11 +550,16 @@ export class Formik<Values = object, ExtraProps = {}> extends React.Component<
   setFormikState = (s: any, callback?: (() => void)) =>
     this.setState(s, callback);
 
+  validateForm = (values: Values) => {
+    this.setState({ isValidating: true });
+    return this.runValidations(values);
+  };
+
   getFormikActions = (): FormikActions<Values> => {
     return {
       resetForm: this.resetForm,
       submitForm: this.submitForm,
-      validateForm: this.runValidations,
+      validateForm: this.validateForm,
       validateField: this.validateField,
       setError: this.setError,
       setErrors: this.setErrors,

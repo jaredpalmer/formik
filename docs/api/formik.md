@@ -112,7 +112,7 @@ Returns `true` if the there are no `errors`, or the result of
 
 #### `isValidating: boolean`
 
-Returns `true` if Formik is running any validation function, `false` otherwise. To learn more about what happens with `isValidating` during the submission process, see [Form Submission](guides/form-submission.md).
+Returns `true` if Formik is running validation during submission, or by calling [`validateForm`] directly `false` otherwise. To learn more about what happens with `isValidating` during the submission process, see [Form Submission](guides/form-submission.md).
 
 #### `resetForm: (nextValues?: Values) => void`
 
@@ -325,7 +325,7 @@ Validate the form's `values` with function. This function can either be:
 
 ```js
 // Synchronous validation
-const validate = (values) => {
+const validate = values => {
   let errors = {};
 
   if (!values.email) {
@@ -346,7 +346,7 @@ const validate = (values) => {
 // Async Validation
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-const validate = (values) => {
+const validate = values => {
   return sleep(2000).then(() => {
     let errors = {};
     if (['admin', 'null', 'god'].includes(values.username)) {

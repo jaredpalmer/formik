@@ -18,7 +18,7 @@ import {
   setNestedObjectValues,
   getActiveElement,
   getIn,
-  debounce,
+  makeCancelable,
 } from './utils';
 import { FormikProvider } from './FormikContext';
 import warning from 'warning';
@@ -54,8 +54,6 @@ function formikReducer<Values>(
       return { ...state, errors: msg.payload };
     case 'SET_STATUS':
       return { ...state, status: msg.payload };
-    case 'SET_ISVALIDATING':
-      return { ...state, isValidating: msg.payload };
     case 'SET_ISSUBMITTING':
       return { ...state, isSubmitting: msg.payload };
     case 'SET_FIELD_VALUE':
@@ -127,52 +125,38 @@ export function useFormik<Values = object>({
     errors: {},
     touched: {},
     isSubmitting: false,
-    isValidating: false,
+
     submitCount: 0,
   });
 
-  // Validation is expensive. Running it on change isn't efficient, so we debounce
-  // it. In the future, we will also mark change-triggered validation as low-priority
-  // with scheduler
-  const debouncedValidateForm: any = debounce(
-    validateForm,
-    debounceValidationMs
+  const runValidationAsEffect = React.useCallback(
+    () => {
+      const [validate, cancel] = makeCancelable(validateForm(state.values));
+      validate.catch(x => x); // catch the rejection silently
+      return cancel;
+    },
+    [state.values]
   );
 
   React.useEffect(
     () => {
-      if (
-        !!didMount.current &&
-        !!validateOnChange &&
-        !state.isSubmitting &&
-        (props.validate || props.validationSchema)
-      ) {
-        debouncedValidateForm(state.values);
+      if (!!validateOnChange && !state.isSubmitting) {
+        return runValidationAsEffect();
       }
+      return;
     },
-    [state.values, validateOnChange, state.isSubmitting]
+    [state.values, state.isSubmitting]
   );
 
   React.useEffect(
     () => {
-      if (
-        !!didMount.current &&
-        !!validateOnBlur &&
-        !state.isSubmitting &&
-        (props.validate || props.validationSchema)
-      ) {
-        validateForm(state.values);
+      if (!!validateOnBlur && !state.isSubmitting) {
+        return runValidationAsEffect();
       }
+      return;
     },
-    [state.touched, validateOnBlur, state.isSubmitting]
+    [state.touched, state.isSubmitting]
   );
-
-  React.useEffect(() => {
-    didMount.current = true;
-    return function unMount() {
-      didMount.current = false;
-    };
-  }, []);
 
   const imperativeMethods = {
     resetForm,
@@ -352,7 +336,6 @@ export function useFormik<Values = object>({
       type: 'RESET_FORM',
       payload: {
         isSubmitting: false,
-        isValidating: false,
         errors: {},
         touched: {},
         status: undefined,
@@ -449,22 +432,6 @@ export function useFormik<Values = object>({
     }
   }
 
-  // function runSingleFieldLevelValidationAsPromise(
-  //   name: string,
-  //   value: void | string
-  // ): Promise<string> {
-  //   return new Promise(resolve => {
-  //     if (
-  //       fields.current !== null &&
-  //       fields.current[name] &&
-  //       fields.current[name].validate &&
-  //       isFunction(fields.current[name].validate)
-  //     ) {
-  //       resolve(fields.current[name].validate(value));
-  //     }
-  //   }).then(x => x, e => e);
-  // }
-
   function runValidateHandler(
     values: Values,
     field?: string
@@ -516,25 +483,18 @@ export function useFormik<Values = object>({
    * Run all validations methods and update state accordingly
    */
   function validateForm(
-    values: Values = state.values,
-    field?: string
+    values: Values = state.values
   ): Promise<FormikErrors<Values>> {
     if (props.validationSchema || props.validate) {
-      dispatch({ type: 'SET_ISVALIDATING', payload: true });
       return Promise.all([
-        props.validationSchema ? runValidationSchema(values, field) : {},
-        props.validate ? runValidateHandler(values, field) : {},
+        props.validationSchema ? runValidationSchema(values) : {},
+        props.validate ? runValidateHandler(values) : {},
       ]).then(([fieldErrors, schemaErrors]) => {
         const combinedErrors = deepmerge.all<FormikErrors<Values>>(
           [fieldErrors, schemaErrors],
           { arrayMerge }
         );
-
-        if (didMount.current) {
-          dispatch({ type: 'SET_ISVALIDATING', payload: false });
-          dispatch({ type: 'SET_ERRORS', payload: combinedErrors });
-        }
-
+        dispatch({ type: 'SET_ERRORS', payload: combinedErrors });
         return combinedErrors;
       });
     } else {

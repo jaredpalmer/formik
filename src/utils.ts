@@ -150,31 +150,25 @@ export function getActiveElement(doc?: Document): Element | null {
 }
 
 /**
- * Returns a function, that, as long as it continues to be invoked, will not
- * be triggered. The function will be called after it stops being called for
- * N milliseconds. If `immediate` is passed, trigger the function on the
- * leading edge, instead of the trailing.
- *
- * @param func a function
- * @param wait time to wait
- * @param immediate should it be called immediately
+ * Make a promise cancellable by @istarkov
+ * @see https://reactjs.org/blog/2015/12/16/ismounted-antipattern.html
  */
-export const debounce = (func: Function, wait: number, immediate?: boolean) => {
-  let timeout: any;
-  return function(this: any) {
-    const context = this,
-      args = arguments;
-    const later = function() {
-      timeout = null;
-      if (!immediate) {
-        func.apply(context, args);
-      }
-    };
-    const callNow = immediate && !timeout;
-    clearTimeout(timeout);
-    timeout = setTimeout(later, wait);
-    if (callNow) {
-      func.apply(context, args);
-    }
-  };
-};
+export function makeCancelable<T extends Promise<any>>(
+  promise: T
+): [T, () => void] {
+  let hasCanceled: boolean = false;
+
+  const wrappedPromise: any = new Promise((resolve, reject) => {
+    promise.then(
+      val => (hasCanceled ? reject({ isCanceled: true }) : resolve(val)),
+      error => (hasCanceled ? reject({ isCanceled: true }) : reject(error))
+    );
+  });
+
+  return [
+    wrappedPromise,
+    function cancel() {
+      hasCanceled = true;
+    },
+  ];
+}

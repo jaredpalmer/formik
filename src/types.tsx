@@ -40,8 +40,6 @@ export interface FormikState<Values> {
   errors: FormikErrors<Values>;
   /** map of field names to whether the field has been touched */
   touched: FormikTouched<Values>;
-  /** whether the form is currently validating */
-  isValidating: boolean;
   /** whether the form is currently submitting */
   isSubmitting: boolean;
   /** Top level status state, in case you need it */
@@ -95,7 +93,7 @@ export interface FormikHelpers<Values> {
   /** Validate field value */
   validateField(field: string): void;
   /** Reset form */
-  resetForm(nextValues?: any): void;
+  resetForm(nextValues?: Values): void;
   /** Submit the form imperatively */
   submitForm(): void;
   /** Set Formik state, careful! */

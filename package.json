@@ -47,7 +47,7 @@
     "lodash": "^4.17.11",
     "lodash-es": "^4.17.11",
     "prop-types": "^15.6.1",
-    "react-fast-compare": "^1.0.0",
+    "react-fast-compare": "^2.0.1",
     "tslib": "^1.9.3",
     "warning": "^3.0.0"
   },

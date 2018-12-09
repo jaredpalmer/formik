@@ -499,7 +499,6 @@ export function useFormik<Values extends FormikValues = FormikValues>({
       // provides just the value of the input.
       let field = maybePath;
       let val = eventOrTextValue;
-      let parsed;
       // If the first argument is not a string though, it has to be a synthetic React Event (or a fake one),
       // so we handle like we would a normal HTML change event.
       if (!isString(eventOrTextValue)) {
@@ -527,9 +526,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
             handlerName: 'handleChange',
           });
         }
-        val = /number|range/.test(type)
-          ? ((parsed = parseFloat(value)), isNaN(parsed) ? '' : parsed)
-          : /checkbox/.test(type) // checkboxes
+        val = /checkbox/.test(type) // checkboxes
           ? getValueForCheckbox(getIn(state.values, field!), checked, value)
           : !!multiple // <select multiple>
           ? getSelectedValues(options)

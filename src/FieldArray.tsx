@@ -85,6 +85,23 @@ export const replace = (array: any[], index: number, value: any) => {
   copy[index] = value;
   return copy;
 };
+
+const copyArray = (array?: any[]) => {
+  if (!array) {
+    return [];
+  }
+  if (isFunction(array.slice)) {
+    return [...array];
+  }
+
+  // It's an array-like object, e.g. {2: "hello"}, let's create a sparse array from it.
+  const copy = new Array();
+  Object.keys(array).forEach(k => {
+    copy[parseInt(k)] = array[parseInt(k)];
+  });
+  return copy;
+};
+
 class FieldArrayInner<Values = {}> extends React.Component<
   FieldArrayConfig & { formik: FormikContext<Values> },
   {}
@@ -200,7 +217,7 @@ class FieldArrayInner<Values = {}> extends React.Component<
     this.updateArrayField(
       // so this gets call 3 times
       (array?: any[]) => {
-        const copy = array ? [...array] : [];
+        const copy = copyArray(array);
         if (!result) {
           result = copy[index];
         }

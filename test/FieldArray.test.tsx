@@ -14,6 +14,14 @@ const TestForm: React.SFC<any> = p => (
   />
 );
 
+const TestObjectsForm: React.SFC<any> = p => (
+  <Formik
+    onSubmit={noop}
+    initialValues={{ friends: [{ name: 'jared' }] }}
+    {...p}
+  />
+);
+
 describe('<FieldArray />', () => {
   const node = document.createElement('div');
 
@@ -353,6 +361,150 @@ describe('<FieldArray />', () => {
       arrayHelpers.remove(1);
       const expected = ['jared', 'brent'];
       expect(formikBag.values.friends).toEqual(expected);
+    });
+
+    it('should remove a value at given index of field array with errors array', () => {
+      let formikBag: any;
+      let arrayHelpers: any;
+      ReactDOM.render(
+        <TestForm
+          render={(props: any) => {
+            formikBag = props;
+            return (
+              <FieldArray
+                name="friends"
+                render={arrayProps => {
+                  arrayHelpers = arrayProps;
+                  return null;
+                }}
+              />
+            );
+          }}
+        />,
+        node
+      );
+
+      formikBag.setErrors({ friends: ['invalid'] });
+      arrayHelpers.remove(0);
+      const expected = ['andrea', 'brent'];
+      expect(formikBag.values.friends).toEqual(expected);
+      expect(formikBag.errors.friends).toEqual([]);
+    });
+
+    it('should remove a value at given index of field array with errors object', () => {
+      let formikBag: any;
+      let arrayHelpers: any;
+      ReactDOM.render(
+        <TestForm
+          render={(props: any) => {
+            formikBag = props;
+            return (
+              <FieldArray
+                name="friends"
+                render={arrayProps => {
+                  arrayHelpers = arrayProps;
+                  return null;
+                }}
+              />
+            );
+          }}
+        />,
+        node
+      );
+
+      formikBag.setErrors({ friends: { 1: 'invalid', 2: 'invalid' } });
+      arrayHelpers.remove(1);
+      const expected = ['jared', 'brent'];
+      expect(formikBag.values.friends).toEqual(expected);
+      expect(formikBag.errors.friends).toEqual([undefined, 'invalid']);
+    });
+  });
+});
+
+describe('<FieldArray /> with array of objects', () => {
+  const node = document.createElement('div');
+
+  afterEach(() => {
+    ReactDOM.unmountComponentAtNode(node);
+  });
+
+  describe('props.remove()', () => {
+    it('should remove a value at given index of field array', () => {
+      let formikBag: any;
+      let arrayHelpers: any;
+      ReactDOM.render(
+        <TestObjectsForm
+          render={(props: any) => {
+            formikBag = props;
+            return (
+              <FieldArray
+                name="friends"
+                render={arrayProps => {
+                  arrayHelpers = arrayProps;
+                  return null;
+                }}
+              />
+            );
+          }}
+        />,
+        node
+      );
+
+      arrayHelpers.remove(0);
+      expect(formikBag.values.friends).toEqual([]);
+    });
+
+    it('should remove a value at given index of field array with errors array', () => {
+      let formikBag: any;
+      let arrayHelpers: any;
+      ReactDOM.render(
+        <TestObjectsForm
+          render={(props: any) => {
+            formikBag = props;
+            return (
+              <FieldArray
+                name="friends"
+                render={arrayProps => {
+                  arrayHelpers = arrayProps;
+                  return null;
+                }}
+              />
+            );
+          }}
+        />,
+        node
+      );
+
+      formikBag.setErrors({ friends: [{ name: 'invalid' }] });
+      arrayHelpers.remove(0);
+      expect(formikBag.values.friends).toEqual([]);
+    });
+
+    it('should remove a value at given index of field array with errors object', () => {
+      let formikBag: any;
+      let arrayHelpers: any;
+      ReactDOM.render(
+        <TestObjectsForm
+          render={(props: any) => {
+            formikBag = props;
+            return (
+              <FieldArray
+                name="friends"
+                render={arrayProps => {
+                  arrayHelpers = arrayProps;
+                  return null;
+                }}
+              />
+            );
+          }}
+        />,
+        node
+      );
+
+      formikBag.setErrors({ friends: { 0: { name: 'invalid' } } });
+      arrayHelpers.remove(0);
+      expect(formikBag.values.friends).toEqual([]);
+      expect(formikBag.errors.friends).toEqual([]);
     });
   });
 });

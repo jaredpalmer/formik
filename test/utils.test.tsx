@@ -1,4 +1,11 @@
-import { setIn, setNestedObjectValues, isPromise } from '../src/utils';
+import {
+  setIn,
+  setNestedObjectValues,
+  isPromise,
+  getActiveElement,
+  makeCancelable,
+  isNaN,
+} from '../src/utils';
 
 describe('utils', () => {
   describe('setNestedObjectValues', () => {
@@ -250,6 +257,89 @@ describe('utils', () => {
 
       expect(isPromise(undefined)).toEqual(false);
       expect(isPromise(null)).toEqual(false);
+    });
+  });
+
+  describe('getActiveElement', () => {
+    it('test getActiveElement with undefined', () => {
+      const result = getActiveElement(undefined);
+      expect(result).toEqual(document.body);
+    });
+
+    it('test getActiveElement with valid document', () => {
+      const result = getActiveElement(document);
+      expect(result).toEqual(document.body);
+    });
+  });
+
+  describe('makeCancelable', () => {
+    it('correctly call promise without cancel', async () => {
+      const PromiseToResolve = () => {
+        return Promise.resolve('test');
+      };
+
+      const [updatedPromise, cancel] = makeCancelable(PromiseToResolve());
+
+      const result = await (() => {
+        return updatedPromise;
+      })();
+
+      expect(result).toEqual('test');
+    });
+
+    it('correctly cancel successful promise', async () => {
+      const PromiseToResolve = () => {
+        return new Promise(resolve => {
+          setTimeout(() => {
+            resolve('test');
+          }, 10);
+        });
+      };
+
+      const [updatedPromise, cancel] = makeCancelable(PromiseToResolve());
+
+      cancel();
+      try {
+        await (() => {
+          return updatedPromise;
+        })();
+      } catch (e) {
+        expect(e).toEqual({ isCanceled: true });
+      }
+    });
+
+    it('correctly cancel rejected promise', async () => {
+      const PromiseToResolve = () => {
+        return new Promise((_, reject) => {
+          setTimeout(() => {
+            reject('test');
+          }, 100);
+        });
+      };
+
+      const [updatedPromise, cancel] = makeCancelable(PromiseToResolve());
+
+      cancel();
+      try {
+        await (() => {
+          return updatedPromise;
+        })();
+      } catch (e) {
+        expect(e).toEqual({ isCanceled: true });
+      }
+    });
+  });
+
+  describe('isNaN', () => {
+    it('correctly validate NaN', () => {
+      expect(isNaN(NaN)).toBe(true);
+    });
+
+    it('correctly validate not NaN', () => {
+      expect(isNaN(undefined)).toBe(false);
+      expect(isNaN(1)).toBe(false);
+      expect(isNaN('')).toBe(false);
+      expect(isNaN([])).toBe(false);
     });
   });
 });

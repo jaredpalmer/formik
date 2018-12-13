@@ -1,5 +1,5 @@
 ---
-id: version-1.3.1-validation
+id: version-1.4.0-validation
 title: Validation
 custom_edit_url: https://github.com/jaredpalmer/formik/edit/master/docs/guides/validation.md
 original_id: validation
@@ -27,7 +27,7 @@ There are 2 ways to do form-level validation with Formik:
 
 ```js
 // Synchronous validation
-const validate = (values) => {
+const validate = (values, props /* only available when using withFormik */) => {
   let errors = {};
 
   if (!values.email) {
@@ -44,7 +44,7 @@ const validate = (values) => {
 // Async Validation
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-const validate = (values) => {
+const validate = (values, props /* only available when using withFormik */) => {
   return sleep(2000).then(() => {
     let errors = {};
     if (['admin', 'null', 'god'].includes(values.username)) {

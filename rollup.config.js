@@ -8,11 +8,20 @@ import { sizeSnapshot } from 'rollup-plugin-size-snapshot';
 import pkg from './package.json';
 
 const input = './compiled/index.js';
-const external = ['react', 'react-native'];
+const external = id => !id.startsWith('.') && !id.startsWith('/');
+const replacements = [{ original: 'lodash', replacement: 'lodash-es' }];
+const babelOptions = {
+  exclude: /node_modules/,
+  plugins: [
+    'annotate-pure-calls',
+    'dev-expression',
+    ['transform-rename-import', { replacements }],
+  ],
+};
 
 const buildUmd = ({ env }) => ({
   input,
-  external,
+  external: ['react', 'react-native'],
   output: {
     name: 'Formik',
     format: 'umd',
@@ -30,8 +39,8 @@ const buildUmd = ({ env }) => ({
 
   plugins: [
     resolve(),
+    babel(babelOptions),
     replace({
-      exclude: 'node_modules/**',
       'process.env.NODE_ENV': JSON.stringify(env),
     }),
     commonjs({
@@ -49,7 +58,7 @@ const buildUmd = ({ env }) => ({
       },
     }),
     sourceMaps(),
-    env === 'production' && sizeSnapshot(),
+    sizeSnapshot(),
     env === 'production' &&
       uglify({
         output: { comments: false },
@@ -65,7 +74,7 @@ const buildUmd = ({ env }) => ({
 
 const buildCjs = ({ env }) => ({
   input,
-  external: external.concat(Object.keys(pkg.dependencies)),
+  external,
   output: {
     file: `./dist/${pkg.name}.cjs.${env}.js`,
     format: 'cjs',
@@ -74,7 +83,6 @@ const buildCjs = ({ env }) => ({
   plugins: [
     resolve(),
     replace({
-      exclude: 'node_modules/**',
       'process.env.NODE_ENV': JSON.stringify(env),
     }),
     sourceMaps(),
@@ -89,26 +97,14 @@ export default [
   buildCjs({ env: 'development' }),
   {
     input,
-    external: external.concat(Object.keys(pkg.dependencies)),
+    external,
     output: [
       {
         file: pkg.module,
         format: 'es',
         sourcemap: true,
       },
-      {
-        file: pkg.main,
-        format: 'cjs',
-        sourcemap: true,
-      },
     ],
-    plugins: [
-      resolve(),
-      babel({
-        plugins: ['babel-plugin-annotate-pure-calls'],
-      }),
-      sizeSnapshot(),
-      sourceMaps(),
-    ],
+    plugins: [resolve(), babel(babelOptions), sizeSnapshot(), sourceMaps()],
   },
 ];

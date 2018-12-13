@@ -1,5 +1,5 @@
 import * as React from 'react';
-import cloneDeep from 'lodash.clonedeep';
+import cloneDeep from 'lodash/cloneDeep';
 import { connect } from './connect';
 import {
   FormikCtx,

@@ -27,7 +27,7 @@ import warning from 'warning';
 type FormikMessage<Values> =
   | { type: 'SUBMIT_ATTEMPT' }
   | { type: 'SUBMIT_FAILURE' }
-  | { type: 'SUBMIT_SUCESS' }
+  | { type: 'SUBMIT_SUCCESS' }
   | { type: 'SET_ISVALIDATING'; payload: boolean }
   | { type: 'SET_ISSUBMITTING'; payload: boolean }
   | { type: 'SET_VALUES'; payload: Values }
@@ -90,6 +90,11 @@ function formikReducer<Values>(
         ...state,
         isSubmitting: false,
       };
+    case 'SUBMIT_SUCCESS':
+      return {
+        ...state,
+        isSubmitting: false,
+      };
     default:
       return state;
   }
@@ -125,7 +130,7 @@ export function useFormik<Values = object>({
     errors: {},
     touched: {},
     isSubmitting: false,
-
+    isValidating: false,
     submitCount: 0,
   });
 
@@ -340,6 +345,7 @@ export function useFormik<Values = object>({
         touched: {},
         status: undefined,
         values,
+        isValidating: false,
         submitCount: 0,
       },
     });
@@ -525,9 +531,16 @@ export function useFormik<Values = object>({
   function submitForm() {
     dispatch({ type: 'SUBMIT_ATTEMPT' });
     return validateForm().then((combinedErrors: FormikErrors<Values>) => {
+      dispatch({ type: 'SET_ISVALIDATING', payload: false });
       const isActuallyValid = Object.keys(combinedErrors).length === 0;
       if (isActuallyValid) {
-        executeSubmit();
+        Promise.resolve(executeSubmit())
+          .then(() => {
+            dispatch({ type: 'SUBMIT_SUCCESS' });
+          })
+          .catch(_errors => {
+            dispatch({ type: 'SUBMIT_FAILURE' });
+          });
       } else if (didMount.current) {
         // ^^^ Make sure Formik is still mounted before calling setState
         dispatch({ type: 'SUBMIT_FAILURE' });

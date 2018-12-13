@@ -4,8 +4,12 @@ daysUntilStale: 60
 daysUntilClose: 7
 # Issues with these labels will never be considered stale
 exemptLabels:
+  - enhancement
   - pinned
-  - security
+  - RFC
+  - bug
+  - in progress
+  - 2.0
 # Label to use when marking an issue as stale
 staleLabel: stale
 # Comment to post when marking an issue as stale. Set to `false` to disable

@@ -31,17 +31,14 @@ export type FormikTouched<Values> = {
 export interface FormikState<Values> {
   /** Form values */
   values: Values;
-  /**
-   * Top level error, in case you need it
-   * @deprecated since 0.8.0
-   */
-  error?: any;
   /** map of field names to specific error for that field */
   errors: FormikErrors<Values>;
   /** map of field names to whether the field has been touched */
   touched: FormikTouched<Values>;
   /** whether the form is currently submitting */
   isSubmitting: boolean;
+  /** whether the form is currently validating (prior to submission) */
+  isValidating: boolean;
   /** Top level status state, in case you need it */
   status?: any;
   /** Number of times user tried to submit the form */

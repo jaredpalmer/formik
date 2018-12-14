@@ -137,7 +137,7 @@ export interface FormikHandlers {
   /** Reset form event handler  */
   handleReset: () => void;
   /** Classic React blur handler, keyed by input name */
-  handleBlur(e: any): void;
+  handleBlur(e: React.FocusEvent<any>): void;
   /** Preact-like linkState. Will return a handleBlur function. */
   handleBlur<T = string | any>(
     fieldOrEvent: T

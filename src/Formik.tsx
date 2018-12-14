@@ -284,11 +284,14 @@ export class Formik<Values = object, ExtraProps = {}> extends React.Component<
     );
     this.validator = cancel;
     return promise
-      .then((combinedErrors: FormikErrors<Values>) => {
-        if (!isEqual(this.state.errors, combinedErrors)) {
-          this.setState({ isValidating: false, errors: combinedErrors });
-        }
-        return combinedErrors;
+      .then((errors: FormikErrors<Values>) => {
+        this.setState(prevState => {
+          if (!isEqual(prevState.errors, errors)) {
+            return { errors: errors };
+          }
+          return null; // abort the update
+        });
+        return errors;
       })
       .catch(x => x);
   };
@@ -439,6 +442,7 @@ export class Formik<Values = object, ExtraProps = {}> extends React.Component<
     }));
 
     return this.runValidations(this.state.values).then(combinedErrors => {
+      this.setState({ isValidating: false });
       const isValid = Object.keys(combinedErrors).length === 0;
       if (isValid) {
         this.executeSubmit();
@@ -555,7 +559,10 @@ export class Formik<Values = object, ExtraProps = {}> extends React.Component<
 
   validateForm = (values: Values) => {
     this.setState({ isValidating: true });
-    return this.runValidations(values);
+    return this.runValidations(values).then(errors => {
+      this.setState({ isValidating: false });
+      return errors;
+    });
   };
 
   getFormikActions = (): FormikActions<Values> => {

@@ -500,7 +500,9 @@ export function useFormik<Values = object>({
           [fieldErrors, schemaErrors],
           { arrayMerge }
         );
-        dispatch({ type: 'SET_ERRORS', payload: combinedErrors });
+        if (!isEqual(state.errors, combinedErrors)) {
+          dispatch({ type: 'SET_ERRORS', payload: combinedErrors });
+        }
         return combinedErrors;
       });
     } else {

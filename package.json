@@ -1,7 +1,7 @@
 {
   "name": "formik",
   "description": "Forms in React, without tears",
-  "version": "2.0.0-canary.5a8e912",
+  "version": "2.0.0-canary.effcf9a",
   "license": "MIT",
   "author": "Jared Palmer <jared@palmer.net>",
   "repository": "jaredpalmer/formik",
@@ -130,7 +130,8 @@
       "json"
     ]
   },
-  "size-limit": [{
+  "size-limit": [
+    {
       "path": "./dist/index.js",
       "limit": "14 kB"
     },

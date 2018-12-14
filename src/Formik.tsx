@@ -160,9 +160,9 @@ export class Formik<Values = object, ExtraProps = {}> extends React.Component<
   /**
    * Run field level validation
    */
-  validateField = (field: string) => {
+  validateField = (field: string): Promise<Object> => {
     this.setState({ isValidating: true });
-    this.runSingleFieldLevelValidation(
+    return this.runSingleFieldLevelValidation(
       field,
       getIn(this.state.values, field)
     ).then(error => {
@@ -172,6 +172,7 @@ export class Formik<Values = object, ExtraProps = {}> extends React.Component<
           isValidating: false,
         });
       }
+      return error;
     });
   };
 

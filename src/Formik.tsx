@@ -287,7 +287,7 @@ export class Formik<Values = object, ExtraProps = {}> extends React.Component<
       .then((errors: FormikErrors<Values>) => {
         this.setState(prevState => {
           if (!isEqual(prevState.errors, errors)) {
-            return { errors: errors };
+            return { errors };
           }
           return null; // abort the update
         });

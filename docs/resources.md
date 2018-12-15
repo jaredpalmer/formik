@@ -12,6 +12,7 @@ title: Resources
 
 ## Community Videos
 
+* [Build and Validate Forms in React Native with Formik & Yup](https://www.reactnativeschool.com/build-and-validate-forms-with-formik-and-yup) (Series) by [Spencer Carli](https://twitter.com/spencer_carli) - December 14, 2018
 * [Form handling in React-Native with Formik and Yup](https://www.youtube.com/watch?v=EO08ydCCsOQ) by [Emanuel Quimper](https://twitter.com/QuimperEmanuel) - May 23, 2018
 * Building an Airbnb Clone Series by [Ben Awad](https://twitter.com/benawad97)
   * [Coding React Form with Formik and Ant Design - Part 3](https://www.youtube.com/watch?v=pbCrDBQFU_A&index=5&list=PLN3n1USn4xlnfJIQBa6bBjjiECnk6zL6s)

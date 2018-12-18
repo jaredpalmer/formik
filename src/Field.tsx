@@ -1,12 +1,12 @@
 import * as React from 'react';
-import warning from 'tiny-warning';
+
 import { connect } from './connect';
 import {
   FormikProps,
   GenericFieldHTMLAttributes,
   FormikContext,
 } from './types';
-import { getIn, isEmptyChildren, isFunction } from './utils';
+import { warning, getIn, isEmptyChildren, isFunction } from './utils';
 
 /**
  * Note: These typings could be more restrictive, but then it would limit the

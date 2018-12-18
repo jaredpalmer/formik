@@ -1,12 +1,12 @@
 import * as React from 'react';
-import warning from 'tiny-warning';
+
 import { connect } from './connect';
 import {
   FormikProps,
   GenericFieldHTMLAttributes,
   FormikContext,
 } from './types';
-import { getIn, isEmptyChildren, isFunction } from './utils';
+import { warning, getIn, isEmptyChildren, isFunction } from './utils';
 
 export interface FastFieldProps<V = any> {
   field: {

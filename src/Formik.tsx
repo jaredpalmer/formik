@@ -104,7 +104,6 @@ export function useFormik<Values = object>({
   validateOnChange = true,
   validateOnBlur = true,
   isInitialValid = false,
-  debounceValidationMs = 300,
   ...rest
 }: FormikConfig<Values>) {
   const props = { validateOnChange, validateOnBlur, isInitialValid, ...rest };

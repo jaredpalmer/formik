@@ -1,6 +1,6 @@
 import * as React from 'react';
 import isEqual from 'react-fast-compare';
-import warning from 'warning';
+import warning from 'tiny-warning';
 import deepmerge from 'deepmerge';
 import { FormikProvider } from './connect';
 import {

@@ -380,10 +380,6 @@
     "@types/prop-types" "*"
     csstype "^2.2.0"
 
-"@types/warning@^3.0.0":
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/@types/warning/-/warning-3.0.0.tgz#0d2501268ad8f9962b740d387c4654f5f8e23e52"
-
 "@types/yup@^0.24.9":
   version "0.24.9"
   resolved "https://registry.yarnpkg.com/@types/yup/-/yup-0.24.9.tgz#da98f4b38eec7ca72146e7042679c8c8628896fa"
@@ -8932,6 +8928,11 @@ timers-browserify@^2.0.4:
   resolved "https://registry.yarnpkg.com/timers-browserify/-/timers-browserify-2.0.10.tgz#1d28e3d2aadf1d5a5996c4e9f95601cd053480ae"
   dependencies:
     setimmediate "^1.0.4"
+
+tiny-warning@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/tiny-warning/-/tiny-warning-1.0.0.tgz#70fba262ea3645e10506fe8673aeb133d959fc93"
+  integrity sha512-6CrF/DMLSoYakJ7f6+1bz6nHJY6Tj6sEj8/9hjTzGi94MeuAZprPE+3jykGMUgoswnmuPA9NlKlYLNJaFVYHIw==
 
 tmp@^0.0.33:
   version "0.0.33"

@@ -5,9 +5,9 @@
     "gzipped": 11848
   },
   "./dist/formik.umd.development.js": {
-    "bundled": 171566,
-    "minified": 49463,
-    "gzipped": 14945
+    "bundled": 171603,
+    "minified": 49483,
+    "gzipped": 14950
   },
   "./dist/formik.cjs.production.js": {
     "bundled": 42377,
@@ -22,7 +22,7 @@
   "dist/formik.esm.js": {
     "bundled": 39126,
     "minified": 21749,
-    "gzipped": 5605,
+    "gzipped": 5602,
     "treeshaked": {
       "rollup": {
         "code": 771,

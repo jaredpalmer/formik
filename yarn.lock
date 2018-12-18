@@ -8929,10 +8929,10 @@ timers-browserify@^2.0.4:
   dependencies:
     setimmediate "^1.0.4"
 
-tiny-warning@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/tiny-warning/-/tiny-warning-1.0.1.tgz#5e4d3eb25eb1733252dcd676ff673c3335bff517"
-  integrity sha512-kcH7qxiyGWPe7xWOFnLrea2F4QYKRjXDRPmXqT9vqF7AhCPcljGoyG2xD6S7N73S5NWVJDfpPSS8d3HKdhcbSA==
+tiny-warning@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/tiny-warning/-/tiny-warning-1.0.2.tgz#1dfae771ee1a04396bdfde27a3adcebc6b648b28"
+  integrity sha512-rru86D9CpQRLvsFG5XFdy0KdLAvjdQDyZCsRcuu60WtzFylDM3eAWSxEVz5kzL2Gp544XiUvPbVKtOA/txLi9Q==
 
 tmp@^0.0.33:
   version "0.0.33"

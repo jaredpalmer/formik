@@ -1,8 +1,8 @@
 import * as React from 'react';
 import isEqual from 'react-fast-compare';
-import warning from 'warning';
 import deepmerge from 'deepmerge';
 import { FormikProvider } from './connect';
+import warning from 'tiny-warning';
 import {
   FormikActions,
   FormikConfig,
@@ -657,7 +657,7 @@ function warnAboutMissingIdentifier({
   documentationAnchorLink: string;
   handlerName: string;
 }) {
-  console.error(
+  console.warn(
     `Warning: Formik called \`${handlerName}\`, but you forgot to pass an \`id\` or \`name\` attribute to your input:
 
     ${htmlContent}

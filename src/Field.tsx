@@ -1,11 +1,12 @@
 import * as React from 'react';
-import warning from 'warning';
+
 import { connect } from './connect';
 import {
   FormikProps,
   GenericFieldHTMLAttributes,
   FormikContext,
 } from './types';
+import warning from 'tiny-warning';
 import { getIn, isEmptyChildren, isFunction } from './utils';
 
 /**

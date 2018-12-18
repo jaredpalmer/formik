@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { FormikCtx } from './types';
+import { FormikContext } from './types';
 
-const PrivateFormikContext = React.createContext<FormikCtx<any>>({} as any);
+const PrivateFormikContext = React.createContext<FormikContext<any>>({} as any);
 export const FormikProvider = PrivateFormikContext.Provider;
 export const FormikConsumer = PrivateFormikContext.Consumer;
 
 export function useFormikContext<Values>() {
-  return React.useContext<FormikCtx<Values>>(PrivateFormikContext);
+  return React.useContext<FormikContext<Values>>(PrivateFormikContext);
 }

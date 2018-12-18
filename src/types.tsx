@@ -228,7 +228,7 @@ export interface FormikRegistration {
 /**
  * State, handlers, and helpers made available to Formik's primitive components through context.
  */
-export type FormikCtx<Values> = FormikProps<Values> &
+export type FormikContext<Values> = FormikProps<Values> &
   Pick<FormikConfig<Values>, 'validate' | 'validationSchema'>;
 
 export interface SharedRenderProps<T> {

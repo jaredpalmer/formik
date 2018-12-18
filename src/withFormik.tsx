@@ -155,9 +155,9 @@ export function withFormik<
       }
     }
 
-    return hoistNonReactStatics<OuterProps, OuterProps & FormikProps<Values>>(
-      C,
-      Component as React.ComponentClass<OuterProps & FormikProps<Values>> // cast type to ComponentClass (even if SFC)
-    ) as React.ComponentClass<OuterProps>;
+    return hoistNonReactStatics<
+      React.ComponentType<OuterProps>,
+      React.ComponentType<OuterProps & FormikProps<Values>>
+    >(C, Component) as React.ComponentClass<OuterProps>;
   };
 }

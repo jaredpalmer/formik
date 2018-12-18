@@ -289,21 +289,88 @@ describe('Field / FastField', () => {
     cases(
       'runs validation when validateField is called (ASYNC)',
       async renderField => {
-        const validate = jest.fn(() => Promise.resolve('Error!'));
-        const { getFormProps, rerender } = renderField({
-          validate,
-          component: 'input',
-        });
+        const validate = jest.fn(() => Promise.reject('Error!'));
+        const { getFormProps } = renderField({ validate });
 
-        rerender();
-        await getFormProps().validateField('name');
-        rerender();
-        await wait(() => {
-          expect(validate).toHaveBeenCalled();
-          expect(getFormProps().errors.name).toBe('Error!');
-        });
+        getFormProps().validateField('name');
+
+        expect(validate).toHaveBeenCalled();
+        await wait(() => expect(getFormProps().errors.name).toBe('Error!'));
       }
     );
+  });
+
+  describe('warnings', () => {
+    cases(
+      'warns if both string component and children as a function',
+      renderField => {
+        global.console.warn = jest.fn();
+
+        renderField({
+          component: 'select',
+          children: () => <option value="Jared">{TEXT}</option>,
+        });
+
+        expect((global.console.warn as jest.Mock).mock.calls[0][0]).toContain(
+          'Warning:'
+        );
+      }
+    );
+
+    cases(
+      'warns if both non-string component and children children as a function',
+      renderField => {
+        global.console.warn = jest.fn();
+
+        renderField({
+          component: () => null,
+          children: () => <option value="Jared">{TEXT}</option>,
+        });
+
+        expect((global.console.warn as jest.Mock).mock.calls[0][0]).toContain(
+          'Warning:'
+        );
+      }
+    );
+
+    cases('warns if both string component and render', renderField => {
+      global.console.warn = jest.fn();
+
+      renderField({
+        component: 'textarea',
+        render: () => <option value="Jared">{TEXT}</option>,
+      });
+
+      expect((global.console.warn as jest.Mock).mock.calls[0][0]).toContain(
+        'Warning:'
+      );
+    });
+
+    cases('warns if both non-string component and render', renderField => {
+      global.console.warn = jest.fn();
+
+      renderField({
+        component: () => null,
+        render: () => <option value="Jared">{TEXT}</option>,
+      });
+
+      expect((global.console.warn as jest.Mock).mock.calls[0][0]).toContain(
+        'Warning:'
+      );
+    });
+
+    cases('warns if both children and render', renderField => {
+      global.console.warn = jest.fn();
+
+      renderField({
+        children: <div>{TEXT}</div>,
+        render: () => <div>{TEXT}</div>,
+      });
+
+      expect((global.console.warn as jest.Mock).mock.calls[0][0]).toContain(
+        'Warning:'
+      );
+    });
   });
 
   cases('can resolve bracket paths', renderField => {

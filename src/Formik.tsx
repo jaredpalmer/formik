@@ -21,7 +21,7 @@ import {
   makeCancelable,
 } from './utils';
 import { FormikProvider } from './FormikContext';
-import warning from 'warning';
+import warning from 'tiny-warning';
 
 // We already used FormikActions. So we'll go all Elm-y, and use Message.
 type FormikMessage<Values> =
@@ -673,7 +673,7 @@ function warnAboutMissingIdentifier({
   documentationAnchorLink: string;
   handlerName: string;
 }) {
-  console.error(
+  console.warn(
     `Warning: Formik called \`${handlerName}\`, but you forgot to pass an \`id\` or \`name\` attribute to your input:
     ${htmlContent}
     Formik cannot determine which value to update. For more info see https://github.com/jaredpalmer/formik#${documentationAnchorLink}

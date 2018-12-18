@@ -46,8 +46,8 @@
     "lodash": "^4.17.11",
     "lodash-es": "^4.17.11",
     "react-fast-compare": "^2.0.1",
-    "tslib": "^1.9.3",
-    "warning": "^3.0.0"
+    "tiny-warning": "^1.0.2",
+    "tslib": "^1.9.3"
   },
   "optionalDependencies": {},
   "resolutions": {

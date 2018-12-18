@@ -126,25 +126,6 @@ export const isEmptyChildren = (children: any): boolean =>
 export const isPromise = (value: any): value is PromiseLike<any> =>
   isObject(value) && isFunction(value.then);
 
-export function warning(condition: any, message: string) {
-  // don't do anything in production
-  // wrapping in production check for better dead code elimination
-  if (process.env.NODE_ENV !== 'production') {
-    // condition passed: do not log
-    if (condition) {
-      return;
-    }
-    const m = 'Warning: ' + message;
-    if (typeof console !== 'undefined') {
-      console.error(m);
-    }
-    try {
-      throw new Error(m);
-      // tslint:disable-next-line:no-empty
-    } catch (x) {}
-  }
-}
-
 /**
  * Same as document.activeElement but wraps in a try-catch block. In IE it is
  * not safe to call document.activeElement if there is nothing focused.

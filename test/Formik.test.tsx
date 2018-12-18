@@ -5,7 +5,7 @@ import * as Yup from 'yup';
 import { Formik, FormikProps, FormikConfig } from '../src';
 import { noop } from './testHelpers';
 
-jest.spyOn(global.console, 'error');
+jest.spyOn(global.console, 'warn');
 
 interface Values {
   name: string;
@@ -878,14 +878,14 @@ describe('<Formik>', () => {
 
     fireEvent.submit(getByTestId('form'));
 
-    expect(global.console.error).toHaveBeenCalledWith(
+    expect(global.console.warn).toHaveBeenCalledWith(
       expect.stringMatching(
         /Warning: You submitted a Formik form using a button with an unspecified `type./
       )
     );
 
     button.blur(); // unsets activeElement
-    (global.console.error as jest.Mock<{}>).mockClear();
+    (global.console.warn as jest.Mock<{}>).mockClear();
   });
 
   it('should not warn when button has type submit', () => {
@@ -910,14 +910,14 @@ describe('<Formik>', () => {
 
     fireEvent.submit(getByTestId('form'));
 
-    expect(global.console.error).not.toHaveBeenCalledWith(
+    expect(global.console.warn).not.toHaveBeenCalledWith(
       expect.stringMatching(
         /Warning: You submitted a Formik form using a button with an unspecified type./
       )
     );
 
     button.blur(); // unsets activeElement
-    (global.console.error as jest.Mock<{}>).mockClear();
+    (global.console.warn as jest.Mock<{}>).mockClear();
   });
 
   it('should not warn when activeElement is not a button', () => {
@@ -942,14 +942,14 @@ describe('<Formik>', () => {
 
     fireEvent.submit(getByTestId('form'));
 
-    expect(global.console.error).not.toHaveBeenCalledWith(
+    expect(global.console.warn).not.toHaveBeenCalledWith(
       expect.stringMatching(
         /Warning: You submitted a Formik form using a button with an unspecified type./
       )
     );
 
     input.blur(); // unsets activeElement
-    (global.console.error as jest.Mock<{}>).mockClear();
+    (global.console.warn as jest.Mock<{}>).mockClear();
   });
 
   it('submit count increments', async () => {

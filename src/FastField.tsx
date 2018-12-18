@@ -6,7 +6,8 @@ import {
   GenericFieldHTMLAttributes,
   FormikContext,
 } from './types';
-import { warning, getIn, isEmptyChildren, isFunction } from './utils';
+import warning from 'tiny-warning';
+import { getIn, isEmptyChildren, isFunction } from './utils';
 
 export interface FastFieldProps<V = any> {
   field: {

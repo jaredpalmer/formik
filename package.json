@@ -48,6 +48,7 @@
     "lodash-es": "^4.17.11",
     "prop-types": "^15.6.1",
     "react-fast-compare": "^2.0.1",
+    "tiny-warning": "^1.0.1",
     "tslib": "^1.9.3"
   },
   "optionalDependencies": {},

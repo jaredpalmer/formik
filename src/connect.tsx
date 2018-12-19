@@ -1,12 +1,16 @@
 import * as React from 'react';
 import hoistNonReactStatics from 'hoist-non-react-statics';
-import createContext from 'create-react-context';
+import createContext, { Context } from 'create-react-context';
 import { FormikContext } from './types';
 
+function createFormikContext<Values>(): Context<FormikContext<Values>> {
+  const defaultvalue: FormikContext<Values> = {} as FormikContext<Values>;
+  return createContext(defaultvalue);
+}
 export const {
   Provider: FormikProvider,
   Consumer: FormikConsumer,
-} = createContext<FormikContext<any>>({} as any);
+} = createFormikContext();
 
 /**
  * Connect any component to Formik context, and inject as a prop called `formik`;
@@ -17,7 +21,10 @@ export function connect<OuterProps, Values = {}>(
 ) {
   const C: React.SFC<OuterProps> = (props: OuterProps) => (
     <FormikConsumer>
-      {formik => <Comp {...props} formik={formik} />}
+      {formik => {
+        const formikProps = formik as FormikContext<Values>;
+        return <Comp {...props} formik={formikProps} />;
+      }}
     </FormikConsumer>
   );
   const componentDisplayName =

@@ -187,7 +187,7 @@ export class Formik<Values = object, ExtraProps = {}> extends React.Component<
 
   runFieldLevelValidations(
     values: FormikValues
-  ): Promise<FormikErrors<Values>> {
+  ): Promise<Error | FormikErrors<Values>> {
     const fieldKeysWithValidation: string[] = Object.keys(this.fields).filter(
       f =>
         this.fields &&
@@ -215,23 +215,29 @@ export class Formik<Values = object, ExtraProps = {}> extends React.Component<
           }
           return prev;
         },
-        {} as FormikErrors<Values>
+        {} as Error | FormikErrors<Values>
       )
     );
   }
 
-  runValidateHandler(values: FormikValues): Promise<FormikErrors<Values>> {
-    return new Promise(resolve => {
+  runValidateHandler(
+    values: FormikValues
+  ): Promise<Error | FormikErrors<Values>> {
+    return new Promise((resolve, reject) => {
       const maybePromisedErrors = (this.props.validate as any)(values);
       if (maybePromisedErrors === undefined) {
         resolve({});
       } else if (isPromise(maybePromisedErrors)) {
         (maybePromisedErrors as Promise<any>).then(
-          () => {
-            resolve({});
+          maybeErrors => {
+            resolve(maybeErrors);
           },
           errors => {
-            resolve(errors);
+            if (errors instanceof Error) {
+              reject(errors);
+            } else {
+              resolve(errors);
+            }
           }
         );
       } else {
@@ -265,7 +271,7 @@ export class Formik<Values = object, ExtraProps = {}> extends React.Component<
    */
   runValidations = (
     values: FormikValues = this.state.values
-  ): Promise<FormikErrors<Values>> => {
+  ): Promise<Error | FormikErrors<Values>> => {
     if (this.validator) {
       this.validator();
     }
@@ -293,7 +299,7 @@ export class Formik<Values = object, ExtraProps = {}> extends React.Component<
         });
         return errors;
       })
-      .catch(x => x);
+      .catch(error => error);
   };
 
   handleChange = (
@@ -441,16 +447,39 @@ export class Formik<Values = object, ExtraProps = {}> extends React.Component<
       submitCount: prevState.submitCount + 1,
     }));
 
-    return this.runValidations(this.state.values).then(combinedErrors => {
-      this.setState({ isValidating: false });
-      const isValid = Object.keys(combinedErrors).length === 0;
-      if (isValid) {
-        this.executeSubmit();
-      } else if (this.didMount) {
-        // ^^^ Make sure Formik is still mounted before calling setState
-        this.setState({ isSubmitting: false });
+    return this.runValidations(this.state.values).then(
+      combinedErrors => {
+        this.setState({ isValidating: false });
+        // In case an error was thrown and passed to the resolved Promise,
+        // `combinedErrors` can be an instance of an Error. We need to check
+        // that and abort the submit.
+        // If we don't do that, calling `Object.keys(new Error())` yields an
+        // empty array, which causes the validation to pass and the form
+        // to be submitted.
+        const isInstanceOfError = combinedErrors instanceof Error;
+        const isValid =
+          !isInstanceOfError && Object.keys(combinedErrors).length === 0;
+        if (isValid) {
+          this.executeSubmit();
+        } else if (this.didMount) {
+          // ^^^ Make sure Formik is still mounted before calling setState
+          this.setState({ isSubmitting: false });
+        }
+      },
+      error => {
+        if (process.env.NODE_ENV !== 'production') {
+          console.warn(
+            `Warning: the form could not be submitted because an unhandled error was caught upon validation. Please report it at https://github.com/jaredpalmer/formik/issues/new/choose in case it's an internal error in Formik.`,
+            error
+          );
+        }
+        this.setState({ isValidating: false });
+        if (this.didMount) {
+          // ^^^ Make sure Formik is still mounted before calling setState
+          this.setState({ isSubmitting: false });
+        }
       }
-    });
+    );
   };
 
   executeSubmit = () => {

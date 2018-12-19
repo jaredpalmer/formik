@@ -187,7 +187,7 @@ Your form's values. Will have the shape of the result of `mapPropsToValues`
 (if specified) or all props that are not functions passed to your wrapped
 component.
 
-#### `validateForm: (values?: any) => Promise<FormikErrors<Values>>`
+#### `validateForm: (values?: any) => Promise<Error | FormikErrors<Values>>`
 
 Imperatively call your `validate` or `validateSchema` depending on what was specified. You can optionally pass values to validate against and this modify Formik state accordingly, otherwise this will use the current `values` of the form.
 

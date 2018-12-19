@@ -96,7 +96,7 @@ export interface FormikActions<Values> {
     shouldValidate?: boolean
   ): void;
   /** Validate form values */
-  validateForm(values?: any): Promise<FormikErrors<Values>>;
+  validateForm(values?: any): Promise<Error | FormikErrors<Values>>;
   /** Validate field value */
   validateField(field: string): void;
   /** Reset form */
@@ -211,7 +211,11 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
    */
   validate?: ((
     values: Values
-  ) => void | object | Promise<FormikErrors<Values>>);
+  ) =>
+    | void
+    | Error
+    | FormikErrors<Values>
+    | Promise<Error | FormikErrors<Values>>);
 }
 
 /**

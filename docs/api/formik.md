@@ -194,7 +194,7 @@ Imperatively call your `validate` or `validateSchema` depending on what was spec
 
 Imperatively call field's `validate` function if specified for given field. Formik will use the current field value.
 
-### `component`
+### `component?: React.ComponentType<FormikProps<Values>>`
 
 ```jsx
 <Formik component={ContactForm} />;
@@ -248,7 +248,7 @@ don’t use both in the same `<Formik>`.
 />
 ```
 
-### `children: func`
+### `children?: React.ReactNode | (props: FormikProps<Values>) => ReactNode`
 
 ```jsx
 <Formik children={props => <ContactForm {...props} />} />
@@ -286,7 +286,7 @@ Default is `false`. Control the initial value of `isValid` prop prior to
 mount. You can also pass a function. Useful for situations when you want to
 enable/disable a submit and reset buttons on initial mount.
 
-### `initialValues?: Values`
+### `initialValues: Values`
 
 Initial field values of the form, Formik will make these values available to
 render methods component as `values`.

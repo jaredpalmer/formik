@@ -3,25 +3,7 @@ import { FormikProps, GenericFieldHTMLAttributes } from './types';
 import { useFormikContext } from './FormikContext';
 import { isFunction, isEmptyChildren } from './utils';
 import warning from 'tiny-warning';
-/**
- * Note: These typings could be more restrictive, but then it would limit the
- * reusability of custom <Field/> components.
- *
- * @example
- * interface MyProps {
- *   ...
- * }
- *
- * export const MyInput: React.SFC<MyProps & FieldProps> = ({
- *   field,
- *   form,
- *   ...props
- * }) =>
- *   <div>
- *     <input {...field} {...props}/>
- *     {form.touched[field.name] && form.errors[field.name]}
- *   </div>
- */
+
 export interface FieldProps<V = any> {
   field: {
     /** Classic React change handler, keyed by input name */
@@ -79,6 +61,13 @@ export type FieldAttributes<T> = GenericFieldHTMLAttributes & FieldConfig & T;
 
 export function useField(name: string, type?: string) {
   const formik = useFormikContext();
+
+  if (process.env.NODE_ENV !== 'production') {
+    warning(
+      !formik,
+      'useField() / <Field /> must be used underneath a <Formik> component or withFormik() higher order component'
+    );
+  }
 
   return formik.getFieldProps(name, type);
 }

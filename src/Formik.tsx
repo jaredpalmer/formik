@@ -264,8 +264,10 @@ export class Formik<Values = object, ExtraProps = {}> extends React.Component<
    * Run all validations methods and update state accordingly
    */
   runValidations = (
-    values: FormikValues = this.state.values
+    values: FormikValues = this.state.values,
+    forceValidate: boolean = false
   ): Promise<FormikErrors<Values>> => {
+    // Cancel any running validation
     if (this.validator) {
       this.validator();
     }
@@ -282,7 +284,11 @@ export class Formik<Values = object, ExtraProps = {}> extends React.Component<
         );
       })
     );
-    this.validator = cancel;
+    if (!forceValidate) {
+      // Make validation cancellable (unless it's during a submisson) by
+      // the next validation call
+      this.validator = cancel;
+    }
     return promise
       .then((errors: FormikErrors<Values>) => {
         this.setState(prevState => {
@@ -441,7 +447,7 @@ export class Formik<Values = object, ExtraProps = {}> extends React.Component<
       submitCount: prevState.submitCount + 1,
     }));
 
-    return this.runValidations(this.state.values).then(combinedErrors => {
+    return this.runValidations(this.state.values, true).then(combinedErrors => {
       this.setState({ isValidating: false });
       const isValid = Object.keys(combinedErrors).length === 0;
       if (isValid) {

@@ -160,8 +160,8 @@ export function makeCancelable<T extends Promise<any>>(
 
   const wrappedPromise: any = new Promise((resolve, reject) => {
     promise.then(
-      val => (hasCanceled ? reject() : resolve(val)),
-      error => (hasCanceled ? reject() : reject(error))
+      val => (hasCanceled ? reject({}) : resolve(val)),
+      error => (hasCanceled ? reject({}) : reject(error))
     );
   });
 

@@ -304,7 +304,7 @@ describe('utils', () => {
           return updatedPromise;
         })();
       } catch (e) {
-        expect(e).toEqual({ isCanceled: true });
+        expect(e).toEqual({});
       }
     });
 
@@ -325,7 +325,7 @@ describe('utils', () => {
           return updatedPromise;
         })();
       } catch (e) {
-        expect(e).toEqual({ isCanceled: true });
+        expect(e).toEqual({});
       }
     });
   });

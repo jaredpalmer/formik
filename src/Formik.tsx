@@ -136,7 +136,7 @@ export function useFormik<Values = object>({
   const runValidationAsEffect = React.useCallback(
     () => {
       const [validate, cancel] = makeCancelable(validateForm(state.values));
-      validate.catch(x => x); // catch the rejection silently
+      validate.then(x => x).catch(x => x); // catch the rejection silently
       return cancel;
     },
     [state.values]
@@ -149,7 +149,7 @@ export function useFormik<Values = object>({
       }
       return;
     },
-    [state.values, state.isSubmitting]
+    [state.values, state.isSubmitting, validateOnChange]
   );
 
   React.useEffect(
@@ -159,7 +159,7 @@ export function useFormik<Values = object>({
       }
       return;
     },
-    [state.touched, state.isSubmitting]
+    [state.touched, state.isSubmitting, validateOnBlur]
   );
 
   const imperativeMethods = {

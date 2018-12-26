@@ -196,109 +196,109 @@ describe('Field / FastField', () => {
     });
   });
 
-  // describe('validate', () => {
-  //   cases('calls validate during onChange if present', async renderField => {
-  //     const validate = jest.fn();
-  //     const { getByTestId, rerender } = renderField({
-  //       validate,
-  //       component: 'input',
-  //     });
-  //     rerender();
-  //     fireEvent.change(getByTestId('name-input'), {
-  //       target: { name: 'name', value: 'hello' },
-  //     });
+  describe('validate', () => {
+    cases('calls validate during onChange if present', async renderField => {
+      const validate = jest.fn();
+      const { getByTestId, rerender } = renderField({
+        validate,
+        component: 'input',
+      });
+      rerender();
+      fireEvent.change(getByTestId('name-input'), {
+        target: { name: 'name', value: 'hello' },
+      });
 
-  //     rerender();
-  //     await wait(() => {
-  //       expect(validate).toHaveBeenCalled();
-  //     });
-  //   });
+      rerender();
+      await wait(() => {
+        expect(validate).toHaveBeenCalled();
+      });
+    });
 
-  //   cases(
-  //     'does NOT call validate during onChange if validateOnChange is set to false',
-  //     async renderField => {
-  //       const validate = jest.fn();
-  //       const { getByTestId, rerender } = renderField(
-  //         { validate, component: 'input' },
-  //         { validateOnChange: false }
-  //       );
-  //       rerender();
-  //       fireEvent.change(getByTestId('name-input'), {
-  //         target: { name: 'name', value: 'hello' },
-  //       });
-  //       rerender();
-  //       await wait(() => {
-  //         expect(validate).not.toHaveBeenCalled();
-  //       });
-  //     }
-  //   );
+    cases(
+      'does NOT call validate during onChange if validateOnChange is set to false',
+      async renderField => {
+        const validate = jest.fn();
+        const { getByTestId, rerender } = renderField(
+          { validate, component: 'input' },
+          { validateOnChange: false }
+        );
+        rerender();
+        fireEvent.change(getByTestId('name-input'), {
+          target: { name: 'name', value: 'hello' },
+        });
+        rerender();
+        await wait(() => {
+          expect(validate).not.toHaveBeenCalled();
+        });
+      }
+    );
 
-  //   cases('calls validate during onBlur if present', async renderField => {
-  //     const validate = jest.fn();
-  //     const { getByTestId, rerender } = renderField({
-  //       validate,
-  //       component: 'input',
-  //     });
-  //     rerender();
-  //     fireEvent.blur(getByTestId('name-input'), {
-  //       target: { name: 'name' },
-  //     });
-  //     rerender();
-  //     await wait(() => {
-  //       expect(validate).toHaveBeenCalled();
-  //     });
-  //   });
+    cases('calls validate during onBlur if present', async renderField => {
+      const validate = jest.fn();
+      const { getByTestId, rerender } = renderField({
+        validate,
+        component: 'input',
+      });
+      rerender();
+      fireEvent.blur(getByTestId('name-input'), {
+        target: { name: 'name' },
+      });
+      rerender();
+      await wait(() => {
+        expect(validate).toHaveBeenCalled();
+      });
+    });
 
-  //   cases(
-  //     'does NOT call validate during onBlur if validateOnBlur is set to false',
-  //     async renderField => {
-  //       const validate = jest.fn();
-  //       const { getByTestId, rerender } = renderField(
-  //         { validate, component: 'input' },
-  //         { validateOnBlur: false }
-  //       );
+    cases(
+      'does NOT call validate during onBlur if validateOnBlur is set to false',
+      async renderField => {
+        const validate = jest.fn();
+        const { getByTestId, rerender } = renderField(
+          { validate, component: 'input' },
+          { validateOnBlur: false }
+        );
 
-  //       rerender();
-  //       fireEvent.blur(getByTestId('name-input'), {
-  //         target: { name: 'name' },
-  //       });
-  //       rerender();
+        rerender();
+        fireEvent.blur(getByTestId('name-input'), {
+          target: { name: 'name' },
+        });
+        rerender();
 
-  //       await wait(() => expect(validate).not.toHaveBeenCalled());
-  //     }
-  //   );
+        await wait(() => expect(validate).not.toHaveBeenCalled());
+      }
+    );
 
-  //   cases(
-  //     'runs validation when validateField is called (SYNC)',
-  //     async renderField => {
-  //       const validate = jest.fn(() => 'Error!');
-  //       const { getFormProps, rerender } = renderField({
-  //         validate,
-  //         component: 'input',
-  //       });
-  //       rerender();
-  //       getFormProps().validateField('name');
-  //       rerender();
-  //       await wait(() => {
-  //         expect(validate).toHaveBeenCalled();
-  //         expect(getFormProps().errors.name).toBe('Error!');
-  //       });
-  //     }
-  //   );
+    cases(
+      'runs validation when validateField is called (SYNC)',
+      async renderField => {
+        const validate = jest.fn(() => 'Error!');
+        const { getFormProps, rerender } = renderField({
+          validate,
+          component: 'input',
+        });
+        rerender();
+        getFormProps().validateField('name');
+        rerender();
+        await wait(() => {
+          expect(validate).toHaveBeenCalled();
+          expect(getFormProps().errors.name).toBe('Error!');
+        });
+      }
+    );
 
-  //   cases(
-  //     'runs validation when validateField is called (ASYNC)',
-  //     async renderField => {
-  //       const validate = jest.fn(() => Promise.reject('Error!'));
-  //       const { getFormProps } = renderField({ validate });
+    cases(
+      'runs validation when validateField is called (ASYNC)',
+      async renderField => {
+        const validate = jest.fn(() => Promise.reject('Error!'));
+        const { getFormProps } = renderField({ validate });
 
-  //       getFormProps().validateField('name');
+        getFormProps().validateField('name');
 
-  //       expect(validate).toHaveBeenCalled();
-  //       await wait(() => expect(getFormProps().errors.name).toBe('Error!'));
-  //     }
-  //   );
-  // });
+        expect(validate).toHaveBeenCalled();
+        await wait(() => expect(getFormProps().errors.name).toBe('Error!'));
+      }
+    );
+  });
 
   describe('warnings', () => {
     cases(

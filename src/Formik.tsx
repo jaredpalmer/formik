@@ -477,6 +477,55 @@ export function useFormik<Values = object>({
     });
   }
 
+  function runSingleFieldLevelValidation(
+    field: string,
+    value: void | string
+  ): Promise<string> {
+    return new Promise(resolve =>
+      resolve(fields.current[field].validate(value))
+    ).then(x => x, e => e);
+  }
+
+  function runFieldLevelValidations(
+    values: Values
+  ): Promise<FormikErrors<Values>> {
+    if (fields.current === null) {
+      return Promise.resolve({});
+    }
+    const fieldKeysWithValidation: string[] = Object.keys(
+      fields.current
+    ).filter(
+      f =>
+        fields.current !== null &&
+        fields.current[f] &&
+        fields.current[f].validate &&
+        isFunction(fields.current[f].validate)
+    );
+
+    // Construct an array with all of the field validation functions
+    const fieldValidations: Promise<string>[] =
+      fieldKeysWithValidation.length > 0
+        ? fieldKeysWithValidation.map(f =>
+            runSingleFieldLevelValidation(f, getIn(values, f))
+          )
+        : [Promise.resolve('DO_NOT_DELETE_YOU_WILL_BE_FIRED')]; // use special case ;)
+
+    return Promise.all(fieldValidations).then((fieldErrorsList: string[]) =>
+      fieldErrorsList.reduce(
+        (prev, curr, index) => {
+          if (curr === 'DO_NOT_DELETE_YOU_WILL_BE_FIRED') {
+            return prev;
+          }
+          if (!!curr) {
+            prev = setIn(prev, fieldKeysWithValidation[index], curr);
+          }
+          return prev;
+        },
+        {} as FormikErrors<Values>
+      )
+    );
+  }
+
   /**
    * Run all validations methods and update state accordingly
    */
@@ -485,6 +534,7 @@ export function useFormik<Values = object>({
   ): Promise<FormikErrors<Values>> {
     if (props.validationSchema || props.validate) {
       return Promise.all([
+        runFieldLevelValidations(values),
         props.validationSchema ? runValidationSchema(values) : {},
         props.validate ? runValidateHandler(values) : {},
       ]).then(([fieldErrors, schemaErrors]) => {

@@ -114,13 +114,6 @@ export function useFormik<Values = object>({
       validate: (value: any) => string | Promise<string> | undefined;
     };
   }>({});
-  React.useEffect(
-    () => {
-      initialValues.current = props.initialValues;
-    },
-    [props.initialValues]
-  );
-
   const [state, dispatch] = React.useReducer<
     FormikState<Values>,
     FormikMessage<Values>

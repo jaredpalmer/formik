@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { FormikProps, GenericFieldHTMLAttributes } from './types';
 import { useFormikContext } from './FormikContext';
-import { isFunction } from './utils';
-
+import { isFunction, isEmptyChildren } from './utils';
+import warning from 'tiny-warning';
 /**
  * Note: These typings could be more restrictive, but then it would limit the
  * reusability of custom <Field/> components.
@@ -96,6 +96,22 @@ export function Field({
     validationSchema: _validationSchema,
     ...formik
   } = useFormikContext();
+
+  warning(
+    !(component && render),
+    'You should not use <Field component> and <Field render> in the same <Field> component; <Field component> will be ignored'
+  );
+
+  warning(
+    !(component && children && isFunction(children)),
+    'You should not use <Field component> and <Field children> as a function in the same <Field> component; <Field component> will be ignored.'
+  );
+
+  warning(
+    !(render && children && !isEmptyChildren(children)),
+    'You should not use <Field render> and <Field children> in the same <Field> component; <Field children> will be ignored'
+  );
+
   React.useEffect(
     () => {
       formik.registerField(props.name, {

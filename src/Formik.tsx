@@ -462,12 +462,11 @@ export class Formik<Values = object, ExtraProps = {}> extends React.Component<
       if (e.persist) {
         e.persist();
       }
-      const { name, id, outerHTML } = e.target;
-      const field = path ? path : name ? name : id;
+      const field = path ? path : e.target.name ? e.target.name : e.target.id;
 
       if (!field && process.env.NODE_ENV !== 'production') {
         warnAboutMissingIdentifier({
-          htmlContent: outerHTML,
+          htmlContent: e.target.outerHTML,
           documentationAnchorLink: 'handleblur-e-any--void',
           handlerName: 'handleBlur',
         });

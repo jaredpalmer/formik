@@ -457,17 +457,23 @@ export class Formik<Values = object, ExtraProps = {}> extends React.Component<
     this.props.onSubmit(this.state.values, this.getFormikActions());
   };
 
-  handleBlur = (eventOrString: any): void | ((e: any) => void) => {
-    const executeBlur = (e: any, path?: string) => {
-      if (e.persist) {
-        e.persist();
+  handleBlur = (
+    eventOrPath: string | React.FocusEvent<any>
+  ): void | ((e?: React.FocusEvent<any>) => void) => {
+    const executeBlur = (event?: React.FocusEvent<any>, maybePath?: string) => {
+      if (event && event.persist) {
+        event.persist();
       }
-      const field = path ? path : e.target.name ? e.target.name : e.target.id;
+      const field = maybePath
+        ? maybePath
+        : event && event.target && event.target.name
+          ? event.target.name
+          : event && event.target ? event.target.id : null;
 
       if (!field && process.env.NODE_ENV !== 'production') {
         warnAboutMissingIdentifier({
-          htmlContent: e.target.outerHTML,
-          documentationAnchorLink: 'handleblur-e-any--void',
+          htmlContent: event && event.target && event.target.outerHTML,
+          documentationAnchorLink: 'handleblur-e-reactfocuseventany--void',
           handlerName: 'handleBlur',
         });
       }
@@ -480,15 +486,18 @@ export class Formik<Values = object, ExtraProps = {}> extends React.Component<
         this.runValidations(this.state.values);
       }
     };
-
-    if (isString(eventOrString)) {
+    if (isString(eventOrPath)) {
+      const path = eventOrPath;
       // cache these handlers by key like Preact's linkState does for perf boost
-      return isFunction(this.hbCache[eventOrString])
-        ? this.hbCache[eventOrString]
-        : (this.hbCache[eventOrString] = (event: any) =>
-            executeBlur(event, eventOrString));
+      if (!isFunction(this.hbCache[path])) {
+        // set a new handle function in cache
+        this.hbCache[path] = (event?: React.FocusEvent<any>) =>
+          executeBlur(event, path);
+      }
+      return this.hbCache[path]; // return the cached function
     } else {
-      executeBlur(eventOrString);
+      const event = eventOrPath;
+      executeBlur(event);
     }
   };
 

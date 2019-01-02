@@ -26,8 +26,8 @@ import {
   makeCancelable,
 } from './utils';
 
-export class Formik<Values = object, ExtraProps = {}> extends React.Component<
-  FormikConfig<Values> & ExtraProps,
+export class Formik<Values = FormikValues> extends React.Component<
+  FormikConfig<Values>,
   FormikState<Values>
 > {
   static defaultProps = {
@@ -50,7 +50,7 @@ export class Formik<Values = object, ExtraProps = {}> extends React.Component<
   };
   validator: any;
 
-  constructor(props: FormikConfig<Values> & ExtraProps) {
+  constructor(props: FormikConfig<Values>) {
     super(props);
     this.state = {
       values: props.initialValues || ({} as any),
@@ -106,7 +106,7 @@ export class Formik<Values = object, ExtraProps = {}> extends React.Component<
     }
   }
 
-  componentDidUpdate(prevProps: Readonly<FormikConfig<Values> & ExtraProps>) {
+  componentDidUpdate(prevProps: Readonly<FormikConfig<Values>>) {
     // If the initialValues change, reset the form
     if (
       this.props.enableReinitialize &&

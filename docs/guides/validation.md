@@ -138,6 +138,8 @@ For more information about `<Formik validationSchema>`, see the API reference.
 
 Formik supports field-level validation via the `<Field>`/`<FastField>` components' `validate` prop. This function can be synchronous or asynchronous (return a Promise). It will run after any `onChange` and `onBlur` by default. This behavior can be altered at the top level `<Formik/>` component using the `validateOnChange` and `validateOnBlur` props respectively. In addition to change/blur, all field-level validations are run at the beginning of a submission attempt and then the results are deeply merged with any top-level validation results.
 
+> Note: The `<Field>/<FastField>` components' `validate` function will only be executed on mounted fields. That is to say, if any of your fields unmount during the flow of your form (e.g. Material-UI's `<Tabs>` unmounts the previous `<Tab>` your user was on), those fields will not be validated during form validation/submission.
+
 ```jsx
 import React from 'react';
 import { Formik, Form, Field } from 'formik';

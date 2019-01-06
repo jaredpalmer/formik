@@ -199,8 +199,14 @@ class FieldArrayInner<Values = {}> extends React.Component<
     let result: any;
     this.updateArrayField(
       // so this gets call 3 times
-      (array?: any[]) => {
-        const copy = array ? [...array] : [];
+      var copy = [];
+        if (array && Object.keys(array)) {
+          Object.keys(array).map(parentKey => {
+            Object.keys(array[parentKey]) ? Object.keys(array[parentKey]).map(childKey => {
+              copy.push(array[parentKey][childKey]);
+            }) : copy.push(array[parentKey]);
+          });
+        }
         if (!result) {
           result = copy[index];
         }

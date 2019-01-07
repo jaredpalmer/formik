@@ -63,8 +63,6 @@ jobs:
           command: |
             if [ "${CIRCLE_BRANCH}" == "master" ]; then 
               cd website && cp now.json build/now.json && cd build && now --token=$NOW_TOKEN --team palmer && now alias --token=$NOW_TOKEN --team palmer            
-            else
-              cd website && cp now.json build/now.json && cd build && now --token=$NOW_TOKEN --team palmer              
             fi
 
 workflows:

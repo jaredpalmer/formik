@@ -19,7 +19,7 @@ import {
   isNaN,
   isPromise,
   isString,
-  isEvent,
+  isInputEvent,
   setIn,
   setNestedObjectValues,
   getActiveElement,
@@ -309,10 +309,12 @@ export class Formik<Values = object, ExtraProps = {}> extends React.Component<
       // allow for the first argument to be either a value or the standard change event.
       let field = maybePath;
       let value: any;
-      if (isEvent(eventOrValue)) {
+      if (isInputEvent(eventOrValue)) {
         const event = eventOrValue as React.ChangeEvent<any>;
         // If we can, persist the event, https://reactjs.org/docs/events.html#event-pooling
-        if (event.persist) event.persist();
+        if (event.persist) {
+          event.persist();
+        }
         const { type, name, id, checked, outerHTML } = event.target;
         field = maybePath ? maybePath : name ? name : id;
         if (!field && process.env.NODE_ENV !== 'production') {
@@ -460,10 +462,12 @@ export class Formik<Values = object, ExtraProps = {}> extends React.Component<
       maybePath?: string
     ) => {
       let field = maybePath;
-      if (isEvent(maybeEvent)) {
+      if (isInputEvent(maybeEvent)) {
         const event = maybeEvent as React.FocusEvent<any>;
         // If we can, persist the event, https://reactjs.org/docs/events.html#event-pooling
-        if (event.persist) event.persist();
+        if (event.persist) {
+          event.persist();
+        }
         const { name, id, outerHTML } = event.target;
         field = name ? name : id;
         if (!field && process.env.NODE_ENV !== 'production') {

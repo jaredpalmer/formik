@@ -127,7 +127,7 @@ export const isPromise = (value: any): value is PromiseLike<any> =>
   isObject(value) && isFunction(value.then);
 
 /** @private is the given object/value a type of synthetic event? */
-export const isEvent = (value: any): value is React.SyntheticEvent<any> =>
+export const isInputEvent = (value: any): value is React.SyntheticEvent<any> =>
   value && isObject(value) && isObject(value.target);
 
 /**

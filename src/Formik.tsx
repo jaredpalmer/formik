@@ -445,16 +445,17 @@ export class Formik<Values = FormikValues> extends React.Component<
       this.setState({ isValidating: false });
       const isValid = Object.keys(combinedErrors).length === 0;
       if (isValid) {
-        this.executeSubmit();
+        return Promise.resolve(this.executeSubmit());
       } else if (this.didMount) {
         // ^^^ Make sure Formik is still mounted before calling setState
         this.setState({ isSubmitting: false });
       }
+      return;
     });
   };
 
   executeSubmit = () => {
-    this.props.onSubmit(this.state.values, this.getFormikActions());
+    return this.props.onSubmit(this.state.values, this.getFormikActions());
   };
 
   handleBlur = (eventOrString: any): void | ((e: any) => void) => {

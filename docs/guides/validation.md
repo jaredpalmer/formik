@@ -199,7 +199,6 @@ You can manually trigger both form-level and field-level validation with Formik 
 ```jsx
 import React from 'react';
 import { Formik, Form, Field } from 'formik';
-import * as Yup from "yup";
 
 function validateEmail(value) {
   let error;

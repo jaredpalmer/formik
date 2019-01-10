@@ -81,16 +81,12 @@ the `errors` objects shape.
 `onBlur` event handler. Useful for when you need to track whether an input has
 been `touched` or not. This should be passed to `<input onBlur={handleBlur} ... />`
 
-DOM-only. Use `setFieldTouched` in React Native.
-
 #### `handleChange: (e: React.ChangeEvent<any>) => void`
 
 General input change event handler. This will update the `values[key]` where
 `key` is the event-emitting input's `name` attribute. If the `name` attribute is
 not present, `handleChange` will look for an input's `id` attribute. Note:
 "input" here means all HTML inputs.
-
-DOM-only. Use `setFieldValue` in React Native.
 
 #### `handleReset: () => void`
 

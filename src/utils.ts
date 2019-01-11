@@ -1,4 +1,4 @@
-import cloneDeep from 'lodash/cloneDeep';
+import clone from 'lodash/clone';
 import toPath from 'lodash/toPath';
 import * as React from 'react';
 
@@ -32,10 +32,8 @@ export function setIn(obj: any, path: string, value: any): any {
     const currentPath: string = pathArray[i];
     let currentObj: any = getIn(obj, pathArray.slice(0, i + 1));
 
-    if (resVal[currentPath]) {
-      resVal = resVal[currentPath];
-    } else if (currentObj) {
-      resVal = resVal[currentPath] = cloneDeep(currentObj);
+    if (currentObj) {
+      resVal = resVal[currentPath] = clone(currentObj);
     } else {
       const nextPath: string = pathArray[i + 1];
       resVal = resVal[currentPath] =

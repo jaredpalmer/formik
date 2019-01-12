@@ -7,7 +7,7 @@ custom_edit_url: https://github.com/jaredpalmer/formik/edit/master/docs/guides/t
 [![TypeScript Types](https://img.shields.io/npm/types/formik.svg)](https://npm.im/formik)
 
 The Formik source code is written in TypeScript, so you can rest easy that Formik's
-types will always be up-to-date. As a mental model, Formik's type signature(s) is/are very
+types will always be up-to-date. As a mental model, Formik's type signatures are very
 similar to React Router 4's `<Route>`.
 
 #### Render props (`<Formik />` and `<Field />`)

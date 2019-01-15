@@ -39,7 +39,7 @@ jobs:
       - attach_workspace:
           at: ~/repo
       - run:
-          name: Deploy Docs
+          name: Deploy Docs Website
           command: |
             if [ "${CIRCLE_BRANCH}" == "master" ]; then 
               curl -X POST -d {} ${NETLIFY_HOOK}

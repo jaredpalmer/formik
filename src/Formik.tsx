@@ -56,6 +56,8 @@ function formikReducer<Values>(
       return { ...state, status: msg.payload };
     case 'SET_ISSUBMITTING':
       return { ...state, isSubmitting: msg.payload };
+    case 'SET_ISVALIDATING':
+      return { ...state, isValidating: msg.payload };
     case 'SET_FIELD_VALUE':
       return {
         ...state,
@@ -533,6 +535,7 @@ export function useFormik<Values = object>({
     values: Values = state.values
   ): Promise<FormikErrors<Values>> {
     if (props.validationSchema || props.validate) {
+      dispatch({ type: 'SET_ISVALIDATING', payload: true });
       return Promise.all([
         runFieldLevelValidations(values),
         props.validationSchema ? runValidationSchema(values) : {},
@@ -545,6 +548,7 @@ export function useFormik<Values = object>({
         if (!isEqual(state.errors, combinedErrors)) {
           dispatch({ type: 'SET_ERRORS', payload: combinedErrors });
         }
+        dispatch({ type: 'SET_ISVALIDATING', payload: false });
         return combinedErrors;
       });
     } else {
@@ -575,7 +579,6 @@ export function useFormik<Values = object>({
   function submitForm() {
     dispatch({ type: 'SUBMIT_ATTEMPT' });
     return validateForm().then((combinedErrors: FormikErrors<Values>) => {
-      dispatch({ type: 'SET_ISVALIDATING', payload: false });
       const isActuallyValid = Object.keys(combinedErrors).length === 0;
       if (isActuallyValid) {
         Promise.resolve(executeSubmit())

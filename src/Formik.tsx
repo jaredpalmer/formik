@@ -84,7 +84,6 @@ function formikReducer<Values>(
           true
         ),
         isSubmitting: true,
-        isValidating: true,
         submitCount: state.submitCount + 1,
       };
     case 'SUBMIT_FAILURE':
@@ -110,7 +109,7 @@ export function useFormik<Values = object>({
 }: FormikConfig<Values>) {
   const props = { validateOnChange, validateOnBlur, isInitialValid, ...rest };
   const initialValues = React.useRef(props.initialValues);
-  const didMount = React.useRef<boolean>(false);
+  const isMounted = React.useRef<boolean>(false);
   const fields = React.useRef<{
     [field: string]: {
       validate: (value: any) => string | Promise<string> | undefined;
@@ -156,6 +155,14 @@ export function useFormik<Values = object>({
     },
     [state.touched, state.isSubmitting, validateOnBlur]
   );
+
+  React.useEffect(() => {
+    isMounted.current = true;
+
+    return () => {
+      isMounted.current = false;
+    };
+  });
 
   const imperativeMethods = {
     resetForm,
@@ -321,7 +328,7 @@ export function useFormik<Values = object>({
   }
 
   function executeSubmit() {
-    props.onSubmit(state.values, imperativeMethods);
+    return props.onSubmit(state.values, imperativeMethods);
   }
 
   function resetForm(nextValues?: Values) {
@@ -588,7 +595,7 @@ export function useFormik<Values = object>({
           .catch(_errors => {
             dispatch({ type: 'SUBMIT_FAILURE' });
           });
-      } else if (didMount.current) {
+      } else if (isMounted.current) {
         // ^^^ Make sure Formik is still mounted before calling setState
         dispatch({ type: 'SUBMIT_FAILURE' });
       }

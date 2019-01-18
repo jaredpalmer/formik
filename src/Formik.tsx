@@ -537,9 +537,9 @@ export function useFormik<Values = object>({
         runFieldLevelValidations(values),
         props.validationSchema ? runValidationSchema(values) : {},
         props.validate ? runValidateHandler(values) : {},
-      ]).then(([fieldErrors, schemaErrors]) => {
+      ]).then(([fieldErrors, schemaErrors, validateErrors]) => {
         const combinedErrors = deepmerge.all<FormikErrors<Values>>(
-          [fieldErrors, schemaErrors],
+          [fieldErrors, schemaErrors, validateErrors],
           { arrayMerge }
         );
         if (!isEqual(state.errors, combinedErrors)) {

@@ -1051,10 +1051,8 @@ describe('<Formik>', () => {
     expect(getProps().isValidating).toBe(true);
     // do it again async
     await validatePromise;
-    // done validating
+    // done validating and submitting
     expect(getProps().isValidating).toBe(false);
-    // now run submit
-    expect(getProps().isSubmitting).toBe(true);
     expect(validate).toHaveBeenCalled();
     expect(onSubmit).toHaveBeenCalled();
     expect(getProps().submitCount).toEqual(1);

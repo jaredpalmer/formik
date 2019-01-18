@@ -290,7 +290,11 @@ describe('Field / FastField', () => {
       'runs validation when validateField is called (ASYNC)',
       async renderField => {
         const validate = jest.fn(() => Promise.reject('Error!'));
-        const { getFormProps } = renderField({ validate });
+
+        const { getFormProps, rerender } = renderField({ validate });
+
+        // workaround for `useEffect` to run: https://github.com/facebook/react/issues/14050
+        rerender();
 
         getFormProps().validateField('name');
 

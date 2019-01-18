@@ -103,14 +103,14 @@ export function Field({
 
   React.useEffect(
     () => {
-      formik.registerField(props.name, {
-        validate: props.validate,
+      formik.registerField(name, {
+        validate: validate,
       });
       return () => {
-        formik.unregisterField(props.name);
+        formik.unregisterField(name);
       };
     },
-    [props.name, props.validate]
+    [name, validate]
   );
   const [field] = formik.getFieldProps(name, props.type);
   const bag = { field, form: formik };

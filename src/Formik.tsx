@@ -56,6 +56,8 @@ function formikReducer<Values>(
       return { ...state, status: msg.payload };
     case 'SET_ISSUBMITTING':
       return { ...state, isSubmitting: msg.payload };
+    case 'SET_ISVALIDATING':
+      return { ...state, isValidating: msg.payload };
     case 'SET_FIELD_VALUE':
       return {
         ...state,
@@ -82,7 +84,6 @@ function formikReducer<Values>(
           true
         ),
         isSubmitting: true,
-        isValidating: true,
         submitCount: state.submitCount + 1,
       };
     case 'SUBMIT_FAILURE':
@@ -108,7 +109,7 @@ export function useFormik<Values = object>({
 }: FormikConfig<Values>) {
   const props = { validateOnChange, validateOnBlur, isInitialValid, ...rest };
   const initialValues = React.useRef(props.initialValues);
-  const didMount = React.useRef<boolean>(false);
+  const isMounted = React.useRef<boolean>(false);
   const fields = React.useRef<{
     [field: string]: {
       validate: (value: any) => string | Promise<string> | undefined;
@@ -137,23 +138,31 @@ export function useFormik<Values = object>({
 
   React.useEffect(
     () => {
-      if (!!validateOnChange && !state.isSubmitting) {
+      if (!!validateOnChange && !state.isSubmitting && isMounted.current) {
         return runValidationAsEffect();
       }
       return;
     },
-    [state.values, state.isSubmitting, validateOnChange]
+    [state.values]
   );
 
   React.useEffect(
     () => {
-      if (!!validateOnBlur && !state.isSubmitting) {
+      if (!!validateOnBlur && !state.isSubmitting && isMounted.current) {
         return runValidationAsEffect();
       }
       return;
     },
-    [state.touched, state.isSubmitting, validateOnBlur]
+    [state.touched]
   );
+
+  React.useEffect(() => {
+    isMounted.current = true;
+
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
 
   const imperativeMethods = {
     resetForm,
@@ -319,7 +328,7 @@ export function useFormik<Values = object>({
   }
 
   function executeSubmit() {
-    props.onSubmit(state.values, imperativeMethods);
+    return props.onSubmit(state.values, imperativeMethods);
   }
 
   function resetForm(nextValues?: Values) {
@@ -532,19 +541,28 @@ export function useFormik<Values = object>({
   function validateForm(
     values: Values = state.values
   ): Promise<FormikErrors<Values>> {
-    if (props.validationSchema || props.validate) {
+    if (
+      props.validationSchema ||
+      props.validate ||
+      (fields.current &&
+        Object.keys(fields.current).filter(
+          key => !!fields.current[key].validate
+        ).length > 0)
+    ) {
+      dispatch({ type: 'SET_ISVALIDATING', payload: true });
       return Promise.all([
         runFieldLevelValidations(values),
         props.validationSchema ? runValidationSchema(values) : {},
         props.validate ? runValidateHandler(values) : {},
-      ]).then(([fieldErrors, schemaErrors]) => {
+      ]).then(([fieldErrors, schemaErrors, validateErrors]) => {
         const combinedErrors = deepmerge.all<FormikErrors<Values>>(
-          [fieldErrors, schemaErrors],
+          [fieldErrors, schemaErrors, validateErrors],
           { arrayMerge }
         );
         if (!isEqual(state.errors, combinedErrors)) {
           dispatch({ type: 'SET_ERRORS', payload: combinedErrors });
         }
+        dispatch({ type: 'SET_ISVALIDATING', payload: false });
         return combinedErrors;
       });
     } else {
@@ -575,7 +593,6 @@ export function useFormik<Values = object>({
   function submitForm() {
     dispatch({ type: 'SUBMIT_ATTEMPT' });
     return validateForm().then((combinedErrors: FormikErrors<Values>) => {
-      dispatch({ type: 'SET_ISVALIDATING', payload: false });
       const isActuallyValid = Object.keys(combinedErrors).length === 0;
       if (isActuallyValid) {
         Promise.resolve(executeSubmit())
@@ -585,7 +602,7 @@ export function useFormik<Values = object>({
           .catch(_errors => {
             dispatch({ type: 'SUBMIT_FAILURE' });
           });
-      } else if (didMount.current) {
+      } else if (isMounted.current) {
         // ^^^ Make sure Formik is still mounted before calling setState
         dispatch({ type: 'SUBMIT_FAILURE' });
       }

@@ -541,7 +541,14 @@ export function useFormik<Values = object>({
   function validateForm(
     values: Values = state.values
   ): Promise<FormikErrors<Values>> {
-    if (props.validationSchema || props.validate) {
+    if (
+      props.validationSchema ||
+      props.validate ||
+      (fields.current &&
+        Object.keys(fields.current).filter(
+          key => !!fields.current[key].validate
+        ).length > 0)
+    ) {
       dispatch({ type: 'SET_ISVALIDATING', payload: true });
       return Promise.all([
         runFieldLevelValidations(values),

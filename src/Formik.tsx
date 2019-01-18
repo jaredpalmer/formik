@@ -138,22 +138,22 @@ export function useFormik<Values = object>({
 
   React.useEffect(
     () => {
-      if (!!validateOnChange && !state.isSubmitting) {
+      if (!!validateOnChange && !state.isSubmitting && isMounted.current) {
         return runValidationAsEffect();
       }
       return;
     },
-    [state.values, state.isSubmitting, validateOnChange]
+    [state.values]
   );
 
   React.useEffect(
     () => {
-      if (!!validateOnBlur && !state.isSubmitting) {
+      if (!!validateOnBlur && !state.isSubmitting && isMounted.current) {
         return runValidationAsEffect();
       }
       return;
     },
-    [state.touched, state.isSubmitting, validateOnBlur]
+    [state.touched]
   );
 
   React.useEffect(() => {
@@ -162,7 +162,7 @@ export function useFormik<Values = object>({
     return () => {
       isMounted.current = false;
     };
-  });
+  }, []);
 
   const imperativeMethods = {
     resetForm,

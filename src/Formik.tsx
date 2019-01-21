@@ -130,12 +130,18 @@ export class Formik<Values = FormikValues> extends React.Component<
     });
   };
 
-  setValues = (values: FormikState<Values>['values']) => {
-    this.setState({ values }, () => {
+  setValues = (nextState: FormikState<Values>['values']) => {
+    const callback = () => {
       if (this.props.validateOnChange) {
-        this.runValidations(values);
+        this.runValidations(nextState);
       }
-    });
+    };
+
+    if (typeof nextState === 'function') {
+      return this.setState(({values}) => ({values: nextState(values)}), callback)
+    }
+
+    this.setState({ values: nextState }, callback);
   };
 
   setStatus = (status?: any) => {

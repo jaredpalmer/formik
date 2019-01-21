@@ -518,6 +518,13 @@ describe('<Formik>', () => {
         expect(getProps().values.name).toEqual('ian');
       });
 
+      it('can receive a function', () => {
+        const { getProps } = renderFormik();
+
+        getProps().setValues((state: any) => ({ name: state.name + ' leto' }));
+        expect(getProps().values.name).toEqual('jared leto');
+      });
+
       it('setValues should run validations when validateOnChange is true (default)', () => {
         const validate = jest.fn(() => ({}));
         const { getProps } = renderFormik({ validate });

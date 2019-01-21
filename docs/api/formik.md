@@ -163,9 +163,9 @@ Set `isSubmitting` imperatively.
 
 Set `touched` imperatively.
 
-#### `setValues: (fields: { [field: string]: any }) => void`
+#### `setValues: (fields: { [field: string]: any } | Function) => void`
 
-Set `values` imperatively.
+Set `values` imperatively. Can receive a function, akin to functional `this.setState`;
 
 #### `status?: any`
 

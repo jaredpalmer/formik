@@ -158,6 +158,7 @@ class FastFieldInner<Values = {}, Props = {}> extends React.Component<
       children,
       component = 'input',
       formik,
+      shouldUpdate,
       ...props
     } = (this.props as FastFieldAttributes<Props> & {
       formik: FormikContext<Values>;
@@ -195,7 +196,6 @@ class FastFieldInner<Values = {}, Props = {}> extends React.Component<
         children,
       });
     }
-
     return React.createElement(component as any, {
       ...bag,
       ...props,

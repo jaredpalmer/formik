@@ -1,7 +1,8 @@
 ---
-id: validation
+id: version-1.4.2-validation
 title: Validation
 custom_edit_url: https://github.com/jaredpalmer/formik/edit/master/docs/guides/validation.md
+original_id: validation
 ---
 
 Formik is designed to manage forms with complex validation with ease. Formik supports synchronous and asynchronous
@@ -199,6 +200,7 @@ You can manually trigger both form-level and field-level validation with Formik 
 ```jsx
 import React from 'react';
 import { Formik, Form, Field } from 'formik';
+import * as Yup from "yup";
 
 function validateEmail(value) {
   let error;

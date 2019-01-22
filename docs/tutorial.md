@@ -145,10 +145,10 @@ const EditUserDialog = ({ user, updateUser, onClose }) => {
             <Field type="email" name="email" />
             {errors.email && touched.email && <div>{errors.email}</div>}
             <Field type="text" name="social.facebook" />
-            {errors.social.facebook &&
+            {errors.social && errors.social.facebook &&
               touched.social.facebook && <div>{errors.social.facebook}</div>}
             <Field type="text" name="social.twitter" />
-            {errors.social.twitter &&
+            {errors.social && errors.social.twitter &&
               touched.social.twitter && <div>{errors.social.twitter}</div>}
             {status && status.msg && <div>{status.msg}</div>}
             <button type="submit" disabled={isSubmitting}>

@@ -32,17 +32,6 @@ jobs:
       - persist_to_workspace:
           root: ~/repo
           paths: .
-  publish-canary:
-    <<: *defaults
-    steps:
-      - attach_workspace:
-          at: ~/repo
-      - run:
-          name: Authenticate with registry
-          command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/repo/.npmrc
-      - run:
-          name: Publish package to canary channel
-          command: npm publish --tag canary
 
   deploy-docs:
     <<: *defaults
@@ -50,21 +39,10 @@ jobs:
       - attach_workspace:
           at: ~/repo
       - run:
-          name: Install Now CLI
-          command: sudo npm install --global --unsafe-perm now
-      - run:
-          name: Install Docs dependencies
-          command: cd website && yarn install --frozen-lockfile
-      - run:
-          name: Build Docs
-          command: cd website && yarn build
-      - run:
-          name: Deploy Docs
+          name: Deploy Docs Website
           command: |
             if [ "${CIRCLE_BRANCH}" == "master" ]; then 
-              cd website && cp now.json build/now.json && cd build && now --token=$NOW_TOKEN --team palmer && now alias --token=$NOW_TOKEN --team palmer            
-            else
-              cd website && cp now.json build/now.json && cd build && now --token=$NOW_TOKEN --team palmer              
+              curl -X POST -d {} ${NETLIFY_HOOK}
             fi
 
 workflows:
@@ -75,11 +53,3 @@ workflows:
       - deploy-docs:
           requires:
             - test
-      - publish-canary:
-          requires:
-            - test
-          filters:
-            tags:
-              only: /^.*canary.*($|\b)/
-            branches:
-              ignore: /.*/

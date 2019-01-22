@@ -129,8 +129,7 @@
       "json"
     ]
   },
-  "size-limit": [
-    {
+  "size-limit": [{
       "path": "./dist/index.js",
       "limit": "14 kB"
     },

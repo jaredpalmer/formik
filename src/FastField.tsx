@@ -196,6 +196,7 @@ class FastFieldInner<Values = {}, Props = {}> extends React.Component<
         children,
       });
     }
+
     return React.createElement(component as any, {
       ...bag,
       ...props,

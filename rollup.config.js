@@ -3,7 +3,7 @@ import replace from 'rollup-plugin-replace';
 import resolve from 'rollup-plugin-node-resolve';
 import sourceMaps from 'rollup-plugin-sourcemaps';
 import babel from 'rollup-plugin-babel';
-import { uglify } from 'rollup-plugin-uglify';
+import { terser } from 'rollup-plugin-terser';
 import { sizeSnapshot } from 'rollup-plugin-size-snapshot';
 import pkg from './package.json';
 
@@ -60,14 +60,17 @@ const buildUmd = ({ env }) => ({
     sourceMaps(),
     sizeSnapshot(),
     env === 'production' &&
-      uglify({
+      terser({
+        sourcemap: true,
         output: { comments: false },
         compress: {
           keep_infinity: true,
           pure_getters: true,
         },
         warnings: true,
+        ecma: 5,
         toplevel: false,
+        mangle: false,
       }),
   ],
 });

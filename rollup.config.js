@@ -70,7 +70,6 @@ const buildUmd = ({ env }) => ({
         warnings: true,
         ecma: 5,
         toplevel: false,
-        mangle: false,
       }),
   ],
 });

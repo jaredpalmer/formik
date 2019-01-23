@@ -124,6 +124,7 @@ const siteConfig = {
   // For no header links in the top nav bar -> headerLinks: [],
   headerLinks: [
     { doc: 'overview', label: 'Docs' },
+    { page: 'users', label: 'Users' },
     { page: 'help', label: 'Help' },
     {
       href: 'https://github.com/jaredpalmer/formik',
@@ -204,6 +205,7 @@ const siteConfig = {
     zIndex: 100,
   },
   enableUpdateTime: true,
+  enableUpdateBy: true,
   gaTrackingId: 'UA-55176740-4',
   twitter: true,
   twitterUsername: 'jaredpalmer',

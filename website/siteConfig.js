@@ -69,6 +69,16 @@ const users = [
     pinned: true,
   },
   {
+    caption: 'State Street',
+    image: '/formik/img/logos/state-street.png',
+    infoLink: 'https://statestreet.com',
+  },
+  {
+    caption: 'Artsy',
+    image: '/formik/img/logos/artsy.png',
+    infoLink: 'https://artsy.com',
+  },
+  {
     caption: 'Postmates',
     image: '/formik/img/logos/postmates.svg',
     infoLink: 'https://postmates.com',

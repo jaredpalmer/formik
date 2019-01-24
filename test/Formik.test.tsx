@@ -582,6 +582,14 @@ describe('<Formik>', () => {
         expect(validate).not.toHaveBeenCalled();
       });
 
+      it('setTouched should NOT run validations when shouldValidate is false', () => {
+        const validate = jest.fn(() => ({}));
+        const { getProps } = renderFormik({ validate });
+
+        getProps().setTouched({ name: true }, false);
+        expect(validate).not.toHaveBeenCalled();
+      });
+
       it('setFieldTouched sets touched by key', () => {
         const { getProps } = renderFormik();
 

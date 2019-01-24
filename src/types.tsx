@@ -78,7 +78,7 @@ export interface FormikActions<Values> {
   /** Manually set isSubmitting */
   setSubmitting(isSubmitting: boolean): void;
   /** Manually set touched object */
-  setTouched(touched: FormikTouched<Values>): void;
+  setTouched(touched: FormikTouched<Values>, shouldValidate?: boolean): void;
   /** Manually set values object  */
   setValues(values: Values): void;
   /** Set value of form field directly */

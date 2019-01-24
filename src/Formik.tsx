@@ -123,9 +123,12 @@ export class Formik<Values = FormikValues> extends React.Component<
     this.setState({ errors });
   };
 
-  setTouched = (touched: FormikTouched<Values>) => {
+  setTouched = (
+    touched: FormikTouched<Values>,
+    shouldValidate: boolean = true
+  ) => {
     this.setState({ touched }, () => {
-      if (this.props.validateOnBlur) {
+      if (this.props.validateOnBlur && shouldValidate) {
         this.runValidations(this.state.values);
       }
     });

@@ -155,9 +155,11 @@ use it to pass API responses back into your component in `handleSubmit`.
 
 Set `isSubmitting` imperatively.
 
-#### `setTouched: (fields: { [field: string]: boolean }) => void`
+#### `setTouched: (fields: { [field: string]: boolean }, shouldValidate?: boolean) => void`
 
 Set `touched` imperatively.
+
+You can also explicitly prevent/skip validation by passing a second argument as `false`.
 
 #### `setValues: (fields: { [field: string]: any }) => void`
 

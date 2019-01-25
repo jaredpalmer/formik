@@ -12,7 +12,7 @@ const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 const validate = (values) =>
   sleep(300).then(() => {
-    throw {
+   if(!values.zip) throw {
       zip: 'This field is required',
     };
   });
@@ -58,7 +58,6 @@ const FieldLevelValidation = () => (
           <div>
             <Field
               name="email"
-              validate={isRequired('This field is required')}
               type="text"
               placeholder="email"
             />
@@ -68,7 +67,6 @@ const FieldLevelValidation = () => (
           <div>
             <Field
               name="zip"
-              validate={isRequired('This field is required')}
               type="text"
               placeholder="zip"
             />

@@ -94,7 +94,6 @@ const buildCjs = ({ env }) => ({
           keep_infinity: true,
           pure_getters: true,
         },
-        format: 'cjs',
         warnings: true,
         ecma: 5,
         toplevel: false,

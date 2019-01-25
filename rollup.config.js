@@ -96,7 +96,9 @@ const buildCjs = ({ env }) => ({
         },
         warnings: true,
         ecma: 5,
-        toplevel: false,
+        // Compress and/or mangle variables in top level scope.
+        // @see https://github.com/terser-js/terser
+        toplevel: true,
       }),
   ],
 });

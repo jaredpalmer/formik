@@ -346,3 +346,13 @@ code[class*="language-"],
 pre[class*="language-"] {
   font-family: Menlo, Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace
 }
+
+.reactNavSearchWrapper input#search_input_react {
+  background-color: #222;
+  padding-top: .2rem;
+  padding-bottom: .2rem;
+}
+
+.reactNavSearchWrapper input#search_input_react:focus {
+  background-color: #333;
+}

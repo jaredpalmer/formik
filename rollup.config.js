@@ -26,10 +26,7 @@ const buildUmd = ({ env }) => ({
     name: 'Formik',
     format: 'umd',
     sourcemap: true,
-    file:
-      env === 'production'
-        ? `./dist/formik.umd.${env}.js`
-        : `./dist/formik.umd.${env}.js`,
+    file: `./dist/formik.umd.${env}.js`,
     exports: 'named',
     globals: {
       react: 'React',

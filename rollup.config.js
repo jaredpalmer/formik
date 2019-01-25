@@ -67,7 +67,6 @@ const buildUmd = ({ env }) => ({
         warnings: true,
         ecma: 5,
         toplevel: false,
-        mangle: false,
       }),
   ],
 });
@@ -87,6 +86,19 @@ const buildCjs = ({ env }) => ({
     }),
     sourceMaps(),
     sizeSnapshot(),
+    env === 'production' &&
+      terser({
+        sourcemap: true,
+        output: { comments: false },
+        compress: {
+          keep_infinity: true,
+          pure_getters: true,
+        },
+        format: 'cjs',
+        warnings: true,
+        ecma: 5,
+        toplevel: false,
+      }),
   ],
 });
 

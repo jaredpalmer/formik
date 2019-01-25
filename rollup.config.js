@@ -101,7 +101,7 @@ export default [
     output: [
       {
         file: pkg.module,
-        format: 'es',
+        format: 'esm',
         sourcemap: true,
       },
     ],

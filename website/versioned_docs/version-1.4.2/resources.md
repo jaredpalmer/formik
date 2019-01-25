@@ -30,6 +30,7 @@ original_id: resources
 ## Community Articles / Tutorials
 
 * [Building dynamic forms with Formik with React and TypeScript](https://scottdj92.ghost.io/building-dynamic-forms-with-formik-with-react-and-typescript/) by [Scott Jones](https://twitter.com/sdj2964) - Sep 1, 2018
+* [🍳 Render Props, Apollo and Formik: build and compose forms in React with ease 🏄](https://techblog.commercetools.com/render-props-apollo-and-formik-build-and-compose-forms-in-react-with-ease-f79a594be239) by [Tobias Deekens](https://github.com/tdeekens) - June 29, 2018
 * [Simple React form validation with Formik, Yup and/or Spected](https://itnext.io/simple-react-form-validation-with-formik-yup-and-or-spected-206ebe9e7dcc) by [Jakub Kočí](https://github.com/jakubkoci) - May 21, 2018
 * [ Formik —Handling files and reCaptcha](https://hackernoon.com/formik-handling-files-and-recaptcha-209cbeae10bc) by [João Miguel Cunha](https://twitter.com/lokuzt) - Dec 18, 2017
 * [Better React Forms with Formik](https://mead.io/formik/?utm_source=github&utm_campaign=formikrepo) by [Andrew Mead](https://twitter.com/andrew_j_mead) - Nov 28, 2017

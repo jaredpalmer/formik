@@ -1,6 +1,7 @@
 import * as React from 'react';
 import isEqual from 'react-fast-compare';
 import deepmerge from 'deepmerge';
+import cloneDeep from 'lodash/cloneDeep';
 import { FormikProvider } from './connect';
 import warning from 'tiny-warning';
 import {
@@ -53,7 +54,7 @@ export class Formik<Values = FormikValues> extends React.Component<
   constructor(props: FormikConfig<Values>) {
     super(props);
     this.state = {
-      values: props.initialValues || ({} as any),
+      values: cloneDeep(props.initialValues) || ({} as any),
       errors: {},
       touched: {},
       isSubmitting: false,

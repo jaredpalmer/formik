@@ -66,7 +66,9 @@ You can install Formik with [NPM](https://npmjs.com),
 
 ```sh
 npm install formik --save
-# or
+```
+or
+```
 yarn add formik
 ```
 

@@ -41,7 +41,6 @@
     "size": "size-limit"
   },
   "dependencies": {
-    "cp-cli": "^1.1.2",
     "create-react-context": "^0.2.2",
     "deepmerge": "^2.1.1",
     "hoist-non-react-statics": "^2.5.5",
@@ -97,7 +96,8 @@
     "tslint": "^5.11.0",
     "tslint-react": "^3.6.0",
     "typescript": "^3.1.6",
-    "yup": "0.21.3"
+    "yup": "0.21.3",
+    "cp-cli": "^1.1.2"
   },
   "lint-staged": {
     "**/*.{ts,tsx}": [

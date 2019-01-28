@@ -854,6 +854,17 @@ describe('<Formik>', () => {
       });
       expect(formik.current.resetForm).not.toHaveBeenCalled();
     });
+
+    it('should fire formikDidUpdate callback when componentDidUpdate is called', () => {
+      const formikDidUpdate = jest.fn();
+      const { getRef } = renderFormik({
+        formikDidUpdate,
+      });
+
+      getRef().current.componentDidUpdate();
+
+      expect(formikDidUpdate).toHaveBeenCalled();
+    });
   });
 
   it('should warn against buttons with unspecified type', () => {

@@ -212,6 +212,11 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
   validate?: ((
     values: Values
   ) => void | object | Promise<FormikErrors<Values>>);
+
+  /**
+   * Formik did update Function. Callback for formik component did update.
+   */
+  formikDidUpdate?: () => void;
 }
 
 /**

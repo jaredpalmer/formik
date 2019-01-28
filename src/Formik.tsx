@@ -116,6 +116,10 @@ export class Formik<Values = FormikValues> extends React.Component<
       // @todo refactor to use getDerivedStateFromProps?
       this.resetForm(this.props.initialValues);
     }
+
+    if (this.props.formikDidUpdate) {
+      this.props.formikDidUpdate();
+    }
   }
 
   setErrors = (errors: FormikErrors<Values>) => {

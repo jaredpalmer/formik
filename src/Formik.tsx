@@ -122,18 +122,18 @@ export class Formik<Values = FormikValues> extends React.Component<
     this.setState({ errors });
   };
 
-  setTouched = (touched: FormikTouched<Values>) => {
+  setTouched = (touched: FormikTouched<Values>, context?: Object) => {
     this.setState({ touched }, () => {
       if (this.props.validateOnBlur) {
-        this.runValidations(this.state.values);
+        this.runValidations(this.state.values, context);
       }
     });
   };
 
-  setValues = (values: FormikState<Values>['values']) => {
+  setValues = (values: FormikState<Values>['values'], context?: Object) => {
     this.setState({ values }, () => {
       if (this.props.validateOnChange) {
-        this.runValidations(values);
+        this.runValidations(values, context);
       }
     });
   };
@@ -160,11 +160,12 @@ export class Formik<Values = FormikValues> extends React.Component<
   /**
    * Run field level validation
    */
-  validateField = (field: string): Promise<Object> => {
+  validateField = (field: string, context?: Object): Promise<Object> => {
     this.setState({ isValidating: true });
     return this.runSingleFieldLevelValidation(
       field,
-      getIn(this.state.values, field)
+      getIn(this.state.values, field),
+      { field, ...context }
     ).then(error => {
       if (this.didMount) {
         this.setState({
@@ -178,15 +179,17 @@ export class Formik<Values = FormikValues> extends React.Component<
 
   runSingleFieldLevelValidation = (
     field: string,
-    value: void | string
+    value: void | string,
+    context: Object = {}
   ): Promise<string> => {
     return new Promise(resolve =>
-      resolve(this.fields[field].props.validate(value))
+      resolve(this.fields[field].props.validate(value, context))
     ).then(x => x, e => e);
   };
 
   runFieldLevelValidations(
-    values: FormikValues
+    values: FormikValues,
+    context?: Object
   ): Promise<FormikErrors<Values>> {
     const fieldKeysWithValidation: string[] = Object.keys(this.fields).filter(
       f =>
@@ -200,7 +203,7 @@ export class Formik<Values = FormikValues> extends React.Component<
     const fieldValidations: Promise<string>[] =
       fieldKeysWithValidation.length > 0
         ? fieldKeysWithValidation.map(f =>
-            this.runSingleFieldLevelValidation(f, getIn(values, f))
+            this.runSingleFieldLevelValidation(f, getIn(values, f), context)
           )
         : [Promise.resolve('DO_NOT_DELETE_YOU_WILL_BE_FIRED')]; // use special case ;)
 
@@ -220,9 +223,12 @@ export class Formik<Values = FormikValues> extends React.Component<
     );
   }
 
-  runValidateHandler(values: FormikValues): Promise<FormikErrors<Values>> {
+  runValidateHandler(
+    values: FormikValues,
+    context: Object = {}
+  ): Promise<FormikErrors<Values>> {
     return new Promise(resolve => {
-      const maybePromisedErrors = (this.props.validate as any)(values);
+      const maybePromisedErrors = (this.props.validate as any)(values, context);
       if (maybePromisedErrors === undefined) {
         resolve({});
       } else if (isPromise(maybePromisedErrors)) {
@@ -264,7 +270,8 @@ export class Formik<Values = FormikValues> extends React.Component<
    * Run all validations methods and update state accordingly
    */
   runValidations = (
-    values: FormikValues = this.state.values
+    values: FormikValues = this.state.values,
+    context?: Object
   ): Promise<FormikErrors<Values>> => {
     if (this.validator) {
       this.validator();
@@ -272,9 +279,9 @@ export class Formik<Values = FormikValues> extends React.Component<
 
     const [promise, cancel] = makeCancelable(
       Promise.all([
-        this.runFieldLevelValidations(values),
+        this.runFieldLevelValidations(values, context),
         this.props.validationSchema ? this.runValidationSchema(values) : {},
-        this.props.validate ? this.runValidateHandler(values) : {},
+        this.props.validate ? this.runValidateHandler(values, context) : {},
       ]).then(([fieldErrors, schemaErrors, handlerErrors]) => {
         return deepmerge.all<FormikErrors<Values>>(
           [fieldErrors, schemaErrors, handlerErrors],
@@ -351,7 +358,9 @@ export class Formik<Values = FormikValues> extends React.Component<
           }),
           () => {
             if (this.props.validateOnChange) {
-              this.runValidations(setIn(this.state.values, field!, val));
+              this.runValidations(setIn(this.state.values, field!, val), {
+                field,
+              });
             }
           }
         );
@@ -379,7 +388,8 @@ export class Formik<Values = FormikValues> extends React.Component<
   setFieldValue = (
     field: string,
     value: any,
-    shouldValidate: boolean = true
+    shouldValidate: boolean = true,
+    context?: Object
   ) => {
     if (this.didMount) {
       // Set form field by name
@@ -390,7 +400,7 @@ export class Formik<Values = FormikValues> extends React.Component<
         }),
         () => {
           if (this.props.validateOnChange && shouldValidate) {
-            this.runValidations(this.state.values);
+            this.runValidations(this.state.values, { field, ...context });
           }
         }
       );
@@ -478,7 +488,7 @@ export class Formik<Values = FormikValues> extends React.Component<
       }));
 
       if (this.props.validateOnBlur) {
-        this.runValidations(this.state.values);
+        this.runValidations(this.state.values, { field });
       }
     };
 
@@ -496,7 +506,8 @@ export class Formik<Values = FormikValues> extends React.Component<
   setFieldTouched = (
     field: string,
     touched: boolean = true,
-    shouldValidate: boolean = true
+    shouldValidate: boolean = true,
+    context?: Object
   ) => {
     // Set touched field by name
     this.setState(
@@ -506,7 +517,7 @@ export class Formik<Values = FormikValues> extends React.Component<
       }),
       () => {
         if (this.props.validateOnBlur && shouldValidate) {
-          this.runValidations(this.state.values);
+          this.runValidations(this.state.values, { field, ...context });
         }
       }
     );
@@ -557,9 +568,9 @@ export class Formik<Values = FormikValues> extends React.Component<
   setFormikState = (s: any, callback?: (() => void)) =>
     this.setState(s, callback);
 
-  validateForm = (values: Values) => {
+  validateForm = (values: Values, context?: Object) => {
     this.setState({ isValidating: true });
-    return this.runValidations(values).then(errors => {
+    return this.runValidations(values, context).then(errors => {
       this.setState({ isValidating: false });
       return errors;
     });

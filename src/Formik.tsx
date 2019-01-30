@@ -597,10 +597,14 @@ export function useFormik<Values = object>({
       if (isActuallyValid) {
         Promise.resolve(executeSubmit())
           .then(() => {
-            dispatch({ type: 'SUBMIT_SUCCESS' });
+            if (isMounted.current) {
+              dispatch({ type: 'SUBMIT_SUCCESS' });
+            }
           })
           .catch(_errors => {
-            dispatch({ type: 'SUBMIT_FAILURE' });
+            if (isMounted.current) {
+              dispatch({ type: 'SUBMIT_FAILURE' });
+            }
           });
       } else if (isMounted.current) {
         // ^^^ Make sure Formik is still mounted before calling setState

@@ -138,6 +138,40 @@ describe('<Formik>', () => {
       expect(injected.values.name).toEqual('ian');
     });
 
+    it('send field context to validation onchange', () => {
+      const validate = jest.fn(() => {});
+      const { getByTestId } = render(
+        <Formik
+          initialValues={{ name: '' }}
+          validate={validate}
+          onSubmit={noop}
+        >
+          {({ handleChange, handleBlur }) => (
+            <input
+              name="name"
+              onChange={handleChange}
+              onBlur={handleBlur}
+              data-testid="name-input"
+            />
+          )}
+        </Formik>
+      );
+      const input = getByTestId('name-input');
+      fireEvent.change(input, {
+        persist: noop,
+        target: {
+          name: 'name',
+          value: 'ian',
+        },
+      });
+      fireEvent.blur(input);
+      expect(validate).toHaveBeenCalledTimes(2);
+      expect(validate.mock.calls).toEqual([
+        [{ name: 'ian' }, { field: 'name' }],
+        [{ name: 'ian' }, { field: 'name' }],
+      ]);
+    });
+
     it('updates values via `name` instead of `id` attribute when both are present', () => {
       const { getProps, getByTestId } = renderFormik();
 

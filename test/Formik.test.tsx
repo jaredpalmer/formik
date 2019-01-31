@@ -138,40 +138,6 @@ describe('<Formik>', () => {
       expect(injected.values.name).toEqual('ian');
     });
 
-    it('send field context to validation onchange', () => {
-      const validate = jest.fn(() => {});
-      const { getByTestId } = render(
-        <Formik
-          initialValues={{ name: '' }}
-          validate={validate}
-          onSubmit={noop}
-        >
-          {({ handleChange, handleBlur }) => (
-            <input
-              name="name"
-              onChange={handleChange}
-              onBlur={handleBlur}
-              data-testid="name-input"
-            />
-          )}
-        </Formik>
-      );
-      const input = getByTestId('name-input');
-      fireEvent.change(input, {
-        persist: noop,
-        target: {
-          name: 'name',
-          value: 'ian',
-        },
-      });
-      fireEvent.blur(input);
-      expect(validate).toHaveBeenCalledTimes(2);
-      expect(validate.mock.calls).toEqual([
-        [{ name: 'ian' }, { field: 'name' }],
-        [{ name: 'ian' }, { field: 'name' }],
-      ]);
-    });
-
     it('updates values via `name` instead of `id` attribute when both are present', () => {
       const { getProps, getByTestId } = renderFormik();
 
@@ -1091,6 +1057,96 @@ describe('<Formik>', () => {
     await getProps().validateForm();
     expect(getProps().errors).toEqual({
       users: [{ firstName: 'required', lastName: 'required' }],
+    });
+  });
+
+  describe('validate prop context', () => {
+    function setupFormikForTestValidateProp({
+      initialValues = { name: 'ian' },
+    } = {}) {
+      const validate = jest.fn(() => {});
+      let formikProps: any;
+      const { getByTestId } = render(
+        <Formik
+          initialValues={initialValues}
+          validate={validate}
+          onSubmit={noop}
+        >
+          {formikProps_ => {
+            formikProps = formikProps_;
+            return (
+              <input
+                name="name"
+                onChange={formikProps.handleChange}
+                onBlur={formikProps.handleBlur}
+                data-testid="name-input"
+              />
+            );
+          }}
+        </Formik>
+      );
+      const input = getByTestId('name-input');
+      return { input, validate, formikProps };
+    }
+
+    it('send field context to validation on change and on blur', () => {
+      const { validate, input } = setupFormikForTestValidateProp();
+
+      fireEvent.change(input, {
+        persist: noop,
+        target: {
+          name: 'name',
+          value: 'ian',
+        },
+      });
+      fireEvent.blur(input);
+      expect(validate).toHaveBeenCalledTimes(2);
+      expect(validate.mock.calls).toMatchObject([
+        [{ name: 'ian' }, { field: 'name', on: 'change' }],
+        [{ name: 'ian' }, { field: 'name', on: 'blur' }],
+      ]);
+    });
+
+    it('verify context is right in formikProps methods', () => {
+      const { validate, formikProps } = setupFormikForTestValidateProp();
+
+      formikProps.submitForm();
+      expect(validate).toHaveBeenLastCalledWith(
+        { name: 'ian' },
+        { on: 'submit' }
+      );
+
+      formikProps.validateForm({ name: 'ian' }, { justValidate: true });
+      expect(validate).toHaveBeenLastCalledWith(
+        { name: 'ian' },
+        { justValidate: true }
+      );
+
+      formikProps.setTouched({}, { justTouched: true });
+      expect(validate).toHaveBeenLastCalledWith(
+        { name: 'ian' },
+        { justTouched: true }
+      );
+      formikProps.setValues({ name: 'ian' }, { setValues: true });
+      expect(validate).toHaveBeenLastCalledWith(
+        { name: 'ian' },
+        { setValues: true }
+      );
+
+      formikProps.setFieldTouched('name', true, true, {
+        setFieldTouched: true,
+      });
+      expect(validate).toHaveBeenLastCalledWith(
+        { name: 'ian' },
+        { field: 'name', setFieldTouched: true }
+      );
+      formikProps.setFieldValue('name', 'ian', true, {
+        setFieldValue: true,
+      });
+      expect(validate).toHaveBeenLastCalledWith(
+        { name: 'ian' },
+        { field: 'name', setFieldValue: true }
+      );
     });
   });
 });

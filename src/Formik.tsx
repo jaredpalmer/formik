@@ -360,6 +360,7 @@ export class Formik<Values = FormikValues> extends React.Component<
             if (this.props.validateOnChange) {
               this.runValidations(setIn(this.state.values, field!, val), {
                 field,
+                on: 'change',
               });
             }
           }
@@ -451,16 +452,18 @@ export class Formik<Values = FormikValues> extends React.Component<
       submitCount: prevState.submitCount + 1,
     }));
 
-    return this.runValidations(this.state.values).then(combinedErrors => {
-      this.setState({ isValidating: false });
-      const isValid = Object.keys(combinedErrors).length === 0;
-      if (isValid) {
-        this.executeSubmit();
-      } else if (this.didMount) {
-        // ^^^ Make sure Formik is still mounted before calling setState
-        this.setState({ isSubmitting: false });
+    return this.runValidations(this.state.values, { on: 'submit' }).then(
+      combinedErrors => {
+        this.setState({ isValidating: false });
+        const isValid = Object.keys(combinedErrors).length === 0;
+        if (isValid) {
+          this.executeSubmit();
+        } else if (this.didMount) {
+          // ^^^ Make sure Formik is still mounted before calling setState
+          this.setState({ isSubmitting: false });
+        }
       }
-    });
+    );
   };
 
   executeSubmit = () => {
@@ -488,7 +491,7 @@ export class Formik<Values = FormikValues> extends React.Component<
       }));
 
       if (this.props.validateOnBlur) {
-        this.runValidations(this.state.values, { field });
+        this.runValidations(this.state.values, { field, on: 'blur' });
       }
     };
 

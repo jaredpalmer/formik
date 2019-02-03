@@ -284,7 +284,7 @@ There are also imperative helper methods provided to you via Formik's render/inj
 
 ## Displaying Error Messages
 
-@todo
+The easiest way to display error messages is with Formik's [`<ErrorMessage />`](api/errormessage.md) component.
 
 ## Frequently Asked Questions
 
@@ -296,15 +296,22 @@ If `isValidating` prop is `true`
 </details>
 
 <details>
-<summary>Can I return `null` as an error message?</summary>
+<summary>How do I test validation?</summary>
 
-No. Use `undefined` instead. Formik uses `undefined` to represent empty states. If you use `null`, several parts of Formik's computed props (e.g. `isValid` for example), will not work as expected.
+Formik has extensive unit tests for Yup validation so you do not need to test that. However, if you are rolling your own validation functions, you should simply unit test those. If you do need to test Formik's execution you should use the imperative `validateForm` and `validateField` methods respectively.
 
 </details>
 
 <details>
-<summary>How do I test validation?</summary>
+<summary>Which should I use to represent a field with no error: `null`, or `undefined`?</summary>
 
-Formik has extensive unit tests for Yup validation so you do not need to test that. However, if you are rolling your own validation functions, you should simply unit test those. If you do need to test Formik's execution you should use the imperative `validateForm` and `validateField` methods respectively.
+Formik uses `undefined` to represent empty states, so you should use `undefined` to represent a field with no error. If you use `null`, several parts of Formik's computed props (e.g. `isValid` for example), will not work as expected.
+
+</details>
+
+<details>
+<summary>Can I return objects or React elements as error messages, instead of strings?</summary>
+
+Yes, you can provide whatever data type you want for error messages (other than `undefined`, which indicates a field has no error). However, if you are using Yup for validation, it does require custom messages to be strings. And if you are using the Formik `<ErrorMessage>` component, your error message must be something that can be rendered directly by React.
 
 </details>

@@ -28,7 +28,7 @@ export type FormikTouched<Values> = {
 /**
  * Formik state tree
  */
-export interface FormikState<Values> {
+export interface FormikState<Values, Status = any> {
   /** Form values */
   values: Values;
   /**
@@ -45,7 +45,7 @@ export interface FormikState<Values> {
   /** whether the form is currently submitting */
   isSubmitting: boolean;
   /** Top level status state, in case you need it */
-  status?: any;
+  status?: Status;
   /** Number of times user tried to submit the form */
   submitCount: number;
 }
@@ -65,9 +65,9 @@ export interface FormikComputedProps<Values> {
 /**
  * Formik state helpers
  */
-export interface FormikActions<Values> {
+export interface FormikActions<Values, Status = any> {
   /** Manually set top level status. */
-  setStatus(status?: any): void;
+  setStatus(status?: Status): void;
   /**
    * Manually set top level error
    * @deprecated since 0.8.0
@@ -104,17 +104,17 @@ export interface FormikActions<Values> {
   /** Submit the form imperatively */
   submitForm(): void;
   /** Set Formik state, careful! */
-  setFormikState<K extends keyof FormikState<Values>>(
+  setFormikState<K extends keyof FormikState<Values, Status>>(
     f: (
-      prevState: Readonly<FormikState<Values>>,
+      prevState: Readonly<FormikState<Values, Status>>,
       props: any
-    ) => Pick<FormikState<Values>, K>,
+    ) => Pick<FormikState<Values, Status>, K>,
     callback?: () => any
   ): void;
 }
 
 /** Overloded methods / types */
-export interface FormikActions<Values> {
+export interface FormikActions<Values, Status = any> {
   /** Set value of form field directly */
   setFieldValue(field: string, value: any): void;
   /** Set error message of a form field directly */
@@ -122,8 +122,8 @@ export interface FormikActions<Values> {
   /** Set whether field has been touched directly */
   setFieldTouched(field: string, isTouched?: boolean): void;
   /** Set Formik state, careful! */
-  setFormikState<K extends keyof FormikState<Values>>(
-    state: Pick<FormikState<Values>, K>,
+  setFormikState<K extends keyof FormikState<Values, Status>>(
+    state: Pick<FormikState<Values, Status>, K>,
     callback?: () => any
   ): void;
 }
@@ -169,22 +169,24 @@ export interface FormikSharedConfig {
 /**
  * <Formik /> props
  */
-export interface FormikConfig<Values> extends FormikSharedConfig {
+export interface FormikConfig<Values, Status = any> extends FormikSharedConfig {
   /**
    * Form component to render
    */
-  component?: React.ComponentType<FormikProps<Values>> | React.ReactNode;
+  component?:
+    | React.ComponentType<FormikProps<Values, Status>>
+    | React.ReactNode;
 
   /**
    * Render prop (works like React router's <Route render={props =>} />)
    */
-  render?: ((props: FormikProps<Values>) => React.ReactNode);
+  render?: ((props: FormikProps<Values, Status>) => React.ReactNode);
 
   /**
    * React children or child render callback
    */
   children?:
-    | ((props: FormikProps<Values>) => React.ReactNode)
+    | ((props: FormikProps<Values, Status>) => React.ReactNode)
     | React.ReactNode;
   /**
    * Initial values of the form
@@ -194,12 +196,18 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
   /**
    * Reset handler
    */
-  onReset?: (values: Values, formikActions: FormikActions<Values>) => void;
+  onReset?: (
+    values: Values,
+    formikActions: FormikActions<Values, Status>
+  ) => void;
 
   /**
    * Submission handler
    */
-  onSubmit: (values: Values, formikActions: FormikActions<Values>) => void;
+  onSubmit: (
+    values: Values,
+    formikActions: FormikActions<Values, Status>
+  ) => void;
   /**
    * A Yup Schema or a function that returns a Yup schema
    */
@@ -218,9 +226,9 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
  * State, handlers, and helpers made available to form component or render prop
  * of <Formik/>.
  */
-export type FormikProps<Values> = FormikSharedConfig &
-  FormikState<Values> &
-  FormikActions<Values> &
+export type FormikProps<Values, Status = any> = FormikSharedConfig &
+  FormikState<Values, Status> &
+  FormikActions<Values, Status> &
   FormikHandlers &
   FormikComputedProps<Values> &
   FormikRegistration;
@@ -234,8 +242,8 @@ export interface FormikRegistration {
 /**
  * State, handlers, and helpers made available to Formik's primitive components through context.
  */
-export type FormikContext<Values> = FormikProps<Values> &
-  Pick<FormikConfig<Values>, 'validate' | 'validationSchema'>;
+export type FormikContext<Values, Status = any> = FormikProps<Values, Status> &
+  Pick<FormikConfig<Values, Status>, 'validate' | 'validationSchema'>;
 
 export interface SharedRenderProps<T> {
   /**

@@ -111,7 +111,7 @@ class FieldArrayInner<Values = {}> extends React.Component<
       formik: { setFormikState, validateForm },
     } = this.props;
     setFormikState(
-      (prevState: FormikState<any>) => ({
+      (prevState: FormikState<any, any>) => ({
         ...prevState,
         values: setIn(
           prevState.values,

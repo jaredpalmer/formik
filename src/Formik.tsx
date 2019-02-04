@@ -26,9 +26,12 @@ import {
   makeCancelable,
 } from './utils';
 
-export class Formik<Values = FormikValues> extends React.Component<
-  FormikConfig<Values>,
-  FormikState<Values>
+export class Formik<
+  Values = FormikValues,
+  Status = any
+> extends React.Component<
+  FormikConfig<Values, Status>,
+  FormikState<Values, Status>
 > {
   static defaultProps = {
     validateOnChange: true,
@@ -50,7 +53,7 @@ export class Formik<Values = FormikValues> extends React.Component<
   };
   validator: any;
 
-  constructor(props: FormikConfig<Values>) {
+  constructor(props: FormikConfig<Values, Status>) {
     super(props);
     this.state = {
       values: props.initialValues || ({} as any),

@@ -149,7 +149,7 @@ Number of times user tried to submit the form. Increases when [`handleSubmit`](#
 Set the value of a field imperatively. `field` should match the key of
 `values` you wish to update. Useful for creating custom input change handlers. Calling this will trigger validation to run if `validateOnChange` is set to `true` (which it is by default). You can also explicitly prevent/skip validation by passing a third argument as `false`.
 
-#### `setStatus: (status?: any) => void`
+#### `setStatus: (status?: Status) => void`
 
 Set a top-level `status` to anything you want imperatively. Useful for
 controlling arbitrary top-level state related to your form. For example, you can
@@ -167,14 +167,14 @@ Set `touched` imperatively.
 
 Set `values` imperatively.
 
-#### `status?: any`
+#### `status?: Status`
 
 A top-level status object that you can use to represent form state that can't
 otherwise be expressed/stored with other methods. This is useful for capturing
 and passing through API responses to your inner component.
 
 `status` should only be modified by calling
-[`setStatus`](#setstatus-status-any-void).
+[`setStatus`](#setstatus-status-status-void).
 
 #### `touched: { [field: string]: boolean }`
 

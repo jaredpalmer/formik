@@ -42,9 +42,9 @@ class Wizard extends React.Component {
     if (isLastPage) {
       return onSubmit(values, bag);
     } else {
-      this.next(values);
       bag.setTouched({});
       bag.setSubmitting(false);
+      this.next(values);
     }
   };
 

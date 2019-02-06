@@ -26,7 +26,11 @@ export const MyApp: React.SFC<{}> = () => {
       <h1>My Example</h1>
       <Formik
         initialValues={{ firstName: '' }}
-        onSubmit={(values: MyFormValues, actions: FormikActions<MyFormValues>) => console.log({ values, actions })}
+        onSubmit={(values: MyFormValues, actions: FormikActions<MyFormValues>) => {
+            console.log({ values, actions });
+            alert(JSON.stringify(values, null, 2));
+            actions.setSubmitting(false)
+         }}
         render={(formikBag: FormikProps<MyFormValues>) => (
           <Form>
             <Field

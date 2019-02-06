@@ -299,16 +299,16 @@ export class Formik<Values = object, ExtraProps = {}> extends React.Component<
 
   handleChange = (
     eventOrPath: string | React.ChangeEvent<any>
-  ): void | ((eventOrValue: any | React.ChangeEvent<any>) => void) => {
+  ): void | ((eventOrValue: unkown | React.ChangeEvent<any>) => void) => {
     // this function actually handles the change
     const executeChange = (
-      eventOrValue: any | React.ChangeEvent<any>,
+      eventOrValue: unkown | React.ChangeEvent<any>,
       maybePath?: string
     ) => {
       // To allow using handleChange with React Native (Web) or other UI libraries, we
       // allow for the first argument to be either a value or the standard change event.
       let field = maybePath;
-      let value: any;
+      let value: unkown;
       if (isInputEvent(eventOrValue)) {
         const event = eventOrValue as React.ChangeEvent<any>;
         // If we can, persist the event, https://reactjs.org/docs/events.html#event-pooling
@@ -363,7 +363,7 @@ export class Formik<Values = object, ExtraProps = {}> extends React.Component<
       // cache these handlers by key like Preact's linkState does for perf boost
       if (!isFunction(this.hcCache[path])) {
         // set a new handle function in cache
-        this.hcCache[path] = (eventOrValue: any | React.ChangeEvent<any>) =>
+        this.hcCache[path] = (eventOrValue: unkown | React.ChangeEvent<any>) =>
           executeChange(eventOrValue, path);
       }
       return this.hcCache[path]; // return the cached function

@@ -130,7 +130,7 @@ class FieldArrayInner<Values = {}> extends React.Component<
                 updateErrors(getIn(prevState.errors, name))
               )
             : prevState.errors,
-          touched: updateTouched
+          touched: alterTouched
             ? setIn(
                 prevState.touched,
                 name,

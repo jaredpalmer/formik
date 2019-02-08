@@ -64,7 +64,7 @@ export const MyApp: React.SFC<{}> = () => {
 
 #### `withFormik()`
 
-```typescript
+```tsx
 import React from 'react';
 import * as Yup from 'yup';
 import { withFormik, FormikProps, FormikErrors, Form, Field } from 'formik';

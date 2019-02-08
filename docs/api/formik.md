@@ -286,6 +286,13 @@ Default is `false`. Control the initial value of `isValid` prop prior to
 mount. You can also pass a function. Useful for situations when you want to
 enable/disable a submit and reset buttons on initial mount.
 
+### `initialStatus?: any`
+
+An arbitrary value for the initial `status` of the form. If the form is reset, this value will be restored.
+
+Note: `initialStatus` is not available to the higher-order component `withFormik`, use
+`mapPropsToStatus` instead.
+
 ### `initialValues: Values`
 
 Initial field values of the form, Formik will make these values available to

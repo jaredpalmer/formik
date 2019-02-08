@@ -129,6 +129,12 @@ will map all props that are not functions to the inner component's
 Even if your form is not receiving any props from its parent, use
 `mapPropsToValues` to initialize your forms empty state.
 
+### `mapPropsToStatus?: (props: Props) => any`
+
+If this option is specified, then Formik will transfer its results into
+updatable form state and make these values available to the new component as
+`props.status`. Useful for storing or instatiating arbitrary state into your form. As a reminder, `status` will be reset to this initial value (and this function will be re-run) if the form is reset.
+
 ### `validate?: (values: Values, props: Props) => FormikErrors<Values> | Promise<any>`
 
 _Note: I suggest using `validationSchema` and Yup for validation. However,

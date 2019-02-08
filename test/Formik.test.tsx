@@ -785,6 +785,14 @@ describe('<Formik>', () => {
       getProps().handleReset();
       expect(getProps().submitCount).toEqual(0);
     });
+
+    it('should call preventDefault()', () => {
+      const event = { preventDefault: jest.fn() };
+      const { getProps } = renderFormik();
+
+      getProps().handleReset(event);
+      expect(event.preventDefault).toHaveBeenCalled();
+    });
   });
 
   describe('componentDidUpdate', () => {

@@ -537,7 +537,11 @@ export class Formik<Values = FormikValues> extends React.Component<
     });
   };
 
-  handleReset = () => {
+  handleReset = (e?: React.FormEvent<HTMLFormElement>) => {
+    if (e && e.preventDefault) {
+      e.preventDefault();
+    }
+
     if (this.props.onReset) {
       const maybePromisedOnReset = (this.props.onReset as any)(
         this.state.values,

@@ -194,7 +194,7 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
   /**
    * Initial status
    */
-  initialStatus: any;
+  initialStatus?: any;
 
   /**
    * Reset handler

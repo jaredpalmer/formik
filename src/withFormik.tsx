@@ -46,6 +46,11 @@ export interface WithFormikConfig<
   mapPropsToValues?: (props: Props) => Values;
 
   /**
+   * Map props to the form values
+   */
+  mapPropsToStatus?: (props: Props) => any;
+
+  /**
    * @deprecated in 0.9.0 (but needed to break TS types)
    */
   mapValuesToPayload?: (values: Values) => DeprecatedPayload;
@@ -148,6 +153,9 @@ export function withFormik<
             validate={config.validate && this.validate}
             validationSchema={config.validationSchema && this.validationSchema}
             initialValues={mapPropsToValues(this.props)}
+            initialStatus={
+              config.mapPropsToStatus && config.mapPropsToStatus(this.props)
+            }
             onSubmit={this.handleSubmit as any}
             render={this.renderFormComponent}
           />

@@ -89,7 +89,8 @@ export interface FormikHelpers<Values> {
   setFormikState(
     f:
       | FormikState<Values>
-      | ((prevState: FormikState<Values>) => FormikState<Values>)
+      | ((prevState: FormikState<Values>) => FormikState<Values>),
+    cb?: () => void
   ): void;
 }
 
@@ -173,6 +174,11 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
    * Initial values of the form
    */
   initialValues: Values;
+
+  /**
+   * Initial status
+   */
+  initialStatus?: any;
 
   /**
    * Reset handler

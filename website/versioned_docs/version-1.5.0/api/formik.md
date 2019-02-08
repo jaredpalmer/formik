@@ -1,7 +1,8 @@
 ---
-id: formik
+id: version-1.5.0-formik
 title: <Formik />
 custom_edit_url: https://github.com/jaredpalmer/formik/edit/master/docs/api/formik.md
+original_id: formik
 ---
 
 `<Formik>` is a component that helps you with building forms. It uses a render

@@ -69,6 +69,16 @@ const users = [
     pinned: true,
   },
   {
+    caption: 'State Street',
+    image: '/formik/img/logos/state-street.png',
+    infoLink: 'https://statestreet.com',
+  },
+  {
+    caption: 'Artsy',
+    image: '/formik/img/logos/artsy.png',
+    infoLink: 'https://artsy.com',
+  },
+  {
     caption: 'Postmates',
     image: '/formik/img/logos/postmates.svg',
     infoLink: 'https://postmates.com',
@@ -114,6 +124,7 @@ const siteConfig = {
   // For no header links in the top nav bar -> headerLinks: [],
   headerLinks: [
     { doc: 'overview', label: 'Docs' },
+    { page: 'users', label: 'Users' },
     { page: 'help', label: 'Help' },
     {
       href: 'https://github.com/jaredpalmer/formik',
@@ -194,6 +205,7 @@ const siteConfig = {
     zIndex: 100,
   },
   enableUpdateTime: true,
+  enableUpdateBy: true,
   gaTrackingId: 'UA-55176740-4',
   twitter: true,
   twitterUsername: 'jaredpalmer',

@@ -6,6 +6,7 @@ import {
   FastField,
   FieldProps,
   FieldConfig,
+  FastFieldConfig,
   FormikProps,
   FormikConfig,
 } from '../src';
@@ -47,7 +48,7 @@ function renderForm(
 const createRenderField = (
   FieldComponent: React.ComponentType<FieldConfig>
 ) => (
-  props: Partial<FieldConfig> = {},
+  props: Partial<FieldConfig> | Partial<FastFieldConfig> = {},
   formProps?: Partial<FormikConfig<Values>>
 ) => {
   let injected: FieldProps;
@@ -403,5 +404,16 @@ describe('Field / FastField', () => {
     );
 
     expect(getProps().field.value).toBe('Binding');
+  });
+});
+
+describe('<FastField />', () => {
+  it('does NOT forward shouldUpdate to React component', () => {
+    let injected: any;
+    const Component = (props: FieldProps) => (injected = props) && null;
+
+    const shouldUpdate = () => true;
+    renderFastField({ component: Component, shouldUpdate });
+    expect(injected.shouldUpdate).toBe(undefined);
   });
 });

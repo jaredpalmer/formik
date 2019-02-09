@@ -74,6 +74,11 @@ const users = [
     infoLink: 'https://statestreet.com',
   },
   {
+    caption: 'Wayfair',
+    image: '/formik/img/logos/wayfair.svg',
+    infoLink: 'https://wayfair.com',
+  },
+  {
     caption: 'Artsy',
     image: '/formik/img/logos/artsy.png',
     infoLink: 'https://artsy.com',

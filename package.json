@@ -46,15 +46,15 @@
     "hoist-non-react-statics": "^2.5.5",
     "lodash": "^4.17.11",
     "lodash-es": "^4.17.11",
-    "prop-types": "^15.6.1",
+    "prop-types": "^15.6.2",
     "react-fast-compare": "^2.0.1",
     "tiny-warning": "^1.0.2",
     "tslib": "^1.9.3"
   },
   "optionalDependencies": {},
   "resolutions": {
-    "@types/react": "^16.7.6",
-    "@types/react-dom": "^16.0.9"
+    "@types/react": "^16.8.2",
+    "@types/react-dom": "^16.8.0"
   },
   "devDependencies": {
     "@babel/core": "^7.1.2",
@@ -62,8 +62,8 @@
     "@storybook/react": "^3.4.0",
     "@types/jest": "^22.2.3",
     "@types/lodash": "^4.14.119",
-    "@types/react": "^16.7.6",
-    "@types/react-dom": "^16.0.9",
+    "@types/react": "^16.8.2",
+    "@types/react-dom": "^16.8.0",
     "@types/yup": "^0.24.9",
     "all-contributors-cli": "^4.4.0",
     "awesome-typescript-loader": "^3.4.1",
@@ -79,8 +79,8 @@
     "lint-staged": "4.0.2",
     "prettier": "1.11.1",
     "raw-loader": "^0.5.1",
-    "react": "^16.6.3",
-    "react-dom": "^16.6.3",
+    "react": "^16.8.1",
+    "react-dom": "^16.8.1",
     "react-testing-library": "^5.2.3",
     "rimraf": "^2.6.2",
     "rollup": "^1.1.2",

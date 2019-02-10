@@ -22,37 +22,37 @@ export type FieldArrayConfig = {
 } & SharedRenderProps<FieldArrayRenderProps>;
 export interface ArrayHelpers {
   /** Imperatively add a value to the end of an array */
-  push: (obj: any) => void;
+  push: (obj: any, cb?: Function) => void;
   /** Curried fn to add a value to the end of an array */
-  handlePush: (obj: any) => () => void;
+  handlePush: (obj: any, cb?: Function) => () => void;
   /** Imperatively swap two values in an array */
-  swap: (indexA: number, indexB: number) => void;
+  swap: (indexA: number, indexB: number, cb?: Function) => void;
   /** Curried fn to swap two values in an array */
-  handleSwap: (indexA: number, indexB: number) => () => void;
+  handleSwap: (indexA: number, indexB: number, cb?: Function) => () => void;
   /** Imperatively move an element in an array to another index */
-  move: (from: number, to: number) => void;
+  move: (from: number, to: number, cb?: Function) => void;
   /** Imperatively move an element in an array to another index */
-  handleMove: (from: number, to: number) => () => void;
+  handleMove: (from: number, to: number, cb?: Function) => () => void;
   /** Imperatively insert an element at a given index into the array */
-  insert: (index: number, value: any) => void;
+  insert: (index: number, value: any, cb?: Function) => void;
   /** Curried fn to insert an element at a given index into the array */
-  handleInsert: (index: number, value: any) => () => void;
+  handleInsert: (index: number, value: any, cb?: Function) => () => void;
   /** Imperatively replace a value at an index of an array  */
-  replace: (index: number, value: any) => void;
+  replace: (index: number, value: any, cb?: Function) => void;
   /** Curried fn to replace an element at a given index into the array */
-  handleReplace: (index: number, value: any) => () => void;
+  handleReplace: (index: number, value: any, cb?: Function) => () => void;
   /** Imperatively add an element to the beginning of an array and return its length */
-  unshift: (value: any) => number;
+  unshift: (value: any, cb?: Function) => number;
   /** Curried fn to add an element to the beginning of an array */
-  handleUnshift: (value: any) => () => void;
+  handleUnshift: (value: any, cb?: Function) => () => void;
   /** Curried fn to remove an element at an index of an array */
-  handleRemove: (index: number) => () => void;
+  handleRemove: (index: number, cb?: Function) => () => void;
   /** Curried fn to remove a value from the end of the array */
-  handlePop: () => () => void;
+  handlePop: (cb?: Function) => () => void;
   /** Imperatively remove and element at an index of an array */
-  remove<T>(index: number): T | undefined;
+  remove<T>(index: number, cb?: Function): T | undefined;
   /** Imperatively remove and return value from the end of the array */
-  pop<T>(): T | undefined;
+  pop<T>(cb?: Function): T | undefined;
 }
 
 /**
@@ -103,7 +103,8 @@ class FieldArrayInner<Values = {}> extends React.Component<
   updateArrayField = (
     fn: Function,
     alterTouched: boolean,
-    alterErrors: boolean
+    alterErrors: boolean,
+    cb?: Function
   ) => {
     const {
       name,
@@ -129,54 +130,67 @@ class FieldArrayInner<Values = {}> extends React.Component<
         if (validateOnChange) {
           validateForm();
         }
+        cb && cb();
       }
     );
   };
 
-  push = (value: any) =>
-    this.updateArrayField(
+  push = (value: any, cb?: Function) => {
+    return this.updateArrayField(
       (array: any[]) => [...(array || []), cloneDeep(value)],
       false,
-      false
+      false,
+      cb
     );
+  };
 
-  handlePush = (value: any) => () => this.push(value);
+  handlePush = (value: any, cb?: Function) => () => this.push(value, cb);
 
-  swap = (indexA: number, indexB: number) =>
+  swap = (indexA: number, indexB: number, cb?: Function) =>
     this.updateArrayField(
       (array: any[]) => swap(array, indexA, indexB),
       true,
-      true
+      true,
+      cb
     );
 
-  handleSwap = (indexA: number, indexB: number) => () =>
-    this.swap(indexA, indexB);
+  handleSwap = (indexA: number, indexB: number, cb?: Function) => () =>
+    this.swap(indexA, indexB, cb);
 
-  move = (from: number, to: number) =>
-    this.updateArrayField((array: any[]) => move(array, from, to), true, true);
+  move = (from: number, to: number, cb?: Function) =>
+    this.updateArrayField(
+      (array: any[]) => move(array, from, to),
+      true,
+      true,
+      cb
+    );
 
-  handleMove = (from: number, to: number) => () => this.move(from, to);
+  handleMove = (from: number, to: number, cb?: Function) => () =>
+    this.move(from, to, cb);
 
-  insert = (index: number, value: any) =>
+  insert = (index: number, value: any, cb?: Function) =>
     this.updateArrayField(
       (array: any[]) => insert(array, index, value),
       true,
-      true
+      true,
+      cb
     );
 
-  handleInsert = (index: number, value: any) => () => this.insert(index, value);
+  handleInsert = (index: number, value: any, cb?: Function) => () =>
+    this.insert(index, value, cb);
 
-  replace = (index: number, value: any) =>
+  replace = (index: number, value: any, cb?: Function) =>
     this.updateArrayField(
       (array: any[]) => replace(array, index, value),
       false,
-      false
+      false,
+      cb
     );
 
-  handleReplace = (index: number, value: any) => () =>
-    this.replace(index, value);
+  handleReplace = (index: number, value: any, cb?: Function) => () =>
+    this.replace(index, value, cb);
 
-  unshift = (value: any) => {
+  unshift = (value: any, cb?: Function) => {
     let length = -1;
     this.updateArrayField(
       (array: any[]) => {
@@ -187,14 +201,15 @@ class FieldArrayInner<Values = {}> extends React.Component<
         return arr;
       },
       true,
-      true
+      true,
+      cb
     );
     return length;
   };
 
-  handleUnshift = (value: any) => () => this.unshift(value);
+  handleUnshift = (value: any, cb?: Function) => () => this.unshift(value, cb);
 
-  remove<T>(index: number): T {
+  remove<T>(index: number, cb?: Function): T {
     // We need to make sure we also remove relevant pieces of `touched` and `errors`
     let result: any;
     this.updateArrayField(
@@ -210,15 +225,17 @@ class FieldArrayInner<Values = {}> extends React.Component<
         return copy;
       },
       true,
-      true
+      true,
+      cb
     );
 
     return result;
   }
 
-  handleRemove = (index: number) => () => this.remove<any>(index);
+  handleRemove = (index: number, cb?: Function) => () =>
+    this.remove<any>(index, cb);
 
-  pop<T>(): T {
+  pop<T>(cb?: Function): T {
     // Remove relevant pieces of `touched` and `errors` too!
     let result: any;
     this.updateArrayField(
@@ -231,13 +248,14 @@ class FieldArrayInner<Values = {}> extends React.Component<
         return tmp;
       },
       true,
-      true
+      true,
+      cb
     );
 
     return result;
   }
 
-  handlePop = () => () => this.pop<any>();
+  handlePop = (cb?: Function) => () => this.pop<any>(cb);
 
   render() {
     const arrayHelpers: ArrayHelpers = {

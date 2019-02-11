@@ -3,6 +3,10 @@ import { BrowserRouter as Router, Route, withRouter } from "react-router-dom";
 import { Formik, Field, ErrorMessage } from "formik";
 import { Debug } from "./Debug";
 
+// the root path. locations should extend from this
+const formRootPath = "/step"
+
+// the specific path for each page
 const locations = ["/step/1", "/step/2"];
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
@@ -24,6 +28,7 @@ class WizardBase extends React.Component {
     const { location, history } = this.props;
     this.setState(() => ({ values }));
 
+    // withRouter provides current location and history.push() to go to next page
     const nextPath = locations.indexOf(location.pathname) + 1;
     history.push(locations[nextPath]);
   };
@@ -59,6 +64,7 @@ class WizardBase extends React.Component {
   render() {
     const { children, location } = this.props;
     const { values } = this.state;
+    // current page is determined by matching path in locations
     const page = locations.indexOf(location.pathname);
 
     const activePage = React.Children.toArray(children)[page];
@@ -107,7 +113,7 @@ const App = () => (
     <div className="App">
       <h1>Multistep / Form Wizard </h1>
       <Route
-        path="/step"
+        path={formRootPath}
         render={routeProps => (
           <Wizard
             {...routeProps}

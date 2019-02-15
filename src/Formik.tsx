@@ -2,7 +2,9 @@ import * as React from 'react';
 import isEqual from 'react-fast-compare';
 import deepmerge from 'deepmerge';
 import { FormikProvider } from './connect';
+import { typedFieldProxy, TypedFieldList } from './Field';
 import warning from 'tiny-warning';
+
 import {
   FormikActions,
   FormikConfig,
@@ -36,6 +38,8 @@ export class Formik<Values = FormikValues> extends React.Component<
     isInitialValid: false,
     enableReinitialize: false,
   };
+
+  TypedFields: TypedFieldList<Values> = typedFieldProxy<Values>();
 
   initialValues: Values;
   didMount: boolean;
@@ -605,6 +609,7 @@ export class Formik<Values = FormikValues> extends React.Component<
       ...this.getFormikActions(),
       ...this.getFormikComputedProps(),
       // Field needs to communicate with Formik during resets
+      Fields: this.TypedFields,
       registerField: this.registerField,
       unregisterField: this.unregisterField,
       handleBlur: this.handleBlur,
@@ -616,7 +621,7 @@ export class Formik<Values = FormikValues> extends React.Component<
     };
   };
 
-  getFormikContext = (): FormikContext<any> => {
+  getFormikContext = (): FormikContext<Values> => {
     return {
       ...this.getFormikBag(),
       validationSchema: this.props.validationSchema,

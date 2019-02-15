@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { TypedFieldList } from './Field';
 /**
  * Values of fields in the form
  */
@@ -60,6 +61,8 @@ export interface FormikComputedProps<Values> {
   readonly isValid: boolean;
   /** initialValues */
   readonly initialValues: Values;
+  /** Fields */
+  readonly Fields: TypedFieldList<Values>;
 }
 
 /**

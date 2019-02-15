@@ -29,71 +29,90 @@ import { getIn, isEmptyChildren, isFunction } from './utils';
  *     {form.touched[field.name] && form.errors[field.name]}
  *   </div>
  */
-export interface FieldProps<V = any> {
+export interface FieldProps<Values = any, Key extends keyof Values = any> {
   field: {
     /** Classic React change handler, keyed by input name */
     onChange: FormikHandlers['handleChange'];
     /** Mark input as touched */
     onBlur: FormikHandlers['handleBlur'];
     /** Value of the input */
-    value: any;
+    value: Values[Key];
     /* name of the input */
-    name: string;
+    name: Key;
   };
-  form: FormikProps<V>; // if ppl want to restrict this for a given form, let them.
+  form: FormikProps<Values>; // if ppl want to restrict this for a given form, let them.
 }
 
-export interface FieldConfig {
+export interface FieldConfig<Values = any, Key extends keyof Values = any> {
   /**
    * Field component to render. Can either be a string like 'select' or a component.
    */
   component?:
     | string
-    | React.ComponentType<FieldProps<any>>
+    | React.ComponentType<FieldProps<Values, Key>>
     | React.ComponentType<void>;
 
   /**
    * Render prop (works like React router's <Route render={props =>} />)
    */
-  render?: ((props: FieldProps<any>) => React.ReactNode);
+  render?: ((props: FieldProps<Values>) => React.ReactNode);
 
   /**
    * Children render function <Field name>{props => ...}</Field>)
    */
-  children?: ((props: FieldProps<any>) => React.ReactNode) | React.ReactNode;
+  children?: ((props: FieldProps<Values>) => React.ReactNode) | React.ReactNode;
 
   /**
    * Validate a single field value independently
    */
-  validate?: ((value: any) => string | Promise<void> | undefined);
+  validate?: ((value: Values[Key]) => string | Promise<void> | undefined);
 
   /**
    * Field name
    */
-  name: string;
+  name: Key;
 
   /** HTML input type */
   type?: string;
 
   /** Field value */
-  value?: any;
+  value?: Values[Key];
 
   /** Inner ref */
   innerRef?: (instance: any) => void;
 }
 
-export type FieldAttributes<T> = GenericFieldHTMLAttributes & FieldConfig & T;
+export type FieldAttributes<
+  Values,
+  Key extends keyof Values = any
+> = GenericFieldHTMLAttributes & FieldConfig<Values, Key>;
+
+type FieldOuterProps<Values, Key extends keyof Values = any> = FieldConfig<
+  Values,
+  Key
+>;
+type FieldInnerProps<Values, Key extends keyof Values = any> = FieldAttributes<
+  Values,
+  Key
+> & { formik: FormikContext<Values> };
+
+export type TypedField<Values, Key extends keyof Values> = React.ComponentType<
+  FieldOuterProps<Values, Key>
+>;
+export type TypedFieldList<Values> = {
+  [fieldName in keyof Values]: TypedField<Values, fieldName>
+};
 
 /**
  * Custom Field component for quickly hooking into Formik
  * context and wiring up forms.
  */
-class FieldInner<Values = {}, Props = {}> extends React.Component<
-  FieldAttributes<Props> & { formik: FormikContext<Values> },
-  {}
-> {
+class FieldInner<
+  Values = {},
+  Key extends keyof Values = any
+> extends React.Component<FieldInnerProps<Values, Key>, {}> {
   constructor(
-    props: FieldAttributes<Props> & { formik: FormikContext<Values> }
+    props: FieldAttributes<Values, Key> & { formik: FormikContext<Values> }
   ) {
     super(props);
     const { render, children, component } = props;
@@ -120,7 +139,7 @@ class FieldInner<Values = {}, Props = {}> extends React.Component<
   }
 
   componentDidUpdate(
-    prevProps: FieldAttributes<Props> & { formik: FormikContext<Values> }
+    prevProps: FieldAttributes<Values, Key> & { formik: FormikContext<Values> }
   ) {
     if (this.props.name !== prevProps.name) {
       this.props.formik.unregisterField(prevProps.name);
@@ -145,9 +164,7 @@ class FieldInner<Values = {}, Props = {}> extends React.Component<
       component = 'input',
       formik,
       ...props
-    } = (this.props as FieldAttributes<Props> & {
-      formik: FormikContext<Values>;
-    }) as any;
+    } = this.props;
     const {
       validate: _validate,
       validationSchema: _validationSchema,
@@ -165,11 +182,11 @@ class FieldInner<Values = {}, Props = {}> extends React.Component<
     const bag = { field, form: restOfFormik };
 
     if (render) {
-      return (render as any)(bag);
+      return render(bag);
     }
 
     if (isFunction(children)) {
-      return (children as (props: FieldProps<any>) => React.ReactNode)(bag);
+      return children(bag);
     }
 
     if (typeof component === 'string') {
@@ -190,4 +207,8 @@ class FieldInner<Values = {}, Props = {}> extends React.Component<
   }
 }
 
-export const Field = connect<FieldAttributes<any>, any>(FieldInner);
+export const Field = connect<FieldOuterProps<any>, any>(FieldInner);
+export const typedFieldProxy = <TValues extends any>() =>
+  new Proxy({} as TypedFieldList<TValues>, {
+    get: () => Field,
+  });

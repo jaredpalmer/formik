@@ -68,8 +68,7 @@ const renderWithFormik = (options?: any, props?: any) => {
 describe('withFormik()', () => {
   it('should initialize Formik state and pass down props', () => {
     const { getProps } = renderWithFormik();
-
-    const props = getProps();
+    const { Fields, ...props } = getProps();
 
     expect(props).toEqual({
       initialValues: {

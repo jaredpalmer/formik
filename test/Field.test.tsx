@@ -14,7 +14,11 @@ import {
 
 import { noop } from './testHelpers';
 
-const initialValues = { name: 'jared', email: 'hello@reason.nyc' };
+const initialValues = {
+  name: 'jared',
+  email: 'hello@reason.nyc',
+  user: { superPowers: ['Surging', 'Binding'] },
+};
 type Values = typeof initialValues;
 
 function renderForm(
@@ -37,9 +41,7 @@ function renderForm(
   };
 }
 
-const createRenderField = (
-  FieldComponent: React.ComponentClass<FieldConfig>
-) => (
+const createRenderField = (FieldComponent: typeof Field) => (
   props: Partial<FieldConfig> | Partial<FastFieldConfig> = {},
   formProps?: Partial<FormikConfig<Values>>
 ) => {
@@ -92,8 +94,11 @@ describe('Field / FastField', () => {
     it('<Field />', () => {
       let injected: FieldProps[] = [];
 
-      const Component = (props: FieldProps) =>
-        injected.push(props) && <div data-testid="child">{TEXT}</div>;
+      const Component: React.FunctionComponent<FieldProps> = props => {
+        injected.push(props);
+
+        return <div data-testid="child">{TEXT}</div>;
+      };
 
       const { getFormProps, queryAllByText } = renderForm(
         <>
@@ -103,13 +108,18 @@ describe('Field / FastField', () => {
         </>
       );
 
-      injected.forEach(props => {
-        const { handleBlur, handleChange } = getFormProps();
-        expect(props.field.name).toBe('name');
-        expect(props.field.value).toBe('jared');
-        expect(props.field.onChange).toBe(handleChange);
-        expect(props.field.onBlur).toBe(handleBlur);
-        expect(props.form).toEqual(getFormProps());
+      injected.forEach(injectedProps => {
+        const {
+          form: { Fields: InjectedFields, ...injectedForm },
+          field: injectedField,
+        } = injectedProps;
+        const { Fields, ...formProps } = getFormProps();
+        const { handleBlur, handleChange } = formProps;
+        expect(injectedField.name).toBe('name');
+        expect(injectedField.value).toBe('jared');
+        expect(injectedField.onChange).toBe(handleChange);
+        expect(injectedField.onBlur).toBe(handleBlur);
+        expect(injectedForm).toEqual(formProps);
       });
 
       expect(queryAllByText(TEXT)).toHaveLength(3);
@@ -129,13 +139,18 @@ describe('Field / FastField', () => {
         </>
       );
 
-      injected.forEach(props => {
-        const { handleBlur, handleChange } = getFormProps();
-        expect(props.field.name).toBe('name');
-        expect(props.field.value).toBe('jared');
-        expect(props.field.onChange).toBe(handleChange);
-        expect(props.field.onBlur).toBe(handleBlur);
-        expect(props.form).toEqual(getFormProps());
+      injected.forEach(injectedProps => {
+        const {
+          form: { Fields: InjectedFields, ...injectedForm },
+          field: injectedField,
+        } = injectedProps;
+        const { Fields, ...formProps } = getFormProps();
+        const { handleBlur, handleChange } = formProps;
+        expect(injectedField.name).toBe('name');
+        expect(injectedField.value).toBe('jared');
+        expect(injectedField.onChange).toBe(handleChange);
+        expect(injectedField.onBlur).toBe(handleBlur);
+        expect(injectedForm).toEqual(formProps);
       });
 
       expect(queryAllByText(TEXT)).toHaveLength(3);
@@ -332,7 +347,7 @@ describe('Field / FastField', () => {
   cases('can resolve bracket paths', renderField => {
     const { getProps } = renderField(
       { name: 'user[superPowers][0]' },
-      { initialValues: { user: { superPowers: ['Surging', 'Binding'] } } } // TODO: fix generic type
+      { initialValues }
     );
 
     expect(getProps().field.value).toBe('Surging');
@@ -341,7 +356,7 @@ describe('Field / FastField', () => {
   cases('can resolve mixed dot and bracket paths', renderField => {
     const { getProps } = renderField(
       { name: 'user.superPowers[1]' },
-      { initialValues: { user: { superPowers: ['Surging', 'Binding'] } } } // TODO: fix generic type
+      { initialValues }
     );
 
     expect(getProps().field.value).toBe('Binding');
@@ -350,7 +365,7 @@ describe('Field / FastField', () => {
   cases('can resolve mixed dot and bracket paths II', renderField => {
     const { getProps } = renderField(
       { name: 'user[superPowers].1' },
-      { initialValues: { user: { superPowers: ['Surging', 'Binding'] } } } // TODO: fix generic type
+      { initialValues }
     );
 
     expect(getProps().field.value).toBe('Binding');

@@ -59,6 +59,7 @@ export class Formik<Values = FormikValues> extends React.Component<
       isSubmitting: false,
       isValidating: false,
       submitCount: 0,
+      status: props.initialStatus,
     };
     this.didMount = false;
     this.fields = {};
@@ -531,7 +532,7 @@ export class Formik<Values = FormikValues> extends React.Component<
       errors: {},
       touched: {},
       error: undefined,
-      status: undefined,
+      status: this.props.initialStatus,
       values,
       submitCount: 0,
     });

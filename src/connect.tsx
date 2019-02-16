@@ -40,9 +40,5 @@ export function connect<OuterProps, Values = {}>(
   >(
     C,
     Comp as React.ComponentClass<OuterProps & { formik: FormikContext<Values> }> // cast type to ComponentClass (even if SFC)
-  ) as React.ComponentClass<OuterProps> & {
-    WrappedComponent: React.ComponentClass<
-      OuterProps & { formik: FormikContext<Values> }
-    >;
-  };
+  );
 }

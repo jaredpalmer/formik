@@ -192,6 +192,11 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
   initialValues: Values;
 
   /**
+   * Initial status
+   */
+  initialStatus?: any;
+
+  /**
    * Reset handler
    */
   onReset?: (values: Values, formikActions: FormikActions<Values>) => void;

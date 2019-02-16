@@ -33,7 +33,7 @@ class Help extends React.Component {
       },
       {
         content:
-          'Ask questions about the documentation and project on [Spectrum.chat](https://spectrum.chat/palmer) or [Reactiflux Discord](https://discordapp.com/invite/reactiflux)',
+          'Ask questions about the documentation and project on [Spectrum.chat](https://spectrum.chat/palmer) or [Reactiflux Discord](https://discord.gg/cU6MCve)',
         title: 'Join the community',
       },
       {

@@ -115,7 +115,8 @@
       "src/**/*.{ts,tsx}"
     ],
     "setupFilesAfterEnv": [
-      "react-testing-library/cleanup-after-each"
+      "react-testing-library/cleanup-after-each",
+      "<rootDir>/setupTests.ts"
     ],
     "transform": {
       ".(ts|tsx)": "<rootDir>/node_modules/ts-jest/preprocessor.js"

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { cleanup, render, wait } from 'react-testing-library';
+import { render, wait } from 'react-testing-library';
 import {
   Formik,
   Field,
@@ -74,8 +74,6 @@ function cases(
 const TEXT = 'Mrs. Kato';
 
 describe('Field / FastField', () => {
-  afterEach(cleanup);
-
   describe('renders an <input /> by default', () => {
     it('<Field />', () => {
       const { container } = renderForm(<Field name="name" />);

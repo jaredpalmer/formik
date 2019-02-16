@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { render, cleanup, fireEvent, wait } from 'react-testing-library';
+import { render, fireEvent, wait } from 'react-testing-library';
 import * as Yup from 'yup';
 
 import { Formik, FormikProps, FormikConfig } from '../src';
@@ -74,10 +74,6 @@ function renderFormik<V>(props?: Partial<FormikConfig<V>>) {
 }
 
 describe('<Formik>', () => {
-  // Cleanup the dom after each test.
-  // https://github.com/kentcdodds/react-testing-library#example
-  afterEach(cleanup);
-
   it('should initialize Formik state and pass down props', () => {
     const { getProps } = renderFormik();
     const props = getProps();

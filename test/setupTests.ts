@@ -1,15 +1,15 @@
 const consoleError = console.error;
 
-let consoleErrorLog = [];
+let consoleErrorLog: any[] = [];
 
 beforeEach(() => {
   consoleErrorLog = [];
   // Make sure we aren't triggering React console.error calls
-  console.error = (...args) => {
+  console.error = (...args: any[]) => {
     // NOTE: We can't throw in here directly as most console.error calls happen
     // inside promises and result in an unhandled promise rejection
     consoleErrorLog.push(`console.error called with args: ${args}`);
-    consoleError.apply(console, args);
+    consoleError.apply(console, args as any);
   };
 });
 

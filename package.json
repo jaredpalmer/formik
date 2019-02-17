@@ -114,8 +114,8 @@
       "src/**/*.{ts,tsx}"
     ],
     "setupFilesAfterEnv": [
-      "react-testing-library/cleanup-after-each",
-      "<rootDir>/setupTests.ts"
+      "react-testing-library/cleanup-after-each.js",
+      "<rootDir>/test/setupTests.ts"
     ],
     "transform": {
       ".(ts|tsx)": "<rootDir>/node_modules/ts-jest/preprocessor.js"
@@ -133,8 +133,7 @@
       "json"
     ]
   },
-  "size-limit": [
-    {
+  "size-limit": [{
       "path": "./dist/index.js",
       "limit": "14 kB"
     },

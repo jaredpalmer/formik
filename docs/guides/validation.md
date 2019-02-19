@@ -104,7 +104,7 @@ export const ValidationSchemaExample = () => (
         lastName: '',
         email: '',
       }}
-      validationSchema={SignupSchema}
+      validationSchema=SignupSchema
       onSubmit={values => {
         // same shape as initial values
         console.log(values);

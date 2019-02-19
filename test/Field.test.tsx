@@ -86,7 +86,7 @@ describe('Field / FastField', () => {
     });
   });
 
-  describe('receives { field, form } props and renders element', () => {
+  describe('receives { ...field, field, form } props and renders element', () => {
     it('<Field />', () => {
       let injected: FieldProps[] = [];
 
@@ -107,6 +107,10 @@ describe('Field / FastField', () => {
         expect(props.field.value).toBe('jared');
         expect(props.field.onChange).toBe(handleChange);
         expect(props.field.onBlur).toBe(handleBlur);
+        expect(props.name).toBe('name');
+        expect(props.value).toBe('jared');
+        expect(props.onChange).toBe(handleChange);
+        expect(props.onBlur).toBe(handleBlur);
         expect(props.form).toEqual(getFormProps());
       });
 
@@ -133,6 +137,10 @@ describe('Field / FastField', () => {
         expect(props.field.value).toBe('jared');
         expect(props.field.onChange).toBe(handleChange);
         expect(props.field.onBlur).toBe(handleBlur);
+        expect(props.name).toBe('name');
+        expect(props.value).toBe('jared');
+        expect(props.onChange).toBe(handleChange);
+        expect(props.onBlur).toBe(handleBlur);
         expect(props.form).toEqual(getFormProps());
       });
 

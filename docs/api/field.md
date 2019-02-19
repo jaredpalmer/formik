@@ -20,9 +20,10 @@ Aside from string-only `component`, each render prop is passed the same props fo
 
 Field's render props are an object containing:
 
-* `field`: An object containing `onChange`, `onBlur`, `name`, and `value` of the field
+* `field`: An object containing `onChange`, `onBlur`, `name`, and `value` of the field.
+(NB: To add compatibility with some API like Material-UI, `field` props are also directly passed)
 * `form`: The Formik bag.
-* Any other props passed to field
+* Any other props passed to field.
 
 ## Example
 

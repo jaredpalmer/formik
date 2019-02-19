@@ -9,17 +9,19 @@ import {
 import warning from 'tiny-warning';
 import { getIn, isEmptyChildren, isFunction } from './utils';
 
-export interface FastFieldProps<V = any> {
-  field: {
-    /** Classic React change handler, keyed by input name */
-    onChange: (e: React.ChangeEvent<any>) => void;
-    /** Mark input as touched */
-    onBlur: (e: any) => void;
-    /** Value of the input */
-    value: any;
-    /* name of the input */
-    name: string;
-  };
+interface Field {
+  /** Classic React change handler, keyed by input name */
+  onChange: (e: React.ChangeEvent<any>) => void;
+  /** Mark input as touched */
+  onBlur: (e: any) => void;
+  /** Value of the input */
+  value: any;
+  /* name of the input */
+  name: string;
+}
+
+export interface FastFieldProps<V = any> extends Field {
+  field: Field;
   form: FormikProps<V>; // if ppl want to restrict this for a given form, let them.
 }
 
@@ -177,7 +179,7 @@ class FastFieldInner<Values = {}, Props = {}> extends React.Component<
       onChange: formik.handleChange,
       onBlur: formik.handleBlur,
     };
-    const bag = { field, form: restOfFormik };
+    const bag = { ...field, field, form: restOfFormik };
 
     if (render) {
       return (render as any)(bag);

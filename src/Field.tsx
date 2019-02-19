@@ -29,17 +29,19 @@ import { getIn, isEmptyChildren, isFunction } from './utils';
  *     {form.touched[field.name] && form.errors[field.name]}
  *   </div>
  */
-export interface FieldProps<V = any> {
-  field: {
-    /** Classic React change handler, keyed by input name */
-    onChange: FormikHandlers['handleChange'];
-    /** Mark input as touched */
-    onBlur: FormikHandlers['handleBlur'];
-    /** Value of the input */
-    value: any;
-    /* name of the input */
-    name: string;
-  };
+interface Field {
+  /** Classic React change handler, keyed by input name */
+  onChange: FormikHandlers['handleChange'];
+  /** Mark input as touched */
+  onBlur: FormikHandlers['handleBlur'];
+  /** Value of the input */
+  value: any;
+  /* name of the input */
+  name: string;
+}
+
+export interface FieldProps<V = any> extends Field {
+  field: Field;
   form: FormikProps<V>; // if ppl want to restrict this for a given form, let them.
 }
 
@@ -162,7 +164,7 @@ class FieldInner<Values = {}, Props = {}> extends React.Component<
       onChange: formik.handleChange,
       onBlur: formik.handleBlur,
     };
-    const bag = { field, form: restOfFormik };
+    const bag = { ...field, field, form: restOfFormik };
 
     if (render) {
       return (render as any)(bag);

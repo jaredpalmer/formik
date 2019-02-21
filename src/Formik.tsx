@@ -314,7 +314,7 @@ export function useFormik<Values = object>({
         activeElement instanceof HTMLButtonElement
       ) {
         warning(
-          !!(
+          !(
             activeElement.attributes &&
             activeElement.attributes.getNamedItem('type')
           ),

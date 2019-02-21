@@ -116,8 +116,7 @@ export function useFormik<Values = object>({
     };
   }>({});
   const [state, dispatch] = React.useReducer<
-    FormikState<Values>,
-    FormikMessage<Values>
+    React.Reducer<FormikState<Values>, FormikMessage<Values>>
   >(formikReducer, {
     values: props.initialValues,
     errors: {},

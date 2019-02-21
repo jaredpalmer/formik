@@ -22,7 +22,7 @@
     "dist"
   ],
   "peerDependencies": {
-    "react": "^16.7.0-alpha.0"
+    "react": "^16.8.0"
   },
   "scripts": {
     "test": "jest --env=jsdom",
@@ -51,8 +51,8 @@
   },
   "optionalDependencies": {},
   "resolutions": {
-    "@types/react": "16.7.17",
-    "@types/react-dom": "16.0.11"
+    "@types/react": "16.8.4",
+    "@types/react-dom": "16.8.2"
   },
   "devDependencies": {
     "@babel/core": "^7.1.2",
@@ -61,8 +61,8 @@
     "@types/hoist-non-react-statics": "^3.0.1",
     "@types/jest": "^22.2.3",
     "@types/lodash": "^4.14.119",
-    "@types/react": "^16.7.17",
-    "@types/react-dom": "^16.0.11",
+    "@types/react": "^16.8.4",
+    "@types/react-dom": "^16.8.2",
     "@types/warning": "^3.0.0",
     "@types/yup": "^0.24.9",
     "all-contributors-cli": "^4.4.0",
@@ -79,8 +79,8 @@
     "lint-staged": "4.0.2",
     "prettier": "1.11.1",
     "raw-loader": "^0.5.1",
-    "react": "^16.7.0-alpha.2",
-    "react-dom": "^16.7.0-alpha.2",
+    "react": "^16.8.2",
+    "react-dom": "^16.8.2",
     "react-testing-library": "^5.2.3",
     "rimraf": "^2.6.2",
     "rollup": "^1.1.2",
@@ -96,7 +96,7 @@
     "tsc-watch": "^1.0.21",
     "tslint": "^5.11.0",
     "tslint-react": "^3.6.0",
-    "typescript": "^3.2.1",
+    "typescript": "^3.3.3",
     "yup": "0.21.3"
   },
   "lint-staged": {
@@ -130,7 +130,8 @@
       "json"
     ]
   },
-  "size-limit": [{
+  "size-limit": [
+    {
       "path": "./dist/index.js",
       "limit": "14 kB"
     },

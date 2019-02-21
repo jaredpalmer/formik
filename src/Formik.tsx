@@ -315,10 +315,8 @@ export function useFormik<Values = object>({
         activeElement instanceof HTMLButtonElement
       ) {
         warning(
-          !!(
-            activeElement.attributes &&
-            activeElement.attributes.getNamedItem('type')
-          ),
+          activeElement.attributes &&
+            activeElement.attributes.getNamedItem('type'),
           'You submitted a Formik form using a button with an unspecified `type` attribute.  Most browsers default button elements to `type="submit"`. If this is not a submit button, please add `type="button"`.'
         );
       }

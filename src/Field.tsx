@@ -29,54 +29,56 @@ import { getIn, isEmptyChildren, isFunction } from './utils';
  *     {form.touched[field.name] && form.errors[field.name]}
  *   </div>
  */
-export interface FieldProps<Values = any, Key extends keyof Values = any> {
+export interface FieldProps<Values = any, ValueType = any> {
   field: {
     /** Classic React change handler, keyed by input name */
     onChange: FormikHandlers['handleChange'];
     /** Mark input as touched */
     onBlur: FormikHandlers['handleBlur'];
     /** Value of the input */
-    value: Values[Key];
+    value: ValueType;
     /* name of the input */
-    name: Key;
+    name: string;
   };
   form: FormikProps<Values>; // if ppl want to restrict this for a given form, let them.
 }
 
-export interface FieldConfig<Values = any, Key extends keyof Values = any> {
+export interface FieldConfig<Values = any, ValueType = any> {
   /**
    * Field component to render. Can either be a string like 'select' or a component.
    */
   component?:
     | string
-    | React.ComponentType<FieldProps<Values, Key>>
+    | React.ComponentType<FieldProps<Values, ValueType>>
     | React.ComponentType<void>;
 
   /**
    * Render prop (works like React router's <Route render={props =>} />)
    */
-  render?: ((props: FieldProps<Values>) => React.ReactNode);
+  render?: ((props: FieldProps<Values, ValueType>) => React.ReactNode);
 
   /**
    * Children render function <Field name>{props => ...}</Field>)
    */
-  children?: ((props: FieldProps<Values>) => React.ReactNode) | React.ReactNode;
+  children?:
+    | ((props: FieldProps<Values, ValueType>) => React.ReactNode)
+    | React.ReactNode;
 
   /**
    * Validate a single field value independently
    */
-  validate?: ((value: Values[Key]) => string | Promise<void> | undefined);
+  validate?: ((value: ValueType) => string | Promise<void> | undefined);
 
   /**
    * Field name
    */
-  name: Key;
+  name: string;
 
   /** HTML input type */
   type?: string;
 
   /** Field value */
-  value?: Values[Key];
+  value?: ValueType;
 
   /** Inner ref */
   innerRef?: (instance: any) => void;
@@ -84,36 +86,24 @@ export interface FieldConfig<Values = any, Key extends keyof Values = any> {
 
 export type FieldAttributes<
   Values,
-  Key extends keyof Values = any
-> = GenericFieldHTMLAttributes & FieldConfig<Values, Key>;
+  ValueType = any
+> = GenericFieldHTMLAttributes & FieldConfig<Values, ValueType>;
 
-type FieldOuterProps<Values, Key extends keyof Values = any> = FieldConfig<
+type FieldOuterProps<Values, ValueType = any> = FieldConfig<Values, ValueType>;
+type FieldInnerProps<Values, ValueType = any> = FieldAttributes<
   Values,
-  Key
->;
-type FieldInnerProps<Values, Key extends keyof Values = any> = FieldAttributes<
-  Values,
-  Key
+  ValueType
 > & { formik: FormikContext<Values> };
-
-export type TypedField<Values, Key extends keyof Values> = React.ComponentType<
-  FieldOuterProps<Values, Key>
->;
-export type TypedFieldList<Values> = {
-  [fieldName in keyof Values]: TypedField<Values, fieldName>
-};
 
 /**
  * Custom Field component for quickly hooking into Formik
  * context and wiring up forms.
  */
-class FieldInner<
-  Values = {},
-  Key extends keyof Values = any
-> extends React.Component<FieldInnerProps<Values, Key>, {}> {
-  constructor(
-    props: FieldAttributes<Values, Key> & { formik: FormikContext<Values> }
-  ) {
+class FieldInner<Values = {}, ValueType = any> extends React.Component<
+  FieldInnerProps<Values, ValueType>,
+  {}
+> {
+  constructor(props: FieldInnerProps<Values, ValueType>) {
     super(props);
     const { render, children, component } = props;
     warning(
@@ -138,9 +128,7 @@ class FieldInner<
     this.props.formik.registerField(this.props.name, this);
   }
 
-  componentDidUpdate(
-    prevProps: FieldAttributes<Values, Key> & { formik: FormikContext<Values> }
-  ) {
+  componentDidUpdate(prevProps: FieldInnerProps<Values, ValueType>) {
     if (this.props.name !== prevProps.name) {
       this.props.formik.unregisterField(prevProps.name);
       this.props.formik.registerField(this.props.name, this);
@@ -208,7 +196,79 @@ class FieldInner<
 }
 
 export const Field = connect<FieldOuterProps<any>, any>(FieldInner);
-export const typedFieldProxy = <TValues extends any>() =>
-  new Proxy({} as TypedFieldList<TValues>, {
-    get: () => Field,
+
+export type TypedAttributes<Values, ValueType> = Partial<
+  Pick<
+    FieldAttributes<Values, ValueType>,
+    Exclude<keyof FieldAttributes<Values, ValueType>, 'name'>
+  >
+>;
+export type WrapFieldFunction<
+  FormValues,
+  Parent,
+  Values,
+  Key extends keyof Values
+> = (
+  parent: Parent
+) => React.ComponentType<TypedAttributes<FormValues, Values[Key]>>;
+
+export interface FieldDefinition<FormValues, ValueType> {
+  parent?: FieldDefinition<FormValues, any>;
+  key?: string;
+  _field_: React.ComponentType<TypedAttributes<FormValues, ValueType>>;
+}
+
+export type TypedField<FormValues, Value> = Value extends object
+  ? TypedFieldList<FormValues, Value>
+  : FieldDefinition<FormValues, Value>;
+
+export type TypedFieldList<FormValues, Values = FormValues> = {
+  [fieldName in keyof Values]: TypedField<FormValues, Values[fieldName]>
+} &
+  FieldDefinition<FormValues, any>;
+
+const wrapField = <FormValues, Values, Key extends keyof Values>(
+  key: Key,
+  parent?: FieldDefinition<FormValues, any>
+) => {
+  let path: string = key + ''; // stringify
+
+  while (parent && parent.key) {
+    path = `${parent.key!}.${path}`;
+    parent = parent.parent;
+  }
+
+  return (props: TypedAttributes<FormValues, Values[Key]>) => {
+    return <Field name={path} {...props} />;
+  };
+};
+
+export const typedFieldProxy = <
+  FormValues,
+  Parent extends TypedFieldList<FormValues, any> | undefined = undefined,
+  Values = FormValues
+>(
+  parent?: Parent
+): TypedFieldList<FormValues, Values> => {
+  return new Proxy({} as TypedFieldList<FormValues, Values>, {
+    get: (target, key: keyof Values) => {
+      if (key === '_field_') {
+        return parent ? parent._field_ : undefined;
+      }
+
+      if (!(key in target)) {
+        target[key] = typedFieldProxy<
+          FormValues,
+          TypedFieldList<FormValues, Values[typeof key]>,
+          Values
+        >({
+          parent: target,
+          key: key as string,
+          _field_: wrapField<FormValues, Values, typeof key>(key, parent),
+        } as any) as any;
+      }
+
+      return target[key];
+    },
   });
+};

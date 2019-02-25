@@ -218,10 +218,14 @@ export interface FieldDefinition<FormValues, ValueType> {
   _field: React.ComponentType<TypedAttributes<FormValues, ValueType>>;
 }
 
+type RemoveArray<T> = T extends (infer U)[] ? U : T;
+
 export type TypedFieldProxy<FormValues, Values = FormValues> = {
-  [fieldName in keyof Values]: Values[fieldName] extends object
-    ? TypedFieldProxy<FormValues, Values[fieldName]>
-    : FieldDefinition<FormValues, Values[fieldName]>
+  [fieldName in keyof Values]: Values[fieldName] extends any[]
+    ? TypedFieldProxy<FormValues, RemoveArray<Values[fieldName]>>[]
+    : Values[fieldName] extends object
+      ? TypedFieldProxy<FormValues, Values[fieldName]>
+      : FieldDefinition<FormValues, Values[fieldName]>
 } &
   FieldDefinition<FormValues, any>;
 

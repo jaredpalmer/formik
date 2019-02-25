@@ -213,59 +213,57 @@ export type WrapFieldFunction<
 ) => React.ComponentType<TypedAttributes<FormValues, Values[Key]>>;
 
 export interface FieldDefinition<FormValues, ValueType> {
-  parent?: FieldDefinition<FormValues, any>;
-  key?: string;
-  _field_: React.ComponentType<TypedAttributes<FormValues, ValueType>>;
+  _parent?: FieldDefinition<FormValues, any>;
+  _key?: string;
+  _field: React.ComponentType<TypedAttributes<FormValues, ValueType>>;
 }
 
-export type TypedField<FormValues, Value> = Value extends object
-  ? TypedFieldList<FormValues, Value>
-  : FieldDefinition<FormValues, Value>;
-
-export type TypedFieldList<FormValues, Values = FormValues> = {
-  [fieldName in keyof Values]: TypedField<FormValues, Values[fieldName]>
+export type TypedFieldProxy<FormValues, Values = FormValues> = {
+  [fieldName in keyof Values]: Values[fieldName] extends object
+    ? TypedFieldProxy<FormValues, Values[fieldName]>
+    : FieldDefinition<FormValues, Values[fieldName]>
 } &
   FieldDefinition<FormValues, any>;
 
-const wrapField = <FormValues, Values, Key extends keyof Values>(
-  key: Key,
+const wrapField = <FormValues, Values, Name extends keyof Values>(
+  key: Name,
   parent?: FieldDefinition<FormValues, any>
 ) => {
   let path: string = key + ''; // stringify
 
-  while (parent && parent.key) {
-    path = `${parent.key!}.${path}`;
-    parent = parent.parent;
+  while (parent && parent._key) {
+    path = `${parent._key!}[${path}]`;
+    parent = parent._parent;
   }
 
-  return (props: TypedAttributes<FormValues, Values[Key]>) => {
+  return (props: TypedAttributes<FormValues, Values[Name]>) => {
     return <Field name={path} {...props} />;
   };
 };
 
 export const typedFieldProxy = <
   FormValues,
-  Parent extends TypedFieldList<FormValues, any> | undefined = undefined,
-  Values = FormValues
+  Values = FormValues,
+  Parent extends FieldDefinition<FormValues, any> | undefined = undefined
 >(
   parent?: Parent
-): TypedFieldList<FormValues, Values> => {
-  return new Proxy({} as TypedFieldList<FormValues, Values>, {
+) => {
+  return new Proxy({} as TypedFieldProxy<FormValues, Values>, {
     get: (target, key: keyof Values) => {
-      if (key === '_field_') {
-        return parent ? parent._field_ : undefined;
+      if (key === '_field') {
+        return parent ? parent._field : undefined;
       }
 
       if (!(key in target)) {
         target[key] = typedFieldProxy<
           FormValues,
-          TypedFieldList<FormValues, Values[typeof key]>,
-          Values
+          Values[typeof key],
+          FieldDefinition<FormValues, Values>
         >({
-          parent: target,
-          key: key as string,
-          _field_: wrapField<FormValues, Values, typeof key>(key, parent),
-        } as any) as any;
+          _parent: target,
+          _key: key as string,
+          _field: wrapField<FormValues, Values, typeof key>(key, parent),
+        }) as any;
       }
 
       return target[key];

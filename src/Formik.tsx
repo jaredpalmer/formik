@@ -2,7 +2,7 @@ import * as React from 'react';
 import isEqual from 'react-fast-compare';
 import deepmerge from 'deepmerge';
 import { FormikProvider } from './connect';
-import { typedFieldProxy, TypedFieldList } from './Field';
+import { typedFieldProxy, TypedFieldProxy } from './Field';
 import warning from 'tiny-warning';
 
 import {
@@ -39,7 +39,7 @@ export class Formik<Values = FormikValues> extends React.Component<
     enableReinitialize: false,
   };
 
-  TypedFields: TypedFieldList<Values> = typedFieldProxy<Values>();
+  TypedFields: TypedFieldProxy<Values> = typedFieldProxy<Values>();
 
   initialValues: Values;
   didMount: boolean;

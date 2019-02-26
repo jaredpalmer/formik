@@ -94,7 +94,7 @@ describe('Field / FastField', () => {
     it('<Field />', () => {
       let injected: FieldProps[] = [];
 
-      const Component: React.FunctionComponent<FieldProps> = props => {
+      const Component: React.FC<FieldProps> = props => {
         injected.push(props);
 
         return <div data-testid="child">{TEXT}</div>;

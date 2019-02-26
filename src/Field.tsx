@@ -85,12 +85,13 @@ export interface FieldConfig<Values = any, ValueType = any> {
 }
 
 export type FieldAttributes<
+  Props,
   Values,
   ValueType = any
-> = GenericFieldHTMLAttributes & FieldConfig<Values, ValueType>;
+> = GenericFieldHTMLAttributes & FieldConfig<Values, ValueType> & Props;
 
-type FieldOuterProps<Values, ValueType = any> = FieldConfig<Values, ValueType>;
-type FieldInnerProps<Values, ValueType = any> = FieldAttributes<
+type FieldInnerProps<Props, Values, ValueType = any> = FieldAttributes<
+  Props,
   Values,
   ValueType
 > & { formik: FormikContext<Values> };
@@ -99,11 +100,12 @@ type FieldInnerProps<Values, ValueType = any> = FieldAttributes<
  * Custom Field component for quickly hooking into Formik
  * context and wiring up forms.
  */
-class FieldInner<Values = {}, ValueType = any> extends React.Component<
-  FieldInnerProps<Values, ValueType>,
-  {}
-> {
-  constructor(props: FieldInnerProps<Values, ValueType>) {
+class FieldInner<
+  Values = {},
+  Props = {},
+  ValueType = any
+> extends React.Component<FieldInnerProps<Props, Values, ValueType>, {}> {
+  constructor(props: FieldInnerProps<Props, Values, ValueType>) {
     super(props);
     const { render, children, component } = props;
     warning(
@@ -128,7 +130,7 @@ class FieldInner<Values = {}, ValueType = any> extends React.Component<
     this.props.formik.registerField(this.props.name, this);
   }
 
-  componentDidUpdate(prevProps: FieldInnerProps<Values, ValueType>) {
+  componentDidUpdate(prevProps: FieldInnerProps<Props, Values, ValueType>) {
     if (this.props.name !== prevProps.name) {
       this.props.formik.unregisterField(prevProps.name);
       this.props.formik.registerField(this.props.name, this);
@@ -174,7 +176,9 @@ class FieldInner<Values = {}, ValueType = any> extends React.Component<
     }
 
     if (isFunction(children)) {
-      return children(bag);
+      return (children as (
+        props: FieldProps<Values, ValueType>
+      ) => React.ReactNode)(bag);
     }
 
     if (typeof component === 'string') {
@@ -195,14 +199,15 @@ class FieldInner<Values = {}, ValueType = any> extends React.Component<
   }
 }
 
-export const Field = connect<FieldOuterProps<any>, any>(FieldInner);
+export const Field = connect<FieldAttributes<any, any>, any>(FieldInner);
 
 export type TypedAttributes<Values, ValueType> = Partial<
   Pick<
-    FieldAttributes<Values, ValueType>,
-    Exclude<keyof FieldAttributes<Values, ValueType>, 'name'>
+    FieldAttributes<{}, Values, ValueType>,
+    Exclude<keyof FieldAttributes<{}, Values, ValueType>, 'name'>
   >
 >;
+
 export type WrapFieldFunction<
   FormValues,
   Parent,

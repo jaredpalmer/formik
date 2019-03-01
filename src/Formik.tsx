@@ -25,7 +25,7 @@ import {
   getIn,
   makeCancelable,
 } from './utils';
-import { ArrayHelpers } from 'formik';
+import { ArrayHelpers } from './FieldArray';
 
 export class Formik<Values = FormikValues> extends React.Component<
   FormikConfig<Values>,

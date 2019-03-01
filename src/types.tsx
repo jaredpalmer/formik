@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ArrayHelpers } from 'formik';
+import { ArrayHelpers } from './FieldArray';
 /**
  * Values of fields in the form
  */

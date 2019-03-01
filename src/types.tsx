@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { ArrayHelpers } from 'formik';
 /**
  * Values of fields in the form
  */
@@ -66,6 +67,7 @@ export interface FormikComputedProps<Values> {
  * Formik state helpers
  */
 export interface FormikActions<Values> {
+  getFieldArrayHelpers(field: keyof Values & string): ArrayHelpers | undefined;
   /** Manually set top level status. */
   setStatus(status?: any): void;
   /**
@@ -233,6 +235,7 @@ export type FormikProps<Values> = FormikSharedConfig &
 /** Internal Formik registration methods that get passed down as props */
 export interface FormikRegistration {
   registerField(name: string, Comp: React.Component<any>): void;
+  registerFieldArrayHelpers(name: string, arrayHelpers: ArrayHelpers): void;
   unregisterField(name: string): void;
 }
 

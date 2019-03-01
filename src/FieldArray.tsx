@@ -299,6 +299,8 @@ class FieldArrayInner<Values = {}> extends React.Component<
       name,
     };
 
+    restOfFormik.registerFieldArrayHelpers(name, arrayHelpers);
+
     return component
       ? React.createElement(component as any, props)
       : render

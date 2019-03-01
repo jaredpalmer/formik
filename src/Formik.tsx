@@ -25,6 +25,7 @@ import {
   getIn,
   makeCancelable,
 } from './utils';
+import { ArrayHelpers } from 'formik';
 
 export class Formik<Values = FormikValues> extends React.Component<
   FormikConfig<Values>,
@@ -48,6 +49,9 @@ export class Formik<Values = FormikValues> extends React.Component<
   fields: {
     [field: string]: React.Component<any>;
   };
+  fieldArrayHelpers: {
+    [field: string]: ArrayHelpers;
+  };
   validator: any;
 
   constructor(props: FormikConfig<Values>) {
@@ -63,6 +67,7 @@ export class Formik<Values = FormikValues> extends React.Component<
     };
     this.didMount = false;
     this.fields = {};
+    this.fieldArrayHelpers = {};
     this.initialValues = props.initialValues || ({} as any);
     warning(
       !(props.component && props.render),
@@ -82,6 +87,10 @@ export class Formik<Values = FormikValues> extends React.Component<
 
   registerField = (name: string, Comp: React.Component<any>) => {
     this.fields[name] = Comp;
+  };
+
+  registerFieldArrayHelpers = (name: string, arrayHelpers: ArrayHelpers) => {
+    this.fieldArrayHelpers[name] = arrayHelpers;
   };
 
   unregisterField = (name: string) => {
@@ -118,6 +127,10 @@ export class Formik<Values = FormikValues> extends React.Component<
       this.resetForm(this.props.initialValues);
     }
   }
+
+  getFieldArrayHelpers = (field: string) => {
+    return getIn(this.fieldArrayHelpers, field);
+  };
 
   setErrors = (errors: FormikErrors<Values>) => {
     this.setState({ errors });
@@ -574,6 +587,7 @@ export class Formik<Values = FormikValues> extends React.Component<
 
   getFormikActions = (): FormikActions<Values> => {
     return {
+      getFieldArrayHelpers: this.getFieldArrayHelpers,
       resetForm: this.resetForm,
       submitForm: this.submitForm,
       validateForm: this.validateForm,
@@ -612,6 +626,7 @@ export class Formik<Values = FormikValues> extends React.Component<
       ...this.getFormikComputedProps(),
       // Field needs to communicate with Formik during resets
       registerField: this.registerField,
+      registerFieldArrayHelpers: this.registerFieldArrayHelpers,
       unregisterField: this.unregisterField,
       handleBlur: this.handleBlur,
       handleChange: this.handleChange,

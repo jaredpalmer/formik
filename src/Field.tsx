@@ -68,7 +68,7 @@ export function useField(name: string, type?: string) {
 
   if (process.env.NODE_ENV !== 'production') {
     warning(
-      !formik,
+      formik,
       'useField() / <Field /> must be used underneath a <Formik> component or withFormik() higher order component'
     );
   }
@@ -91,17 +91,17 @@ export function Field({
   } = useFormikContext();
 
   warning(
-    !(component && render),
+    component && render,
     'You should not use <Field component> and <Field render> in the same <Field> component; <Field component> will be ignored'
   );
 
   warning(
-    !(component && children && isFunction(children)),
+    component && children && isFunction(children),
     'You should not use <Field component> and <Field children> as a function in the same <Field> component; <Field component> will be ignored.'
   );
 
   warning(
-    !(render && children && !isEmptyChildren(children)),
+    render && children && !isEmptyChildren(children),
     'You should not use <Field render> and <Field children> in the same <Field> component; <Field children> will be ignored'
   );
 

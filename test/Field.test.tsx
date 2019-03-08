@@ -407,13 +407,14 @@ describe('Field / FastField', () => {
   });
 });
 
-describe('<FastField />', () => {
-  it('does NOT forward shouldUpdate to React component', () => {
-    let injected: any;
-    const Component = (props: FieldProps) => (injected = props) && null;
+// @todo Deprecated
+// describe('<FastField />', () => {
+//   it('does NOT forward shouldUpdate to React component', () => {
+//     let injected: any;
+//     const Component = (props: FieldProps) => (injected = props) && null;
 
-    const shouldUpdate = () => true;
-    renderFastField({ component: Component, shouldUpdate });
-    expect(injected.shouldUpdate).toBe(undefined);
-  });
-});
+//     const shouldUpdate = () => true;
+//     renderFastField({ component: Component, shouldUpdate });
+//     expect(injected.shouldUpdate).toBe(undefined);
+//   });
+// });

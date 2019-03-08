@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { render, cleanup, fireEvent, wait } from 'react-testing-library';
 import * as Yup from 'yup';
-import { act } from 'react-dom/test-utils';
 
 import { Formik, FormikProps, FormikConfig } from '../src';
 import { noop } from './testHelpers';
@@ -88,36 +87,6 @@ describe('<Formik>', () => {
   // Cleanup the dom after each test.
   // https://github.com/kentcdodds/react-testing-library#example
   afterEach(cleanup);
-  beforeEach(() => {
-    jest.useFakeTimers();
-  });
-
-  afterEach(() => {
-    jest.useRealTimers();
-  });
-  const consoleError = console.error;
-
-  let consoleErrorLog: any[] = [];
-
-  beforeEach(() => {
-    consoleErrorLog = [];
-    // Make sure we aren't triggering React console.error calls
-    console.error = (...args: any[]) => {
-      // NOTE: We can't throw in here directly as most console.error calls happen
-      // inside promises and result in an unhandled promise rejection
-      consoleErrorLog.push(`console.error called with args: ${args}`);
-      consoleError.apply(console, args as any);
-    };
-  });
-
-  afterEach(() => {
-    if (consoleErrorLog.length > 0) {
-      // Not using an Error object here because the stacktrace is misleading
-      throw consoleErrorLog[0];
-    }
-
-    console.error = consoleError;
-  });
 
   it('should initialize Formik state and pass down props', () => {
     const { getProps } = renderFormik();
@@ -1024,7 +993,6 @@ describe('<Formik>', () => {
   });
 
   it('submit count increments', async () => {
-    jest.useFakeTimers();
     const onSubmit = jest.fn();
 
     const { getProps } = renderFormik({
@@ -1032,10 +1000,7 @@ describe('<Formik>', () => {
     });
 
     expect(getProps().submitCount).toEqual(0);
-    act(() => {
-      getProps().submitForm();
-      jest.runAllTimers();
-    });
+    await getProps().submitForm();
     expect(onSubmit).toHaveBeenCalled();
     expect(getProps().submitCount).toEqual(1);
   });
@@ -1127,11 +1092,7 @@ describe('<Formik>', () => {
       validationSchema,
     });
 
-    act(() => {
-      getProps().validateForm();
-      jest.runAllTimers();
-    });
-
+    await getProps().validateForm();
     expect(getProps().errors).toEqual({
       users: [{ firstName: 'required', lastName: 'required' }],
     });

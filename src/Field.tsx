@@ -33,6 +33,7 @@ export interface FieldConfig {
 
   /**
    * Render prop (works like React router's <Route render={props =>} />)
+   * @deprecated
    */
   render?: ((props: FieldProps<any>) => React.ReactNode);
 
@@ -91,8 +92,8 @@ export function Field({
   } = useFormikContext();
 
   warning(
-    component && render,
-    'You should not use <Field component> and <Field render> in the same <Field> component; <Field component> will be ignored'
+    render,
+    '<Field render> has been deprecated and will be removed in future versions of Formik. Please use a function as a child instead.'
   );
 
   warning(
@@ -144,27 +145,3 @@ export function Field({
   });
 }
 export const FastField = Field;
-// export const FastField = (React as any).memo(
-//   connect(
-//     ({
-//       formik: _formik,
-//       ...props
-//     }: FieldAttributes<any> & { formik: FormikCtx<any> }) => {
-//       console.log(props['data-testid']);
-//       return <Field {...props} />;
-//     }
-//   ),
-//   (props: any, nextProps: any) => {
-//     return (
-//       Object.keys(nextProps).length === Object.keys(props).length ||
-//       props.formik.isSubmitting === nextProps.formik.isSubmitting ||
-//       props === nextProps ||
-//       getIn(nextProps.formik.values, nextProps.name) ===
-//         getIn(props.formik.values, nextProps.name) ||
-//       getIn(nextProps.formik.errors, nextProps.name) ===
-//         getIn(props.formik.errors, nextProps.name) ||
-//       getIn(nextProps.formik.touched, nextProps.name) ===
-//         getIn(props.formik.touched, nextProps.name)
-//     );
-//   }
-// );

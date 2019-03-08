@@ -31,8 +31,8 @@ export function connect<OuterProps, Values = {}>(
   C.displayName = `FormikConnect(${componentDisplayName})`;
 
   return hoistNonReactStatics<
-    OuterProps,
-    OuterProps & { formik: FormikContext<Values> }
+    React.ComponentType<OuterProps>,
+    React.ComponentType<OuterProps & { formik: FormikContext<Values> }>
   >(
     C,
     Comp as React.ComponentClass<OuterProps & { formik: FormikContext<Values> }> // cast type to ComponentClass (even if SFC)

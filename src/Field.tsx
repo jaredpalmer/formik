@@ -81,7 +81,7 @@ export function Field({
   name,
   render,
   children,
-  component = 'input',
+  component,
   ...props
 }: FieldAttributes<any>) {
   const {
@@ -137,7 +137,7 @@ export function Field({
     });
   }
 
-  return React.createElement(component, {
+  return React.createElement(component || 'input', {
     ...bag,
     ...props,
     children,

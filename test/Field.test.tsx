@@ -41,7 +41,9 @@ function renderForm(
   };
 }
 
-const createRenderField = (FieldComponent: typeof Field) => (
+const createRenderField = (
+  FieldComponent: React.ComponentType<FieldConfig>
+) => (
   props: Partial<FieldConfig> | Partial<FastFieldConfig> = {},
   formProps?: Partial<FormikConfig<Values>>
 ) => {
@@ -94,11 +96,8 @@ describe('Field / FastField', () => {
     it('<Field />', () => {
       let injected: FieldProps[] = [];
 
-      const Component: React.FC<FieldProps> = props => {
-        injected.push(props);
-
-        return <div data-testid="child">{TEXT}</div>;
-      };
+      const Component = (props: FieldProps) =>
+        injected.push(props) && <div data-testid="child">{TEXT}</div>;
 
       const { getFormProps, queryAllByText } = renderForm(
         <>
@@ -108,15 +107,13 @@ describe('Field / FastField', () => {
         </>
       );
 
-      injected.forEach(injectedProps => {
-        const { form: injectedForm, field: injectedField } = injectedProps;
-        const { Fields, ...formProps } = getFormProps();
-        const { handleBlur, handleChange } = formProps;
-        expect(injectedField.name).toBe('name');
-        expect(injectedField.value).toBe('jared');
-        expect(injectedField.onChange).toBe(handleChange);
-        expect(injectedField.onBlur).toBe(handleBlur);
-        expect(injectedForm).toEqual(formProps);
+      injected.forEach(props => {
+        const { handleBlur, handleChange } = getFormProps();
+        expect(props.field.name).toBe('name');
+        expect(props.field.value).toBe('jared');
+        expect(props.field.onChange).toBe(handleChange);
+        expect(props.field.onBlur).toBe(handleBlur);
+        expect(props.form).toEqual(getFormProps());
       });
 
       expect(queryAllByText(TEXT)).toHaveLength(3);
@@ -136,15 +133,13 @@ describe('Field / FastField', () => {
         </>
       );
 
-      injected.forEach(injectedProps => {
-        const { form: injectedForm, field: injectedField } = injectedProps;
-        const { Fields, ...formProps } = getFormProps();
-        const { handleBlur, handleChange } = formProps;
-        expect(injectedField.name).toBe('name');
-        expect(injectedField.value).toBe('jared');
-        expect(injectedField.onChange).toBe(handleChange);
-        expect(injectedField.onBlur).toBe(handleBlur);
-        expect(injectedForm).toEqual(formProps);
+      injected.forEach(props => {
+        const { handleBlur, handleChange } = getFormProps();
+        expect(props.field.name).toBe('name');
+        expect(props.field.value).toBe('jared');
+        expect(props.field.onChange).toBe(handleChange);
+        expect(props.field.onBlur).toBe(handleBlur);
+        expect(props.form).toEqual(getFormProps());
       });
 
       expect(queryAllByText(TEXT)).toHaveLength(3);

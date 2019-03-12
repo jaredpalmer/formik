@@ -94,6 +94,11 @@ const users = [
     infoLink: 'https://capsulecares.com',
   },
   {
+    caption: 'Egghead',
+    image: '/formik/img/logos/egghead.svg',
+    infoLink: 'https://egghead.io',
+  },
+  {
     caption: 'Frame.io',
     image: '/formik/img/logos/frameio.png',
     infoLink: 'https://frame.io',

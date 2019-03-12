@@ -109,10 +109,7 @@ describe('Field / FastField', () => {
       );
 
       injected.forEach(injectedProps => {
-        const {
-          form: { Fields: InjectedFields, ...injectedForm },
-          field: injectedField,
-        } = injectedProps;
+        const { form: injectedForm, field: injectedField } = injectedProps;
         const { Fields, ...formProps } = getFormProps();
         const { handleBlur, handleChange } = formProps;
         expect(injectedField.name).toBe('name');
@@ -140,10 +137,7 @@ describe('Field / FastField', () => {
       );
 
       injected.forEach(injectedProps => {
-        const {
-          form: { Fields: InjectedFields, ...injectedForm },
-          field: injectedField,
-        } = injectedProps;
+        const { form: injectedForm, field: injectedField } = injectedProps;
         const { Fields, ...formProps } = getFormProps();
         const { handleBlur, handleChange } = formProps;
         expect(injectedField.name).toBe('name');

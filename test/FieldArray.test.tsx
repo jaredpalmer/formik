@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
-import { FieldArray, Formik, isFunction } from '../src';
+import { FieldArray, Formik, isFunction, FieldArrayRenderProps } from '../src';
 
 // tslint:disable-next-line:no-empty
 const noop = () => {};
@@ -22,7 +22,7 @@ describe('<FieldArray />', () => {
   });
 
   it('renders component with array helpers as props', () => {
-    const TestComponent = (arrayProps: any) => {
+    const TestComponent = (arrayProps: FieldArrayRenderProps) => {
       expect(isFunction(arrayProps.push)).toBeTruthy();
       return null;
     };

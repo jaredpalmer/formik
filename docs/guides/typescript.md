@@ -52,6 +52,66 @@ export const MyApp: React.SFC<{}> = () => {
 };
 ```
 
+#### Component props (`<Formik />` and `<FieldArray />`)
+
+```typescript
+import * as React from 'react'
+import { Field, FieldArray, Form, Formik, FormikActions, getIn } from 'formik'
+
+interface MyFormValues {
+  friends: string[]
+}
+
+export const FriendList = () => (
+  <div>
+    <h1>Friend List</h1>
+    <Formik
+      initialValues={{
+        friends: ['jared', 'ian', 'brent', 'beau'],
+      }}
+      onSubmit={(
+        values: MyFormValues,
+        actions: FormikActions<MyFormValues>
+      ) => {
+        console.log({ values, actions })
+        alert(JSON.stringify(values, null, 2))
+        actions.setSubmitting(false)
+      }}
+    >
+      {({ isSubmitting }) => (
+        <Form>
+          <FieldArray name="friends" component={FriendsFieldArray} />
+          <button type="submit" disabled={isSubmitting}>
+            Save
+          </button>
+        </Form>
+      )}
+    </Formik>
+  </div>
+)
+
+const FriendsFieldArray = (arrayHelpers: FieldArrayRenderProps) => {
+  const values = getIn(arrayHelpers.form.values, arrayHelpers.name);
+  return (
+    <div>
+      {values.map(
+        (firstName: string, i: number) => (
+          <div key={i}>
+            <label htmlFor={`${arrayHelpers.name}.${i}`}>Friend Name</label>
+            <Field
+              id={`${arrayHelpers.name}.${i}`}
+              name={`${arrayHelpers.name}.${i}`}
+            />
+            <button onClick={() => arrayHelpers.remove(i)}>Remove</button>
+          </div>
+        )
+      )}
+      <button onClick={() => arrayHelpers.push('')}>Add Friend</button>
+    </div>
+  )
+}
+```
+
 #### `withFormik()`
 
 ```typescript

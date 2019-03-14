@@ -37,6 +37,26 @@ describe('<FieldArray />', () => {
     );
   });
 
+  it('renders component and passes exra props down', () => {
+    const TestComponent = (props: any) => {
+      expect(props.userProps === 'test');
+      return null;
+    };
+
+    ReactDOM.render(
+      <TestForm
+        component={() => (
+          <FieldArray
+            name="friends"
+            userProp="test"
+            component={TestComponent}
+          />
+        )}
+      />,
+      node
+    );
+  });
+
   it('renders with render callback with array helpers as props', () => {
     ReactDOM.render(
       <TestForm

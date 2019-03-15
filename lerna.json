@@ -1,0 +1,9 @@
+{
+  "lerna": "3.13.1",
+  "packages": [
+    "formik"
+  ],
+  "useWorkspaces": true,
+  "npmClient": "yarn",
+  "version": "1.5.1"
+}

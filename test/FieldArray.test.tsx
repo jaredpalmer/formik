@@ -37,7 +37,7 @@ describe('<FieldArray />', () => {
     );
   });
 
-  it('renders component and passes exra props down', () => {
+  it('renders component and passes extra props down', () => {
     const TestComponent = (props: any) => {
       expect(props.userProps === 'test');
       return null;

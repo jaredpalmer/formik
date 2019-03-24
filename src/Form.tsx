@@ -9,10 +9,10 @@ export type FormikFormProps = Pick<
   >
 >;
 
-export const Form = connect<FormikFormProps>(
-  ({ formik: { handleReset, handleSubmit }, ...props }) => (
-    <form onReset={handleReset} onSubmit={handleSubmit} {...props} />
-  )
+const FormInner = ({ formik: { handleReset, handleSubmit }, ...props }) => (
+  <form onReset={handleReset} onSubmit={handleSubmit} {...props} />
 );
 
-Form.displayName = 'Form';
+FormInner.displayName = 'Form';
+
+export const Form = connect<FormikFormProps>(FormInner);

@@ -223,6 +223,26 @@ describe('<Formik>', () => {
     });
   });
 
+  describe('notifyOnChange', () => {
+    it('should trigger notifyOnChange on succesful state update', () => {
+      const notifyOnChange = jest.fn();
+      const { getProps, getByTestId } = renderFormik({
+        notifyOnChange,
+      });
+
+      const input = getByTestId('name-input');
+      fireEvent.change(input, {
+        persist: noop,
+        target: {
+          name: 'name',
+          value: 'ian',
+        },
+      });
+
+      expect(notifyOnChange).toHaveBeenCalledWith(getProps().values);
+    });
+  });
+
   describe('handleBlur', () => {
     it('sets touched state', () => {
       const { getProps, getByTestId } = renderFormik();

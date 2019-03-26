@@ -194,6 +194,23 @@ describe('utils', () => {
       expect(newObj.twofoldly.nested).not.toHaveProperty('value');
     });
 
+    it('shallow clone data along the update path', () => {
+      const obj = {
+        x: 'y',
+        twofoldly: { nested: ['a', { c: 'd' }] },
+        other: { nestedOther: 'o' },
+      };
+      const newObj = setIn(obj, 'twofoldly.nested.0', 'b');
+      // All new objects/arrays created along the update path.
+      expect(obj).not.toBe(newObj);
+      expect(obj.twofoldly).not.toBe(newObj.twofoldly);
+      expect(obj.twofoldly.nested).not.toBe(newObj.twofoldly.nested);
+      // All other objects/arrays copied, not cloned (retain same memory
+      // location).
+      expect(obj.other).toBe(newObj.other);
+      expect(obj.twofoldly.nested[1]).toBe(newObj.twofoldly.nested[1]);
+    });
+
     it('sets new array', () => {
       const obj = { x: 'y' };
       const newObj = setIn(obj, 'nested.0', 'value');

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { connect } from './connect';
+import { FormikHandlers } from './types';
 
 export type FormikFormProps = Pick<
   React.FormHTMLAttributes<HTMLFormElement>,
@@ -9,9 +10,12 @@ export type FormikFormProps = Pick<
   >
 >;
 
-const FormInner = ({ formik: { handleReset, handleSubmit }, ...props }) => (
-  <form onReset={handleReset} onSubmit={handleSubmit} {...props} />
-);
+const FormInner = ({
+  formik: { handleReset, handleSubmit },
+  ...props
+}: {
+  formik: FormikHandlers;
+}) => <form onReset={handleReset} onSubmit={handleSubmit} {...props} />;
 
 FormInner.displayName = 'Form';
 

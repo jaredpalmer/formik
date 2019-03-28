@@ -6,6 +6,7 @@ custom_edit_url: https://github.com/jaredpalmer/formik/edit/master/docs/guides/f
 
 ## Submission Phases
 
+For submitting form your [validation should return empty object](https://github.com/jaredpalmer/formik/blob/5f52e577b4cd51a9b06741309411032777b19496/src/Formik.tsx#L451).
 To submit a form in Formik, you need to somehow fire off the provided `handleSubmit(e)` or `submitForm` prop. When you call either of these methods, Formik will execute the following _(pseudo code)_ each time:
 
 ### Pre-submit

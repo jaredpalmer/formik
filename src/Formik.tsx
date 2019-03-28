@@ -105,6 +105,7 @@ export function useFormik<Values = object>({
   validateOnChange = true,
   validateOnBlur = true,
   isInitialValid = false,
+  enableReinitialize = false,
   ...rest
 }: FormikConfig<Values>) {
   const props = { validateOnChange, validateOnBlur, isInitialValid, ...rest };
@@ -153,6 +154,20 @@ export function useFormik<Values = object>({
       return;
     },
     [state.touched]
+  );
+
+  React.useEffect(
+    () => {
+      if (
+        enableReinitialize &&
+        isMounted.current &&
+        !isEqual(initialValues.current, props.initialValues)
+      ) {
+        initialValues.current = props.initialValues;
+        resetForm(props.initialValues);
+      }
+    },
+    [props.initialValues]
   );
 
   React.useEffect(() => {

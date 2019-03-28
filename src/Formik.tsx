@@ -397,6 +397,8 @@ export class Formik<Values = FormikValues> extends React.Component<
               this.runValidations(this.state.values)
                 .then(resolve)
                 .catch(reject);
+            } else {
+              resolve();
             }
           }
         );

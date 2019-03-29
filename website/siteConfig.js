@@ -113,6 +113,11 @@ const users = [
     image: '/formik/img/logos/extendi.svg',
     infoLink: 'https://www.extendi.it',
   },
+  {
+    caption: 'Gusto',
+    image: '/formik/img/logos/gusto.png',
+    infoLink: 'https://gusto.com',
+  },
 ];
 
 const siteConfig = {

@@ -22,7 +22,7 @@ jobs:
 
       - run:
           name: Run tests
-          command: yarn test --runInBand --no-cache --coverage
+          command: yarn test --coverage
 
       - save_cache:
           paths:

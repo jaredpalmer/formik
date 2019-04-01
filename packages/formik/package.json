@@ -118,7 +118,7 @@
       "<rootDir>/test/setupTests.ts"
     ],
     "transform": {
-      ".(ts|tsx)": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+      ".(ts|tsx)": "../../node_modules/ts-jest/preprocessor.js"
     },
     "testMatch": [
       "<rootDir>/test/**/?(*.)(spec|test).ts?(x)"

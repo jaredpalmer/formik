@@ -3,7 +3,7 @@
   "scripts": {
     "clean": "lerna clean",
     "bootstrap": "lerna bootstrap",
-    "test": "CI=true lerna run test --stream",
+    "test": "lerna run --stream test",
     "start": "lerna run --parallel start",
     "prepare": "lerna run --parallel build",
     "build": "lerna run --parallel build"

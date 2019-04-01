@@ -22,7 +22,7 @@ jobs:
 
       - run:
           name: Run tests
-          command: yarn test --coverage
+          command: yarn test
 
       - save_cache:
           paths:

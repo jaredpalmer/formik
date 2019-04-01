@@ -82,7 +82,8 @@ export function Field({
   name,
   render,
   children,
-  component = 'input',
+  as: is = 'input',
+  component,
   ...props
 }: FieldAttributes<any>) {
   const {
@@ -93,12 +94,17 @@ export function Field({
 
   warning(
     render,
-    '<Field render> has been deprecated and will be removed in future versions of Formik. Please use a function as a child instead.'
+    '<Field render> has been deprecated and will be removed in future versions of Formik. Please use a function as a child instead <Formik>{() => }</Formik>.'
   );
 
   warning(
     component && children && isFunction(children),
     'You should not use <Field component> and <Field children> as a function in the same <Field> component; <Field component> will be ignored.'
+  );
+
+  warning(
+    !!component,
+    '<Field component> has been deprecated and will be removed in future versions of Formik. Use <Formik as> instead. Note that with the `as` prop, all props are passed directly through (so there is no need to destructure anything).'
   );
 
   warning(
@@ -128,20 +134,26 @@ export function Field({
     return children(bag);
   }
 
-  if (typeof component === 'string') {
-    const { innerRef, ...rest } = props;
-    return React.createElement(component, {
-      ref: innerRef,
-      ...field,
-      ...rest,
-      children,
-    });
+  if (component) {
+    if (typeof component === 'string') {
+      const { innerRef, ...rest } = props;
+      return React.createElement(
+        component,
+        { ref: innerRef, ...field, ...rest },
+        children
+      );
+    }
+    return React.createElement(component, { ...bag, ...props }, children);
   }
 
-  return React.createElement(component, {
-    ...bag,
-    ...props,
-    children,
-  });
+  if (typeof is === 'string') {
+    const { innerRef, ...rest } = props;
+    return React.createElement(
+      is,
+      { ref: innerRef, ...field, ...rest },
+      children
+    );
+  }
+  return React.createElement(is, { ...field, ...props }, children);
 }
 export const FastField = Field;

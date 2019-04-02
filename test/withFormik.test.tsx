@@ -75,6 +75,8 @@ describe('withFormik()', () => {
       initialValues: {
         name: 'jared',
       },
+      initialErrors: {},
+      initialTouched: {},
       values: {
         name: InitialValues.name,
       },

@@ -5,6 +5,7 @@ import {
   FormikProps,
   GenericFieldHTMLAttributes,
   FormikContext,
+  FormikHandlers,
 } from './types';
 import warning from 'tiny-warning';
 import { getIn, isEmptyChildren, isFunction } from './utils';
@@ -31,9 +32,9 @@ import { getIn, isEmptyChildren, isFunction } from './utils';
 export interface FieldProps<V = any> {
   field: {
     /** Classic React change handler, keyed by input name */
-    onChange: (e: React.ChangeEvent<any>) => void;
+    onChange: FormikHandlers['handleChange'];
     /** Mark input as touched */
-    onBlur: (e: any) => void;
+    onBlur: FormikHandlers['handleBlur'];
     /** Value of the input */
     value: any;
     /* name of the input */

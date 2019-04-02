@@ -1,11 +1,12 @@
 import * as React from 'react';
-import { cleanup, render, wait } from 'react-testing-library';
+import { render, wait } from 'react-testing-library';
 import {
   Formik,
   Field,
   FastField,
   FieldProps,
   FieldConfig,
+  FastFieldConfig,
   FormikProps,
   FormikConfig,
   FastFieldProps,
@@ -39,7 +40,7 @@ function renderForm(
 const createRenderField = (
   FieldComponent: React.ComponentClass<FieldConfig>
 ) => (
-  props: Partial<FieldConfig> = {},
+  props: Partial<FieldConfig> | Partial<FastFieldConfig> = {},
   formProps?: Partial<FormikConfig<Values>>
 ) => {
   let injected: FieldProps | FastFieldProps;
@@ -73,8 +74,6 @@ function cases(
 const TEXT = 'Mrs. Kato';
 
 describe('Field / FastField', () => {
-  afterEach(cleanup);
-
   describe('renders an <input /> by default', () => {
     it('<Field />', () => {
       const { container } = renderForm(<Field name="name" />);
@@ -353,5 +352,16 @@ describe('Field / FastField', () => {
     );
 
     expect(getProps().field.value).toBe('Binding');
+  });
+});
+
+describe('<FastField />', () => {
+  it('does NOT forward shouldUpdate to React component', () => {
+    let injected: any;
+    const Component = (props: FieldProps) => (injected = props) && null;
+
+    const shouldUpdate = () => true;
+    renderFastField({ component: Component, shouldUpdate });
+    expect(injected.shouldUpdate).toBe(undefined);
   });
 });

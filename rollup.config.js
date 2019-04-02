@@ -1,14 +1,15 @@
+import path from 'path';
 import commonjs from 'rollup-plugin-commonjs';
 import replace from 'rollup-plugin-replace';
 import resolve from 'rollup-plugin-node-resolve';
 import sourceMaps from 'rollup-plugin-sourcemaps';
 import babel from 'rollup-plugin-babel';
-import { uglify } from 'rollup-plugin-uglify';
+import { terser } from 'rollup-plugin-terser';
 import { sizeSnapshot } from 'rollup-plugin-size-snapshot';
 import pkg from './package.json';
 
 const input = './compiled/index.js';
-const external = id => !id.startsWith('.') && !id.startsWith('/');
+const external = id => !id.startsWith('.') && !path.isAbsolute(id);
 const replacements = [{ original: 'lodash', replacement: 'lodash-es' }];
 const babelOptions = {
   exclude: /node_modules/,
@@ -26,10 +27,7 @@ const buildUmd = ({ env }) => ({
     name: 'Formik',
     format: 'umd',
     sourcemap: true,
-    file:
-      env === 'production'
-        ? `./dist/formik.umd.${env}.js`
-        : `./dist/formik.umd.${env}.js`,
+    file: `./dist/formik.umd.${env}.js`,
     exports: 'named',
     globals: {
       react: 'React',
@@ -60,13 +58,15 @@ const buildUmd = ({ env }) => ({
     sourceMaps(),
     sizeSnapshot(),
     env === 'production' &&
-      uglify({
+      terser({
+        sourcemap: true,
         output: { comments: false },
         compress: {
           keep_infinity: true,
           pure_getters: true,
         },
         warnings: true,
+        ecma: 5,
         toplevel: false,
       }),
   ],
@@ -87,6 +87,20 @@ const buildCjs = ({ env }) => ({
     }),
     sourceMaps(),
     sizeSnapshot(),
+    env === 'production' &&
+      terser({
+        sourcemap: true,
+        output: { comments: false },
+        compress: {
+          keep_infinity: true,
+          pure_getters: true,
+        },
+        warnings: true,
+        ecma: 5,
+        // Compress and/or mangle variables in top level scope.
+        // @see https://github.com/terser-js/terser
+        toplevel: true,
+      }),
   ],
 });
 
@@ -101,7 +115,7 @@ export default [
     output: [
       {
         file: pkg.module,
-        format: 'es',
+        format: 'esm',
         sourcemap: true,
       },
     ],

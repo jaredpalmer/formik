@@ -69,6 +69,21 @@ const users = [
     pinned: true,
   },
   {
+    caption: 'State Street',
+    image: '/formik/img/logos/state-street.png',
+    infoLink: 'https://statestreet.com',
+  },
+  {
+    caption: 'Wayfair',
+    image: '/formik/img/logos/wayfair.svg',
+    infoLink: 'https://wayfair.com',
+  },
+  {
+    caption: 'Artsy',
+    image: '/formik/img/logos/artsy.png',
+    infoLink: 'https://artsy.com',
+  },
+  {
     caption: 'Postmates',
     image: '/formik/img/logos/postmates.svg',
     infoLink: 'https://postmates.com',
@@ -77,6 +92,11 @@ const users = [
     caption: 'Capsule Health',
     image: '/formik/img/logos/capsule.svg',
     infoLink: 'https://capsulecares.com',
+  },
+  {
+    caption: 'Egghead',
+    image: '/formik/img/logos/egghead.svg',
+    infoLink: 'https://egghead.io',
   },
   {
     caption: 'Frame.io',
@@ -92,6 +112,11 @@ const users = [
     caption: 'Extendi',
     image: '/formik/img/logos/extendi.svg',
     infoLink: 'https://www.extendi.it',
+  },
+  {
+    caption: 'Gusto',
+    image: '/formik/img/logos/gusto.png',
+    infoLink: 'https://gusto.com',
   },
 ];
 
@@ -114,6 +139,7 @@ const siteConfig = {
   // For no header links in the top nav bar -> headerLinks: [],
   headerLinks: [
     { doc: 'overview', label: 'Docs' },
+    { page: 'users', label: 'Users' },
     { page: 'help', label: 'Help' },
     {
       href: 'https://github.com/jaredpalmer/formik',
@@ -194,6 +220,7 @@ const siteConfig = {
     zIndex: 100,
   },
   enableUpdateTime: true,
+  enableUpdateBy: true,
   gaTrackingId: 'UA-55176740-4',
   twitter: true,
   twitterUsername: 'jaredpalmer',

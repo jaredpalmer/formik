@@ -276,7 +276,7 @@ export const FriendList = () => (
               </Form>
             );
           }}
-        <FieldArray/>
+        </FieldArray>
       )}
     />
   </div>

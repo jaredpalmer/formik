@@ -27,8 +27,8 @@ import {
   makeCancelable,
 } from './utils';
 
-export class Formik<Values = object, ExtraProps = {}> extends React.Component<
-  FormikConfig<Values> & ExtraProps,
+export class Formik<Values = FormikValues> extends React.Component<
+  FormikConfig<Values>,
   FormikState<Values>
 > {
   static defaultProps = {
@@ -51,7 +51,7 @@ export class Formik<Values = object, ExtraProps = {}> extends React.Component<
   };
   validator: any;
 
-  constructor(props: FormikConfig<Values> & ExtraProps) {
+  constructor(props: FormikConfig<Values>) {
     super(props);
     this.state = {
       values: props.initialValues || ({} as any),
@@ -60,6 +60,7 @@ export class Formik<Values = object, ExtraProps = {}> extends React.Component<
       isSubmitting: false,
       isValidating: false,
       submitCount: 0,
+      status: props.initialStatus,
     };
     this.didMount = false;
     this.fields = {};
@@ -107,7 +108,7 @@ export class Formik<Values = object, ExtraProps = {}> extends React.Component<
     }
   }
 
-  componentDidUpdate(prevProps: Readonly<FormikConfig<Values> & ExtraProps>) {
+  componentDidUpdate(prevProps: Readonly<FormikConfig<Values>>) {
     // If the initialValues change, reset the form
     if (
       this.props.enableReinitialize &&
@@ -286,12 +287,14 @@ export class Formik<Values = object, ExtraProps = {}> extends React.Component<
     this.validator = cancel;
     return promise
       .then((errors: FormikErrors<Values>) => {
-        this.setState(prevState => {
-          if (!isEqual(prevState.errors, errors)) {
-            return { errors };
-          }
-          return null; // abort the update
-        });
+        if (this.didMount) {
+          this.setState(prevState => {
+            if (!isEqual(prevState.errors, errors)) {
+              return { errors };
+            }
+            return null; // abort the update
+          });
+        }
         return errors;
       })
       .catch(x => x);
@@ -439,7 +442,9 @@ export class Formik<Values = object, ExtraProps = {}> extends React.Component<
     }));
 
     return this.runValidations(this.state.values).then(combinedErrors => {
-      this.setState({ isValidating: false });
+      if (this.didMount) {
+        this.setState({ isValidating: false });
+      }
       const isValid = Object.keys(combinedErrors).length === 0;
       if (isValid) {
         this.executeSubmit();
@@ -540,7 +545,7 @@ export class Formik<Values = object, ExtraProps = {}> extends React.Component<
       errors: {},
       touched: {},
       error: undefined,
-      status: undefined,
+      status: this.props.initialStatus,
       values,
       submitCount: 0,
     });
@@ -569,7 +574,9 @@ export class Formik<Values = object, ExtraProps = {}> extends React.Component<
   validateForm = (values: Values) => {
     this.setState({ isValidating: true });
     return this.runValidations(values).then(errors => {
-      this.setState({ isValidating: false });
+      if (this.didMount) {
+        this.setState({ isValidating: false });
+      }
       return errors;
     });
   };

@@ -3,7 +3,7 @@ import toPath from 'lodash/toPath';
 import * as React from 'react';
 
 /**
- * Deeply get a value from an object via it's path.
+ * Deeply get a value from an object via its path.
  */
 export function getIn(
   obj: any,
@@ -19,7 +19,7 @@ export function getIn(
 }
 
 /**
- * Deeply set a value from in object via it's path.
+ * Deeply set a value from in object via its path.
  * @see https://github.com/developit/linkstate
  */
 export function setIn(obj: any, path: string, value: any): any {

@@ -33,6 +33,7 @@ const Form: React.SFC<FormikProps<Values>> = ({
       {isSubmitting && <div id="submitting">Submitting</div>}
       <button
         id="statusButton"
+        type="button"
         onClick={() => setStatus({ myStatusMessage: 'True' })}
       >
         Call setStatus

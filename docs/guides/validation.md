@@ -66,7 +66,7 @@ validators or use a 3rd party library. At The Palmer Group, we use
 [Yup](https://github.com/jquense/yup) for object schema validation. It has an
 API that's pretty similar to [Joi](https://github.com/hapijs/joi) and
 [React PropTypes](https://github.com/facebook/prop-types) but is small enough
-for the browser and fast enough for runtime usage. Because we :heart: Yup sooo
+for the browser and fast enough for runtime usage. Because we ❤️ Yup sooo
 much, Formik has a special config option / prop for Yup object schemas called `validationSchema` which will automatically transform Yup's validation errors into a pretty object whose keys match `values` and `touched`. This symmetry makes it easy to manage business logic around error messages.
 
 To add Yup to your project, install it from NPM.
@@ -138,6 +138,8 @@ For more information about `<Formik validationSchema>`, see the API reference.
 
 Formik supports field-level validation via the `<Field>`/`<FastField>` components' `validate` prop. This function can be synchronous or asynchronous (return a Promise). It will run after any `onChange` and `onBlur` by default. This behavior can be altered at the top level `<Formik/>` component using the `validateOnChange` and `validateOnBlur` props respectively. In addition to change/blur, all field-level validations are run at the beginning of a submission attempt and then the results are deeply merged with any top-level validation results.
 
+> Note: The `<Field>/<FastField>` components' `validate` function will only be executed on mounted fields. That is to say, if any of your fields unmount during the flow of your form (e.g. Material-UI's `<Tabs>` unmounts the previous `<Tab>` your user was on), those fields will not be validated during form validation/submission.
+
 ```jsx
 import React from 'react';
 import { Formik, Form, Field } from 'formik';
@@ -197,7 +199,6 @@ You can manually trigger both form-level and field-level validation with Formik 
 ```jsx
 import React from 'react';
 import { Formik, Form, Field } from 'formik';
-import * as Yup from "yup";
 
 function validateEmail(value) {
   let error;

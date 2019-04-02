@@ -102,8 +102,8 @@ class FieldArrayInner<Values = {}> extends React.Component<
 
   updateArrayField = (
     fn: Function,
-    alterTouched: boolean,
-    alterErrors: boolean
+    alterTouched: boolean | Function,
+    alterErrors: boolean | Function
   ) => {
     const {
       name,
@@ -111,20 +111,34 @@ class FieldArrayInner<Values = {}> extends React.Component<
       formik: { setFormikState, validateForm },
     } = this.props;
     setFormikState(
-      (prevState: FormikState<any>) => ({
-        ...prevState,
-        values: setIn(
-          prevState.values,
-          name,
-          fn(getIn(prevState.values, name))
-        ),
-        errors: alterErrors
-          ? setIn(prevState.errors, name, fn(getIn(prevState.errors, name)))
-          : prevState.errors,
-        touched: alterTouched
-          ? setIn(prevState.touched, name, fn(getIn(prevState.touched, name)))
-          : prevState.touched,
-      }),
+      (prevState: FormikState<any>) => {
+        let updateErrors = typeof alterErrors === 'function' ? alterErrors : fn;
+        let updateTouched =
+          typeof alterTouched === 'function' ? alterTouched : fn;
+
+        return {
+          ...prevState,
+          values: setIn(
+            prevState.values,
+            name,
+            fn(getIn(prevState.values, name))
+          ),
+          errors: alterErrors
+            ? setIn(
+                prevState.errors,
+                name,
+                updateErrors(getIn(prevState.errors, name))
+              )
+            : prevState.errors,
+          touched: alterTouched
+            ? setIn(
+                prevState.touched,
+                name,
+                updateTouched(getIn(prevState.touched, name))
+              )
+            : prevState.touched,
+        };
+      },
       () => {
         if (validateOnChange) {
           validateForm();
@@ -160,8 +174,8 @@ class FieldArrayInner<Values = {}> extends React.Component<
   insert = (index: number, value: any) =>
     this.updateArrayField(
       (array: any[]) => insert(array, index, value),
-      true,
-      true
+      (array: any[]) => insert(array, index, null),
+      (array: any[]) => insert(array, index, null)
     );
 
   handleInsert = (index: number, value: any) => () => this.insert(index, value);
@@ -186,8 +200,16 @@ class FieldArrayInner<Values = {}> extends React.Component<
         }
         return arr;
       },
-      true,
-      true
+      (array: any[]) => {
+        const arr = array ? [null, ...array] : [null];
+        if (length < 0) length = arr.length;
+        return arr;
+      },
+      (array: any[]) => {
+        const arr = array ? [null, ...array] : [null];
+        if (length < 0) length = arr.length;
+        return arr;
+      }
     );
     return length;
   };

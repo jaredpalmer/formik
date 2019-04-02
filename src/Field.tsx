@@ -25,10 +25,19 @@ export interface FieldProps<V = any> {
 export interface FieldConfig {
   /**
    * Field component to render. Can either be a string like 'select' or a component.
+   * @deprecated
    */
   component?:
     | string
     | React.ComponentType<FieldProps<any>>
+    | React.ComponentType<void>;
+
+  /**
+   * Component to render. Can either be a string like 'select' or a component.
+   */
+  as?:
+    | string
+    | React.ComponentType<FieldProps<any>['field']>
     | React.ComponentType<void>;
 
   /**
@@ -82,7 +91,7 @@ export function Field({
   name,
   render,
   children,
-  as: is = 'input',
+  as: is = 'input', // `as` is reserved in typescript lol
   component,
   ...props
 }: FieldAttributes<any>) {
@@ -154,6 +163,7 @@ export function Field({
       children
     );
   }
+
   return React.createElement(is, { ...field, ...props }, children);
 }
 export const FastField = Field;

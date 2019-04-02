@@ -76,12 +76,10 @@ export type FieldAttributes<T> = GenericFieldHTMLAttributes & FieldConfig & T;
 export function useField(name: string, type?: string) {
   const formik = useFormikContext();
 
-  if (process.env.NODE_ENV !== 'production') {
-    warning(
-      formik,
-      'useField() / <Field /> must be used underneath a <Formik> component or withFormik() higher order component'
-    );
-  }
+  warning(
+    formik,
+    'useField() / <Field /> must be used underneath a <Formik> component or withFormik() higher order component'
+  );
 
   return formik.getFieldProps(name, type);
 }

@@ -72,17 +72,15 @@ const Basic = () => (
             form.errors.firstName && <div>{form.errors.firstName}</div>}
 
           <label htmlFor="middleInitial">Middle Initial</label>
-          <FastField
-            name="middleInitial"
-            placeholder="F"
-            render={({ field, form }) => (
+          <FastField name="middleInitial" placeholder="F">
+            {({ field, form, meta }) => (
               <div>
                 <input {...field} />
                 {/**
                  * This updates normally because it's from the same slice of Formik state,
                  * i.e. path to the object matches the name of this <FastField />
                  */}
-                {form.touched.middleInitial ? form.errors.middleInitial : null}
+                {meta.touched ? meta.error : null}
 
                 {/** This won't ever update since it's coming from
                  from another <Field>/<FastField>'s (i.e. firstName's) slice   */}
@@ -102,25 +100,23 @@ const Basic = () => (
                 </button>
               </div>
             )}
-          />
+          </FastField>
 
           {/** Updates for all changes to Formik state
            and all changes by all <Field>s and <FastField>s */}
           <label htmlFor="lastName">LastName</label>
-          <Field
-            name="lastName"
-            placeholder="Baby"
-            render={({ field, form }) => (
+          <Field name="lastName" placeholder="Baby">
+            {( }) => (
               <div>
                 <input {...field} />
-                {/** Works because this is inside
+                {/**  Works because this is inside
                  of a <Field/>, which gets all updates */}
                 {form.touched.firstName && form.errors.firstName
                   ? form.errors.firstName
                   : null}
               </div>
             )}
-          />
+          </Field>
 
           {/** Updates for all changes to Formik state and
            all changes by all <Field>s and <FastField>s */}

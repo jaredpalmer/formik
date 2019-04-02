@@ -8,6 +8,8 @@ import {
   FormikTouched,
   FormikValues,
   FormikProps,
+  FieldMetaProps,
+  FieldInputProps,
 } from './types';
 import {
   isFunction,
@@ -625,23 +627,10 @@ export function useFormik<Values = object>({
     });
   }
 
-  function getFieldProps(
+  function getFieldProps<Val = any>(
     name: string,
     type: string
-  ): [
-    {
-      value: any;
-      name: string;
-      onChange: ((e: React.ChangeEvent<any>) => void);
-      onBlur: ((e: any) => void);
-    },
-    {
-      value: any;
-      error?: string | undefined;
-      touch: boolean;
-      initialValue?: any;
-    }
-  ] {
+  ): [FieldInputProps<Val>, FieldMetaProps<Val>] {
     const field = {
       name,
       value:
@@ -652,20 +641,15 @@ export function useFormik<Values = object>({
       onBlur: handleBlur,
     };
 
-    return [field, getFieldMeta(name)];
+    return [field, getFieldMeta<Val>(name)];
   }
 
-  function getFieldMeta(name: string) {
+  function getFieldMeta<Val = any>(name: string): FieldMetaProps<Val> {
     return {
       value: getIn(state.values, name),
       error: getIn(state.errors, name),
-      touch: getIn(state.touched, name),
+      touched: !!getIn(state.touched, name),
       initialValue: getIn(initialValues.current, name),
-    } as {
-      value: any;
-      error?: string;
-      touch: boolean;
-      initialValue?: any;
     };
   }
 

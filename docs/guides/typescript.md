@@ -45,12 +45,10 @@ export const MyApp: React.SFC<{}> = () => {
           <Form>
             <Field
               name="firstName"
-              render={({ field, form }: FieldProps<MyFormValues>) => (
+              render={({ field, form, meta }: FieldProps<MyFormValues>) => (
                 <div>
                   <input type="text" {...field} placeholder="First Name" />
-                  {form.touched.firstName &&
-                    form.errors.firstName &&
-                    form.errors.firstName}
+                  {meta.touched && meta.error && meta.error}
                 </div>
               )}
             />

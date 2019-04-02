@@ -117,23 +117,10 @@ export interface FormikHandlers {
     ? void
     : ((e: string | React.ChangeEvent<any>) => void);
 
-  getFieldProps(
+  getFieldProps<Value = any>(
     name: string,
     type?: string
-  ): [
-    {
-      value: any;
-      name: string;
-      onChange: ((e: React.ChangeEvent<any>) => void);
-      onBlur: ((e: any) => void);
-    },
-    {
-      value: any;
-      error?: string | undefined;
-      touch: boolean;
-      initialValue?: any;
-    }
-  ];
+  ): [FieldInputProps<Value>, FieldMetaProps<Value>];
 }
 
 /**
@@ -247,6 +234,30 @@ export interface SharedRenderProps<T> {
 }
 
 export type GenericFieldHTMLAttributes =
-  | React.InputHTMLAttributes<HTMLInputElement>
-  | React.SelectHTMLAttributes<HTMLSelectElement>
-  | React.TextareaHTMLAttributes<HTMLTextAreaElement>;
+  | JSX.IntrinsicElements['input']
+  | JSX.IntrinsicElements['select']
+  | JSX.IntrinsicElements['textarea'];
+
+/** Field metadata */
+export interface FieldMetaProps<Value> {
+  /** Value of the field */
+  value: Value;
+  /** Error message of the field */
+  error?: string;
+  /** Has the field been visited? */
+  touched: boolean;
+  /** Initial value of the field */
+  initialValue?: Value;
+}
+
+/** Field input value, name, and event handlers */
+export interface FieldInputProps<Value> {
+  /** Value of the field */
+  value: Value;
+  /** Name of the field */
+  name: string;
+  /** Change event handler */
+  onChange: FormikHandlers['handleChange'];
+  /** Blur event handler */
+  onBlur: FormikHandlers['handleBlur'];
+}

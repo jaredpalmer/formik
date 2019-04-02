@@ -5,10 +5,9 @@ import { Debug } from './Debug';
 class Input extends React.Component {
   renders = 0;
   render() {
-    const { field, form, ...rest } = this.props;
     return (
       <div>
-        <input {...field} {...rest} />
+        <input {...this.props} />
         <p># of renders: {this.renders++}</p>
       </div>
     );
@@ -37,7 +36,7 @@ const Basic = () => (
           <FastField
             name="firstName"
             placeholder="Jane"
-            component={Input}
+            as={Input}
             disabled={isSubmitting}
           />
 
@@ -45,7 +44,7 @@ const Basic = () => (
           <FastField
             name="lastName"
             placeholder="Doe"
-            component={Input}
+            as={Input}
             disabled={isSubmitting}
           />
 
@@ -54,7 +53,7 @@ const Basic = () => (
             name="email"
             placeholder="jane@acme.com"
             type="email"
-            component={Input}
+            as={Input}
             disabled={isSubmitting}
           />
 

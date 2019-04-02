@@ -46,11 +46,7 @@ const SignUp = () => (
             label="Email"
             placeholder="jane@acme.com"
           />
-          <Fieldset
-            name="color"
-            label="Favorite Color"
-            component="select"
-          >
+          <Fieldset name="color" label="Favorite Color" as="select">
             <option value="">Select a Color</option>
             <option value="red">Red</option>
             <option value="green">Green</option>

@@ -73,14 +73,14 @@ const Basic = () => (
 
           <label htmlFor="middleInitial">Middle Initial</label>
           <FastField name="middleInitial" placeholder="F">
-            {({ field, form }) => (
+            {({ field, form, meta }) => (
               <div>
                 <input {...field} />
                 {/**
                  * This updates normally because it's from the same slice of Formik state,
                  * i.e. path to the object matches the name of this <FastField />
                  */}
-                {form.touched.middleInitial ? form.errors.middleInitial : null}
+                {meta.touched ? meta.error : null}
 
                 {/** This won't ever update since it's coming from
                  from another <Field>/<FastField>'s (i.e. firstName's) slice   */}
@@ -106,10 +106,10 @@ const Basic = () => (
            and all changes by all <Field>s and <FastField>s */}
           <label htmlFor="lastName">LastName</label>
           <Field name="lastName" placeholder="Baby">
-            {({ field, form }) => (
+            {( }) => (
               <div>
                 <input {...field} />
-                {/** Works because this is inside
+                {/**  Works because this is inside
                  of a <Field/>, which gets all updates */}
                 {form.touched.firstName && form.errors.firstName
                   ? form.errors.firstName

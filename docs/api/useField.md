@@ -20,7 +20,7 @@ const MyTextField = ({ label, ...props }) => {
         {label}
         <input {...field} {...props} />
       </label>
-      {meta.touch && meta.error ? (
+      {meta.touched && meta.error ? (
         <div className="error">{meta.error}</div>
       ) : null}
     </>
@@ -55,25 +55,26 @@ const Example = () => (
 
 # Reference
 
-## `useField(name: string): [FieldProps, FieldMetaProps]`
+## `useField<Value = any>(name: string): [FieldInputProps<Value>, FieldMetaProps<Value>]`
 
 A custom React Hook that returns a tuple (2 element array) containing `FieldProps` and `FieldMetaProps`.
 
-### `FieldProps`
+### `FieldInputProps`
 
 An object that contains:
 
-* `onChange`
-* `onBlur`
-* `value`
-* `name`
+* `name: string` - The name of the field
+* `onBlur: () => void;` - A blur event handler
+* `onChange: (e: React.ChangeEvent<any>) => void` - A change event handler
+* `value: any` - The field's value (plucked out of `values`)
 
 for a given field in Formik state. This is to avoid needing to manually wire up inputs.
 
-### `FieldMeta`
+### `FieldMetaProps`
 
 An object that contains relevant computed metadata about a field. More specifically,
 
-* `touch: boolean` - Whether the field has been visited (plucked out of `touched`)
 * `error?: string` - The field's error message (plucked out of `errors`)
-* `initialValue: any` - The field's initial value if the field is given a value in `initialValues` (plucked out of `initialValues`)
+* `initialValue?: any` - The field's initial value if the field is given a value in `initialValues` (plucked out of `initialValues`)
+* `touched: boolean` - Whether the field has been visited (plucked out of `touched`)
+* `value: any` - The field's value (plucked out of `values`)

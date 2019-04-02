@@ -42,6 +42,7 @@
   },
   "dependencies": {
     "deepmerge": "^2.1.1",
+    "es6-error": "^4.1.1",
     "hoist-non-react-statics": "^3.2.1",
     "lodash": "^4.17.11",
     "lodash-es": "^4.17.11",

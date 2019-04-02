@@ -2,7 +2,7 @@ import * as React from 'react';
 import { render, cleanup, fireEvent, wait } from 'react-testing-library';
 import * as Yup from 'yup';
 
-import { Formik, FormikProps, FormikConfig } from '../src';
+import { Formik, FormikProps, FormikConfig, FormikSubmitError } from '../src';
 import { noop } from './testHelpers';
 
 jest.spyOn(global.console, 'warn');
@@ -440,6 +440,18 @@ describe('<Formik>', () => {
 
       fireEvent.submit(getByTestId('form'));
       expect(getProps().isSubmitting).toBeTruthy();
+    });
+
+    describe('with async handler', () => {
+      it('should set error if promise is rejected with FormikSubmitError', async () => {
+        const submitError = new FormikSubmitError({ email: 'Exists' });
+        const onSubmit = jest.fn(() => Promise.reject(submitError));
+        const { getProps, getByTestId } = renderFormik({ onSubmit });
+
+        fireEvent.submit(getByTestId('form'));
+        await wait(() => expect(onSubmit).toBeCalled());
+        expect(getProps().errors.email).toEqual('Exists');
+      });
     });
 
     describe('with validate (SYNC)', () => {

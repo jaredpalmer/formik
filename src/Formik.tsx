@@ -23,6 +23,7 @@ import {
   makeCancelable,
 } from './utils';
 import { FormikProvider } from './FormikContext';
+import { FormikSubmitError } from './FormikSubmitError';
 import warning from 'tiny-warning';
 
 // We already used FormikActions. So we'll go all Elm-y, and use Message.
@@ -615,8 +616,11 @@ export function useFormik<Values = object>({
               dispatch({ type: 'SUBMIT_SUCCESS' });
             }
           })
-          .catch(_errors => {
+          .catch(error => {
             if (isMounted.current) {
+              if (error instanceof FormikSubmitError) {
+                dispatch({ type: 'SET_ERRORS', payload: error.errors });
+              }
               dispatch({ type: 'SUBMIT_FAILURE' });
             }
           });

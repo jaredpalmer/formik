@@ -41,7 +41,7 @@ export class Formik<Values = FormikValues> extends React.Component<
   initialValues: Values;
   didMount: boolean;
   hcCache: {
-    [key: string]: (e: string | React.ChangeEvent<any>) => void;
+    [key: string]: (e: unknown | React.ChangeEvent<any>) => void;
   } = {};
   hbCache: {
     [key: string]: (e: any) => void;
@@ -337,11 +337,6 @@ export class Formik<Values = FormikValues> extends React.Component<
         }
       } else {
         value = eventOrValue;
-      }
-
-      // If the first argument is not a string though, it has to be a synthetic React Event (or a fake one),
-      // so we handle like we would a normal HTML change event.
-      if (!isString(eventOrValue)) {
       }
 
       if (field) {

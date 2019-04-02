@@ -55,7 +55,7 @@ const Example = () => (
 
 # Reference
 
-## `useField(name: string): [FieldInputProps, FieldMetaProps]`
+## `useField<Value = any>(name: string): [FieldInputProps<Value>, FieldMetaProps<Value>]`
 
 A custom React Hook that returns a tuple (2 element array) containing `FieldProps` and `FieldMetaProps`.
 

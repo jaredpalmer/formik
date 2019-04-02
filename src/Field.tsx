@@ -25,11 +25,20 @@ export interface FieldProps<V = any> {
 export interface FieldConfig {
   /**
    * Field component to render. Can either be a string like 'select' or a component.
+   * @deprecated
    */
   component?:
     | string
     | React.ComponentType<FieldProps<any>>
-    | React.ComponentType<void>;
+    | React.ComponentType;
+
+  /**
+   * Component to render. Can either be a string e.g. 'select', 'input', or 'textarea', or a component.
+   */
+  as?:
+    | React.ComponentType<FieldProps<any>['field']>
+    | keyof JSX.IntrinsicElements
+    | React.ComponentType;
 
   /**
    * Render prop (works like React router's <Route render={props =>} />)
@@ -82,7 +91,8 @@ export function Field({
   name,
   render,
   children,
-  component = 'input',
+  as: is = 'input', // `as` is reserved in typescript lol
+  component,
   ...props
 }: FieldAttributes<any>) {
   const {
@@ -92,17 +102,32 @@ export function Field({
   } = useFormikContext();
 
   warning(
-    render,
-    '<Field render> has been deprecated and will be removed in future versions of Formik. Please use a function as a child instead.'
+    !!render,
+    `<Field render> has been deprecated and will be removed in future versions of Formik. Please use a child callback function instead. To get rid of this warning, 
+        replace 
+          <Field name="${name}" render={({field, form}) => ...} />
+        with
+          <Field name="${name}">{({field, form}) => ...}</Field>
+    `
   );
 
   warning(
-    component && children && isFunction(children),
-    'You should not use <Field component> and <Field children> as a function in the same <Field> component; <Field component> will be ignored.'
+    !!component,
+    '<Field component> has been deprecated and will be removed in future versions of Formik. Use <Formik as> instead. Note that with the `as` prop, all props are passed directly through and not grouped in `field` object key.'
   );
 
   warning(
-    render && children && !isEmptyChildren(children),
+    !!is && !!children && isFunction(children),
+    'You should not use <Field as> and <Field children> as a function in the same <Field> component; <Field as> will be ignored.'
+  );
+
+  warning(
+    !!component && children && isFunction(children),
+    'You should not use <Field as> and <Field children> as a function in the same <Field> component; <Field as> will be ignored.'
+  );
+
+  warning(
+    !!render && !!children && !isEmptyChildren(children),
     'You should not use <Field render> and <Field children> in the same <Field> component; <Field children> will be ignored'
   );
 
@@ -128,20 +153,27 @@ export function Field({
     return children(bag);
   }
 
-  if (typeof component === 'string') {
-    const { innerRef, ...rest } = props;
-    return React.createElement(component, {
-      ref: innerRef,
-      ...field,
-      ...rest,
-      children,
-    });
+  if (component) {
+    if (typeof component === 'string') {
+      const { innerRef, ...rest } = props;
+      return React.createElement(
+        component,
+        { ref: innerRef, ...field, ...rest },
+        children
+      );
+    }
+    return React.createElement(component, { ...bag, ...props }, children);
   }
 
-  return React.createElement(component, {
-    ...bag,
-    ...props,
-    children,
-  });
+  if (typeof is === 'string') {
+    const { innerRef, ...rest } = props;
+    return React.createElement(
+      is,
+      { ref: innerRef, ...field, ...rest },
+      children
+    );
+  }
+
+  return React.createElement(is, { ...field, ...props }, children);
 }
 export const FastField = Field;

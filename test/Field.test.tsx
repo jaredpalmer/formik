@@ -6,7 +6,6 @@ import {
   FastField,
   FieldProps,
   FieldConfig,
-  FastFieldConfig,
   FormikProps,
   FormikConfig,
 } from '../src';
@@ -15,6 +14,7 @@ import { noop } from './testHelpers';
 
 const initialValues = { name: 'jared', email: 'hello@reason.nyc' };
 type Values = typeof initialValues;
+type FastFieldConfig = FieldConfig;
 
 function renderForm(
   ui?: React.ReactNode,
@@ -53,7 +53,7 @@ const createRenderField = (
 ) => {
   let injected: FieldProps;
 
-  if (!props.children && !props.render && !props.component) {
+  if (!props.children && !props.render && !props.component && !props.as) {
     props.children = (fieldProps: FieldProps) =>
       (injected = fieldProps) && (
         <input {...fieldProps.field} name="name" data-testid="name-input" />
@@ -104,20 +104,25 @@ describe('Field / FastField', () => {
   describe('receives { field, form } props and renders element', () => {
     it('<Field />', () => {
       let injected: FieldProps[] = [];
+      let asInjectedProps: FieldProps['field'] = {} as any;
 
       const Component = (props: FieldProps) =>
         injected.push(props) && <div data-testid="child">{TEXT}</div>;
+
+      const AsComponent = (props: FieldProps['field']) =>
+        (asInjectedProps = props) && <div data-testid="child">{TEXT}</div>;
 
       const { getFormProps, queryAllByText } = renderForm(
         <>
           <Field name="name" children={Component} />
           <Field name="name" render={Component} />
           <Field name="name" component={Component} />
+          <Field name="name" as={AsComponent} />
         </>
       );
 
+      const { handleBlur, handleChange } = getFormProps();
       injected.forEach(props => {
-        const { handleBlur, handleChange } = getFormProps();
         expect(props.field.name).toBe('name');
         expect(props.field.value).toBe('jared');
         expect(props.field.onChange).toBe(handleChange);
@@ -125,25 +130,34 @@ describe('Field / FastField', () => {
         expect(props.form).toEqual(getFormProps());
       });
 
-      expect(queryAllByText(TEXT)).toHaveLength(3);
+      expect(asInjectedProps.name).toBe('name');
+      expect(asInjectedProps.value).toBe('jared');
+      expect(asInjectedProps.onChange).toBe(handleChange);
+      expect(asInjectedProps.onBlur).toBe(handleBlur);
+
+      expect(queryAllByText(TEXT)).toHaveLength(4);
     });
 
     it('<FastField />', () => {
       let injected: FieldProps[] = [];
+      let asInjectedProps: FieldProps['field'] = {} as any;
 
       const Component = (props: FieldProps) =>
         injected.push(props) && <div>{TEXT}</div>;
+      const AsComponent = (props: FieldProps['field']) =>
+        (asInjectedProps = props) && <div data-testid="child">{TEXT}</div>;
 
       const { getFormProps, queryAllByText } = renderForm(
         <>
           <FastField name="name" children={Component} />
           <FastField name="name" render={Component} />
           <FastField name="name" component={Component} />
+          <FastField name="name" as={AsComponent} />
         </>
       );
 
+      const { handleBlur, handleChange } = getFormProps();
       injected.forEach(props => {
-        const { handleBlur, handleChange } = getFormProps();
         expect(props.field.name).toBe('name');
         expect(props.field.value).toBe('jared');
         expect(props.field.onChange).toBe(handleChange);
@@ -151,16 +165,31 @@ describe('Field / FastField', () => {
         expect(props.form).toEqual(getFormProps());
       });
 
-      expect(queryAllByText(TEXT)).toHaveLength(3);
+      expect(asInjectedProps.name).toBe('name');
+      expect(asInjectedProps.value).toBe('jared');
+      expect(asInjectedProps.onChange).toBe(handleChange);
+      expect(asInjectedProps.onBlur).toBe(handleBlur);
+      expect(queryAllByText(TEXT)).toHaveLength(4);
     });
   });
 
   describe('children', () => {
-    cases('renders a child element', () => {
+    cases('renders a child element with component', () => {
       const { container } = renderForm(
         <Field name="name" component="select">
           <option value="Jared" label={TEXT} />
+          <option value="Brent" label={TEXT} />
+        </Field>
+      );
+
+      expect(container.querySelectorAll('option')).toHaveLength(2);
+    });
+
+    cases('renders a child element with as', () => {
+      const { container } = renderForm(
+        <Field name="name" as="select">
           <option value="Jared" label={TEXT} />
+          <option value="Brent" label={TEXT} />
         </Field>
       );
 
@@ -193,6 +222,36 @@ describe('Field / FastField', () => {
 
       const innerRef = jest.fn();
       renderField({ component: Component, innerRef });
+      expect(injected.innerRef).toBe(innerRef);
+    });
+  });
+
+  describe('as', () => {
+    cases('renders string components', renderField => {
+      const { container } = renderField({
+        as: 'textarea',
+      });
+
+      expect(container.firstChild.type).toBe('textarea');
+    });
+
+    cases('assigns innerRef as a ref to string components', renderField => {
+      const innerRef = jest.fn();
+      const { container } = renderField({
+        innerRef,
+        as: 'input',
+      });
+
+      expect(innerRef).toHaveBeenCalledWith(container.firstChild);
+    });
+
+    cases('forwards innerRef to React component', renderField => {
+      let injected: any; /** FieldProps ;) */
+      const Component = (props: FieldProps['field']) =>
+        (injected = props) && null;
+
+      const innerRef = jest.fn();
+      renderField({ as: Component, innerRef });
       expect(injected.innerRef).toBe(innerRef);
     });
   });
@@ -306,6 +365,30 @@ describe('Field / FastField', () => {
   });
 
   describe('warnings', () => {
+    cases('warns if component is a string', renderField => {
+      global.console.warn = jest.fn();
+
+      renderField({
+        component: 'select',
+      });
+
+      expect((global.console.warn as jest.Mock).mock.calls[0][0]).toContain(
+        'Warning:'
+      );
+    });
+
+    cases('warns if component is fn', renderField => {
+      global.console.warn = jest.fn();
+
+      renderField({
+        component: () => null,
+      });
+
+      expect((global.console.warn as jest.Mock).mock.calls[0][0]).toContain(
+        'Warning:'
+      );
+    });
+
     cases(
       'warns if both string component and children as a function',
       renderField => {

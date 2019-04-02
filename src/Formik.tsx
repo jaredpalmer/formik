@@ -19,6 +19,7 @@ import {
   isNaN,
   isPromise,
   isString,
+  isInputEvent,
   setIn,
   setNestedObjectValues,
   getActiveElement,
@@ -40,7 +41,7 @@ export class Formik<Values = FormikValues> extends React.Component<
   initialValues: Values;
   didMount: boolean;
   hcCache: {
-    [key: string]: (e: string | React.ChangeEvent<any>) => void;
+    [key: string]: (e: unknown | React.ChangeEvent<any>) => void;
   } = {};
   hbCache: {
     [key: string]: (e: any) => void;
@@ -301,37 +302,23 @@ export class Formik<Values = FormikValues> extends React.Component<
 
   handleChange = (
     eventOrPath: string | React.ChangeEvent<any>
-  ): void | ((eventOrTextValue: string | React.ChangeEvent<any>) => void) => {
-    // @todo someone make this less disgusting.
-    //
-    // executeChange is the core of handleChange, we'll use it cache change
-    // handlers like Preact's linkState.
+  ): void | ((eventOrValue: unknown | React.ChangeEvent<any>) => void) => {
+    // this function actually handles the change
     const executeChange = (
-      eventOrTextValue: string | React.ChangeEvent<any>,
+      eventOrValue: unknown | React.ChangeEvent<any>,
       maybePath?: string
     ) => {
-      // By default, assume that the first argument is a string. This allows us to use
-      // handleChange with React Native and React Native Web's onChangeText prop which
-      // provides just the value of the input.
+      // To allow using handleChange with React Native (Web) or other UI libraries, we
+      // allow for the first argument to be either a value or the standard change event.
       let field = maybePath;
-      let val = eventOrTextValue;
-      let parsed;
-      // If the first argument is not a string though, it has to be a synthetic React Event (or a fake one),
-      // so we handle like we would a normal HTML change event.
-      if (!isString(eventOrTextValue)) {
-        // If we can, persist the event
-        // @see https://reactjs.org/docs/events.html#event-pooling
-        if ((eventOrTextValue as React.ChangeEvent<any>).persist) {
-          (eventOrTextValue as React.ChangeEvent<any>).persist();
+      let value: unknown;
+      if (isInputEvent(eventOrValue)) {
+        const event = eventOrValue as React.ChangeEvent<any>;
+        // If we can, persist the event, https://reactjs.org/docs/events.html#event-pooling
+        if (event.persist) {
+          event.persist();
         }
-        const {
-          type,
-          name,
-          id,
-          value,
-          checked,
-          outerHTML,
-        } = (eventOrTextValue as React.ChangeEvent<any>).target;
+        const { type, name, id, checked, outerHTML } = event.target;
         field = maybePath ? maybePath : name ? name : id;
         if (!field && process.env.NODE_ENV !== 'production') {
           warnAboutMissingIdentifier({
@@ -340,9 +327,16 @@ export class Formik<Values = FormikValues> extends React.Component<
             handlerName: 'handleChange',
           });
         }
-        val = /number|range/.test(type)
-          ? ((parsed = parseFloat(value)), isNaN(parsed) ? '' : parsed)
-          : /checkbox/.test(type) ? checked : value;
+        value = event.target.value;
+        if (/number|range/.test(type)) {
+          const parsed = parseFloat(event.target.value);
+          value = isNaN(parsed) ? '' : parsed;
+        }
+        if (/checkbox/.test(type)) {
+          value = checked;
+        }
+      } else {
+        value = eventOrValue;
       }
 
       if (field) {
@@ -350,11 +344,11 @@ export class Formik<Values = FormikValues> extends React.Component<
         this.setState(
           prevState => ({
             ...prevState,
-            values: setIn(prevState.values, field!, val),
+            values: setIn(prevState.values, field!, value),
           }),
           () => {
             if (this.props.validateOnChange) {
-              this.runValidations(setIn(this.state.values, field!, val));
+              this.runValidations(setIn(this.state.values, field!, value));
             }
           }
         );
@@ -362,20 +356,18 @@ export class Formik<Values = FormikValues> extends React.Component<
     };
 
     // Actually execute logic above....
-    // cache these handlers by key like Preact's linkState does for perf boost
     if (isString(eventOrPath)) {
-      return isFunction(this.hcCache[eventOrPath])
-        ? this.hcCache[eventOrPath] // return the cached handled
-        : (this.hcCache[eventOrPath] = (
-            // make a new one
-            event: React.ChangeEvent<any> | string
-          ) =>
-            executeChange(
-              event /* string or event, does not matter */,
-              eventOrPath /* this is path to the field now */
-            ));
+      const path = eventOrPath;
+      // cache these handlers by key like Preact's linkState does for perf boost
+      if (!isFunction(this.hcCache[path])) {
+        // set a new handle function in cache
+        this.hcCache[path] = (eventOrValue: unknown | React.ChangeEvent<any>) =>
+          executeChange(eventOrValue, path);
+      }
+      return this.hcCache[path]; // return the cached function
     } else {
-      executeChange(eventOrPath);
+      const event = eventOrPath;
+      executeChange(event);
     }
   };
 
@@ -462,39 +454,51 @@ export class Formik<Values = FormikValues> extends React.Component<
     this.props.onSubmit(this.state.values, this.getFormikActions());
   };
 
-  handleBlur = (eventOrString: any): void | ((e: any) => void) => {
-    const executeBlur = (e: any, path?: string) => {
-      if (e.persist) {
-        e.persist();
-      }
-      const { name, id, outerHTML } = e.target;
-      const field = path ? path : name ? name : id;
-
-      if (!field && process.env.NODE_ENV !== 'production') {
-        warnAboutMissingIdentifier({
-          htmlContent: outerHTML,
-          documentationAnchorLink: 'handleblur-e-any--void',
-          handlerName: 'handleBlur',
-        });
+  handleBlur = (
+    eventOrPath: string | React.FocusEvent<any>
+  ): void | ((e?: React.FocusEvent<any>) => void) => {
+    const executeBlur = (
+      maybeEvent?: React.FocusEvent<any>,
+      maybePath?: string
+    ) => {
+      let field = maybePath;
+      if (isInputEvent(maybeEvent)) {
+        const event = maybeEvent as React.FocusEvent<any>;
+        // If we can, persist the event, https://reactjs.org/docs/events.html#event-pooling
+        if (event.persist) {
+          event.persist();
+        }
+        const { name, id, outerHTML } = event.target;
+        field = name ? name : id;
+        if (!field && process.env.NODE_ENV !== 'production') {
+          warnAboutMissingIdentifier({
+            htmlContent: outerHTML,
+            documentationAnchorLink: 'handleblur-e-reactfocuseventany--void',
+            handlerName: 'handleBlur',
+          });
+        }
       }
 
       this.setState(prevState => ({
-        touched: setIn(prevState.touched, field, true),
+        touched: setIn(prevState.touched, field!, true),
       }));
 
       if (this.props.validateOnBlur) {
         this.runValidations(this.state.values);
       }
     };
-
-    if (isString(eventOrString)) {
+    if (isString(eventOrPath)) {
+      const path = eventOrPath;
       // cache these handlers by key like Preact's linkState does for perf boost
-      return isFunction(this.hbCache[eventOrString])
-        ? this.hbCache[eventOrString]
-        : (this.hbCache[eventOrString] = (event: any) =>
-            executeBlur(event, eventOrString));
+      if (!isFunction(this.hbCache[path])) {
+        // set a new handle function in cache
+        this.hbCache[path] = (event?: React.FocusEvent<any>) =>
+          executeBlur(event, path);
+      }
+      return this.hbCache[path]; // return the cached function
     } else {
-      executeBlur(eventOrString);
+      const event = eventOrPath;
+      executeBlur(event);
     }
   };
 

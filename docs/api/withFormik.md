@@ -113,9 +113,29 @@ included in the `FormikBag`.
 
 ### `isInitialValid?: boolean | (props: Props) => boolean`
 
-Default is `false`. Control the initial value of `isValid` prop prior to
+**Deprecated in 2.x, use `mapPropsToErrors` instead**
+
+Control the initial value of `isValid` prop prior to
 mount. You can also pass a function. Useful for situations when you want to
 enable/disable a submit and reset buttons on initial mount.
+
+### `mapPropsToErrors?: (props: Props) => FormikErrors<Values>`
+
+If this option is specified, then Formik will transfer its results into
+updatable form state and make these values available to the new component as
+`props.errors` initially. Useful for instatiating arbitrary error state into your form. As a reminder, `props.errors` will be overwritten as soon as validation runs. Formik will also reset `props.errors` to this initial value (and this function will be re-run) if the form is reset.
+
+### `mapPropsToStatus?: (props: Props) => any`
+
+If this option is specified, then Formik will transfer its results into
+updatable form state and make these values available to the new component as
+`props.status`. Useful for storing or instatiating arbitrary state into your form. As a reminder, `status` will be reset to this initial value (and this function will be re-run) if the form is reset.
+
+### `mapPropsToTouched?: (props: Props) => FormikTocuhed<Values>`
+
+If this option is specified, then Formik will transfer its results into
+updatable form state and make these values available to the new component as
+`props.errors`. Useful for instatiating arbitrary touched state (i.e. marking fields as visited) into your form. As a reminder, Formik will use this initial value (and this function will be re-run) if the form is reset.
 
 ### `mapPropsToValues?: (props: Props) => Values`
 
@@ -128,12 +148,6 @@ will map all props that are not functions to the inner component's
 
 Even if your form is not receiving any props from its parent, use
 `mapPropsToValues` to initialize your forms empty state.
-
-### `mapPropsToStatus?: (props: Props) => any`
-
-If this option is specified, then Formik will transfer its results into
-updatable form state and make these values available to the new component as
-`props.status`. Useful for storing or instatiating arbitrary state into your form. As a reminder, `status` will be reset to this initial value (and this function will be re-run) if the form is reset.
 
 ### `validate?: (values: Values, props: Props) => FormikErrors<Values> | Promise<any>`
 

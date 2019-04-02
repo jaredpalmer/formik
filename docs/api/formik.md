@@ -107,19 +107,17 @@ Submitting state of the form. Returns `true` if submission is in progress and `f
 
 #### `isValid: boolean`
 
-Returns `true` if the there are no `errors`, or the result of
-`isInitialValid` the form if is in "pristine" condition (i.e. not `dirty`).
+Returns `true` if there are no `errors` (i.e. the `errors` object is empty) and `false` otherwise.
+
+> Note: `isInitialValid` was deprecated in 2.x. However, for backwards compatibility, if the `isInitialValid` prop is specified, `isValid` will return `true` if the there are no `errors`, or the result of `isInitialValid` of the form if it is in "pristine" condition (i.e. not `dirty`).
 
 #### `isValidating: boolean`
 
 Returns `true` if Formik is running validation during submission, or by calling [`validateForm`] directly `false` otherwise. To learn more about what happens with `isValidating` during the submission process, see [Form Submission](guides/form-submission.md).
 
-#### `resetForm: (nextValues?: Values) => void`
+#### `resetForm: (nextInitialState?: FormikState<Values>) => void`
 
-Imperatively reset the form. This will clear `errors` and `touched`, set
-`isSubmitting` to `false`, `isValidating` to `false`, and rerun `mapPropsToValues` with the current
-`WrappedComponent`'s `props` or what's passed as an argument. The latter is
-useful for calling `resetForm` within `componentWillReceiveProps`.
+Imperatively reset the form. If `nextInitialState` is specified, Formik will set this state as the new "initial state" and use the related values of `nextInitialState` to update the form's `initialValues` as well as `initialTouched`, `initialStatus`, `initialErrors`. This is useful for altering the initial state (i.e. "base") of the form after changes have been made. If `nextInitialState` is not defined, then Formik will reset state to the original initial state. The latter is useful for calling `resetForm` within `componentDidUpdate` or `useEffect`.
 
 #### `setErrors: (fields: { [field: string]: string }) => void`
 
@@ -282,9 +280,19 @@ Default is `false`. Control whether Formik should reset the form if
 
 ### `isInitialValid?: boolean`
 
-Default is `false`. Control the initial value of `isValid` prop prior to
+**Deprecated in 2.x, use `initialErrors` instead**
+
+Control the initial value of `isValid` prop prior to
 mount. You can also pass a function. Useful for situations when you want to
 enable/disable a submit and reset buttons on initial mount.
+
+### `initialErrors?: FormikErrors<Values>`
+
+Initial field errors of the form, Formik will make these values available to
+render methods component as `errors`.
+
+Note: `initialErrors` is not available to the higher-order component `withFormik`, use
+`mapPropsToErrors` instead.
 
 ### `initialStatus?: any`
 
@@ -292,6 +300,14 @@ An arbitrary value for the initial `status` of the form. If the form is reset, t
 
 Note: `initialStatus` is not available to the higher-order component `withFormik`, use
 `mapPropsToStatus` instead.
+
+### `initialTouched?: FormikTouched<Values>`
+
+Initial visitied fields of the form, Formik will make these values available to
+render methods component as `touched`.
+
+Note: `initialTouched` is not available to the higher-order component `withFormik`, use
+`mapPropsToTouched` instead.
 
 ### `initialValues: Values`
 

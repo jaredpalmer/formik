@@ -85,7 +85,7 @@ describe('withFormik()', () => {
       handleReset: expect.any(Function),
       handleSubmit: expect.any(Function),
       isSubmitting: false,
-      isValid: false,
+      isValid: true,
       isValidating: false,
       getFieldProps: expect.any(Function),
       registerField: expect.any(Function),

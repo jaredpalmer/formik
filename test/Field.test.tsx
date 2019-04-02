@@ -101,7 +101,7 @@ describe('Field / FastField', () => {
     });
   });
 
-  describe('receives { field, form } props and renders element', () => {
+  describe('receives { field, form, meta } props and renders element', () => {
     it('<Field />', () => {
       let injected: FieldProps[] = [];
       let asInjectedProps: FieldProps['field'] = {} as any;
@@ -122,12 +122,22 @@ describe('Field / FastField', () => {
       );
 
       const { handleBlur, handleChange } = getFormProps();
-      injected.forEach(props => {
+      injected.forEach((props, idx) => {
         expect(props.field.name).toBe('name');
         expect(props.field.value).toBe('jared');
         expect(props.field.onChange).toBe(handleChange);
         expect(props.field.onBlur).toBe(handleBlur);
         expect(props.form).toEqual(getFormProps());
+        if (idx === 0) {
+          expect(props.meta.value).toBe('jared');
+          expect(props.meta.error).toBeUndefined();
+          expect(props.meta.touched).toBe(false);
+          expect(props.meta.initialValue).toEqual('jared');
+        } else {
+          // Ensure that we do not pass through `meta` to
+          // <Field component> or <Field render>
+          expect(props.meta).toBeUndefined();
+        }
       });
 
       expect(asInjectedProps.name).toBe('name');
@@ -157,12 +167,22 @@ describe('Field / FastField', () => {
       );
 
       const { handleBlur, handleChange } = getFormProps();
-      injected.forEach(props => {
+      injected.forEach((props, idx) => {
         expect(props.field.name).toBe('name');
         expect(props.field.value).toBe('jared');
         expect(props.field.onChange).toBe(handleChange);
         expect(props.field.onBlur).toBe(handleBlur);
         expect(props.form).toEqual(getFormProps());
+        if (idx === 0) {
+          expect(props.meta.value).toBe('jared');
+          expect(props.meta.error).toBeUndefined();
+          expect(props.meta.touched).toBe(false);
+          expect(props.meta.initialValue).toEqual('jared');
+        } else {
+          // Ensure that we do not pass through `meta` to
+          // <Field component> or <Field render>
+          expect(props.meta).toBeUndefined();
+        }
       });
 
       expect(asInjectedProps.name).toBe('name');

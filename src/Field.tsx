@@ -2,24 +2,17 @@ import * as React from 'react';
 import {
   FormikProps,
   GenericFieldHTMLAttributes,
-  FormikHandlers,
+  FieldMetaProps,
+  FieldInputProps,
 } from './types';
 import { useFormikContext } from './FormikContext';
 import { isFunction, isEmptyChildren } from './utils';
 import warning from 'tiny-warning';
 
 export interface FieldProps<V = any> {
-  field: {
-    /** Classic React change handler, keyed by input name */
-    onChange: FormikHandlers['handleChange'];
-    /** Mark input as touched */
-    onBlur: FormikHandlers['handleBlur'];
-    /** Value of the input */
-    value: any;
-    /* name of the input */
-    name: string;
-  };
+  field: FieldInputProps<V>;
   form: FormikProps<V>; // if ppl want to restrict this for a given form, let them.
+  meta: FieldMetaProps<V>;
 }
 
 export interface FieldConfig {
@@ -73,7 +66,7 @@ export interface FieldConfig {
 
 export type FieldAttributes<T> = GenericFieldHTMLAttributes & FieldConfig & T;
 
-export function useField(name: string, type?: string) {
+export function useField<Val = any>(name: string, type?: string) {
   const formik = useFormikContext();
 
   warning(
@@ -81,7 +74,7 @@ export function useField(name: string, type?: string) {
     'useField() / <Field /> must be used underneath a <Formik> component or withFormik() higher order component'
   );
 
-  return formik.getFieldProps(name, type);
+  return formik.getFieldProps<Val>(name, type);
 }
 
 export function Field({
@@ -105,7 +98,7 @@ export function Field({
         replace 
           <Field name="${name}" render={({field, form}) => ...} />
         with
-          <Field name="${name}">{({field, form}) => ...}</Field>
+          <Field name="${name}">{({field, form, meta}) => ...}</Field>
     `
   );
 
@@ -140,18 +133,19 @@ export function Field({
     },
     [name, validate]
   );
-  const [field] = formik.getFieldProps(name, props.type);
-  const bag = { field, form: formik };
+  const [field, meta] = formik.getFieldProps(name, props.type);
+  const legacyBag = { field, form: formik };
 
   if (render) {
-    return render(bag);
+    return render(legacyBag);
   }
 
   if (isFunction(children)) {
-    return children(bag);
+    return children({ ...legacyBag, meta });
   }
 
   if (component) {
+    // This behavior is backwards compat with earlier Formik 0.9 to 1.x
     if (typeof component === 'string') {
       const { innerRef, ...rest } = props;
       return React.createElement(
@@ -160,7 +154,12 @@ export function Field({
         children
       );
     }
-    return React.createElement(component, { ...bag, ...props }, children);
+    // We don't pass `meta` for backwards compat
+    return React.createElement(
+      component,
+      { field, form: formik, ...props },
+      children
+    );
   }
 
   if (typeof is === 'string') {

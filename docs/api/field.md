@@ -21,8 +21,9 @@ There are 2 ways to render things with `<Field>`.
 
 `children` can either be an array of elements (e.g. `<option>` in the case of `<Field as="select">`) or a callback function (a.k.a render prop). The render props are an object containing:
 
-* `field`: An object containing `onChange`, `onBlur`, `name`, and `value` of the field
-* `form`: The Formik bag.
+* `field`: An object containing `onChange`, `onBlur`, `name`, and `value` of the field (see [`FieldInputProps`](./useField#fieldinputprops))
+* `form`: The Formik bag
+* `meta`: An object containing metadata (i.e. `value`, `touched`, `error`, and `initialValue`) about the field (see [`FieldMetaProps`](./useField#fieldmetaprops))
 
 > In Formik 0.9 to 1.x, `component` and `render` props could also be used for rendering. These have been deprecated since 2.x. While the code still lives within `<Field>`, they will show a warning in the console.
 
@@ -55,13 +56,12 @@ const Example = () => (
             {({
               field, // { name, value, onChange, onBlur }
               form: { touched, errors }, // also values, setXXXX, handleXXXX, dirty, isValid, status, etc.
+              meta,
             }) => (
               <div>
                 <input type="text" placeholder="Email" {...field} />
-                {touched[field.name] &&
-                  errors[field.name] && (
-                    <div className="error">{errors[field.name]}</div>
-                  )}
+                {meta.touched &&
+                  meta.error && <div className="error">{meta.error}</div>}
               </div>
             )}
           </Field>
@@ -92,6 +92,7 @@ Either a React component or the name of an HTML element to render. That is, one 
 * `input`
 * `select`
 * `textarea`
+* A valid HTML element name
 * A custom React component
 
 Custom React components will be passed `onChange`, `onBlur`, `name`, and `value` plus any other props passed to directly to `<Field>`.
@@ -133,11 +134,11 @@ Either JSX elements or callback function. Same as `render`.
 
 // Or a callback function
 <Field name="firstName">
-{({ field, form }) => (
+{({ field, form, meta }) => (
   <div>
     <input type="text" {...field} placeholder="First Name"/>
-    {form.touched[field.name] &&
-      form.errors[field.name] && <div className="error">{form.errors[field.name]}</div>}
+    {meta.touched &&
+      meta.error && <div className="error">{meta.error}</div>}
   </div>
 )}
 </Field>

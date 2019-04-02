@@ -72,10 +72,8 @@ const Basic = () => (
             form.errors.firstName && <div>{form.errors.firstName}</div>}
 
           <label htmlFor="middleInitial">Middle Initial</label>
-          <FastField
-            name="middleInitial"
-            placeholder="F"
-            render={({ field, form }) => (
+          <FastField name="middleInitial" placeholder="F">
+            {({ field, form }) => (
               <div>
                 <input {...field} />
                 {/**
@@ -102,15 +100,13 @@ const Basic = () => (
                 </button>
               </div>
             )}
-          />
+          </FastField>
 
           {/** Updates for all changes to Formik state
            and all changes by all <Field>s and <FastField>s */}
           <label htmlFor="lastName">LastName</label>
-          <Field
-            name="lastName"
-            placeholder="Baby"
-            render={({ field, form }) => (
+          <Field name="lastName" placeholder="Baby">
+            {({ field, form }) => (
               <div>
                 <input {...field} />
                 {/** Works because this is inside
@@ -120,7 +116,7 @@ const Basic = () => (
                   : null}
               </div>
             )}
-          />
+          </Field>
 
           {/** Updates for all changes to Formik state and
            all changes by all <Field>s and <FastField>s */}

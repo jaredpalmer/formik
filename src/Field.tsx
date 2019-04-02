@@ -102,22 +102,32 @@ export function Field({
   } = useFormikContext();
 
   warning(
-    render,
-    '<Field render> has been deprecated and will be removed in future versions of Formik. Please use a function as a child instead <Formik>{() => }</Formik>.'
-  );
-
-  warning(
-    component && children && isFunction(children),
-    'You should not use <Field component> and <Field children> as a function in the same <Field> component; <Field component> will be ignored.'
+    !!render,
+    `<Field render> has been deprecated and will be removed in future versions of Formik. Please use a child callback function instead. To get rid of this warning, 
+        replace 
+          <Field name="${name}" render={({field, form}) => ...} />
+        with
+          <Field name="${name}">{({field, form}) => ...}</Field>
+    `
   );
 
   warning(
     !!component,
-    '<Field component> has been deprecated and will be removed in future versions of Formik. Use <Formik as> instead. Note that with the `as` prop, all props are passed directly through (so there is no need to destructure anything).'
+    '<Field component> has been deprecated and will be removed in future versions of Formik. Use <Formik as> instead. Note that with the `as` prop, all props are passed directly through and not grouped in `field` object key.'
   );
 
   warning(
-    render && children && !isEmptyChildren(children),
+    !!is && !!children && isFunction(children),
+    'You should not use <Field as> and <Field children> as a function in the same <Field> component; <Field as> will be ignored.'
+  );
+
+  warning(
+    !!component && children && isFunction(children),
+    'You should not use <Field as> and <Field children> as a function in the same <Field> component; <Field as> will be ignored.'
+  );
+
+  warning(
+    !!render && !!children && !isEmptyChildren(children),
     'You should not use <Field render> and <Field children> in the same <Field> component; <Field children> will be ignored'
   );
 

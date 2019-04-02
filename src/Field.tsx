@@ -30,15 +30,15 @@ export interface FieldConfig {
   component?:
     | string
     | React.ComponentType<FieldProps<any>>
-    | React.ComponentType<void>;
+    | React.ComponentType;
 
   /**
-   * Component to render. Can either be a string like 'select' or a component.
+   * Component to render. Can either be a string e.g. 'select', 'input', or 'textarea', or a component.
    */
   as?:
-    | string
     | React.ComponentType<FieldProps<any>['field']>
-    | React.ComponentType<void>;
+    | keyof JSX.IntrinsicElements
+    | React.ComponentType;
 
   /**
    * Render prop (works like React router's <Route render={props =>} />)

@@ -388,22 +388,43 @@ describe('Field / FastField', () => {
     cases('warns if component is a string', renderField => {
       global.console.warn = jest.fn();
 
-      renderField({
+      const { rerender } = renderField({
         component: 'select',
       });
-
+      rerender();
       expect((global.console.warn as jest.Mock).mock.calls[0][0]).toContain(
         'Warning:'
       );
     });
 
-    cases('warns if component is fn', renderField => {
+    cases('warns about compnent prop deprecation', renderField => {
       global.console.warn = jest.fn();
-
-      renderField({
+      const { rerender } = renderField({
         component: () => null,
       });
+      rerender();
+      expect((global.console.warn as jest.Mock).mock.calls[0][0]).toContain(
+        'deprecated'
+      );
+    });
 
+    cases('warns about render prop deprecation', renderField => {
+      global.console.warn = jest.fn();
+      const { rerender } = renderField({
+        render: () => null,
+      });
+      rerender();
+      expect((global.console.warn as jest.Mock).mock.calls[0][0]).toContain(
+        'deprecated'
+      );
+    });
+
+    cases('warns if component is fn', renderField => {
+      global.console.warn = jest.fn();
+      const { rerender } = renderField({
+        component: () => null,
+      });
+      rerender();
       expect((global.console.warn as jest.Mock).mock.calls[0][0]).toContain(
         'Warning:'
       );
@@ -414,11 +435,27 @@ describe('Field / FastField', () => {
       renderField => {
         global.console.warn = jest.fn();
 
-        renderField({
+        const { rerender } = renderField({
           component: 'select',
           children: () => <option value="Jared">{TEXT}</option>,
         });
+        rerender();
+        expect((global.console.warn as jest.Mock).mock.calls[0][0]).toContain(
+          'Warning:'
+        );
+      }
+    );
 
+    cases(
+      'warns if both string as prop and children as a function',
+      renderField => {
+        global.console.warn = jest.fn();
+
+        const { rerender } = renderField({
+          as: 'select',
+          children: () => <option value="Jared">{TEXT}</option>,
+        });
+        rerender();
         expect((global.console.warn as jest.Mock).mock.calls[0][0]).toContain(
           'Warning:'
         );
@@ -430,11 +467,11 @@ describe('Field / FastField', () => {
       renderField => {
         global.console.warn = jest.fn();
 
-        renderField({
+        const { rerender } = renderField({
           component: () => null,
           children: () => <option value="Jared">{TEXT}</option>,
         });
-
+        rerender();
         expect((global.console.warn as jest.Mock).mock.calls[0][0]).toContain(
           'Warning:'
         );
@@ -444,11 +481,11 @@ describe('Field / FastField', () => {
     cases('warns if both string component and render', renderField => {
       global.console.warn = jest.fn();
 
-      renderField({
+      const { rerender } = renderField({
         component: 'textarea',
         render: () => <option value="Jared">{TEXT}</option>,
       });
-
+      rerender();
       expect((global.console.warn as jest.Mock).mock.calls[0][0]).toContain(
         'Warning:'
       );
@@ -457,11 +494,11 @@ describe('Field / FastField', () => {
     cases('warns if both non-string component and render', renderField => {
       global.console.warn = jest.fn();
 
-      renderField({
+      const { rerender } = renderField({
         component: () => null,
         render: () => <option value="Jared">{TEXT}</option>,
       });
-
+      rerender();
       expect((global.console.warn as jest.Mock).mock.calls[0][0]).toContain(
         'Warning:'
       );
@@ -470,11 +507,11 @@ describe('Field / FastField', () => {
     cases('warns if both children and render', renderField => {
       global.console.warn = jest.fn();
 
-      renderField({
+      const { rerender } = renderField({
         children: <div>{TEXT}</div>,
         render: () => <div>{TEXT}</div>,
       });
-
+      rerender();
       expect((global.console.warn as jest.Mock).mock.calls[0][0]).toContain(
         'Warning:'
       );

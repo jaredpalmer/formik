@@ -23,7 +23,7 @@ import {
   makeCancelable,
 } from './utils';
 import { FormikProvider } from './FormikContext';
-import warning from 'tiny-warning';
+import invariant from 'tiny-warning';
 
 // We already used FormikActions. So we'll go all Elm-y, and use Message.
 type FormikMessage<Values> =
@@ -330,7 +330,7 @@ export function useFormik<Values = object>({
         activeElement !== null &&
         activeElement instanceof HTMLButtonElement
       ) {
-        warning(
+        invariant(
           activeElement.attributes &&
             activeElement.attributes.getNamedItem('type'),
           'You submitted a Formik form using a button with an unspecified `type` attribute.  Most browsers default button elements to `type="submit"`. If this is not a submit button, please add `type="button"`.'
@@ -734,7 +734,7 @@ function warnAboutMissingIdentifier({
   handlerName: string;
 }) {
   console.warn(
-    `Warning: Formik called \`${handlerName}\`, but you forgot to pass an \`id\` or \`name\` attribute to your input:
+    `invariant: Formik called \`${handlerName}\`, but you forgot to pass an \`id\` or \`name\` attribute to your input:
     ${htmlContent}
     Formik cannot determine which value to update. For more info see https://github.com/jaredpalmer/formik#${documentationAnchorLink}
   `

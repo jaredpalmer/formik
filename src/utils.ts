@@ -126,6 +126,10 @@ export const isEmptyChildren = (children: any): boolean =>
 export const isPromise = (value: any): value is PromiseLike<any> =>
   isObject(value) && isFunction(value.then);
 
+/** @private is the given object/value a type of synthetic event? */
+export const isInputEvent = (value: any): value is React.SyntheticEvent<any> =>
+  value && isObject(value) && isObject(value.target);
+
 /**
  * Same as document.activeElement but wraps in a try-catch block. In IE it is
  * not safe to call document.activeElement if there is nothing focused.

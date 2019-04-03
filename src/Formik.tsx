@@ -10,7 +10,6 @@ import {
   FormikState,
   FormikTouched,
   FormikValues,
-  FormikContext,
   FormikProps,
 } from './types';
 import {
@@ -626,7 +625,7 @@ export class Formik<Values = FormikValues> extends React.Component<
     };
   };
 
-  getFormikContext = (): FormikContext<any> => {
+  getFormikContext = () => {
     return {
       ...this.getFormikBag(),
       validationSchema: this.props.validationSchema,

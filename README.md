@@ -37,7 +37,7 @@ organized--making testing, refactoring, and reasoning about your forms a breeze.
 You can play with Formik in your web browser with these live online playgrounds.
 
 * CodeSandbox (ReactDOM) https://codesandbox.io/s/zKrK5YLDZ
-* Expo Snack (React Native) https://snack.expo.io/Bk9pPK87X
+* Expo Snack (React Native) https://snack.expo.io/@jaredpalmer/basic-formik-x-react-native-example
 
 ## Examples
 

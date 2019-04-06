@@ -45,6 +45,17 @@ const users = [
     pinned: true,
   },
   {
+    caption: 'Nasa',
+    image: '/formik/img/logos/nasa.svg',
+    infoLink: 'https://www.nasa.gov',
+    pinned: true,
+  },
+  {
+    caption: 'NOAA',
+    image: '/formik/img/logos/noaa.svg',
+    infoLink: 'https://www.noaa.gov',
+  },
+  {
     caption: 'Docker',
     image: '/formik/img/logos/docker.svg',
     infoLink: 'https://docker.com',

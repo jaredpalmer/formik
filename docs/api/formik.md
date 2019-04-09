@@ -131,9 +131,9 @@ Set the error message of a field imperatively. `field` should match the key of
 Set the touched state of a field imperatively. `field` should match the key of
 `touched` you wish to update. Useful for creating custom input blur handlers. Calling this method will trigger validation to run if `validateOnBlur` is set to `true` (which it is by default). `isTouched` defaults to `true` if not specified. You can also explicitly prevent/skip validation by passing a third argument as `false`.
 
-#### `submitForm: () => void`
+#### `submitForm: () => Promise`
 
-Trigger a form submission.
+Trigger a form submission. The promise will be rejected if form is invalid. 
 
 #### `submitCount: number`
 

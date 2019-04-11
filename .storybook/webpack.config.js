@@ -6,8 +6,10 @@ module.exports = (storybookBaseConfig, configType, defaultConfig) => {
   defaultConfig.module.rules.push(
     {
       test: /\.tsx?$/,
-      exclude: /node_modules/,
       loader: 'awesome-typescript-loader',
+      options: {
+        configFileName: 'storybook.tsconfig.json'
+      }
     },
   )
   defaultConfig.resolve.extensions = ['.ts', '.tsx', '.js', '.jsx']

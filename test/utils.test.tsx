@@ -235,6 +235,21 @@ describe('utils', () => {
       expect(obj).toEqual({ x: 'y' });
       expect(newObj).toEqual({ x: 'y', a: { x: { c: 'value' } } });
     });
+
+    it('should keep class inheritance for the top level object', () => {
+      class TestClass {
+        constructor(public key: string, public setObj?: any) {}
+      }
+      const obj = new TestClass('value');
+      const newObj = setIn(obj, 'setObj.nested', 'setInValue');
+      expect(obj).toEqual(new TestClass('value'));
+      expect(newObj).toEqual({
+        key: 'value',
+        setObj: { nested: 'setInValue' },
+      });
+      expect(obj instanceof TestClass).toEqual(true);
+      expect(newObj instanceof TestClass).toEqual(true);
+    });
   });
 
   describe('isPromise', () => {

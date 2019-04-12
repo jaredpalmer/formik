@@ -100,7 +100,7 @@ export function Field({
 
     invariant(
       !component,
-      '<Field component> has been deprecated and will be removed in future versions of Formik. Use <Formik as> instead. Note that with the `as` prop, all props are passed directly through and not grouped in `field` object key.'
+      '<Field component> has been deprecated and will be removed in future versions of Formik. Use <Field as> instead. Note that with the `as` prop, all props are passed directly through and not grouped in `field` object key.'
     );
 
     invariant(

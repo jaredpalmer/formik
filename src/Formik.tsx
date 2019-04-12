@@ -134,9 +134,12 @@ export class Formik<Values = FormikValues> extends React.Component<
     });
   };
 
-  setValues = (values: FormikState<Values>['values']) => {
+  setValues = (
+    values: FormikState<Values>['values'],
+    shouldValidate: boolean = true
+  ) => {
     this.setState({ values }, () => {
-      if (this.props.validateOnChange) {
+      if (this.props.validateOnChange && shouldValidate) {
         this.runValidations(values);
       }
     });

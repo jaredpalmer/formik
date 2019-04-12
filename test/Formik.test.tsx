@@ -533,6 +533,14 @@ describe('<Formik>', () => {
         expect(validate).not.toHaveBeenCalled();
       });
 
+      it('setValues should NOT run validations when shouldValidate is false', () => {
+        const validate = jest.fn();
+        const { getProps } = renderFormik({ validate });
+
+        getProps().setValues({ name: 'ian' }, false);
+        expect(validate).not.toHaveBeenCalled();
+      });
+
       it('setFieldValue sets value by key', () => {
         const { getProps } = renderFormik();
 

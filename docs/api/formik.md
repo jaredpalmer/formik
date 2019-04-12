@@ -161,9 +161,11 @@ Set `touched` imperatively.
 
 You can also explicitly prevent/skip validation by passing a second argument as `false`.
 
-#### `setValues: (fields: { [field: string]: any }) => void`
+#### `setValues: (fields: { [field: string]: any }, shouldValidate?: boolean) => void`
 
 Set `values` imperatively.
+
+You can also explicitly prevent/skip validation by passing a second argument as `false`.
 
 #### `status?: any`
 

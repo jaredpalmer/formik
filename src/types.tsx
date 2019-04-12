@@ -80,7 +80,7 @@ export interface FormikActions<Values> {
   /** Manually set touched object */
   setTouched(touched: FormikTouched<Values>, shouldValidate?: boolean): void;
   /** Manually set values object  */
-  setValues(values: Values): void;
+  setValues(values: Values, shouldValidate?: boolean): void;
   /** Set value of form field directly */
   setFieldValue(
     field: keyof Values & string,

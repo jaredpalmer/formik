@@ -1,10 +1,10 @@
 import './story.css';
-import { action, storiesOf, module } from '@storybook/react';
+import { action, storiesOf } from '@storybook/react';
 import React from 'react';
 import { FormikConsumer } from 'formik';
 import AsyncValidation from '../examples/AsyncValidation';
 import Arrays from '../examples/Arrays';
-import Basic from '../examples/Basic.js';
+import Basic from '../examples/Basic';
 import CustomInputs from '../examples/CustomInputs';
 import ErrorMessage from '../examples/ErrorMessage';
 import FastField from '../examples/FastField';
@@ -16,7 +16,7 @@ import CombinedValidations from '../examples/CombinedValidations';
 
 const AsyncValidationCode = require('!raw-loader!../examples/AsyncValidation');
 const ArraysCode = require('!raw-loader!../examples/Arrays');
-const BasicCode = require('!raw-loader!../examples/Basic.js');
+const BasicCode = require('!raw-loader!../examples/Basic');
 const CustomInputsCode = require('!raw-loader!../examples/CustomInputs');
 const ErrorMessageCode = require('!raw-loader!../examples/ErrorMessage');
 const FastFieldCode = require('!raw-loader!../examples/FastField');

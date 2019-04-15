@@ -201,7 +201,7 @@ const ContactForm = ({
   handleBlur,
   values,
   errors,
-}) => (
+}) => {
   <form onSubmit={handleSubmit}>
     <input
       type="text"

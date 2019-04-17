@@ -43,6 +43,8 @@ export interface FormikState<Values> {
   status?: any;
   /** Number of times user tried to submit the form */
   submitCount: number;
+  /** Global form submission error */
+  formError: any;
 }
 
 /**

@@ -28,7 +28,7 @@ import invariant from 'tiny-warning';
 // We already used FormikActions. So we'll go all Elm-y, and use Message.
 type FormikMessage<Values> =
   | { type: 'SUBMIT_ATTEMPT' }
-  | { type: 'SUBMIT_FAILURE' }
+  | { type: 'SUBMIT_FAILURE'; payload: any }
   | { type: 'SUBMIT_SUCCESS' }
   | { type: 'SET_ISVALIDATING'; payload: boolean }
   | { type: 'SET_ISSUBMITTING'; payload: boolean }
@@ -92,6 +92,7 @@ function formikReducer<Values>(
       return {
         ...state,
         isSubmitting: false,
+        formError: msg.payload,
       };
     case 'SUBMIT_SUCCESS':
       return {
@@ -127,6 +128,7 @@ export function useFormik<Values = object>({
     isSubmitting: false,
     isValidating: false,
     submitCount: 0,
+    formError: undefined,
   });
 
   const runValidationAsEffect = React.useCallback(
@@ -362,6 +364,7 @@ export function useFormik<Values = object>({
         values,
         isValidating: false,
         submitCount: 0,
+        formError: undefined,
       },
     });
   }
@@ -615,14 +618,14 @@ export function useFormik<Values = object>({
               dispatch({ type: 'SUBMIT_SUCCESS' });
             }
           })
-          .catch(_errors => {
+          .catch(errors => {
             if (isMounted.current) {
-              dispatch({ type: 'SUBMIT_FAILURE' });
+              dispatch({ type: 'SUBMIT_FAILURE', payload: errors });
             }
           });
       } else if (isMounted.current) {
         // ^^^ Make sure Formik is still mounted before calling setState
-        dispatch({ type: 'SUBMIT_FAILURE' });
+        dispatch({ type: 'SUBMIT_FAILURE', payload: undefined });
       }
     });
   }

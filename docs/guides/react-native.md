@@ -25,14 +25,14 @@ export const MyReactNativeForm = props => (
     initialValues={{ email: '' }}
     onSubmit={values => console.log(values)}
   >
-    {props => (
+    {({ handleChange, handleBlur, handleSubmit, values }) => (
       <View>
         <TextInput
-          onChangeText={props.handleChange('email')}
-          onBlur={props.handleBlur('email')}
-          value={props.values.email}
+          onChangeText={handleChange('email')}
+          onBlur={handleBlur('email')}
+          value={values.email}
         />
-        <Button onPress={props.handleSubmit} title="Submit" />
+        <Button onPress={handleSubmit} title="Submit" />
       </View>
     )}
   </Formik>

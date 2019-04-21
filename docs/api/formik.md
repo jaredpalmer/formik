@@ -133,7 +133,7 @@ Set the touched state of a field imperatively. `field` should match the key of
 
 #### `submitForm: () => Promise`
 
-Trigger a form submission. The promise will be rejected if form is invalid. 
+Trigger a form submission. The promise will be rejected if form is invalid.
 
 #### `submitCount: number`
 

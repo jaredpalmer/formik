@@ -1,23 +1,15 @@
-const TsConfigPathsPlugin = require('awesome-typescript-loader').TsConfigPathsPlugin;
+const { TsConfigPathsPlugin } = require('awesome-typescript-loader');
 
 module.exports = (storybookBaseConfig, configType, defaultConfig) => {
-
-
-  defaultConfig.module.rules.push(
-    {
-      test: /\.tsx?$/,
-      exclude: /node_modules/,
-      loader: 'awesome-typescript-loader',
+  defaultConfig.module.rules.push({
+    test: /\.tsx?$/,
+    loader: 'awesome-typescript-loader',
+    options: {
+      configFileName: 'tsconfig.storybook.json',
     },
-  )
-  defaultConfig.resolve.extensions = ['.ts', '.tsx', '.js', '.jsx']
-  defaultConfig.resolve.plugins = [
-    new TsConfigPathsPlugin({
-      tsconfig: 'tsconfig.json',
-      compiler: 'typescript'
-    })
-  ]
+  });
+  defaultConfig.resolve.extensions = ['.ts', '.tsx', '.js', '.jsx'];
+  defaultConfig.resolve.plugins = [new TsConfigPathsPlugin({})];
 
-  return defaultConfig
-
-}
+  return defaultConfig;
+};

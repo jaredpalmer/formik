@@ -23,7 +23,7 @@ export function getIn(
  * @see https://github.com/developit/linkstate
  */
 export function setIn(obj: any, path: string, value: any): any {
-  let res: any = {};
+  let res: any = cloneDeep(obj);
   let resVal: any = res;
   let i = 0;
   let pathArray = toPath(path);
@@ -54,15 +54,13 @@ export function setIn(obj: any, path: string, value: any): any {
     resVal[pathArray[i]] = value;
   }
 
-  const result = { ...obj, ...res };
-
   // If the path array has a single element, the loop did not run.
   // Deleting on `resVal` had no effect in this scenario, so we delete on the result instead.
   if (i === 0 && value === undefined) {
-    delete result[pathArray[i]];
+    delete res[pathArray[i]];
   }
 
-  return result;
+  return res;
 }
 
 /**
@@ -125,6 +123,10 @@ export const isEmptyChildren = (children: any): boolean =>
 /** @private is the given object/value a promise? */
 export const isPromise = (value: any): value is PromiseLike<any> =>
   isObject(value) && isFunction(value.then);
+
+/** @private is the given object/value a type of synthetic event? */
+export const isInputEvent = (value: any): value is React.SyntheticEvent<any> =>
+  value && isObject(value) && isObject(value.target);
 
 /**
  * Same as document.activeElement but wraps in a try-catch block. In IE it is

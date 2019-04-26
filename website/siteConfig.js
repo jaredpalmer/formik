@@ -45,6 +45,17 @@ const users = [
     pinned: true,
   },
   {
+    caption: 'Nasa',
+    image: '/formik/img/logos/nasa.svg',
+    infoLink: 'https://www.nasa.gov',
+    pinned: true,
+  },
+  {
+    caption: 'NOAA',
+    image: '/formik/img/logos/noaa.svg',
+    infoLink: 'https://www.noaa.gov',
+  },
+  {
     caption: 'Docker',
     image: '/formik/img/logos/docker.svg',
     infoLink: 'https://docker.com',
@@ -74,6 +85,11 @@ const users = [
     infoLink: 'https://statestreet.com',
   },
   {
+    caption: 'Wayfair',
+    image: '/formik/img/logos/wayfair.svg',
+    infoLink: 'https://wayfair.com',
+  },
+  {
     caption: 'Artsy',
     image: '/formik/img/logos/artsy.png',
     infoLink: 'https://artsy.com',
@@ -87,6 +103,11 @@ const users = [
     caption: 'Capsule Health',
     image: '/formik/img/logos/capsule.svg',
     infoLink: 'https://capsulecares.com',
+  },
+  {
+    caption: 'Egghead',
+    image: '/formik/img/logos/egghead.svg',
+    infoLink: 'https://egghead.io',
   },
   {
     caption: 'Frame.io',
@@ -103,6 +124,16 @@ const users = [
     image: '/formik/img/logos/extendi.svg',
     infoLink: 'https://www.extendi.it',
   },
+  {
+    caption: 'Gusto',
+    image: '/formik/img/logos/gusto.png',
+    infoLink: 'https://gusto.com',
+  },
+  {
+    caption: 'Campusjäger',
+    image: '/formik/img/logos/campusjaeger.png',
+    infoLink: 'https://www.campusjaeger.de/',
+  }
 ];
 
 const siteConfig = {

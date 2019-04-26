@@ -122,7 +122,7 @@ export function useFormik<Values = object>({
     };
   }>({});
 
-  warning(
+  invariant(
     typeof isInitialValid === 'undefined',
     'isInitialValid has been deprecated and will be removed in future versions of Formik. Please use initialErrors instead.'
   );
@@ -175,8 +175,7 @@ export function useFormik<Values = object>({
         isMounted.current &&
         !isEqual(initialValues.current, props.initialValues)
       ) {
-        initialValues.current = props.initialValues;
-        resetForm(props.initialValues);
+        resetForm();
       }
     },
     [props.initialValues]

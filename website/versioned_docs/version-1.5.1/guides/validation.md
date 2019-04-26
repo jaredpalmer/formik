@@ -1,5 +1,5 @@
 ---
-id: version-1.3.2-validation
+id: version-1.5.1-validation
 title: Validation
 custom_edit_url: https://github.com/jaredpalmer/formik/edit/master/docs/guides/validation.md
 original_id: validation
@@ -139,6 +139,8 @@ For more information about `<Formik validationSchema>`, see the API reference.
 
 Formik supports field-level validation via the `<Field>`/`<FastField>` components' `validate` prop. This function can be synchronous or asynchronous (return a Promise). It will run after any `onChange` and `onBlur` by default. This behavior can be altered at the top level `<Formik/>` component using the `validateOnChange` and `validateOnBlur` props respectively. In addition to change/blur, all field-level validations are run at the beginning of a submission attempt and then the results are deeply merged with any top-level validation results.
 
+> Note: The `<Field>/<FastField>` components' `validate` function will only be executed on mounted fields. That is to say, if any of your fields unmount during the flow of your form (e.g. Material-UI's `<Tabs>` unmounts the previous `<Tab>` your user was on), those fields will not be validated during form validation/submission.
+
 ```jsx
 import React from 'react';
 import { Formik, Form, Field } from 'formik';
@@ -198,7 +200,6 @@ You can manually trigger both form-level and field-level validation with Formik 
 ```jsx
 import React from 'react';
 import { Formik, Form, Field } from 'formik';
-import * as Yup from "yup";
 
 function validateEmail(value) {
   let error;
@@ -245,7 +246,7 @@ export const FieldLevelValidationExample = () => (
           </button>
           {/** Trigger form-level validation
            imperatively */}
-          <button type="button" onClick={() => validateForm().then(() => console.log('Form has been validated'))}>
+          <button type="button" onClick={() => validateForm().then(() => console.log('blah')))}>
             Validate All
           </button>
           <button type="submit">Submit</button>

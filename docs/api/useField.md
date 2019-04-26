@@ -8,7 +8,7 @@ custom_edit_url: https://github.com/jaredpalmer/formik/edit/master/docs/api/usef
 
 ## Example
 
-```jsx
+```tsx
 import React from 'react';
 import { useField, Formik } from 'formik';
 

@@ -106,24 +106,34 @@ function formikReducer<Values>(
 export function useFormik<Values = object>({
   validateOnChange = true,
   validateOnBlur = true,
-  isInitialValid = false,
+  isInitialValid,
   enableReinitialize = false,
   ...rest
 }: FormikConfig<Values>) {
-  const props = { validateOnChange, validateOnBlur, isInitialValid, ...rest };
+  const props = { validateOnChange, validateOnBlur, ...rest };
   const initialValues = React.useRef(props.initialValues);
+  const initialErrors = React.useRef(props.initialErrors || {});
+  const initialTouched = React.useRef(props.initialTouched || {});
+  const initialStatus = React.useRef(props.initialStatus);
   const isMounted = React.useRef<boolean>(false);
   const fields = React.useRef<{
     [field: string]: {
       validate: (value: any) => string | Promise<string> | undefined;
     };
   }>({});
+
+  warning(
+    typeof isInitialValid === 'undefined',
+    'isInitialValid has been deprecated and will be removed in future versions of Formik. Please use initialErrors instead.'
+  );
+
   const [state, dispatch] = React.useReducer<
     React.Reducer<FormikState<Values>, FormikMessage<Values>>
   >(formikReducer, {
     values: props.initialValues,
-    errors: {},
-    touched: {},
+    errors: props.initialErrors || {},
+    touched: props.initialTouched || {},
+    status: props.initialStatus,
     isSubmitting: false,
     isValidating: false,
     submitCount: 0,
@@ -294,22 +304,25 @@ export function useFormik<Values = object>({
     }
   }
 
-  function handleReset() {
-    if (props.onReset) {
-      const maybePromisedOnReset = (props.onReset as any)(
-        state.values,
-        imperativeMethods
-      );
+  const handleReset = React.useCallback(
+    () => {
+      if (props.onReset) {
+        const maybePromisedOnReset = (props.onReset as any)(
+          state.values,
+          imperativeMethods
+        );
 
-      if (isPromise(maybePromisedOnReset)) {
-        (maybePromisedOnReset as Promise<any>).then(resetForm);
+        if (isPromise(maybePromisedOnReset)) {
+          (maybePromisedOnReset as Promise<any>).then(resetForm);
+        } else {
+          resetForm();
+        }
       } else {
         resetForm();
       }
-    } else {
-      resetForm();
-    }
-  }
+    },
+    [props.onReset]
+  );
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement> | undefined) {
     if (e && e.preventDefault) {
@@ -345,23 +358,47 @@ export function useFormik<Values = object>({
     return props.onSubmit(state.values, imperativeMethods);
   }
 
-  function resetForm(nextValues?: Values) {
-    const values = nextValues
-      ? nextValues
-      : initialValues.current !== null
-        ? initialValues.current
-        : props.initialValues;
+  function resetForm(nextState?: FormikState<Values>) {
+    const values =
+      nextState && nextState.values
+        ? nextState.values
+        : !!initialValues.current ? initialValues.current : props.initialValues;
+    const errors =
+      nextState && nextState.errors
+        ? nextState.values
+        : !!initialErrors.current
+          ? initialErrors.current
+          : props.initialErrors || {};
+    const touched =
+      nextState && nextState.touched
+        ? nextState.values
+        : !!initialTouched.current
+          ? initialTouched.current
+          : props.initialTouched || {};
+    const status =
+      nextState && nextState.status
+        ? nextState.status
+        : initialStatus.current ? initialStatus.current : props.initialStatus;
     initialValues.current = values;
+    initialErrors.current = errors;
+    initialTouched.current = touched;
+    initialStatus.current = status;
+
     dispatch({
       type: 'RESET_FORM',
       payload: {
-        isSubmitting: false,
-        errors: {},
-        touched: {},
-        status: undefined,
+        isSubmitting: !!nextState && !!nextState.isSubmitting,
+        errors,
+        touched,
+        status,
         values,
-        isValidating: false,
-        submitCount: 0,
+        isValidating: !!nextState && !!nextState.isValidating,
+        submitCount:
+          !!nextState &&
+          !!nextState.submitCount &&
+          typeof nextState.submitCount === 'number'
+            ? nextState.submitCount
+            : 0,
       },
     });
   }
@@ -644,12 +681,14 @@ export function useFormik<Values = object>({
     return [field, getFieldMeta<Val>(name)];
   }
 
-  function getFieldMeta<Val = any>(name: string): FieldMetaProps<Val> {
+  function getFieldMeta<Val>(name: string): FieldMetaProps<Val> {
     return {
       value: getIn(state.values, name),
       error: getIn(state.errors, name),
       touched: !!getIn(state.touched, name),
       initialValue: getIn(initialValues.current, name),
+      initialTouched: !!getIn(initialTouched.current, name),
+      initialError: getIn(initialErrors.current, name),
     };
   }
 
@@ -660,17 +699,24 @@ export function useFormik<Values = object>({
 
   const isValid = React.useMemo(
     () =>
-      dirty
-        ? state.errors && Object.keys(state.errors).length === 0
-        : isInitialValid !== false && isFunction(isInitialValid)
-          ? (isInitialValid as (props: FormikConfig<Values>) => boolean)(props)
-          : (isInitialValid as boolean),
-    [state.errors, dirty, isInitialValid]
+      typeof isInitialValid !== 'undefined'
+        ? dirty
+          ? state.errors && Object.keys(state.errors).length === 0
+          : isInitialValid !== false && isFunction(isInitialValid)
+            ? (isInitialValid as (props: FormikConfig<Values>) => boolean)(
+                props
+              )
+            : (isInitialValid as boolean)
+        : state.errors && Object.keys(state.errors).length === 0,
+    [state.errors, isInitialValid, dirty]
   );
 
   const ctx = {
     ...state,
-    initialValues: initialValues.current || props.initialValues,
+    initialValues: initialValues.current,
+    initialErrors: initialErrors.current,
+    initialTouched: initialTouched.current,
+    initialStatus: initialStatus.current,
     handleBlur,
     handleChange,
     handleReset,

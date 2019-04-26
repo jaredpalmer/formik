@@ -75,6 +75,8 @@ describe('withFormik()', () => {
       initialValues: {
         name: 'jared',
       },
+      initialErrors: {},
+      initialTouched: {},
       values: {
         name: InitialValues.name,
       },
@@ -85,7 +87,7 @@ describe('withFormik()', () => {
       handleReset: expect.any(Function),
       handleSubmit: expect.any(Function),
       isSubmitting: false,
-      isValid: false,
+      isValid: true,
       isValidating: false,
       getFieldProps: expect.any(Function),
       registerField: expect.any(Function),

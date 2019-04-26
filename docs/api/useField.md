@@ -75,6 +75,8 @@ for a given field in Formik state. This is to avoid needing to manually wire up 
 An object that contains relevant computed metadata about a field. More specifically,
 
 * `error?: string` - The field's error message (plucked out of `errors`)
+* `initialError?: string` - The field's initial error if the field is present in `initialErrors` (plucked out of `initialErrors`)
+* `initialTouched: boolean` - The field's initial value if the field is present in `initialTouched` (plucked out of `initialTouched`)
 * `initialValue?: any` - The field's initial value if the field is given a value in `initialValues` (plucked out of `initialValues`)
 * `touched: boolean` - Whether the field has been visited (plucked out of `touched`)
 * `value: any` - The field's value (plucked out of `values`)

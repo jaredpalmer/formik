@@ -97,7 +97,7 @@ describe('<Formik>', () => {
     expect(props.values).toEqual(InitialValues);
     expect(props.errors).toEqual({});
     expect(props.dirty).toBe(false);
-    expect(props.isValid).toBe(false);
+    expect(props.isValid).toBe(true);
     expect(props.submitCount).toBe(0);
   });
 

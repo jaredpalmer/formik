@@ -51,10 +51,16 @@ export interface FormikState<Values> {
 export interface FormikComputedProps<Values> {
   /** True if any input has been touched. False otherwise. */
   readonly dirty: boolean;
-  /** Result of isInitiallyValid on mount, then whether true values pass validation. */
+  /** True if state.errors is empty */
   readonly isValid: boolean;
-  /** initialValues */
+  /** The initial values of the form */
   readonly initialValues: Values;
+  /** The initial errors of the form */
+  readonly initialErrors: FormikErrors<Values>;
+  /** The initial visited fields of the form */
+  readonly initialTouched: FormikTouched<Values>;
+  /** The initial status of the form */
+  readonly initialStatus?: any;
 }
 
 /**
@@ -82,7 +88,7 @@ export interface FormikHelpers<Values> {
   /** Validate field value */
   validateField(field: string): void;
   /** Reset form */
-  resetForm(nextValues?: Values): void;
+  resetForm(nextState?: FormikState<Values>): void;
   /** Submit the form imperatively */
   submitForm(): void;
   /** Set Formik state, careful! */
@@ -157,6 +163,7 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
   children?:
     | ((props: FormikProps<Values>) => React.ReactNode)
     | React.ReactNode;
+
   /**
    * Initial values of the form
    */
@@ -166,6 +173,12 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
    * Initial status
    */
   initialStatus?: any;
+
+  /** Initial object map of field names to specific error for that field */
+  initialErrors?: FormikErrors<Values>;
+
+  /** Initial object map of field names to whether the field has been touched */
+  initialTouched?: FormikTouched<Values>;
 
   /**
    * Reset handler
@@ -248,6 +261,10 @@ export interface FieldMetaProps<Value> {
   touched: boolean;
   /** Initial value of the field */
   initialValue?: Value;
+  /** Initial touched state of the field */
+  initialTouched: boolean;
+  /** Initial error message of the field */
+  initialError?: string;
 }
 
 /** Field input value, name, and event handlers */

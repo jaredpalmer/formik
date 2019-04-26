@@ -6,7 +6,7 @@ custom_edit_url: https://github.com/jaredpalmer/formik/edit/master/docs/api/fast
 
 ## Before we start
 
-`<FastField />` is meant for performance _optimization_. However, you really do not need to use it until you do. Only proceed if you are familiar with how React's [`shouldComponentUpdate()`](https://reactjs.org/docs/react-component.html#shouldcomponentupdate) works. You have been warned.\*\*
+`<FastField />` is meant for performance _optimization_. However, you really do not need to use it until you do. Only proceed if you are familiar with how React's [`shouldComponentUpdate()`](https://reactjs.org/docs/react-component.html#shouldcomponentupdate) works. You have been warned.
 
 **No. Seriously. Please review the following parts of the official React documentation before continuing**
 

@@ -45,6 +45,17 @@ const users = [
     pinned: true,
   },
   {
+    caption: 'Nasa',
+    image: '/formik/img/logos/nasa.svg',
+    infoLink: 'https://www.nasa.gov',
+    pinned: true,
+  },
+  {
+    caption: 'NOAA',
+    image: '/formik/img/logos/noaa.svg',
+    infoLink: 'https://www.noaa.gov',
+  },
+  {
     caption: 'Docker',
     image: '/formik/img/logos/docker.svg',
     infoLink: 'https://docker.com',
@@ -113,6 +124,16 @@ const users = [
     image: '/formik/img/logos/extendi.svg',
     infoLink: 'https://www.extendi.it',
   },
+  {
+    caption: 'Gusto',
+    image: '/formik/img/logos/gusto.png',
+    infoLink: 'https://gusto.com',
+  },
+  {
+    caption: 'Campusjäger',
+    image: '/formik/img/logos/campusjaeger.png',
+    infoLink: 'https://www.campusjaeger.de/',
+  }
 ];
 
 const siteConfig = {

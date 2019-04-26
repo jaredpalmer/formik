@@ -1,7 +1,8 @@
 ---
-id: formik
+id: version-1.5.2-formik
 title: <Formik />
 custom_edit_url: https://github.com/jaredpalmer/formik/edit/master/docs/api/formik.md
+original_id: formik
 ---
 
 `<Formik>` is a component that helps you with building forms. It uses a render
@@ -131,9 +132,9 @@ Set the error message of a field imperatively. `field` should match the key of
 Set the touched state of a field imperatively. `field` should match the key of
 `touched` you wish to update. Useful for creating custom input blur handlers. Calling this method will trigger validation to run if `validateOnBlur` is set to `true` (which it is by default). `isTouched` defaults to `true` if not specified. You can also explicitly prevent/skip validation by passing a third argument as `false`.
 
-#### `submitForm: () => Promise`
+#### `submitForm: () => void`
 
-Trigger a form submission. The promise will be rejected if form is invalid. 
+Trigger a form submission.
 
 #### `submitCount: number`
 

@@ -145,11 +145,11 @@ export interface FormikHandlers {
   /** Classic React change handler, keyed by input name */
   handleChange(e: React.ChangeEvent<any>): void;
   /** Preact-like linkState. Will return a handleChange function.  */
-  handleChange<T = string | React.ChangeEvent<any>>(
+  handleChange<T = unknown | React.ChangeEvent<any>>(
     field: T
   ): T extends React.ChangeEvent<any>
     ? void
-    : ((e: string | React.ChangeEvent<any>) => void);
+    : ((e: unknown | React.ChangeEvent<any>) => void);
 }
 
 /**

@@ -175,14 +175,14 @@ _NOTE_: In Formik v0.12 / 1.0, a new `meta` prop may be added to `Field` and `Fi
 
 The following methods are made available via render props.
 
-* `push: (obj: any) => void`: Add a value to the end of an array
-* `swap: (indexA: number, indexB: number) => void`: Swap two values in an array
-* `move: (from: number, to: number) => void`: Move an element in an array to another index
-* `insert: (index: number, value: any) => void`: Insert an element at a given index into the array
-* `unshift: (value: any) => number`: Add an element to the beginning of an array and return its length
-* `remove<T>(index: number): T | undefined`: Remove an element at an index of an array and return it
-* `pop<T>(): T | undefined`: Remove and return value from the end of the array
-* `replace: (index: number, value: any) => void`: Replace a value at the given index into the array
+* `push: (obj: any, explicitValidation?: boolean) => void`: Add a value to the end of an array. Validation can be forced on or off.
+* `swap: (indexA: number, indexB: number, explicitValidation?: boolean) => void`: Swap two values in an array. Validation can be forced on or off.
+* `move: (from: number, to: number, explicitValidation?: boolean) => void`: Move an element in an array to another index. Validation can be forced on or off.
+* `insert: (index: number, value: any, explicitValidation?: boolean) => void`: Insert an element at a given index into the array. Validation can be forced on or off.
+* `unshift: (value: any, explicitValidation?: boolean) => number`: Add an element to the beginning of an array and return its length. Validation can be forced on or off.
+* `remove<T>(index: number, explicitValidation?: boolean): T | undefined`: Remove an element at an index of an array and return it. Validation can be forced on or off.
+* `pop<T>(explicitValidation?: boolean): T | undefined`: Remove and return value from the end of the array. Validation can be forced on or off.
+* `replace: (index: number, value: any, explicitValidation?: boolean) => void`: Replace a value at the given index into the array. Validation can be forced on or off.
 
 ## FieldArray render methods
 

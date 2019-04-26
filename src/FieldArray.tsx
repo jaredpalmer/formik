@@ -22,37 +22,53 @@ export type FieldArrayConfig = {
 } & SharedRenderProps<FieldArrayRenderProps>;
 export interface ArrayHelpers {
   /** Imperatively add a value to the end of an array */
-  push: (obj: any) => void;
+  push: (obj: any, explicitValidation?: boolean) => void;
   /** Curried fn to add a value to the end of an array */
-  handlePush: (obj: any) => () => void;
+  handlePush: (obj: any, explicitValidation?: boolean) => () => void;
   /** Imperatively swap two values in an array */
-  swap: (indexA: number, indexB: number) => void;
+  swap: (indexA: number, indexB: number, explicitValidation?: boolean) => void;
   /** Curried fn to swap two values in an array */
-  handleSwap: (indexA: number, indexB: number) => () => void;
+  handleSwap: (
+    indexA: number,
+    indexB: number,
+    explicitValidation?: boolean
+  ) => () => void;
   /** Imperatively move an element in an array to another index */
-  move: (from: number, to: number) => void;
+  move: (from: number, to: number, explicitValidation?: boolean) => void;
   /** Imperatively move an element in an array to another index */
-  handleMove: (from: number, to: number) => () => void;
+  handleMove: (
+    from: number,
+    to: number,
+    explicitValidation?: boolean
+  ) => () => void;
   /** Imperatively insert an element at a given index into the array */
-  insert: (index: number, value: any) => void;
+  insert: (index: number, value: any, explicitValidation?: boolean) => void;
   /** Curried fn to insert an element at a given index into the array */
-  handleInsert: (index: number, value: any) => () => void;
+  handleInsert: (
+    index: number,
+    value: any,
+    explicitValidation?: boolean
+  ) => () => void;
   /** Imperatively replace a value at an index of an array  */
-  replace: (index: number, value: any) => void;
+  replace: (index: number, value: any, explicitValidation?: boolean) => void;
   /** Curried fn to replace an element at a given index into the array */
-  handleReplace: (index: number, value: any) => () => void;
+  handleReplace: (
+    index: number,
+    value: any,
+    explicitValidation?: boolean
+  ) => () => void;
   /** Imperatively add an element to the beginning of an array and return its length */
-  unshift: (value: any) => number;
+  unshift: (value: any, explicitValidation?: boolean) => number;
   /** Curried fn to add an element to the beginning of an array */
-  handleUnshift: (value: any) => () => void;
+  handleUnshift: (value: any, explicitValidation?: boolean) => () => void;
   /** Curried fn to remove an element at an index of an array */
-  handleRemove: (index: number) => () => void;
+  handleRemove: (index: number, explicitValidation?: boolean) => () => void;
   /** Curried fn to remove a value from the end of the array */
-  handlePop: () => () => void;
+  handlePop: (explicitValidation?: boolean) => () => void;
   /** Imperatively remove and element at an index of an array */
-  remove<T>(index: number): T | undefined;
+  remove<T>(index: number, explicitValidation?: boolean): T | undefined;
   /** Imperatively remove and return value from the end of the array */
-  pop<T>(): T | undefined;
+  pop<T>(explicitValidation?: boolean): T | undefined;
 }
 
 /**
@@ -103,7 +119,8 @@ class FieldArrayInner<Values = {}> extends React.Component<
   updateArrayField = (
     fn: Function,
     alterTouched: boolean | Function,
-    alterErrors: boolean | Function
+    alterErrors: boolean | Function,
+    explicitValidation?: boolean
   ) => {
     const {
       name,
@@ -140,57 +157,82 @@ class FieldArrayInner<Values = {}> extends React.Component<
         };
       },
       () => {
-        if (validateOnChange) {
+        if (typeof explicitValidation === 'boolean') {
+          if (explicitValidation) {
+            validateForm();
+          }
+        } else if (validateOnChange) {
           validateForm();
         }
       }
     );
   };
 
-  push = (value: any) =>
+  push = (value: any, explicitValidation?: boolean) =>
     this.updateArrayField(
       (array: any[]) => [...(array || []), cloneDeep(value)],
       false,
-      false
+      false,
+      explicitValidation
     );
 
-  handlePush = (value: any) => () => this.push(value);
+  handlePush = (value: any, explicitValidation?: boolean) => () =>
+    this.push(value, explicitValidation);
 
-  swap = (indexA: number, indexB: number) =>
+  swap = (indexA: number, indexB: number, explicitValidation?: boolean) =>
     this.updateArrayField(
       (array: any[]) => swap(array, indexA, indexB),
       true,
-      true
+      true,
+      explicitValidation
     );
 
-  handleSwap = (indexA: number, indexB: number) => () =>
-    this.swap(indexA, indexB);
+  handleSwap = (
+    indexA: number,
+    indexB: number,
+    explicitValidation?: boolean
+  ) => () => this.swap(indexA, indexB, explicitValidation);
 
-  move = (from: number, to: number) =>
-    this.updateArrayField((array: any[]) => move(array, from, to), true, true);
+  move = (from: number, to: number, explicitValidation?: boolean) =>
+    this.updateArrayField(
+      (array: any[]) => move(array, from, to),
+      true,
+      true,
+      explicitValidation
+    );
 
-  handleMove = (from: number, to: number) => () => this.move(from, to);
+  handleMove = (from: number, to: number, explicitValidation?: boolean) => () =>
+    this.move(from, to, explicitValidation);
 
-  insert = (index: number, value: any) =>
+  insert = (index: number, value: any, explicitValidation?: boolean) =>
     this.updateArrayField(
       (array: any[]) => insert(array, index, value),
       (array: any[]) => insert(array, index, null),
-      (array: any[]) => insert(array, index, null)
+      (array: any[]) => insert(array, index, null),
+      explicitValidation
     );
 
-  handleInsert = (index: number, value: any) => () => this.insert(index, value);
+  handleInsert = (
+    index: number,
+    value: any,
+    explicitValidation?: boolean
+  ) => () => this.insert(index, value, explicitValidation);
 
-  replace = (index: number, value: any) =>
+  replace = (index: number, value: any, explicitValidation?: boolean) =>
     this.updateArrayField(
       (array: any[]) => replace(array, index, value),
       false,
-      false
+      false,
+      explicitValidation
     );
 
-  handleReplace = (index: number, value: any) => () =>
-    this.replace(index, value);
+  handleReplace = (
+    index: number,
+    value: any,
+    explicitValidation?: boolean
+  ) => () => this.replace(index, value, explicitValidation);
 
-  unshift = (value: any) => {
+  unshift = (value: any, explicitValidation?: boolean) => {
     let length = -1;
     this.updateArrayField(
       (array: any[]) => {
@@ -209,14 +251,16 @@ class FieldArrayInner<Values = {}> extends React.Component<
         const arr = array ? [null, ...array] : [null];
         if (length < 0) length = arr.length;
         return arr;
-      }
+      },
+      explicitValidation
     );
     return length;
   };
 
-  handleUnshift = (value: any) => () => this.unshift(value);
+  handleUnshift = (value: any, explicitValidation?: boolean) => () =>
+    this.unshift(value, explicitValidation);
 
-  remove<T>(index: number): T {
+  remove<T>(index: number, explicitValidation?: boolean): T {
     // We need to make sure we also remove relevant pieces of `touched` and `errors`
     let result: any;
     this.updateArrayField(
@@ -232,15 +276,17 @@ class FieldArrayInner<Values = {}> extends React.Component<
         return copy;
       },
       true,
-      true
+      true,
+      explicitValidation
     );
 
     return result;
   }
 
-  handleRemove = (index: number) => () => this.remove<any>(index);
+  handleRemove = (index: number, explicitValidation?: boolean) => () =>
+    this.remove<any>(index, explicitValidation);
 
-  pop<T>(): T {
+  pop<T>(explicitValidation?: boolean): T {
     // Remove relevant pieces of `touched` and `errors` too!
     let result: any;
     this.updateArrayField(
@@ -253,13 +299,15 @@ class FieldArrayInner<Values = {}> extends React.Component<
         return tmp;
       },
       true,
-      true
+      true,
+      explicitValidation
     );
 
     return result;
   }
 
-  handlePop = () => () => this.pop<any>();
+  handlePop = (explicitValidation?: boolean) => () =>
+    this.pop<any>(explicitValidation);
 
   render() {
     const arrayHelpers: ArrayHelpers = {

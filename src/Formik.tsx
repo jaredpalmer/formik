@@ -779,7 +779,7 @@ function warnAboutMissingIdentifier({
   handlerName: string;
 }) {
   console.warn(
-    `invariant: Formik called \`${handlerName}\`, but you forgot to pass an \`id\` or \`name\` attribute to your input:
+    `Warning: Formik called \`${handlerName}\`, but you forgot to pass an \`id\` or \`name\` attribute to your input:
     ${htmlContent}
     Formik cannot determine which value to update. For more info see https://github.com/jaredpalmer/formik#${documentationAnchorLink}
   `

@@ -3,6 +3,7 @@ import isEqual from 'react-fast-compare';
 import deepmerge from 'deepmerge';
 import { FormikProvider } from './connect';
 import warning from 'tiny-warning';
+
 import {
   FormikActions,
   FormikConfig,

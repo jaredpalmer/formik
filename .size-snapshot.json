@@ -10,13 +10,13 @@
     "gzipped": 15075
   },
   "./dist/formik.cjs.production.js": {
-    "bundled": 43495,
-    "minified": 21912,
+    "bundled": 44213,
+    "minified": 21876,
     "gzipped": 5488
   },
   "./dist/formik.cjs.development.js": {
-    "bundled": 44383,
-    "minified": 22795,
+    "bundled": 45112,
+    "minified": 22759,
     "gzipped": 5826
   },
   "dist/formik.esm.js": {

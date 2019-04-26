@@ -14,7 +14,11 @@ import {
 
 import { noop } from './testHelpers';
 
-const initialValues = { name: 'jared', email: 'hello@reason.nyc' };
+const initialValues = {
+  name: 'jared',
+  email: 'hello@reason.nyc',
+  user: { superPowers: ['Surging', 'Binding'] },
+};
 type Values = typeof initialValues;
 
 function renderForm(
@@ -38,7 +42,7 @@ function renderForm(
 }
 
 const createRenderField = (
-  FieldComponent: React.ComponentClass<FieldConfig>
+  FieldComponent: React.ComponentType<FieldConfig>
 ) => (
   props: Partial<FieldConfig> | Partial<FastFieldConfig> = {},
   formProps?: Partial<FormikConfig<Values>>
@@ -330,7 +334,7 @@ describe('Field / FastField', () => {
   cases('can resolve bracket paths', renderField => {
     const { getProps } = renderField(
       { name: 'user[superPowers][0]' },
-      { initialValues: { user: { superPowers: ['Surging', 'Binding'] } } } // TODO: fix generic type
+      { initialValues }
     );
 
     expect(getProps().field.value).toBe('Surging');
@@ -339,7 +343,7 @@ describe('Field / FastField', () => {
   cases('can resolve mixed dot and bracket paths', renderField => {
     const { getProps } = renderField(
       { name: 'user.superPowers[1]' },
-      { initialValues: { user: { superPowers: ['Surging', 'Binding'] } } } // TODO: fix generic type
+      { initialValues }
     );
 
     expect(getProps().field.value).toBe('Binding');
@@ -348,7 +352,7 @@ describe('Field / FastField', () => {
   cases('can resolve mixed dot and bracket paths II', renderField => {
     const { getProps } = renderField(
       { name: 'user[superPowers].1' },
-      { initialValues: { user: { superPowers: ['Surging', 'Binding'] } } } // TODO: fix generic type
+      { initialValues }
     );
 
     expect(getProps().field.value).toBe('Binding');

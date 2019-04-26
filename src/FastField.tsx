@@ -23,7 +23,7 @@ export interface FastFieldProps<V = any> {
   form: FormikProps<V>; // if ppl want to restrict this for a given form, let them.
 }
 
-export interface FastFieldConfig<T> {
+export interface FastFieldConfig<T = any> {
   /**
    * Field component to render. Can either be a string like 'select' or a component.
    */

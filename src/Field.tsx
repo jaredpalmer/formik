@@ -29,43 +29,45 @@ import { getIn, isEmptyChildren, isFunction } from './utils';
  *     {form.touched[field.name] && form.errors[field.name]}
  *   </div>
  */
-export interface FieldProps<V = any> {
+export interface FieldProps<Values = any, ValueType = any> {
   field: {
     /** Classic React change handler, keyed by input name */
     onChange: FormikHandlers['handleChange'];
     /** Mark input as touched */
     onBlur: FormikHandlers['handleBlur'];
     /** Value of the input */
-    value: any;
+    value: ValueType;
     /* name of the input */
     name: string;
   };
-  form: FormikProps<V>; // if ppl want to restrict this for a given form, let them.
+  form: FormikProps<Values>; // if ppl want to restrict this for a given form, let them.
 }
 
-export interface FieldConfig {
+export interface FieldConfig<Values = any, ValueType = any> {
   /**
    * Field component to render. Can either be a string like 'select' or a component.
    */
   component?:
     | string
-    | React.ComponentType<FieldProps<any>>
+    | React.ComponentType<FieldProps<Values, ValueType>>
     | React.ComponentType<void>;
 
   /**
    * Render prop (works like React router's <Route render={props =>} />)
    */
-  render?: ((props: FieldProps<any>) => React.ReactNode);
+  render?: ((props: FieldProps<Values, ValueType>) => React.ReactNode);
 
   /**
    * Children render function <Field name>{props => ...}</Field>)
    */
-  children?: ((props: FieldProps<any>) => React.ReactNode) | React.ReactNode;
+  children?:
+    | ((props: FieldProps<Values, ValueType>) => React.ReactNode)
+    | React.ReactNode;
 
   /**
    * Validate a single field value independently
    */
-  validate?: ((value: any) => string | Promise<void> | undefined);
+  validate?: ((value: ValueType) => string | Promise<void> | undefined);
 
   /**
    * Field name
@@ -76,25 +78,34 @@ export interface FieldConfig {
   type?: string;
 
   /** Field value */
-  value?: any;
+  value?: ValueType;
 
   /** Inner ref */
   innerRef?: (instance: any) => void;
 }
 
-export type FieldAttributes<T> = GenericFieldHTMLAttributes & FieldConfig & T;
+export type FieldAttributes<
+  Props,
+  Values,
+  ValueType = any
+> = GenericFieldHTMLAttributes & FieldConfig<Values, ValueType> & Props;
+
+type FieldInnerProps<Props, Values, ValueType = any> = FieldAttributes<
+  Props,
+  Values,
+  ValueType
+> & { formik: FormikContext<Values> };
 
 /**
  * Custom Field component for quickly hooking into Formik
  * context and wiring up forms.
  */
-class FieldInner<Values = {}, Props = {}> extends React.Component<
-  FieldAttributes<Props> & { formik: FormikContext<Values> },
-  {}
-> {
-  constructor(
-    props: FieldAttributes<Props> & { formik: FormikContext<Values> }
-  ) {
+class FieldInner<
+  Values = {},
+  Props = {},
+  ValueType = any
+> extends React.Component<FieldInnerProps<Props, Values, ValueType>, {}> {
+  constructor(props: FieldInnerProps<Props, Values, ValueType>) {
     super(props);
     const { render, children, component } = props;
     warning(
@@ -119,9 +130,7 @@ class FieldInner<Values = {}, Props = {}> extends React.Component<
     this.props.formik.registerField(this.props.name, this);
   }
 
-  componentDidUpdate(
-    prevProps: FieldAttributes<Props> & { formik: FormikContext<Values> }
-  ) {
+  componentDidUpdate(prevProps: FieldInnerProps<Props, Values, ValueType>) {
     if (this.props.name !== prevProps.name) {
       this.props.formik.unregisterField(prevProps.name);
       this.props.formik.registerField(this.props.name, this);
@@ -145,9 +154,7 @@ class FieldInner<Values = {}, Props = {}> extends React.Component<
       component = 'input',
       formik,
       ...props
-    } = (this.props as FieldAttributes<Props> & {
-      formik: FormikContext<Values>;
-    }) as any;
+    } = this.props;
     const {
       validate: _validate,
       validationSchema: _validationSchema,
@@ -165,11 +172,13 @@ class FieldInner<Values = {}, Props = {}> extends React.Component<
     const bag = { field, form: restOfFormik };
 
     if (render) {
-      return (render as any)(bag);
+      return render(bag);
     }
 
     if (isFunction(children)) {
-      return (children as (props: FieldProps<any>) => React.ReactNode)(bag);
+      return (children as (
+        props: FieldProps<Values, ValueType>
+      ) => React.ReactNode)(bag);
     }
 
     if (typeof component === 'string') {
@@ -190,4 +199,4 @@ class FieldInner<Values = {}, Props = {}> extends React.Component<
   }
 }
 
-export const Field = connect<FieldAttributes<any>, any>(FieldInner);
+export const Field = connect<FieldAttributes<any, any>, any>(FieldInner);

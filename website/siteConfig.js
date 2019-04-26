@@ -129,6 +129,11 @@ const users = [
     image: '/formik/img/logos/gusto.png',
     infoLink: 'https://gusto.com',
   },
+  {
+    caption: 'Campusjäger',
+    image: '/formik/img/logos/campusjaeger.png',
+    infoLink: 'https://www.campusjaeger.de/',
+  }
 ];
 
 const siteConfig = {

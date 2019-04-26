@@ -90,7 +90,7 @@ export interface FormikHelpers<Values> {
   /** Reset form */
   resetForm(nextState?: FormikState<Values>): void;
   /** Submit the form imperatively */
-  submitForm(): void;
+
   /** Set Formik state, careful! */
   setFormikState(
     f:
@@ -212,7 +212,9 @@ export type FormikProps<Values> = FormikSharedConfig &
   FormikHelpers<Values> &
   FormikHandlers &
   FormikComputedProps<Values> &
-  FormikRegistration;
+  FormikRegistration & {
+    submitForm(): void;
+  };
 
 /** Internal Formik registration methods that get passed down as props */
 export interface FormikRegistration {

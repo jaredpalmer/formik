@@ -3,7 +3,6 @@ import hoistNonReactStatics from 'hoist-non-react-statics';
 import createContext from 'create-react-context';
 import { FormikContext } from './types';
 import warning from 'tiny-warning';
-import isEmpty from 'lodash/isEmpty';
 
 export const {
   Provider: FormikProvider,
@@ -21,7 +20,7 @@ export function connect<OuterProps, Values = {}>(
     <FormikConsumer>
       {formik => {
         warning(
-          isEmpty(formik),
+          !formik,
           `Formik context is undefined, please verify you are rendering <Form>, <Field>, <FastField> or <FieldArray> inside <Formik>. Component name: ${
             Comp.name
           }`

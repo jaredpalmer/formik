@@ -209,7 +209,7 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
   /**
    * Submit validation error
    */
-  onSubmitValidationError: () => void;
+  onSubmitValidationError: (errors: FormikErrors<Values>) => void;
 
   /**
    * A Yup Schema or a function that returns a Yup schema

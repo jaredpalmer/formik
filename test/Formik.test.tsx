@@ -450,14 +450,15 @@ describe('<Formik>', () => {
 
       it('should call to submit validation error if the form is invalid', async () => {
         const onSubmitValidationError = jest.fn();
-        const validate = jest.fn(() => ({ name: 'Error!' }));
+        const error = { name: 'Error!' };
+        const validate = jest.fn(() => error);
         const { getByTestId } = renderFormik({
           onSubmitValidationError,
           validate,
         });
 
         fireEvent.submit(getByTestId('form'));
-        await wait(() => expect(onSubmitValidationError).toBeCalled());
+        await wait(() => expect(onSubmitValidationError).toBeCalledWith(error));
       });
     });
 
@@ -490,14 +491,15 @@ describe('<Formik>', () => {
 
       it('should call to submit validation error if the form is invalid', async () => {
         const onSubmitValidationError = jest.fn();
-        const validate = jest.fn(() => Promise.reject({ name: 'Error!' }));
+        const error = { name: 'Error!' };
+        const validate = jest.fn(() => Promise.reject(error));
         const { getByTestId } = renderFormik({
           onSubmitValidationError,
           validate,
         });
 
         fireEvent.submit(getByTestId('form'));
-        await wait(() => expect(onSubmitValidationError).toBeCalled());
+        await wait(() => expect(onSubmitValidationError).toBeCalledWith(error));
       });
     });
 

@@ -58,8 +58,27 @@ const createRenderField = (
   };
 };
 
+const createRenderFieldWithoutFormikCtx = (
+  FieldComponent: React.ComponentClass<FieldConfig>
+) => (props: Partial<FieldConfig> | Partial<FastFieldConfig> = {}) => {
+  let injected: FieldProps | FastFieldProps;
+
+  if (!props.children && !props.render && !props.component) {
+    props.children = (fieldProps: FieldProps | FastFieldProps) =>
+      (injected = fieldProps) && null;
+  }
+
+  return {
+    getProps() {
+      return injected;
+    },
+    ...render(<FieldComponent name="name" {...props} />),
+  };
+};
+
 const renderField = createRenderField(Field);
 const renderFastField = createRenderField(FastField);
+const renderFieldWithoutFormikCtx = createRenderFieldWithoutFormikCtx(Field);
 
 function cases(
   title: string,
@@ -317,6 +336,19 @@ describe('Field / FastField', () => {
       global.console.warn = jest.fn();
 
       renderField({
+        children: <div>{TEXT}</div>,
+        render: () => <div>{TEXT}</div>,
+      });
+
+      expect((global.console.warn as jest.Mock).mock.calls[0][0]).toContain(
+        'Warning:'
+      );
+    });
+
+    cases('warns if Formik context is undefined', () => {
+      global.console.warn = jest.fn();
+
+      renderFieldWithoutFormikCtx({
         children: <div>{TEXT}</div>,
         render: () => <div>{TEXT}</div>,
       });

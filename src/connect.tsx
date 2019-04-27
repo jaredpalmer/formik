@@ -2,6 +2,8 @@ import * as React from 'react';
 import hoistNonReactStatics from 'hoist-non-react-statics';
 import createContext from 'create-react-context';
 import { FormikContext } from './types';
+import warning from 'tiny-warning';
+import isEmpty from 'lodash/isEmpty';
 
 export const {
   Provider: FormikProvider,
@@ -17,9 +19,19 @@ export function connect<OuterProps, Values = {}>(
 ) {
   const C: React.SFC<OuterProps> = (props: OuterProps) => (
     <FormikConsumer>
-      {formik => <Comp {...props} formik={formik} />}
+      {formik => {
+        warning(
+          isEmpty(formik),
+          `Formik context is undefined, please verify you are rendering <Form>, <Field>, <FastField> or <FieldArray> inside <Formik>. Component name: ${
+            Comp.name
+          }`
+        );
+
+        return <Comp {...props} formik={formik} />;
+      }}
     </FormikConsumer>
   );
+
   const componentDisplayName =
     Comp.displayName ||
     Comp.name ||

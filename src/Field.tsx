@@ -116,7 +116,12 @@ class FieldInner<Values = {}, Props = {}> extends React.Component<
   componentDidMount() {
     // Register the Field with the parent Formik. Parent will cycle through
     // registered Field's validate fns right prior to submit
-    this.props.formik.registerField(this.props.name, this);
+
+    const { name, formik: { registerField } } = this.props;
+
+    if (registerField) {
+      registerField(name, this);
+    }
   }
 
   componentDidUpdate(
@@ -133,7 +138,11 @@ class FieldInner<Values = {}, Props = {}> extends React.Component<
   }
 
   componentWillUnmount() {
-    this.props.formik.unregisterField(this.props.name);
+    const { name, formik: { unregisterField } } = this.props;
+
+    if (unregisterField) {
+      unregisterField(name);
+    }
   }
 
   render() {

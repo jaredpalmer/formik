@@ -60,6 +60,7 @@ function renderFormik<V>(props?: Partial<FormikConfig<V>>) {
       <Formik
         ref={ref as any}
         onSubmit={noop as any}
+        onSubmitValidationError={noop as any}
         initialValues={InitialValues as any}
         {...props}
       >
@@ -445,6 +446,18 @@ describe('<Formik>', () => {
 
         fireEvent.submit(getByTestId('form'));
         expect(onSubmit).not.toBeCalled();
+      });
+
+      it('should call to submit validation error if the form is invalid', async () => {
+        const onSubmitValidationError = jest.fn();
+        const validate = jest.fn(() => ({ name: 'Error!' }));
+        const { getByTestId } = renderFormik({
+          onSubmitValidationError,
+          validate,
+        });
+
+        fireEvent.submit(getByTestId('form'));
+        await wait(() => expect(onSubmitValidationError).toBeCalled());
       });
     });
 

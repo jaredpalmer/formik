@@ -481,7 +481,7 @@ describe('<Formik>', () => {
 
       it('should not submit the form if invalid', async () => {
         const onSubmit = jest.fn();
-        const validate = jest.fn(() => Promise.resolve({ name: 'Error!' }));
+        const validate = jest.fn(() => Promise.reject({ name: 'Error!' }));
         const { getByTestId } = renderFormik({ onSubmit, validate });
 
         fireEvent.submit(getByTestId('form'));

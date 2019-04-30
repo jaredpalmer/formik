@@ -254,17 +254,16 @@ export class Formik<Values = FormikValues> extends React.Component<
         ? validationSchema(field)
         : validationSchema;
 
-      let promise =
-        field && schema.validateAt
-          ? schema.validateAt(field, values)
-          : validateYupSchema(values, schema);
+      let promise = validateYupSchema(values, schema);
 
       promise.then(
         () => {
           resolve({});
         },
         (err: any) => {
-          resolve(yupToFormErrors(err));
+          const { errors } = this.state;
+          const nextErrors = yupToFormErrors(err);
+          resolve(field ? { errors, ...nextErrors } : nextErrors);
         }
       );
     });
@@ -617,8 +616,8 @@ export class Formik<Values = FormikValues> extends React.Component<
       isValid: dirty
         ? this.state.errors && Object.keys(this.state.errors).length === 0
         : isInitialValid !== false && isFunction(isInitialValid)
-        ? (isInitialValid as (props: this['props']) => boolean)(this.props)
-        : (isInitialValid as boolean),
+          ? (isInitialValid as (props: this['props']) => boolean)(this.props)
+          : (isInitialValid as boolean),
       initialValues: this.initialValues,
     };
   };
@@ -658,16 +657,16 @@ export class Formik<Values = FormikValues> extends React.Component<
         {component
           ? React.createElement(component as any, props)
           : render
-          ? render(props)
-          : children // children come last, always called
-          ? isFunction(children)
-            ? (children as ((props: FormikProps<Values>) => React.ReactNode))(
-                props as FormikProps<Values>
-              )
-            : !isEmptyChildren(children)
-            ? React.Children.only(children)
-            : null
-          : null}
+            ? render(props)
+            : children // children come last, always called
+              ? isFunction(children)
+                ? (children as ((
+                    props: FormikProps<Values>
+                  ) => React.ReactNode))(props as FormikProps<Values>)
+                : !isEmptyChildren(children)
+                  ? React.Children.only(children)
+                  : null
+              : null}
       </FormikProvider>
     );
   }

@@ -1,6 +1,7 @@
 const { TsConfigPathsPlugin } = require('awesome-typescript-loader');
 
 module.exports = (storybookBaseConfig, configType, defaultConfig) => {
+  defaultConfig.devtool = 'inline-source-map';
   defaultConfig.module.rules.push({
     test: /\.tsx?$/,
     loader: 'awesome-typescript-loader',

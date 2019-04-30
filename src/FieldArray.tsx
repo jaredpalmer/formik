@@ -291,12 +291,19 @@ class FieldArrayInner<Values = {}> extends React.Component<
         validationSchema: _validationSchema,
         ...restOfFormik
       },
+
+      ...rest
     } = this.props;
 
-    const props: FieldArrayRenderProps = {
+    const fieldArrayRenderProps: FieldArrayRenderProps = {
       ...arrayHelpers,
       form: restOfFormik,
       name,
+    };
+
+    const props = {
+        ...rest,
+        ...fieldArrayRenderProps
     };
 
     return component

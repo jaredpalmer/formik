@@ -48,4 +48,35 @@ describe('<ErrorMessage />', () => {
     // Renders after being visited with an error.
     expect(actual).toEqual(message);
   });
+  it('only show when onSubmitted', async () => {
+    let actual: any; /** ErrorMessage ;) */
+    let actualFProps: any;
+    let message = 'Wrong';
+    ReactDOM.render(
+      <TestForm
+        render={(fProps: FormikProps<TestFormValues>) => {
+          actualFProps = fProps;
+          return (
+            <div>
+              <ErrorMessage name="email" onlySubmitted>
+                {props => (actual = props) || <div>{props}</div>}
+              </ErrorMessage>
+            </div>
+          );
+        }}
+      />,
+      node
+    );
+
+    actualFProps.setFieldError('email', message);
+    expect(actual).toEqual(undefined);
+
+    actualFProps.setFieldTouched('email');
+    expect(actual).toEqual(undefined);
+
+    actualFProps.handleSubmit();
+
+    // Renders after being submitted.
+    expect(actual).toEqual(message);
+  });
 });

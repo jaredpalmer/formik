@@ -5,6 +5,7 @@ import { connect } from './connect';
 
 export interface ErrorMessageProps {
   name: string;
+  onlySubmitted?: boolean;
   className?: string;
   component?: string | React.ComponentType;
   children?: ((errorMessage: string) => React.ReactNode);
@@ -22,6 +23,7 @@ class ErrorMessageImpl extends React.Component<
         getIn(props.formik.errors, this.props.name) ||
       getIn(this.props.formik.touched, this.props.name) !==
         getIn(props.formik.touched, this.props.name) ||
+      this.props.formik.submitCount !== props.formik.submitCount ||
       Object.keys(this.props).length !== Object.keys(props).length
     ) {
       return true;
@@ -31,12 +33,20 @@ class ErrorMessageImpl extends React.Component<
   }
 
   render() {
-    let { component, formik, render, children, name, ...rest } = this.props;
+    let {
+      component,
+      formik,
+      render,
+      onlySubmitted,
+      children,
+      name,
+      ...rest
+    } = this.props;
 
     const touch = getIn(formik.touched, name);
     const error = getIn(formik.errors, name);
 
-    return !!touch && !!error
+    return !!touch && !!error && (onlySubmitted ? !!formik.submitCount : true)
       ? render
         ? isFunction(render) ? render(error) : null
         : children

@@ -107,6 +107,12 @@ Either a React component or the name of an HTML element to render. If not specif
 
 A field's name in Formik state. To access nested objects or arrays, name can also accept lodash-like dot path like `social.facebook` or `friends[0].firstName`
 
+### `onlySubmitted`
+
+`onlySubmitted?: boolean`
+
+Will only show the error message if the form has been submitted before.
+
 ### `render`
 
 `render?: (error: string) => React.ReactNode`

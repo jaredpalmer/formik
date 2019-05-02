@@ -29,7 +29,7 @@ import { getIn, isEmptyChildren, isFunction } from './utils';
  *     {form.touched[field.name] && form.errors[field.name]}
  *   </div>
  */
-export interface FieldProps<Values = any, ValueType = any> {
+export type FieldProps<Values = any, ValueType = any, Props = {}> = Props & {
   field: {
     /** Classic React change handler, keyed by input name */
     onChange: FormikHandlers['handleChange'];
@@ -41,27 +41,27 @@ export interface FieldProps<Values = any, ValueType = any> {
     name: string;
   };
   form: FormikProps<Values>; // if ppl want to restrict this for a given form, let them.
-}
+};
 
-export interface FieldConfig<Values = any, ValueType = any> {
+export interface FieldConfig<Values = any, ValueType = any, Props = {}> {
   /**
    * Field component to render. Can either be a string like 'select' or a component.
    */
   component?:
     | string
-    | React.ComponentType<FieldProps<Values, ValueType>>
+    | React.ComponentType<FieldProps<Values, ValueType, Props>>
     | React.ComponentType<void>;
 
   /**
    * Render prop (works like React router's <Route render={props =>} />)
    */
-  render?: ((props: FieldProps<Values, ValueType>) => React.ReactNode);
+  render?: ((props: FieldProps<Values, ValueType, Props>) => React.ReactNode);
 
   /**
    * Children render function <Field name>{props => ...}</Field>)
    */
   children?:
-    | ((props: FieldProps<Values, ValueType>) => React.ReactNode)
+    | ((props: FieldProps<Values, ValueType, Props>) => React.ReactNode)
     | React.ReactNode;
 
   /**
@@ -88,7 +88,7 @@ export type FieldAttributes<
   Props,
   Values,
   ValueType = any
-> = GenericFieldHTMLAttributes & FieldConfig<Values, ValueType> & Props;
+> = GenericFieldHTMLAttributes & FieldConfig<Values, ValueType, Props> & Props;
 
 type FieldInnerProps<Props, Values, ValueType = any> = FieldAttributes<
   Props,
@@ -169,7 +169,11 @@ class FieldInner<
       onChange: formik.handleChange,
       onBlur: formik.handleBlur,
     };
-    const bag = { field, form: restOfFormik };
+    const bag: FieldProps<Values, ValueType, Props> = {
+      field,
+      form: restOfFormik,
+      ...this.props,
+    };
 
     if (render) {
       return render(bag);
@@ -177,7 +181,7 @@ class FieldInner<
 
     if (isFunction(children)) {
       return (children as (
-        props: FieldProps<Values, ValueType>
+        props: FieldProps<Values, ValueType, Props>
       ) => React.ReactNode)(bag);
     }
 
@@ -199,4 +203,4 @@ class FieldInner<
   }
 }
 
-export const Field = connect<FieldAttributes<any, any>, any>(FieldInner);
+export const Field = connect<FieldAttributes<any, any, {}>, any>(FieldInner);

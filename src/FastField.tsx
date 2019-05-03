@@ -1,4 +1,5 @@
 import * as React from 'react';
+import isEqual from 'react-fast-compare';
 
 import { connect } from './connect';
 import {
@@ -109,17 +110,23 @@ class FastFieldInner<Values = {}, Props = {}> extends React.Component<
   shouldComponentUpdate(
     props: FastFieldAttributes<Props> & { formik: FormikContext<Values> }
   ) {
+    const { formik, ...otherProps } = (this.props as {
+      formik: FormikContext<Values>;
+    }) as any;
+    const { formik: nextFormik, ...nextOtherProps } = (props as {
+      formik: FormikContext<Values>;
+    }) as any;
     if (this.props.shouldUpdate) {
       return this.props.shouldUpdate(props, this.props);
     } else if (
-      getIn(this.props.formik.values, this.props.name) !==
-        getIn(props.formik.values, this.props.name) ||
-      getIn(this.props.formik.errors, this.props.name) !==
-        getIn(props.formik.errors, this.props.name) ||
-      getIn(this.props.formik.touched, this.props.name) !==
-        getIn(props.formik.touched, this.props.name) ||
-      Object.keys(this.props).length !== Object.keys(props).length ||
-      this.props.formik.isSubmitting !== props.formik.isSubmitting
+      getIn(nextFormik.values, this.props.name) !==
+        getIn(formik.values, this.props.name) ||
+      getIn(nextFormik.errors, this.props.name) !==
+        getIn(formik.errors, this.props.name) ||
+      getIn(nextFormik.touched, this.props.name) !==
+        getIn(formik.touched, this.props.name) ||
+      !isEqual(nextOtherProps, otherProps) ||
+      nextFormik.isSubmitting !== formik.isSubmitting
     ) {
       return true;
     } else {

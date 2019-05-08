@@ -760,10 +760,12 @@ describe('<Formik>', () => {
           setFieldError: expect.any(Function),
           setFieldTouched: expect.any(Function),
           setFieldValue: expect.any(Function),
+          setFieldInitialValue: expect.any(Function),
           setStatus: expect.any(Function),
           setSubmitting: expect.any(Function),
           setTouched: expect.any(Function),
           setValues: expect.any(Function),
+          setInitialValues: expect.any(Function),
           submitForm: expect.any(Function),
         })
       );

@@ -60,6 +60,9 @@ export interface FieldConfig {
   /** Field value */
   value?: any;
 
+  /** Field initial value */
+  initialValue?: any;
+
   /** Inner ref */
   innerRef?: (instance: any) => void;
 }
@@ -84,6 +87,7 @@ export function Field({
   children,
   as: is = 'input', // `as` is reserved in typescript lol
   component,
+  initialValue,
   ...props
 }: FieldAttributes<any>) {
   const {
@@ -118,6 +122,13 @@ export function Field({
       'You should not use <Field render> and <Field children> in the same <Field> component; <Field children> will be ignored'
     );
   }, []);
+
+  React.useEffect(
+    () => {
+      formik.setFieldInitialValue(name, props.initialValue);
+    },
+    [props.initialValue]
+  );
 
   React.useEffect(
     () => {

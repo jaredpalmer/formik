@@ -33,7 +33,12 @@ type FormikMessage<Values> =
   | { type: 'SET_ISVALIDATING'; payload: boolean }
   | { type: 'SET_ISSUBMITTING'; payload: boolean }
   | { type: 'SET_VALUES'; payload: Values }
+  | { type: 'SET_INITIAL_VALUES'; payload: Values }
   | { type: 'SET_FIELD_VALUE'; payload: { field: string; value?: any } }
+  | {
+      type: 'SET_FIELD_INITIAL_VALUE';
+      payload: { field: string; initialValue?: any };
+    }
   | { type: 'SET_FIELD_TOUCHED'; payload: { field: string; value?: boolean } }
   | { type: 'SET_FIELD_ERROR'; payload: { field: string; value?: string } }
   | { type: 'SET_TOUCHED'; payload: FormikTouched<Values> }
@@ -50,6 +55,8 @@ function formikReducer<Values>(
   switch (msg.type) {
     case 'SET_VALUES':
       return { ...state, values: msg.payload };
+    case 'SET_INITIAL_VALUES':
+      return { ...state, initialValues: msg.payload };
     case 'SET_TOUCHED':
       return { ...state, touched: msg.payload };
     case 'SET_ERRORS':
@@ -64,6 +71,15 @@ function formikReducer<Values>(
       return {
         ...state,
         values: setIn(state.values, msg.payload.field, msg.payload.value),
+      };
+    case 'SET_FIELD_INITIAL_VALUE':
+      return {
+        ...state,
+        values: setIn(
+          state.initialValues,
+          msg.payload.field,
+          msg.payload.initialValue
+        ),
       };
     case 'SET_FIELD_TOUCHED':
       return {
@@ -131,6 +147,11 @@ export function useFormik<Values = object>({
     React.Reducer<FormikState<Values>, FormikMessage<Values>>
   >(formikReducer, {
     values: props.initialValues,
+    /**
+     * only field-level initial values store here
+     * it will be merged to initialValues.current with props.initialValues
+     */
+    initialValues: {} as Values,
     errors: props.initialErrors || {},
     touched: props.initialTouched || {},
     status: props.initialStatus,
@@ -184,6 +205,7 @@ export function useFormik<Values = object>({
           touched,
           status,
           values,
+          initialValues: state.initialValues,
           isValidating: !!nextState && !!nextState.isValidating,
           submitCount:
             !!nextState &&
@@ -322,6 +344,10 @@ export function useFormik<Values = object>({
     dispatch({ type: 'SET_VALUES', payload: values });
   }, []);
 
+  const setInitialValues = React.useCallback((initialValues: Values) => {
+    dispatch({ type: 'SET_INITIAL_VALUES', payload: initialValues });
+  }, []);
+
   const setFieldError = React.useCallback(
     (field: string, value: string | undefined) => {
       dispatch({
@@ -345,6 +371,19 @@ export function useFormik<Values = object>({
       },
     });
   }, []);
+
+  const setFieldInitialValue = React.useCallback(
+    (field: string, initialValue: any) => {
+      dispatch({
+        type: 'SET_FIELD_INITIAL_VALUE',
+        payload: {
+          field,
+          initialValue,
+        },
+      });
+    },
+    []
+  );
 
   const setFieldTouched = React.useCallback((
     field: string,
@@ -673,6 +712,10 @@ export function useFormik<Values = object>({
 
   React.useEffect(
     () => {
+      initialValues.current = deepmerge(
+        props.initialValues,
+        state.initialValues
+      );
       if (
         enableReinitialize &&
         isMounted.current &&
@@ -681,7 +724,7 @@ export function useFormik<Values = object>({
         resetForm();
       }
     },
-    [props.initialValues, isMounted]
+    [props.initialValues, state.initialValues, isMounted]
   );
 
   const imperativeMethods = React.useMemo(
@@ -693,10 +736,12 @@ export function useFormik<Values = object>({
       setFieldError,
       setFieldTouched,
       setFieldValue,
+      setFieldInitialValue,
       setStatus,
       setSubmitting,
       setTouched,
       setValues,
+      setInitialValues,
       setFormikState,
     }),
     [
@@ -707,10 +752,12 @@ export function useFormik<Values = object>({
       setFieldError,
       setFieldTouched,
       setFieldValue,
+      setFieldInitialValue,
       setStatus,
       setSubmitting,
       setTouched,
       setValues,
+      setInitialValues,
       setFormikState,
     ]
   );
@@ -816,11 +863,13 @@ export function useFormik<Values = object>({
     setFormikState,
     setFieldTouched,
     setFieldValue,
+    setFieldInitialValue,
     setFieldError,
     setStatus,
     setSubmitting,
     setTouched,
     setValues,
+    setInitialValues,
     submitForm,
     validateForm,
     validateField,

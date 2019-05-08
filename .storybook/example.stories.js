@@ -7,6 +7,7 @@ import Arrays from '../examples/Arrays';
 import Basic from '../examples/Basic.js';
 import CustomInputs from '../examples/CustomInputs';
 import ErrorMessage from '../examples/ErrorMessage';
+import FieldLevelInitialValue from '../examples/FieldLevelInitialValue';
 import FastField from '../examples/FastField';
 import MultistepWizard from '../examples/MultistepWizard';
 import SchemaValidation from '../examples/SchemaValidation';
@@ -19,6 +20,7 @@ const ArraysCode = require('!raw-loader!../examples/Arrays');
 const BasicCode = require('!raw-loader!../examples/Basic.js');
 const CustomInputsCode = require('!raw-loader!../examples/CustomInputs');
 const ErrorMessageCode = require('!raw-loader!../examples/ErrorMessage');
+const FieldLevelInitialValueCode = require('!raw-loader!../examples/FieldLevelInitialValue');
 const FastFieldCode = require('!raw-loader!../examples/FastField');
 const MultistepWizardCode = require('!raw-loader!../examples/MultistepWizard');
 const SchemaValidationCode = require('!raw-loader!../examples/SchemaValidation');
@@ -116,6 +118,16 @@ storiesOf('Example', module)
           <ErrorMessage />
         </main>
         <Code>{cleanExample(ErrorMessageCode)}</Code>
+      </div>
+    );
+  })
+  .add('Field Level Initial Value', () => {
+    return (
+      <div className="formik-example">
+        <main>
+          <FieldLevelInitialValue />
+        </main>
+        <Code>{cleanExample(FieldLevelInitialValueCode)}</Code>
       </div>
     );
   })

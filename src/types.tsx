@@ -31,6 +31,10 @@ export type FormikTouched<Values> = {
 export interface FormikState<Values> {
   /** Form values */
   values: Values;
+  /**
+   * Field Level initialValues, will be merged to props.initialValues
+   */
+  initialValues: Values;
   /** map of field names to specific error for that field */
   errors: FormikErrors<Values>;
   /** map of field names to whether the field has been touched */
@@ -77,8 +81,12 @@ export interface FormikHelpers<Values> {
   setTouched(touched: FormikTouched<Values>): void;
   /** Manually set values object  */
   setValues(values: Values): void;
+  /** Manually set all field-level initial values object  */
+  setInitialValues(initialValues: Values): void;
   /** Set value of form field directly */
   setFieldValue(field: keyof Values & string, value: any): void;
+  /** Set initial value of a form field directly */
+  setFieldInitialValue(field: string, initialValue: any): void;
   /** Set error message of a form field directly */
   setFieldError(field: keyof Values & string, message: string): void;
   /** Set whether field has been touched directly */

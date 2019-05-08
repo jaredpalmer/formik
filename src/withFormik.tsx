@@ -29,7 +29,7 @@ export interface WithFormikConfig<
   Props,
   Values extends FormikValues = FormikValues,
   DeprecatedPayload = Values
-> extends FormikSharedConfig {
+> extends FormikSharedConfig<Props> {
   /**
    * Set the display name of the component. Useful for React DevTools.
    */

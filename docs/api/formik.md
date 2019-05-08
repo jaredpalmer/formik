@@ -143,6 +143,12 @@ Number of times user tried to submit the form. Increases when [`handleSubmit`](#
 Set the value of a field imperatively. `field` should match the key of
 `values` you wish to update. Useful for creating custom input change handlers. Calling this will trigger validation to run if `validateOnChange` is set to `true` (which it is by default). You can also explicitly prevent/skip validation by passing a third argument as `false`.
 
+#### `setFieldInitialValue: (field: string, value: any) => void`
+
+Set the initial value of a field imperatively. `field` should match the key of
+`values` you wish to update. Useful for dynamic changing field-level initial value.
+Remeber it only works when `enableReinitialize` is `true`.
+
 #### `setStatus: (status?: any) => void`
 
 Set a top-level `status` to anything you want imperatively. Useful for
@@ -160,6 +166,11 @@ Set `touched` imperatively.
 #### `setValues: (fields: { [field: string]: any }) => void`
 
 Set `values` imperatively.
+
+#### `setInitialValues: (fields: { [field: string]: any }) => void`
+
+Set `intialValues` imperatively, but ONLY collected from the field-level,
+it will be taken into calculation everytime `initialValues` change.
 
 #### `status?: any`
 

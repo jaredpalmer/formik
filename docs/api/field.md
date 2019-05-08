@@ -240,6 +240,15 @@ A function that returns one or more JSX elements.
 />
 ```
 
+### `initialValue`
+
+`initialValue?: any`
+
+You can setup the field-level initial value by passing it to the `initialValue`
+prop. Even though the form-level `initialValues` change, the all field-level 
+`initialValue`s will still be taken into calculation. Remeber it only works when
+turning on form-level `enableReinitialize`.
+
 ### `validate`
 
 `validate?: (value: any) => undefined | string | Promise<any>`

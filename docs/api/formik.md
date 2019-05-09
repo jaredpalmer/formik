@@ -213,7 +213,7 @@ const ContactForm = ({
     {errors.name && <div>{errors.name}</div>}
     <button type="submit">Submit</button>
   </form>
-};
+);
 ```
 
 **Warning:** `<Formik component>` takes precendence over `<Formik render>` so

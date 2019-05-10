@@ -120,27 +120,35 @@ export class Formik<Values = FormikValues> extends React.Component<
   }
 
   setErrors = (errors: FormikErrors<Values>) => {
-    this.setState({ errors });
+    if (this.didMount) {
+      this.setState({ errors });
+    }
   };
 
   setTouched = (touched: FormikTouched<Values>) => {
-    this.setState({ touched }, () => {
-      if (this.props.validateOnBlur) {
-        this.runValidations(this.state.values);
-      }
-    });
+    if (this.didMount) {
+      this.setState({ touched }, () => {
+        if (this.props.validateOnBlur) {
+          this.runValidations(this.state.values);
+        }
+      });
+    }
   };
 
   setValues = (values: FormikState<Values>['values']) => {
-    this.setState({ values }, () => {
-      if (this.props.validateOnChange) {
-        this.runValidations(values);
-      }
-    });
+    if (this.didMount) {
+      this.setState({ values }, () => {
+        if (this.props.validateOnChange) {
+          this.runValidations(values);
+        }
+      });
+    }
   };
 
   setStatus = (status?: any) => {
-    this.setState({ status });
+    if (this.didMount) {
+      this.setState({ status });
+    }
   };
 
   setError = (error: any) => {
@@ -506,26 +514,30 @@ export class Formik<Values = FormikValues> extends React.Component<
     touched: boolean = true,
     shouldValidate: boolean = true
   ) => {
-    // Set touched field by name
-    this.setState(
-      prevState => ({
-        ...prevState,
-        touched: setIn(prevState.touched, field, touched),
-      }),
-      () => {
-        if (this.props.validateOnBlur && shouldValidate) {
-          this.runValidations(this.state.values);
+    if (this.didMount) {
+      // Set touched field by name
+      this.setState(
+        prevState => ({
+          ...prevState,
+          touched: setIn(prevState.touched, field, touched),
+        }),
+        () => {
+          if (this.props.validateOnBlur && shouldValidate) {
+            this.runValidations(this.state.values);
+          }
         }
-      }
-    );
+      );
+    }
   };
 
   setFieldError = (field: string, message: string | undefined) => {
-    // Set form field by name
-    this.setState(prevState => ({
-      ...prevState,
-      errors: setIn(prevState.errors, field, message),
-    }));
+    if (this.didMount) {
+      // Set form field by name
+      this.setState(prevState => ({
+        ...prevState,
+        errors: setIn(prevState.errors, field, message),
+      }));
+    }
   };
 
   resetForm = (nextValues?: Values) => {

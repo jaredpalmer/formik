@@ -246,11 +246,11 @@ export class Formik<Values = FormikValues> extends React.Component<
    */
   runValidationSchema = (values: FormikValues) => {
     return new Promise(resolve => {
-      const { validationSchema } = this.props;
+      const { validationSchema, validationContext } = this.props;
       const schema = isFunction(validationSchema)
         ? validationSchema()
         : validationSchema;
-      validateYupSchema(values, schema).then(
+      validateYupSchema(values, schema, false, validationContext).then(
         () => {
           resolve({});
         },
@@ -629,6 +629,7 @@ export class Formik<Values = FormikValues> extends React.Component<
     return {
       ...this.getFormikBag(),
       validationSchema: this.props.validationSchema,
+      validationContext: this.props.validationContext,
       validate: this.props.validate,
       initialValues: this.initialValues,
     };

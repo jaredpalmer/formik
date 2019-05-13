@@ -61,6 +61,11 @@ export interface WithFormikConfig<
   validationSchema?: any | ((props: Props) => any);
 
   /**
+   * A context object to pass to `validationSchema`
+   */
+  validationContext?: any;
+
+  /**
    * Validation function. Must return an error object or promise that
    * throws an error object where that object keys map to corresponding value.
    */
@@ -151,6 +156,7 @@ export function withFormik<
             {...config}
             validate={config.validate && this.validate}
             validationSchema={config.validationSchema && this.validationSchema}
+            validationContext={config.validationContext}
             initialValues={mapPropsToValues(this.props)}
             initialStatus={
               config.mapPropsToStatus && config.mapPropsToStatus(this.props)

@@ -133,7 +133,7 @@ Set the touched state of a field imperatively. `field` should match the key of
 
 #### `submitForm: () => Promise`
 
-Trigger a form submission. The promise will be rejected if form is invalid. 
+Trigger a form submission. The promise will be rejected if form is invalid.
 
 #### `submitCount: number`
 
@@ -380,3 +380,7 @@ events and `change`-related methods. More specifically, when either
 [A Yup schema](https://github.com/jquense/yup) or a function that returns a Yup
 schema. This is used for validation. Errors are mapped by key to the inner
 component's `errors`. Its keys should match those of `values`.
+
+### `validationContext?: any`
+
+[A Yup context object](https://github.com/jquense/yup#mixedvalidatevalue-any-options-object-promiseany-validationerror). Pass an arbitrary set of key value pairs which will be accesible to the `validationSchema` or `validate` props.

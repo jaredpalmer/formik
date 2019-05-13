@@ -209,6 +209,11 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
    * A Yup Schema or a function that returns a Yup schema
    */
   validationSchema?: any | (() => any);
+  /**
+   * An object to be used in custom validations
+   * on the validationSchema
+   */
+  validationContext?: any;
 
   /**
    * Validation function. Must return an error object or promise that
@@ -240,7 +245,10 @@ export interface FormikRegistration {
  * State, handlers, and helpers made available to Formik's primitive components through context.
  */
 export type FormikContext<Values> = FormikProps<Values> &
-  Pick<FormikConfig<Values>, 'validate' | 'validationSchema'>;
+  Pick<
+    FormikConfig<Values>,
+    'validate' | 'validationSchema' | 'validationContext'
+  >;
 
 export interface SharedRenderProps<T> {
   /**

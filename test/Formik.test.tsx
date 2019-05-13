@@ -504,6 +504,24 @@ describe('<Formik>', () => {
         fireEvent.submit(getByTestId('form'));
         expect(validate).toHaveBeenCalled();
       });
+
+      it('should pass validationContext to validationSchema', async () => {
+        const validate = jest.fn(() => Promise.resolve({}));
+        const validationSchema = () => ({
+          validate,
+        });
+        const { getByTestId } = renderFormik({
+          validate,
+          validationSchema,
+          validationContext: { test: 'present' },
+        });
+
+        fireEvent.submit(getByTestId('form'));
+        expect(validate).toHaveBeenCalledWith(InitialValues, {
+          abortEarly: false,
+          context: { test: 'present' },
+        });
+      });
     });
 
     describe('FormikActions', () => {

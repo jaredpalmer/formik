@@ -119,7 +119,8 @@ export function Field({
         'You should not use <Field render> and <Field children> in the same <Field> component; <Field children> will be ignored'
       );
     }
-  }, [children, component, is, name, render]);
+    // eslint-disable-next-line
+  }, []);
 
   React.useEffect(() => {
     formik.registerField(name, {

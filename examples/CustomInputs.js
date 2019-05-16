@@ -60,7 +60,7 @@ const SignUp = () => (
             placeholder="https://example.com"
           />
 
-          <Fieldset name="animal" component="select" label="Favorite Animal">
+          <Fieldset name="animal" as="select" label="Favorite Animal">
             <option value="">Select an animal</option>
             <option value="tiger">Tiger</option>
             <option value="bear">Bear</option>

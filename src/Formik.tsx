@@ -8,18 +8,20 @@ import {
   FormikTouched,
   FormikValues,
   FormikProps,
-  FieldMetaProps,
-  FieldInputProps,
+  ValuesOrValuesFactory,
 } from './types';
 import {
-  isFunction,
-  isString,
-  setIn,
   isEmptyChildren,
+  isFunction,
+  isNaN,
   isPromise,
+  isString,
+  isInputEvent,
+  setIn,
   setNestedObjectValues,
   getActiveElement,
   getIn,
+  makeCancelable,
 } from './utils';
 import { FormikProvider } from './FormikContext';
 import invariant from 'tiny-warning';
@@ -32,7 +34,7 @@ type FormikMessage<Values> =
   | { type: 'SUBMIT_SUCCESS' }
   | { type: 'SET_ISVALIDATING'; payload: boolean }
   | { type: 'SET_ISSUBMITTING'; payload: boolean }
-  | { type: 'SET_VALUES'; payload: Values }
+  | { type: 'SET_VALUES'; payload: ValuesOrValuesFactory<Values> }
   | { type: 'SET_FIELD_VALUE'; payload: { field: string; value?: any } }
   | { type: 'SET_FIELD_TOUCHED'; payload: { field: string; value?: boolean } }
   | { type: 'SET_FIELD_ERROR'; payload: { field: string; value?: string } }
@@ -49,7 +51,11 @@ function formikReducer<Values>(
 ) {
   switch (msg.type) {
     case 'SET_VALUES':
-      return { ...state, values: msg.payload };
+      const values = isFunction(msg.payload)
+        ? msg.payload(state.values)
+        : msg.payload;
+
+      return { ...state, values };
     case 'SET_TOUCHED':
       return { ...state, touched: msg.payload };
     case 'SET_ERRORS':
@@ -457,7 +463,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   }, []);
 
   const setValues = useEventCallback(
-    (values: Values) => {
+    (values: ValuesOrValuesFactory<Values>) => {
       dispatch({ type: 'SET_VALUES', payload: values });
       return validateOnChange
         ? validateFormWithLowPriority(state.values)

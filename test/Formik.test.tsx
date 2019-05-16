@@ -9,6 +9,7 @@ jest.spyOn(global.console, 'warn');
 
 interface Values {
   name: string;
+  zipcode?: number;
 }
 
 function Form({
@@ -426,7 +427,7 @@ describe('<Formik>', () => {
       expect(getProps().touched).toEqual({});
 
       fireEvent.submit(getByTestId('form'));
-      expect(getProps().touched).toEqual({ name: true });
+      expect(getProps().touched).toEqual({ name: true, zipcode: true });
     });
 
     it('should push submission state changes to child component', () => {
@@ -581,8 +582,20 @@ describe('<Formik>', () => {
       it('setValues sets values', () => {
         const { getProps } = renderFormik<Values>();
 
-        getProps().setValues({ name: 'ian' });
+        getProps().setValues({ name: 'ian', zipcode: 12321 });
         expect(getProps().values.name).toEqual('ian');
+        expect(getProps().values.zipcode).toEqual(12321);
+      });
+
+      it('setValues takes a function which can patch values', () => {
+        const { getProps } = renderFormik<Values>();
+
+        getProps().setValues(values => ({
+          ...values,
+          zipcode: 99999,
+        }));
+        expect(getProps().values.name).toEqual('jared');
+        expect(getProps().values.zipcode).toEqual(99999);
       });
 
       it('setValues should run validations when validateOnChange is true (default)', async () => {
@@ -608,6 +621,7 @@ describe('<Formik>', () => {
           expect(validate).not.toHaveBeenCalled();
         });
       });
+      
 
       it('setFieldValue sets value by key', async () => {
         const { getProps, rerender } = renderFormik<Values>();
@@ -642,6 +656,14 @@ describe('<Formik>', () => {
         await wait(() => {
           expect(validate).not.toHaveBeenCalled();
         });
+      });
+
+      it('setFieldValues sets several values at once', () => {
+        const { getProps } = renderFormik();
+
+        getProps().setFieldValues({ name: 'sam', zipcode: 56789 });
+        expect(getProps().values.name).toEqual('sam');
+        expect(getProps().values.zipcode).toEqual(56789);
       });
 
       it('setTouched sets touched', () => {
@@ -735,7 +757,7 @@ describe('<Formik>', () => {
       const { getProps } = renderFormik();
 
       expect(getProps().dirty).toBeFalsy();
-      getProps().setValues({ name: 'ian' });
+      getProps().setValues({ name: 'ian', zipcode: 12345 });
       expect(getProps().dirty).toBeTruthy();
     });
 
@@ -807,7 +829,7 @@ describe('<Formik>', () => {
       getProps().handleReset();
 
       expect(onReset).toHaveBeenCalledWith(
-        { name: 'jared' },
+        InitialValues,
         expect.objectContaining({
           resetForm: expect.any(Function),
           setErrors: expect.any(Function),

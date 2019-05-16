@@ -71,6 +71,9 @@ export interface FormikComputedProps<Values> {
   readonly initialStatus?: any;
 }
 
+export type ValuesFactory<Values> = (prevValues: Readonly<Values>) => Values;
+export type ValuesOrValuesFactory<Values> = Values | ValuesFactory<Values>;
+
 /**
  * Formik state helpers
  */
@@ -84,13 +87,15 @@ export interface FormikHelpers<Values> {
   /** Manually set touched object */
   setTouched(touched: FormikTouched<Values>): void;
   /** Manually set values object  */
-  setValues(values: Values): void;
+  setValues(ValuesOrValuesFactory: ValuesOrValuesFactory<Values>): void;
   /** Set value of form field directly */
   setFieldValue(
     field: keyof Values & string,
     value: any,
     shouldValidate?: boolean
   ): void;
+  /** Set the value of several fields at once */
+  setFieldValues(values: Partial<Values>, shouldValidate?: boolean): void;
   /** Set error message of a form field directly */
   setFieldError(field: keyof Values & string, message: string): void;
   /** Set whether field has been touched directly */

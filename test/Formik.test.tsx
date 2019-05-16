@@ -45,7 +45,7 @@ function Form({
 
 const InitialValues: Values = { name: 'jared' };
 
-function renderFormik<V>(props?: Partial<FormikConfig<V>>) {
+function renderFormik<V = Values>(props?: Partial<FormikConfig<V>>) {
   let injected: any;
   const { rerender, ...rest } = render(
     <Formik
@@ -98,7 +98,7 @@ describe('<Formik>', () => {
 
   describe('handleChange', () => {
     it('updates values based on name attribute', () => {
-      const { getProps, getByTestId } = renderFormik();
+      const { getProps, getByTestId } = renderFormik<Values>();
 
       expect(getProps().values.name).toEqual(InitialValues.name);
 
@@ -144,7 +144,7 @@ describe('<Formik>', () => {
     });
 
     it('updates values via `name` instead of `id` attribute when both are present', () => {
-      const { getProps, getByTestId } = renderFormik();
+      const { getProps, getByTestId } = renderFormik<Values>();
 
       expect(getProps().values.name).toEqual(InitialValues.name);
 
@@ -238,7 +238,7 @@ describe('<Formik>', () => {
 
   describe('handleBlur', () => {
     it('sets touched state', () => {
-      const { getProps, getByTestId } = renderFormik();
+      const { getProps, getByTestId } = renderFormik<Values>();
       expect(getProps().touched.name).toEqual(undefined);
 
       const input = getByTestId('name-input');
@@ -251,7 +251,7 @@ describe('<Formik>', () => {
     });
 
     it('updates touched state via `name` instead of `id` attribute when both are present', () => {
-      const { getProps, getByTestId } = renderFormik();
+      const { getProps, getByTestId } = renderFormik<Values>();
       expect(getProps().touched.name).toEqual(undefined);
 
       const input = getByTestId('name-input');
@@ -524,7 +524,7 @@ describe('<Formik>', () => {
 
     describe('FormikActions', () => {
       it('setValues sets values', () => {
-        const { getProps } = renderFormik();
+        const { getProps } = renderFormik<Values>();
 
         getProps().setValues({ name: 'ian' });
         expect(getProps().values.name).toEqual('ian');
@@ -542,7 +542,7 @@ describe('<Formik>', () => {
       });
       it('setValues should NOT run validations when validateOnChange is false', async () => {
         const validate = jest.fn();
-        const { getProps, rerender } = renderFormik({
+        const { getProps, rerender } = renderFormik<Values>({
           validate,
           validateOnChange: false,
         });
@@ -555,7 +555,7 @@ describe('<Formik>', () => {
       });
 
       it('setFieldValue sets value by key', async () => {
-        const { getProps, rerender } = renderFormik();
+        const { getProps, rerender } = renderFormik<Values>();
 
         getProps().setFieldValue('name', 'ian');
         rerender();
@@ -618,7 +618,7 @@ describe('<Formik>', () => {
       });
 
       it('setFieldTouched sets touched by key', () => {
-        const { getProps } = renderFormik();
+        const { getProps } = renderFormik<Values>();
 
         getProps().setFieldTouched('name', true);
         expect(getProps().touched).toEqual({ name: true });
@@ -651,14 +651,14 @@ describe('<Formik>', () => {
       });
 
       it('setErrors sets error object', () => {
-        const { getProps } = renderFormik();
+        const { getProps } = renderFormik<Values>();
 
         getProps().setErrors({ name: 'Required' });
         expect(getProps().errors.name).toEqual('Required');
       });
 
       it('setFieldError sets error by key', () => {
-        const { getProps } = renderFormik();
+        const { getProps } = renderFormik<Values>();
 
         getProps().setFieldError('name', 'Required');
         expect(getProps().errors.name).toEqual('Required');

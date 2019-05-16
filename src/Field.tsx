@@ -68,12 +68,12 @@ export type FieldAttributes<T> = GenericFieldHTMLAttributes & FieldConfig & T;
 
 export function useField<Val = any>(name: string, type?: string) {
   const formik = useFormikContext();
-
-  invariant(
-    formik,
-    'useField() / <Field /> must be used underneath a <Formik> component or withFormik() higher order component'
-  );
-
+  if (process.env.NODE_ENV !== 'production') {
+    invariant(
+      formik,
+      'useField() / <Field /> must be used underneath a <Formik> component or withFormik() higher order component'
+    );
+  }
   return formik.getFieldProps<Val>(name, type);
 }
 
@@ -93,30 +93,32 @@ export function Field({
   } = useFormikContext();
 
   React.useEffect(() => {
-    invariant(
-      !render,
-      `<Field render> has been deprecated and will be removed in future versions of Formik. Please use a child callback function instead. To get rid of this warning, replace <Field name="${name}" render={({field, form}) => ...} /> with <Field name="${name}">{({field, form, meta}) => ...}</Field>`
-    );
+    if (process.env.NODE_ENV !== 'production') {
+      invariant(
+        !render,
+        `<Field render> has been deprecated and will be removed in future versions of Formik. Please use a child callback function instead. To get rid of this warning, replace <Field name="${name}" render={({field, form}) => ...} /> with <Field name="${name}">{({field, form, meta}) => ...}</Field>`
+      );
 
-    invariant(
-      !component,
-      '<Field component> has been deprecated and will be removed in future versions of Formik. Use <Field as> instead. Note that with the `as` prop, all props are passed directly through and not grouped in `field` object key.'
-    );
+      invariant(
+        !component,
+        '<Field component> has been deprecated and will be removed in future versions of Formik. Use <Field as> instead. Note that with the `as` prop, all props are passed directly through and not grouped in `field` object key.'
+      );
 
-    invariant(
-      !(is && children && isFunction(children)),
-      'You should not use <Field as> and <Field children> as a function in the same <Field> component; <Field as> will be ignored.'
-    );
+      invariant(
+        !(is && children && isFunction(children)),
+        'You should not use <Field as> and <Field children> as a function in the same <Field> component; <Field as> will be ignored.'
+      );
 
-    invariant(
-      !(component && children && isFunction(children)),
-      'You should not use <Field component> and <Field children> as a function in the same <Field> component; <Field component> will be ignored.'
-    );
+      invariant(
+        !(component && children && isFunction(children)),
+        'You should not use <Field component> and <Field children> as a function in the same <Field> component; <Field component> will be ignored.'
+      );
 
-    invariant(
-      !(render && children && !isEmptyChildren(children)),
-      'You should not use <Field render> and <Field children> in the same <Field> component; <Field children> will be ignored'
-    );
+      invariant(
+        !(render && children && !isEmptyChildren(children)),
+        'You should not use <Field render> and <Field children> in the same <Field> component; <Field children> will be ignored'
+      );
+    }
   }, [children, component, is, name, render]);
 
   React.useEffect(() => {

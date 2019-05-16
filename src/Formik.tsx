@@ -132,10 +132,14 @@ export function useFormik<Values = object>({
     };
   }>({});
 
-  invariant(
-    typeof isInitialValid === 'undefined',
-    'isInitialValid has been deprecated and will be removed in future versions of Formik. Please use initialErrors instead.'
-  );
+  React.useEffect(() => {
+    if (process.env.NODE_ENV !== 'production') {
+      invariant(
+        typeof isInitialValid === 'undefined',
+        'isInitialValid has been deprecated and will be removed in future versions of Formik. Please use initialErrors instead.'
+      );
+    }
+  }, [isInitialValid]);
 
   React.useEffect(() => {
     isMounted.current = true;

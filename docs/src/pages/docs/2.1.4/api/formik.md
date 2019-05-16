@@ -142,6 +142,10 @@ Number of times user tried to submit the form. Increases when [`handleSubmit`](#
 Set the value of a field imperatively. `field` should match the key of
 `values` you wish to update. Useful for creating custom input change handlers. Calling this will trigger validation to run if `validateOnChange` is set to `true` (which it is by default). You can also explicitly prevent/skip validation by passing a third argument as `false`.
 
+#### `setFieldValues: (values: Partial<Values>, shouldValidate?: boolean) => void`
+
+Set the value of several fields imperatively. The method shares the same `validateOnChange` behaviour as `setFieldValue`.
+
 #### `setStatus: (status?: any) => void`
 
 Set a top-level `status` to anything you want imperatively. Useful for
@@ -390,7 +394,7 @@ are called.
 
 Default is `true`. Use this option to tell Formik to run validations on `change`
 events and `change`-related methods. More specifically, when either
-`handleChange`, `setFieldValue`, or `setValues` are called.
+`handleChange`, `setFieldValue`, `setFieldValues`, or `setValues` are called.
 
 ### `validateOnMount?: boolean`
 

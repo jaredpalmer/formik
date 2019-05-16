@@ -71,6 +71,9 @@ export interface FormikComputedProps<Values> {
   readonly initialStatus?: any;
 }
 
+export type ValuesFactory<Values> = (prevValues: Readonly<Values>) => Values;
+export type ValuesOrValuesFactory<Values> = Values | ValuesFactory<Values>;
+
 /**
  * Formik state helpers
  */

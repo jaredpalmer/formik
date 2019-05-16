@@ -31,13 +31,6 @@ const users = [
     infoLink: 'https://walmart.com',
     pinned: true,
   },
-
-  {
-    caption: 'OpenTable',
-    image: '/formik/img/logos/opentable.svg',
-    infoLink: 'https://opentable.com',
-    pinned: true,
-  },
   {
     caption: 'Lyft',
     image: '/formik/img/logos/lyft.svg',
@@ -51,9 +44,40 @@ const users = [
     pinned: true,
   },
   {
+    caption: 'OpenTable',
+    image: '/formik/img/logos/opentable.svg',
+    infoLink: 'https://opentable.com',
+    pinned: true,
+  },
+  {
+    caption: 'Priceline.com',
+    image: '/formik/img/logos/priceline.png',
+    infoLink: 'https://priceline.com',
+    pinned: true,
+  },
+  {
+    caption: 'Booking.com',
+    image: '/formik/img/logos/booking.svg',
+    infoLink: 'https://booking.com',
+    pinned: true,
+  },
+  {
+    caption: 'NASDAQ',
+    image: '/formik/img/logos/nasdaq.svg',
+    infoLink: 'https://www.nasdaq.com',
+    pinned: true,
+  },
+  {
+    caption: 'PWC',
+    image: '/formik/img/logos/pwc.svg',
+    infoLink: 'https://www.pwc.com',
+    pinned: true,
+  },
+  {
     caption: 'NOAA',
     image: '/formik/img/logos/noaa.svg',
     infoLink: 'https://www.noaa.gov',
+    pinned: true,
   },
   {
     caption: 'Docker',
@@ -88,26 +112,31 @@ const users = [
     caption: 'Wayfair',
     image: '/formik/img/logos/wayfair.svg',
     infoLink: 'https://wayfair.com',
+    pinned: true,
   },
   {
     caption: 'Artsy',
     image: '/formik/img/logos/artsy.png',
     infoLink: 'https://artsy.com',
+    pinned: true,
   },
   {
     caption: 'Postmates',
     image: '/formik/img/logos/postmates.svg',
     infoLink: 'https://postmates.com',
+    pinned: true,
   },
   {
     caption: 'Capsule Health',
     image: '/formik/img/logos/capsule.svg',
     infoLink: 'https://capsulecares.com',
+    pinned: true,
   },
   {
     caption: 'Egghead',
     image: '/formik/img/logos/egghead.svg',
     infoLink: 'https://egghead.io',
+    pinned: true,
   },
   {
     caption: 'Frame.io',
@@ -133,7 +162,7 @@ const users = [
     caption: 'Campusjäger',
     image: '/formik/img/logos/campusjaeger.png',
     infoLink: 'https://www.campusjaeger.de/',
-  }
+  },
 ];
 
 const siteConfig = {

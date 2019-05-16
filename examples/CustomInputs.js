@@ -4,8 +4,8 @@ import * as Yup from 'yup';
 import { Debug } from './Debug';
 
 // By combining a vanilla <label> plus Formik's <Field> and <ErrorMessage>,
-// we can abstract a generic "FieldGroup" component for most of our inputs.
-const FieldGroup = ({ name, label, ...rest }) => (
+// we can abstract a generic "Fieldset" component for most of our inputs.
+const Fieldset = ({ name, label, ...rest }) => (
   <React.Fragment>
     <label htmlFor={name}>{label}</label>
     <Field id={name} name={name} {...rest} />
@@ -40,32 +40,32 @@ const SignUp = () => (
       }}
       render={({ isSubmitting, handleReset }) => (
         <Form>
-          <FieldGroup
+          <Fieldset
             name="email"
             type="email"
             label="Email"
             placeholder="jane@acme.com"
           />
-          <FieldGroup name="color" label="Favorite Color" as="select">
+          <Fieldset name="color" label="Favorite Color" as="select">
             <option value="">Select a Color</option>
             <option value="red">Red</option>
             <option value="green">Green</option>
             <option value="blue">Blue</option>
-          </FieldGroup>
+          </Fieldset>
 
-          <FieldGroup
+          <Fieldset
             name="website"
             type="url"
             label="Website"
             placeholder="https://example.com"
           />
 
-          <FieldGroup name="animal" as="select" label="Favorite Animal">
+          <Fieldset name="animal" component="select" label="Favorite Animal">
             <option value="">Select an animal</option>
             <option value="tiger">Tiger</option>
             <option value="bear">Bear</option>
             <option value="shark">Shark</option>
-          </FieldGroup>
+          </Fieldset>
 
           <button
             type="reset"

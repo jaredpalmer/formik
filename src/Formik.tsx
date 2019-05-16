@@ -139,6 +139,48 @@ export function useFormik<Values = object>({
     submitCount: 0,
   });
 
+  const runValidationAsEffect = React.useCallback(
+    () => {
+      const [validate, cancel] = makeCancelable(validateForm(state.values));
+      validate.then(x => x).catch(x => x); // catch the rejection silently
+      return cancel;
+    },
+    [state.values]
+  );
+
+  React.useEffect(
+    () => {
+      if (!!validateOnChange && !state.isSubmitting && isMounted.current) {
+        return runValidationAsEffect();
+      }
+      return;
+    },
+    [state.values]
+  );
+
+  React.useEffect(
+    () => {
+      if (!!validateOnBlur && !state.isSubmitting && isMounted.current) {
+        return runValidationAsEffect();
+      }
+      return;
+    },
+    [state.touched]
+  );
+
+  React.useEffect(
+    () => {
+      if (
+        enableReinitialize &&
+        isMounted.current &&
+        !isEqual(initialValues.current, props.initialValues)
+      ) {
+        resetForm();
+      }
+    },
+    [props.initialValues]
+  );
+
   React.useEffect(() => {
     isMounted.current = true;
 
@@ -147,82 +189,37 @@ export function useFormik<Values = object>({
     };
   }, []);
 
-  const resetForm = React.useCallback(
-    (nextState?: FormikState<Values>) => {
-      const values =
-        nextState && nextState.values
-          ? nextState.values
-          : !!initialValues.current
-            ? initialValues.current
-            : props.initialValues;
-      const errors =
-        nextState && nextState.errors
-          ? nextState.values
-          : !!initialErrors.current
-            ? initialErrors.current
-            : props.initialErrors || {};
-      const touched =
-        nextState && nextState.touched
-          ? nextState.values
-          : !!initialTouched.current
-            ? initialTouched.current
-            : props.initialTouched || {};
-      const status =
-        nextState && nextState.status
-          ? nextState.status
-          : initialStatus.current ? initialStatus.current : props.initialStatus;
-      initialValues.current = values;
-      initialErrors.current = errors;
-      initialTouched.current = touched;
-      initialStatus.current = status;
+  const imperativeMethods = {
+    resetForm,
+    submitForm,
+    validateForm,
+    validateField,
+    setErrors,
+    setFieldError,
+    setFieldTouched,
+    setFieldValue,
+    setStatus,
+    setSubmitting,
+    setTouched,
+    setValues,
+    setFormikState,
+  };
 
-      dispatch({
-        type: 'RESET_FORM',
-        payload: {
-          isSubmitting: !!nextState && !!nextState.isSubmitting,
-          errors,
-          touched,
-          status,
-          values,
-          isValidating: !!nextState && !!nextState.isValidating,
-          submitCount:
-            !!nextState &&
-            !!nextState.submitCount &&
-            typeof nextState.submitCount === 'number'
-              ? nextState.submitCount
-              : 0,
-        },
-      });
-    },
-    [
-      initialValues,
-      initialErrors,
-      initialStatus,
-      initialTouched,
-      props.initialTouched,
-      props.initialStatus,
-      props.initialValues,
-      props.initialErrors,
-    ]
-  );
-
-  const registerField = React.useCallback((name: string, { validate }: any) => {
+  function registerField(name: string, { validate }: any) {
     if (fields.current !== null) {
       fields.current[name] = {
         validate,
       };
     }
-  }, []);
+  }
 
-  const unregisterField = React.useCallback((name: string) => {
+  function unregisterField(name: string) {
     if (fields.current !== null) {
       delete fields.current[name];
     }
-  }, []);
+  }
 
-  const handleBlur = React.useCallback((eventOrString: any):
-    | void
-    | ((e: any) => void) => {
+  function handleBlur(eventOrString: any): void | ((e: any) => void) {
     if (isString(eventOrString)) {
       return event => executeBlur(event, eventOrString);
     } else {
@@ -249,537 +246,62 @@ export function useFormik<Values = object>({
         payload: { field, value: true },
       });
     }
-  }, []);
+  }
 
-  const handleChange = React.useCallback(
-    (
-      eventOrPath: string | React.ChangeEvent<any>
-    ): void | ((eventOrTextValue: string | React.ChangeEvent<any>) => void) => {
-      if (isString(eventOrPath)) {
-        return event => executeChange(event, eventOrPath);
-      } else {
-        executeChange(eventOrPath);
-      }
+  function handleChange(
+    eventOrPath: string | React.ChangeEvent<any>
+  ): void | ((eventOrTextValue: string | React.ChangeEvent<any>) => void) {
+    if (isString(eventOrPath)) {
+      return event => executeChange(event, eventOrPath);
+    } else {
+      executeChange(eventOrPath);
+    }
 
-      function executeChange(
-        eventOrTextValue: string | React.ChangeEvent<any>,
-        maybePath?: string
-      ) {
-        // By default, assume that the first argument is a string. This allows us to use
-        // handleChange with React Native and React Native Web's onChangeText prop which
-        // provides just the value of the input.
-        let field = maybePath;
-        let val = eventOrTextValue;
-        let parsed;
-        // If the first argument is not a string though, it has to be a synthetic React Event (or a fake one),
-        // so we handle like we would a normal HTML change event.
-        if (!isString(eventOrTextValue)) {
-          // If we can, persist the event
-          // @see https://reactjs.org/docs/events.html#event-pooling
-          if ((eventOrTextValue as React.ChangeEvent<any>).persist) {
-            (eventOrTextValue as React.ChangeEvent<any>).persist();
-          }
-          const {
-            type,
-            name,
-            id,
-            value,
-            checked,
-            outerHTML,
-          } = (eventOrTextValue as React.ChangeEvent<any>).target;
-          field = maybePath ? maybePath : name ? name : id;
-          if (!field && process.env.NODE_ENV !== 'production') {
-            warnAboutMissingIdentifier({
-              htmlContent: outerHTML,
-              documentationAnchorLink:
-                'handlechange-e-reactchangeeventany--void',
-              handlerName: 'handleChange',
-            });
-          }
-          val = /number|range/.test(type)
-            ? ((parsed = parseFloat(value)), isNaN(parsed) ? '' : parsed)
-            : /checkbox/.test(type) ? checked : value;
+    function executeChange(
+      eventOrTextValue: string | React.ChangeEvent<any>,
+      maybePath?: string
+    ) {
+      // By default, assume that the first argument is a string. This allows us to use
+      // handleChange with React Native and React Native Web's onChangeText prop which
+      // provides just the value of the input.
+      let field = maybePath;
+      let val = eventOrTextValue;
+      let parsed;
+      // If the first argument is not a string though, it has to be a synthetic React Event (or a fake one),
+      // so we handle like we would a normal HTML change event.
+      if (!isString(eventOrTextValue)) {
+        // If we can, persist the event
+        // @see https://reactjs.org/docs/events.html#event-pooling
+        if ((eventOrTextValue as React.ChangeEvent<any>).persist) {
+          (eventOrTextValue as React.ChangeEvent<any>).persist();
         }
-
-        if (field) {
-          // Set form fields by name
-          dispatch({ type: 'SET_FIELD_VALUE', payload: { field, value: val } });
-        }
-      }
-    },
-    []
-  );
-
-  const setTouched = React.useCallback((touched: FormikTouched<Values>) => {
-    dispatch({ type: 'SET_TOUCHED', payload: touched });
-  }, []);
-
-  const setErrors = React.useCallback((errors: FormikErrors<Values>) => {
-    dispatch({ type: 'SET_ERRORS', payload: errors });
-  }, []);
-
-  const setValues = React.useCallback((values: Values) => {
-    dispatch({ type: 'SET_VALUES', payload: values });
-  }, []);
-
-  const setFieldError = React.useCallback(
-    (field: string, value: string | undefined) => {
-      dispatch({
-        type: 'SET_FIELD_ERROR',
-        payload: { field, value },
-      });
-    },
-    []
-  );
-
-  const setFieldValue = React.useCallback((
-    field: string,
-    value: any
-    // shouldValidate: boolean = true
-  ) => {
-    dispatch({
-      type: 'SET_FIELD_VALUE',
-      payload: {
-        field,
-        value,
-      },
-    });
-  }, []);
-
-  const setFieldTouched = React.useCallback((
-    field: string,
-    touched: boolean = true
-    // shouldValidate: boolean = true
-  ) => {
-    dispatch({
-      type: 'SET_FIELD_TOUCHED',
-      payload: {
-        field,
-        value: touched,
-      },
-    });
-  }, []);
-
-  const validateField = React.useCallback(
-    (name: string) => {
-      // This will efficiently validate a single field by avoiding state
-      // changes if the validation function is synchronous. It's different from
-      // what is called when using validateForm.
-
-      if (
-        fields.current !== null &&
-        fields.current[name] &&
-        fields.current[name].validate &&
-        isFunction(fields.current[name].validate)
-      ) {
-        const value = getIn(state.values, name);
-        const maybePromise = fields.current[name].validate(value);
-        if (isPromise(maybePromise)) {
-          // Only flip isValidating if the function is async.
-          dispatch({ type: 'SET_ISVALIDATING', payload: true });
-          return maybePromise
-            .then((x: any) => x, (e: any) => e)
-            .then((error: string) => {
-              dispatch({
-                type: 'SET_FIELD_ERROR',
-                payload: { field: name, value: error },
-              });
-              dispatch({ type: 'SET_ISVALIDATING', payload: false });
-            });
-        } else {
-          dispatch({
-            type: 'SET_FIELD_ERROR',
-            payload: {
-              field: name,
-              value: maybePromise as string | undefined,
-            },
+        const {
+          type,
+          name,
+          id,
+          value,
+          checked,
+          outerHTML,
+        } = (eventOrTextValue as React.ChangeEvent<any>).target;
+        field = maybePath ? maybePath : name ? name : id;
+        if (!field && process.env.NODE_ENV !== 'production') {
+          warnAboutMissingIdentifier({
+            htmlContent: outerHTML,
+            documentationAnchorLink: 'handlechange-e-reactchangeeventany--void',
+            handlerName: 'handleChange',
           });
-          return Promise.resolve(maybePromise as string | undefined);
         }
-      } else {
-        return Promise.resolve();
-      }
-    },
-    [fields, state.values]
-  );
-
-  const runValidateHandler = React.useCallback(
-    (values: Values, field?: string): Promise<FormikErrors<Values>> => {
-      return new Promise(resolve => {
-        const maybePromisedErrors = (props.validate as any)(values, field);
-        if (maybePromisedErrors === undefined) {
-          resolve({});
-        } else if (isPromise(maybePromisedErrors)) {
-          (maybePromisedErrors as Promise<any>).then(
-            () => {
-              resolve({});
-            },
-            errors => {
-              resolve(errors);
-            }
-          );
-        } else {
-          resolve(maybePromisedErrors);
-        }
-      });
-    },
-    [props.validate]
-  );
-
-  /**
-   * Run validation against a Yup schema and optionally run a function if successful
-   */
-  const runValidationSchema = React.useCallback(
-    (values: Values, field?: string) => {
-      return new Promise(resolve => {
-        const { validationSchema } = props;
-        const schema = isFunction(validationSchema)
-          ? validationSchema(field)
-          : validationSchema;
-        let promise =
-          field && schema.validateAt
-            ? schema.validateAt(field, values)
-            : validateYupSchema(values, schema);
-        promise.then(
-          () => {
-            resolve({});
-          },
-          (err: any) => {
-            resolve(yupToFormErrors(err));
-          }
-        );
-      });
-    },
-    [props.validationSchema]
-  );
-
-  const runSingleFieldLevelValidation = React.useCallback(
-    (field: string, value: void | string): Promise<string> => {
-      return new Promise(resolve =>
-        resolve(fields.current[field].validate(value))
-      ).then(x => x, e => e);
-    },
-    [fields]
-  );
-
-  const runFieldLevelValidations = React.useCallback(
-    (values: Values): Promise<FormikErrors<Values>> => {
-      if (fields.current === null) {
-        return Promise.resolve({});
-      }
-      const fieldKeysWithValidation: string[] = Object.keys(
-        fields.current
-      ).filter(
-        f =>
-          fields.current !== null &&
-          fields.current[f] &&
-          fields.current[f].validate &&
-          isFunction(fields.current[f].validate)
-      );
-
-      // Construct an array with all of the field validation functions
-      const fieldValidations: Promise<string>[] =
-        fieldKeysWithValidation.length > 0
-          ? fieldKeysWithValidation.map(f =>
-              runSingleFieldLevelValidation(f, getIn(values, f))
-            )
-          : [Promise.resolve('DO_NOT_DELETE_YOU_WILL_BE_FIRED')]; // use special case ;)
-
-      return Promise.all(fieldValidations).then((fieldErrorsList: string[]) =>
-        fieldErrorsList.reduce(
-          (prev, curr, index) => {
-            if (curr === 'DO_NOT_DELETE_YOU_WILL_BE_FIRED') {
-              return prev;
-            }
-            if (!!curr) {
-              prev = setIn(prev, fieldKeysWithValidation[index], curr);
-            }
-            return prev;
-          },
-          {} as FormikErrors<Values>
-        )
-      );
-    },
-    [fields]
-  );
-
-  /**
-   * Run all validations methods and update state accordingly
-   */
-  const validateForm = React.useCallback(
-    (values: Values = state.values): Promise<FormikErrors<Values>> => {
-      if (
-        props.validationSchema ||
-        props.validate ||
-        (fields.current &&
-          Object.keys(fields.current).filter(
-            key => !!fields.current[key].validate
-          ).length > 0)
-      ) {
-        dispatch({ type: 'SET_ISVALIDATING', payload: true });
-        return Promise.all([
-          runFieldLevelValidations(values),
-          props.validationSchema ? runValidationSchema(values) : {},
-          props.validate ? runValidateHandler(values) : {},
-        ]).then(([fieldErrors, schemaErrors, validateErrors]) => {
-          const combinedErrors = deepmerge.all<FormikErrors<Values>>(
-            [fieldErrors, schemaErrors, validateErrors],
-            { arrayMerge }
-          );
-          if (!isEqual(state.errors, combinedErrors)) {
-            dispatch({ type: 'SET_ERRORS', payload: combinedErrors });
-          }
-          dispatch({ type: 'SET_ISVALIDATING', payload: false });
-          return combinedErrors;
-        });
-      } else {
-        return Promise.resolve({});
-      }
-    },
-    [state.values, props.validate, props.validationSchema, fields]
-  );
-
-  const setFormikState = React.useCallback(
-    (
-      stateOrCb:
-        | FormikState<Values>
-        | ((state: FormikState<Values>) => FormikState<Values>)
-    ): void => {
-      if (isFunction(stateOrCb)) {
-        dispatch({ type: 'SET_FORMIK_STATE', payload: stateOrCb(state) });
-      } else {
-        dispatch({ type: 'SET_FORMIK_STATE', payload: stateOrCb });
-      }
-    },
-    [state]
-  );
-
-  const setStatus = React.useCallback((status: any) => {
-    dispatch({ type: 'SET_STATUS', payload: status });
-  }, []);
-
-  const setSubmitting = React.useCallback((isSubmitting: boolean) => {
-    dispatch({ type: 'SET_ISSUBMITTING', payload: isSubmitting });
-  }, []);
-
-  const getFieldMeta: <Val>(
-    name: string
-  ) => FieldMetaProps<Val> = React.useCallback(
-    (name: string) => {
-      return {
-        value: getIn(state.values, name),
-        error: getIn(state.errors, name),
-        touched: !!getIn(state.touched, name),
-        initialValue: getIn(initialValues.current, name),
-        initialTouched: !!getIn(initialTouched.current, name),
-        initialError: getIn(initialErrors.current, name),
-      };
-    },
-    [
-      state.values,
-      state.errors,
-      state.touched,
-      initialValues,
-      initialTouched,
-      initialErrors,
-    ]
-  );
-
-  const getFieldProps: <Val = any>(
-    name: string,
-    type: string
-  ) => [FieldInputProps<Val>, FieldMetaProps<Val>] = React.useCallback(
-    (
-      name: string,
-      type: string
-    ): [
-      FieldInputProps<any>,
-      FieldMetaProps<any>
-    ] /** generics are whack is TS x hooks */ => {
-      const field = {
-        name,
-        value:
-          type && (type === 'radio' || type === 'checkbox')
-            ? undefined // React uses checked={} for these inputs
-            : getIn(state.values, name),
-        onChange: handleChange,
-        onBlur: handleBlur,
-      };
-
-      return [field, getFieldMeta<any>(name)];
-    },
-    [handleChange, handleBlur, state.values, getFieldMeta]
-  );
-
-  const dirty = React.useMemo(
-    () => !isEqual(initialValues.current, state.values),
-    [initialValues, state.values]
-  );
-
-  const isValid = React.useMemo(
-    () =>
-      typeof isInitialValid !== 'undefined'
-        ? dirty
-          ? state.errors && Object.keys(state.errors).length === 0
-          : isInitialValid !== false && isFunction(isInitialValid)
-            ? (isInitialValid as (props: FormikConfig<Values>) => boolean)(
-                props
-              )
-            : (isInitialValid as boolean)
-        : state.errors && Object.keys(state.errors).length === 0,
-    [state.errors, isInitialValid, dirty]
-  );
-
-  const runValidationAsEffect = React.useCallback(
-    () => {
-      const [validate, cancel] = makeCancelable(validateForm(state.values));
-      validate.then(x => x).catch(x => x); // catch the rejection silently
-      return cancel;
-    },
-    [state.values, validateForm]
-  );
-
-  React.useEffect(
-    () => {
-      if (!!validateOnChange && !state.isSubmitting && !!isMounted.current) {
-        return runValidationAsEffect();
-      }
-      return;
-    },
-    [
-      state.values,
-      isMounted,
-      validateOnChange,
-      state.isSubmitting,
-      runValidationAsEffect,
-    ]
-  );
-
-  React.useEffect(
-    () => {
-      if (!!validateOnBlur && !state.isSubmitting && !!isMounted.current) {
-        return runValidationAsEffect();
-      }
-      return;
-    },
-    [
-      state.touched,
-      isMounted,
-      validateOnBlur,
-      state.isSubmitting,
-      runValidationAsEffect,
-    ]
-  );
-
-  React.useEffect(
-    () => {
-      if (
-        enableReinitialize &&
-        isMounted.current &&
-        !isEqual(initialValues.current, props.initialValues)
-      ) {
-        resetForm();
-      }
-    },
-    [props.initialValues, isMounted]
-  );
-
-  const imperativeMethods = React.useMemo(
-    () => ({
-      resetForm,
-      validateForm,
-      validateField,
-      setErrors,
-      setFieldError,
-      setFieldTouched,
-      setFieldValue,
-      setStatus,
-      setSubmitting,
-      setTouched,
-      setValues,
-      setFormikState,
-    }),
-    [
-      resetForm,
-      validateForm,
-      validateField,
-      setErrors,
-      setFieldError,
-      setFieldTouched,
-      setFieldValue,
-      setStatus,
-      setSubmitting,
-      setTouched,
-      setValues,
-      setFormikState,
-    ]
-  );
-
-  const executeSubmit = React.useCallback(
-    () => {
-      return props.onSubmit(state.values, imperativeMethods);
-    },
-    [state.values, props.onSubmit, imperativeMethods]
-  );
-
-  const submitForm: () => void = React.useCallback(
-    () => {
-      dispatch({ type: 'SUBMIT_ATTEMPT' });
-      return validateForm().then((combinedErrors: FormikErrors<Values>) => {
-        const isActuallyValid = Object.keys(combinedErrors).length === 0;
-        if (isActuallyValid) {
-          Promise.resolve(executeSubmit())
-            .then(() => {
-              if (isMounted.current) {
-                dispatch({ type: 'SUBMIT_SUCCESS' });
-              }
-            })
-            .catch(_errors => {
-              if (isMounted.current) {
-                dispatch({ type: 'SUBMIT_FAILURE' });
-              }
-            });
-        } else if (isMounted.current) {
-          // ^^^ Make sure Formik is still mounted before calling setState
-          dispatch({ type: 'SUBMIT_FAILURE' });
-        }
-      });
-    },
-    [isMounted, executeSubmit]
-  );
-
-  const handleSubmit = React.useCallback(
-    (e: React.FormEvent<HTMLFormElement> | undefined) => {
-      if (e && e.preventDefault) {
-        e.preventDefault();
+        val = /number|range/.test(type)
+          ? ((parsed = parseFloat(value)), isNaN(parsed) ? '' : parsed)
+          : /checkbox/.test(type) ? checked : value;
       }
 
-      // Warn if form submission is triggered by a <button> without a
-      // specified `type` attribute during development. This mitigates
-      // a common gotcha in forms with both reset and submit buttons,
-      // where the dev forgets to add type="button" to the reset button.
-      if (
-        process.env.NODE_ENV !== 'production' &&
-        typeof document !== 'undefined'
-      ) {
-        // Safely get the active element (works with IE)
-        const activeElement = getActiveElement();
-        if (
-          activeElement !== null &&
-          activeElement instanceof HTMLButtonElement
-        ) {
-          invariant(
-            activeElement.attributes &&
-              activeElement.attributes.getNamedItem('type'),
-            'You submitted a Formik form using a button with an unspecified `type` attribute.  Most browsers default button elements to `type="submit"`. If this is not a submit button, please add `type="button"`.'
-          );
-        }
+      if (field) {
+        // Set form fields by name
+        dispatch({ type: 'SET_FIELD_VALUE', payload: { field, value: val } });
       }
-
-      submitForm();
-    },
-    [submitForm]
-  );
+    }
+  }
 
   const handleReset = React.useCallback(
     () => {
@@ -798,7 +320,394 @@ export function useFormik<Values = object>({
         resetForm();
       }
     },
-    [props.onReset, imperativeMethods]
+    [props.onReset]
+  );
+
+  function handleSubmit(e: React.FormEvent<HTMLFormElement> | undefined) {
+    if (e && e.preventDefault) {
+      e.preventDefault();
+    }
+
+    // Warn if form submission is triggered by a <button> without a
+    // specified `type` attribute during development. This mitigates
+    // a common gotcha in forms with both reset and submit buttons,
+    // where the dev forgets to add type="button" to the reset button.
+    if (
+      process.env.NODE_ENV !== 'production' &&
+      typeof document !== 'undefined'
+    ) {
+      // Safely get the active element (works with IE)
+      const activeElement = getActiveElement();
+      if (
+        activeElement !== null &&
+        activeElement instanceof HTMLButtonElement
+      ) {
+        invariant(
+          activeElement.attributes &&
+            activeElement.attributes.getNamedItem('type'),
+          'You submitted a Formik form using a button with an unspecified `type` attribute.  Most browsers default button elements to `type="submit"`. If this is not a submit button, please add `type="button"`.'
+        );
+      }
+    }
+
+    submitForm();
+  }
+
+  function executeSubmit() {
+    return props.onSubmit(state.values, imperativeMethods);
+  }
+
+  function resetForm(nextState?: FormikState<Values>) {
+    const values =
+      nextState && nextState.values
+        ? nextState.values
+        : !!initialValues.current ? initialValues.current : props.initialValues;
+    const errors =
+      nextState && nextState.errors
+        ? nextState.values
+        : !!initialErrors.current
+          ? initialErrors.current
+          : props.initialErrors || {};
+    const touched =
+      nextState && nextState.touched
+        ? nextState.values
+        : !!initialTouched.current
+          ? initialTouched.current
+          : props.initialTouched || {};
+    const status =
+      nextState && nextState.status
+        ? nextState.status
+        : initialStatus.current ? initialStatus.current : props.initialStatus;
+    initialValues.current = values;
+    initialErrors.current = errors;
+    initialTouched.current = touched;
+    initialStatus.current = status;
+
+    dispatch({
+      type: 'RESET_FORM',
+      payload: {
+        isSubmitting: !!nextState && !!nextState.isSubmitting,
+        errors,
+        touched,
+        status,
+        values,
+        isValidating: !!nextState && !!nextState.isValidating,
+        submitCount:
+          !!nextState &&
+          !!nextState.submitCount &&
+          typeof nextState.submitCount === 'number'
+            ? nextState.submitCount
+            : 0,
+      },
+    });
+  }
+
+  function setTouched(touched: FormikTouched<Values>) {
+    dispatch({ type: 'SET_TOUCHED', payload: touched });
+  }
+
+  function setErrors(errors: FormikErrors<Values>) {
+    dispatch({ type: 'SET_ERRORS', payload: errors });
+  }
+
+  function setValues(values: Values) {
+    dispatch({ type: 'SET_VALUES', payload: values });
+  }
+
+  function setFieldError(field: string, value: string | undefined) {
+    dispatch({
+      type: 'SET_FIELD_ERROR',
+      payload: { field, value },
+    });
+  }
+
+  function setFieldValue(
+    field: string,
+    value: any
+    // shouldValidate: boolean = true
+  ) {
+    dispatch({
+      type: 'SET_FIELD_VALUE',
+      payload: {
+        field,
+        value,
+      },
+    });
+  }
+
+  function setFieldTouched(
+    field: string,
+    touched: boolean = true
+    // shouldValidate: boolean = true
+  ) {
+    dispatch({
+      type: 'SET_FIELD_TOUCHED',
+      payload: {
+        field,
+        value: touched,
+      },
+    });
+  }
+
+  function validateField(name: string) {
+    // This will efficiently validate a single field by avoiding state
+    // changes if the validation function is synchronous. It's different from
+    // what is called when using validateForm.
+
+    if (
+      fields.current !== null &&
+      fields.current[name] &&
+      fields.current[name].validate &&
+      isFunction(fields.current[name].validate)
+    ) {
+      const value = getIn(state.values, name);
+      const maybePromise = fields.current[name].validate(value);
+      if (isPromise(maybePromise)) {
+        // Only flip isValidating if the function is async.
+        dispatch({ type: 'SET_ISVALIDATING', payload: true });
+        return maybePromise
+          .then((x: any) => x, (e: any) => e)
+          .then((error: string) => {
+            dispatch({
+              type: 'SET_FIELD_ERROR',
+              payload: { field: name, value: error },
+            });
+            dispatch({ type: 'SET_ISVALIDATING', payload: false });
+          });
+      } else {
+        dispatch({
+          type: 'SET_FIELD_ERROR',
+          payload: {
+            field: name,
+            value: maybePromise as string | undefined,
+          },
+        });
+        return Promise.resolve(maybePromise as string | undefined);
+      }
+    } else {
+      return Promise.resolve();
+    }
+  }
+
+  function runValidateHandler(
+    values: Values,
+    field?: string
+  ): Promise<FormikErrors<Values>> {
+    return new Promise(resolve => {
+      const maybePromisedErrors = (props.validate as any)(values, field);
+      if (maybePromisedErrors === undefined) {
+        resolve({});
+      } else if (isPromise(maybePromisedErrors)) {
+        (maybePromisedErrors as Promise<any>).then(
+          () => {
+            resolve({});
+          },
+          errors => {
+            resolve(errors);
+          }
+        );
+      } else {
+        resolve(maybePromisedErrors);
+      }
+    });
+  }
+
+  /**
+   * Run validation against a Yup schema and optionally run a function if successful
+   */
+  function runValidationSchema(values: Values, field?: string) {
+    return new Promise(resolve => {
+      const { validationSchema } = props;
+      const schema = isFunction(validationSchema)
+        ? validationSchema(field)
+        : validationSchema;
+      let promise =
+        field && schema.validateAt
+          ? schema.validateAt(field, values)
+          : validateYupSchema(values, schema);
+      promise.then(
+        () => {
+          resolve({});
+        },
+        (err: any) => {
+          resolve(yupToFormErrors(err));
+        }
+      );
+    });
+  }
+
+  function runSingleFieldLevelValidation(
+    field: string,
+    value: void | string
+  ): Promise<string> {
+    return new Promise(resolve =>
+      resolve(fields.current[field].validate(value))
+    ).then(x => x, e => e);
+  }
+
+  function runFieldLevelValidations(
+    values: Values
+  ): Promise<FormikErrors<Values>> {
+    if (fields.current === null) {
+      return Promise.resolve({});
+    }
+    const fieldKeysWithValidation: string[] = Object.keys(
+      fields.current
+    ).filter(
+      f =>
+        fields.current !== null &&
+        fields.current[f] &&
+        fields.current[f].validate &&
+        isFunction(fields.current[f].validate)
+    );
+
+    // Construct an array with all of the field validation functions
+    const fieldValidations: Promise<string>[] =
+      fieldKeysWithValidation.length > 0
+        ? fieldKeysWithValidation.map(f =>
+            runSingleFieldLevelValidation(f, getIn(values, f))
+          )
+        : [Promise.resolve('DO_NOT_DELETE_YOU_WILL_BE_FIRED')]; // use special case ;)
+
+    return Promise.all(fieldValidations).then((fieldErrorsList: string[]) =>
+      fieldErrorsList.reduce(
+        (prev, curr, index) => {
+          if (curr === 'DO_NOT_DELETE_YOU_WILL_BE_FIRED') {
+            return prev;
+          }
+          if (!!curr) {
+            prev = setIn(prev, fieldKeysWithValidation[index], curr);
+          }
+          return prev;
+        },
+        {} as FormikErrors<Values>
+      )
+    );
+  }
+
+  /**
+   * Run all validations methods and update state accordingly
+   */
+  function validateForm(
+    values: Values = state.values
+  ): Promise<FormikErrors<Values>> {
+    if (
+      props.validationSchema ||
+      props.validate ||
+      (fields.current &&
+        Object.keys(fields.current).filter(
+          key => !!fields.current[key].validate
+        ).length > 0)
+    ) {
+      dispatch({ type: 'SET_ISVALIDATING', payload: true });
+      return Promise.all([
+        runFieldLevelValidations(values),
+        props.validationSchema ? runValidationSchema(values) : {},
+        props.validate ? runValidateHandler(values) : {},
+      ]).then(([fieldErrors, schemaErrors, validateErrors]) => {
+        const combinedErrors = deepmerge.all<FormikErrors<Values>>(
+          [fieldErrors, schemaErrors, validateErrors],
+          { arrayMerge }
+        );
+        if (!isEqual(state.errors, combinedErrors)) {
+          dispatch({ type: 'SET_ERRORS', payload: combinedErrors });
+        }
+        dispatch({ type: 'SET_ISVALIDATING', payload: false });
+        return combinedErrors;
+      });
+    } else {
+      return Promise.resolve({});
+    }
+  }
+
+  function setFormikState(
+    stateOrCb:
+      | FormikState<Values>
+      | ((state: FormikState<Values>) => FormikState<Values>)
+  ): void {
+    if (isFunction(stateOrCb)) {
+      dispatch({ type: 'SET_FORMIK_STATE', payload: stateOrCb(state) });
+    } else {
+      dispatch({ type: 'SET_FORMIK_STATE', payload: stateOrCb });
+    }
+  }
+
+  function setStatus(status: any) {
+    dispatch({ type: 'SET_STATUS', payload: status });
+  }
+
+  function setSubmitting(isSubmitting: boolean) {
+    dispatch({ type: 'SET_ISSUBMITTING', payload: isSubmitting });
+  }
+
+  function submitForm() {
+    dispatch({ type: 'SUBMIT_ATTEMPT' });
+    return validateForm().then((combinedErrors: FormikErrors<Values>) => {
+      const isActuallyValid = Object.keys(combinedErrors).length === 0;
+      if (isActuallyValid) {
+        Promise.resolve(executeSubmit())
+          .then(() => {
+            if (isMounted.current) {
+              dispatch({ type: 'SUBMIT_SUCCESS' });
+            }
+          })
+          .catch(_errors => {
+            if (isMounted.current) {
+              dispatch({ type: 'SUBMIT_FAILURE' });
+            }
+          });
+      } else if (isMounted.current) {
+        // ^^^ Make sure Formik is still mounted before calling setState
+        dispatch({ type: 'SUBMIT_FAILURE' });
+      }
+    });
+  }
+
+  function getFieldProps<Val = any>(
+    name: string,
+    type: string
+  ): [FieldInputProps<Val>, FieldMetaProps<Val>] {
+    const field = {
+      name,
+      value:
+        type && (type === 'radio' || type === 'checkbox')
+          ? undefined // React uses checked={} for these inputs
+          : getIn(state.values, name),
+      onChange: handleChange,
+      onBlur: handleBlur,
+    };
+
+    return [field, getFieldMeta<Val>(name)];
+  }
+
+  function getFieldMeta<Val>(name: string): FieldMetaProps<Val> {
+    return {
+      value: getIn(state.values, name),
+      error: getIn(state.errors, name),
+      touched: !!getIn(state.touched, name),
+      initialValue: getIn(initialValues.current, name),
+      initialTouched: !!getIn(initialTouched.current, name),
+      initialError: getIn(initialErrors.current, name),
+    };
+  }
+
+  const dirty = React.useMemo(
+    () => !isEqual(initialValues.current, state.values),
+    [initialValues.current, state.values]
+  );
+
+  const isValid = React.useMemo(
+    () =>
+      typeof isInitialValid !== 'undefined'
+        ? dirty
+          ? state.errors && Object.keys(state.errors).length === 0
+          : isInitialValid !== false && isFunction(isInitialValid)
+            ? (isInitialValid as (props: FormikConfig<Values>) => boolean)(
+                props
+              )
+            : (isInitialValid as boolean)
+        : state.errors && Object.keys(state.errors).length === 0,
+    [state.errors, isInitialValid, dirty]
   );
 
   const ctx = {

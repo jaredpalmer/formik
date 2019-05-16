@@ -521,7 +521,9 @@ describe('Field / FastField', () => {
   cases('can resolve bracket paths', renderField => {
     const { getProps } = renderField(
       { name: 'user[superPowers][0]' },
-      { initialValues: { user: { superPowers: ['Surging', 'Binding'] } } } // TODO: fix generic type
+      {
+        initialValues: { user: { superPowers: ['Surging', 'Binding'] } } as any,
+      } // TODO: fix generic type
     );
 
     expect(getProps().field.value).toBe('Surging');
@@ -530,7 +532,9 @@ describe('Field / FastField', () => {
   cases('can resolve mixed dot and bracket paths', renderField => {
     const { getProps } = renderField(
       { name: 'user.superPowers[1]' },
-      { initialValues: { user: { superPowers: ['Surging', 'Binding'] } } } // TODO: fix generic type
+      {
+        initialValues: { user: { superPowers: ['Surging', 'Binding'] } } as any,
+      } // TODO: fix generic type
     );
 
     expect(getProps().field.value).toBe('Binding');
@@ -540,7 +544,9 @@ describe('Field / FastField', () => {
     const { getProps } = renderField(
       // tslint:disable-next-line:quotemark
       { name: "user['superPowers'].1" },
-      { initialValues: { user: { superPowers: ['Surging', 'Binding'] } } } // TODO: fix generic type
+      {
+        initialValues: { user: { superPowers: ['Surging', 'Binding'] } } as any,
+      } // TODO: fix generic type
     );
 
     expect(getProps().field.value).toBe('Binding');

@@ -1,6 +1,5 @@
 {
-  "extends": "./tsconfig.base.json",
-  "include": ["src", "./typings.d.ts", "types"],
+  "extends": "./tsconfig.json",
   "compilerOptions": {
     "baseUrl": "./"
   }

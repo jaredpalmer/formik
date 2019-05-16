@@ -568,36 +568,6 @@ export function useFormik<Values = object>({
     []
   );
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement> | undefined) {
-    if (e && e.preventDefault) {
-      e.preventDefault();
-    }
-
-    // Warn if form submission is triggered by a <button> without a
-    // specified `type` attribute during development. This mitigates
-    // a common gotcha in forms with both reset and submit buttons,
-    // where the dev forgets to add type="button" to the reset button.
-    if (
-      process.env.NODE_ENV !== 'production' &&
-      typeof document !== 'undefined'
-    ) {
-      // Safely get the active element (works with IE)
-      const activeElement = getActiveElement();
-      if (
-        activeElement !== null &&
-        activeElement instanceof HTMLButtonElement
-      ) {
-        invariant(
-          activeElement.attributes &&
-            activeElement.attributes.getNamedItem('type'),
-          'You submitted a Formik form using a button with an unspecified `type` attribute.  Most browsers default button elements to `type="submit"`. If this is not a submit button, please add `type="button"`.'
-        );
-      }
-    }
-
-    submitForm();
-  }
-
   const setTouched = React.useCallback((touched: FormikTouched<Values>) => {
     dispatch({ type: 'SET_TOUCHED', payload: touched });
   }, []);
@@ -711,6 +681,42 @@ export function useFormik<Values = object>({
     });
   }, [executeSubmit, validateForm]);
 
+  const handleSubmit = React.useCallback(
+    (e?: React.FormEvent<HTMLFormElement>) => {
+      if (e && e.preventDefault && isFunction(e.preventDefault)) {
+        e.preventDefault();
+      }
+
+      if (e && e.stopPropagation && isFunction(e.stopPropagation)) {
+        e.stopPropagation();
+      }
+
+      // Warn if form submission is triggered by a <button> without a
+      // specified `type` attribute during development. This mitigates
+      // a common gotcha in forms with both reset and submit buttons,
+      // where the dev forgets to add type="button" to the reset button.
+      if (
+        process.env.NODE_ENV !== 'production' &&
+        typeof document !== 'undefined'
+      ) {
+        // Safely get the active element (works with IE)
+        const activeElement = getActiveElement();
+        if (
+          activeElement !== null &&
+          activeElement instanceof HTMLButtonElement
+        ) {
+          invariant(
+            activeElement.attributes &&
+              activeElement.attributes.getNamedItem('type'),
+            'You submitted a Formik form using a button with an unspecified `type` attribute.  Most browsers default button elements to `type="submit"`. If this is not a submit button, please add `type="button"`.'
+          );
+        }
+      }
+
+      submitForm();
+    },
+    [submitForm]
+  );
   const handleReset = React.useCallback(() => {
     if (props.onReset) {
       const maybePromisedOnReset = (props.onReset as any)(

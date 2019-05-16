@@ -38,10 +38,9 @@ const Form: React.SFC<FormikProps<Values>> = ({
       >
         Call setStatus
       </button>
-      {status &&
-        !!status.myStatusMessage && (
-          <div id="statusMessage">{status.myStatusMessage}</div>
-        )}
+      {status && !!status.myStatusMessage && (
+        <div id="statusMessage">{status.myStatusMessage}</div>
+      )}
       <button type="submit">Submit</button>
     </form>
   );
@@ -180,7 +179,6 @@ describe('withFormik()', () => {
           setSubmitting: expect.any(Function),
           setTouched: expect.any(Function),
           setValues: expect.any(Function),
-          submitForm: expect.any(Function),
           validateField: expect.any(Function),
           validateForm: expect.any(Function),
         }

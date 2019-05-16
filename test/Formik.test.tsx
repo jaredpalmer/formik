@@ -33,10 +33,9 @@ function Form({
       />
       {touched.name && errors.name && <div id="feedback">{errors.name}</div>}
       {isSubmitting && <div id="submitting">Submitting</div>}
-      {status &&
-        !!status.myStatusMessage && (
-          <div id="statusMessage">{status.myStatusMessage}</div>
-        )}
+      {status && !!status.myStatusMessage && (
+        <div id="statusMessage">{status.myStatusMessage}</div>
+      )}
       <button type="submit" data-testid="submit-button">
         Submit
       </button>
@@ -764,7 +763,6 @@ describe('<Formik>', () => {
           setSubmitting: expect.any(Function),
           setTouched: expect.any(Function),
           setValues: expect.any(Function),
-          submitForm: expect.any(Function),
         })
       );
     });

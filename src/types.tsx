@@ -89,8 +89,6 @@ export interface FormikHelpers<Values> {
   validateField(field: string): void;
   /** Reset form */
   resetForm(nextState?: FormikState<Values>): void;
-  /** Submit the form imperatively */
-  submitForm(): void;
   /** Set Formik state, careful! */
   setFormikState(
     f:
@@ -155,7 +153,7 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
   /**
    * Render prop (works like React router's <Route render={props =>} />)
    */
-  render?: ((props: FormikProps<Values>) => React.ReactNode);
+  render?: (props: FormikProps<Values>) => React.ReactNode;
 
   /**
    * React children or child render callback
@@ -198,9 +196,7 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
    * Validation function. Must return an error object or promise that
    * throws an error object where that object keys map to corresponding value.
    */
-  validate?: ((
-    values: Values
-  ) => void | object | Promise<FormikErrors<Values>>);
+  validate?: (values: Values) => void | object | Promise<FormikErrors<Values>>;
 }
 
 /**
@@ -212,13 +208,13 @@ export type FormikProps<Values> = FormikSharedConfig &
   FormikHelpers<Values> &
   FormikHandlers &
   FormikComputedProps<Values> &
-  FormikRegistration;
+  FormikRegistration & { submitForm: () => Promise<void> };
 
 /** Internal Formik registration methods that get passed down as props */
 export interface FormikRegistration {
   registerField(
     name: string,
-    fns: { validate?: ((value: any) => string | Promise<void> | undefined) }
+    fns: { validate?: (value: any) => string | Promise<void> | undefined }
   ): void;
   unregisterField(name: string): void;
 }
@@ -238,12 +234,12 @@ export interface SharedRenderProps<T> {
   /**
    * Render prop (works like React router's <Route render={props =>} />)
    */
-  render?: ((props: T) => React.ReactNode);
+  render?: (props: T) => React.ReactNode;
 
   /**
    * Children render function <Field name>{props => ...}</Field>)
    */
-  children?: ((props: T) => React.ReactNode);
+  children?: (props: T) => React.ReactNode;
 }
 
 export type GenericFieldHTMLAttributes =

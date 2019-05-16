@@ -21,6 +21,7 @@ export const isString = (obj: any): obj is string =>
   Object.prototype.toString.call(obj) === '[object String]';
 
 /** @private is the given object a NaN? */
+// eslint-disable-next-line no-self-compare
 export const isNaN = (obj: any): boolean => obj !== obj;
 
 /** @private Does a React component have exactly 0 children? */
@@ -65,7 +66,7 @@ export function getActiveElement(doc?: Document): Element | null {
 export function makeCancelable<T extends Promise<any>>(
   promise: T
 ): [T, () => void] {
-  let hasCanceled: boolean = false;
+  let hasCanceled = false;
 
   const wrappedPromise: any = new Promise((resolve, reject) => {
     promise.then(

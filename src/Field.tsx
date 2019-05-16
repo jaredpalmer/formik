@@ -37,7 +37,7 @@ export interface FieldConfig {
    * Render prop (works like React router's <Route render={props =>} />)
    * @deprecated
    */
-  render?: ((props: FieldProps<any>) => React.ReactNode);
+  render?: (props: FieldProps<any>) => React.ReactNode;
 
   /**
    * Children render function <Field name>{props => ...}</Field>)
@@ -47,7 +47,7 @@ export interface FieldConfig {
   /**
    * Validate a single field value independently
    */
-  validate?: ((value: any) => string | Promise<void> | undefined);
+  validate?: (value: any) => string | Promise<void> | undefined;
 
   /**
    * Field name
@@ -117,19 +117,16 @@ export function Field({
       !(render && children && !isEmptyChildren(children)),
       'You should not use <Field render> and <Field children> in the same <Field> component; <Field children> will be ignored'
     );
-  }, []);
+  }, [children, component, is, name, render]);
 
-  React.useEffect(
-    () => {
-      formik.registerField(name, {
-        validate: validate,
-      });
-      return () => {
-        formik.unregisterField(name);
-      };
-    },
-    [name, validate]
-  );
+  React.useEffect(() => {
+    formik.registerField(name, {
+      validate: validate,
+    });
+    return () => {
+      formik.unregisterField(name);
+    };
+  }, [formik, name, validate]);
   const [field, meta] = formik.getFieldProps(name, props.type);
   const legacyBag = { field, form: formik };
 

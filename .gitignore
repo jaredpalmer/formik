@@ -20,3 +20,6 @@ website/build/
 website/yarn.lock
 website/node_modules
 website/i18n/*
+.rts2_cache_es
+.rts2_cache_cjs
+.rts2_cache_umd

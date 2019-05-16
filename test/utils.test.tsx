@@ -310,7 +310,7 @@ describe('utils', () => {
         return Promise.resolve('test');
       };
 
-      const [updatedPromise, cancel] = makeCancelable(PromiseToResolve());
+      const [updatedPromise] = makeCancelable(PromiseToResolve());
 
       const result = await (() => {
         return updatedPromise;

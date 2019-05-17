@@ -6,7 +6,7 @@ import { FormikContext } from './types';
 export const {
   Provider: FormikProvider,
   Consumer: FormikConsumer,
-} = createContext<FormikContext<any>>({} as any);
+}: React.Context<FormikContext<any>> = (createContext as any)({} as any);
 
 /**
  * Connect any component to Formik context, and inject as a prop called `formik`;

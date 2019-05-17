@@ -34,12 +34,3 @@ declare module 'deepmerge' {
     function all<T>(objects: Array<Partial<T>>, options?: Options): T;
   }
 }
-
-// mridgway removed the types from hoist-non-react-statics causing
-// massive pain and sadness.
-// @see https://github.com/mridgway/hoist-non-react-statics/issues/47
-// Additionally, there are further headaches with TS resolutions
-// because Formik relies on these types as deps.
-// These packages are thus cast kept as any. #yolo.
-// see @https://github.com/react-dnd/react-dnd/pull/1330 for reference
-declare module 'hoist-non-react-statics';

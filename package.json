@@ -52,16 +52,17 @@
   },
   "optionalDependencies": {},
   "resolutions": {
-    "@types/react": "16.8.14",
+    "@types/react": "16.8.17",
     "@types/react-dom": "16.8.4"
   },
   "devDependencies": {
     "@babel/core": "^7.1.2",
     "@storybook/addon-options": "^3.4.8",
     "@storybook/react": "^3.4.0",
+    "@types/hoist-non-react-statics": "^3.3.1",
     "@types/jest": "^24.0.5",
     "@types/lodash": "^4.14.119",
-    "@types/react": "^16.8.14",
+    "@types/react": "^16.8.17",
     "@types/react-dom": "^16.8.4",
     "@types/warning": "^3.0.0",
     "@types/yup": "^0.24.9",

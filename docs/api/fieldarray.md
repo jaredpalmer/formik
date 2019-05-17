@@ -131,7 +131,7 @@ const schema = Yup.object().shape({
 
 Since Yup and your custom validation function should always output error messages as strings, you'll need to sniff whether your nested error is an array or a string when you go to display it.
 
-So...to display `'Must have friends'` and `'Minimum of 3 friends'` (our example's array validation contstraints)...
+So...to display `'Must have friends'` and `'Minimum of 3 friends'` (our example's array validation constraints)...
 
 **_Bad_**
 

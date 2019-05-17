@@ -1,7 +1,7 @@
 {
   "name": "formik",
   "description": "Forms in React, without tears",
-  "version": "2.0.1-alpha.51",
+  "version": "2.0.1-rc.0",
   "license": "MIT",
   "author": "Jared Palmer <jared@palmer.net>",
   "repository": "jaredpalmer/formik",
@@ -115,7 +115,8 @@
       "<rootDir>/test/setupTests.ts"
     ]
   },
-  "size-limit": [{
+  "size-limit": [
+    {
       "path": "./dist/index.js",
       "limit": "14 kB"
     },

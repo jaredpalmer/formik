@@ -20,7 +20,6 @@ import {
   setNestedObjectValues,
   getActiveElement,
   getIn,
-  makeCancelable,
 } from './utils';
 import { FormikProvider } from './FormikContext';
 import invariant from 'tiny-warning';
@@ -103,14 +102,9 @@ function formikReducer<Values>(
   }
 }
 
-/** @private */
-function usePrevious<T>(val: T) {
-  const ref = React.useRef<T>(val);
-  React.useEffect(() => {
-    ref.current = val;
-  }, [val]);
-  return ref.current;
-}
+// Initial empty states
+const emptyErrors: FormikErrors<any> = {};
+const emptyTouched: FormikTouched<any> = {};
 
 export function useFormik<Values = object>({
   validateOnChange = true,
@@ -122,8 +116,8 @@ export function useFormik<Values = object>({
 }: FormikConfig<Values>) {
   const props = { validateOnChange, validateOnBlur, onSubmit, ...rest };
   const initialValues = React.useRef(props.initialValues);
-  const initialErrors = React.useRef(props.initialErrors || {});
-  const initialTouched = React.useRef(props.initialTouched || {});
+  const initialErrors = React.useRef(props.initialErrors || emptyErrors);
+  const initialTouched = React.useRef(props.initialTouched || emptyTouched);
   const initialStatus = React.useRef(props.initialStatus);
   const isMounted = React.useRef<boolean>(false);
   const fields = React.useRef<{
@@ -160,18 +154,17 @@ export function useFormik<Values = object>({
     isValidating: false,
     submitCount: 0,
   });
-  const prevState = usePrevious(state);
 
   const runValidateHandler = React.useCallback(
     (values: Values, field?: string): Promise<FormikErrors<Values>> => {
       return new Promise(resolve => {
         const maybePromisedErrors = (props.validate as any)(values, field);
         if (maybePromisedErrors === undefined) {
-          resolve({});
+          resolve(emptyErrors);
         } else if (isPromise(maybePromisedErrors)) {
           (maybePromisedErrors as Promise<any>).then(
             () => {
-              resolve({});
+              resolve(emptyErrors);
             },
             errors => {
               resolve(errors);
@@ -201,7 +194,7 @@ export function useFormik<Values = object>({
             : validateYupSchema(values, schema);
         promise.then(
           () => {
-            resolve({});
+            resolve(emptyErrors);
           },
           (err: any) => {
             resolve(yupToFormErrors(err));
@@ -223,8 +216,8 @@ export function useFormik<Values = object>({
 
   const runFieldLevelValidations = React.useCallback(
     (values: Values): Promise<FormikErrors<Values>> => {
-      if (fields.current === null) {
-        return Promise.resolve({});
+      if (fields.current == null) {
+        return Promise.resolve(emptyErrors);
       }
       const fieldKeysWithValidation: string[] = Object.keys(
         fields.current
@@ -259,38 +252,32 @@ export function useFormik<Values = object>({
     [runSingleFieldLevelValidation, fields]
   );
 
-  /**
-   * Run all validations methods and update state accordingly
-   */
-  const validateForm = React.useCallback(
-    (values: Values = state.values) => {
-      if (
-        props.validationSchema ||
-        props.validate ||
-        (fields.current &&
-          Object.keys(fields.current).filter(
-            key => !!fields.current[key].validate
-          ).length > 0)
-      ) {
-        dispatch({ type: 'SET_ISVALIDATING', payload: true });
-        return Promise.all([
-          runFieldLevelValidations(values),
-          props.validationSchema ? runValidationSchema(values) : {},
-          props.validate ? runValidateHandler(values) : {},
-        ]).then(([fieldErrors, schemaErrors, validateErrors]) => {
-          const combinedErrors = deepmerge.all<FormikErrors<Values>>(
-            [fieldErrors, schemaErrors, validateErrors],
-            { arrayMerge }
-          );
-          if (!isEqual(state.errors, combinedErrors)) {
-            dispatch({ type: 'SET_ERRORS', payload: combinedErrors });
-          }
-          dispatch({ type: 'SET_ISVALIDATING', payload: false });
-          return combinedErrors;
-        });
-      } else {
-        return Promise.resolve({});
-      }
+  // Are there any validation methods?
+  const hasValidationFns = React.useMemo(
+    () =>
+      props.validationSchema ||
+      props.validate ||
+      (fields.current &&
+        Object.keys(fields.current).filter(
+          key => !!fields.current[key].validate
+        ).length > 0),
+    [props.validate, props.validationSchema, fields]
+  );
+
+  // Run all validations and return the result
+  const runAllValidations = React.useCallback(
+    (values: Values) => {
+      return Promise.all([
+        runFieldLevelValidations(values),
+        props.validationSchema ? runValidationSchema(values) : {},
+        props.validate ? runValidateHandler(values) : {},
+      ]).then(([fieldErrors, schemaErrors, validateErrors]) => {
+        const combinedErrors = deepmerge.all<FormikErrors<Values>>(
+          [fieldErrors, schemaErrors, validateErrors],
+          { arrayMerge }
+        );
+        return combinedErrors;
+      });
     },
     [
       props.validate,
@@ -298,53 +285,61 @@ export function useFormik<Values = object>({
       runFieldLevelValidations,
       runValidateHandler,
       runValidationSchema,
-      state.errors,
-      state.values,
-      fields,
     ]
   );
 
-  React.useEffect(() => {
-    if (
-      prevState.values !== state.values &&
-      !!validateOnChange &&
-      !state.isSubmitting &&
-      isMounted.current != null
-    ) {
-      const [validate, cancel] = makeCancelable(validateForm());
-      validate.then(x => x).catch(x => x); // catch the rejection silently
-      return cancel;
-    }
-    return;
-  }, [
-    prevState.values,
-    state.isSubmitting,
-    state.values,
-    validateForm,
-    validateOnChange,
-    isMounted,
-  ]);
+  // Run validations and dispatching the result as low-priority via rAF.
+  //
+  // The thinking is that validation as a result of onChange and onBlur
+  // should never block user input. Note: This method should never be called
+  // during the submission phase because validation prior to submission
+  // is actaully high-priority since we absolutely need to guarantee the
+  // form is valid before executing props.onSubmit.
+  const validateFormWithLowPriority = React.useCallback(
+    (values: Values = state.values) => {
+      if (!hasValidationFns) {
+        // No validation functions, so we bail out immediately
+        return Promise.resolve(emptyErrors);
+      }
 
-  React.useEffect(() => {
-    if (
-      prevState.touched !== state.touched &&
-      !!validateOnBlur &&
-      !state.isSubmitting &&
-      isMounted.current != null
-    ) {
-      const [validate, cancel] = makeCancelable(validateForm());
-      validate.then(x => x).catch(x => x); // catch the rejection silently
-      return cancel;
-    }
-    return;
-  }, [
-    prevState.touched,
-    state.isSubmitting,
-    state.touched,
-    validateForm,
-    validateOnBlur,
-    isMounted,
-  ]);
+      return Promise.resolve().then(() => {
+        // TODO: replace rAF with react deferred update API when it's ready https://github.com/facebook/react/issues/13306
+        requestAnimationFrame(() => {
+          return runAllValidations(values).then(combinedErrors => {
+            if (isMounted.current != null) {
+              dispatch({ type: 'SET_ERRORS', payload: combinedErrors });
+            }
+            return combinedErrors;
+          });
+        });
+      });
+    },
+    [hasValidationFns, runAllValidations, state.values]
+  );
+
+  // Run all validations methods and update state accordingly
+  const validateFormWithHighPriority = React.useCallback(
+    (values: Values = state.values) => {
+      if (!hasValidationFns) {
+        // No validation functions, so we bail out immediately
+        return Promise.resolve(emptyErrors);
+      }
+      dispatch({ type: 'SET_ISVALIDATING', payload: true });
+      return runAllValidations(values).then(combinedErrors => {
+        if (
+          !isEqual(state.errors, combinedErrors) &&
+          isMounted.current != null
+        ) {
+          dispatch({ type: 'SET_ERRORS', payload: combinedErrors });
+        }
+        if (isMounted.current != null) {
+          dispatch({ type: 'SET_ISVALIDATING', payload: false });
+        }
+        return combinedErrors;
+      });
+    },
+    [state.values, state.errors, hasValidationFns, runAllValidations]
+  );
 
   const resetForm = React.useCallback(
     (nextState?: FormikState<Values>) => {
@@ -406,7 +401,7 @@ export function useFormik<Values = object>({
   React.useEffect(() => {
     if (
       enableReinitialize &&
-      isMounted.current &&
+      isMounted.current != null &&
       !isEqual(initialValues.current, props.initialValues)
     ) {
       resetForm();
@@ -476,36 +471,55 @@ export function useFormik<Values = object>({
     [fields]
   );
 
-  const handleBlur = React.useCallback((eventOrString: any):
-    | void
-    | ((e: any) => void) => {
-    if (isString(eventOrString)) {
-      return event => executeBlur(event, eventOrString);
-    } else {
-      executeBlur(eventOrString);
-    }
+  const setTouched = React.useCallback(
+    (touched: FormikTouched<Values>) => {
+      dispatch({ type: 'SET_TOUCHED', payload: touched });
+      return validateOnBlur
+        ? validateFormWithLowPriority(state.values)
+        : Promise.resolve();
+    },
+    [validateFormWithLowPriority, state.values, validateOnBlur]
+  );
 
-    function executeBlur(e: any, path?: string) {
-      if (e.persist) {
-        e.persist();
-      }
-      const { name, id, outerHTML } = e.target;
-      const field = path ? path : name ? name : id;
-
-      if (!field && process.env.NODE_ENV !== 'production') {
-        warnAboutMissingIdentifier({
-          htmlContent: outerHTML,
-          documentationAnchorLink: 'handleblur-e-any--void',
-          handlerName: 'handleBlur',
-        });
-      }
-
-      dispatch({
-        type: 'SET_FIELD_TOUCHED',
-        payload: { field, value: true },
-      });
-    }
+  const setErrors = React.useCallback((errors: FormikErrors<Values>) => {
+    dispatch({ type: 'SET_ERRORS', payload: errors });
   }, []);
+
+  const setValues = React.useCallback(
+    (values: Values) => {
+      dispatch({ type: 'SET_VALUES', payload: values });
+      return validateOnBlur
+        ? validateFormWithLowPriority(state.values)
+        : Promise.resolve();
+    },
+    [validateFormWithLowPriority, state.values, validateOnBlur]
+  );
+
+  const setFieldError = React.useCallback(
+    (field: string, value: string | undefined) => {
+      dispatch({
+        type: 'SET_FIELD_ERROR',
+        payload: { field, value },
+      });
+    },
+    []
+  );
+
+  const setFieldValue = React.useCallback(
+    (field: string, value: any, shouldValidate: boolean = true) => {
+      dispatch({
+        type: 'SET_FIELD_VALUE',
+        payload: {
+          field,
+          value,
+        },
+      });
+      return validateOnChange && shouldValidate
+        ? validateFormWithLowPriority(setIn(state.values, field, value))
+        : Promise.resolve();
+    },
+    [validateFormWithLowPriority, state.values, validateOnChange]
+  );
 
   const handleChange = React.useCallback(
     (
@@ -561,62 +575,61 @@ export function useFormik<Values = object>({
 
         if (field) {
           // Set form fields by name
-          dispatch({ type: 'SET_FIELD_VALUE', payload: { field, value: val } });
+          setFieldValue(field, val);
         }
       }
     },
-    []
+    [setFieldValue]
   );
 
-  const setTouched = React.useCallback((touched: FormikTouched<Values>) => {
-    dispatch({ type: 'SET_TOUCHED', payload: touched });
-  }, []);
-
-  const setErrors = React.useCallback((errors: FormikErrors<Values>) => {
-    dispatch({ type: 'SET_ERRORS', payload: errors });
-  }, []);
-
-  const setValues = React.useCallback((values: Values) => {
-    dispatch({ type: 'SET_VALUES', payload: values });
-  }, []);
-
-  const setFieldError = React.useCallback(
-    (field: string, value: string | undefined) => {
+  const setFieldTouched = React.useCallback(
+    (
+      field: string,
+      touched: boolean = true,
+      shouldValidate: boolean = true
+    ) => {
       dispatch({
-        type: 'SET_FIELD_ERROR',
-        payload: { field, value },
+        type: 'SET_FIELD_TOUCHED',
+        payload: {
+          field,
+          value: touched,
+        },
       });
+      return validateOnBlur && shouldValidate
+        ? validateFormWithLowPriority(state.values)
+        : Promise.resolve();
     },
-    []
+    [validateFormWithLowPriority, state.values, validateOnBlur]
   );
 
-  const setFieldValue = React.useCallback((
-    field: string,
-    value: any
-    // shouldValidate: boolean = true
-  ) => {
-    dispatch({
-      type: 'SET_FIELD_VALUE',
-      payload: {
-        field,
-        value,
-      },
-    });
-  }, []);
+  const handleBlur = React.useCallback(
+    (eventOrString: any): void | ((e: any) => void) => {
+      if (isString(eventOrString)) {
+        return event => executeBlur(event, eventOrString);
+      } else {
+        executeBlur(eventOrString);
+      }
 
-  const setFieldTouched = React.useCallback((
-    field: string,
-    touched: boolean = true
-    // shouldValidate: boolean = true
-  ) => {
-    dispatch({
-      type: 'SET_FIELD_TOUCHED',
-      payload: {
-        field,
-        value: touched,
-      },
-    });
-  }, []);
+      function executeBlur(e: any, path?: string) {
+        if (e.persist) {
+          e.persist();
+        }
+        const { name, id, outerHTML } = e.target;
+        const field = path ? path : name ? name : id;
+
+        if (!field && process.env.NODE_ENV !== 'production') {
+          warnAboutMissingIdentifier({
+            htmlContent: outerHTML,
+            documentationAnchorLink: 'handleblur-e-any--void',
+            handlerName: 'handleBlur',
+          });
+        }
+
+        setFieldTouched(field, true);
+      }
+    },
+    [setFieldTouched]
+  );
 
   function setFormikState(
     stateOrCb:
@@ -641,7 +654,7 @@ export function useFormik<Values = object>({
   const imperativeMethods = {
     resetForm,
 
-    validateForm,
+    validateForm: validateFormWithHighPriority,
     validateField,
     setErrors,
     setFieldError,
@@ -660,26 +673,28 @@ export function useFormik<Values = object>({
 
   const submitForm = React.useCallback(() => {
     dispatch({ type: 'SUBMIT_ATTEMPT' });
-    return validateForm().then((combinedErrors: FormikErrors<Values>) => {
-      const isActuallyValid = Object.keys(combinedErrors).length === 0;
-      if (isActuallyValid) {
-        Promise.resolve(executeSubmit())
-          .then(() => {
-            if (isMounted.current) {
-              dispatch({ type: 'SUBMIT_SUCCESS' });
-            }
-          })
-          .catch(_errors => {
-            if (isMounted.current) {
-              dispatch({ type: 'SUBMIT_FAILURE' });
-            }
-          });
-      } else if (isMounted.current) {
-        // ^^^ Make sure Formik is still mounted before calling setState
-        dispatch({ type: 'SUBMIT_FAILURE' });
+    return validateFormWithHighPriority(state.values).then(
+      (combinedErrors: FormikErrors<Values>) => {
+        const isActuallyValid = Object.keys(combinedErrors).length === 0;
+        if (isActuallyValid) {
+          Promise.resolve(executeSubmit())
+            .then(() => {
+              if (isMounted.current) {
+                dispatch({ type: 'SUBMIT_SUCCESS' });
+              }
+            })
+            .catch(_errors => {
+              if (isMounted.current) {
+                dispatch({ type: 'SUBMIT_FAILURE' });
+              }
+            });
+        } else if (isMounted.current) {
+          // ^^^ Make sure Formik is still mounted before calling setState
+          dispatch({ type: 'SUBMIT_FAILURE' });
+        }
       }
-    });
-  }, [executeSubmit, validateForm]);
+    );
+  }, [executeSubmit, state.values, validateFormWithHighPriority]);
 
   const handleSubmit = React.useCallback(
     (e?: React.FormEvent<HTMLFormElement>) => {
@@ -806,7 +821,7 @@ export function useFormik<Values = object>({
     setTouched,
     setValues,
     submitForm,
-    validateForm,
+    validateForm: validateFormWithHighPriority,
     validateField,
     isValid,
     dirty,

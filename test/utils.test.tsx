@@ -3,7 +3,6 @@ import {
   setNestedObjectValues,
   isPromise,
   getActiveElement,
-  makeCancelable,
   isNaN,
 } from '../src/utils';
 
@@ -301,64 +300,6 @@ describe('utils', () => {
     it('test getActiveElement with valid document', () => {
       const result = getActiveElement(document);
       expect(result).toEqual(document.body);
-    });
-  });
-
-  describe('makeCancelable', () => {
-    it('correctly call promise without cancel', async () => {
-      const PromiseToResolve = () => {
-        return Promise.resolve('test');
-      };
-
-      const [updatedPromise] = makeCancelable(PromiseToResolve());
-
-      const result = await (() => {
-        return updatedPromise;
-      })();
-
-      expect(result).toEqual('test');
-    });
-
-    it('correctly cancel successful promise', async () => {
-      const PromiseToResolve = () => {
-        return new Promise(resolve => {
-          setTimeout(() => {
-            resolve('test');
-          }, 10);
-        });
-      };
-
-      const [updatedPromise, cancel] = makeCancelable(PromiseToResolve());
-
-      cancel();
-      try {
-        await (() => {
-          return updatedPromise;
-        })();
-      } catch (e) {
-        expect(e).toEqual({ isCanceled: true });
-      }
-    });
-
-    it('correctly cancel rejected promise', async () => {
-      const PromiseToResolve = () => {
-        return new Promise((_, reject) => {
-          setTimeout(() => {
-            reject('test');
-          }, 100);
-        });
-      };
-
-      const [updatedPromise, cancel] = makeCancelable(PromiseToResolve());
-
-      cancel();
-      try {
-        await (() => {
-          return updatedPromise;
-        })();
-      } catch (e) {
-        expect(e).toEqual({ isCanceled: true });
-      }
     });
   });
 

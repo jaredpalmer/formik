@@ -1,38 +1,10 @@
 {
+  "extends": "./tsconfig.base.json",
+  "include": ["src", "types", "test", "test/setupTests.ts"],
   "compilerOptions": {
-    "target": "es5",
-    "module": "esnext",
-    "lib": ["dom", "esnext"],
-    "importHelpers": true,
-    "declaration": true,
-    "sourceMap": true,
-    "rootDir": "./",
-    "strict": true,
-    "pretty": true,
-    "removeComments": true,
-    "noImplicitAny": true,
-    "strictNullChecks": true,
-    "strictFunctionTypes": true,
-    "strictPropertyInitialization": true,
-    "noImplicitThis": true,
-    "alwaysStrict": true,
-    "stripInternal": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true,
-    "emitDecoratorMetadata": false,
-    "experimentalDecorators": false,
-    "moduleResolution": "node",
     "baseUrl": "./",
-    "jsx": "react",
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
     "paths": {
-      "*": ["src/*", "node_modules/*"]
-    },
-
-  },
-  "include": ["src", "types"],
-  "exclude": ["node_modules", "dist"]
+      "formik": ["src/"]
+    }
+  }
 }

@@ -14,17 +14,25 @@ import SyncValidation from '../examples/SyncValidation';
 import FieldLevelValidation from '../examples/FieldLevelValidation';
 import CombinedValidations from '../examples/CombinedValidations';
 
-const AsyncValidationCode = require('!raw-loader!../examples/AsyncValidation');
-const ArraysCode = require('!raw-loader!../examples/Arrays');
-const BasicCode = require('!raw-loader!../examples/Basic.js');
-const CustomInputsCode = require('!raw-loader!../examples/CustomInputs');
-const ErrorMessageCode = require('!raw-loader!../examples/ErrorMessage');
-const FastFieldCode = require('!raw-loader!../examples/FastField');
-const MultistepWizardCode = require('!raw-loader!../examples/MultistepWizard');
-const SchemaValidationCode = require('!raw-loader!../examples/SchemaValidation');
-const SyncValidationCode = require('!raw-loader!../examples/SyncValidation');
-const FieldLevelValidationCode = require('!raw-loader!../examples/FieldLevelValidation');
-const CombinedValidationsCode = require('!raw-loader!../examples/CombinedValidations');
+const AsyncValidationCode = require('!raw-loader!../examples/AsyncValidation')
+  .default;
+const ArraysCode = require('!raw-loader!../examples/Arrays').default;
+const BasicCode = require('!raw-loader!../examples/Basic.js').default;
+const CustomInputsCode = require('!raw-loader!../examples/CustomInputs')
+  .default;
+const ErrorMessageCode = require('!raw-loader!../examples/ErrorMessage')
+  .default;
+const FastFieldCode = require('!raw-loader!../examples/FastField').default;
+const MultistepWizardCode = require('!raw-loader!../examples/MultistepWizard')
+  .default;
+const SchemaValidationCode = require('!raw-loader!../examples/SchemaValidation')
+  .default;
+const SyncValidationCode = require('!raw-loader!../examples/SyncValidation')
+  .default;
+const FieldLevelValidationCode = require('!raw-loader!../examples/FieldLevelValidation')
+  .default;
+const CombinedValidationsCode = require('!raw-loader!../examples/CombinedValidations')
+  .default;
 
 function cleanExample(str) {
   return str

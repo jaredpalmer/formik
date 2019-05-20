@@ -688,14 +688,6 @@ describe('<Formik>', () => {
         });
       });
 
-      it('setFieldValues sets several values at once', () => {
-        const { getProps } = renderFormik();
-
-        getProps().setFieldValues({ name: 'sam', zipcode: 56789 });
-        expect(getProps().values.name).toEqual('sam');
-        expect(getProps().values.zipcode).toEqual(56789);
-      });
-
       it('setTouched sets touched', () => {
         const { getProps } = renderFormik();
 

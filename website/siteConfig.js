@@ -163,6 +163,11 @@ const users = [
     image: '/formik/img/logos/campusjaeger.png',
     infoLink: 'https://www.campusjaeger.de/',
   },
+  {
+    caption: 'Letgo',
+    image: '/formik/img/logos/letgo-logo.png',
+    infoLink: 'https://www.letgo.com/',
+  },
 ];
 
 const siteConfig = {

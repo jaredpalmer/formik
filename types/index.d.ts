@@ -34,3 +34,4 @@ declare module 'deepmerge' {
     function all<T>(objects: Array<Partial<T>>, options?: Options): T;
   }
 }
+declare module 'scheduler';

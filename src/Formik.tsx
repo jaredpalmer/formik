@@ -23,6 +23,7 @@ import {
 } from './utils';
 import { FormikProvider } from './FormikContext';
 import invariant from 'tiny-warning';
+import { LowPriority, unstable_runWithPriority } from 'scheduler';
 
 // We already used FormikActions. So we'll go all Elm-y, and use Message.
 type FormikMessage<Values> =
@@ -302,15 +303,12 @@ export function useFormik<Values = object>({
         return Promise.resolve(emptyErrors);
       }
 
-      return Promise.resolve().then(() => {
-        // TODO: replace rAF with react deferred update API when it's ready https://github.com/facebook/react/issues/13306
-        requestAnimationFrame(() => {
-          return runAllValidations(values).then(combinedErrors => {
-            if (isMounted.current != null) {
-              dispatch({ type: 'SET_ERRORS', payload: combinedErrors });
-            }
-            return combinedErrors;
-          });
+      return unstable_runWithPriority(LowPriority, () => {
+        return runAllValidations(values).then(combinedErrors => {
+          if (isMounted.current != null) {
+            dispatch({ type: 'SET_ERRORS', payload: combinedErrors });
+          }
+          return combinedErrors;
         });
       });
     },

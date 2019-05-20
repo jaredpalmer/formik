@@ -103,7 +103,6 @@ passed to the wrapped component.
 * `setFieldError`
 * `setFieldTouched`
 * `setFieldValue`
-* `setFieldValues`
 * `setStatus`
 * `setSubmitting`
 * `setTouched`
@@ -206,7 +205,7 @@ are called.
 
 Default is `true`. Use this option to tell Formik to run validations on `change`
 events and `change`-related methods. More specifically, when either
-`handleChange`, `setFieldValue`, `setFieldValues`, or `setValues` are called.
+`handleChange`, `setFieldValue`, or `setValues` are called.
 
 ### `validationSchema?: Schema | ((props: Props) => Schema)`
 

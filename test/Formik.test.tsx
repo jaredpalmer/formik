@@ -2,7 +2,7 @@ import * as React from 'react';
 import { render, fireEvent, wait } from 'react-testing-library';
 import * as Yup from 'yup';
 
-import { Formik, FormikProps, FormikConfig } from '../src';
+import { Formik, FormikProps, FormikConfig, ValueUpdate } from '../src';
 import { noop } from './testHelpers';
 
 jest.spyOn(global.console, 'warn');
@@ -656,14 +656,6 @@ describe('<Formik>', () => {
         await wait(() => {
           expect(validate).not.toHaveBeenCalled();
         });
-      });
-
-      it('setFieldValues sets several values at once', () => {
-        const { getProps } = renderFormik();
-
-        getProps().setFieldValues({ name: 'sam', zipcode: 56789 });
-        expect(getProps().values.name).toEqual('sam');
-        expect(getProps().values.zipcode).toEqual(56789);
       });
 
       it('setTouched sets touched', () => {

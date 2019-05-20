@@ -94,8 +94,6 @@ export interface FormikHelpers<Values> {
     value: any,
     shouldValidate?: boolean
   ): void;
-  /** Set the value of several fields at once */
-  setFieldValues(values: Partial<Values>, shouldValidate?: boolean): void;
   /** Set error message of a form field directly */
   setFieldError(field: keyof Values & string, message: string): void;
   /** Set whether field has been touched directly */

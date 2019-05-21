@@ -166,7 +166,7 @@ const users = [
   {
     caption: 'Letgo',
     image: '/formik/img/logos/letgo-logo.png',
-    infoLink: 'https://www.letgo.com/',
+    infoLink: 'https://we.letgo.com/',
   },
 ];
 

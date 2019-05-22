@@ -90,7 +90,7 @@ describe('<Formik>', () => {
 
     expect(props.isSubmitting).toBe(false);
     expect(props.touched).toEqual({});
-    expect(props.values).toEqual(InitialValues);
+    expect(props.values).toEqual(INITIAL_VALUES);
     expect(props.errors).toEqual({});
     expect(props.dirty).toBe(false);
     expect(props.isValid).toBe(true);
@@ -101,7 +101,7 @@ describe('<Formik>', () => {
     it('updates values based on name attribute', () => {
       const { getProps, getByTestId } = renderFormik<Values>();
 
-      expect(getProps().values.name).toEqual(InitialValues.name);
+      expect(getProps().values.name).toEqual(INITIAL_VALUES.name);
 
       const input = getByTestId('name-input');
       fireEvent.change(input, {
@@ -118,7 +118,7 @@ describe('<Formik>', () => {
     it('updates values when passed a string (overloaded)', () => {
       let injected: any;
       const { getByTestId } = render(
-        <Formik initialValues={InitialValues} onSubmit={noop}>
+        <Formik initialValues={INITIAL_VALUES} onSubmit={noop}>
           {formikProps =>
             (injected = formikProps) && (
               <input
@@ -131,7 +131,7 @@ describe('<Formik>', () => {
       );
       const input = getByTestId('name-input');
 
-      expect(injected.values.name).toEqual(InitialValues.name);
+      expect(injected.values.name).toEqual(INITIAL_VALUES.name);
 
       fireEvent.change(input, {
         persist: noop,
@@ -147,7 +147,7 @@ describe('<Formik>', () => {
     it('updates values via `name` instead of `id` attribute when both are present', () => {
       const { getProps, getByTestId } = renderFormik<Values>();
 
-      expect(getProps().values.name).toEqual(InitialValues.name);
+      expect(getProps().values.name).toEqual(INITIAL_VALUES.name);
 
       const input = getByTestId('name-input');
       fireEvent.change(input, {
@@ -165,7 +165,7 @@ describe('<Formik>', () => {
     it('updates values when passed a string (overloaded)', () => {
       let injected: any;
       const { getByTestId } = render(
-        <Formik initialValues={InitialValues} onSubmit={noop}>
+        <Formik initialValues={INITIAL_VALUES} onSubmit={noop}>
           {formikProps =>
             (injected = formikProps) && (
               <input
@@ -268,7 +268,7 @@ describe('<Formik>', () => {
     it('updates touched when passed a string (overloaded)', () => {
       let injected: any;
       const { getByTestId } = render(
-        <Formik initialValues={InitialValues} onSubmit={noop}>
+        <Formik initialValues={INITIAL_VALUES} onSubmit={noop}>
           {formikProps =>
             (injected = formikProps) && (
               <input
@@ -813,7 +813,7 @@ describe('<Formik>', () => {
     it('should call onReset with values and actions when form is reset', () => {
       const onReset = jest.fn();
       const { getProps } = renderFormik({
-        initialValues: InitialValues,
+        initialValues: INITIAL_VALUES,
         onSubmit: noop,
         onReset,
       });
@@ -821,7 +821,7 @@ describe('<Formik>', () => {
       getProps().handleReset();
 
       expect(onReset).toHaveBeenCalledWith(
-        InitialValues,
+        INITIAL_VALUES,
         expect.objectContaining({
           resetForm: expect.any(Function),
           setErrors: expect.any(Function),

@@ -168,6 +168,11 @@ const users = [
     image: '/formik/img/logos/letgo-logo.png',
     infoLink: 'https://we.letgo.com/',
   },
+  {
+    caption: 'gitconnected',
+    image: '/formik/img/logos/gitconnected-logo.png',
+    infoLink: 'https://gitconnected.com',
+  },
 ];
 
 const siteConfig = {

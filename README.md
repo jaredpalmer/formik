@@ -80,6 +80,6 @@ specification. Contributions of any kind welcome!
 
 ---
 
-MIT License.
+[MIT License.](https://github.com/jaredpalmer/formik/blob/master/LICENSE)
 
 ---

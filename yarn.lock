@@ -10518,10 +10518,10 @@ ts-jest@^24.0.2:
     semver "^5.5"
     yargs-parser "10.x"
 
-tsdx@^0.5.11:
-  version "0.5.11"
-  resolved "https://registry.yarnpkg.com/tsdx/-/tsdx-0.5.11.tgz#588d71b680f913ba7cfa70edb8113a8707ac47f5"
-  integrity sha512-N6L9Z9dSZ8Net3p0/013kyBG0+T0N2ppDjWKVZKCatdyIo3JUO+r0JvFXcS6F4UDLqwm0A3RzEAG71yAr04ZNA==
+tsdx@^0.5.12:
+  version "0.5.12"
+  resolved "https://registry.yarnpkg.com/tsdx/-/tsdx-0.5.12.tgz#aebeac8a97f097bf507db35263d998160f6fd40a"
+  integrity sha512-vqPsVagIjwfP21ih92CWqYTQgUAZYGXlDWpaHu1YCZ2lwQmQBcqkeIbUzNkTBBHB+mscND0vXViSJmVXyMgGMg==
   dependencies:
     "@babel/core" "^7.4.4"
     "@jaredpalmer/rollup-plugin-preserve-shebang" "^0.1.7"

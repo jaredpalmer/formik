@@ -259,9 +259,9 @@ export function useFormik<Values = object>({
       props.validationSchema ||
       props.validate ||
       (fields.current &&
-        Object.keys(fields.current).filter(
+        Object.keys(fields.current).some(
           key => !!fields.current[key].validate
-        ).length > 0),
+        )),
     [props.validate, props.validationSchema, fields]
   );
 
@@ -324,7 +324,10 @@ export function useFormik<Values = object>({
       }
       dispatch({ type: 'SET_ISVALIDATING', payload: true });
       return runAllValidations(values).then(combinedErrors => {
-        if (!!isMounted.current && !isEqual(state.errors, combinedErrors)) {
+        if (
+          isMounted.current === true &&
+          !isEqual(state.errors, combinedErrors)
+        ) {
           dispatch({ type: 'SET_ERRORS', payload: combinedErrors });
           dispatch({ type: 'SET_ISVALIDATING', payload: false });
         }

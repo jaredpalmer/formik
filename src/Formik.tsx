@@ -399,7 +399,7 @@ export function useFormik<Values = object>({
   React.useEffect(() => {
     if (
       enableReinitialize &&
-      isMounted.current != null &&
+      isMounted.current === true &&
       !isEqual(initialValues.current, props.initialValues)
     ) {
       resetForm();

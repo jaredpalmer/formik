@@ -330,7 +330,7 @@ export function useFormik<Values = object>({
         ) {
           dispatch({ type: 'SET_ERRORS', payload: combinedErrors });
         }
-        if (isMounted.current != null) {
+        if (isMounted.current === true) {
           dispatch({ type: 'SET_ISVALIDATING', payload: false });
         }
         return combinedErrors;

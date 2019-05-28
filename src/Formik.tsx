@@ -324,13 +324,8 @@ export function useFormik<Values = object>({
       }
       dispatch({ type: 'SET_ISVALIDATING', payload: true });
       return runAllValidations(values).then(combinedErrors => {
-        if (
-          !isEqual(state.errors, combinedErrors) &&
-          isMounted.current != null
-        ) {
+        if (!!isMounted.current && !isEqual(state.errors, combinedErrors)) {
           dispatch({ type: 'SET_ERRORS', payload: combinedErrors });
-        }
-        if (isMounted.current === true) {
           dispatch({ type: 'SET_ISVALIDATING', payload: false });
         }
         return combinedErrors;

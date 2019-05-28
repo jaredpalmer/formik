@@ -9,7 +9,7 @@ export const isFunction = (obj: any): obj is Function =>
   typeof obj === 'function';
 
 /** @private is the given object an Object? */
-export const isObject = (obj: any): boolean =>
+export const isObject = (obj: any): obj is Object =>
   obj !== null && typeof obj === 'object';
 
 /** @private is the given object an integer? */

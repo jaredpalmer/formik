@@ -542,7 +542,10 @@ export function useFormik<Values = object>({
             value,
             checked,
             outerHTML,
+            options,
+            multiple,
           } = (eventOrTextValue as React.ChangeEvent<any>).target;
+
           field = maybePath ? maybePath : name ? name : id;
           if (!field && process.env.NODE_ENV !== 'production') {
             warnAboutMissingIdentifier({
@@ -554,8 +557,10 @@ export function useFormik<Values = object>({
           }
           val = /number|range/.test(type)
             ? ((parsed = parseFloat(value)), isNaN(parsed) ? '' : parsed)
-            : /checkbox/.test(type)
-            ? checked
+            : /checkbox/.test(type) // checkboxes
+            ? getValueForCheckbox(getIn(state.values, field!), checked, value)
+            : !!multiple // <select multiple>
+            ? getSelectedValues(options)
             : value;
         }
 
@@ -565,7 +570,7 @@ export function useFormik<Values = object>({
         }
       }
     },
-    []
+    [state.values]
   );
 
   const setTouched = React.useCallback((touched: FormikTouched<Values>) => {
@@ -749,20 +754,36 @@ export function useFormik<Values = object>({
   );
 
   const getFieldProps = React.useCallback(
-    (
-      name: string,
-      type: string
-    ): [FieldInputProps<any>, FieldMetaProps<any>] => {
-      const field = {
+    ({
+      name,
+      type,
+      value: _value,
+      as: is,
+      multiple,
+    }): [FieldInputProps<any>, FieldMetaProps<any>] => {
+      const value = getIn(state.values, name);
+
+      const field: FieldInputProps<any> = {
         name,
-        value:
-          type && (type === 'radio' || type === 'checkbox')
-            ? undefined // React uses checked={} for these inputs
-            : getIn(state.values, name),
+        value,
         onChange: handleChange,
         onBlur: handleBlur,
       };
 
+      if (type === 'checkbox') {
+        if (_value === undefined) {
+          field.checked = !!value;
+        } else {
+          field.checked = !!(Array.isArray(value) && ~value.indexOf(_value));
+          field.value = _value;
+        }
+      } else if (type === 'radio') {
+        field.checked = value === _value;
+        field.value = _value;
+      } else if (is === 'select' && multiple) {
+        field.value = field.value || [];
+        field.multiple = true;
+      }
       return [field, getFieldMeta(name)];
     },
     [getFieldMeta, handleBlur, handleChange, state.values]
@@ -920,4 +941,47 @@ function arrayMerge(target: any[], source: any[], options: any): any[] {
     }
   });
   return destination;
+}
+
+/** Return multi select values based on an array of options */
+function getSelectedValues(options: any[]) {
+  const result = [];
+  if (options) {
+    for (let index = 0; index < options.length; index++) {
+      const option = options[index];
+      if (option.selected) {
+        result.push(option.value);
+      }
+    }
+  }
+  return result;
+}
+
+/** Return the next value for a checkbox */
+function getValueForCheckbox(
+  currentValue: string | any[],
+  checked: boolean,
+  valueProp: any
+) {
+  if (valueProp == 'true' || valueProp == 'false') {
+    return !!checked;
+  } else {
+    if (checked) {
+      return Array.isArray(currentValue)
+        ? currentValue.concat(valueProp)
+        : [valueProp];
+    } else {
+      if (!Array.isArray(currentValue)) {
+        return !!currentValue;
+      }
+      const index = currentValue.indexOf(valueProp);
+      if (index < 0) {
+        return currentValue;
+      } else {
+        return currentValue
+          .slice(0, index)
+          .concat(currentValue.slice(index + 1));
+      }
+    }
+  }
 }

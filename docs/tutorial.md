@@ -194,7 +194,7 @@ const EditUserDialog = ({ user, updateUser, onClose }) => {
           <Form>
             <Field type="email" name="email" />
             <ErrorMessage name="email" component="div" />  
-            <Field type="text" className="error" name="social.facebook" />
+            <Field type="text" name="social.facebook" />
             <ErrorMessage name="social.facebook">
               {errorMessage => <div className="error">{errorMessage}</div>}
             </ErrorMessage>

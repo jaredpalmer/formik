@@ -216,7 +216,7 @@ export function useFormik<Values = object>({
         resolve(fieldRegistry.current[field].validate(value))
       );
     },
-    [fieldRegistry]
+    []
   );
 
   const runFieldLevelValidations = React.useCallback(
@@ -250,7 +250,7 @@ export function useFormik<Values = object>({
         }, {})
       );
     },
-    [runSingleFieldLevelValidation, fieldRegistry]
+    [runSingleFieldLevelValidation]
   );
 
   // Run all validations and return the result
@@ -422,24 +422,18 @@ export function useFormik<Values = object>({
         return Promise.resolve();
       }
     },
-    [state.values, fieldRegistry]
+    [state.values]
   );
 
-  const registerField = React.useCallback(
-    (name: string, { validate }: any) => {
-      fieldRegistry.current[name] = {
-        validate,
-      };
-    },
-    [fieldRegistry]
-  );
+  const registerField = React.useCallback((name: string, { validate }: any) => {
+    fieldRegistry.current[name] = {
+      validate,
+    };
+  }, []);
 
-  const unregisterField = React.useCallback(
-    (name: string) => {
-      delete fieldRegistry.current[name];
-    },
-    [fieldRegistry]
-  );
+  const unregisterField = React.useCallback((name: string) => {
+    delete fieldRegistry.current[name];
+  }, []);
 
   const setTouched = React.useCallback(
     (touched: FormikTouched<Values>) => {

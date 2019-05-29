@@ -932,15 +932,13 @@ function getValueForCheckbox(
     return Array.isArray(currentValue)
       ? currentValue.concat(valueProp)
       : [valueProp];
-  } else {
-    if (!Array.isArray(currentValue)) {
-      return !!currentValue;
-    }
-    const index = currentValue.indexOf(valueProp);
-    if (index < 0) {
-      return currentValue;
-    } else {
-      return currentValue.slice(0, index).concat(currentValue.slice(index + 1));
-    }
   }
+  if (!Array.isArray(currentValue)) {
+    return !!currentValue;
+  }
+  const index = currentValue.indexOf(valueProp);
+  if (index < 0) {
+    return currentValue;
+  }
+  return currentValue.slice(0, index).concat(currentValue.slice(index + 1));
 }

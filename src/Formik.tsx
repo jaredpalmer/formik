@@ -223,12 +223,7 @@ export function useFormik<Values = object>({
     (values: Values): Promise<FormikErrors<Values>> => {
       const fieldKeysWithValidation: string[] = Object.keys(
         fieldRegistry.current
-      ).filter(
-        f =>
-          fieldRegistry.current[f] &&
-          fieldRegistry.current[f].validate &&
-          isFunction(fieldRegistry.current[f].validate)
-      );
+      ).filter(f => isFunction(fieldRegistry.current[f].validate));
 
       // Construct an array with all of the field validation functions
       const fieldValidations: Promise<string>[] =
@@ -388,12 +383,7 @@ export function useFormik<Values = object>({
       // changes if the validation function is synchronous. It's different from
       // what is called when using validateForm.
 
-      if (
-        fieldRegistry.current !== null &&
-        fieldRegistry.current[name] &&
-        fieldRegistry.current[name].validate &&
-        isFunction(fieldRegistry.current[name].validate)
-      ) {
+      if (isFunction(fieldRegistry.current[name].validate)) {
         const value = getIn(state.values, name);
         const maybePromise = fieldRegistry.current[name].validate(value);
         if (isPromise(maybePromise)) {

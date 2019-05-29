@@ -104,8 +104,8 @@ function formikReducer<Values>(
 }
 
 // Initial empty states // objects
-const emptyErrors: FormikErrors<any> = {};
-const emptyTouched: FormikTouched<any> = {};
+const emptyErrors: FormikErrors<unknown> = {};
+const emptyTouched: FormikTouched<unknown> = {};
 
 // This is an object that contains a map of all registered fields
 // and their validate functions
@@ -116,7 +116,7 @@ interface FieldRegistry {
 }
 const emptyFieldRegistry: FieldRegistry = {};
 
-export function useFormik<Values = object>({
+export function useFormik<Values extends FormikValues = FormikValues>({
   validateOnChange = true,
   validateOnBlur = true,
   isInitialValid,
@@ -257,7 +257,7 @@ export function useFormik<Values = object>({
         props.validate ? runValidateHandler(values) : {},
       ]).then(([fieldErrors, schemaErrors, validateErrors]) => {
         const combinedErrors = deepmerge.all<FormikErrors<Values>>(
-          [fieldErrors, schemaErrors, validateErrors],
+          [fieldErrors, schemaErrors, validateErrors] as FormikErrors<Values>[],
           { arrayMerge }
         );
         return combinedErrors;
@@ -789,9 +789,10 @@ export function useFormik<Values = object>({
   return ctx;
 }
 
-export function Formik<Values = object, ExtraProps = {}>(
-  props: FormikConfig<Values> & ExtraProps
-) {
+export function Formik<
+  Values extends FormikValues = FormikValues,
+  ExtraProps = {}
+>(props: FormikConfig<Values> & ExtraProps) {
   const formikbag = useFormik<Values>(props);
   const { component, children, render } = props;
   return (
@@ -855,7 +856,7 @@ export function validateYupSchema<T extends FormikValues>(
   sync: boolean = false,
   context: any = {}
 ): Promise<Partial<T>> {
-  let validateData: Partial<T> = {};
+  let validateData: any = {};
   for (let k in values) {
     if (values.hasOwnProperty(k)) {
       const key = String(k);

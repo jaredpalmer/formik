@@ -856,7 +856,7 @@ export function validateYupSchema<T extends FormikValues>(
   sync: boolean = false,
   context: any = {}
 ): Promise<Partial<T>> {
-  let validateData: any = {};
+  let validateData: FormikValues = {};
   for (let k in values) {
     if (values.hasOwnProperty(k)) {
       const key = String(k);

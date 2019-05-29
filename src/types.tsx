@@ -3,7 +3,7 @@ import * as React from 'react';
  * Values of fields in the form
  */
 export interface FormikValues {
-  [field: string]: unknown;
+  [field: string]: any;
 }
 
 /**

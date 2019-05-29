@@ -945,16 +945,7 @@ function arrayMerge(target: any[], source: any[], options: any): any[] {
 
 /** Return multi select values based on an array of options */
 function getSelectedValues(options: any[]) {
-  const result = [];
-  if (options) {
-    for (let index = 0; index < options.length; index++) {
-      const option = options[index];
-      if (option.selected) {
-        result.push(option.value);
-      }
-    }
-  }
-  return result;
+  return options.filter(el => el.selected).map(el => el.value);
 }
 
 /** Return the next value for a checkbox */
@@ -965,23 +956,20 @@ function getValueForCheckbox(
 ) {
   if (valueProp == 'true' || valueProp == 'false') {
     return !!checked;
+  }
+  if (checked) {
+    return Array.isArray(currentValue)
+      ? currentValue.concat(valueProp)
+      : [valueProp];
   } else {
-    if (checked) {
-      return Array.isArray(currentValue)
-        ? currentValue.concat(valueProp)
-        : [valueProp];
+    if (!Array.isArray(currentValue)) {
+      return !!currentValue;
+    }
+    const index = currentValue.indexOf(valueProp);
+    if (index < 0) {
+      return currentValue;
     } else {
-      if (!Array.isArray(currentValue)) {
-        return !!currentValue;
-      }
-      const index = currentValue.indexOf(valueProp);
-      if (index < 0) {
-        return currentValue;
-      } else {
-        return currentValue
-          .slice(0, index)
-          .concat(currentValue.slice(index + 1));
-      }
+      return currentValue.slice(0, index).concat(currentValue.slice(index + 1));
     }
   }
 }

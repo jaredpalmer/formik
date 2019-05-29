@@ -103,9 +103,18 @@ function formikReducer<Values>(
   }
 }
 
-// Initial empty states
+// Initial empty states // objects
 const emptyErrors: FormikErrors<any> = {};
 const emptyTouched: FormikTouched<any> = {};
+
+// This is an object that contains a map of all registered fields
+// and their validate functions
+interface FieldRegistry {
+  [field: string]: {
+    validate: (value: any) => string | Promise<string> | undefined;
+  };
+}
+const emptyFieldRegistry: FieldRegistry = {};
 
 export function useFormik<Values = object>({
   validateOnChange = true,
@@ -121,12 +130,7 @@ export function useFormik<Values = object>({
   const initialTouched = React.useRef(props.initialTouched || emptyTouched);
   const initialStatus = React.useRef(props.initialStatus);
   const isMounted = React.useRef<boolean>(false);
-  const fields = React.useRef<{
-    [field: string]: {
-      validate: (value: any) => string | Promise<string> | undefined;
-    };
-  }>({});
-
+  const fieldRegistry = React.useRef<FieldRegistry>(emptyFieldRegistry);
   React.useEffect(() => {
     if (process.env.NODE_ENV !== 'production') {
       invariant(
@@ -209,25 +213,21 @@ export function useFormik<Values = object>({
   const runSingleFieldLevelValidation = React.useCallback(
     (field: string, value: void | string): Promise<string> => {
       return new Promise(resolve =>
-        resolve(fields.current[field].validate(value))
-      ).then(x => x, e => e);
+        resolve(fieldRegistry.current[field].validate(value))
+      );
     },
-    [fields]
+    [fieldRegistry]
   );
 
   const runFieldLevelValidations = React.useCallback(
     (values: Values): Promise<FormikErrors<Values>> => {
-      if (fields.current == null) {
-        return Promise.resolve(emptyErrors);
-      }
       const fieldKeysWithValidation: string[] = Object.keys(
-        fields.current
+        fieldRegistry.current
       ).filter(
         f =>
-          fields.current !== null &&
-          fields.current[f] &&
-          fields.current[f].validate &&
-          isFunction(fields.current[f].validate)
+          fieldRegistry.current[f] &&
+          fieldRegistry.current[f].validate &&
+          isFunction(fieldRegistry.current[f].validate)
       );
 
       // Construct an array with all of the field validation functions
@@ -250,19 +250,7 @@ export function useFormik<Values = object>({
         }, {})
       );
     },
-    [runSingleFieldLevelValidation, fields]
-  );
-
-  // Are there any validation methods?
-  const hasValidationFns = React.useMemo(
-    () =>
-      props.validationSchema ||
-      props.validate ||
-      (fields.current &&
-        Object.keys(fields.current).some(
-          key => !!fields.current[key].validate
-        )),
-    [props.validate, props.validationSchema, fields]
+    [runSingleFieldLevelValidation, fieldRegistry]
   );
 
   // Run all validations and return the result
@@ -298,43 +286,33 @@ export function useFormik<Values = object>({
   // form is valid before executing props.onSubmit.
   const validateFormWithLowPriority = React.useCallback(
     (values: Values = state.values) => {
-      if (!hasValidationFns) {
-        // No validation functions, so we bail out immediately
-        return Promise.resolve(emptyErrors);
-      }
-
       return unstable_runWithPriority(LowPriority, () => {
         return runAllValidations(values).then(combinedErrors => {
-          if (isMounted.current != null) {
+          if (!!isMounted.current) {
             dispatch({ type: 'SET_ERRORS', payload: combinedErrors });
           }
           return combinedErrors;
         });
       });
     },
-    [hasValidationFns, runAllValidations, state.values]
+    [runAllValidations, state.values]
   );
 
   // Run all validations methods and update state accordingly
   const validateFormWithHighPriority = React.useCallback(
     (values: Values = state.values) => {
-      if (!hasValidationFns) {
-        // No validation functions, so we bail out immediately
-        return Promise.resolve(emptyErrors);
-      }
       dispatch({ type: 'SET_ISVALIDATING', payload: true });
       return runAllValidations(values).then(combinedErrors => {
-        if (
-          isMounted.current === true &&
-          !isEqual(state.errors, combinedErrors)
-        ) {
-          dispatch({ type: 'SET_ERRORS', payload: combinedErrors });
+        if (!!isMounted.current) {
           dispatch({ type: 'SET_ISVALIDATING', payload: false });
+          if (!isEqual(state.errors, combinedErrors)) {
+            dispatch({ type: 'SET_ERRORS', payload: combinedErrors });
+          }
         }
         return combinedErrors;
       });
     },
-    [state.values, state.errors, hasValidationFns, runAllValidations]
+    [state.values, state.errors, runAllValidations]
   );
 
   const resetForm = React.useCallback(
@@ -411,13 +389,13 @@ export function useFormik<Values = object>({
       // what is called when using validateForm.
 
       if (
-        fields.current !== null &&
-        fields.current[name] &&
-        fields.current[name].validate &&
-        isFunction(fields.current[name].validate)
+        fieldRegistry.current !== null &&
+        fieldRegistry.current[name] &&
+        fieldRegistry.current[name].validate &&
+        isFunction(fieldRegistry.current[name].validate)
       ) {
         const value = getIn(state.values, name);
-        const maybePromise = fields.current[name].validate(value);
+        const maybePromise = fieldRegistry.current[name].validate(value);
         if (isPromise(maybePromise)) {
           // Only flip isValidating if the function is async.
           dispatch({ type: 'SET_ISVALIDATING', payload: true });
@@ -444,27 +422,23 @@ export function useFormik<Values = object>({
         return Promise.resolve();
       }
     },
-    [state.values, fields]
+    [state.values, fieldRegistry]
   );
 
   const registerField = React.useCallback(
     (name: string, { validate }: any) => {
-      if (fields.current !== null) {
-        fields.current[name] = {
-          validate,
-        };
-      }
+      fieldRegistry.current[name] = {
+        validate,
+      };
     },
-    [fields]
+    [fieldRegistry]
   );
 
   const unregisterField = React.useCallback(
     (name: string) => {
-      if (fields.current !== null) {
-        delete fields.current[name];
-      }
+      delete fieldRegistry.current[name];
     },
-    [fields]
+    [fieldRegistry]
   );
 
   const setTouched = React.useCallback(
@@ -484,11 +458,11 @@ export function useFormik<Values = object>({
   const setValues = React.useCallback(
     (values: Values) => {
       dispatch({ type: 'SET_VALUES', payload: values });
-      return validateOnBlur
+      return validateOnChange
         ? validateFormWithLowPriority(state.values)
         : Promise.resolve();
     },
-    [validateFormWithLowPriority, state.values, validateOnBlur]
+    [validateFormWithLowPriority, state.values, validateOnChange]
   );
 
   const setFieldError = React.useCallback(
@@ -675,16 +649,16 @@ export function useFormik<Values = object>({
         if (isActuallyValid) {
           Promise.resolve(executeSubmit())
             .then(() => {
-              if (isMounted.current) {
+              if (!!isMounted.current) {
                 dispatch({ type: 'SUBMIT_SUCCESS' });
               }
             })
             .catch(_errors => {
-              if (isMounted.current) {
+              if (!!isMounted.current) {
                 dispatch({ type: 'SUBMIT_FAILURE' });
               }
             });
-        } else if (isMounted.current) {
+        } else if (!!isMounted.current) {
           // ^^^ Make sure Formik is still mounted before calling setState
           dispatch({ type: 'SUBMIT_FAILURE' });
         }

@@ -1,7 +1,8 @@
 ---
-id: field
+id: version-2.0.1-rc.2-field
 title: <Field />
 custom_edit_url: https://github.com/jaredpalmer/formik/edit/master/docs/api/field.md
+original_id: field
 ---
 
 `<Field />` will automagically hook up inputs to Formik. It uses the `name`

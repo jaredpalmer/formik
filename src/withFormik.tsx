@@ -2,10 +2,12 @@ import hoistNonReactStatics from 'hoist-non-react-statics';
 import * as React from 'react';
 import { Formik } from './Formik';
 import {
-  FormikActions,
+  FormikHelpers,
   FormikProps,
   FormikSharedConfig,
   FormikValues,
+  FormikTouched,
+  FormikErrors,
 } from './types';
 import { isFunction } from './utils';
 
@@ -20,7 +22,7 @@ export type InjectedFormikProps<Props, Values> = Props & FormikProps<Values>;
 /**
  * Formik actions + { props }
  */
-export type FormikBag<P, V> = { props: P } & FormikActions<V>;
+export type FormikBag<P, V> = { props: P } & FormikHelpers<V>;
 
 /**
  * withFormik() configuration options. Backwards compatible.
@@ -49,6 +51,16 @@ export interface WithFormikConfig<
    * Map props to the form values
    */
   mapPropsToStatus?: (props: Props) => any;
+
+  /**
+   * Map props to the form touched state
+   */
+  mapPropsToTouched?: (props: Props) => FormikTouched<Values>;
+
+  /**
+   * Map props to the form touched state
+   */
+  mapPropsToErrors?: (props: Props) => FormikErrors<Values>;
 
   /**
    * @deprecated in 0.9.0 (but needed to break TS types)
@@ -94,6 +106,7 @@ export function withFormik<
         vanillaProps.hasOwnProperty(k) &&
         typeof vanillaProps[k] !== 'function'
       ) {
+        // @todo TypeScript fix
         (val as any)[k] = vanillaProps[k];
       }
     }
@@ -129,7 +142,7 @@ export function withFormik<
           : config.validationSchema;
       };
 
-      handleSubmit = (values: Values, actions: FormikActions<Values>) => {
+      handleSubmit = (values: Values, actions: FormikHelpers<Values>) => {
         return config.handleSubmit(values, {
           ...actions,
           props: this.props,
@@ -154,6 +167,12 @@ export function withFormik<
             initialValues={mapPropsToValues(this.props)}
             initialStatus={
               config.mapPropsToStatus && config.mapPropsToStatus(this.props)
+            }
+            initialErrors={
+              config.mapPropsToErrors && config.mapPropsToErrors(this.props)
+            }
+            initialTouched={
+              config.mapPropsToTouched && config.mapPropsToTouched(this.props)
             }
             onSubmit={this.handleSubmit as any}
             render={this.renderFormComponent}

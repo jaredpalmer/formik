@@ -1,7 +1,8 @@
 ---
-id: typescript
+id: version-2.0.1-rc.2-typescript
 title: TypeScript
 custom_edit_url: https://github.com/jaredpalmer/formik/edit/master/docs/guides/typescript.md
+original_id: typescript
 ---
 
 [![TypeScript Types](https://img.shields.io/npm/types/formik.svg)](https://npm.im/formik)

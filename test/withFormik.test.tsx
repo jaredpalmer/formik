@@ -38,10 +38,9 @@ const Form: React.SFC<FormikProps<Values>> = ({
       >
         Call setStatus
       </button>
-      {status &&
-        !!status.myStatusMessage && (
-          <div id="statusMessage">{status.myStatusMessage}</div>
-        )}
+      {status && !!status.myStatusMessage && (
+        <div id="statusMessage">{status.myStatusMessage}</div>
+      )}
       <button type="submit">Submit</button>
     </form>
   );
@@ -76,6 +75,8 @@ describe('withFormik()', () => {
       initialValues: {
         name: 'jared',
       },
+      initialErrors: {},
+      initialTouched: {},
       values: {
         name: InitialValues.name,
       },
@@ -86,11 +87,11 @@ describe('withFormik()', () => {
       handleReset: expect.any(Function),
       handleSubmit: expect.any(Function),
       isSubmitting: false,
-      isValid: false,
+      isValid: true,
       isValidating: false,
+      getFieldProps: expect.any(Function),
       registerField: expect.any(Function),
       resetForm: expect.any(Function),
-      setError: expect.any(Function),
       setErrors: expect.any(Function),
       setFieldError: expect.any(Function),
       setFieldTouched: expect.any(Function),
@@ -169,7 +170,6 @@ describe('withFormik()', () => {
         {
           props: myProps,
           resetForm: expect.any(Function),
-          setError: expect.any(Function),
           setErrors: expect.any(Function),
           setFieldError: expect.any(Function),
           setFieldTouched: expect.any(Function),
@@ -179,7 +179,6 @@ describe('withFormik()', () => {
           setSubmitting: expect.any(Function),
           setTouched: expect.any(Function),
           setValues: expect.any(Function),
-          submitForm: expect.any(Function),
           validateField: expect.any(Function),
           validateForm: expect.any(Function),
         }

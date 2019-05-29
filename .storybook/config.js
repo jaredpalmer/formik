@@ -12,7 +12,7 @@ setOptions({
    * URL for name in top left corner to link to
    * @type {String}
    */
-  url: 'https://github.com/jaredpalerm/formik',
+  url: 'https://github.com/jaredpalmer/formik',
   /**
    * Show story component as full screen
    * @type {Boolean}

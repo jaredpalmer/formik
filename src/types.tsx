@@ -31,19 +31,14 @@ export type FormikTouched<Values> = {
 export interface FormikState<Values> {
   /** Form values */
   values: Values;
-  /**
-   * Top level error, in case you need it
-   * @deprecated since 0.8.0
-   */
-  error?: any;
   /** map of field names to specific error for that field */
   errors: FormikErrors<Values>;
   /** map of field names to whether the field has been touched */
   touched: FormikTouched<Values>;
-  /** whether the form is currently validating */
-  isValidating: boolean;
   /** whether the form is currently submitting */
   isSubmitting: boolean;
+  /** whether the form is currently validating (prior to submission) */
+  isValidating: boolean;
   /** Top level status state, in case you need it */
   status?: any;
   /** Number of times user tried to submit the form */
@@ -56,23 +51,24 @@ export interface FormikState<Values> {
 export interface FormikComputedProps<Values> {
   /** True if any input has been touched. False otherwise. */
   readonly dirty: boolean;
-  /** Result of isInitiallyValid on mount, then whether true values pass validation. */
+  /** True if state.errors is empty */
   readonly isValid: boolean;
-  /** initialValues */
+  /** The initial values of the form */
   readonly initialValues: Values;
+  /** The initial errors of the form */
+  readonly initialErrors: FormikErrors<Values>;
+  /** The initial visited fields of the form */
+  readonly initialTouched: FormikTouched<Values>;
+  /** The initial status of the form */
+  readonly initialStatus?: any;
 }
 
 /**
  * Formik state helpers
  */
-export interface FormikActions<Values> {
+export interface FormikHelpers<Values> {
   /** Manually set top level status. */
   setStatus(status?: any): void;
-  /**
-   * Manually set top level error
-   * @deprecated since 0.8.0
-   */
-  setError(e: any): void;
   /** Manually set errors object */
   setErrors(errors: FormikErrors<Values>): void;
   /** Manually set isSubmitting */
@@ -82,49 +78,23 @@ export interface FormikActions<Values> {
   /** Manually set values object  */
   setValues(values: Values): void;
   /** Set value of form field directly */
-  setFieldValue(
-    field: keyof Values & string,
-    value: any,
-    shouldValidate?: boolean
-  ): void;
+  setFieldValue(field: keyof Values & string, value: any): void;
   /** Set error message of a form field directly */
   setFieldError(field: keyof Values & string, message: string): void;
   /** Set whether field has been touched directly */
-  setFieldTouched(
-    field: keyof Values & string,
-    isTouched?: boolean,
-    shouldValidate?: boolean
-  ): void;
+  setFieldTouched(field: keyof Values & string, isTouched?: boolean): void;
   /** Validate form values */
   validateForm(values?: any): Promise<FormikErrors<Values>>;
   /** Validate field value */
   validateField(field: string): void;
   /** Reset form */
-  resetForm(nextValues?: Values): void;
-  /** Submit the form imperatively */
-  submitForm(): void;
+  resetForm(nextState?: FormikState<Values>): void;
   /** Set Formik state, careful! */
-  setFormikState<K extends keyof FormikState<Values>>(
-    f: (
-      prevState: Readonly<FormikState<Values>>,
-      props: any
-    ) => Pick<FormikState<Values>, K>,
-    callback?: () => any
-  ): void;
-}
-
-/** Overloded methods / types */
-export interface FormikActions<Values> {
-  /** Set value of form field directly */
-  setFieldValue(field: string, value: any): void;
-  /** Set error message of a form field directly */
-  setFieldError(field: string, message: string): void;
-  /** Set whether field has been touched directly */
-  setFieldTouched(field: string, isTouched?: boolean): void;
-  /** Set Formik state, careful! */
-  setFormikState<K extends keyof FormikState<Values>>(
-    state: Pick<FormikState<Values>, K>,
-    callback?: () => any
+  setFormikState(
+    f:
+      | FormikState<Values>
+      | ((prevState: FormikState<Values>) => FormikState<Values>),
+    cb?: () => void
   ): void;
 }
 
@@ -145,11 +115,16 @@ export interface FormikHandlers {
   /** Classic React change handler, keyed by input name */
   handleChange(e: React.ChangeEvent<any>): void;
   /** Preact-like linkState. Will return a handleChange function.  */
-  handleChange<T = unknown | React.ChangeEvent<any>>(
+  handleChange<T = string | React.ChangeEvent<any>>(
     field: T
   ): T extends React.ChangeEvent<any>
     ? void
-    : ((e: unknown | React.ChangeEvent<any>) => void);
+    : ((e: string | React.ChangeEvent<any>) => void);
+
+  getFieldProps<Value = any>(
+    name: string,
+    type?: string
+  ): [FieldInputProps<Value>, FieldMetaProps<Value>];
 }
 
 /**
@@ -178,7 +153,7 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
   /**
    * Render prop (works like React router's <Route render={props =>} />)
    */
-  render?: ((props: FormikProps<Values>) => React.ReactNode);
+  render?: (props: FormikProps<Values>) => React.ReactNode;
 
   /**
    * React children or child render callback
@@ -186,6 +161,7 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
   children?:
     | ((props: FormikProps<Values>) => React.ReactNode)
     | React.ReactNode;
+
   /**
    * Initial values of the form
    */
@@ -196,15 +172,21 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
    */
   initialStatus?: any;
 
+  /** Initial object map of field names to specific error for that field */
+  initialErrors?: FormikErrors<Values>;
+
+  /** Initial object map of field names to whether the field has been touched */
+  initialTouched?: FormikTouched<Values>;
+
   /**
    * Reset handler
    */
-  onReset?: (values: Values, formikActions: FormikActions<Values>) => void;
+  onReset?: (values: Values, formikHelpers: FormikHelpers<Values>) => void;
 
   /**
    * Submission handler
    */
-  onSubmit: (values: Values, formikActions: FormikActions<Values>) => void;
+  onSubmit: (values: Values, formikHelpers: FormikHelpers<Values>) => void;
   /**
    * A Yup Schema or a function that returns a Yup schema
    */
@@ -214,9 +196,7 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
    * Validation function. Must return an error object or promise that
    * throws an error object where that object keys map to corresponding value.
    */
-  validate?: ((
-    values: Values
-  ) => void | object | Promise<FormikErrors<Values>>);
+  validate?: (values: Values) => void | object | Promise<FormikErrors<Values>>;
 }
 
 /**
@@ -225,14 +205,17 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
  */
 export type FormikProps<Values> = FormikSharedConfig &
   FormikState<Values> &
-  FormikActions<Values> &
+  FormikHelpers<Values> &
   FormikHandlers &
   FormikComputedProps<Values> &
-  FormikRegistration;
+  FormikRegistration & { submitForm: () => Promise<void> };
 
 /** Internal Formik registration methods that get passed down as props */
 export interface FormikRegistration {
-  registerField(name: string, Comp: React.Component<any>): void;
+  registerField(
+    name: string,
+    fns: { validate?: (value: any) => string | Promise<void> | undefined }
+  ): void;
   unregisterField(name: string): void;
 }
 
@@ -251,15 +234,43 @@ export interface SharedRenderProps<T> {
   /**
    * Render prop (works like React router's <Route render={props =>} />)
    */
-  render?: ((props: T) => React.ReactNode);
+  render?: (props: T) => React.ReactNode;
 
   /**
    * Children render function <Field name>{props => ...}</Field>)
    */
-  children?: ((props: T) => React.ReactNode);
+  children?: (props: T) => React.ReactNode;
 }
 
 export type GenericFieldHTMLAttributes =
-  | React.InputHTMLAttributes<HTMLInputElement>
-  | React.SelectHTMLAttributes<HTMLSelectElement>
-  | React.TextareaHTMLAttributes<HTMLTextAreaElement>;
+  | JSX.IntrinsicElements['input']
+  | JSX.IntrinsicElements['select']
+  | JSX.IntrinsicElements['textarea'];
+
+/** Field metadata */
+export interface FieldMetaProps<Value> {
+  /** Value of the field */
+  value: Value;
+  /** Error message of the field */
+  error?: string;
+  /** Has the field been visited? */
+  touched: boolean;
+  /** Initial value of the field */
+  initialValue?: Value;
+  /** Initial touched state of the field */
+  initialTouched: boolean;
+  /** Initial error message of the field */
+  initialError?: string;
+}
+
+/** Field input value, name, and event handlers */
+export interface FieldInputProps<Value> {
+  /** Value of the field */
+  value: Value;
+  /** Name of the field */
+  name: string;
+  /** Change event handler */
+  onChange: FormikHandlers['handleChange'];
+  /** Blur event handler */
+  onBlur: FormikHandlers['handleBlur'];
+}

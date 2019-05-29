@@ -21,6 +21,7 @@ export const isString = (obj: any): obj is string =>
   Object.prototype.toString.call(obj) === '[object String]';
 
 /** @private is the given object a NaN? */
+// eslint-disable-next-line no-self-compare
 export const isNaN = (obj: any): boolean => obj !== obj;
 
 /** @private Does a React component have exactly 0 children? */
@@ -56,30 +57,6 @@ export function getActiveElement(doc?: Document): Element | null {
   } catch (e) {
     return doc.body;
   }
-}
-
-/**
- * Make a promise cancellable by @istarkov
- * @see https://reactjs.org/blog/2015/12/16/ismounted-antipattern.html
- */
-export function makeCancelable<T extends Promise<any>>(
-  promise: T
-): [T, () => void] {
-  let hasCanceled: boolean = false;
-
-  const wrappedPromise: any = new Promise((resolve, reject) => {
-    promise.then(
-      val => (hasCanceled ? reject({ isCanceled: true }) : resolve(val)),
-      error => (hasCanceled ? reject({ isCanceled: true }) : reject(error))
-    );
-  });
-
-  return [
-    wrappedPromise,
-    function cancel() {
-      hasCanceled = true;
-    },
-  ];
 }
 
 /**

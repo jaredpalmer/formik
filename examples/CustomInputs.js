@@ -46,11 +46,7 @@ const SignUp = () => (
             label="Email"
             placeholder="jane@acme.com"
           />
-          <Fieldset
-            name="color"
-            label="Favorite Color"
-            component="select"
-          >
+          <Fieldset name="color" label="Favorite Color" as="select">
             <option value="">Select a Color</option>
             <option value="red">Red</option>
             <option value="green">Green</option>
@@ -64,7 +60,7 @@ const SignUp = () => (
             placeholder="https://example.com"
           />
 
-          <Fieldset name="animal" component="select" label="Favorite Animal">
+          <Fieldset name="animal" as="select" label="Favorite Animal">
             <option value="">Select an animal</option>
             <option value="tiger">Tiger</option>
             <option value="bear">Bear</option>

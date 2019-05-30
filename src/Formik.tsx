@@ -116,7 +116,7 @@ interface FieldRegistry {
 }
 const emptyFieldRegistry: FieldRegistry = {};
 
-export function useFormik<Values = object>({
+function useFormikInternal<Values = object>({
   validateOnChange = true,
   validateOnBlur = true,
   isInitialValid,
@@ -792,7 +792,7 @@ export function useFormik<Values = object>({
 export function Formik<Values = object, ExtraProps = {}>(
   props: FormikConfig<Values> & ExtraProps
 ) {
-  const formikbag = useFormik<Values>(props);
+  const formikbag = useFormikInternal<Values>(props);
   const { component, children, render } = props;
   return (
     <FormikProvider value={formikbag}>

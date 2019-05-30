@@ -320,13 +320,13 @@ export function useFormik<Values = object>({
           : props.initialValues;
       const errors =
         nextState && nextState.errors
-          ? nextState.values
+          ? nextState.errors
           : initialErrors.current
           ? initialErrors.current
           : props.initialErrors || {};
       const touched =
         nextState && nextState.touched
-          ? nextState.values
+          ? nextState.touched
           : initialTouched.current
           ? initialTouched.current
           : props.initialTouched || {};

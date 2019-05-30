@@ -82,7 +82,7 @@ export function Field({
   name,
   render,
   children,
-  as: is = 'input', // `as` is reserved in typescript lol
+  as: is, // `as` is reserved in typescript lol
   component,
   ...props
 }: FieldAttributes<any>) {
@@ -159,15 +159,18 @@ export function Field({
     );
   }
 
-  if (typeof is === 'string') {
+  // default to input here so we can check for both `as` and `children` above
+  const asElement = is || 'input';
+
+  if (typeof asElement === 'string') {
     const { innerRef, ...rest } = props;
     return React.createElement(
-      is,
+      asElement,
       { ref: innerRef, ...field, ...rest },
       children
     );
   }
 
-  return React.createElement(is, { ...field, ...props }, children);
+  return React.createElement(asElement, { ...field, ...props }, children);
 }
 export const FastField = Field;

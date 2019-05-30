@@ -87,6 +87,7 @@
     "eslint-plugin-react": "7.x",
     "eslint-plugin-react-hooks": "1.5.0",
     "husky": "0.14.3",
+    "just-debounce-it": "^1.1.0",
     "lint-staged": "4.0.2",
     "prettier": "^1.17.1",
     "raw-loader": "^2.0.0",

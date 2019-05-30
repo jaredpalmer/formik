@@ -279,7 +279,7 @@ function useFormikInternal<Values = object>({
   // during the submission phase because validation prior to submission
   // is actaully high-priority since we absolutely need to guarantee the
   // form is valid before executing props.onSubmit.
-  const validateFormWithLowPriority = React.useCallback(
+  const validateFormWithLowPriority = useEventCallback(
     (values: Values = state.values) => {
       return unstable_runWithPriority(LowPriority, () => {
         return runAllValidations(values).then(combinedErrors => {
@@ -294,7 +294,7 @@ function useFormikInternal<Values = object>({
   );
 
   // Run all validations methods and update state accordingly
-  const validateFormWithHighPriority = React.useCallback(
+  const validateFormWithHighPriority = useEventCallback(
     (values: Values = state.values) => {
       dispatch({ type: 'SET_ISVALIDATING', payload: true });
       return runAllValidations(values).then(combinedErrors => {
@@ -377,7 +377,7 @@ function useFormikInternal<Values = object>({
     }
   }, [enableReinitialize, props.initialValues, resetForm]);
 
-  const validateField = React.useCallback(
+  const validateField = useEventCallback(
     (name: string) => {
       // This will efficiently validate a single field by avoiding state
       // changes if the validation function is synchronous. It's different from
@@ -425,7 +425,7 @@ function useFormikInternal<Values = object>({
     delete fieldRegistry.current[name];
   }, []);
 
-  const setTouched = React.useCallback(
+  const setTouched = useEventCallback(
     (touched: FormikTouched<Values>) => {
       dispatch({ type: 'SET_TOUCHED', payload: touched });
       return validateOnBlur
@@ -439,7 +439,7 @@ function useFormikInternal<Values = object>({
     dispatch({ type: 'SET_ERRORS', payload: errors });
   }, []);
 
-  const setValues = React.useCallback(
+  const setValues = useEventCallback(
     (values: Values) => {
       dispatch({ type: 'SET_VALUES', payload: values });
       return validateOnChange
@@ -459,7 +459,7 @@ function useFormikInternal<Values = object>({
     []
   );
 
-  const setFieldValue = React.useCallback(
+  const setFieldValue = useEventCallback(
     (field: string, value: any, shouldValidate: boolean = true) => {
       dispatch({
         type: 'SET_FIELD_VALUE',
@@ -475,13 +475,16 @@ function useFormikInternal<Values = object>({
     [validateFormWithLowPriority, state.values, validateOnChange]
   );
 
-  const handleChange = React.useCallback(
+  const handleChange = useEventCallback(
     (
       eventOrPath: string | React.ChangeEvent<any>
     ): void | ((eventOrTextValue: string | React.ChangeEvent<any>) => void) => {
       if (isString(eventOrPath)) {
         return event => executeChange(event, eventOrPath);
       } else {
+        if ((eventOrPath as React.ChangeEvent<any>).persist) {
+          (eventOrPath as React.ChangeEvent<any>).persist();
+        }
         executeChange(eventOrPath);
       }
 
@@ -536,7 +539,7 @@ function useFormikInternal<Values = object>({
     [setFieldValue]
   );
 
-  const setFieldTouched = React.useCallback(
+  const setFieldTouched = useEventCallback(
     (
       field: string,
       touched: boolean = true,
@@ -556,7 +559,7 @@ function useFormikInternal<Values = object>({
     [validateFormWithLowPriority, state.values, validateOnBlur]
   );
 
-  const handleBlur = React.useCallback(
+  const handleBlur = useEventCallback(
     (eventOrString: any): void | ((e: any) => void) => {
       if (isString(eventOrString)) {
         return event => executeBlur(event, eventOrString);
@@ -621,17 +624,17 @@ function useFormikInternal<Values = object>({
     setFormikState,
   };
 
-  const executeSubmit = React.useCallback(() => {
+  const executeSubmit = useEventCallback(() => {
     return onSubmit(state.values, imperativeMethods);
   }, [imperativeMethods, onSubmit, state.values]);
 
-  const submitForm = React.useCallback(() => {
+  const submitForm = useEventCallback(() => {
     dispatch({ type: 'SUBMIT_ATTEMPT' });
-    return validateFormWithHighPriority(state.values).then(
+    return validateFormWithHighPriority().then(
       (combinedErrors: FormikErrors<Values>) => {
         const isActuallyValid = Object.keys(combinedErrors).length === 0;
         if (isActuallyValid) {
-          Promise.resolve(executeSubmit())
+          return Promise.resolve(executeSubmit())
             .then(() => {
               if (!!isMounted.current) {
                 dispatch({ type: 'SUBMIT_SUCCESS' });
@@ -645,12 +648,14 @@ function useFormikInternal<Values = object>({
         } else if (!!isMounted.current) {
           // ^^^ Make sure Formik is still mounted before calling setState
           dispatch({ type: 'SUBMIT_FAILURE' });
+          return;
         }
+        return;
       }
     );
-  }, [executeSubmit, state.values, validateFormWithHighPriority]);
+  }, [executeSubmit, validateFormWithHighPriority]);
 
-  const handleSubmit = React.useCallback(
+  const handleSubmit = useEventCallback(
     (e?: React.FormEvent<HTMLFormElement>) => {
       if (e && e.preventDefault && isFunction(e.preventDefault)) {
         e.preventDefault();
@@ -686,7 +691,7 @@ function useFormikInternal<Values = object>({
     },
     [submitForm]
   );
-  const handleReset = React.useCallback(() => {
+  const handleReset = useEventCallback(() => {
     if (props.onReset) {
       const maybePromisedOnReset = (props.onReset as any)(
         state.values,
@@ -889,4 +894,26 @@ function arrayMerge(target: any[], source: any[], options: any): any[] {
     }
   });
   return destination;
+}
+
+function useEventCallback<T extends (...args: any[]) => any>(
+  fn: T,
+  dependencies: React.DependencyList
+): T {
+  const ref: any = React.useRef(() => {
+    throw new Error('Cannot call an event handler while rendering.');
+  });
+
+  React.useEffect(() => {
+    ref.current = fn;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fn, ...dependencies]);
+
+  return React.useCallback<any>(
+    (...argz: any[]) => {
+      const fn = ref.current;
+      return fn(...argz);
+    },
+    [ref]
+  ) as T;
 }

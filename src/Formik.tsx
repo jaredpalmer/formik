@@ -475,68 +475,64 @@ function useFormikInternal<Values = object>({
     [validateFormWithLowPriority, state.values, validateOnChange]
   );
 
-  const handleChange = useEventCallback(
+  const executeChange = React.useCallback(
+    (eventOrTextValue: string | React.ChangeEvent<any>, maybePath?: string) => {
+      // By default, assume that the first argument is a string. This allows us to use
+      // handleChange with React Native and React Native Web's onChangeText prop which
+      // provides just the value of the input.
+      let field = maybePath;
+      let val = eventOrTextValue;
+      let parsed;
+      // If the first argument is not a string though, it has to be a synthetic React Event (or a fake one),
+      // so we handle like we would a normal HTML change event.
+      if (!isString(eventOrTextValue)) {
+        // If we can, persist the event
+        // @see https://reactjs.org/docs/events.html#event-pooling
+        if ((eventOrTextValue as React.ChangeEvent<any>).persist) {
+          (eventOrTextValue as React.ChangeEvent<any>).persist();
+        }
+        const {
+          type,
+          name,
+          id,
+          value,
+          checked,
+          outerHTML,
+        } = (eventOrTextValue as React.ChangeEvent<any>).target;
+        field = maybePath ? maybePath : name ? name : id;
+        if (!field && process.env.NODE_ENV !== 'production') {
+          warnAboutMissingIdentifier({
+            htmlContent: outerHTML,
+            documentationAnchorLink: 'handlechange-e-reactchangeeventany--void',
+            handlerName: 'handleChange',
+          });
+        }
+        val = /number|range/.test(type)
+          ? ((parsed = parseFloat(value)), isNaN(parsed) ? '' : parsed)
+          : /checkbox/.test(type)
+          ? checked
+          : value;
+      }
+
+      if (field) {
+        // Set form fields by name
+        setFieldValue(field, val);
+      }
+    },
+    [setFieldValue]
+  );
+
+  const handleChange = React.useCallback(
     (
       eventOrPath: string | React.ChangeEvent<any>
     ): void | ((eventOrTextValue: string | React.ChangeEvent<any>) => void) => {
       if (isString(eventOrPath)) {
         return event => executeChange(event, eventOrPath);
       } else {
-        if ((eventOrPath as React.ChangeEvent<any>).persist) {
-          (eventOrPath as React.ChangeEvent<any>).persist();
-        }
         executeChange(eventOrPath);
       }
-
-      function executeChange(
-        eventOrTextValue: string | React.ChangeEvent<any>,
-        maybePath?: string
-      ) {
-        // By default, assume that the first argument is a string. This allows us to use
-        // handleChange with React Native and React Native Web's onChangeText prop which
-        // provides just the value of the input.
-        let field = maybePath;
-        let val = eventOrTextValue;
-        let parsed;
-        // If the first argument is not a string though, it has to be a synthetic React Event (or a fake one),
-        // so we handle like we would a normal HTML change event.
-        if (!isString(eventOrTextValue)) {
-          // If we can, persist the event
-          // @see https://reactjs.org/docs/events.html#event-pooling
-          if ((eventOrTextValue as React.ChangeEvent<any>).persist) {
-            (eventOrTextValue as React.ChangeEvent<any>).persist();
-          }
-          const {
-            type,
-            name,
-            id,
-            value,
-            checked,
-            outerHTML,
-          } = (eventOrTextValue as React.ChangeEvent<any>).target;
-          field = maybePath ? maybePath : name ? name : id;
-          if (!field && process.env.NODE_ENV !== 'production') {
-            warnAboutMissingIdentifier({
-              htmlContent: outerHTML,
-              documentationAnchorLink:
-                'handlechange-e-reactchangeeventany--void',
-              handlerName: 'handleChange',
-            });
-          }
-          val = /number|range/.test(type)
-            ? ((parsed = parseFloat(value)), isNaN(parsed) ? '' : parsed)
-            : /checkbox/.test(type)
-            ? checked
-            : value;
-        }
-
-        if (field) {
-          // Set form fields by name
-          setFieldValue(field, val);
-        }
-      }
     },
-    [setFieldValue]
+    [executeChange]
   );
 
   const setFieldTouched = useEventCallback(
@@ -559,33 +555,36 @@ function useFormikInternal<Values = object>({
     [validateFormWithLowPriority, state.values, validateOnBlur]
   );
 
-  const handleBlur = useEventCallback(
+  const executeBlur = React.useCallback(
+    (e: any, path?: string) => {
+      if (e.persist) {
+        e.persist();
+      }
+      const { name, id, outerHTML } = e.target;
+      const field = path ? path : name ? name : id;
+
+      if (!field && process.env.NODE_ENV !== 'production') {
+        warnAboutMissingIdentifier({
+          htmlContent: outerHTML,
+          documentationAnchorLink: 'handleblur-e-any--void',
+          handlerName: 'handleBlur',
+        });
+      }
+
+      setFieldTouched(field, true);
+    },
+    [setFieldTouched]
+  );
+
+  const handleBlur = React.useCallback(
     (eventOrString: any): void | ((e: any) => void) => {
       if (isString(eventOrString)) {
         return event => executeBlur(event, eventOrString);
       } else {
         executeBlur(eventOrString);
       }
-
-      function executeBlur(e: any, path?: string) {
-        if (e.persist) {
-          e.persist();
-        }
-        const { name, id, outerHTML } = e.target;
-        const field = path ? path : name ? name : id;
-
-        if (!field && process.env.NODE_ENV !== 'production') {
-          warnAboutMissingIdentifier({
-            htmlContent: outerHTML,
-            documentationAnchorLink: 'handleblur-e-any--void',
-            handlerName: 'handleBlur',
-          });
-        }
-
-        setFieldTouched(field, true);
-      }
     },
-    [setFieldTouched]
+    [executeBlur]
   );
 
   function setFormikState(

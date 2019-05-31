@@ -315,9 +315,7 @@ export function useFormik<Values = object>({
       const values =
         nextState && nextState.values
           ? nextState.values
-          : initialValues.current
-          ? initialValues.current
-          : props.initialValues;
+          : initialValues.current;
       const errors =
         nextState && nextState.errors
           ? nextState.errors
@@ -373,6 +371,7 @@ export function useFormik<Values = object>({
       isMounted.current === true &&
       !isEqual(initialValues.current, props.initialValues)
     ) {
+      initialValues.current = props.initialValues;
       resetForm();
     }
   }, [enableReinitialize, props.initialValues, resetForm]);

@@ -10,6 +10,7 @@ import {
   FormikProps,
   FieldMetaProps,
   FieldInputProps,
+  ValidationSchemaOptions,
 } from './types';
 import {
   isFunction,
@@ -122,6 +123,7 @@ function useFormikInternal<Values = object>({
   isInitialValid,
   enableReinitialize = false,
   onSubmit,
+  validationSchemaOptions = { showMultipleFieldErrors: false },
   ...rest
 }: FormikConfig<Values>) {
   const props = { validateOnChange, validateOnBlur, onSubmit, ...rest };
@@ -202,12 +204,12 @@ function useFormikInternal<Values = object>({
             resolve(emptyErrors);
           },
           (err: any) => {
-            resolve(yupToFormErrors(err));
+            resolve(yupToFormErrors(err, validationSchemaOptions));
           }
         );
       });
     },
-    [props.validationSchema]
+    [props.validationSchema, validationSchemaOptions]
   );
 
   const runSingleFieldLevelValidation = React.useCallback(
@@ -837,14 +839,30 @@ function warnAboutMissingIdentifier({
 /**
  * Transform Yup ValidationError to a more usable object
  */
-export function yupToFormErrors<Values>(yupError: any): FormikErrors<Values> {
+export function yupToFormErrors<Values>(
+  yupError: any,
+  validationSchemaOptions: ValidationSchemaOptions
+): FormikErrors<Values> {
   let errors: FormikErrors<Values> = {};
   if (yupError.inner.length === 0) {
     return setIn(errors, yupError.path, yupError.message);
   }
-  for (let err of yupError.inner) {
-    if (!(errors as any)[err.path]) {
-      errors = setIn(errors, err.path, err.message);
+  // if showMultipleFieldErrors is enabled, set the error value
+  // to an array of all errors for that field
+  if (validationSchemaOptions.showMultipleFieldErrors) {
+    for (let err of yupError.inner) {
+      let fieldErrors = getIn(errors, err.path);
+      if (!fieldErrors) {
+        fieldErrors = [];
+      }
+      fieldErrors.push(err.message);
+      errors = setIn(errors, err.path, fieldErrors);
+    }
+  } else {
+    for (let err of yupError.inner) {
+      if (!(errors as any)[err.path]) {
+        errors = setIn(errors, err.path, err.message);
+      }
     }
   }
   return errors;

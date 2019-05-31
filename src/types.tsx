@@ -191,12 +191,20 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
    * A Yup Schema or a function that returns a Yup schema
    */
   validationSchema?: any | (() => any);
+  /**
+   * Additional options relating to validationSchema
+   */
+  validationSchemaOptions?: ValidationSchemaOptions;
 
   /**
    * Validation function. Must return an error object or promise that
    * throws an error object where that object keys map to corresponding value.
    */
   validate?: (values: Values) => void | object | Promise<FormikErrors<Values>>;
+}
+
+export interface ValidationSchemaOptions {
+  showMultipleFieldErrors?: boolean;
 }
 
 /**
@@ -252,7 +260,7 @@ export interface FieldMetaProps<Value> {
   /** Value of the field */
   value: Value;
   /** Error message of the field */
-  error?: string;
+  error?: string | string[];
   /** Has the field been visited? */
   touched: boolean;
   /** Initial value of the field */

@@ -1091,4 +1091,21 @@ describe('<Formik>', () => {
       users: [{ firstName: 'required', lastName: 'required' }],
     });
   });
+
+  it('respects the validationSchemaOptions prop', async () => {
+    const validationSchema = Yup.object().shape({
+      firstName: Yup.string().required('required'),
+    });
+
+    const { getProps } = renderFormik({
+      initialValues: { users: [{ firstName: '' }] },
+      validationSchema,
+      validationSchemaOptions: { showMultipleFieldErrors: true },
+    });
+
+    await getProps().validateForm();
+    expect(getProps().errors).toEqual({
+      firstName: ['required'],
+    });
+  });
 });

@@ -13,7 +13,6 @@ import SchemaValidation from '../examples/SchemaValidation';
 import SyncValidation from '../examples/SyncValidation';
 import FieldLevelValidation from '../examples/FieldLevelValidation';
 import CombinedValidations from '../examples/CombinedValidations';
-import EnableReinitialize from '../examples/EnableReinitialize';
 
 const AsyncValidationCode = require('!raw-loader!../examples/AsyncValidation')
   .default;
@@ -34,7 +33,6 @@ const FieldLevelValidationCode = require('!raw-loader!../examples/FieldLevelVali
   .default;
 const CombinedValidationsCode = require('!raw-loader!../examples/CombinedValidations')
   .default;
-const EnableReinitializeCode = require('!raw-loader!../examples/EnableReinitialize').default;
 
 function cleanExample(str) {
   return str
@@ -118,16 +116,6 @@ storiesOf('Example', module)
         <Code>{cleanExample(CustomInputsCode)}</Code>
       </div>
     );
-  })
-  .add('Enable Reinitialize', () => {
-    return (
-      <div className="formik-example">
-        <main>
-          <EnableReinitialize />
-        </main>
-        <Code>{cleanExample(EnableReinitializeCode)}</Code>
-      </div>
-    )
   })
   .add('Using <ErrorMessage />', () => {
     return (

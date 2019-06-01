@@ -162,17 +162,20 @@ function useFormikInternal<Values = object>({
 
   const runValidateHandler = React.useCallback(
     (values: Values, field?: string): Promise<FormikErrors<Values>> => {
-      return new Promise(resolve => {
+      return new Promise((resolve, reject) => {
         const maybePromisedErrors = (props.validate as any)(values, field);
-        if (maybePromisedErrors === undefined) {
+        if (!maybePromisedErrors) {
           resolve(emptyErrors);
         } else if (isPromise(maybePromisedErrors)) {
           (maybePromisedErrors as Promise<any>).then(
-            () => {
-              resolve(emptyErrors);
-            },
             errors => {
-              resolve(errors);
+              resolve(errors || {});
+            },
+            realError => {
+              console.warn(
+                'Your validate function threw an error. In Formik 2.x, your validate function should resolve to an object if there are validation errors (instead of throwing them).'
+              );
+              reject(realError);
             }
           );
         } else {
@@ -188,7 +191,7 @@ function useFormikInternal<Values = object>({
    */
   const runValidationSchema = React.useCallback(
     (values: Values, field?: string) => {
-      return new Promise(resolve => {
+      return new Promise((resolve, reject) => {
         const validationSchema = props.validationSchema;
         const schema = isFunction(validationSchema)
           ? validationSchema(field)
@@ -202,7 +205,16 @@ function useFormikInternal<Values = object>({
             resolve(emptyErrors);
           },
           (err: any) => {
-            resolve(yupToFormErrors(err));
+            // Yup will throw a validation error if validation fails. We catch those and
+            // turn them into Formik errors. We can sniff is something is a Yup error
+            // by checking error.name.
+            // @see https://github.com/jquense/yup#validationerrorerrors-string--arraystring-value-any-path-string
+            if (err.name === 'ValidationError') {
+              resolve(yupToFormErrors(err));
+            } else {
+              // We reject any other errors
+              reject(err);
+            }
           }
         );
       });
@@ -390,7 +402,7 @@ function useFormikInternal<Values = object>({
           // Only flip isValidating if the function is async.
           dispatch({ type: 'SET_ISVALIDATING', payload: true });
           return maybePromise
-            .then((x: any) => x, (e: any) => e)
+            .then((x: any) => x)
             .then((error: string) => {
               dispatch({
                 type: 'SET_FIELD_ERROR',

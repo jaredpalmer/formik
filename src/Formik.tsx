@@ -162,7 +162,7 @@ function useFormikInternal<Values = object>({
 
   const runValidateHandler = React.useCallback(
     (values: Values, field?: string): Promise<FormikErrors<Values>> => {
-      return new Promise((resolve, reject) => {
+      return new Promise(resolve => {
         const maybePromisedErrors = (props.validate as any)(values, field);
         if (!maybePromisedErrors) {
           resolve(emptyErrors);
@@ -175,7 +175,7 @@ function useFormikInternal<Values = object>({
               console.warn(
                 'Your validate function threw an error. In Formik 2.x, your validate function should resolve to an object if there are validation errors (instead of throwing them).'
               );
-              reject(realError);
+              throw realError;
             }
           );
         } else {
@@ -191,7 +191,7 @@ function useFormikInternal<Values = object>({
    */
   const runValidationSchema = React.useCallback(
     (values: Values, field?: string) => {
-      return new Promise((resolve, reject) => {
+      return new Promise(resolve => {
         const validationSchema = props.validationSchema;
         const schema = isFunction(validationSchema)
           ? validationSchema(field)
@@ -206,14 +206,14 @@ function useFormikInternal<Values = object>({
           },
           (err: any) => {
             // Yup will throw a validation error if validation fails. We catch those and
-            // turn them into Formik errors. We can sniff is something is a Yup error
+            // resolve them into Formik errors. We can sniff is something is a Yup error
             // by checking error.name.
             // @see https://github.com/jquense/yup#validationerrorerrors-string--arraystring-value-any-path-string
             if (err.name === 'ValidationError') {
               resolve(yupToFormErrors(err));
             } else {
-              // We reject any other errors
-              reject(err);
+              // We throw any other errors
+              throw err;
             }
           }
         );

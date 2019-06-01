@@ -162,7 +162,7 @@ function useFormikInternal<Values = object>({
 
   const runValidateHandler = React.useCallback(
     (values: Values, field?: string): Promise<FormikErrors<Values>> => {
-      return new Promise(resolve => {
+      return new Promise((resolve, reject) => {
         const maybePromisedErrors = (props.validate as any)(values, field);
         if (!maybePromisedErrors) {
           resolve(emptyErrors);
@@ -172,10 +172,14 @@ function useFormikInternal<Values = object>({
               resolve(errors || {});
             },
             realError => {
-              console.warn(
-                'Your validate function threw an error. In Formik 2.x, your validate function should resolve to an object if there are validation errors (instead of throwing them).'
-              );
-              throw realError;
+              if (process.env.NODE_ENV !== 'production') {
+                console.warn(
+                  `Warning: An unhandled error was caught during validation in <Formik validate />`,
+                  realError
+                );
+              }
+
+              reject(realError);
             }
           );
         } else {
@@ -191,7 +195,7 @@ function useFormikInternal<Values = object>({
    */
   const runValidationSchema = React.useCallback(
     (values: Values, field?: string) => {
-      return new Promise(resolve => {
+      return new Promise((resolve, reject) => {
         const validationSchema = props.validationSchema;
         const schema = isFunction(validationSchema)
           ? validationSchema(field)
@@ -213,7 +217,14 @@ function useFormikInternal<Values = object>({
               resolve(yupToFormErrors(err));
             } else {
               // We throw any other errors
-              throw err;
+              if (process.env.NODE_ENV !== 'production') {
+                console.warn(
+                  `Warning: An unhandled error was caught during validation in <Formik validationSchema />`,
+                  err
+                );
+              }
+
+              reject(err);
             }
           }
         );

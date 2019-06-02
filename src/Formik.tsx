@@ -171,15 +171,15 @@ function useFormikInternal<Values = object>({
             errors => {
               resolve(errors || emptyErrors);
             },
-            realError => {
+            actualException => {
               if (process.env.NODE_ENV !== 'production') {
                 console.warn(
                   `Warning: An unhandled error was caught during validation in <Formik validate />`,
-                  realError
+                  actualException
                 );
               }
 
-              reject(realError);
+              reject(actualException);
             }
           );
         } else {

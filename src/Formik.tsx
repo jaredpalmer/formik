@@ -152,8 +152,8 @@ function useFormikInternal<Values = object>({
     React.Reducer<FormikState<Values>, FormikMessage<Values>>
   >(formikReducer, {
     values: props.initialValues,
-    errors: props.initialErrors || {},
-    touched: props.initialTouched || {},
+    errors: props.initialErrors || emptyErrors,
+    touched: props.initialTouched || emptyTouched,
     status: props.initialStatus,
     isSubmitting: false,
     isValidating: false,
@@ -169,7 +169,7 @@ function useFormikInternal<Values = object>({
         } else if (isPromise(maybePromisedErrors)) {
           (maybePromisedErrors as Promise<any>).then(
             errors => {
-              resolve(errors || {});
+              resolve(errors || emptyErrors);
             },
             realError => {
               if (process.env.NODE_ENV !== 'production') {

@@ -98,7 +98,7 @@
     "tsdx": "^0.6.0",
     "typescript": "^3.4.5",
     "webpack": "^4.31.0",
-    "yup": "0.21.3"
+    "yup": "^0.27.0"
   },
   "lint-staged": {
     "**/*.{ts,tsx}": [

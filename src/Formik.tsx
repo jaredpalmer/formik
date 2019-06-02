@@ -193,9 +193,10 @@ function useFormikInternal<Values = object>({
         const schema = isFunction(validationSchema)
           ? validationSchema(field)
           : validationSchema;
-        let promise = field
-          ? schema.validateAt(field, values)
-          : validateYupSchema(values, schema);
+        let promise =
+          field && schema.validateAt
+            ? schema.validateAt(field, values)
+            : validateYupSchema(values, schema);
         promise.then(
           () => {
             resolve(emptyErrors);
@@ -218,7 +219,16 @@ function useFormikInternal<Values = object>({
 
   const runFieldLevelValidations = React.useCallback(
     (values: Values, field?: string): Promise<FormikErrors<Values>> => {
-      if (field && isFunction(fieldRegistry.current[field].validate)) {
+      if (field) {
+        const hasValidateFn =
+          fieldRegistry.current[field] &&
+          isFunction(fieldRegistry.current[field].validate);
+
+        if (!hasValidateFn) {
+          // bail
+          return Promise.resolve(emptyErrors);
+        }
+
         return runSingleFieldLevelValidation(field, getIn(values, field)).then(
           result => setIn(emptyErrors, field, result)
         );

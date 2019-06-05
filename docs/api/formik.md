@@ -274,12 +274,11 @@ don’t use both in the same `<Formik>`.
 Default is `false`. Control whether Formik should reset the form if
 `initialValues` changes (using deep equality).
 
-Note: `enableReinitialize` will break the form `initialValues`, 
-meaning the form won't stay pristine. You shouldn't render the form 
-until all props are fetched (by using a Loader, for instance). 
-Also, remember that `enableReinitialize` will re-render your form and all 
-chidren components when the props change, so try not using it in production 
-if you are not sure how to use it.
+Note: `enableReinitialize` will change the form `initialValues`.
+You shouldn't render the form until all props are fetched 
+(by using a Loader, for instance). Also, remember that `enableReinitialize` 
+will re-render your form and all chidren components when the props change, 
+so try not using it in production if you are not sure how to use it.
 
 ### `isInitialValid?: boolean`
 

@@ -132,7 +132,7 @@ function useFormikInternal<Values = object>({
   const isMounted = React.useRef<boolean>(false);
   const fieldRegistry = React.useRef<FieldRegistry>(emptyFieldRegistry);
   React.useEffect(() => {
-    if (process.env.NODE_ENV !== 'production') {
+    if (__DEV__) {
       invariant(
         typeof isInitialValid === 'undefined',
         'isInitialValid has been deprecated and will be removed in future versions of Formik. Please use initialErrors instead.'
@@ -500,7 +500,7 @@ function useFormikInternal<Values = object>({
           outerHTML,
         } = (eventOrTextValue as React.ChangeEvent<any>).target;
         field = maybePath ? maybePath : name ? name : id;
-        if (!field && process.env.NODE_ENV !== 'production') {
+        if (!field && __DEV__) {
           warnAboutMissingIdentifier({
             htmlContent: outerHTML,
             documentationAnchorLink: 'handlechange-e-reactchangeeventany--void',
@@ -563,7 +563,7 @@ function useFormikInternal<Values = object>({
       const { name, id, outerHTML } = e.target;
       const field = path ? path : name ? name : id;
 
-      if (!field && process.env.NODE_ENV !== 'production') {
+      if (!field && __DEV__) {
         warnAboutMissingIdentifier({
           htmlContent: outerHTML,
           documentationAnchorLink: 'handleblur-e-any--void',
@@ -668,10 +668,7 @@ function useFormikInternal<Values = object>({
       // specified `type` attribute during development. This mitigates
       // a common gotcha in forms with both reset and submit buttons,
       // where the dev forgets to add type="button" to the reset button.
-      if (
-        process.env.NODE_ENV !== 'production' &&
-        typeof document !== 'undefined'
-      ) {
+      if (__DEV__ && typeof document !== 'undefined') {
         // Safely get the active element (works with IE)
         const activeElement = getActiveElement();
         if (

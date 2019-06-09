@@ -112,6 +112,9 @@
     "semi": true
   },
   "jest": {
+    "globals": {
+      "__DEV__": true
+    },
     "collectCoverageFrom": [
       "src/**/*.{ts,tsx}"
     ],

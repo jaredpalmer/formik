@@ -721,29 +721,31 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     ({
       name,
       type,
-      value: _value,
+      value: valueProp, // value is special for checkboxes
       as: is,
       multiple,
     }): [FieldInputProps<any>, FieldMetaProps<any>] => {
-      const value = getIn(state.values, name);
+      const valueState = getIn(state.values, name);
 
       const field: FieldInputProps<any> = {
         name,
-        value,
+        value: valueState,
         onChange: handleChange,
         onBlur: handleBlur,
       };
 
       if (type === 'checkbox') {
-        if (_value === undefined) {
-          field.checked = !!value;
+        if (valueProp === undefined) {
+          field.checked = !!valueState;
         } else {
-          field.checked = !!(Array.isArray(value) && ~value.indexOf(_value));
-          field.value = _value;
+          field.checked = !!(
+            Array.isArray(valueState) && ~valueState.indexOf(valueProp)
+          );
+          field.value = valueProp;
         }
       } else if (type === 'radio') {
-        field.checked = value === _value;
-        field.value = _value;
+        field.checked = valueState === valueProp;
+        field.value = valueProp;
       } else if (is === 'select' && multiple) {
         field.value = field.value || [];
         field.multiple = true;

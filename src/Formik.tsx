@@ -104,8 +104,8 @@ function formikReducer<Values>(
 }
 
 // Initial empty states // objects
-const emptyErrors: FormikErrors<any> = {};
-const emptyTouched: FormikTouched<any> = {};
+const emptyErrors: FormikErrors<unknown> = {};
+const emptyTouched: FormikTouched<unknown> = {};
 
 // This is an object that contains a map of all registered fields
 // and their validate functions
@@ -116,7 +116,7 @@ interface FieldRegistry {
 }
 const emptyFieldRegistry: FieldRegistry = {};
 
-function useFormikInternal<Values = object>({
+export function useFormik<Values extends FormikValues = FormikValues>({
   validateOnChange = true,
   validateOnBlur = true,
   isInitialValid,
@@ -132,7 +132,7 @@ function useFormikInternal<Values = object>({
   const isMounted = React.useRef<boolean>(false);
   const fieldRegistry = React.useRef<FieldRegistry>(emptyFieldRegistry);
   React.useEffect(() => {
-    if (process.env.NODE_ENV !== 'production') {
+    if (__DEV__) {
       invariant(
         typeof isInitialValid === 'undefined',
         'isInitialValid has been deprecated and will be removed in future versions of Formik. Please use initialErrors instead.'
@@ -194,7 +194,7 @@ function useFormikInternal<Values = object>({
    * Run validation against a Yup schema and optionally run a function if successful
    */
   const runValidationSchema = React.useCallback(
-    (values: Values, field?: string) => {
+    (values: Values, field?: string): Promise<FormikErrors<Values>> => {
       return new Promise((resolve, reject) => {
         const validationSchema = props.validationSchema;
         const schema = isFunction(validationSchema)
@@ -338,9 +338,7 @@ function useFormikInternal<Values = object>({
       const values =
         nextState && nextState.values
           ? nextState.values
-          : initialValues.current
-          ? initialValues.current
-          : props.initialValues;
+          : initialValues.current;
       const errors =
         nextState && nextState.errors
           ? nextState.errors
@@ -382,12 +380,7 @@ function useFormikInternal<Values = object>({
         },
       });
     },
-    [
-      props.initialErrors,
-      props.initialStatus,
-      props.initialTouched,
-      props.initialValues,
-    ]
+    [props.initialErrors, props.initialStatus, props.initialTouched]
   );
 
   React.useEffect(() => {
@@ -396,6 +389,7 @@ function useFormikInternal<Values = object>({
       isMounted.current === true &&
       !isEqual(initialValues.current, props.initialValues)
     ) {
+      initialValues.current = props.initialValues;
       resetForm();
     }
   }, [enableReinitialize, props.initialValues, resetForm]);
@@ -523,7 +517,7 @@ function useFormikInternal<Values = object>({
           outerHTML,
         } = (eventOrTextValue as React.ChangeEvent<any>).target;
         field = maybePath ? maybePath : name ? name : id;
-        if (!field && process.env.NODE_ENV !== 'production') {
+        if (!field && __DEV__) {
           warnAboutMissingIdentifier({
             htmlContent: outerHTML,
             documentationAnchorLink: 'handlechange-e-reactchangeeventany--void',
@@ -586,7 +580,7 @@ function useFormikInternal<Values = object>({
       const { name, id, outerHTML } = e.target;
       const field = path ? path : name ? name : id;
 
-      if (!field && process.env.NODE_ENV !== 'production') {
+      if (!field && __DEV__) {
         warnAboutMissingIdentifier({
           htmlContent: outerHTML,
           documentationAnchorLink: 'handleblur-e-any--void',
@@ -691,10 +685,7 @@ function useFormikInternal<Values = object>({
       // specified `type` attribute during development. This mitigates
       // a common gotcha in forms with both reset and submit buttons,
       // where the dev forgets to add type="button" to the reset button.
-      if (
-        process.env.NODE_ENV !== 'production' &&
-        typeof document !== 'undefined'
-      ) {
+      if (__DEV__ && typeof document !== 'undefined') {
         // Safely get the active element (works with IE)
         const activeElement = getActiveElement();
         if (
@@ -816,10 +807,11 @@ function useFormikInternal<Values = object>({
   return ctx;
 }
 
-export function Formik<Values = object, ExtraProps = {}>(
-  props: FormikConfig<Values> & ExtraProps
-) {
-  const formikbag = useFormikInternal<Values>(props);
+export function Formik<
+  Values extends FormikValues = FormikValues,
+  ExtraProps = {}
+>(props: FormikConfig<Values> & ExtraProps) {
+  const formikbag = useFormik<Values>(props);
   const { component, children, render } = props;
   return (
     <FormikProvider value={formikbag}>
@@ -882,7 +874,7 @@ export function validateYupSchema<T extends FormikValues>(
   sync: boolean = false,
   context: any = {}
 ): Promise<Partial<T>> {
-  let validateData: Partial<T> = {};
+  let validateData: FormikValues = {};
   for (let k in values) {
     if (values.hasOwnProperty(k)) {
       const key = String(k);

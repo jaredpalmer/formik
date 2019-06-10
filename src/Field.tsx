@@ -68,7 +68,7 @@ export type FieldAttributes<T> = GenericFieldHTMLAttributes & FieldConfig & T;
 
 export function useField<Val = any>(name: string, type?: string) {
   const formik = useFormikContext();
-  if (process.env.NODE_ENV !== 'production') {
+  if (__DEV__) {
     invariant(
       formik,
       'useField() / <Field /> must be used underneath a <Formik> component or withFormik() higher order component'
@@ -93,7 +93,7 @@ export function Field({
   } = useFormikContext();
 
   React.useEffect(() => {
-    if (process.env.NODE_ENV !== 'production') {
+    if (__DEV__) {
       invariant(
         !render,
         `<Field render> has been deprecated and will be removed in future versions of Formik. Please use a child callback function instead. To get rid of this warning, replace <Field name="${name}" render={({field, form}) => ...} /> with <Field name="${name}">{({field, form, meta}) => ...}</Field>`

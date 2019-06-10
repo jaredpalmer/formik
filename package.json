@@ -113,7 +113,7 @@
   },
   "jest": {
     "globals": {
-      "__DEV__": true
+      "__DEV__": "boolean"
     },
     "collectCoverageFrom": [
       "src/**/*.{ts,tsx}"

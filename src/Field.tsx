@@ -173,4 +173,3 @@ export function Field({
 
   return React.createElement(asElement, { ...field, ...props }, children);
 }
-export const FastField = Field;

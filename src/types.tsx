@@ -133,6 +133,8 @@ export interface FormikHandlers {
 export interface FormikSharedConfig<Props = {}> {
   /** Tells Formik to validate the form on each input's onChange event */
   validateOnChange?: boolean;
+  /** Tells Formik to debounce validate onChange by a given number of milliseconds */
+  validateOnChangeDebounceMs?: number;
   /** Tells Formik to validate the form on each input's onBlur event */
   validateOnBlur?: boolean;
   /** Tell Formik if initial form values are valid or not on first render */

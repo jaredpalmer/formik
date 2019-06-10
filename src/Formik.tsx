@@ -24,7 +24,7 @@ import {
 import { FormikProvider } from './FormikContext';
 import invariant from 'tiny-warning';
 import { LowPriority, unstable_runWithPriority } from 'scheduler';
-
+import debounce from 'lodash/debounce';
 // We already used FormikActions. So we'll go all Elm-y, and use Message.
 type FormikMessage<Values> =
   | { type: 'SUBMIT_ATTEMPT' }
@@ -316,6 +316,11 @@ function useFormikInternal<Values = object>({
     [runAllValidations, state.values]
   );
 
+  const debouncedValidateFormWithLowPriority = React.useCallback(
+    debounce(validateFormWithLowPriority, props.validateOnChangeDebounceMs),
+    [validateFormWithLowPriority]
+  );
+
   // Run all validations methods and update state accordingly
   const validateFormWithHighPriority = useEventCallback(
     (values: Values = state.values, field?: string) => {
@@ -474,7 +479,7 @@ function useFormikInternal<Values = object>({
     (values: Values) => {
       dispatch({ type: 'SET_VALUES', payload: values });
       return validateOnChange
-        ? validateFormWithLowPriority(state.values)
+        ? debouncedValidateFormWithLowPriority(state.values)
         : Promise.resolve();
     },
     [validateFormWithLowPriority, state.values, validateOnChange]
@@ -500,7 +505,10 @@ function useFormikInternal<Values = object>({
         },
       });
       return validateOnChange && shouldValidate
-        ? validateFormWithLowPriority(setIn(state.values, field, value), field)
+        ? debouncedValidateFormWithLowPriority(
+            setIn(state.values, field, value),
+            field
+          )
         : Promise.resolve();
     },
     [validateFormWithLowPriority, state.values, validateOnChange]
@@ -580,7 +588,7 @@ function useFormikInternal<Values = object>({
         },
       });
       return validateOnBlur && shouldValidate
-        ? validateFormWithLowPriority(state.values, field)
+        ? debouncedValidateFormWithLowPriority(state.values, field)
         : Promise.resolve();
     },
     [validateFormWithLowPriority, state.values, validateOnBlur]

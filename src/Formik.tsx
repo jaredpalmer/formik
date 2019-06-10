@@ -164,7 +164,8 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     (values: Values, field?: string): Promise<FormikErrors<Values>> => {
       return new Promise((resolve, reject) => {
         const maybePromisedErrors = (props.validate as any)(values, field);
-        if (!maybePromisedErrors) {
+        if (maybePromisedErrors == null) {
+          // use loose null check here on purpose
           resolve(emptyErrors);
         } else if (isPromise(maybePromisedErrors)) {
           (maybePromisedErrors as Promise<any>).then(

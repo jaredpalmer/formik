@@ -13,6 +13,7 @@ import SchemaValidation from '../examples/SchemaValidation';
 import SyncValidation from '../examples/SyncValidation';
 import FieldLevelValidation from '../examples/FieldLevelValidation';
 import CombinedValidations from '../examples/CombinedValidations';
+import TwoHundredFields from '../examples/TwoHundredFields';
 import DebouncedAutoSave from '../examples/DebouncedAutoSave';
 
 const AsyncValidationCode = require('!raw-loader!../examples/AsyncValidation')
@@ -35,6 +36,8 @@ const SyncValidationCode = require('!raw-loader!../examples/SyncValidation')
 const FieldLevelValidationCode = require('!raw-loader!../examples/FieldLevelValidation')
   .default;
 const CombinedValidationsCode = require('!raw-loader!../examples/CombinedValidations')
+  .default;
+const TwoHundredFieldsCode = require('!raw-loader!../examples/TwoHundredFields')
   .default;
 
 function cleanExample(str) {
@@ -197,6 +200,16 @@ storiesOf('Example', module)
           <CombinedValidations />
         </main>
         <Code>{cleanExample(CombinedValidationsCode)}</Code>
+      </div>
+    );
+  })
+  .add('Two Hundred Fields', () => {
+    return (
+      <div className="formik-example">
+        <main>
+          <CombinedValidations />
+        </main>
+        <Code>{cleanExample(TwoHundredFieldsCode)}</Code>
       </div>
     );
   });

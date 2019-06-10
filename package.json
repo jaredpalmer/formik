@@ -95,8 +95,8 @@
     "react-dom": "^16.9.0-alpha.0",
     "react-testing-library": "^7.0.0",
     "rimraf": "^2.6.2",
-    "tsdx": "^0.6.0",
-    "typescript": "^3.4.5",
+    "tsdx": "^0.6.1",
+    "typescript": "^3.5.1",
     "webpack": "^4.31.0",
     "yup": "0.21.3"
   },
@@ -123,8 +123,7 @@
       "<rootDir>/test/setupTests.ts"
     ]
   },
-  "size-limit": [
-    {
+  "size-limit": [{
       "path": "./dist/index.js",
       "limit": "14 kB"
     },

@@ -104,8 +104,8 @@ function formikReducer<Values>(
 }
 
 // Initial empty states // objects
-const emptyErrors: FormikErrors<any> = {};
-const emptyTouched: FormikTouched<any> = {};
+const emptyErrors: FormikErrors<unknown> = {};
+const emptyTouched: FormikTouched<unknown> = {};
 
 // This is an object that contains a map of all registered fields
 // and their validate functions
@@ -116,7 +116,7 @@ interface FieldRegistry {
 }
 const emptyFieldRegistry: FieldRegistry = {};
 
-function useFormikInternal<Values = object>({
+export function useFormik<Values extends FormikValues = FormikValues>({
   validateOnChange = true,
   validateOnBlur = true,
   isInitialValid,
@@ -187,7 +187,7 @@ function useFormikInternal<Values = object>({
    * Run validation against a Yup schema and optionally run a function if successful
    */
   const runValidationSchema = React.useCallback(
-    (values: Values, field?: string) => {
+    (values: Values, field?: string): Promise<FormikErrors<Values>> => {
       return new Promise(resolve => {
         const validationSchema = props.validationSchema;
         const schema = isFunction(validationSchema)
@@ -789,10 +789,11 @@ function useFormikInternal<Values = object>({
   return ctx;
 }
 
-export function Formik<Values = object, ExtraProps = {}>(
-  props: FormikConfig<Values> & ExtraProps
-) {
-  const formikbag = useFormikInternal<Values>(props);
+export function Formik<
+  Values extends FormikValues = FormikValues,
+  ExtraProps = {}
+>(props: FormikConfig<Values> & ExtraProps) {
+  const formikbag = useFormik<Values>(props);
   const { component, children, render } = props;
   return (
     <FormikProvider value={formikbag}>
@@ -855,7 +856,7 @@ export function validateYupSchema<T extends FormikValues>(
   sync: boolean = false,
   context: any = {}
 ): Promise<Partial<T>> {
-  let validateData: Partial<T> = {};
+  let validateData: FormikValues = {};
   for (let k in values) {
     if (values.hasOwnProperty(k)) {
       const key = String(k);

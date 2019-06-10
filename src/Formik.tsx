@@ -187,7 +187,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
    * Run validation against a Yup schema and optionally run a function if successful
    */
   const runValidationSchema = React.useCallback(
-    (values: Values, field?: string) => {
+    (values: Values, field?: string): Promise<FormikErrors<Values>> => {
       return new Promise(resolve => {
         const validationSchema = props.validationSchema;
         const schema = isFunction(validationSchema)
@@ -257,7 +257,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
         props.validate ? runValidateHandler(values) : {},
       ]).then(([fieldErrors, schemaErrors, validateErrors]) => {
         const combinedErrors = deepmerge.all<FormikErrors<Values>>(
-          [fieldErrors, schemaErrors, validateErrors] as FormikErrors<Values>[],
+          [fieldErrors, schemaErrors, validateErrors],
           { arrayMerge }
         );
         return combinedErrors;

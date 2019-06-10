@@ -130,13 +130,13 @@ export interface FormikHandlers {
 /**
  * Base formik configuration/props shared between the HoC and Component.
  */
-export interface FormikSharedConfig {
+export interface FormikSharedConfig<Props = {}> {
   /** Tells Formik to validate the form on each input's onChange event */
   validateOnChange?: boolean;
   /** Tells Formik to validate the form on each input's onBlur event */
   validateOnBlur?: boolean;
   /** Tell Formik if initial form values are valid or not on first render */
-  isInitialValid?: boolean | ((props: object) => boolean | undefined);
+  isInitialValid?: boolean | ((props: Props) => boolean);
   /** Should Formik reset the form when new initialValues change */
   enableReinitialize?: boolean;
 }

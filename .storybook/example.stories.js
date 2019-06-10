@@ -13,11 +13,14 @@ import SchemaValidation from '../examples/SchemaValidation';
 import SyncValidation from '../examples/SyncValidation';
 import FieldLevelValidation from '../examples/FieldLevelValidation';
 import CombinedValidations from '../examples/CombinedValidations';
+import DebouncedAutoSave from '../examples/DebouncedAutoSave';
 
 const AsyncValidationCode = require('!raw-loader!../examples/AsyncValidation')
   .default;
 const ArraysCode = require('!raw-loader!../examples/Arrays').default;
 const BasicCode = require('!raw-loader!../examples/Basic.js').default;
+const DebouncedAutoSaveCode = require('!raw-loader!../examples/DebouncedAutoSave.js')
+  .default;
 const CustomInputsCode = require('!raw-loader!../examples/CustomInputs')
   .default;
 const ErrorMessageCode = require('!raw-loader!../examples/ErrorMessage')
@@ -114,6 +117,16 @@ storiesOf('Example', module)
           <CustomInputs />
         </main>
         <Code>{cleanExample(CustomInputsCode)}</Code>
+      </div>
+    );
+  })
+  .add('Debounced AutoSave', () => {
+    return (
+      <div className="formik-example">
+        <main>
+          <DebouncedAutoSave />
+        </main>
+        <Code>{cleanExample(DebouncedAutoSaveCode)}</Code>
       </div>
     );
   })

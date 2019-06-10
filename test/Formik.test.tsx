@@ -43,7 +43,7 @@ function Form({
   );
 }
 
-const InitialValues: Values = { name: 'jared' };
+const InitialValues = { name: 'jared' };
 
 function renderFormik<V = Values>(props?: Partial<FormikConfig<V>>) {
   let injected: any;
@@ -53,7 +53,7 @@ function renderFormik<V = Values>(props?: Partial<FormikConfig<V>>) {
       initialValues={InitialValues as any}
       {...props}
     >
-      {(formikProps: FormikProps<V>) =>
+      {formikProps =>
         (injected = formikProps) && (
           <Form {...(formikProps as unknown) as FormikProps<Values>} />
         )
@@ -72,7 +72,7 @@ function renderFormik<V = Values>(props?: Partial<FormikConfig<V>>) {
           initialValues={InitialValues as any}
           {...props}
         >
-          {(formikProps: FormikProps<V>) =>
+          {formikProps =>
             (injected = formikProps) && (
               <Form {...(formikProps as unknown) as FormikProps<Values>} />
             )

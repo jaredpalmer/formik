@@ -72,8 +72,7 @@ export function useField<Val = any>(
   propsOrFieldName: string | FieldAttributes<Val>
 ) {
   const formik = useFormikContext();
-
-  if (process.env.NODE_ENV !== 'production') {
+  if (__DEV__) {
     invariant(
       formik,
       'useField() / <Field /> must be used underneath a <Formik> component or withFormik() higher order component'
@@ -98,7 +97,7 @@ export function Field({
   name,
   render,
   children,
-  as: is = 'input', // `as` is reserved in typescript lol
+  as: is, // `as` is reserved in typescript lol
   component,
   ...props
 }: FieldAttributes<any>) {
@@ -109,7 +108,7 @@ export function Field({
   } = useFormikContext();
 
   React.useEffect(() => {
-    if (process.env.NODE_ENV !== 'production') {
+    if (__DEV__) {
       invariant(
         !render,
         `<Field render> has been deprecated and will be removed in future versions of Formik. Please use a child callback function instead. To get rid of this warning, replace <Field name="${name}" render={({field, form}) => ...} /> with <Field name="${name}">{({field, form, meta}) => ...}</Field>`
@@ -175,15 +174,18 @@ export function Field({
     );
   }
 
-  if (typeof is === 'string') {
+  // default to input here so we can check for both `as` and `children` above
+  const asElement = is || 'input';
+
+  if (typeof asElement === 'string') {
     const { innerRef, ...rest } = props;
     return React.createElement(
-      is,
+      asElement,
       { ref: innerRef, ...field, ...rest },
       children
     );
   }
 
-  return React.createElement(is, { ...field, ...props }, children);
+  return React.createElement(asElement, { ...field, ...props }, children);
 }
 export const FastField = Field;

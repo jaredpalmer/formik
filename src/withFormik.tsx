@@ -31,7 +31,7 @@ export interface WithFormikConfig<
   Props,
   Values extends FormikValues = FormikValues,
   DeprecatedPayload = Values
-> extends FormikSharedConfig {
+> extends FormikSharedConfig<Props> {
   /**
    * Set the display name of the component. Useful for React DevTools.
    */
@@ -95,7 +95,7 @@ export interface InferableComponentDecorator<TOwnProps> {
  * A public higher-order component to access the imperative API
  */
 export function withFormik<
-  OuterProps,
+  OuterProps extends object,
   Values extends FormikValues,
   Payload = Values
 >({

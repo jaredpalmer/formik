@@ -462,6 +462,28 @@ describe('<Formik>', () => {
         fireEvent.submit(getByTestId('form'));
         expect(onSubmit).not.toBeCalled();
       });
+
+      it('should not submit the form if validate function throws an error', async () => {
+        const onSubmit = jest.fn();
+        const err = new Error('Async Error');
+        const validate = jest.fn().mockRejectedValue(err);
+        const { getProps } = renderFormik({
+          onSubmit,
+          validate,
+        });
+
+        await expect(getProps().submitForm()).rejects.toThrow('Async Error');
+
+        await wait(() => {
+          expect(onSubmit).not.toBeCalled();
+          expect(global.console.warn).toHaveBeenCalledWith(
+            expect.stringMatching(
+              /Warning: An unhandled error was caught during validation in <Formik validate ./
+            ),
+            err
+          );
+        });
+      });
     });
 
     describe('with validate (ASYNC)', () => {
@@ -489,6 +511,26 @@ describe('<Formik>', () => {
 
         fireEvent.submit(getByTestId('form'));
         expect(onSubmit).not.toBeCalled();
+      });
+
+      it('should not submit the form if validate function rejects with an error', async () => {
+        const onSubmit = jest.fn();
+        const err = new Error('Async Error');
+        const validate = jest.fn().mockRejectedValue(err);
+
+        const { getProps } = renderFormik({ onSubmit, validate });
+
+        await expect(getProps().submitForm()).rejects.toThrow('Async Error');
+
+        await wait(() => {
+          expect(onSubmit).not.toBeCalled();
+          expect(global.console.warn).toHaveBeenCalledWith(
+            expect.stringMatching(
+              /Warning: An unhandled error was caught during validation in <Formik validate ./
+            ),
+            err
+          );
+        });
       });
     });
 

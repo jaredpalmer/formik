@@ -47,7 +47,7 @@ export interface FieldConfig {
   /**
    * Validate a single field value independently
    */
-  validate?: (value: any) => string | Promise<void> | undefined;
+  validate?: (value: any) => string | Promise<string | void> | undefined;
 
   /**
    * Field name

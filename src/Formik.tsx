@@ -152,8 +152,8 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     React.Reducer<FormikState<Values>, FormikMessage<Values>>
   >(formikReducer, {
     values: props.initialValues,
-    errors: props.initialErrors || {},
-    touched: props.initialTouched || {},
+    errors: props.initialErrors || emptyErrors,
+    touched: props.initialTouched || emptyTouched,
     status: props.initialStatus,
     isSubmitting: false,
     isValidating: false,
@@ -162,17 +162,25 @@ export function useFormik<Values extends FormikValues = FormikValues>({
 
   const runValidateHandler = React.useCallback(
     (values: Values, field?: string): Promise<FormikErrors<Values>> => {
-      return new Promise(resolve => {
+      return new Promise((resolve, reject) => {
         const maybePromisedErrors = (props.validate as any)(values, field);
-        if (maybePromisedErrors === undefined) {
+        if (maybePromisedErrors == null) {
+          // use loose null check here on purpose
           resolve(emptyErrors);
         } else if (isPromise(maybePromisedErrors)) {
           (maybePromisedErrors as Promise<any>).then(
-            () => {
-              resolve(emptyErrors);
-            },
             errors => {
-              resolve(errors);
+              resolve(errors || emptyErrors);
+            },
+            actualException => {
+              if (process.env.NODE_ENV !== 'production') {
+                console.warn(
+                  `Warning: An unhandled error was caught during validation in <Formik validate />`,
+                  actualException
+                );
+              }
+
+              reject(actualException);
             }
           );
         } else {
@@ -188,7 +196,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
    */
   const runValidationSchema = React.useCallback(
     (values: Values, field?: string): Promise<FormikErrors<Values>> => {
-      return new Promise(resolve => {
+      return new Promise((resolve, reject) => {
         const validationSchema = props.validationSchema;
         const schema = isFunction(validationSchema)
           ? validationSchema(field)
@@ -202,7 +210,23 @@ export function useFormik<Values extends FormikValues = FormikValues>({
             resolve(emptyErrors);
           },
           (err: any) => {
-            resolve(yupToFormErrors(err));
+            // Yup will throw a validation error if validation fails. We catch those and
+            // resolve them into Formik errors. We can sniff is something is a Yup error
+            // by checking error.name.
+            // @see https://github.com/jquense/yup#validationerrorerrors-string--arraystring-value-any-path-string
+            if (err.name === 'ValidationError') {
+              resolve(yupToFormErrors(err));
+            } else {
+              // We throw any other errors
+              if (process.env.NODE_ENV !== 'production') {
+                console.warn(
+                  `Warning: An unhandled error was caught during validation in <Formik validationSchema />`,
+                  err
+                );
+              }
+
+              reject(err);
+            }
           }
         );
       });
@@ -357,12 +381,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
         },
       });
     },
-    [
-      props.initialErrors,
-      props.initialStatus,
-      props.initialTouched,
-      props.initialValues,
-    ]
+    [props.initialErrors, props.initialStatus, props.initialTouched]
   );
 
   React.useEffect(() => {
@@ -389,7 +408,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
           // Only flip isValidating if the function is async.
           dispatch({ type: 'SET_ISVALIDATING', payload: true });
           return maybePromise
-            .then((x: any) => x, (e: any) => e)
+            .then((x: any) => x)
             .then((error: string) => {
               dispatch({
                 type: 'SET_FIELD_ERROR',

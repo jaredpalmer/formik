@@ -17,8 +17,8 @@ Form-level validation is useful because you have complete access to all of your 
 
 There are 2 ways to do form-level validation with Formik:
 
-* `<Formik validate>` and `withFormik({ validate: ... })`
-* `<Formik validationSchema>` and `withFormik({ validationSchema: ... })`
+- `<Formik validate>` and `withFormik({ validate: ... })`
+- `<Formik validationSchema>` and `withFormik({ validationSchema: ... })`
 
 #### `validate`
 
@@ -50,9 +50,7 @@ const validate = (values, props /* only available when using withFormik */) => {
       errors.username = 'Nice try';
     }
     // ...
-    if (Object.keys(errors).length) {
-      throw errors;
-    }
+    return errors;
   });
 };
 ```
@@ -262,25 +260,25 @@ You can control when Formik runs validation by changing the values of `<Formik v
 
 **After "change" events/methods** (things that update`values`)
 
-* `handleChange`
-* `setFieldValue`
-* `setValues`
+- `handleChange`
+- `setFieldValue`
+- `setValues`
 
 **After "blur" events/methods** (things that update `touched`)
 
-* `handleBlur`
-* `setTouched`
-* `setFieldTouched`
+- `handleBlur`
+- `setTouched`
+- `setFieldTouched`
 
 **Whenever submission is attempted**
 
-* `handleSubmit`
-* `submitForm`
+- `handleSubmit`
+- `submitForm`
 
 There are also imperative helper methods provided to you via Formik's render/injected props which you can use to imperatively call validation.
 
-* `validateForm`
-* `validateField`
+- `validateForm`
+- `validateField`
 
 ## Displaying Error Messages
 

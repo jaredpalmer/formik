@@ -6,7 +6,7 @@ import {
   FieldInputProps,
 } from './types';
 import { useFormikContext } from './FormikContext';
-import { isFunction, isEmptyChildren } from './utils';
+import { isFunction, isEmptyChildren, isObject } from './utils';
 import invariant from 'tiny-warning';
 
 export interface FieldProps<V = any> {
@@ -64,9 +64,13 @@ export interface FieldConfig {
   innerRef?: (instance: any) => void;
 }
 
-export type FieldAttributes<T> = GenericFieldHTMLAttributes & FieldConfig & T;
+export type FieldAttributes<T> = GenericFieldHTMLAttributes &
+  FieldConfig &
+  T & { name: string };
 
-export function useField<Val = any>(name: string, type?: string) {
+export function useField<Val = any>(
+  propsOrFieldName: string | FieldAttributes<Val>
+) {
   const formik = useFormikContext();
   if (__DEV__) {
     invariant(
@@ -74,7 +78,18 @@ export function useField<Val = any>(name: string, type?: string) {
       'useField() / <Field /> must be used underneath a <Formik> component or withFormik() higher order component'
     );
   }
-  return formik.getFieldProps<Val>(name, type);
+
+  if (isObject(propsOrFieldName)) {
+    if (process.env.NODE_ENV !== 'production') {
+      invariant(
+        (propsOrFieldName as FieldAttributes<Val>).name,
+        'Invalid field name. Either pass `useField` a string or an object containing a `name` key.'
+      );
+    }
+    return formik.getFieldProps(propsOrFieldName);
+  }
+
+  return formik.getFieldProps({ name: propsOrFieldName });
 }
 
 export function Field({
@@ -130,7 +145,7 @@ export function Field({
       formik.unregisterField(name);
     };
   }, [formik, name, validate]);
-  const [field, meta] = formik.getFieldProps(name, props.type);
+  const [field, meta] = formik.getFieldProps({ name, ...props });
   const legacyBag = { field, form: formik };
 
   if (render) {

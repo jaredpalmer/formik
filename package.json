@@ -1,7 +1,7 @@
 {
   "name": "formik",
   "description": "Forms in React, without tears",
-  "version": "1.5.2",
+  "version": "1.5.7",
   "license": "MIT",
   "author": "Jared Palmer <jared@palmer.net>",
   "repository": "jaredpalmer/formik",
@@ -43,7 +43,7 @@
   "dependencies": {
     "create-react-context": "^0.2.2",
     "deepmerge": "^2.1.1",
-    "hoist-non-react-statics": "^2.5.5",
+    "hoist-non-react-statics": "^3.3.0",
     "lodash": "^4.17.11",
     "lodash-es": "^4.17.11",
     "prop-types": "^15.6.1",

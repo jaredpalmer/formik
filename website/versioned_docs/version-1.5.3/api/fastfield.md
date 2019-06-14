@@ -1,7 +1,8 @@
 ---
-id: fastfield
+id: version-1.5.3-fastfield
 title: <FastField />
 custom_edit_url: https://github.com/jaredpalmer/formik/edit/master/docs/api/fastfield.md
+original_id: fastfield
 ---
 
 ## Before we start

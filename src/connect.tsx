@@ -6,7 +6,7 @@ import { FormikContext } from './types';
 export const {
   Provider: FormikProvider,
   Consumer: FormikConsumer,
-} = createContext<FormikContext<any>>({} as any);
+}: React.Context<FormikContext<any>> = (createContext as any)({} as any);
 
 /**
  * Connect any component to Formik context, and inject as a prop called `formik`;
@@ -34,11 +34,8 @@ export function connect<OuterProps, Values = {}>(
 
   C.displayName = `FormikConnect(${componentDisplayName})`;
 
-  return hoistNonReactStatics<
-    OuterProps,
-    OuterProps & { formik: FormikContext<Values> }
-  >(
+  return hoistNonReactStatics(
     C,
     Comp as React.ComponentClass<OuterProps & { formik: FormikContext<Values> }> // cast type to ComponentClass (even if SFC)
-  );
+  ) as React.ComponentType<OuterProps>;
 }

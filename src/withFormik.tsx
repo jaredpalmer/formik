@@ -29,7 +29,7 @@ export interface WithFormikConfig<
   Props,
   Values extends FormikValues = FormikValues,
   DeprecatedPayload = Values
-> extends FormikSharedConfig {
+> extends FormikSharedConfig<Props> {
   /**
    * Set the display name of the component. Useful for React DevTools.
    */
@@ -162,7 +162,7 @@ export function withFormik<
       }
     }
 
-    return hoistNonReactStatics<OuterProps, OuterProps & FormikProps<Values>>(
+    return hoistNonReactStatics(
       C,
       Component as React.ComponentClass<OuterProps & FormikProps<Values>> // cast type to ComponentClass (even if SFC)
     ) as React.ComponentClass<OuterProps>;

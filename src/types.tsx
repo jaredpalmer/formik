@@ -88,7 +88,7 @@ export interface FormikHelpers<Values> {
   /** Validate field value */
   validateField(field: string): void;
   /** Reset form */
-  resetForm(nextState?: FormikState<Values>): void;
+  resetForm(nextState?: Partial<FormikState<Values>>): void;
   /** Set Formik state, careful! */
   setFormikState(
     f:

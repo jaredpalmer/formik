@@ -335,7 +335,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   );
 
   const resetForm = React.useCallback(
-    (nextState?: FormikState<Values>) => {
+    (nextState?: Partial<FormikState<Values>>) => {
       const values =
         nextState && nextState.values
           ? nextState.values

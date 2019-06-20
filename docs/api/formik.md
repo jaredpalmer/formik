@@ -56,9 +56,9 @@ const BasicExample = () => (
 
 There are three ways to render things with `<Formik />`
 
-* `<Formik component>`
-* `<Formik render>`
-* `<Formik children>`
+- `<Formik component>`
+- `<Formik render>`
+- `<Formik children>`
 
 All three render methods will be passed the same props:
 
@@ -131,7 +131,7 @@ Set the touched state of a field imperatively. `field` should match the key of
 
 #### `submitForm: () => Promise`
 
-Trigger a form submission. The promise will be rejected if form is invalid. 
+Trigger a form submission. The promise will be rejected if form is invalid.
 
 #### `submitCount: number`
 
@@ -359,7 +359,7 @@ const validate = values => {
 };
 ```
 
-* Asynchronous and return a Promise that's error in an `errors` object
+- Asynchronous and return a Promise that's resolves to an object containing `errors`
 
 ```js
 // Async Validation
@@ -372,9 +372,7 @@ const validate = values => {
       errors.username = 'Nice try';
     }
     // ...
-    if (Object.keys(errors).length) {
-      throw errors;
-    }
+    return errors;
   });
 };
 ```

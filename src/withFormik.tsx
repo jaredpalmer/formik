@@ -95,7 +95,7 @@ export interface InferableComponentDecorator<TOwnProps> {
  * A public higher-order component to access the imperative API
  */
 export function withFormik<
-  OuterProps,
+  OuterProps extends object,
   Values extends FormikValues,
   Payload = Values
 >({

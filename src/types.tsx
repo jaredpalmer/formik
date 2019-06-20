@@ -88,7 +88,7 @@ export interface FormikHelpers<Values> {
   /** Validate field value */
   validateField(field: string): void;
   /** Reset form */
-  resetForm(nextState?: FormikState<Values>): void;
+  resetForm(nextState?: Partial<FormikState<Values>>): void;
   /** Set Formik state, careful! */
   setFormikState(
     f:
@@ -122,8 +122,7 @@ export interface FormikHandlers {
     : ((e: string | React.ChangeEvent<any>) => void);
 
   getFieldProps<Value = any>(
-    name: string,
-    type?: string
+    props: any
   ): [FieldInputProps<Value>, FieldMetaProps<Value>];
 }
 
@@ -271,6 +270,10 @@ export interface FieldInputProps<Value> {
   value: Value;
   /** Name of the field */
   name: string;
+  /** Multiple select? */
+  multiple?: boolean;
+  /** Is the field checked? */
+  checked?: boolean;
   /** Change event handler */
   onChange: FormikHandlers['handleChange'];
   /** Blur event handler */

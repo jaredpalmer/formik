@@ -369,7 +369,7 @@ describe('Field / FastField', () => {
     cases(
       'runs validation when validateField is called (ASYNC)',
       async renderField => {
-        const validate = jest.fn(() => Promise.reject('Error!'));
+        const validate = jest.fn(() => Promise.resolve('Error!'));
 
         const { getFormProps, rerender } = renderField({ validate });
 

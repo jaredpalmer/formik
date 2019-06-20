@@ -6,7 +6,7 @@ import {
   FieldInputProps,
 } from './types';
 import { useFormikContext } from './FormikContext';
-import { isFunction, isEmptyChildren } from './utils';
+import { isFunction, isEmptyChildren, isObject } from './utils';
 import invariant from 'tiny-warning';
 
 export interface FieldProps<V = any> {
@@ -47,7 +47,7 @@ export interface FieldConfig {
   /**
    * Validate a single field value independently
    */
-  validate?: (value: any) => string | Promise<void> | undefined;
+  validate?: (value: any) => string | Promise<string | void> | undefined;
 
   /**
    * Field name
@@ -64,17 +64,32 @@ export interface FieldConfig {
   innerRef?: (instance: any) => void;
 }
 
-export type FieldAttributes<T> = GenericFieldHTMLAttributes & FieldConfig & T;
+export type FieldAttributes<T> = GenericFieldHTMLAttributes &
+  FieldConfig &
+  T & { name: string };
 
-export function useField<Val = any>(name: string, type?: string) {
+export function useField<Val = any>(
+  propsOrFieldName: string | FieldAttributes<Val>
+) {
   const formik = useFormikContext();
-  if (process.env.NODE_ENV !== 'production') {
+  if (__DEV__) {
     invariant(
       formik,
       'useField() / <Field /> must be used underneath a <Formik> component or withFormik() higher order component'
     );
   }
-  return formik.getFieldProps<Val>(name, type);
+
+  if (isObject(propsOrFieldName)) {
+    if (process.env.NODE_ENV !== 'production') {
+      invariant(
+        (propsOrFieldName as FieldAttributes<Val>).name,
+        'Invalid field name. Either pass `useField` a string or an object containing a `name` key.'
+      );
+    }
+    return formik.getFieldProps(propsOrFieldName);
+  }
+
+  return formik.getFieldProps({ name: propsOrFieldName });
 }
 
 export function Field({
@@ -93,7 +108,7 @@ export function Field({
   } = useFormikContext();
 
   React.useEffect(() => {
-    if (process.env.NODE_ENV !== 'production') {
+    if (__DEV__) {
       invariant(
         !render,
         `<Field render> has been deprecated and will be removed in future versions of Formik. Please use a child callback function instead. To get rid of this warning, replace <Field name="${name}" render={({field, form}) => ...} /> with <Field name="${name}">{({field, form, meta}) => ...}</Field>`
@@ -130,7 +145,7 @@ export function Field({
       formik.unregisterField(name);
     };
   }, [formik, name, validate]);
-  const [field, meta] = formik.getFieldProps(name, props.type);
+  const [field, meta] = formik.getFieldProps({ name, ...props });
   const legacyBag = { field, form: formik };
 
   if (render) {

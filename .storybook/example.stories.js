@@ -207,7 +207,7 @@ storiesOf('Example', module)
     return (
       <div className="formik-example">
         <main>
-          <CombinedValidations />
+          <TwoHundredFields />
         </main>
         <Code>{cleanExample(TwoHundredFieldsCode)}</Code>
       </div>

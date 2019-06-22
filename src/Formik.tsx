@@ -710,22 +710,33 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     },
     [submitForm]
   );
-  const handleReset = useEventCallback(() => {
-    if (props.onReset) {
-      const maybePromisedOnReset = (props.onReset as any)(
-        state.values,
-        imperativeMethods
-      );
+  const handleReset = useEventCallback(
+    e => {
+      if (e && e.preventDefault && isFunction(e.preventDefault)) {
+        e.preventDefault();
+      }
 
-      if (isPromise(maybePromisedOnReset)) {
-        (maybePromisedOnReset as Promise<any>).then(resetForm);
+      if (e && e.stopPropagation && isFunction(e.stopPropagation)) {
+        e.stopPropagation();
+      }
+
+      if (props.onReset) {
+        const maybePromisedOnReset = (props.onReset as any)(
+          state.values,
+          imperativeMethods
+        );
+
+        if (isPromise(maybePromisedOnReset)) {
+          (maybePromisedOnReset as Promise<any>).then(resetForm);
+        } else {
+          resetForm();
+        }
       } else {
         resetForm();
       }
-    } else {
-      resetForm();
-    }
-  }, [imperativeMethods, props.onReset, resetForm, state.values]);
+    },
+    [imperativeMethods, props.onReset, resetForm, state.values]
+  );
 
   const getFieldMeta = React.useCallback(
     (name: string) => {

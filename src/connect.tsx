@@ -16,7 +16,7 @@ export function connect<OuterProps, Values = {}>(
     <FormikConsumer>
       {formik => {
         invariant(
-          !formik,
+          !!formik,
           `Formik context is undefined, please verify you are rendering <Form>, <Field>, <FastField>, <FieldArray>, or your custom context-using component as a child of a <Formik> component. Component name: ${
             Comp.name
           }`

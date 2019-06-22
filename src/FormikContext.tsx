@@ -10,7 +10,7 @@ export function useFormikContext<Values>() {
   const formik = React.useContext<FormikContext<Values>>(PrivateFormikContext);
 
   invariant(
-    !formik,
+    !!formik,
     `Formik context is undefined, please verify you are calling useFormikContext() as child of a <Formik> component.`
   );
 

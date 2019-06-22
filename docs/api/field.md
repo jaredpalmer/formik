@@ -8,27 +8,30 @@ custom_edit_url: https://github.com/jaredpalmer/formik/edit/master/docs/api/fiel
 attribute to match up with Formik state. `<Field />` will default to an HTML
 `<input />` element.
 
-## Field render props
+## Rendering
 
-There are 3 ways to render things with `<Field>`.
+There are 2 ways to render things with `<Field>`.
 
-* `<Field component>`
-* `<Field render>`
+* `<Field as>`
 * `<Field children>`
+* ~~`<Field render>`~~ _deprecated in 2.x. Using these will log warning_
+* ~~`<Field component>`~~ _deprecated in 2.x. Using these will log warning_
 
-Aside from string-only `component`, each render prop is passed the same props for your convenience.
+`as` can either be a React component or the name of an HTML element to render. Formik will automagically inject `onChange`, `onBlur`, `name`, and `value` props of the field designated by the `name` prop to the (custom) component.
 
-Field's render props are an object containing:
+`children` can either be an array of elements (e.g. `<option>` in the case of `<Field as="select">`) or a callback function (a.k.a render prop). The render props are an object containing:
 
-* `field`: An object containing `onChange`, `onBlur`, `name`, and `value` of the field
-* `form`: Formik state and helpers
-* Any other props passed to field
+* `field`: An object containing `onChange`, `onBlur`, `name`, and `value` of the field (see [`FieldInputProps`](./useField#fieldinputprops))
+* `form`: The Formik bag
+* `meta`: An object containing metadata (i.e. `value`, `touched`, `error`, and `initialValue`) about the field (see [`FieldMetaProps`](./useField#fieldmetaprops))
+
+> In Formik 0.9 to 1.x, `component` and `render` props could also be used for rendering. These have been deprecated since 2.x. While the code still lives within `<Field>`, they will show a warning in the console.
 
 ## Example
 
 ```jsx
 import React from 'react';
-import { Formik, Field } from 'formik';
+import { Formik, Field, Form } from 'formik';
 
 const Example = () => (
   <div>
@@ -42,36 +45,30 @@ const Example = () => (
         }, 1000);
       }}
       render={(props: FormikProps<Values>) => (
-        <form onSubmit={props.handleSubmit}>
+        <Form>
           <Field type="email" name="email" placeholder="Email" />
-          <Field component="select" name="color">
+          <Field as="select" name="color">
             <option value="red">Red</option>
             <option value="green">Green</option>
             <option value="blue">Blue</option>
           </Field>
-          <Field name="firstName" component={CustomInputComponent} />
-          <Field
-            name="lastName"
-            render={({ field /* _form */ }) => (
-              <input {...field} placeholder="lastName" />
+          <Field name="lastName">
+            {({
+              field, // { name, value, onChange, onBlur }
+              form: { touched, errors }, // also values, setXXXX, handleXXXX, dirty, isValid, status, etc.
+              meta,
+            }) => (
+              <div>
+                <input type="text" placeholder="Email" {...field} />
+                {meta.touched &&
+                  meta.error && <div className="error">{meta.error}</div>}
+              </div>
             )}
-          />
+          </Field>
           <button type="submit">Submit</button>
-        </form>
+        </Form>
       )}
     />
-  </div>
-);
-
-const CustomInputComponent = ({
-  field, // { name, value, onChange, onBlur }
-  form: { touched, errors }, // also values, setXXXX, handleXXXX, dirty, isValid, status, etc.
-  ...props
-}) => (
-  <div>
-    <input type="text" {...field} {...props} />
-    {touched[field.name] &&
-      errors[field.name] && <div className="error">{errors[field.name]}</div>}
   </div>
 );
 ```
@@ -86,6 +83,41 @@ const CustomInputComponent = ({
 
 ## Props
 
+### `as`
+
+`as?: string | React.ComponentType<FieldProps['field']>`
+
+Either a React component or the name of an HTML element to render. That is, one of the following:
+
+* `input`
+* `select`
+* `textarea`
+* A valid HTML element name
+* A custom React component
+
+Custom React components will be passed `onChange`, `onBlur`, `name`, and `value` plus any other props passed to directly to `<Field>`.
+
+Default is `'input'` (so an `<input>` is rendered by default)
+
+```jsx
+// Renders an HTML <input> by default
+<Field name="lastName" placeholder="Last Name"/>
+
+// Renders an HTML <select>
+<Field name="color" as="select" placeholder="Favorite Color">
+  <option value="red">Red</option>
+  <option value="green">Green</option>
+  <option value="blue">Blue</option>
+</Field>
+
+// Renders a CustomInputComponent
+<Field name="firstName" as={CustomInputComponent} placeholder="First Name"/>
+
+const CustomInputComponent = (props) => (
+  <input clasName="my-custom-input" type="text" {...props} />
+);
+```
+
 ### `children`
 
 `children?: React.ReactNode | ((props: FieldProps) => React.ReactNode)`
@@ -94,7 +126,7 @@ Either JSX elements or callback function. Same as `render`.
 
 ```jsx
 // Children can be JSX elements
-<Field name="color" component="select" placeholder="Favorite Color">
+<Field name="color" as="select" placeholder="Favorite Color">
   <option value="red">Red</option>
   <option value="green">Green</option>
   <option value="blue">Blue</option>
@@ -102,11 +134,11 @@ Either JSX elements or callback function. Same as `render`.
 
 // Or a callback function
 <Field name="firstName">
-{({ field, form }) => (
+{({ field, form, meta }) => (
   <div>
     <input type="text" {...field} placeholder="First Name"/>
-    {form.touched[field.name] &&
-      form.errors[field.name] && <div className="error">{form.errors[field.name]}</div>}
+    {meta.touched &&
+      meta.error && <div className="error">{meta.error}</div>}
   </div>
 )}
 </Field>
@@ -116,14 +148,16 @@ Either JSX elements or callback function. Same as `render`.
 
 `component?: string | React.ComponentType<FieldProps>`
 
+**Deprecated in 2.x. Use `as` instead.**
+
 Either a React component or the name of an HTML element to render. That is, one of the following:
 
 * `input`
 * `select`
 * `textarea`
-* A custom React Component
+* A custom React component
 
-Custom React Components will be passed `FieldProps` which is same `render` prop parameters of `<Field render>` plus any other props passed to directly to `<Field>`.
+Custom React components will be passed `FieldProps` which is same `render` prop parameters of `<Field render>` plus any other props passed to directly to `<Field>`.
 
 Default is `'input'` (so an `<input>` is rendered by default)
 
@@ -163,6 +197,7 @@ When you are **not** using a custom component and you need to access the underly
 ### `name`
 
 `name: string`
+
 **Required**
 
 A field's name in Formik state. To access nested objects or arrays, name can also accept lodash-like dot path like `social.facebook` or `friends[0].firstName`
@@ -170,6 +205,8 @@ A field's name in Formik state. To access nested objects or arrays, name can als
 ### `render`
 
 `render?: (props: FieldProps) => React.ReactNode`
+
+**Deprecated in 2.x. Use `children` instead.**
 
 A function that returns one or more JSX elements.
 

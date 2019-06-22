@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { connect } from './connect';
+import { useFormikContext } from './FormikContext';
 
 export type FormikFormProps = Pick<
   React.FormHTMLAttributes<HTMLFormElement>,
@@ -9,10 +9,9 @@ export type FormikFormProps = Pick<
   >
 >;
 
-export const Form = connect<FormikFormProps>(
-  ({ formik: { handleReset, handleSubmit }, ...props }) => (
-    <form onReset={handleReset} onSubmit={handleSubmit} {...props} />
-  )
-);
+export function Form(props: FormikFormProps) {
+  const { handleReset, handleSubmit } = useFormikContext();
+  return <form onSubmit={handleSubmit} onReset={handleReset} {...props} />;
+}
 
 Form.displayName = 'Form';

@@ -658,13 +658,11 @@ export function useFormik<Values extends FormikValues = FormikValues>({
         if (isActuallyValid) {
           return Promise.resolve(executeSubmit())
             .then(() => {
-              console.log('than inside formik');
               if (!!isMounted.current) {
                 dispatch({ type: 'SUBMIT_SUCCESS' });
               }
             })
             .catch(_errors => {
-              console.log('catch inside formik');
               if (!!isMounted.current) {
                 dispatch({ type: 'SUBMIT_FAILURE' });
                 throw _errors instanceof Error ? _errors : new Error(_errors);

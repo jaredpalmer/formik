@@ -485,7 +485,7 @@ describe('<Formik>', () => {
         });
       });
 
-      describe('submitForm helper should not brake promise chain if handleSubmit has returned rejected Promise', () => {
+      describe('submitForm helper should not break promise chain if handleSubmit has returned rejected Promise', () => {
         it('should throw error typeof Error if handleSubmit has rejected with typeof Error', async () => {
           const errorIsErrorType = new Error('This Error is typeof Error');
           const handleSubmit = () => {

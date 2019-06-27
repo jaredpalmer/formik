@@ -236,15 +236,28 @@ export function useFormik<Values extends FormikValues = FormikValues>({
 
   const runSingleFieldLevelValidation = React.useCallback(
     (field: string, value: void | string): Promise<string> => {
-      return new Promise(resolve =>
-        resolve(fieldRegistry.current[field].validate(value))
-      );
+      return new Promise(r => r(fieldRegistry.current[field].validate(value)));
     },
     []
   );
 
   const runFieldLevelValidations = React.useCallback(
-    (values: Values): Promise<FormikErrors<Values>> => {
+    (values: Values, field?: string): Promise<FormikErrors<Values>> => {
+      if (field) {
+        const hasValidateFn =
+          fieldRegistry.current[field] &&
+          isFunction(fieldRegistry.current[field].validate);
+
+        if (!hasValidateFn) {
+          // bail
+          return Promise.resolve(emptyErrors);
+        }
+
+        return runSingleFieldLevelValidation(field, getIn(values, field)).then(
+          result => setIn(emptyErrors, field, result)
+        );
+      }
+
       const fieldKeysWithValidation: string[] = Object.keys(
         fieldRegistry.current
       ).filter(f => isFunction(fieldRegistry.current[f].validate));
@@ -274,11 +287,11 @@ export function useFormik<Values extends FormikValues = FormikValues>({
 
   // Run all validations and return the result
   const runAllValidations = React.useCallback(
-    (values: Values) => {
+    (values: Values, field?: string) => {
       return Promise.all([
-        runFieldLevelValidations(values),
-        props.validationSchema ? runValidationSchema(values) : {},
-        props.validate ? runValidateHandler(values) : {},
+        runFieldLevelValidations(values, field),
+        props.validationSchema ? runValidationSchema(values, field) : {},
+        props.validate ? runValidateHandler(values, field) : {},
       ]).then(([fieldErrors, schemaErrors, validateErrors]) => {
         const combinedErrors = deepmerge.all<FormikErrors<Values>>(
           [fieldErrors, schemaErrors, validateErrors],
@@ -304,11 +317,21 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   // is actaully high-priority since we absolutely need to guarantee the
   // form is valid before executing props.onSubmit.
   const validateFormWithLowPriority = useEventCallback(
-    (values: Values = state.values) => {
+    (values: Values = state.values, field?: string) => {
       return unstable_runWithPriority(LowPriority, () => {
-        return runAllValidations(values).then(combinedErrors => {
+        return runAllValidations(values, field).then(combinedErrors => {
           if (!!isMounted.current) {
-            dispatch({ type: 'SET_ERRORS', payload: combinedErrors });
+            if (field) {
+              dispatch({
+                type: 'SET_FIELD_ERROR',
+                payload: {
+                  field,
+                  value: combinedErrors && (combinedErrors as any)[field],
+                },
+              });
+            } else {
+              dispatch({ type: 'SET_ERRORS', payload: combinedErrors });
+            }
           }
           return combinedErrors;
         });
@@ -319,12 +342,20 @@ export function useFormik<Values extends FormikValues = FormikValues>({
 
   // Run all validations methods and update state accordingly
   const validateFormWithHighPriority = useEventCallback(
-    (values: Values = state.values) => {
+    (values: Values = state.values, field?: string) => {
       dispatch({ type: 'SET_ISVALIDATING', payload: true });
-      return runAllValidations(values).then(combinedErrors => {
+      return runAllValidations(values, field).then(combinedErrors => {
         if (!!isMounted.current) {
           dispatch({ type: 'SET_ISVALIDATING', payload: false });
-          if (!isEqual(state.errors, combinedErrors)) {
+          if (field) {
+            dispatch({
+              type: 'SET_FIELD_ERROR',
+              payload: {
+                field,
+                value: combinedErrors && (combinedErrors as any)[field],
+              },
+            });
+          } else {
             dispatch({ type: 'SET_ERRORS', payload: combinedErrors });
           }
         }
@@ -396,14 +427,14 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   }, [enableReinitialize, props.initialValues, resetForm]);
 
   const validateField = useEventCallback(
-    (name: string) => {
+    (fieldName: string) => {
       // This will efficiently validate a single field by avoiding state
       // changes if the validation function is synchronous. It's different from
       // what is called when using validateForm.
 
-      if (isFunction(fieldRegistry.current[name].validate)) {
-        const value = getIn(state.values, name);
-        const maybePromise = fieldRegistry.current[name].validate(value);
+      if (isFunction(fieldRegistry.current[fieldName].validate)) {
+        const value = getIn(state.values, fieldName);
+        const maybePromise = fieldRegistry.current[fieldName].validate(value);
         if (isPromise(maybePromise)) {
           // Only flip isValidating if the function is async.
           dispatch({ type: 'SET_ISVALIDATING', payload: true });
@@ -412,7 +443,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
             .then((error: string) => {
               dispatch({
                 type: 'SET_FIELD_ERROR',
-                payload: { field: name, value: error },
+                payload: { field: fieldName, value: error },
               });
               dispatch({ type: 'SET_ISVALIDATING', payload: false });
             });
@@ -420,7 +451,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
           dispatch({
             type: 'SET_FIELD_ERROR',
             payload: {
-              field: name,
+              field: fieldName,
               value: maybePromise as string | undefined,
             },
           });
@@ -487,7 +518,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
         },
       });
       return validateOnChange && shouldValidate
-        ? validateFormWithLowPriority(setIn(state.values, field, value))
+        ? validateFormWithLowPriority(setIn(state.values, field, value), field)
         : Promise.resolve();
     },
     [validateFormWithLowPriority, state.values, validateOnChange]
@@ -572,7 +603,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
         },
       });
       return validateOnBlur && shouldValidate
-        ? validateFormWithLowPriority(state.values)
+        ? validateFormWithLowPriority(state.values, field)
         : Promise.resolve();
     },
     [validateFormWithLowPriority, state.values, validateOnBlur]

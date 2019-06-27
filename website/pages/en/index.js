@@ -36,7 +36,6 @@ class Index extends React.Component {
               viewBox="0 0 145 127"
               aria-hidden="true"
               style={{
-                height: 145 * 3,
                 height: 127 * 3,
                 position: 'absolute',
                 right: '36%',

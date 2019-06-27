@@ -484,6 +484,19 @@ describe('<Formik>', () => {
           );
         });
       });
+
+      describe('submitForm helper should not break promise chain if handleSubmit has returned rejected Promise', () => {
+        it('submitForm helper should not break promise chain if handleSubmit has returned rejected Promise', async () => {
+          const error = new Error('This Error is typeof Error');
+          const handleSubmit = () => {
+            return Promise.reject(error);
+          };
+          const { getProps } = renderFormik({ onSubmit: handleSubmit });
+
+          const { submitForm } = getProps();
+          await expect(submitForm()).rejects.toEqual(error);
+        });
+      });
     });
 
     describe('with validate (ASYNC)', () => {

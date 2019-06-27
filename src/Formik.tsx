@@ -665,6 +665,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
             .catch(_errors => {
               if (!!isMounted.current) {
                 dispatch({ type: 'SUBMIT_FAILURE' });
+                throw _errors;
               }
             });
         } else if (!!isMounted.current) {

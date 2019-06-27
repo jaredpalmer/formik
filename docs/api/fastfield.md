@@ -36,6 +36,7 @@ More specifically, if the `<Field />` does not change behavior or render anythin
 ```jsx
 import React from 'react';
 import { Formik, Field, FastField, Form } from 'formik';
+import * as Yup from 'yup';
 
 const Basic = () => (
   <div>

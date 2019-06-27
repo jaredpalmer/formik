@@ -43,7 +43,7 @@ function Form({
   );
 }
 
-const InitialValues: Values = { name: 'jared' };
+const InitialValues = { name: 'jared' };
 
 function renderFormik<V = Values>(props?: Partial<FormikConfig<V>>) {
   let injected: any;
@@ -53,7 +53,7 @@ function renderFormik<V = Values>(props?: Partial<FormikConfig<V>>) {
       initialValues={InitialValues as any}
       {...props}
     >
-      {(formikProps: FormikProps<V>) =>
+      {formikProps =>
         (injected = formikProps) && (
           <Form {...(formikProps as unknown) as FormikProps<Values>} />
         )
@@ -72,7 +72,7 @@ function renderFormik<V = Values>(props?: Partial<FormikConfig<V>>) {
           initialValues={InitialValues as any}
           {...props}
         >
-          {(formikProps: FormikProps<V>) =>
+          {formikProps =>
             (injected = formikProps) && (
               <Form {...(formikProps as unknown) as FormikProps<Values>} />
             )
@@ -462,6 +462,41 @@ describe('<Formik>', () => {
         fireEvent.submit(getByTestId('form'));
         expect(onSubmit).not.toBeCalled();
       });
+
+      it('should not submit the form if validate function throws an error', async () => {
+        const onSubmit = jest.fn();
+        const err = new Error('Async Error');
+        const validate = jest.fn().mockRejectedValue(err);
+        const { getProps } = renderFormik({
+          onSubmit,
+          validate,
+        });
+
+        await expect(getProps().submitForm()).rejects.toThrow('Async Error');
+
+        await wait(() => {
+          expect(onSubmit).not.toBeCalled();
+          expect(global.console.warn).toHaveBeenCalledWith(
+            expect.stringMatching(
+              /Warning: An unhandled error was caught during validation in <Formik validate ./
+            ),
+            err
+          );
+        });
+      });
+
+      describe('submitForm helper should not break promise chain if handleSubmit has returned rejected Promise', () => {
+        it('submitForm helper should not break promise chain if handleSubmit has returned rejected Promise', async () => {
+          const error = new Error('This Error is typeof Error');
+          const handleSubmit = () => {
+            return Promise.reject(error);
+          };
+          const { getProps } = renderFormik({ onSubmit: handleSubmit });
+
+          const { submitForm } = getProps();
+          await expect(submitForm()).rejects.toEqual(error);
+        });
+      });
     });
 
     describe('with validate (ASYNC)', () => {
@@ -489,6 +524,26 @@ describe('<Formik>', () => {
 
         fireEvent.submit(getByTestId('form'));
         expect(onSubmit).not.toBeCalled();
+      });
+
+      it('should not submit the form if validate function rejects with an error', async () => {
+        const onSubmit = jest.fn();
+        const err = new Error('Async Error');
+        const validate = jest.fn().mockRejectedValue(err);
+
+        const { getProps } = renderFormik({ onSubmit, validate });
+
+        await expect(getProps().submitForm()).rejects.toThrow('Async Error');
+
+        await wait(() => {
+          expect(onSubmit).not.toBeCalled();
+          expect(global.console.warn).toHaveBeenCalledWith(
+            expect.stringMatching(
+              /Warning: An unhandled error was caught during validation in <Formik validate ./
+            ),
+            err
+          );
+        });
       });
     });
 

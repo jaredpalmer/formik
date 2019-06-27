@@ -11,7 +11,11 @@ export interface FormikValues {
  * Should be always be and object of strings, but any is allowed to support i18n libraries.
  */
 export type FormikErrors<Values> = {
-  [K in keyof Values]?: Values[K] extends object
+  [K in keyof Values]?: Values[K] extends any[]
+    ? Values[K][number] extends object // [number] is the special sauce to get the type of array's element. More here https://github.com/Microsoft/TypeScript/pull/21316
+      ? FormikErrors<Values[K][number]>[] | string | string[]
+      : string | string[]
+    : Values[K] extends object
     ? FormikErrors<Values[K]>
     : string
 };
@@ -20,7 +24,11 @@ export type FormikErrors<Values> = {
  * An object containing touched state of the form whose keys correspond to FormikValues.
  */
 export type FormikTouched<Values> = {
-  [K in keyof Values]?: Values[K] extends object
+  [K in keyof Values]?: Values[K] extends any[]
+    ? Values[K][number] extends object // [number] is the special sauce to get the type of array's element. More here https://github.com/Microsoft/TypeScript/pull/21316
+      ? FormikTouched<Values[K][number]>[]
+      : boolean
+    : Values[K] extends object
     ? FormikTouched<Values[K]>
     : boolean
 };
@@ -88,7 +96,7 @@ export interface FormikHelpers<Values> {
   /** Validate field value */
   validateField(field: string): void;
   /** Reset form */
-  resetForm(nextState?: FormikState<Values>): void;
+  resetForm(nextState?: Partial<FormikState<Values>>): void;
   /** Set Formik state, careful! */
   setFormikState(
     f:
@@ -105,7 +113,7 @@ export interface FormikHandlers {
   /** Form submit handler */
   handleSubmit: (e?: React.FormEvent<HTMLFormElement>) => void;
   /** Reset form event handler  */
-  handleReset: () => void;
+  handleReset: (e?: React.SyntheticEvent<any>) => void;
   /** Classic React blur handler, keyed by input name */
   handleBlur(e: React.FocusEvent<any>): void;
   /** Preact-like linkState. Will return a handleBlur function. */
@@ -122,8 +130,7 @@ export interface FormikHandlers {
     : ((e: string | React.ChangeEvent<any>) => void);
 
   getFieldProps<Value = any>(
-    name: string,
-    type?: string
+    props: any
   ): [FieldInputProps<Value>, FieldMetaProps<Value>];
 }
 
@@ -269,6 +276,10 @@ export interface FieldInputProps<Value> {
   value: Value;
   /** Name of the field */
   name: string;
+  /** Multiple select? */
+  multiple?: boolean;
+  /** Is the field checked? */
+  checked?: boolean;
   /** Change event handler */
   onChange: FormikHandlers['handleChange'];
   /** Blur event handler */

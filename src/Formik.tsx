@@ -104,8 +104,8 @@ function formikReducer<Values>(
 }
 
 // Initial empty states // objects
-const emptyErrors: FormikErrors<any> = {};
-const emptyTouched: FormikTouched<any> = {};
+const emptyErrors: FormikErrors<unknown> = {};
+const emptyTouched: FormikTouched<unknown> = {};
 
 // This is an object that contains a map of all registered fields
 // and their validate functions
@@ -116,7 +116,7 @@ interface FieldRegistry {
 }
 const emptyFieldRegistry: FieldRegistry = {};
 
-function useFormikInternal<Values = object>({
+export function useFormik<Values extends FormikValues = FormikValues>({
   validateOnChange = true,
   validateOnBlur = true,
   isInitialValid,
@@ -132,7 +132,7 @@ function useFormikInternal<Values = object>({
   const isMounted = React.useRef<boolean>(false);
   const fieldRegistry = React.useRef<FieldRegistry>(emptyFieldRegistry);
   React.useEffect(() => {
-    if (process.env.NODE_ENV !== 'production') {
+    if (__DEV__) {
       invariant(
         typeof isInitialValid === 'undefined',
         'isInitialValid has been deprecated and will be removed in future versions of Formik. Please use initialErrors instead.'
@@ -152,8 +152,8 @@ function useFormikInternal<Values = object>({
     React.Reducer<FormikState<Values>, FormikMessage<Values>>
   >(formikReducer, {
     values: props.initialValues,
-    errors: props.initialErrors || {},
-    touched: props.initialTouched || {},
+    errors: props.initialErrors || emptyErrors,
+    touched: props.initialTouched || emptyTouched,
     status: props.initialStatus,
     isSubmitting: false,
     isValidating: false,
@@ -162,17 +162,25 @@ function useFormikInternal<Values = object>({
 
   const runValidateHandler = React.useCallback(
     (values: Values, field?: string): Promise<FormikErrors<Values>> => {
-      return new Promise(resolve => {
+      return new Promise((resolve, reject) => {
         const maybePromisedErrors = (props.validate as any)(values, field);
-        if (maybePromisedErrors === undefined) {
+        if (maybePromisedErrors == null) {
+          // use loose null check here on purpose
           resolve(emptyErrors);
         } else if (isPromise(maybePromisedErrors)) {
           (maybePromisedErrors as Promise<any>).then(
-            () => {
-              resolve(emptyErrors);
-            },
             errors => {
-              resolve(errors);
+              resolve(errors || emptyErrors);
+            },
+            actualException => {
+              if (process.env.NODE_ENV !== 'production') {
+                console.warn(
+                  `Warning: An unhandled error was caught during validation in <Formik validate />`,
+                  actualException
+                );
+              }
+
+              reject(actualException);
             }
           );
         } else {
@@ -187,8 +195,8 @@ function useFormikInternal<Values = object>({
    * Run validation against a Yup schema and optionally run a function if successful
    */
   const runValidationSchema = React.useCallback(
-    (values: Values, field?: string) => {
-      return new Promise(resolve => {
+    (values: Values, field?: string): Promise<FormikErrors<Values>> => {
+      return new Promise((resolve, reject) => {
         const validationSchema = props.validationSchema;
         const schema = isFunction(validationSchema)
           ? validationSchema(field)
@@ -202,7 +210,23 @@ function useFormikInternal<Values = object>({
             resolve(emptyErrors);
           },
           (err: any) => {
-            resolve(yupToFormErrors(err));
+            // Yup will throw a validation error if validation fails. We catch those and
+            // resolve them into Formik errors. We can sniff is something is a Yup error
+            // by checking error.name.
+            // @see https://github.com/jquense/yup#validationerrorerrors-string--arraystring-value-any-path-string
+            if (err.name === 'ValidationError') {
+              resolve(yupToFormErrors(err));
+            } else {
+              // We throw any other errors
+              if (process.env.NODE_ENV !== 'production') {
+                console.warn(
+                  `Warning: An unhandled error was caught during validation in <Formik validationSchema />`,
+                  err
+                );
+              }
+
+              reject(err);
+            }
           }
         );
       });
@@ -342,13 +366,11 @@ function useFormikInternal<Values = object>({
   );
 
   const resetForm = React.useCallback(
-    (nextState?: FormikState<Values>) => {
+    (nextState?: Partial<FormikState<Values>>) => {
       const values =
         nextState && nextState.values
           ? nextState.values
-          : initialValues.current
-          ? initialValues.current
-          : props.initialValues;
+          : initialValues.current;
       const errors =
         nextState && nextState.errors
           ? nextState.errors
@@ -390,12 +412,7 @@ function useFormikInternal<Values = object>({
         },
       });
     },
-    [
-      props.initialErrors,
-      props.initialStatus,
-      props.initialTouched,
-      props.initialValues,
-    ]
+    [props.initialErrors, props.initialStatus, props.initialTouched]
   );
 
   React.useEffect(() => {
@@ -404,6 +421,7 @@ function useFormikInternal<Values = object>({
       isMounted.current === true &&
       !isEqual(initialValues.current, props.initialValues)
     ) {
+      initialValues.current = props.initialValues;
       resetForm();
     }
   }, [enableReinitialize, props.initialValues, resetForm]);
@@ -421,7 +439,7 @@ function useFormikInternal<Values = object>({
           // Only flip isValidating if the function is async.
           dispatch({ type: 'SET_ISVALIDATING', payload: true });
           return maybePromise
-            .then((x: any) => x, (e: any) => e)
+            .then((x: any) => x)
             .then((error: string) => {
               dispatch({
                 type: 'SET_FIELD_ERROR',
@@ -529,9 +547,12 @@ function useFormikInternal<Values = object>({
           value,
           checked,
           outerHTML,
+          options,
+          multiple,
         } = (eventOrTextValue as React.ChangeEvent<any>).target;
+
         field = maybePath ? maybePath : name ? name : id;
-        if (!field && process.env.NODE_ENV !== 'production') {
+        if (!field && __DEV__) {
           warnAboutMissingIdentifier({
             htmlContent: outerHTML,
             documentationAnchorLink: 'handlechange-e-reactchangeeventany--void',
@@ -540,8 +561,10 @@ function useFormikInternal<Values = object>({
         }
         val = /number|range/.test(type)
           ? ((parsed = parseFloat(value)), isNaN(parsed) ? '' : parsed)
-          : /checkbox/.test(type)
-          ? checked
+          : /checkbox/.test(type) // checkboxes
+          ? getValueForCheckbox(getIn(state.values, field!), checked, value)
+          : !!multiple // <select multiple>
+          ? getSelectedValues(options)
           : value;
       }
 
@@ -550,7 +573,7 @@ function useFormikInternal<Values = object>({
         setFieldValue(field, val);
       }
     },
-    [setFieldValue]
+    [setFieldValue, state.values]
   );
 
   const handleChange = React.useCallback(
@@ -594,7 +617,7 @@ function useFormikInternal<Values = object>({
       const { name, id, outerHTML } = e.target;
       const field = path ? path : name ? name : id;
 
-      if (!field && process.env.NODE_ENV !== 'production') {
+      if (!field && __DEV__) {
         warnAboutMissingIdentifier({
           htmlContent: outerHTML,
           documentationAnchorLink: 'handleblur-e-any--void',
@@ -673,6 +696,7 @@ function useFormikInternal<Values = object>({
             .catch(_errors => {
               if (!!isMounted.current) {
                 dispatch({ type: 'SUBMIT_FAILURE' });
+                throw _errors;
               }
             });
         } else if (!!isMounted.current) {
@@ -699,10 +723,7 @@ function useFormikInternal<Values = object>({
       // specified `type` attribute during development. This mitigates
       // a common gotcha in forms with both reset and submit buttons,
       // where the dev forgets to add type="button" to the reset button.
-      if (
-        process.env.NODE_ENV !== 'production' &&
-        typeof document !== 'undefined'
-      ) {
+      if (__DEV__ && typeof document !== 'undefined') {
         // Safely get the active element (works with IE)
         const activeElement = getActiveElement();
         if (
@@ -721,22 +742,33 @@ function useFormikInternal<Values = object>({
     },
     [submitForm]
   );
-  const handleReset = useEventCallback(() => {
-    if (props.onReset) {
-      const maybePromisedOnReset = (props.onReset as any)(
-        state.values,
-        imperativeMethods
-      );
+  const handleReset = useEventCallback(
+    e => {
+      if (e && e.preventDefault && isFunction(e.preventDefault)) {
+        e.preventDefault();
+      }
 
-      if (isPromise(maybePromisedOnReset)) {
-        (maybePromisedOnReset as Promise<any>).then(resetForm);
+      if (e && e.stopPropagation && isFunction(e.stopPropagation)) {
+        e.stopPropagation();
+      }
+
+      if (props.onReset) {
+        const maybePromisedOnReset = (props.onReset as any)(
+          state.values,
+          imperativeMethods
+        );
+
+        if (isPromise(maybePromisedOnReset)) {
+          (maybePromisedOnReset as Promise<any>).then(resetForm);
+        } else {
+          resetForm();
+        }
       } else {
         resetForm();
       }
-    } else {
-      resetForm();
-    }
-  }, [imperativeMethods, props.onReset, resetForm, state.values]);
+    },
+    [imperativeMethods, props.onReset, resetForm, state.values]
+  );
 
   const getFieldMeta = React.useCallback(
     (name: string) => {
@@ -753,20 +785,38 @@ function useFormikInternal<Values = object>({
   );
 
   const getFieldProps = React.useCallback(
-    (
-      name: string,
-      type: string
-    ): [FieldInputProps<any>, FieldMetaProps<any>] => {
-      const field = {
+    ({
+      name,
+      type,
+      value: valueProp, // value is special for checkboxes
+      as: is,
+      multiple,
+    }): [FieldInputProps<any>, FieldMetaProps<any>] => {
+      const valueState = getIn(state.values, name);
+
+      const field: FieldInputProps<any> = {
         name,
-        value:
-          type && (type === 'radio' || type === 'checkbox')
-            ? undefined // React uses checked={} for these inputs
-            : getIn(state.values, name),
+        value: valueState,
         onChange: handleChange,
         onBlur: handleBlur,
       };
 
+      if (type === 'checkbox') {
+        if (valueProp === undefined) {
+          field.checked = !!valueState;
+        } else {
+          field.checked = !!(
+            Array.isArray(valueState) && ~valueState.indexOf(valueProp)
+          );
+          field.value = valueProp;
+        }
+      } else if (type === 'radio') {
+        field.checked = valueState === valueProp;
+        field.value = valueProp;
+      } else if (is === 'select' && multiple) {
+        field.value = field.value || [];
+        field.multiple = true;
+      }
       return [field, getFieldMeta(name)];
     },
     [getFieldMeta, handleBlur, handleChange, state.values]
@@ -824,10 +874,11 @@ function useFormikInternal<Values = object>({
   return ctx;
 }
 
-export function Formik<Values = object, ExtraProps = {}>(
-  props: FormikConfig<Values> & ExtraProps
-) {
-  const formikbag = useFormikInternal<Values>(props);
+export function Formik<
+  Values extends FormikValues = FormikValues,
+  ExtraProps = {}
+>(props: FormikConfig<Values> & ExtraProps) {
+  const formikbag = useFormik<Values>(props);
   const { component, children, render } = props;
   return (
     <FormikProvider value={formikbag}>
@@ -890,7 +941,7 @@ export function validateYupSchema<T extends FormikValues>(
   sync: boolean = false,
   context: any = {}
 ): Promise<Partial<T>> {
-  let validateData: Partial<T> = {};
+  let validateData: FormikValues = {};
   for (let k in values) {
     if (values.hasOwnProperty(k)) {
       const key = String(k);
@@ -924,6 +975,37 @@ function arrayMerge(target: any[], source: any[], options: any): any[] {
     }
   });
   return destination;
+}
+
+/** Return multi select values based on an array of options */
+function getSelectedValues(options: any[]) {
+  return options.filter(el => el.selected).map(el => el.value);
+}
+
+/** Return the next value for a checkbox */
+function getValueForCheckbox(
+  currentValue: string | any[],
+  checked: boolean,
+  valueProp: any
+) {
+  // eslint-disable-next-line eqeqeq
+  if (valueProp == 'true' || valueProp == 'false') {
+    return !!checked;
+  }
+
+  if (checked) {
+    return Array.isArray(currentValue)
+      ? currentValue.concat(valueProp)
+      : [valueProp];
+  }
+  if (!Array.isArray(currentValue)) {
+    return !!currentValue;
+  }
+  const index = currentValue.indexOf(valueProp);
+  if (index < 0) {
+    return currentValue;
+  }
+  return currentValue.slice(0, index).concat(currentValue.slice(index + 1));
 }
 
 function useEventCallback<T extends (...args: any[]) => any>(

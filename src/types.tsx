@@ -86,11 +86,19 @@ export interface FormikHelpers<Values> {
   /** Manually set values object  */
   setValues(values: Values): void;
   /** Set value of form field directly */
-  setFieldValue(field: keyof Values & string, value: any, shouldValidate?: boolean): void;
+  setFieldValue(
+    field: keyof Values & string,
+    value: any,
+    shouldValidate?: boolean
+  ): void;
   /** Set error message of a form field directly */
   setFieldError(field: keyof Values & string, message: string): void;
   /** Set whether field has been touched directly */
-  setFieldTouched(field: keyof Values & string, isTouched?: boolean, shouldValidate?: boolean): void;
+  setFieldTouched(
+    field: keyof Values & string,
+    isTouched?: boolean,
+    shouldValidate?: boolean
+  ): void;
   /** Validate form values */
   validateForm(values?: any): Promise<FormikErrors<Values>>;
   /** Validate field value */
@@ -219,10 +227,7 @@ export type FormikProps<Values> = FormikSharedConfig &
 
 /** Internal Formik registration methods that get passed down as props */
 export interface FormikRegistration {
-  registerField(
-    name: string,
-    fns: { validate?: (value: any) => string | Promise<void> | undefined }
-  ): void;
+  registerField(name: string, fns: { validate?: FieldValidator }): void;
   unregisterField(name: string): void;
 }
 
@@ -285,3 +290,5 @@ export interface FieldInputProps<Value> {
   /** Blur event handler */
   onBlur: FormikHandlers['handleBlur'];
 }
+
+export type FieldValidator = (value: any) => string | Promise<string | void>;

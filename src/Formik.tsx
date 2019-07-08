@@ -114,7 +114,6 @@ interface FieldRegistry {
     validate: (value: any) => string | Promise<string> | undefined;
   };
 }
-const emptyFieldRegistry: FieldRegistry = {};
 
 export function useFormik<Values extends FormikValues = FormikValues>({
   validateOnChange = true,
@@ -130,7 +129,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   const initialTouched = React.useRef(props.initialTouched || emptyTouched);
   const initialStatus = React.useRef(props.initialStatus);
   const isMounted = React.useRef<boolean>(false);
-  const fieldRegistry = React.useRef<FieldRegistry>(emptyFieldRegistry);
+  const fieldRegistry = React.useRef<FieldRegistry>({});
   React.useEffect(() => {
     if (__DEV__) {
       invariant(

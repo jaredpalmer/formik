@@ -4,6 +4,7 @@ import {
   isPromise,
   getActiveElement,
   isNaN,
+  getIn,
 } from '../src/utils';
 
 describe('utils', () => {
@@ -314,5 +315,23 @@ describe('utils', () => {
       expect(isNaN('')).toBe(false);
       expect(isNaN([])).toBe(false);
     });
+  });
+});
+
+describe('getIn', () => {
+  const field = { errors: { name: 'John' } };
+  it("gets object's property value by given path", () => {
+    expect(getIn(field, 'errors')).toEqual({
+      name: 'John',
+    });
+    expect(getIn(field, 'errors.name')).toBe('John');
+    expect(getIn(field.errors, 'name')).toBe('John');
+  });
+
+  it('returns default value, if nothing was found by given path', () => {
+    expect(getIn(field, 'values.name')).toBe(undefined);
+    expect(getIn(field, 'values.name', '')).toBe('');
+    expect(getIn(field, '')).toBe(undefined);
+    expect(getIn(field, '', '')).toBe('');
   });
 });

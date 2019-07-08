@@ -68,7 +68,10 @@ export function getIn(
   def?: any,
   p: number = 0
 ) {
+  if (!key || !key.length) return def;
   const path = toPath(key);
+  if (!path || !path.length) return def;
+
   while (obj && p < path.length) {
     obj = obj[path[p++]];
   }

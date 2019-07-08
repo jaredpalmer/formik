@@ -4,7 +4,7 @@ import {
   GenericFieldHTMLAttributes,
   FieldMetaProps,
   FieldInputProps,
-  FieldValidate,
+  FieldValidator,
 } from './types';
 import { useFormikContext } from './FormikContext';
 import { isFunction, isEmptyChildren, isObject } from './utils';
@@ -48,7 +48,7 @@ export interface FieldConfig {
   /**
    * Validate a single field value independently
    */
-  validate?: FieldValidate;
+  validate?: FieldValidator;
 
   /**
    * Field name

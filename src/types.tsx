@@ -227,7 +227,7 @@ export type FormikProps<Values> = FormikSharedConfig &
 
 /** Internal Formik registration methods that get passed down as props */
 export interface FormikRegistration {
-  registerField(name: string, fns: { validate?: FieldValidate }): void;
+  registerField(name: string, fns: { validate?: FieldValidator }): void;
   unregisterField(name: string): void;
 }
 
@@ -291,4 +291,4 @@ export interface FieldInputProps<Value> {
   onBlur: FormikHandlers['handleBlur'];
 }
 
-export type FieldValidate = (value: any) => string | Promise<string | void>;
+export type FieldValidator = (value: any) => string | Promise<string | void>;

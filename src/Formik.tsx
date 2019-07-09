@@ -474,7 +474,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     (values: Values) => {
       dispatch({ type: 'SET_VALUES', payload: values });
       return validateOnChange
-        ? debouncedValidateFormWithLowPriority(state.values)
+        ? debouncedValidateFormWithLowPriority(values)
         : Promise.resolve();
     },
     [validateFormWithLowPriority, state.values, validateOnChange]

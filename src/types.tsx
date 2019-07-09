@@ -33,6 +33,8 @@ export type FormikTouched<Values> = {
     : boolean
 };
 
+export type FieldValidator = (value: any) => string | Promise<string | void>;
+
 /**
  * Formik state tree
  */
@@ -292,5 +294,3 @@ export interface FieldInputProps<Value> {
   /** Blur event handler */
   onBlur: FormikHandlers['handleBlur'];
 }
-
-export type FieldValidator = (value: any) => string | Promise<string | void>;

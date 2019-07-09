@@ -317,7 +317,9 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   );
 
   const debouncedValidateFormWithLowPriority = React.useCallback(
-    debounce(validateFormWithLowPriority, props.validateOnChangeDebounceMs),
+    debounce(validateFormWithLowPriority, props.validateOnChangeDebounceMs, {
+      leading: true,
+    }),
     [validateFormWithLowPriority]
   );
 

@@ -327,7 +327,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   // @see https://lodash.com/docs/4.17.11#debounce
   const debouncedValidateFormWithLowPriority = React.useCallback(
     debounce(validateFormWithLowPriority, props.debounceValidationMs),
-    [validateFormWithLowPriority]
+    [validateFormWithLowPriority, props.debounceValidationMs]
   );
 
   // Run all validations methods and update state accordingly

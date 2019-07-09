@@ -25,6 +25,7 @@ import { FormikProvider } from './FormikContext';
 import invariant from 'tiny-warning';
 import { LowPriority, unstable_runWithPriority } from 'scheduler';
 import debounce from 'lodash/debounce';
+import throttle from 'lodash/throttle';
 // We already used FormikActions. So we'll go all Elm-y, and use Message.
 type FormikMessage<Values> =
   | { type: 'SUBMIT_ATTEMPT' }
@@ -121,11 +122,13 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   isInitialValid,
   enableReinitialize = false,
   debounceValidationMs = 400,
+  throttleValidationMs = 400,
   onSubmit,
   ...rest
 }: FormikConfig<Values>) {
   const props = {
     debounceValidationMs,
+    throttleValidationMs,
     validateOnChange,
     validateOnBlur,
     onSubmit,
@@ -330,6 +333,13 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     [validateFormWithLowPriority]
   );
 
+  // Create a throttled version of low-priority validation.
+  // @see https://lodash.com/docs/4.17.11#debounce
+  const throttledValidateFormWithLowPriority = React.useCallback(
+    throttle(validateFormWithLowPriority, props.throttleValidationMs),
+    [validateFormWithLowPriority]
+  );
+
   // Run all validations methods and update state accordingly
   const validateFormWithHighPriority = useEventCallback(
     (values: Values = state.values) => {
@@ -499,11 +509,18 @@ export function useFormik<Values extends FormikValues = FormikValues>({
           value,
         },
       });
-      return validateOnChange && shouldValidate
-        ? debouncedValidateFormWithLowPriority(
+      if (validateOnChange && shouldValidate) {
+        if (value.length < 5 || value.endsWith(' ')) {
+          return throttledValidateFormWithLowPriority(
             setIn(state.values, field, value)
-          )
-        : Promise.resolve();
+          );
+        } else {
+          return debouncedValidateFormWithLowPriority(
+            setIn(state.values, field, value)
+          );
+        }
+      }
+      return Promise.resolve();
     },
     [debouncedValidateFormWithLowPriority, state.values, validateOnChange]
   );

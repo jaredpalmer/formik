@@ -280,16 +280,25 @@ There are also imperative helper methods provided to you via Formik's render/inj
 - `validateForm`
 - `validateField`
 
-## Displaying Error Messages
+### Scheduling Validation
 
-@todo
+**DOM-only**
+
+With v2.x, Formik uses Facebook's [`scheduler`](https://github.com/facebook/react/tree/master/packages/scheduler) package to prioritize when validation should run. The key insight is that validation when triggered as a side effect of a change event and blur event (i.e. when a user is typing) should not block the high-priority work of updating the input value and is thus low-priority. However, validation triggered prior to a submit attempt is user-blocking priority (i.e. high-priority) (since we absolutely don't want to submit an invalid form!).
+
+### Debouncing Validation
+
+> Debouncing is a programming practice used to ensure that time-consuming tasks do not fire so often, that it stalls the performance of the web page / application. In other words, it limits the rate at which a function gets invoked.  
+> --[Geeks For Geeks](https://www.geeksforgeeks.org/debouncing-in-javascript/)
+
+In addition to scheduling, Formik also debounces low-priority validation by default by 400ms. This yields a massive performance boost, especially on large forms, and is encouraged. You can alter the delay with the [`debounceValidationMs`](/api/formik#debouncevalidationms-boolean) prop.
 
 ## Frequently Asked Questions
 
 <details>
-<summary>How do I determine if my form is validating?</summary>
+<summary>How do I determine if my form is validating before a submit?</summary>
 
-If `isValidating` prop is `true`
+If `isValidating` prop is `true`. Note that this only toggled during a submission attempt.
 
 </details>
 

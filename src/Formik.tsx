@@ -120,10 +120,17 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   validateOnBlur = true,
   isInitialValid,
   enableReinitialize = false,
+  debounceValidationMs = 400,
   onSubmit,
   ...rest
 }: FormikConfig<Values>) {
-  const props = { validateOnChange, validateOnBlur, onSubmit, ...rest };
+  const props = {
+    debounceValidationMs,
+    validateOnChange,
+    validateOnBlur,
+    onSubmit,
+    ...rest,
+  };
   const initialValues = React.useRef(props.initialValues);
   const initialErrors = React.useRef(props.initialErrors || emptyErrors);
   const initialTouched = React.useRef(props.initialTouched || emptyTouched);
@@ -316,10 +323,10 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     [runAllValidations, state.values]
   );
 
+  // Create a debounced version of low-priority validation.
+  // @see https://lodash.com/docs/4.17.11#debounce
   const debouncedValidateFormWithLowPriority = React.useCallback(
-    debounce(validateFormWithLowPriority, props.validateOnChangeDebounceMs, {
-      leading: true,
-    }),
+    debounce(validateFormWithLowPriority, props.debounceValidationMs),
     [validateFormWithLowPriority]
   );
 

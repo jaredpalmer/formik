@@ -269,6 +269,10 @@ don’t use both in the same `<Formik>`.
 </Formik>
 ```
 
+### `debounceValidationMs?: number`
+
+Default is `400`. The number of milliseconds Formik should wait before invoking low-priority validation (i.e. validation triggered as a side-effect of `handleChange` and `handleBlur`) once it has already been called.
+
 ### `enableReinitialize?: boolean`
 
 Default is `false`. Control whether Formik should reset the form if

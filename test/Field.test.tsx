@@ -121,12 +121,11 @@ describe('Field / FastField', () => {
         </>
       );
 
-      const { handleBlur, handleChange } = getFormProps();
       injected.forEach((props, idx) => {
         expect(props.field.name).toBe('name');
         expect(props.field.value).toBe('jared');
-        expect(props.field.onChange).toBe(handleChange);
-        expect(props.field.onBlur).toBe(handleBlur);
+        expect(typeof props.field.onChange).toBe('function');
+        expect(typeof props.field.onBlur).toBe('function');
         expect(props.form).toEqual(getFormProps());
         if (idx === 0) {
           expect(props.meta.value).toBe('jared');
@@ -142,8 +141,8 @@ describe('Field / FastField', () => {
 
       expect(asInjectedProps.name).toBe('name');
       expect(asInjectedProps.value).toBe('jared');
-      expect(asInjectedProps.onChange).toBe(handleChange);
-      expect(asInjectedProps.onBlur).toBe(handleBlur);
+      expect(typeof asInjectedProps.onChange).toBe('function');
+      expect(typeof asInjectedProps.onBlur).toBe('function');
 
       expect(queryAllByText(TEXT)).toHaveLength(4);
     });
@@ -166,12 +165,11 @@ describe('Field / FastField', () => {
         </>
       );
 
-      const { handleBlur, handleChange } = getFormProps();
       injected.forEach((props, idx) => {
         expect(props.field.name).toBe('name');
         expect(props.field.value).toBe('jared');
-        expect(props.field.onChange).toBe(handleChange);
-        expect(props.field.onBlur).toBe(handleBlur);
+        expect(typeof props.field.onChange).toBe('function');
+        expect(typeof props.field.onBlur).toBe('function');
         expect(props.form).toEqual(getFormProps());
         if (idx === 0) {
           expect(props.meta.value).toBe('jared');
@@ -187,8 +185,8 @@ describe('Field / FastField', () => {
 
       expect(asInjectedProps.name).toBe('name');
       expect(asInjectedProps.value).toBe('jared');
-      expect(asInjectedProps.onChange).toBe(handleChange);
-      expect(asInjectedProps.onBlur).toBe(handleBlur);
+      expect(typeof asInjectedProps.onChange).toBe('function');
+      expect(typeof asInjectedProps.onBlur).toBe('function');
       expect(queryAllByText(TEXT)).toHaveLength(4);
     });
   });

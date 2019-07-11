@@ -172,7 +172,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
               resolve(errors || emptyErrors);
             },
             actualException => {
-              if (process.env.NODE_ENV !== 'production') {
+              if (__DEV__) {
                 console.warn(
                   `Warning: An unhandled error was caught during validation in <Formik validate />`,
                   actualException
@@ -217,7 +217,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
               resolve(yupToFormErrors(err));
             } else {
               // We throw any other errors
-              if (process.env.NODE_ENV !== 'production') {
+              if (__DEV__) {
                 console.warn(
                   `Warning: An unhandled error was caught during validation in <Formik validationSchema />`,
                   err
@@ -493,20 +493,24 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   );
 
   const executeChange = React.useCallback(
-    (eventOrTextValue: string | React.ChangeEvent<any>, maybePath?: string) => {
+    (eventOrValue: any | React.ChangeEvent<any>, maybePath?: string) => {
       // By default, assume that the first argument is a string. This allows us to use
       // handleChange with React Native and React Native Web's onChangeText prop which
       // provides just the value of the input.
       let field = maybePath;
-      let val = eventOrTextValue;
+      let val = eventOrValue;
       let parsed;
       // If the first argument is not a string though, it has to be a synthetic React Event (or a fake one),
       // so we handle like we would a normal HTML change event.
-      if (!isString(eventOrTextValue)) {
+      if (
+        eventOrValue &&
+        (eventOrValue instanceof Event ||
+          eventOrValue.nativeEvent instanceof Event)
+      ) {
         // If we can, persist the event
         // @see https://reactjs.org/docs/events.html#event-pooling
-        if ((eventOrTextValue as React.ChangeEvent<any>).persist) {
-          (eventOrTextValue as React.ChangeEvent<any>).persist();
+        if ((eventOrValue as React.ChangeEvent<any>).persist) {
+          (eventOrValue as React.ChangeEvent<any>).persist();
         }
         const {
           type,
@@ -517,7 +521,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
           outerHTML,
           options,
           multiple,
-        } = (eventOrTextValue as React.ChangeEvent<any>).target;
+        } = (eventOrValue as React.ChangeEvent<any>).target;
 
         field = maybePath ? maybePath : name ? name : id;
         if (!field && __DEV__) {
@@ -547,7 +551,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   const handleChange = React.useCallback(
     (
       eventOrPath: string | React.ChangeEvent<any>
-    ): void | ((eventOrTextValue: string | React.ChangeEvent<any>) => void) => {
+    ): void | ((e: any | React.ChangeEvent<any>) => void) => {
       if (isString(eventOrPath)) {
         return event => executeChange(event, eventOrPath);
       } else {
@@ -578,32 +582,47 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   );
 
   const executeBlur = React.useCallback(
-    (e: any, path?: string) => {
-      if (e.persist) {
-        e.persist();
+    (eventOrValue: any | React.FocusEvent<any>, maybePath?: string) => {
+      let field = maybePath;
+      let htmlContent = 'no HTML content provided';
+
+      if (
+        eventOrValue &&
+        (eventOrValue instanceof Event ||
+          eventOrValue.nativeEvent instanceof Event)
+      ) {
+        if (eventOrValue.persist) {
+          eventOrValue.persist();
+        }
+        const { name, id, outerHTML } = eventOrValue.target;
+        field = name || id;
+        htmlContent = outerHTML;
       }
-      const { name, id, outerHTML } = e.target;
-      const field = path ? path : name ? name : id;
 
       if (!field && __DEV__) {
         warnAboutMissingIdentifier({
-          htmlContent: outerHTML,
+          htmlContent,
           documentationAnchorLink: 'handleblur-e-any--void',
           handlerName: 'handleBlur',
         });
       }
 
-      setFieldTouched(field, true);
+      if (field) {
+        // Set field touched state by name
+        setFieldTouched(field, true);
+      }
     },
     [setFieldTouched]
   );
 
   const handleBlur = React.useCallback(
-    (eventOrString: any): void | ((e: any) => void) => {
-      if (isString(eventOrString)) {
-        return event => executeBlur(event, eventOrString);
+    (
+      eventOrPath: string | React.FocusEvent<any>
+    ): void | ((e: any | React.FocusEvent<any>) => void) => {
+      if (isString(eventOrPath)) {
+        return event => executeBlur(event, eventOrPath);
       } else {
-        executeBlur(eventOrString);
+        executeBlur(eventOrPath);
       }
     },
     [executeBlur]
@@ -765,8 +784,8 @@ export function useFormik<Values extends FormikValues = FormikValues>({
       const field: FieldInputProps<any> = {
         name,
         value: valueState,
-        onChange: handleChange,
-        onBlur: handleBlur,
+        onChange: (e: any) => executeChange(e, name),
+        onBlur: (e: any) => executeBlur(e, name),
       };
 
       if (type === 'checkbox') {
@@ -787,7 +806,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
       }
       return [field, getFieldMeta(name)];
     },
-    [getFieldMeta, handleBlur, handleChange, state.values]
+    [getFieldMeta, executeBlur, executeChange, state.values]
   );
 
   const dirty = React.useMemo(

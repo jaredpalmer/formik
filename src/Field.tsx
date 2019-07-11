@@ -81,7 +81,7 @@ export function useField<Val = any>(
   }
 
   if (isObject(propsOrFieldName)) {
-    if (process.env.NODE_ENV !== 'production') {
+    if (__DEV__) {
       invariant(
         (propsOrFieldName as FieldAttributes<Val>).name,
         'Invalid field name. Either pass `useField` a string or an object containing a `name` key.'

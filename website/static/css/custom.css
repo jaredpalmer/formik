@@ -1,6 +1,6 @@
 body {
-  font-family: 'San Francisco', -apple-system, BlinkMacSystemFont,
-    '.SFNSText-Regular', 'Helvetica Neue', Helvetica, sans-serif;
+  font-family: $sans;
+  color: #091E42;
 }
 
 h1,
@@ -9,54 +9,56 @@ h3,
 h4,
 h5,
 h6 {
-  font-weight: bold;
+  font-weight: 700;
+  color: #172B4D;
 }
 
-.fixedHeaderContainer header h2 {
-  font-family: 'San Francisco', -apple-system, BlinkMacSystemFont,
-    '.SFNSText-Regular', 'Helvetica Neue', Helvetica, sans-serif;
-  font-size: 17px;
-}
 
-.fixedHeaderContainer .logo {
-  height: 70%;
-}
 
-.fixedHeaderContainer a {
-  padding-right: 15px;
-}
 
 .splash {
   /* min-height: 700px; */
-  background: linear-gradient(#111, #222);
+  background: #1B2638;
+  background-image: url(/formik/img/forms-bg.svg);
+  background-size: 500px, 500px;
+  background-repeat: repeat;
   text-align: center;
   color: white;
   position: relative;
   overflow: hidden;
-  padding-top: 50px;
+  padding-top: 100px;
+  margin-top: -50px;
   padding-bottom: 80px;
 }
 
+
 .splash h1 {
-  color: white;
+  /* color: white;
   font-size: 56px;
   line-height: 100%;
   margin-top: 15px;
   margin-bottom: 25px;
   font-weight: 700;
-  letter-spacing: -1px;
+  letter-spacing: -1px; */
+  border: 0;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  width: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  position: absolute;
 }
 
 .splash h2 {
-  color: rgba(255, 255, 255, 0.7);
-  font-weight: 300;
+  color: rgba(255, 255, 255, 0.9);
   margin-left: auto;
   margin-right: auto;
   margin-bottom: 40px;
-  font-size: 20px;
+  font-size: 24px;
   line-height: 140%;
   max-width: 750px;
-  letter-spacing: 1px;
+  font-weight: 400;
 }
 
 .btn {
@@ -101,7 +103,7 @@ h6 {
 
 .splash .shadow {
   position: absolute;
-  background-image: linear-gradient(to top, rgba(0, 0, 0, 0.1), transparent);
+  background-image: linear-gradient(to top, rgb(27, 38, 56, .1), transparent);
   left: 0;
   right: 0;
   bottom: 0;
@@ -163,29 +165,6 @@ footer.nav-footer {
   font-size: 15px;
 }
 
-nav.toc .toggleNav,
-nav.toc .toggleNav .navGroup.navGroupActive {
-  background: transparent;
-}
-
-nav.toc .toggleNav .navGroup.navGroupActive ul {
-  padding: 0;
-  margin-bottom: 20px;
-}
-
-nav.toc .toggleNav ul li a {
-  margin: 0;
-  font-size: 1em;
-  opacity: 0.7;
-}
-
-nav.toc .toggleNav .navGroup.navGroupActive h3 {
-  background: none;
-  color: inherit;
-  font-weight: 500;
-  padding: 0;
-  margin: 0;
-}
 
 .button {
   font-weight: 500;
@@ -208,11 +187,11 @@ a.learnmore:hover {
 }
 
 .post a:not(.button) {
-  color: $actionColor;
+  color: #0052CC;
 }
 
 nav.toc .toggleNav ul li a.navItemActive {
-  color: $actionColor;
+  color: #0052CC;
   opacity: 1;
 }
 
@@ -276,10 +255,6 @@ footer iframe {
     margin-top: 20px;
   }
 
-  .splash .content svg {
-    display: none;
-  }
-
   .content.row {
     margin-top: 0px;
     margin-bottom: 0px;
@@ -300,6 +275,10 @@ footer iframe {
 }
 
 @media screen and (max-width: 680px) {
+  .mainContainer .wrapper .post .postHeaderTitle {
+    padding-top: 20px;
+  }
+
   .splash .splashScreen {
     margin-top: 20px;
     top: 120%;
@@ -348,11 +327,11 @@ pre[class*="language-"] {
 }
 
 .reactNavSearchWrapper input#search_input_react {
-  background-color: #222;
+  background-color: #283447;
   padding-top: .2rem;
   padding-bottom: .2rem;
 }
 
 .reactNavSearchWrapper input#search_input_react:focus {
-  background-color: #333;
+  background-color: #344563;
 }

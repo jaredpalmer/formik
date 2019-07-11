@@ -177,7 +177,7 @@ const users = [
 
 const siteConfig = {
   title: 'Formik', // Title for your website.
-  tagline: `Build forms in React, without tears.`,
+  tagline: `Build forms in React, without the tears.`,
   url: 'https://jaredpalmer.com', // Your website URL
   baseUrl: '/formik/', // Base URL for your project */
   // For github.io type URLs, you would set the url and baseUrl like:
@@ -209,33 +209,36 @@ const siteConfig = {
 
   /* path to images for header/footer */
   headerIcon: 'img/formik.svg',
-  footerIcon: 'img/formik.svg',
+  footerIcon: 'img/formik-mark.svg',
   favicon: 'img/favicon.png',
 
   /* Colors for website */
   colors: {
-    primaryColor: '#111',
-    secondaryColor: '#111',
-    grayDarker: '#333',
-    gray: '#555',
-    grayLighter: '#888',
+    primaryColor: '#1B2638',
+    secondaryColor: '#0E1624',
+    grayDarker: '#344563',
+    gray: '#505F79',
+    grayLighter: '#7A869A',
     accentColor: '#785BA3',
     actionColor: '#008cf2',
   },
 
   /* Custom fonts for website */
-  /*
   fonts: {
-    myFont: [
-      "Times New Roman",
-      "Serif"
+    sans: [
+      `FormikSans`,
+      `-apple-system`,
+      `BlinkMacSystemFont`,
+      `Segoe UI`,
+      `Roboto`,
+      `Oxygen`,
+      `Ubuntu`,
+      `Cantarell`,
+      'Open Sans',
+      'Helvetica Neue',
+      `sans-serif`,
     ],
-    myOtherFont: [
-      "-apple-system",
-      "system-ui"
-    ]
   },
-  */
 
   // This copyright info is used in /core/Footer.js and blog RSS/Atom feeds.
   copyright: `Copyright © ${new Date().getFullYear()} Jared Palmer. All Rights Reserved.`,
@@ -251,7 +254,6 @@ const siteConfig = {
     'https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.0/clipboard.min.js',
     '/formik/js/code-blocks-buttons.js',
   ],
-  stylesheets: ['/formik/css/code-blocks-buttons.css'],
 
   // On page navigation for the current documentation page.
   onPageNav: 'separate',
@@ -274,6 +276,7 @@ const siteConfig = {
   scrollToTopOptions: {
     zIndex: 100,
   },
+  disableHeaderTitle: true,
   enableUpdateTime: true,
   enableUpdateBy: true,
   gaTrackingId: 'UA-55176740-4',

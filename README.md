@@ -1,4 +1,12 @@
-![](https://user-images.githubusercontent.com/4060187/27243721-3b5219d0-52b1-11e7-96f1-dae8391a3ef6.png)
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/4060187/61057426-4e5a4600-a3c3-11e9-9114-630743e05814.png" width="211" height="182" alt="Formik.js" />
+</p>
+
+<h3 align="center">
+  Build forms in React, without the tears.
+</h3>
+
+<br>
 
 [![CircleCI](https://circleci.com/gh/jaredpalmer/formik.svg?style=svg)](https://circleci.com/gh/jaredpalmer/formik)
 [![Stable Release](https://img.shields.io/npm/v/formik.svg)](https://npm.im/formik)

@@ -177,7 +177,7 @@ const users = [
 
 const siteConfig = {
   title: 'Formik', // Title for your website.
-  tagline: `Build forms in React, without tears.`,
+  tagline: `Build forms in React, without the tears.`,
   url: 'https://jaredpalmer.com', // Your website URL
   baseUrl: '/formik/', // Base URL for your project */
   // For github.io type URLs, you would set the url and baseUrl like:

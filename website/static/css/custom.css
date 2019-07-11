@@ -1,5 +1,6 @@
 body {
   font-family: $sans;
+  color: #091E42;
 }
 
 h1,
@@ -9,18 +10,24 @@ h4,
 h5,
 h6 {
   font-weight: 700;
+  color: #172B4D;
 }
+
 
 
 
 .splash {
   /* min-height: 700px; */
-  background: linear-gradient(rgb(27, 38, 56), rgb(38, 54, 80));
+  background: #1B2638;
+  background-image: url(/formik/img/forms-bg.svg);
+  background-size: 500px, 500px;
+  background-repeat: repeat;
   text-align: center;
   color: white;
   position: relative;
   overflow: hidden;
-  padding-top: 50px;
+  padding-top: 100px;
+  margin-top: -50px;
   padding-bottom: 80px;
 }
 

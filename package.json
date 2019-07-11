@@ -44,8 +44,8 @@
   "dependencies": {
     "deepmerge": "^2.1.1",
     "hoist-non-react-statics": "^3.3.0",
-    "lodash": "^4.17.11",
-    "lodash-es": "^4.17.11",
+    "lodash": "^4.17.14",
+    "lodash-es": "^4.17.14",
     "react-fast-compare": "^2.0.1",
     "scheduler": "^0.14.0",
     "tiny-warning": "^1.0.2",

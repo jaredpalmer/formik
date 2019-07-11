@@ -43,7 +43,7 @@ class Index extends React.Component {
 
             <div className="relative">
               <h1>Formik</h1>
-              <h2>Build forms in React, without tears.</h2>
+              <h2>Build forms in React, without the tears.</h2>
               <div className="row">
                 <a className="btn primary" href="/formik/docs/overview">
                   Get Started

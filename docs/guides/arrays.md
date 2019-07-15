@@ -29,9 +29,11 @@ export const NestedExample = () => (
         console.log(values);
       }}
     >
-      <Field name="social.facebook" />
-      <Field name="social.twitter" />
-      <button type="submit">Submit</button>
+      <Form>
+        <Field name="social.facebook" />
+        <Field name="social.twitter" />
+        <button type="submit">Submit</button>
+      </Form>
     </Formik>
   </div>
 );

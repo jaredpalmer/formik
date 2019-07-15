@@ -59,9 +59,11 @@ export const BasicArrayExample = () => (
         console.log(values);
       }}
     >
-      <Field name="friends[0]" />
-      <Field name="friends[1]" />
-      <button type="submit">Submit</button>
+      <Form>
+        <Field name="friends[0]" />
+        <Field name="friends[1]" />
+        <button type="submit">Submit</button>
+      </Form>
     </Formik>
   </div>
 );

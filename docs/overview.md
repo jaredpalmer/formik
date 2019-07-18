@@ -238,3 +238,7 @@ install Yup from npm...
 ```
 npm install yup --save
 ```
+or
+```
+yarn add yup
+```

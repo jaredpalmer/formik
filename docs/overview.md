@@ -67,7 +67,9 @@ You can install Formik with [NPM](https://npmjs.com),
 ```sh
 npm install formik --save
 ```
+
 or
+
 ```
 yarn add formik
 ```
@@ -93,8 +95,8 @@ Once you've added this you will have access to the `window.Formik.<Insert_Compon
 
 You can play with Formik in your web browser with these live online playgrounds.
 
-* CodeSandbox (ReactDOM) https://codesandbox.io/s/zKrK5YLDZ
-* Expo Snack (React Native) https://snack.expo.io/@jaredpalmer/basic-formik-x-react-native-example
+- CodeSandbox (ReactDOM) https://codesandbox.io/s/zKrK5YLDZ
+- Expo Snack (React Native) https://snack.expo.io/@jaredpalmer/basic-formik-x-react-native-example
 
 ## The Gist
 
@@ -238,7 +240,9 @@ install Yup from npm...
 ```
 npm install yup --save
 ```
+
 or
+
 ```
 yarn add yup
 ```

@@ -32,7 +32,7 @@
     "prebuild": "rimraf dist",
     "build": "cross-env NODE_ENV=production tsdx build --format=cjs,esm,umd",
     "prepublish": "npm run build",
-    "format": "prettier --trailing-comma es5 --single-quote --write 'src/**/*' 'test/**/*' 'README.md'",
+    "format": "prettier --trailing-comma es5 --single-quote --write 'src/**/*' 'test/**/*' 'README.md' '/docs/**/*.md'",
     "precommit": "lint-staged",
     "storybook": "start-storybook -p 9001",
     "addc": "all-contributors add",
@@ -89,7 +89,7 @@
     "husky": "0.14.3",
     "just-debounce-it": "^1.1.0",
     "lint-staged": "4.0.2",
-    "prettier": "^1.17.1",
+    "prettier": "^1.18.2",
     "raw-loader": "^2.0.0",
     "react": "^16.9.0-alpha.0",
     "react-dom": "^16.9.0-alpha.0",
@@ -102,7 +102,7 @@
   },
   "lint-staged": {
     "**/*.{ts,tsx}": [
-      "prettier --trailing-comma es5 --single-quote --write",
+      "prettier --trailing-comma es5 --single-quote --write 'src/**/*' 'test/**/*' 'README.md' '/docs/**/*.md'",
       "git add"
     ]
   },
@@ -123,8 +123,7 @@
       "<rootDir>/test/setupTests.ts"
     ]
   },
-  "size-limit": [
-    {
+  "size-limit": [{
       "path": "./dist/index.js",
       "limit": "14 kB"
     },

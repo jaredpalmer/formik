@@ -57,16 +57,15 @@ const Example = () => (
 
 ## `useField<Value = any>(name: string | FieldAttributes<Val>): [FieldInputProps<Value>, FieldMetaProps<Value>]`
 
-A custom React Hook that returns a tuple (2 element array) containing `FieldProps` and `FieldMetaProps`. It accepts either a string of a field name or an object as an argument. The object must at least contain a `name` key. This object should identical to the props that you would pass to `<Field>` and the returned helpers will mimic the behavior of `<Field>` exactly. This is useful, and generally preferred, since it allows you to take advantage of formik's checkbox, radio, and multiple select behavior when the object contains the relevant key/values (e.g. `type: 'checkbox'`, `multiple: true`, etc.).  
+A custom React Hook that returns a tuple (2 element array) containing `FieldProps` and `FieldMetaProps`. It accepts either a string of a field name or an object as an argument. The object must at least contain a `name` key. This object should identical to the props that you would pass to `<Field>` and the returned helpers will mimic the behavior of `<Field>` exactly. This is useful, and generally preferred, since it allows you to take advantage of formik's checkbox, radio, and multiple select behavior when the object contains the relevant key/values (e.g. `type: 'checkbox'`, `multiple: true`, etc.).
 
 ```jsx
 import React from 'react';
 import { useField } from 'formik';
 
-
 function MyTextField(props) {
   // this will return field props for an <input />
-  const [field, meta] = useField(props.name); 
+  const [field, meta] = useField(props.name);
   return (
     <>
       <input {...field} {...props} />
@@ -77,7 +76,7 @@ function MyTextField(props) {
 
 function MyInput(props) {
   // this will return field exactly like <Field>{({ field }) => ... }</Field>
-  const [field, meta] = useField(props);  
+  const [field, meta] = useField(props);
   return (
     <>
       <input {...field} {...props} />
@@ -86,7 +85,6 @@ function MyInput(props) {
   );
 }
 ```
-
 
 ### `FieldInputProps`
 

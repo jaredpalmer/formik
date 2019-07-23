@@ -73,6 +73,29 @@ export function useField<Val = any>(
   propsOrFieldName: string | FieldAttributes<Val>
 ) {
   const formik = useFormikContext();
+  const { getFieldProps, registerField, unregisterField } = formik;
+  const isAnObject = isObject(propsOrFieldName);
+  const fieldName = isAnObject
+    ? (propsOrFieldName as FieldAttributes<Val>).name
+    : (propsOrFieldName as string);
+  const validateFn = isAnObject
+    ? (propsOrFieldName as FieldAttributes<Val>).validate
+    : undefined;
+  React.useEffect(
+    () => {
+      if (fieldName) {
+        registerField(fieldName, {
+          validate: validateFn,
+        });
+      }
+      return () => {
+        if (fieldName) {
+          unregisterField(fieldName);
+        }
+      };
+    },
+    [registerField, unregisterField, fieldName, validateFn]
+  );
   if (__DEV__) {
     invariant(
       formik,
@@ -81,16 +104,16 @@ export function useField<Val = any>(
   }
 
   if (isObject(propsOrFieldName)) {
-    if (process.env.NODE_ENV !== 'production') {
+    if (__DEV__) {
       invariant(
         (propsOrFieldName as FieldAttributes<Val>).name,
         'Invalid field name. Either pass `useField` a string or an object containing a `name` key.'
       );
     }
-    return formik.getFieldProps(propsOrFieldName);
+    return getFieldProps(propsOrFieldName);
   }
 
-  return formik.getFieldProps({ name: propsOrFieldName });
+  return getFieldProps({ name: propsOrFieldName });
 }
 
 export function Field({
@@ -105,6 +128,7 @@ export function Field({
   const {
     validate: _validate,
     validationSchema: _validationSchema,
+
     ...formik
   } = useFormikContext();
 
@@ -138,14 +162,19 @@ export function Field({
     // eslint-disable-next-line
   }, []);
 
-  React.useEffect(() => {
-    formik.registerField(name, {
-      validate: validate,
-    });
-    return () => {
-      formik.unregisterField(name);
-    };
-  }, [formik, name, validate]);
+  // Register field and field-level validation with parent <Formik>
+  const { registerField, unregisterField } = formik;
+  React.useEffect(
+    () => {
+      registerField(name, {
+        validate: validate,
+      });
+      return () => {
+        unregisterField(name);
+      };
+    },
+    [registerField, unregisterField, name, validate]
+  );
   const [field, meta] = formik.getFieldProps({ name, ...props });
   const legacyBag = { field, form: formik };
 

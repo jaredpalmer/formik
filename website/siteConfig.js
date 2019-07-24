@@ -155,7 +155,7 @@ const users = [
   },
   {
     caption: 'Gusto',
-    image: '/formik/img/logos/gusto.png',
+    image: '/formik/img/logos/gusto.svg',
     infoLink: 'https://gusto.com',
   },
   {

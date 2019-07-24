@@ -28,24 +28,22 @@ interface MyFormValues {
 }
 
 export const MyApp: React.SFC<{}> = () => {
+  const initialValues: MyFormValues = { firstName: '' };
   return (
     <div>
       <h1>My Example</h1>
       <Formik
-        initialValues={{ firstName: '' }}
-        onSubmit={(
-          values: MyFormValues,
-          actions: FormikHelpers<MyFormValues>
-        ) => {
+        initialValues={initialValues}
+        onSubmit={(values, actions) => {
           console.log({ values, actions });
           alert(JSON.stringify(values, null, 2));
           actions.setSubmitting(false);
         }}
-        render={(formikBag: FormikProps<MyFormValues>) => (
+        render={formikBag => (
           <Form>
             <Field
               name="firstName"
-              render={({ field, form, meta }: FieldProps<MyFormValues>) => (
+              render={({ field, form, meta }) => (
                 <div>
                   <input type="text" {...field} placeholder="First Name" />
                   {meta.touched && meta.error && meta.error}

@@ -173,6 +173,11 @@ const users = [
     image: '/formik/img/logos/gitconnected-logo.png',
     infoLink: 'https://gitconnected.com',
   },
+    {
+    caption: 'mahendran.in ',
+    image: '',
+    infoLink: 'http://mahendran.in',
+  },
 ];
 
 const siteConfig = {

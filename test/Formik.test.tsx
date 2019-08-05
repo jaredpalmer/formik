@@ -57,7 +57,11 @@ function renderFormik<V = Values>(props?: Partial<FormikConfig<V>>) {
       initialValues={InitialValues as any}
       {...props}
     >
-      {formikProps => (injected = formikProps) && <Form {...formikProps} />}
+      {formikProps =>
+        (injected = formikProps) && (
+          <Form {...(formikProps as unknown) as FormikProps<Values>} />
+        )
+      }
     </Formik>
   );
   return {
@@ -72,7 +76,11 @@ function renderFormik<V = Values>(props?: Partial<FormikConfig<V>>) {
           initialValues={InitialValues as any}
           {...props}
         >
-          {formikProps => (injected = formikProps) && <Form {...formikProps} />}
+          {formikProps =>
+            (injected = formikProps) && (
+              <Form {...(formikProps as unknown) as FormikProps<Values>} />
+            )
+          }
         </Formik>
       ),
   };
@@ -585,7 +593,7 @@ describe('<Formik>', () => {
       it('setValues takes a function which can patch values', () => {
         const { getProps } = renderFormik<Values>();
 
-        getProps().setValues(values => ({
+        getProps().setValues((values: Values) => ({
           ...values,
           zipcode: 99999,
         }));

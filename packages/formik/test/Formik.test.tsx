@@ -621,7 +621,7 @@ describe('<Formik>', () => {
       it('setValues takes a function which can patch values', () => {
         const { getProps } = renderFormik<Values>();
 
-        getProps().setValues(values => ({
+        getProps().setValues((values: Values) => ({
           ...values,
           zipcode: 99999,
         }));

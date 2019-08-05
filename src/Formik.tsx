@@ -8,20 +8,19 @@ import {
   FormikTouched,
   FormikValues,
   FormikProps,
+  FieldMetaProps,
+  FieldInputProps,
   ValuesOrValuesFactory,
 } from './types';
 import {
-  isEmptyChildren,
   isFunction,
-  isNaN,
-  isPromise,
   isString,
-  isInputEvent,
   setIn,
+  isEmptyChildren,
+  isPromise,
   setNestedObjectValues,
   getActiveElement,
   getIn,
-  makeCancelable,
 } from './utils';
 import { FormikProvider } from './FormikContext';
 import invariant from 'tiny-warning';

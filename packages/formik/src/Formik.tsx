@@ -15,13 +15,11 @@ import {
   FormikHelpers, FormikHandlers,
 } from './types';
 import {
-  isEmptyChildren,
   isFunction,
-  isNaN,
-  isPromise,
   isString,
-  isInputEvent,
   setIn,
+  isEmptyChildren,
+  isPromise,
   setNestedObjectValues,
   getActiveElement,
   getIn,

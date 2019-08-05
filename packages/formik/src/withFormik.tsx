@@ -1,7 +1,8 @@
 import hoistNonReactStatics from 'hoist-non-react-statics';
 import * as React from 'react';
 import { Formik } from './Formik';
-import FormikHelpers, {
+import {
+  FormikHelpers,
   FormikProps,
   FormikSharedConfig,
   FormikValues,

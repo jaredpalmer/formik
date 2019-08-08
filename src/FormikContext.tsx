@@ -2,7 +2,9 @@ import * as React from 'react';
 import { FormikContext } from './types';
 import invariant from 'tiny-warning';
 
-const PrivateFormikContext = React.createContext<FormikContext<any>>({} as any);
+const PrivateFormikContext = React.createContext<FormikContext<any>>(
+  undefined as any
+);
 export const FormikProvider = PrivateFormikContext.Provider;
 export const FormikConsumer = PrivateFormikContext.Consumer;
 

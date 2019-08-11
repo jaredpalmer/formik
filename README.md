@@ -95,6 +95,10 @@ This project follows the
 [all-contributors](https://github.com/kentcdodds/all-contributors)
 specification. Contributions of any kind welcome!
 
+## Related
+
+- [TSDX](https://github.com/palmerhq/tsdx) - Zero-config CLI for TypeScript used by this repo.
+
 ---
 
 [MIT License.](https://github.com/jaredpalmer/formik/blob/master/LICENSE)

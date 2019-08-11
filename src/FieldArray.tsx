@@ -307,12 +307,14 @@ class FieldArrayInner<Values = {}> extends React.Component<
     return component
       ? React.createElement(component as any, props)
       : render
-        ? (render as any)(props)
-        : children // children come last, always called
-          ? typeof children === 'function'
-            ? (children as any)(props)
-            : !isEmptyChildren(children) ? React.Children.only(children) : null
-          : null;
+      ? (render as any)(props)
+      : children // children come last, always called
+      ? typeof children === 'function'
+        ? (children as any)(props)
+        : !isEmptyChildren(children)
+        ? React.Children.only(children)
+        : null
+      : null;
   }
 }
 

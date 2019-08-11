@@ -55,7 +55,7 @@ function renderFormik<V = Values>(props?: Partial<FormikConfig<V>>) {
     >
       {formikProps =>
         (injected = formikProps) && (
-          <Form {...(formikProps as unknown) as FormikProps<Values>} />
+          <Form {...((formikProps as unknown) as FormikProps<Values>)} />
         )
       }
     </Formik>
@@ -74,7 +74,7 @@ function renderFormik<V = Values>(props?: Partial<FormikConfig<V>>) {
         >
           {formikProps =>
             (injected = formikProps) && (
-              <Form {...(formikProps as unknown) as FormikProps<Values>} />
+              <Form {...((formikProps as unknown) as FormikProps<Values>)} />
             )
           }
         </Formik>

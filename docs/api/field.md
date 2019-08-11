@@ -12,18 +12,18 @@ attribute to match up with Formik state. `<Field />` will default to an HTML
 
 There are 2 ways to render things with `<Field>`.
 
-* `<Field as>`
-* `<Field children>`
-* ~~`<Field render>`~~ _deprecated in 2.x. Using these will log warning_
-* ~~`<Field component>`~~ _deprecated in 2.x. Using these will log warning_
+- `<Field as>`
+- `<Field children>`
+- ~~`<Field render>`~~ _deprecated in 2.x. Using these will log warning_
+- ~~`<Field component>`~~ _deprecated in 2.x. Using these will log warning_
 
 `as` can either be a React component or the name of an HTML element to render. Formik will automagically inject `onChange`, `onBlur`, `name`, and `value` props of the field designated by the `name` prop to the (custom) component.
 
 `children` can either be an array of elements (e.g. `<option>` in the case of `<Field as="select">`) or a callback function (a.k.a render prop). The render props are an object containing:
 
-* `field`: An object containing `onChange`, `onBlur`, `name`, and `value` of the field (see [`FieldInputProps`](./useField#fieldinputprops))
-* `form`: The Formik bag
-* `meta`: An object containing metadata (i.e. `value`, `touched`, `error`, and `initialValue`) about the field (see [`FieldMetaProps`](./useField#fieldmetaprops))
+- `field`: An object containing `onChange`, `onBlur`, `name`, and `value` of the field (see [`FieldInputProps`](./useField#fieldinputprops))
+- `form`: The Formik bag
+- `meta`: An object containing metadata (i.e. `value`, `touched`, `error`, and `initialValue`) about the field (see [`FieldMetaProps`](./useField#fieldmetaprops))
 
 > In Formik 0.9 to 1.x, `component` and `render` props could also be used for rendering. These have been deprecated since 2.x. While the code still lives within `<Field>`, they will show a warning in the console.
 
@@ -60,8 +60,9 @@ const Example = () => (
             }) => (
               <div>
                 <input type="text" placeholder="Email" {...field} />
-                {meta.touched &&
-                  meta.error && <div className="error">{meta.error}</div>}
+                {meta.touched && meta.error && (
+                  <div className="error">{meta.error}</div>
+                )}
               </div>
             )}
           </Field>
@@ -89,11 +90,11 @@ const Example = () => (
 
 Either a React component or the name of an HTML element to render. That is, one of the following:
 
-* `input`
-* `select`
-* `textarea`
-* A valid HTML element name
-* A custom React component
+- `input`
+- `select`
+- `textarea`
+- A valid HTML element name
+- A custom React component
 
 Custom React components will be passed `onChange`, `onBlur`, `name`, and `value` plus any other props passed to directly to `<Field>`.
 
@@ -152,10 +153,10 @@ Either JSX elements or callback function. Same as `render`.
 
 Either a React component or the name of an HTML element to render. That is, one of the following:
 
-* `input`
-* `select`
-* `textarea`
-* A custom React component
+- `input`
+- `select`
+- `textarea`
+- A custom React component
 
 Custom React components will be passed `FieldProps` which is same `render` prop parameters of `<Field render>` plus any other props passed to directly to `<Field>`.
 
@@ -249,10 +250,10 @@ You can run independent field-level validations by passing a function to the
 `validateOnChange` config/props specified in the `<Field>'s` parent `<Formik>`
 / `withFormik`. This function can be either be synchronous or asynchronous:
 
-* Sync: if invalid, return a `string` containing the error message or
+- Sync: if invalid, return a `string` containing the error message or
   return `undefined`.
 
-* Async: return a Promise that throws a `string` containing the error message.
+- Async: return a Promise that throws a `string` containing the error message.
   This works like Formik's `validate`, but instead of returning an `errors`
   object, it's just a `string`.
 

@@ -17,7 +17,7 @@ export type FormikErrors<Values> = {
       : string | string[]
     : Values[K] extends object
     ? FormikErrors<Values[K]>
-    : string
+    : string;
 };
 
 /**
@@ -30,7 +30,7 @@ export type FormikTouched<Values> = {
       : boolean
     : Values[K] extends object
     ? FormikTouched<Values[K]>
-    : boolean
+    : boolean;
 };
 
 /**
@@ -291,4 +291,6 @@ export interface FieldInputProps<Value> {
   onBlur: FormikHandlers['handleBlur'];
 }
 
-export type FieldValidator = (value: any) => string | void | Promise<string | void>;
+export type FieldValidator = (
+  value: any
+) => string | void | Promise<string | void>;

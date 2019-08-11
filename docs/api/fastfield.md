@@ -10,8 +10,8 @@ custom_edit_url: https://github.com/jaredpalmer/formik/edit/master/docs/api/fast
 
 **No. Seriously. Please review the following parts of the official React documentation before continuing**
 
-* [React `shouldComponentUpdate()` Reference](https://reactjs.org/docs/react-component.html#shouldcomponentupdate)
-* [`shouldComponentUpdate` in Action](https://reactjs.org/docs/optimizing-performance.html#shouldcomponentupdate-in-action)
+- [React `shouldComponentUpdate()` Reference](https://reactjs.org/docs/react-component.html#shouldcomponentupdate)
+- [`shouldComponentUpdate` in Action](https://reactjs.org/docs/optimizing-performance.html#shouldcomponentupdate-in-action)
 
 ## Overview
 
@@ -19,9 +19,9 @@ custom_edit_url: https://github.com/jaredpalmer/formik/edit/master/docs/api/fast
 
 For example, `<FastField name="firstName" />` will only re-render when there are:
 
-* Changes to `values.firstName`, `errors.firstName`, `touched.firstName`, or `isSubmitting`. This is determined by shallow comparison. Note: dotpaths are supported.
-* A prop is added/removed to the `<FastField name="firstName" />`
-* The `name` prop changes
+- Changes to `values.firstName`, `errors.firstName`, `touched.firstName`, or `isSubmitting`. This is determined by shallow comparison. Note: dotpaths are supported.
+- A prop is added/removed to the `<FastField name="firstName" />`
+- The `name` prop changes
 
 Other than for these aforementioned situations, `<FastField />` will not re-render when other parts of of Formik state change. However, all updates triggered by a `<FastField />` will trigger re-renders to other "vanilla" `<Field />` components.
 

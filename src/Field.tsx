@@ -81,21 +81,18 @@ export function useField<Val = any>(
   const validateFn = isAnObject
     ? (propsOrFieldName as FieldAttributes<Val>).validate
     : undefined;
-  React.useEffect(
-    () => {
+  React.useEffect(() => {
+    if (fieldName) {
+      registerField(fieldName, {
+        validate: validateFn,
+      });
+    }
+    return () => {
       if (fieldName) {
-        registerField(fieldName, {
-          validate: validateFn,
-        });
+        unregisterField(fieldName);
       }
-      return () => {
-        if (fieldName) {
-          unregisterField(fieldName);
-        }
-      };
-    },
-    [registerField, unregisterField, fieldName, validateFn]
-  );
+    };
+  }, [registerField, unregisterField, fieldName, validateFn]);
   if (__DEV__) {
     invariant(
       formik,
@@ -164,17 +161,14 @@ export function Field({
 
   // Register field and field-level validation with parent <Formik>
   const { registerField, unregisterField } = formik;
-  React.useEffect(
-    () => {
-      registerField(name, {
-        validate: validate,
-      });
-      return () => {
-        unregisterField(name);
-      };
-    },
-    [registerField, unregisterField, name, validate]
-  );
+  React.useEffect(() => {
+    registerField(name, {
+      validate: validate,
+    });
+    return () => {
+      unregisterField(name);
+    };
+  }, [registerField, unregisterField, name, validate]);
   const [field, meta] = formik.getFieldProps({ name, ...props });
   const legacyBag = { field, form: formik };
 

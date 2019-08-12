@@ -9,7 +9,7 @@ jest.spyOn(global.console, 'warn');
 
 interface Values {
   name: string;
-  zipcode?: number;
+  age?: number;
 }
 
 function Form({
@@ -46,7 +46,7 @@ function Form({
 
 const InitialValues = {
   name: 'jared',
-  zipcode: 12345,
+  age: 30,
 };
 
 function renderFormik<V = Values>(props?: Partial<FormikConfig<V>>) {
@@ -430,7 +430,7 @@ describe('<Formik>', () => {
       expect(getProps().touched).toEqual({});
 
       fireEvent.submit(getByTestId('form'));
-      expect(getProps().touched).toEqual({ name: true, zipcode: true });
+      expect(getProps().touched).toEqual({ name: true, age: true });
     });
 
     it('should push submission state changes to child component', () => {
@@ -585,9 +585,9 @@ describe('<Formik>', () => {
       it('setValues sets values', () => {
         const { getProps } = renderFormik<Values>();
 
-        getProps().setValues({ name: 'ian', zipcode: 12321 });
+        getProps().setValues({ name: 'ian', age: 25 });
         expect(getProps().values.name).toEqual('ian');
-        expect(getProps().values.zipcode).toEqual(12321);
+        expect(getProps().values.age).toEqual(25);
       });
 
       it('setValues takes a function which can patch values', () => {
@@ -595,10 +595,10 @@ describe('<Formik>', () => {
 
         getProps().setValues((values: Values) => ({
           ...values,
-          zipcode: 99999,
+          age: 80,
         }));
         expect(getProps().values.name).toEqual('jared');
-        expect(getProps().values.zipcode).toEqual(99999);
+        expect(getProps().values.age).toEqual(80);
       });
 
       it('setValues should run validations when validateOnChange is true (default)', async () => {
@@ -751,7 +751,7 @@ describe('<Formik>', () => {
       const { getProps } = renderFormik();
 
       expect(getProps().dirty).toBeFalsy();
-      getProps().setValues({ name: 'ian', zipcode: 12345 });
+      getProps().setValues({ name: 'ian', age: 27 });
       expect(getProps().dirty).toBeTruthy();
     });
 

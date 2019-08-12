@@ -10,6 +10,7 @@ import {
   FormikProps,
   FieldMetaProps,
   FieldInputProps,
+  FormikHelpers,
 } from './types';
 import {
   isFunction,
@@ -32,7 +33,7 @@ type FormikMessage<Values> =
   | { type: 'SUBMIT_SUCCESS' }
   | { type: 'SET_ISVALIDATING'; payload: boolean }
   | { type: 'SET_ISSUBMITTING'; payload: boolean }
-  | { type: 'SET_VALUES'; payload: Values }
+  | { type: 'SET_VALUES'; payload: Values | ((v: Values) => Values) }
   | { type: 'SET_FIELD_VALUE'; payload: { field: string; value?: any } }
   | { type: 'SET_FIELD_TOUCHED'; payload: { field: string; value?: boolean } }
   | { type: 'SET_FIELD_ERROR'; payload: { field: string; value?: string } }
@@ -49,7 +50,13 @@ function formikReducer<Values>(
 ) {
   switch (msg.type) {
     case 'SET_VALUES':
-      return { ...state, values: msg.payload };
+      return {
+        ...state,
+        values:
+          msg.payload instanceof Function
+            ? msg.payload(state.values)
+            : msg.payload,
+      };
     case 'SET_TOUCHED':
       return { ...state, touched: msg.payload };
     case 'SET_ERRORS':
@@ -158,6 +165,10 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     isValidating: false,
     submitCount: 0,
   });
+
+  React.useEffect(() => {
+    validateFormWithLowPriority(state.values);
+  }, [validateOnChange, state.values]);
 
   const runValidateHandler = React.useCallback(
     (values: Values, field?: string): Promise<FormikErrors<Values>> => {
@@ -456,14 +467,11 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     dispatch({ type: 'SET_ERRORS', payload: errors });
   }, []);
 
-  const setValues = useEventCallback(
+  const setValues = useEventCallback<FormikHelpers<Values>['setValues']>(
     (values: Values) => {
       dispatch({ type: 'SET_VALUES', payload: values });
-      return validateOnChange
-        ? validateFormWithLowPriority(state.values)
-        : Promise.resolve();
     },
-    [validateFormWithLowPriority, state.values, validateOnChange]
+    [validateFormWithLowPriority]
   );
 
   const setFieldError = React.useCallback(

@@ -394,3 +394,9 @@ events and `change`-related methods. More specifically, when either
 [A Yup schema](https://github.com/jquense/yup) or a function that returns a Yup
 schema. This is used for validation. Errors are mapped by key to the inner
 component's `errors`. Its keys should match those of `values`.
+
+### `validationSchemaContext?: Record<string, any> | ((values. Values) => Record<string, any>)`
+
+An object or a function that gets the current field values and returns an object that is passed as a context to the validation Schema.
+It can be used to reference an external value in Yup `when` (must be prefixed with `$`) or, returning the passed values in the function form,
+to reach in Yup `when` outside of siblings and descendants.

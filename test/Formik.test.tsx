@@ -575,6 +575,103 @@ describe('<Formik>', () => {
         fireEvent.submit(getByTestId('form'));
         expect(validate).toHaveBeenCalled();
       });
+
+      it('should call validationSchemaContext if it is a function and present', async () => {
+        const validate = () => Promise.resolve({});
+        const validationSchema = () => ({
+          validate,
+        });
+        const validationSchemaContext = jest.fn(() => ({
+          value: '42',
+        }));
+        const { getByTestId } = renderFormik({
+          validate,
+          validationSchema,
+          validationSchemaContext,
+        });
+
+        fireEvent.submit(getByTestId('form'));
+        expect(validationSchemaContext).toHaveBeenCalled();
+      });
+
+      it('should allow passing external values by validationSchemaContext in validation', async () => {
+        const validationSchema = Yup.object({
+          firstField: Yup.string().when('$firstFieldRequired', {
+            is: true,
+            then: Yup.string().required('required'),
+            otherwise: Yup.string(),
+          }),
+          secondField: Yup.string().when('$secondFieldRequired', {
+            is: true,
+            then: Yup.string().required('required'),
+            otherwise: Yup.string(),
+          }),
+        });
+
+        const { getProps } = renderFormik({
+          initialValues: {
+            firstField: '',
+            secondField: '',
+          },
+          validationSchema,
+          validationSchemaContext: {
+            firstFieldRequired: true,
+            secondFieldRequired: false,
+          },
+        });
+
+        await getProps().validateForm();
+        expect(getProps().errors).toEqual({
+          firstField: 'required',
+        });
+      });
+    });
+
+    it('should allow using form values by validationSchemaContext to reach outside siblings and descendant', async () => {
+      const validationSchema = Yup.object({
+        root: Yup.object({
+          firstChild: Yup.object({
+            a: Yup.string().when('$root.secondChild.isARequired', {
+              is: true,
+              then: Yup.string().required('required'),
+              otherwise: Yup.string(),
+            }),
+          }),
+          secondChild: Yup.object({
+            b: Yup.string().when('$root.firstChild.isBRequired', {
+              is: true,
+              then: Yup.string().required('required'),
+              otherwise: Yup.string(),
+            }),
+          }),
+        }),
+      });
+
+      const { getProps } = renderFormik({
+        initialValues: {
+          root: {
+            firstChild: {
+              a: '',
+              isBRequired: true,
+            },
+            secondChild: {
+              b: '',
+              isARequired: false,
+            },
+          },
+        },
+        validationSchema,
+        validationSchemaContext: values => values,
+      });
+
+      await getProps().validateForm();
+      expect(getProps().errors).toEqual({
+        root: {
+          secondChild: {
+            b: 'required',
+          },
+        },
+      });
     });
 
     describe('FormikActions', () => {

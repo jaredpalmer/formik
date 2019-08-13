@@ -167,7 +167,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   });
 
   React.useEffect(() => {
-    validateFormWithLowPriority(state.values);
+    validateOnChange && validateFormWithLowPriority(state.values);
   }, [validateOnChange, state.values]);
 
   const runValidateHandler = React.useCallback(

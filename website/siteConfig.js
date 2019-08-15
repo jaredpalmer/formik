@@ -20,6 +20,12 @@ const users = [
     },
   },
   {
+    caption: 'Monggopesen',
+    image: '',
+    infoLink: 'https://dev.monggopesen.com/',
+    pinned:true
+  },
+  {
     caption: 'Airbnb',
     image: '/formik/img/logos/airbnb.svg',
     infoLink: 'https://airbnb.com',

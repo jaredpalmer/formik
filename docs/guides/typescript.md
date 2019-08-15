@@ -27,7 +27,7 @@ interface MyFormValues {
   firstName: string;
 }
 
-export const MyApp: React.SFC<{}> = () => {
+export const MyApp: React.FC<{}> = () => {
   const initialValues: MyFormValues = { firstName: '' };
   return (
     <div>

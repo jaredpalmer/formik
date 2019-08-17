@@ -36,4 +36,5 @@ jobs:
           GITHUB_CONTEXT: ${{ toJson(github) }}
         run: echo "$GITHUB_CONTEXT"
       - name: Ping Netlify to trigger rebuild
+        if: github.ref == master
         run: curl -X POST -d {} ${{ secrets.NETLIFY_URL }}

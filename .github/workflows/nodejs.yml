@@ -29,9 +29,10 @@ jobs:
 
   docs:
     needs: [build]
-    push:
-      branches:
-        - chore/github-ci
+    on:
+      push:
+        branches:
+          - chore/github-ci
     runs-on: ubuntu-latest
     steps:
       - name: Ping Netlify to trigger rebuild

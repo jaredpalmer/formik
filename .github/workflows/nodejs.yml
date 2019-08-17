@@ -26,3 +26,13 @@ jobs:
 
       - name: Run tests
         run: yarn test --runInBand --no-cache --coverage
+
+  docs:
+    needs: [build]
+    push:
+      branches:
+        - chore/github-ci
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Netlify to trigger rebuild
+        run: curl -X POST -d {} ${{ secrets.NETLIFY_URL }}

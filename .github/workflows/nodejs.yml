@@ -29,11 +29,11 @@ jobs:
 
   docs:
     needs: [build]
-    on:
-      push:
-        branches:
-          - chore/github-ci
     runs-on: ubuntu-latest
     steps:
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
       - name: Ping Netlify to trigger rebuild
         run: curl -X POST -d {} ${{ secrets.NETLIFY_URL }}

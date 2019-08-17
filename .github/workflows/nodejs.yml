@@ -4,7 +4,6 @@ on: [push]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     strategy:
@@ -12,16 +11,18 @@ jobs:
         node-version: [8.x, 10.x, 12.x]
 
     steps:
-    - uses: actions/checkout@v1
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
-      with:
-        node-version: ${{ matrix.node-version }}
-    - name: Install yarnpkg 
-      run: npm i -g yarn
-    - name: Install deps
-      run: yarn install --frozen-lockfile
-    - name: Run tests
-      run: yarn test
-    - name: Build package
-      run: yarn build
+      - uses: actions/checkout@v1
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install yarnpkg
+        run: npm i -g yarn
+
+      - name: Install deps and build package
+        run: yarn install --frozen-lockfile
+
+      - name: Run tests
+        run: yarn test --runInBand --no-cache --coverage

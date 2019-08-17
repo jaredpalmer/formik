@@ -1,0 +1,15 @@
+name: Docs
+
+on: [push]
+
+push:
+  branches:
+    - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Ping Netlify to trigger rebuild
+        run: curl -X POST -d {} ${{ secrets.NETLIFY_URL }}

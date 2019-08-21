@@ -959,11 +959,22 @@ function getValueForCheckbox(
   return currentValue.slice(0, index).concat(currentValue.slice(index + 1));
 }
 
+// React currently throws a warning when using useLayoutEffect on the server.
+// To get around it, we can conditionally useEffect on the server (no-op) and
+// useLayoutEffect in the browser.
+// @see https://gist.github.com/gaearon/e7d97cdf38a2907924ea12e4ebdf3c85
+const useIsomorphicLayoutEffect =
+  typeof window !== 'undefined' &&
+  typeof window.document !== 'undefined' &&
+  typeof window.document.createElement !== 'undefined'
+    ? React.useLayoutEffect
+    : React.useEffect;
+
 function useEventCallback<T extends (...args: any[]) => any>(fn: T): T {
   const ref: any = React.useRef();
 
   // we copy a ref to the callback scoped to the current state/props on each render
-  React.useLayoutEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     ref.current = fn;
   });
 

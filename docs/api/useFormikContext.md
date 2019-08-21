@@ -1,5 +1,5 @@
 ---
-id: useformikcontext
+id: useFormikContext
 title: useFormikContext()
 custom_edit_url: https://github.com/jaredpalmer/formik/edit/master/docs/api/useFormikContext.md
 ---

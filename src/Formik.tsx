@@ -872,12 +872,14 @@ function warnAboutMissingIdentifier({
  */
 export function yupToFormErrors<Values>(yupError: any): FormikErrors<Values> {
   let errors: FormikErrors<Values> = {};
-  if (yupError.inner.length === 0) {
-    return setIn(errors, yupError.path, yupError.message);
-  }
-  for (let err of yupError.inner) {
-    if (!(errors as any)[err.path]) {
-      errors = setIn(errors, err.path, err.message);
+  if (yupError.inner) {
+    if (yupError.inner.length === 0) {
+      return setIn(errors, yupError.path, yupError.message);
+    }
+    for (let err of yupError.inner) {
+      if (!(errors as any)[err.path]) {
+        errors = setIn(errors, err.path, err.message);
+      }
     }
   }
   return errors;

@@ -141,7 +141,6 @@ Formik supports field-level validation via the `<Field>`/`<FastField>` component
 ```jsx
 import React from 'react';
 import { Formik, Form, Field } from 'formik';
-import * as Yup from 'yup';
 
 function validateEmail(value) {
   let error;

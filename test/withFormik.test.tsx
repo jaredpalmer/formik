@@ -151,6 +151,22 @@ describe('withFormik()', () => {
     await wait(() => expect(validationSchema).toHaveBeenCalledWith(myProps));
   });
 
+  it('calls validationSchema function with props and return promise with error object', async () => {
+    const validationSchema = jest.fn(() =>
+      Yup.object({
+        my: Yup.string().required('Required'),
+      })
+    );
+    const myProps = { my: 'prop' };
+    const { getProps } = renderWithFormik(
+      {
+        validationSchema,
+      },
+      myProps
+    );
+    await expect(getProps().submitForm()).rejects.toBeTruthy();
+  });
+
   it('calls handleSubmit with values, actions and custom props', async () => {
     const handleSubmit = jest.fn();
     const myProps = { my: 'prop' };

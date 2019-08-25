@@ -58,16 +58,45 @@ const Example = () => (
 
 ## `useFastField<Value = any>(name: string): [FieldInputProps<Value>, FieldMetaProps<Value>]`
 
-A custom React Hook that returns a tuple (2 element array) containing `FieldProps` and `FieldMetaProps`.
+A custom React Hook that returns a tuple (2 element array) containing `FieldProps` and `FieldMetaProps`. It accepts either a string of a field name or an object as an argument. The object must at least contain a `name` key. This object should identical to the props that you would pass to `<FastField>` and the returned helpers will imitate the behavior of `<FastField>`. This is useful, and generally preferred, since it allows you to take advantage of formik's checkbox, radio, and multiple select behavior when the object contains the relevant key/values (e.g. `type: 'checkbox'`, `multiple: true`, etc.).
+
+```jsx
+import React from 'react';
+import { useFastField } from 'formik';
+
+function MyTextField(props) {
+  // this will return field props for an <input />
+  const [field, meta] = useFastField(props.name);
+  return (
+    <>
+      <input {...field} {...props} />
+      {meta.error && meta.touched && <div>{meta.error}</div>}
+    </>
+  );
+}
+
+function MyInput(props) {
+  // this will return field exactly like <Field>{({ field }) => ... }</Field>
+  const [field, meta] = useFastField(props);
+  return (
+    <>
+      <input {...field} {...props} />
+      {meta.error && meta.touched && <div>{meta.error}</div>}
+    </>
+  );
+}
+```
 
 ### `FieldInputProps`
 
 An object that contains:
 
 - `name: string` - The name of the field
+- `checked?: boolean` - Whether or not the input is checked, this is only defined if `useField` is passed an object with a `name`, `type: "checkbox"` or `type: radio`.
 - `onBlur: () => void;` - A blur event handler
 - `onChange: (e: React.ChangeEvent<any>) => void` - A change event handler
-- `value: any` - The field's value (plucked out of `values`)
+- `value: any` - The field's value (plucked out of `values`) or, if it is a checkbox or radio input, then potentially the `value` passed into `useField`.
+- `multiple?: boolean` - Whether or not the multiple values can be selected. This is only ever defined when `useField` is passed an object with `multiple: true`
 
 for a given field in Formik state. This is to avoid needing to manually wire up inputs.
 

@@ -5,7 +5,7 @@ custom_edit_url: https://github.com/jaredpalmer/formik/edit/master/docs/api/useF
 ---
 
 `useFastField` is a custom React hook that will automagically help you hook up inputs in a similar way to `useField`.
-The useFastField behaviour imitates `useField` when Formik is configured to validate onBlur. The Formik values model is not updated after an onChange event only the input field is updated. After an onBlur event, the Formik values and error model are all update resulting in some minor behaviour variations. There are 2 ways to use it.
+The `useFastField` behaviour imitates `useField` when Formik is configured to validate onBlur. The Formik model is not updated after an onChange event, only the input field is updated. After an onBlur event occurs, the Formik v model is updated resulting in a more performant way at the expense of some minor differences. There are 2 ways to use it.
 
 ## Example
 

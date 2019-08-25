@@ -92,6 +92,27 @@ export function useField<Val = any>(
   return formik.getFieldProps({ name: propsOrFieldName });
 }
 
+export function useFastField<P>(
+  props: FieldAttributes<P>
+): [FieldInputProps<P>, FieldMetaProps<P>] {
+  const [field, meta] = useField<P>(props);
+  const [value, setValue] = React.useState<P>(field.value);
+  const { onBlur, onChange } = field;
+
+  field.value = value;
+  field.onChange = (e: any): void => {
+    if (e && e.currentTarget) {
+      setValue(e.currentTarget.value);
+    }
+  };
+  field.onBlur = (e: any): void => {
+    onChange(e);
+    onBlur(e);
+  };
+
+  return [field, meta];
+}
+
 export function Field({
   validate,
   name,

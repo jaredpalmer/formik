@@ -447,8 +447,8 @@ export class Formik<Values = FormikValues> extends React.Component<
           // ^^^ Make sure Formik is still mounted before calling setState
           this.setState({ isSubmitting: false });
         }
-        throw new Error('Could not submit form, it contains errors.');
       }
+      return Promise.resolve(combinedErrors);
     });
   };
 

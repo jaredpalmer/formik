@@ -164,7 +164,9 @@ describe('withFormik()', () => {
       },
       myProps
     );
-    await expect(getProps().submitForm()).rejects.toBeTruthy();
+    await expect(getProps().submitForm()).resolves.toMatchObject({
+      my: 'Required',
+    });
   });
 
   it('calls handleSubmit with values, actions and custom props', async () => {

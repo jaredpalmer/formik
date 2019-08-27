@@ -173,6 +173,11 @@ const users = [
     image: '/formik/img/logos/gitconnected-logo.png',
     infoLink: 'https://gitconnected.com',
   },
+  {
+    caption: 'zauberware',
+    image: '/formik/img/logos/zauberware-logo.svg',
+    infoLink: 'https://www.zauberware.com',
+  },
 ];
 
 const siteConfig = {

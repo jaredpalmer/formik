@@ -9,8 +9,8 @@ import {
 } from './types';
 import { getIn, isEmptyChildren, isFunction, setIn } from './utils';
 
-export type FieldArrayRenderProps = ArrayHelpers & {
-  form: FormikProps<any>;
+export type FieldArrayRenderProps<Values = any> = ArrayHelpers & {
+  form: FormikProps<Values>;
   name: string;
 };
 

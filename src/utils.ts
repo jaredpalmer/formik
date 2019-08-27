@@ -109,7 +109,7 @@ export function setIn(obj: any, path: string, value: any): any {
     const currentPath: string = pathArray[i];
     let currentObj: any = getIn(obj, pathArray.slice(0, i + 1));
 
-    if (currentObj) {
+    if (currentObj && (isObject(currentObj) || Array.isArray(currentObj))) {
       resVal = resVal[currentPath] = clone(currentObj);
     } else {
       const nextPath: string = pathArray[i + 1];

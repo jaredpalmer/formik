@@ -160,8 +160,10 @@ class FieldArrayInner<Values = {}> extends React.Component<
   swap = (indexA: number, indexB: number) =>
     this.updateArrayField(
       (array: any[]) => swap(array, indexA, indexB),
-      true,
-      true
+      (array: any[]) =>
+        array && array.length > 0 ? swap(array, indexA, indexB) : undefined,
+      (array: any[]) =>
+        array && array.length > 0 ? swap(array, indexA, indexB) : undefined
     );
 
   handleSwap = (indexA: number, indexB: number) => () =>
@@ -175,8 +177,10 @@ class FieldArrayInner<Values = {}> extends React.Component<
   insert = (index: number, value: any) =>
     this.updateArrayField(
       (array: any[]) => insert(array, index, value),
-      (array: any[]) => insert(array, index, null),
-      (array: any[]) => insert(array, index, null)
+      (array: any[]) =>
+        array && array.length > 0 ? insert(array, index, null) : undefined,
+      (array: any[]) =>
+        array && array.length > 0 ? insert(array, index, null) : undefined
     );
 
   handleInsert = (index: number, value: any) => () => this.insert(index, value);
@@ -206,14 +210,14 @@ class FieldArrayInner<Values = {}> extends React.Component<
         if (length < 0) {
           length = arr.length;
         }
-        return arr;
+        return arr.length > 0 ? arr : undefined;
       },
       (array: any[]) => {
-        const arr = array ? [null, ...array] : [null];
+        const arr = array ? [null, ...array] : [];
         if (length < 0) {
           length = arr.length;
         }
-        return arr;
+        return arr.length > 0 ? arr : undefined;
       }
     );
     return length;
@@ -228,16 +232,26 @@ class FieldArrayInner<Values = {}> extends React.Component<
       // so this gets call 3 times
       (array?: any[]) => {
         const copy = array ? [...array] : [];
-        if (!result) {
-          result = copy[index];
-        }
         if (isFunction(copy.splice)) {
+          result = copy[index];
           copy.splice(index, 1);
         }
         return copy;
       },
-      true,
-      true
+      (array?: any[]) => {
+        const copy = array ? [...array] : [];
+        if (isFunction(copy.splice)) {
+          copy.splice(index, 1);
+        }
+        return copy.length > 0 ? copy : undefined;
+      },
+      (array?: any[]) => {
+        const copy = array ? [...array] : [];
+        if (isFunction(copy.splice)) {
+          copy.splice(index, 1);
+        }
+        return copy.length > 0 ? copy : undefined;
+      }
     );
 
     return result as T;
@@ -251,14 +265,26 @@ class FieldArrayInner<Values = {}> extends React.Component<
     this.updateArrayField(
       // so this gets call 3 times
       (array: any[]) => {
-        const tmp = array;
-        if (!result) {
-          result = tmp && tmp.pop && tmp.pop();
+        const copy = array ? [...array] : [];
+        if (isFunction(copy.pop)) {
+          result = copy.pop();
         }
-        return tmp;
+        return copy;
       },
-      true,
-      true
+      (array: any[]) => {
+        const copy = array ? [...array] : [];
+        if (isFunction(copy.pop)) {
+          copy.pop();
+        }
+        return copy.length > 0 ? copy : undefined;
+      },
+      (array: any[]) => {
+        const copy = array ? [...array] : [];
+        if (isFunction(copy.pop)) {
+          copy.pop();
+        }
+        return copy.length > 0 ? copy : undefined;
+      }
     );
 
     return result as T;

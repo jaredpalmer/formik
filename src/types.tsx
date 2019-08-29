@@ -107,10 +107,10 @@ export interface FormikHelpers<Values> {
   resetForm(nextState?: Partial<FormikState<Values>>): void;
   /** Set Formik state, careful! */
   setFormikState(
-    f:
+    stateOrCb:
       | FormikState<Values>
       | ((prevState: FormikState<Values>) => FormikState<Values>),
-    cb?: () => void
+    cb?: (state: FormikState<Values>) => void
   ): void;
 }
 

@@ -599,12 +599,13 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   function setFormikState(
     stateOrCb:
       | FormikState<Values>
-      | ((state: FormikState<Values>) => FormikState<Values>)
+      | ((prevState: FormikState<Values>) => FormikState<Values>),
+    cb?: (state: FormikState<Values>) => void
   ): void {
-    if (isFunction(stateOrCb)) {
-      dispatch({ type: 'SET_FORMIK_STATE', payload: stateOrCb(state) });
-    } else {
-      dispatch({ type: 'SET_FORMIK_STATE', payload: stateOrCb });
+    const nextState = isFunction(stateOrCb) ? stateOrCb(state) : stateOrCb;
+    dispatch({ type: 'SET_FORMIK_STATE', payload: nextState });
+    if (cb) {
+      cb(nextState);
     }
   }
 

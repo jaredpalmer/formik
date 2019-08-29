@@ -140,9 +140,9 @@ class FieldArrayInner<Values = {}> extends React.Component<
             : prevState.touched,
         };
       },
-      () => {
+      (state: FormikState<any>) => {
         if (validateOnChange) {
-          validateForm();
+          validateForm(state.values);
         }
       }
     );

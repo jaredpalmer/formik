@@ -16,34 +16,33 @@ export interface FieldProps<V = any> {
   meta: FieldMetaProps<V>;
 }
 
+type LegacyFieldProps<V = any> = Pick<FieldProps<V>, 'field' | 'form'>;
+
 export interface FieldConfig {
   /**
    * Field component to render. Can either be a string like 'select' or a component.
    * @deprecated
    */
   component?:
-    | string
-    | React.ComponentType<FieldProps<any>>
-    | React.ComponentType;
+    | keyof JSX.IntrinsicElements
+    | React.ComponentType<LegacyFieldProps>;
+  // | React.ComponentType;
 
   /**
    * Component to render. Can either be a string e.g. 'select', 'input', or 'textarea', or a component.
    */
-  as?:
-    | React.ComponentType<FieldProps<any>['field']>
-    | keyof JSX.IntrinsicElements
-    | React.ComponentType;
+  as?: React.ComponentType<FieldProps['field']> | keyof JSX.IntrinsicElements;
 
   /**
    * Render prop (works like React router's <Route render={props =>} />)
    * @deprecated
    */
-  render?: (props: FieldProps<any>) => React.ReactNode;
+  render?: (props: LegacyFieldProps) => React.ReactElement;
 
   /**
    * Children render function <Field name>{props => ...}</Field>)
    */
-  children?: ((props: FieldProps<any>) => React.ReactNode) | React.ReactNode;
+  children?: ((props: FieldProps) => React.ReactElement) | React.ReactNode;
 
   /**
    * Validate a single field value independently
@@ -65,21 +64,27 @@ export interface FieldConfig {
   innerRef?: (instance: any) => void;
 }
 
-export type FieldAttributes<T> = GenericFieldHTMLAttributes &
-  FieldConfig &
+type BasicField<T extends FieldConfig> = T extends {
+  component: keyof JSX.IntrinsicElements;
+}
+  ? GenericFieldHTMLAttributes
+  : {};
+
+export type FieldAttributes<A extends FieldConfig, T = {}> = BasicField<A> &
+  A &
   T & { name: string };
 
-export function useField<Val = any>(
-  propsOrFieldName: string | FieldAttributes<Val>
+const isString = (a: any): a is string => typeof a === 'string';
+export function useField<A extends FieldConfig, Val = any>(
+  propsOrFieldName: string | FieldAttributes<A, Val>
 ) {
   const formik = useFormikContext();
   const { getFieldProps, registerField, unregisterField } = formik;
-  const isAnObject = isObject(propsOrFieldName);
-  const fieldName = isAnObject
-    ? (propsOrFieldName as FieldAttributes<Val>).name
-    : (propsOrFieldName as string);
-  const validateFn = isAnObject
-    ? (propsOrFieldName as FieldAttributes<Val>).validate
+  const fieldName = isString(propsOrFieldName)
+    ? propsOrFieldName
+    : propsOrFieldName.name;
+  const validateFn = !isString(propsOrFieldName)
+    ? propsOrFieldName.validate
     : undefined;
   React.useEffect(() => {
     if (fieldName) {
@@ -103,7 +108,7 @@ export function useField<Val = any>(
   if (isObject(propsOrFieldName)) {
     if (__DEV__) {
       invariant(
-        (propsOrFieldName as FieldAttributes<Val>).name,
+        (propsOrFieldName as FieldAttributes<A, Val>).name,
         'Invalid field name. Either pass `useField` a string or an object containing a `name` key.'
       );
     }
@@ -113,7 +118,7 @@ export function useField<Val = any>(
   return getFieldProps({ name: propsOrFieldName });
 }
 
-export function Field({
+export const Field = <A extends FieldConfig, T>({
   validate,
   name,
   render,
@@ -121,7 +126,9 @@ export function Field({
   as: is, // `as` is reserved in typescript lol
   component,
   ...props
-}: FieldAttributes<any>) {
+}: FieldAttributes<A, T>): React.ReactElement<
+  FieldProps['field'] | FieldProps | LegacyFieldProps
+> => {
   const {
     validate: _validate,
     validationSchema: _validationSchema,
@@ -177,7 +184,7 @@ export function Field({
   }
 
   if (isFunction(children)) {
-    return children({ ...legacyBag, meta });
+    return children({ meta, ...legacyBag });
   }
 
   if (component) {
@@ -191,11 +198,7 @@ export function Field({
       );
     }
     // We don't pass `meta` for backwards compat
-    return React.createElement(
-      component,
-      { field, form: formik, ...props },
-      children
-    );
+    return React.createElement(component, { ...legacyBag, ...props }, children);
   }
 
   // default to input here so we can check for both `as` and `children` above
@@ -211,5 +214,5 @@ export function Field({
   }
 
   return React.createElement(asElement, { ...field, ...props }, children);
-}
+};
 export const FastField = Field;

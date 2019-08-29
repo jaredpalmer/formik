@@ -45,9 +45,7 @@ function renderForm(
   };
 }
 
-const createRenderField = (
-  FieldComponent: React.ComponentType<FieldConfig>
-) => (
+const createRenderField = (FieldComponent: typeof Field) => (
   props: Partial<FieldConfig> | Partial<FastFieldConfig> = {},
   formProps?: Partial<FormikConfig<Values>>
 ) => {
@@ -106,11 +104,13 @@ describe('Field / FastField', () => {
       let injected: FieldProps[] = [];
       let asInjectedProps: FieldProps['field'] = {} as any;
 
-      const Component = (props: FieldProps) =>
-        injected.push(props) && <div data-testid="child">{TEXT}</div>;
+      const Component = (props: FieldProps) => (
+        injected.push(props), <div data-testid="child">{TEXT}</div>
+      );
 
-      const AsComponent = (props: FieldProps['field']) =>
-        (asInjectedProps = props) && <div data-testid="child">{TEXT}</div>;
+      const AsComponent = (props: FieldProps['field']) => (
+        (asInjectedProps = props), <div data-testid="child">{TEXT}</div>
+      );
 
       const { getFormProps, queryAllByText } = renderForm(
         <>
@@ -152,10 +152,13 @@ describe('Field / FastField', () => {
       let injected: FieldProps[] = [];
       let asInjectedProps: FieldProps['field'] = {} as any;
 
-      const Component = (props: FieldProps) =>
-        injected.push(props) && <div>{TEXT}</div>;
-      const AsComponent = (props: FieldProps['field']) =>
-        (asInjectedProps = props) && <div data-testid="child">{TEXT}</div>;
+      const Component = (props: FieldProps) => {
+        injected.push(props);
+        return <div>{TEXT}</div>;
+      };
+      const AsComponent = (props: FieldProps['field']) => (
+        (asInjectedProps = props), <div data-testid="child">{TEXT}</div>
+      );
 
       const { getFormProps, queryAllByText } = renderForm(
         <>
@@ -223,7 +226,7 @@ describe('Field / FastField', () => {
         component: 'textarea',
       });
 
-      expect(container.firstChild.type).toBe('textarea');
+      expect(container.firstChild.nodeName.toLowerCase()).toBe('textarea');
     });
 
     cases('assigns innerRef as a ref to string components', renderField => {
@@ -238,7 +241,7 @@ describe('Field / FastField', () => {
 
     cases('forwards innerRef to React component', renderField => {
       let injected: any; /** FieldProps ;) */
-      const Component = (props: FieldProps) => (injected = props) && null;
+      const Component = (props: FieldProps) => ((injected = props), null);
 
       const innerRef = jest.fn();
       renderField({ component: Component, innerRef });
@@ -252,7 +255,7 @@ describe('Field / FastField', () => {
         as: 'textarea',
       });
 
-      expect(container.firstChild.type).toBe('textarea');
+      expect(container.firstChild.nodeName.toLowerCase()).toBe('textarea');
     });
 
     cases('assigns innerRef as a ref to string components', renderField => {
@@ -411,7 +414,7 @@ describe('Field / FastField', () => {
     cases('warns about render prop deprecation', renderField => {
       global.console.warn = jest.fn();
       const { rerender } = renderField({
-        render: () => null,
+        render: () => <React.Fragment />,
       });
       rerender();
       expect((global.console.warn as jest.Mock).mock.calls[0][0]).toContain(

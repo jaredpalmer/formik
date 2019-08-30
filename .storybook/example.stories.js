@@ -14,6 +14,7 @@ import SyncValidation from '../examples/SyncValidation';
 import FieldLevelValidation from '../examples/FieldLevelValidation';
 import CombinedValidations from '../examples/CombinedValidations';
 import DebouncedAutoSave from '../examples/DebouncedAutoSave';
+import ValidateFieldWithSchema from '../examples/ValidateFieldWithSchema';
 
 const AsyncValidationCode = require('!raw-loader!../examples/AsyncValidation')
   .default;
@@ -35,6 +36,8 @@ const SyncValidationCode = require('!raw-loader!../examples/SyncValidation')
 const FieldLevelValidationCode = require('!raw-loader!../examples/FieldLevelValidation')
   .default;
 const CombinedValidationsCode = require('!raw-loader!../examples/CombinedValidations')
+  .default;
+const ValidateFieldWithSchemaCode = require('!raw-loader!../examples/ValidateFieldWithSchema')
   .default;
 
 function cleanExample(str) {
@@ -199,4 +202,14 @@ storiesOf('Example', module)
         <Code>{cleanExample(CombinedValidationsCode)}</Code>
       </div>
     );
-  });
+  })
+  .add('Validate Field with Schema', () => {
+    return (
+      <div className="formik-example">
+        <main>
+          <ValidateFieldWithSchema />
+        </main>
+        <Code>{cleanExample(ValidateFieldWithSchemaCode)}</Code>
+      </div>
+    );
+  })

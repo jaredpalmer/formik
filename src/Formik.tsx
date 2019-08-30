@@ -423,6 +423,9 @@ export function useFormik<Values extends FormikValues = FormikValues>({
         return Promise.resolve(maybePromise as string | undefined);
       }
     } else {
+      if (!props.validationSchema) {
+        return Promise.resolve();
+      }
       dispatch({ type: 'SET_ISVALIDATING', payload: true });
       return runValidationSchema(state.values, name)
         .then((x: any) => x)

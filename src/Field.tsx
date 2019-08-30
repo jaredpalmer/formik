@@ -7,7 +7,7 @@ import {
   FieldValidator,
 } from './types';
 import { useFormikContext } from './FormikContext';
-import { isFunction, isEmptyChildren, isObject } from './utils';
+import { isFunction, isEmptyChildren } from './utils';
 import invariant from 'tiny-warning';
 
 export interface FieldProps<V = any> {
@@ -18,32 +18,9 @@ export interface FieldProps<V = any> {
 
 type LegacyFieldProps<V = any> = Pick<FieldProps<V>, 'field' | 'form'>;
 
-export interface FieldConfig {
-  /**
-   * Field component to render. Can either be a string like 'select' or a component.
-   * @deprecated
-   */
-  component?:
-    | keyof JSX.IntrinsicElements
-    | React.ComponentType<LegacyFieldProps>;
-  // | React.ComponentType;
+type StringElements = 'select' | 'input' | 'textarea';
 
-  /**
-   * Component to render. Can either be a string e.g. 'select', 'input', or 'textarea', or a component.
-   */
-  as?: React.ComponentType<FieldProps['field']> | keyof JSX.IntrinsicElements;
-
-  /**
-   * Render prop (works like React router's <Route render={props =>} />)
-   * @deprecated
-   */
-  render?: (props: LegacyFieldProps) => React.ReactElement;
-
-  /**
-   * Children render function <Field name>{props => ...}</Field>)
-   */
-  children?: ((props: FieldProps) => React.ReactElement) | React.ReactNode;
-
+interface BaseConfig {
   /**
    * Validate a single field value independently
    */
@@ -64,19 +41,70 @@ export interface FieldConfig {
   innerRef?: (instance: any) => void;
 }
 
-type BasicField<T extends FieldConfig> = T extends {
-  component: keyof JSX.IntrinsicElements;
+export interface FieldConfig {
+  /**
+   * Field component to render. Can either be a string like 'select' or a component.
+   * @deprecated
+   */
+  component?: StringElements | React.ComponentType<LegacyFieldProps>;
+  // | React.ComponentType;
+
+  /**
+   * Component to render. Can either be a string e.g. 'select', 'input', or 'textarea', or a component.
+   */
+  as?: React.ComponentType<FieldProps['field']> | StringElements;
+
+  /**
+   * Render prop (works like React router's <Route render={props =>} />)
+   * @deprecated
+   */
+  render?: (props: LegacyFieldProps) => React.ReactElement;
+
+  /**
+   * Children render function <Field name>{props => ...}</Field>)
+   */
+  children?: ((props: FieldProps) => React.ReactElement) | React.ReactNode;
 }
-  ? GenericFieldHTMLAttributes
+
+type StringComponentConfig<U extends StringElements> =
+  | { component: U }
+  | { as: U };
+
+type RenderableConfigKeys = Exclude<keyof FieldConfig, keyof BaseConfig>;
+
+type OtherFieldConfig<U extends RenderableConfigKeys> = Required<
+  Pick<FieldConfig, U>
+>;
+
+type StrictFieldConfig<T extends FieldConfig> = T extends {
+  component: T['component'];
+}
+  ? OtherFieldConfig<'component'>
+  : T extends { render: T['render'] }
+  ? OtherFieldConfig<'render'>
+  : T extends { as: T['as'] }
+  ? OtherFieldConfig<'as'>
+  : T extends { children: (...args: any[]) => any }
+  ? OtherFieldConfig<'children'>
+  : T extends {}
+  ? Required<FieldConfig>
+  : T;
+
+type AddedProps<T extends FieldConfig> = T extends StringComponentConfig<
+  infer U
+>
+  ? GenericFieldHTMLAttributes<U>
+  : T extends { as: React.ComponentType<infer P> }
+  ? Omit<P, keyof FieldInputProps<any>>
   : {};
 
-export type FieldAttributes<A extends FieldConfig, T = {}> = BasicField<A> &
-  A &
-  T & { name: string };
+type FieldAttributes<T extends FieldConfig> = AddedProps<T> &
+  StrictFieldConfig<T> &
+  BaseConfig;
 
 const isString = (a: any): a is string => typeof a === 'string';
-export function useField<A extends FieldConfig, Val = any>(
-  propsOrFieldName: string | FieldAttributes<A, Val>
+export function useField<A extends FieldConfig>(
+  propsOrFieldName: string | FieldAttributes<A>
 ) {
   const formik = useFormikContext();
   const { getFieldProps, registerField, unregisterField } = formik;
@@ -105,10 +133,10 @@ export function useField<A extends FieldConfig, Val = any>(
     );
   }
 
-  if (isObject(propsOrFieldName)) {
+  if (!isString(propsOrFieldName)) {
     if (__DEV__) {
       invariant(
-        (propsOrFieldName as FieldAttributes<A, Val>).name,
+        propsOrFieldName.name,
         'Invalid field name. Either pass `useField` a string or an object containing a `name` key.'
       );
     }
@@ -118,7 +146,7 @@ export function useField<A extends FieldConfig, Val = any>(
   return getFieldProps({ name: propsOrFieldName });
 }
 
-export const Field = <A extends FieldConfig, T>({
+export const Field = <A extends Partial<FieldConfig> & BaseConfig>({
   validate,
   name,
   render,
@@ -126,7 +154,7 @@ export const Field = <A extends FieldConfig, T>({
   as: is, // `as` is reserved in typescript lol
   component,
   ...props
-}: FieldAttributes<A, T>): React.ReactElement<
+}: FieldAttributes<A>): React.ReactElement<
   FieldProps['field'] | FieldProps | LegacyFieldProps
 > => {
   const {

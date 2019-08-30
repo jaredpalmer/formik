@@ -70,22 +70,26 @@ type StringComponentConfig<U extends StringElements> =
   | { component: U }
   | { as: U };
 
-type RenderableConfigKeys = keyof FieldConfig;
+// type RenderableConfigKeys = keyof FieldConfig;
 
-type SpecificFieldConfig<U extends RenderableConfigKeys> = Required<
-  Pick<FieldConfig, U>
->;
+type PickOne<T, K extends keyof T> = Pick<T, K> &
+  { [P in keyof Omit<T, K>]?: never };
+type PickOneConfig =
+  | PickOne<FieldConfig, 'render'>
+  | PickOne<FieldConfig, 'component'>
+  | PickOne<FieldConfig, 'as'>
+  | PickOne<FieldConfig, 'children'>;
 
-type StrictFieldConfig<T extends FieldConfig> = T extends {
+type StrictFieldConfig<T extends PickOneConfig> = T extends {
   render: T['render'];
 }
-  ? SpecificFieldConfig<'render'>
-  : T extends { children: T['children'] }
-  ? SpecificFieldConfig<'children'>
+  ? Pick<T, 'render'>
   : T extends { component: T['component'] }
-  ? SpecificFieldConfig<'component'>
+  ? Pick<T, 'component'> & { children?: React.ReactNode }
   : T extends { as: T['as'] }
-  ? SpecificFieldConfig<'as'>
+  ? Pick<T, 'as'> & { children?: React.ReactNode }
+  : T extends { children: T['children'] }
+  ? Pick<T, 'children'>
   : T;
 
 type AddedProps<T extends FieldConfig> = T extends StringComponentConfig<
@@ -96,12 +100,12 @@ type AddedProps<T extends FieldConfig> = T extends StringComponentConfig<
   ? Omit<P, keyof FieldInputProps<any>>
   : {};
 
-export type FieldAttributes<T extends FieldConfig> = AddedProps<T> &
-  StrictFieldConfig<T> &
-  BaseConfig;
+export type FieldAttributes<T extends PickOneConfig> = AddedProps<T> &
+  BaseConfig &
+  StrictFieldConfig<T>;
 
 const isString = (a: any): a is string => typeof a === 'string';
-export function useField<A extends FieldConfig>(
+export function useField<A extends PickOneConfig>(
   propsOrFieldName: string | FieldAttributes<A>
 ) {
   const formik = useFormikContext();
@@ -144,7 +148,7 @@ export function useField<A extends FieldConfig>(
   return getFieldProps({ name: propsOrFieldName });
 }
 
-export const Field = <A extends FieldConfig>({
+export const Field = <A extends PickOneConfig>({
   validate,
   name,
   render,
@@ -152,9 +156,7 @@ export const Field = <A extends FieldConfig>({
   as: is, // `as` is reserved in typescript lol
   component,
   ...props
-}: FieldAttributes<A>): React.ReactElement<
-  FieldProps['field'] | FieldProps | LegacyFieldProps
-> => {
+}: FieldAttributes<A>): React.ReactElement => {
   const {
     validate: _validate,
     validationSchema: _validationSchema,
@@ -223,8 +225,12 @@ export const Field = <A extends FieldConfig>({
         children
       );
     }
-    // We don't pass `meta` for backwards compat
-    return React.createElement(component, { ...legacyBag, ...props }, children);
+    const Component = component;
+    return (
+      <Component {...legacyBag} {...props}>
+        {children}
+      </Component>
+    );
   }
 
   // default to input here so we can check for both `as` and `children` above
@@ -239,6 +245,11 @@ export const Field = <A extends FieldConfig>({
     );
   }
 
-  return React.createElement(asElement, { ...field, ...props }, children);
+  const Component = asElement;
+  return (
+    <Component {...field} {...props}>
+      {children}
+    </Component>
+  );
 };
 export const FastField = Field;

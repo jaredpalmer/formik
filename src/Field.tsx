@@ -16,7 +16,7 @@ export interface FieldProps<V = any> {
   meta: FieldMetaProps<V>;
 }
 
-type LegacyFieldProps<V = any> = Pick<FieldProps<V>, 'field' | 'form'>;
+export type LegacyFieldProps<V = any> = Pick<FieldProps<V>, 'field' | 'form'>;
 
 type StringElements = 'select' | 'input' | 'textarea';
 
@@ -85,9 +85,7 @@ type StrictFieldConfig<T extends FieldConfig> = T extends {
   : T extends { as: T['as'] }
   ? OtherFieldConfig<'as'>
   : T extends { children: (...args: any[]) => any }
-  ? OtherFieldConfig<'children'>
-  : T extends {}
-  ? Required<FieldConfig>
+  ? OtherFieldConfig<'children'> // : T extends {} // ? Required<FieldConfig>
   : T;
 
 type AddedProps<T extends FieldConfig> = T extends StringComponentConfig<
@@ -98,7 +96,7 @@ type AddedProps<T extends FieldConfig> = T extends StringComponentConfig<
   ? Omit<P, keyof FieldInputProps<any>>
   : {};
 
-type FieldAttributes<T extends FieldConfig> = AddedProps<T> &
+export type FieldAttributes<T extends FieldConfig> = AddedProps<T> &
   StrictFieldConfig<T> &
   BaseConfig;
 

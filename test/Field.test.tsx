@@ -5,16 +5,16 @@ import {
   Field,
   FastField,
   FieldProps,
-  FieldConfig,
   FormikProps,
   FormikConfig,
+  FieldAttributes,
+  LegacyFieldProps,
 } from '../src';
 
 import { noop } from './testHelpers';
 
 const initialValues = { name: 'jared', email: 'hello@reason.nyc' };
 type Values = typeof initialValues;
-type FastFieldConfig = FieldConfig;
 
 function renderForm(
   ui?: React.ReactNode,
@@ -46,16 +46,16 @@ function renderForm(
 }
 
 const createRenderField = (FieldComponent: typeof Field) => (
-  props: Partial<FieldConfig> | Partial<FastFieldConfig> = {},
+  props: FieldAttributes<any>,
   formProps?: Partial<FormikConfig<Values>>
 ) => {
   let injected: FieldProps;
 
   if (!props.children && !props.render && !props.component && !props.as) {
-    props.children = (fieldProps: FieldProps) =>
-      (injected = fieldProps) && (
-        <input {...fieldProps.field} name="name" data-testid="name-input" />
-      );
+    props.children = (fieldProps: FieldProps) => (
+      (injected = fieldProps),
+      <input {...fieldProps.field} name="name" data-testid="name-input" />
+    );
   }
 
   return {
@@ -102,10 +102,15 @@ describe('Field / FastField', () => {
   describe('receives { field, form, meta } props and renders element', () => {
     it('<Field />', () => {
       let injected: FieldProps[] = [];
+      let legacyInjected: LegacyFieldProps[] = [];
       let asInjectedProps: FieldProps['field'] = {} as any;
 
       const Component = (props: FieldProps) => (
         injected.push(props), <div data-testid="child">{TEXT}</div>
+      );
+
+      const LegacyComponent = (props: LegacyFieldProps) => (
+        legacyInjected.push(props), <div data-testid="child">{TEXT}</div>
       );
 
       const AsComponent = (props: FieldProps['field']) => (
@@ -115,29 +120,33 @@ describe('Field / FastField', () => {
       const { getFormProps, queryAllByText } = renderForm(
         <>
           <Field name="name" children={Component} />
-          <Field name="name" render={Component} />
-          <Field name="name" component={Component} />
+          <Field name="name" render={LegacyComponent} />
+          <Field name="name" component={LegacyComponent} />
           <Field name="name" as={AsComponent} />
         </>
       );
 
       const { handleBlur, handleChange } = getFormProps();
-      injected.forEach((props, idx) => {
+      injected.forEach(props => {
         expect(props.field.name).toBe('name');
         expect(props.field.value).toBe('jared');
         expect(props.field.onChange).toBe(handleChange);
         expect(props.field.onBlur).toBe(handleBlur);
         expect(props.form).toEqual(getFormProps());
-        if (idx === 0) {
-          expect(props.meta.value).toBe('jared');
-          expect(props.meta.error).toBeUndefined();
-          expect(props.meta.touched).toBe(false);
-          expect(props.meta.initialValue).toEqual('jared');
-        } else {
-          // Ensure that we do not pass through `meta` to
-          // <Field component> or <Field render>
-          expect(props.meta).toBeUndefined();
-        }
+        expect(props.meta.value).toBe('jared');
+        expect(props.meta.error).toBeUndefined();
+        expect(props.meta.touched).toBe(false);
+        expect(props.meta.initialValue).toEqual('jared');
+      });
+      legacyInjected.forEach(props => {
+        expect(props.field.name).toBe('name');
+        expect(props.field.value).toBe('jared');
+        expect(props.field.onChange).toBe(handleChange);
+        expect(props.field.onBlur).toBe(handleBlur);
+        expect(props.form).toEqual(getFormProps());
+        // Ensure that we do not pass through `meta` to
+        // <Field component> or <Field render>
+        expect((props as any).meta).toBeUndefined();
       });
 
       expect(asInjectedProps.name).toBe('name');
@@ -150,12 +159,17 @@ describe('Field / FastField', () => {
 
     it('<FastField />', () => {
       let injected: FieldProps[] = [];
+      let legacyInjected: LegacyFieldProps[] = [];
       let asInjectedProps: FieldProps['field'] = {} as any;
 
-      const Component = (props: FieldProps) => {
-        injected.push(props);
-        return <div>{TEXT}</div>;
-      };
+      const Component = (props: FieldProps) => (
+        injected.push(props), <div data-testid="child">{TEXT}</div>
+      );
+
+      const LegacyComponent = (props: LegacyFieldProps) => (
+        legacyInjected.push(props), <div data-testid="child">{TEXT}</div>
+      );
+
       const AsComponent = (props: FieldProps['field']) => (
         (asInjectedProps = props), <div data-testid="child">{TEXT}</div>
       );
@@ -163,29 +177,34 @@ describe('Field / FastField', () => {
       const { getFormProps, queryAllByText } = renderForm(
         <>
           <FastField name="name" children={Component} />
-          <FastField name="name" render={Component} />
-          <FastField name="name" component={Component} />
+          <FastField name="name" render={LegacyComponent} />
+          <FastField name="name" component={LegacyComponent} />
           <FastField name="name" as={AsComponent} />
         </>
       );
 
       const { handleBlur, handleChange } = getFormProps();
-      injected.forEach((props, idx) => {
+      injected.forEach(props => {
         expect(props.field.name).toBe('name');
         expect(props.field.value).toBe('jared');
         expect(props.field.onChange).toBe(handleChange);
         expect(props.field.onBlur).toBe(handleBlur);
         expect(props.form).toEqual(getFormProps());
-        if (idx === 0) {
-          expect(props.meta.value).toBe('jared');
-          expect(props.meta.error).toBeUndefined();
-          expect(props.meta.touched).toBe(false);
-          expect(props.meta.initialValue).toEqual('jared');
-        } else {
-          // Ensure that we do not pass through `meta` to
-          // <Field component> or <Field render>
-          expect(props.meta).toBeUndefined();
-        }
+        expect(props.meta.value).toBe('jared');
+        expect(props.meta.error).toBeUndefined();
+        expect(props.meta.touched).toBe(false);
+        expect(props.meta.initialValue).toEqual('jared');
+      });
+
+      legacyInjected.forEach(props => {
+        expect(props.field.name).toBe('name');
+        expect(props.field.value).toBe('jared');
+        expect(props.field.onChange).toBe(handleChange);
+        expect(props.field.onBlur).toBe(handleBlur);
+        expect(props.form).toEqual(getFormProps());
+        // Ensure that we do not pass through `meta` to
+        // <Field component> or <Field render>
+        expect((props as any).meta).toBeUndefined();
       });
 
       expect(asInjectedProps.name).toBe('name');

@@ -63,29 +63,29 @@ export interface FieldConfig {
   /**
    * Children render function <Field name>{props => ...}</Field>)
    */
-  children?: ((props: FieldProps) => React.ReactElement) | React.ReactNode;
+  children?: React.ReactNode | ((props: FieldProps) => React.ReactElement);
 }
 
 type StringComponentConfig<U extends StringElements> =
   | { component: U }
   | { as: U };
 
-type RenderableConfigKeys = Exclude<keyof FieldConfig, keyof BaseConfig>;
+type RenderableConfigKeys = keyof FieldConfig;
 
-type OtherFieldConfig<U extends RenderableConfigKeys> = Required<
+type SpecificFieldConfig<U extends RenderableConfigKeys> = Required<
   Pick<FieldConfig, U>
 >;
 
 type StrictFieldConfig<T extends FieldConfig> = T extends {
-  component: T['component'];
+  render: T['render'];
 }
-  ? OtherFieldConfig<'component'>
-  : T extends { render: T['render'] }
-  ? OtherFieldConfig<'render'>
+  ? SpecificFieldConfig<'render'>
+  : T extends { children: T['children'] }
+  ? SpecificFieldConfig<'children'>
+  : T extends { component: T['component'] }
+  ? SpecificFieldConfig<'component'>
   : T extends { as: T['as'] }
-  ? OtherFieldConfig<'as'>
-  : T extends { children: (...args: any[]) => any }
-  ? OtherFieldConfig<'children'> // : T extends {} // ? Required<FieldConfig>
+  ? SpecificFieldConfig<'as'>
   : T;
 
 type AddedProps<T extends FieldConfig> = T extends StringComponentConfig<
@@ -144,7 +144,7 @@ export function useField<A extends FieldConfig>(
   return getFieldProps({ name: propsOrFieldName });
 }
 
-export const Field = <A extends Partial<FieldConfig> & BaseConfig>({
+export const Field = <A extends FieldConfig>({
   validate,
   name,
   render,

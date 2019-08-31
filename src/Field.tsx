@@ -76,9 +76,8 @@ type PickOne<T, K extends keyof T> = Pick<T, K> &
   { [P in keyof Omit<T, K>]?: never };
 type PickOneConfig =
   | PickOne<FieldConfig, 'render'>
-  | PickOne<FieldConfig, 'component'>
-  | PickOne<FieldConfig, 'as'>
-  | PickOne<FieldConfig, 'children'>;
+  | PickOne<FieldConfig, 'component' | 'children'>
+  | PickOne<FieldConfig, 'as' | 'children'>;
 
 type StrictFieldConfig<T extends PickOneConfig> = T extends {
   render: T['render'];
@@ -88,10 +87,7 @@ type StrictFieldConfig<T extends PickOneConfig> = T extends {
   ? Pick<T, 'component'> & { children?: React.ReactNode }
   : T extends { as: T['as'] }
   ? Pick<T, 'as'> & { children?: React.ReactNode }
-  : T extends { children: T['children'] }
-  ? Pick<T, 'children'>
   : T;
-
 type AddedProps<T extends FieldConfig> = T extends StringComponentConfig<
   infer U
 >

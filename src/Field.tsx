@@ -221,12 +221,8 @@ export const Field = <A extends PickOneConfig>({
         children
       );
     }
-    const Component = component;
-    return (
-      <Component {...legacyBag} {...props}>
-        {children}
-      </Component>
-    );
+
+    return React.createElement(component, { ...legacyBag, ...props }, children);
   }
 
   // default to input here so we can check for both `as` and `children` above
@@ -241,11 +237,6 @@ export const Field = <A extends PickOneConfig>({
     );
   }
 
-  const Component = asElement;
-  return (
-    <Component {...field} {...props}>
-      {children}
-    </Component>
-  );
+  return React.createElement(asElement, { ...field, ...props }, children);
 };
 export const FastField = Field;

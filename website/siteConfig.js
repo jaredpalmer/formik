@@ -178,6 +178,11 @@ const users = [
     image: '/formik/img/logos/zauberware-logo.svg',
     infoLink: 'https://www.zauberware.com',
   },
+  {
+    caption: 'TicketSwap',
+    image: '/formik/img/logos/ticketswap.svg',
+    infoLink: 'https://www.ticketswap.com',
+  },
 ];
 
 const siteConfig = {

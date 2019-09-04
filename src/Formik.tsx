@@ -386,17 +386,17 @@ export function useFormik<Values extends FormikValues = FormikValues>({
       enableReinitialize &&
       isMounted.current === true
     ) {
-      var needReset = false;
+      const needReset = false;
       if (!isEqual(initialValues.current, props.initialValues)) {
         initialValues.current = props.initialValues;
         needReset = true;
       }
       if (!isEqual(initialErrors.current, props.initialErrors)) {
-        initialErrors.current = props.initialErrors;
+        initialErrors.current = props.initialErrors || emptyErrors;
         needReset = true;
       }
       if (!isEqual(initialTouched.current, props.initialTouched)) {
-        initialTouched.current = props.initialTouched;
+        initialTouched.current = props.initialTouched || emptyTouched;
         needReset = true;
       }
       if (needReset) {

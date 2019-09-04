@@ -407,7 +407,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
         resetForm();
       }
     }
-  }, [enableReinitialize, props.initialValues, props.initialErrors, props.initialTouched, resetForm]);
+  }, [enableReinitialize, props.initialValues, props.initialErrors, props.initialTouched, props.initialStatus, resetForm]);
 
   const validateField = useEventCallback((name: string) => {
     // This will efficiently validate a single field by avoiding state

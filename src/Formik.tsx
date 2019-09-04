@@ -399,6 +399,10 @@ export function useFormik<Values extends FormikValues = FormikValues>({
         initialTouched.current = props.initialTouched || emptyTouched;
         needReset = true;
       }
+      if (!isEqual(initialStatus.current, props.initialStatus)) {
+        initialStatus.current = props.initialStatus;
+        needReset = true;
+      }
       if (needReset) {
         resetForm();
       }

@@ -386,7 +386,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
       enableReinitialize &&
       isMounted.current === true
     ) {
-      const needReset = false;
+      let needReset = false;
       if (!isEqual(initialValues.current, props.initialValues)) {
         initialValues.current = props.initialValues;
         needReset = true;

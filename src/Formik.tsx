@@ -384,13 +384,26 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   React.useEffect(() => {
     if (
       enableReinitialize &&
-      isMounted.current === true &&
-      !isEqual(initialValues.current, props.initialValues)
+      isMounted.current === true
     ) {
-      initialValues.current = props.initialValues;
-      resetForm();
+      var needReset = false;
+      if (!isEqual(initialValues.current, props.initialValues)) {
+        initialValues.current = props.initialValues;
+        needReset = true;
+      }
+      if (!isEqual(initialErrors.current, props.initialErrors)) {
+        initialErrors.current = props.initialErrors;
+        needReset = true;
+      }
+      if (!isEqual(initialTouched.current, props.initialTouched)) {
+        initialTouched.current = props.initialTouched;
+        needReset = true;
+      }
+      if (needReset) {
+        resetForm();
+      }
     }
-  }, [enableReinitialize, props.initialValues, resetForm]);
+  }, [enableReinitialize, props.initialValues, props.initialErrors, props.initialTouched, resetForm]);
 
   const validateField = useEventCallback((name: string) => {
     // This will efficiently validate a single field by avoiding state

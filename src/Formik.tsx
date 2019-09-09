@@ -381,33 +381,56 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     [props.initialErrors, props.initialStatus, props.initialTouched]
   );
 
-  React.useEffect(() => {
-    if (
-      enableReinitialize &&
-      isMounted.current === true
-    ) {
-      let needReset = false;
-      if (!isEqual(initialValues.current, props.initialValues)) {
+  React.useEffect(
+    function() {
+      if (enableReinitialize && isMounted.current === true) {
         initialValues.current = props.initialValues;
-        needReset = true;
+        if (!isEqual(state.values, props.initialValues)) {
+          resetForm();
+        }
       }
-      if (!isEqual(initialErrors.current, props.initialErrors)) {
+    },
+    [enableReinitialize, props.initialValues]
+  );
+
+  React.useEffect(
+    function() {
+      if (enableReinitialize && isMounted.current === true) {
         initialErrors.current = props.initialErrors || emptyErrors;
-        needReset = true;
+        dispatch({
+          type: 'SET_ERRORS',
+          payload: props.initialErrors || emptyErrors,
+        });
       }
-      if (!isEqual(initialTouched.current, props.initialTouched)) {
+    },
+    [enableReinitialize, props.initialErrors]
+  );
+
+  React.useEffect(
+    function() {
+      if (enableReinitialize && isMounted.current === true) {
         initialTouched.current = props.initialTouched || emptyTouched;
-        needReset = true;
+        dispatch({
+          type: 'SET_TOUCHED',
+          payload: props.initialTouched || emptyTouched,
+        });
       }
-      if (!isEqual(initialStatus.current, props.initialStatus)) {
+    },
+    [enableReinitialize, props.initialTouched]
+  );
+
+  React.useEffect(
+    function() {
+      if (enableReinitialize && isMounted.current === true) {
         initialStatus.current = props.initialStatus;
-        needReset = true;
+        dispatch({
+          type: 'SET_STATUS',
+          payload: props.initialStatus,
+        });
       }
-      if (needReset) {
-        resetForm();
-      }
-    }
-  }, [enableReinitialize, props.initialValues, props.initialErrors, props.initialTouched, props.initialStatus, resetForm]);
+    },
+    [enableReinitialize, props.initialStatus]
+  );
 
   const validateField = useEventCallback((name: string) => {
     // This will efficiently validate a single field by avoiding state

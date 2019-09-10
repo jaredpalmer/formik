@@ -9,9 +9,9 @@ export type FormikFormProps = Pick<
   >
 >;
 
-export function Form(props: FormikFormProps) {
+export React.forwardRef(function Form(props: FormikFormProps, ref) {
   const { handleReset, handleSubmit } = useFormikContext();
-  return <form onSubmit={handleSubmit} onReset={handleReset} {...props} />;
-}
+  return <form onSubmit={handleSubmit} onReset={handleReset} {...props} forwardedRef={ref} />;
+})
 
 Form.displayName = 'Form';

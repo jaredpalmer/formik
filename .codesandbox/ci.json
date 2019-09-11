@@ -1,3 +1,4 @@
 {
-  "sandboxes": ["9dyx8"]
+  "sandboxes": ["9dyx8"],
+  "buildCommand": false
 }

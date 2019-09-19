@@ -5,7 +5,7 @@ title: Tutorial
 
 ## Learn Formik by Building it.
 
-My talk at React Alicante is really the best way to get started. It introduces the library (by watching me build a mini version of it) and demos how to build a non-trivial form (with arrays, custom inputs, etc.) using the real thing. It's around 45 minutes long.
+My talk at React Alicante is really the best way to get started. It introduces the library (by watching me build a mini version of it) and demos how to build a non-trivial form (with arrays, custom inputs, etc.) using the real thing. It's around 54 minutes long.
 
 <iframe width="800" height="315" src="https://www.youtube.com/embed/oiNtnehlaTo" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen title="Taming Forms in React - Jared Palmer"></iframe>
 

@@ -266,6 +266,13 @@ describe('utils', () => {
       expect(obj instanceof TestClass).toEqual(true);
       expect(newObj instanceof TestClass).toEqual(true);
     });
+
+    it('can convert primitives to objects before setting', () => {
+      const obj = { x: [{ y: true }] };
+      const newObj = setIn(obj, 'x.0.y.z', true);
+      expect(obj).toEqual({ x: [{ y: true }] });
+      expect(newObj).toEqual({ x: [{ y: { z: true } }] });
+    });
   });
 
   describe('isPromise', () => {

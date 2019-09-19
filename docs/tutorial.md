@@ -463,7 +463,7 @@ const SignupForm = () => {
       lastName: Yup.string()
         .min(20, 'Must be 20 characters or less')
         .required('Required'),
-      lastName: Yup.string()
+      email: Yup.string()
         .email('Invalid email addresss`')
         .required('Required'),
     }),
@@ -542,7 +542,7 @@ const SignupForm = () => {
       lastName: Yup.string()
         .min(20, 'Must be 20 characters or less')
         .required('Required'),
-      lastName: Yup.string()
+      email: Yup.string()
         .email('Invalid email addresss`')
         .required('Required'),
     }),

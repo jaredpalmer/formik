@@ -575,9 +575,33 @@ const SignupForm = () => {
 
 ### Leveraging React Context
 
-Our code above is again very explicit about exactly what Formik is doing. `onChange` -> `handleChange`, `onBlur` -> `handleBlur`, and so on. However, we still have to manually pass each input this "prop getter" `getFieldProps()`. To save you even more time, Formik comes with React context-powered API/component make life easier and less verbose: <Formik/>, <Form />, <Field />, and <ErrorMessage />. They use React Context implicitly connect to the parent <Formik /> state/methods.
+Our code above is again very explicit about exactly what Formik is doing. `onChange` -> `handleChange`, `onBlur` -> `handleBlur`, and so on. However, we still have to manually pass each input this "prop getter" `getFieldProps()`. To save you even more time, Formik comes with [React Context](https://reactjs.org/docs/context.html)-powered API/component make life easier and less verbose: `<Formik/>`, `<Form />`, `<Field />`, and `<ErrorMessage />`. More explicitly, they use React Context implicitly connect to the parent `<Formik />` state/methods.
 
-Since these components use React context, we need to render a React Context Provider that holds our form state and helps in our tree. Thus, we swap out `useFormik()` hook for the `<Formik>` component/render-prop.
+Since these components use React Context, we need to render a [React Context Provider](https://reactjs.org/docs/context.html#contextprovider) that holds our form state and helpers in our tree. If you did this yourself, it would look like:
+
+```jsx
+import React from 'react';
+import { useFormik } from 'formik';
+
+// Create empty context
+const FormikContext = React.createContext({});
+
+// Place all of what's returned by useFormik onto context
+export const Formik = ({ children, ...props }) => {
+  const formikStateAndHelpers = useFormik(props);
+  return (
+    <FormikContext.Provider value={formikStateAndHelpers}>
+      {typeof children === 'function'
+        ? children(formikStateAndHelpers)
+        : children}
+    </FormikContext.Provider>
+  );
+};
+```
+
+Luckily, we've done this for you and a `<Formik>` component that works just like this one comes with the package.
+
+Let's now swap out the `useFormik()` hook for the Formik's `<Formik>` component/render-prop. Since it's a component, we'll convert the object passed to `useFormik()` to JSX, with each key becoming a prop.
 
 ```jsx
 import React from 'react';

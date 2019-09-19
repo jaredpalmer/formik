@@ -659,7 +659,7 @@ As you can see above, we swapped out `useFormik()` hook and replaced it with the
 
 ```jsx
 import React from 'react';
-import { Formik, Field, ErrorMessage } from 'formik';
+import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 
 const SignupForm = () => {

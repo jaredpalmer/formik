@@ -81,7 +81,7 @@ export function useField<Val = any>(
   const validateFn = isAnObject
     ? (propsOrFieldName as FieldAttributes<Val>).validate
     : undefined;
-  React.useEffect(() => {
+  React.useLayoutEffect(() => {
     if (fieldName) {
       registerField(fieldName, {
         validate: validateFn,

@@ -195,15 +195,15 @@ export function useFormik<Values extends FormikValues = FormikValues>({
    */
   const runValidationSchema = React.useCallback(
     (values: Values, field?: string): Promise<FormikErrors<Values>> => {
+      const validationSchema = props.validationSchema;
+      const schema = isFunction(validationSchema)
+        ? validationSchema(field)
+        : validationSchema;
+      const promise =
+        field && schema.validateAt
+          ? schema.validateAt(field, values)
+          : validateYupSchema(values, schema);
       return new Promise((resolve, reject) => {
-        const validationSchema = props.validationSchema;
-        const schema = isFunction(validationSchema)
-          ? validationSchema(field)
-          : validationSchema;
-        let promise =
-          field && schema.validateAt
-            ? schema.validateAt(field, values)
-            : validateYupSchema(values, schema);
         promise.then(
           () => {
             resolve(emptyErrors);

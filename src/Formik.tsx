@@ -932,7 +932,7 @@ function arrayMerge(target: any[], source: any[], options: any): any[] {
 
 /** Return multi select values based on an array of options */
 function getSelectedValues(options: any[]) {
-  return options.filter(el => el.selected).map(el => el.value);
+  return Array.from(options).filter(el => el.selected).map(el => el.value);
 }
 
 /** Return the next value for a checkbox */

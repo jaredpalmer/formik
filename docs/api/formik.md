@@ -151,7 +151,7 @@ use it to pass API responses back into your component in `handleSubmit`.
 
 #### `setSubmitting: (isSubmitting: boolean) => void`
 
-Set `isSubmitting` imperatively.
+Set `isSubmitting` imperatively. You would call it with `setSubmitting(false)` in your `onSubmit` handler to finish the cycle. To learn more about the submission process, see [Form Submission](guides/form-submission.md).
 
 #### `setTouched: (fields: { [field: string]: boolean }) => void`
 

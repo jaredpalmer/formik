@@ -123,19 +123,19 @@ enable/disable a submit and reset buttons on initial mount.
 
 If this option is specified, then Formik will transfer its results into
 updatable form state and make these values available to the new component as
-`props.errors` initially. Useful for instatiating arbitrary error state into your form. As a reminder, `props.errors` will be overwritten as soon as validation runs. Formik will also reset `props.errors` to this initial value (and this function will be re-run) if the form is reset.
+`props.errors` initially. Useful for instantiating arbitrary error state into your form. As a reminder, `props.errors` will be overwritten as soon as validation runs. Formik will also reset `props.errors` to this initial value (and this function will be re-run) if the form is reset.
 
 ### `mapPropsToStatus?: (props: Props) => any`
 
 If this option is specified, then Formik will transfer its results into
 updatable form state and make these values available to the new component as
-`props.status`. Useful for storing or instatiating arbitrary state into your form. As a reminder, `status` will be reset to this initial value (and this function will be re-run) if the form is reset.
+`props.status`. Useful for storing or instantiating arbitrary state into your form. As a reminder, `status` will be reset to this initial value (and this function will be re-run) if the form is reset.
 
 ### `mapPropsToTouched?: (props: Props) => FormikTocuhed<Values>`
 
 If this option is specified, then Formik will transfer its results into
 updatable form state and make these values available to the new component as
-`props.errors`. Useful for instatiating arbitrary touched state (i.e. marking fields as visited) into your form. As a reminder, Formik will use this initial value (and this function will be re-run) if the form is reset.
+`props.errors`. Useful for instantiating arbitrary touched state (i.e. marking fields as visited) into your form. As a reminder, Formik will use this initial value (and this function will be re-run) if the form is reset.
 
 ### `mapPropsToValues?: (props: Props) => Values`
 

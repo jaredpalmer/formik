@@ -41,6 +41,10 @@ export interface ArrayHelpers {
   replace: (index: number, value: any) => void;
   /** Curried fn to replace an element at a given index into the array */
   handleReplace: (index: number, value: any) => () => void;
+  /** Imperatively sort an array using given comparator */
+  sort: (comp: (a: any, b: any) => number) => void;
+  /** Curried fn to sort an array */
+  handleSort: (comp: (a: any, b: any) => number) => () => void;
   /** Imperatively add an element to the beginning of an array and return its length */
   unshift: (value: any) => number;
   /** Curried fn to add an element to the beginning of an array */
@@ -84,6 +88,9 @@ export const replace = (array: any[], index: number, value: any) => {
   const copy = [...(array || [])];
   copy[index] = value;
   return copy;
+};
+export const sort = (array: any[], comp: (a: any, b: any) => number) => {
+  return Array.prototype.slice.call(array).sort(comp);
 };
 class FieldArrayInner<Values = {}> extends React.Component<
   FieldArrayConfig & { formik: FormikContext<Values> },
@@ -191,6 +198,11 @@ class FieldArrayInner<Values = {}> extends React.Component<
   handleReplace = (index: number, value: any) => () =>
     this.replace(index, value);
 
+  sort = (comp: (a: any, b: any) => number) =>
+    this.updateArrayField((array: any[]) => sort(array, comp), false, false);
+
+  handleSort = (comp: (a: any, b: any) => number) => () => this.sort(comp);
+
   unshift = (value: any) => {
     let length = -1;
     this.updateArrayField(
@@ -274,6 +286,7 @@ class FieldArrayInner<Values = {}> extends React.Component<
       move: this.move,
       insert: this.insert,
       replace: this.replace,
+      sort: this.sort,
       unshift: this.unshift,
       remove: this.remove,
       handlePush: this.handlePush,
@@ -282,6 +295,7 @@ class FieldArrayInner<Values = {}> extends React.Component<
       handleMove: this.handleMove,
       handleInsert: this.handleInsert,
       handleReplace: this.handleReplace,
+      handleSort: this.handleSort,
       handleUnshift: this.handleUnshift,
       handleRemove: this.handleRemove,
     };

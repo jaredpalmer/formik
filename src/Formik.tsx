@@ -468,7 +468,7 @@ export class Formik<Values = FormikValues> extends React.Component<
           event.persist();
         }
         const { name, id, outerHTML } = event.target;
-        field = name ? name : id;
+        field = maybePath ? maybePath : name ? name : id;
         if (!field && process.env.NODE_ENV !== 'production') {
           warnAboutMissingIdentifier({
             htmlContent: outerHTML,

@@ -178,6 +178,11 @@ const users = [
     image: '/formik/img/logos/zauberware-logo.svg',
     infoLink: 'https://www.zauberware.com',
   },
+  {
+    caption: 'brightwheel',
+    image: '/formik/img/logos/brightwheel.svg',
+    infoLink: 'https://mybrightwheel.com'
+  }
 ];
 
 const siteConfig = {

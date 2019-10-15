@@ -13,7 +13,7 @@
 [![gzip size](http://img.badgesize.io/https://unpkg.com/formik@latest/dist/formik.umd.production.js?compression=gzip)](https://unpkg.com/formik@latest/dist/formik.umd.production.js)
 [![license](https://badgen.now.sh/badge/license/MIT)](./LICENSE)
 [![Discord](https://img.shields.io/discord/102860784329052160.svg?style=flat-square)](https://discord.gg/cU6MCve)
-[![Join the community on Spectrum](https://withspectrum.github.io/badge/badge.svg)](https://spectrum.chat/palmer)
+[![Join the community on Spectrum](https://withspectrum.github.io/badge/badge.svg)](https://spectrum.chat/palmer) [![Greenkeeper badge](https://badges.greenkeeper.io/jaredpalmer/formik.svg)](https://greenkeeper.io/)
 
 **Visit [https://jaredpalmer.com/formik/](https://jaredpalmer.com/formik/) to get started with Formik.**
 

@@ -2,14 +2,16 @@ import * as React from 'react';
 import { FormikContext } from './types';
 import invariant from 'tiny-warning';
 
-const PrivateFormikContext = React.createContext<FormikContext<any>>(
+const PrivateFormikContext = React.createContext<FormikContext<any, any>>(
   undefined as any
 );
 export const FormikProvider = PrivateFormikContext.Provider;
 export const FormikConsumer = PrivateFormikContext.Consumer;
 
-export function useFormikContext<Values>() {
-  const formik = React.useContext<FormikContext<Values>>(PrivateFormikContext);
+export function useFormikContext<TValues, TError = string>() {
+  const formik = React.useContext<FormikContext<TValues, TError>>(
+    PrivateFormikContext
+  );
 
   invariant(
     !!formik,

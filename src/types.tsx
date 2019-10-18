@@ -10,39 +10,39 @@ export interface FormikValues {
  * An object containing error messages whose keys correspond to FormikValues.
  * Should be always be and object of strings, but any is allowed to support i18n libraries.
  */
-export type FormikErrors<Values> = {
-  [K in keyof Values]?: Values[K] extends any[]
-    ? Values[K][number] extends object // [number] is the special sauce to get the type of array's element. More here https://github.com/Microsoft/TypeScript/pull/21316
-      ? FormikErrors<Values[K][number]>[] | string | string[]
-      : string | string[]
-    : Values[K] extends object
-    ? FormikErrors<Values[K]>
-    : string;
+export type FormikErrors<TValues, TError = string> = {
+  [K in keyof TValues]?: TValues[K] extends any[]
+    ? TValues[K][number] extends object // [number] is the special sauce to get the type of array's element. More here https://github.com/Microsoft/TypeScript/pull/21316
+      ? FormikErrors<TValues[K][number], TError>[] | TError | TError[]
+      : TError | TError[]
+    : TValues[K] extends object
+    ? FormikErrors<TValues[K], TError>
+    : TError;
 };
 
 /**
  * An object containing touched state of the form whose keys correspond to FormikValues.
  */
-export type FormikTouched<Values> = {
-  [K in keyof Values]?: Values[K] extends any[]
-    ? Values[K][number] extends object // [number] is the special sauce to get the type of array's element. More here https://github.com/Microsoft/TypeScript/pull/21316
-      ? FormikTouched<Values[K][number]>[]
+export type FormikTouched<TValues> = {
+  [K in keyof TValues]?: TValues[K] extends any[]
+    ? TValues[K][number] extends object // [number] is the special sauce to get the type of array's element. More here https://github.com/Microsoft/TypeScript/pull/21316
+      ? FormikTouched<TValues[K][number]>[]
       : boolean
-    : Values[K] extends object
-    ? FormikTouched<Values[K]>
+    : TValues[K] extends object
+    ? FormikTouched<TValues[K]>
     : boolean;
 };
 
 /**
  * Formik state tree
  */
-export interface FormikState<Values> {
+export interface FormikState<TValues, TError = string> {
   /** Form values */
-  values: Values;
+  values: TValues;
   /** map of field names to specific error for that field */
-  errors: FormikErrors<Values>;
+  errors: FormikErrors<TValues, TError>;
   /** map of field names to whether the field has been touched */
-  touched: FormikTouched<Values>;
+  touched: FormikTouched<TValues>;
   /** whether the form is currently submitting */
   isSubmitting: boolean;
   /** whether the form is currently validating (prior to submission) */
@@ -56,17 +56,17 @@ export interface FormikState<Values> {
 /**
  * Formik computed properties. These are read-only.
  */
-export interface FormikComputedProps<Values> {
+export interface FormikComputedProps<TValues, TError = string> {
   /** True if any input has been touched. False otherwise. */
   readonly dirty: boolean;
   /** True if state.errors is empty */
   readonly isValid: boolean;
   /** The initial values of the form */
-  readonly initialValues: Values;
+  readonly initialValues: TValues;
   /** The initial errors of the form */
-  readonly initialErrors: FormikErrors<Values>;
+  readonly initialErrors: FormikErrors<TValues, TError>;
   /** The initial visited fields of the form */
-  readonly initialTouched: FormikTouched<Values>;
+  readonly initialTouched: FormikTouched<TValues>;
   /** The initial status of the form */
   readonly initialStatus?: any;
 }
@@ -74,50 +74,63 @@ export interface FormikComputedProps<Values> {
 /**
  * Formik state helpers
  */
-export interface FormikHelpers<Values> {
+export interface FormikHelpers<TValues, TError = string> {
   /** Manually set top level status. */
   setStatus(status?: any): void;
   /** Manually set errors object */
-  setErrors(errors: FormikErrors<Values>): void;
+  setErrors(errors: FormikErrors<TValues, TError>): void;
   /** Manually set isSubmitting */
   setSubmitting(isSubmitting: boolean): void;
   /** Manually set touched object */
-  setTouched(touched: FormikTouched<Values>): void;
+  setTouched(touched: FormikTouched<TValues>): void;
   /** Manually set values object  */
-  setValues(values: Values): void;
+  setValues(values: TValues): void;
   /** Set value of form field directly */
-  setFieldValue(
-    field: keyof Values & string,
-    value: any,
+  setFieldValue<TFieldName extends keyof TValues & string>(
+    field: TFieldName,
+    value: TValues[TFieldName],
     shouldValidate?: boolean
   ): void;
   /** Set error message of a form field directly */
-  setFieldError(field: keyof Values & string, message: string): void;
+  setFieldError(field: keyof TValues & string, message: TError): void;
   /** Set whether field has been touched directly */
   setFieldTouched(
-    field: keyof Values & string,
+    field: keyof TValues & string,
     isTouched?: boolean,
     shouldValidate?: boolean
   ): void;
   /** Validate form values */
-  validateForm(values?: any): Promise<FormikErrors<Values>>;
+  validateForm(values?: TValues): Promise<FormikErrors<TValues, TError>>;
   /** Validate field value */
-  validateField(field: string): void;
+  validateField(field: keyof TValues & string): void;
   /** Reset form */
-  resetForm(nextState?: Partial<FormikState<Values>>): void;
+  resetForm(nextState?: Partial<FormikState<TValues, TError>>): void;
   /** Set Formik state, careful! */
   setFormikState(
     f:
-      | FormikState<Values>
-      | ((prevState: FormikState<Values>) => FormikState<Values>),
+      | FormikState<TValues, TError>
+      | ((
+          prevState: FormikState<TValues, TError>
+        ) => FormikState<TValues, TError>),
     cb?: () => void
   ): void;
+}
+
+export interface FieldPropsQuery<
+  TFieldName extends keyof TValues & string,
+  TValues extends FormikValues
+> {
+  name: TFieldName;
+  type?: string;
+  value?: TValues[TFieldName];
+  as?: string;
+  multiple?: boolean;
 }
 
 /**
  * Formik form event handlers
  */
-export interface FormikHandlers {
+export interface FormikHandlers<TValues extends FormikValues, TError = string> {
   /** Form submit handler */
   handleSubmit: (e?: React.FormEvent<HTMLFormElement>) => void;
   /** Reset form event handler  */
@@ -137,9 +150,12 @@ export interface FormikHandlers {
     ? void
     : ((e: string | React.ChangeEvent<any>) => void);
 
-  getFieldProps<Value = any>(
-    props: any
-  ): [FieldInputProps<Value>, FieldMetaProps<Value>];
+  getFieldProps<TFieldName extends keyof TValues & string>(
+    props: FieldPropsQuery<TFieldName, TValues>
+  ): [
+    FieldInputProps<TFieldName, TValues, TError>,
+    FieldMetaProps<TValues[TFieldName], TError>
+  ];
 }
 
 /**
@@ -159,28 +175,31 @@ export interface FormikSharedConfig<Props = {}> {
 /**
  * <Formik /> props
  */
-export interface FormikConfig<Values> extends FormikSharedConfig {
+export interface FormikConfig<TValues, TError = string>
+  extends FormikSharedConfig {
   /**
    * Form component to render
    */
-  component?: React.ComponentType<FormikProps<Values>> | React.ReactNode;
+  component?:
+    | React.ComponentType<FormikProps<TValues, TError>>
+    | React.ReactNode;
 
   /**
    * Render prop (works like React router's <Route render={props =>} />)
    */
-  render?: (props: FormikProps<Values>) => React.ReactNode;
+  render?: (props: FormikProps<TValues, TError>) => React.ReactNode;
 
   /**
    * React children or child render callback
    */
   children?:
-    | ((props: FormikProps<Values>) => React.ReactNode)
+    | ((props: FormikProps<TValues, TError>) => React.ReactNode)
     | React.ReactNode;
 
   /**
    * Initial values of the form
    */
-  initialValues: Values;
+  initialValues: TValues;
 
   /**
    * Initial status
@@ -188,20 +207,26 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
   initialStatus?: any;
 
   /** Initial object map of field names to specific error for that field */
-  initialErrors?: FormikErrors<Values>;
+  initialErrors?: FormikErrors<TValues, TError>;
 
   /** Initial object map of field names to whether the field has been touched */
-  initialTouched?: FormikTouched<Values>;
+  initialTouched?: FormikTouched<TValues>;
 
   /**
    * Reset handler
    */
-  onReset?: (values: Values, formikHelpers: FormikHelpers<Values>) => void;
+  onReset?: (
+    values: TValues,
+    formikHelpers: FormikHelpers<TValues, TError>
+  ) => void;
 
   /**
    * Submission handler
    */
-  onSubmit: (values: Values, formikHelpers: FormikHelpers<Values>) => void;
+  onSubmit: (
+    values: TValues,
+    formikHelpers: FormikHelpers<TValues, TError>
+  ) => void;
   /**
    * A Yup Schema or a function that returns a Yup schema
    */
@@ -211,31 +236,41 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
    * Validation function. Must return an error object or promise that
    * throws an error object where that object keys map to corresponding value.
    */
-  validate?: (values: Values) => void | object | Promise<FormikErrors<Values>>;
+  validate?: (
+    values: TValues
+  ) => void | object | Promise<FormikErrors<TValues, TError>>;
 }
 
 /**
  * State, handlers, and helpers made available to form component or render prop
  * of <Formik/>.
  */
-export type FormikProps<Values> = FormikSharedConfig &
-  FormikState<Values> &
-  FormikHelpers<Values> &
-  FormikHandlers &
-  FormikComputedProps<Values> &
-  FormikRegistration & { submitForm: () => Promise<void> };
+export type FormikProps<TValues, TError = string> = FormikSharedConfig &
+  FormikState<TValues, TError> &
+  FormikHelpers<TValues, TError> &
+  FormikHandlers<TValues, TError> &
+  FormikComputedProps<TValues, TError> &
+  FormikRegistration<TValues, TError> & { submitForm: () => Promise<void> };
 
 /** Internal Formik registration methods that get passed down as props */
-export interface FormikRegistration {
-  registerField(name: string, fns: { validate?: FieldValidator }): void;
-  unregisterField(name: string): void;
+export interface FormikRegistration<TValues, TError = string> {
+  registerField<TFieldName extends keyof TValues & string>(
+    name: TFieldName,
+    fns: { validate?: FieldValidator<TValues[TFieldName], TError> }
+  ): void;
+  unregisterField<TFieldName extends keyof TValues & string>(
+    name: TFieldName
+  ): void;
 }
 
 /**
  * State, handlers, and helpers made available to Formik's primitive components through context.
  */
-export type FormikContext<Values> = FormikProps<Values> &
-  Pick<FormikConfig<Values>, 'validate' | 'validationSchema'>;
+export type FormikContext<TValues, TError = string> = FormikProps<
+  TValues,
+  TError
+> &
+  Pick<FormikConfig<TValues, TError>, 'validate' | 'validationSchema'>;
 
 export interface SharedRenderProps<T> {
   /**
@@ -260,37 +295,41 @@ export type GenericFieldHTMLAttributes =
   | JSX.IntrinsicElements['textarea'];
 
 /** Field metadata */
-export interface FieldMetaProps<Value> {
+export interface FieldMetaProps<TValue, TError = string> {
   /** Value of the field */
-  value: Value;
-  /** Error message of the field */
-  error?: string;
+  value: TValue;
+  /** TError message of the field */
+  error?: TError;
   /** Has the field been visited? */
   touched: boolean;
   /** Initial value of the field */
-  initialValue?: Value;
+  initialValue?: TValue;
   /** Initial touched state of the field */
   initialTouched: boolean;
   /** Initial error message of the field */
-  initialError?: string;
+  initialError?: TError;
 }
 
 /** Field input value, name, and event handlers */
-export interface FieldInputProps<Value> {
+export interface FieldInputProps<
+  TFieldName extends keyof TValues & string = any,
+  TValues = FormikValues,
+  TError = string
+> {
   /** Value of the field */
-  value: Value;
+  value: TValues[TFieldName];
   /** Name of the field */
-  name: string;
+  name: TFieldName;
   /** Multiple select? */
   multiple?: boolean;
   /** Is the field checked? */
   checked?: boolean;
   /** Change event handler */
-  onChange: FormikHandlers['handleChange'];
+  onChange: FormikHandlers<TValues, TError>['handleChange'];
   /** Blur event handler */
-  onBlur: FormikHandlers['handleBlur'];
+  onBlur: FormikHandlers<TValues, TError>['handleBlur'];
 }
 
-export type FieldValidator = (
-  value: any
-) => string | void | Promise<string | void>;
+export type FieldValidator<TValue, TError = string> = (
+  value: TValue
+) => TError | void | Promise<TError | void>;

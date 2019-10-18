@@ -10,6 +10,7 @@ import {
   FormikProps,
   FieldMetaProps,
   FieldInputProps,
+  FieldPropsQuery,
 } from './types';
 import {
   isFunction,
@@ -26,26 +27,26 @@ import invariant from 'tiny-warning';
 import { LowPriority, unstable_runWithPriority } from 'scheduler';
 
 // We already used FormikActions. So we'll go all Elm-y, and use Message.
-type FormikMessage<Values> =
+type FormikMessage<TValues, TError = string> =
   | { type: 'SUBMIT_ATTEMPT' }
   | { type: 'SUBMIT_FAILURE' }
   | { type: 'SUBMIT_SUCCESS' }
   | { type: 'SET_ISVALIDATING'; payload: boolean }
   | { type: 'SET_ISSUBMITTING'; payload: boolean }
-  | { type: 'SET_VALUES'; payload: Values }
+  | { type: 'SET_VALUES'; payload: TValues }
   | { type: 'SET_FIELD_VALUE'; payload: { field: string; value?: any } }
   | { type: 'SET_FIELD_TOUCHED'; payload: { field: string; value?: boolean } }
-  | { type: 'SET_FIELD_ERROR'; payload: { field: string; value?: string } }
-  | { type: 'SET_TOUCHED'; payload: FormikTouched<Values> }
-  | { type: 'SET_ERRORS'; payload: FormikErrors<Values> }
+  | { type: 'SET_FIELD_ERROR'; payload: { field: string; value?: TError } }
+  | { type: 'SET_TOUCHED'; payload: FormikTouched<TValues> }
+  | { type: 'SET_ERRORS'; payload: FormikErrors<TValues, TError> }
   | { type: 'SET_STATUS'; payload: any }
-  | { type: 'SET_FORMIK_STATE'; payload: FormikState<Values> }
-  | { type: 'RESET_FORM'; payload: FormikState<Values> };
+  | { type: 'SET_FORMIK_STATE'; payload: FormikState<TValues, TError> }
+  | { type: 'RESET_FORM'; payload: FormikState<TValues, TError> };
 
 // State reducer
-function formikReducer<Values>(
-  state: FormikState<Values>,
-  msg: FormikMessage<Values>
+function formikReducer<TValues, TError = string>(
+  state: FormikState<TValues, TError>,
+  msg: FormikMessage<TValues, TError>
 ) {
   switch (msg.type) {
     case 'SET_VALUES':
@@ -81,7 +82,7 @@ function formikReducer<Values>(
     case 'SUBMIT_ATTEMPT':
       return {
         ...state,
-        touched: setNestedObjectValues<FormikTouched<Values>>(
+        touched: setNestedObjectValues<FormikTouched<TValues>>(
           state.values,
           true
         ),
@@ -104,8 +105,8 @@ function formikReducer<Values>(
 }
 
 // Initial empty states // objects
-const emptyErrors: FormikErrors<unknown> = {};
-const emptyTouched: FormikTouched<unknown> = {};
+const emptyErrors: any = {};
+const emptyTouched: any = {};
 
 // This is an object that contains a map of all registered fields
 // and their validate functions
@@ -115,18 +116,25 @@ interface FieldRegistry {
   };
 }
 
-export function useFormik<Values extends FormikValues = FormikValues>({
+export function useFormik<
+  TValues extends FormikValues = FormikValues,
+  TError = string
+>({
   validateOnChange = true,
   validateOnBlur = true,
   isInitialValid,
   enableReinitialize = false,
   onSubmit,
   ...rest
-}: FormikConfig<Values>) {
+}: FormikConfig<TValues, TError>): FormikProps<TValues, TError> {
   const props = { validateOnChange, validateOnBlur, onSubmit, ...rest };
   const initialValues = React.useRef(props.initialValues);
-  const initialErrors = React.useRef(props.initialErrors || emptyErrors);
-  const initialTouched = React.useRef(props.initialTouched || emptyTouched);
+  const initialErrors = React.useRef(
+    props.initialErrors || (emptyErrors as FormikErrors<TValues, TError>)
+  );
+  const initialTouched = React.useRef(
+    props.initialTouched || (emptyTouched as FormikTouched<TValues>)
+  );
   const initialStatus = React.useRef(props.initialStatus);
   const isMounted = React.useRef<boolean>(false);
   const fieldRegistry = React.useRef<FieldRegistry>({});
@@ -148,7 +156,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   }, []);
 
   const [state, dispatch] = React.useReducer<
-    React.Reducer<FormikState<Values>, FormikMessage<Values>>
+    React.Reducer<FormikState<TValues, TError>, FormikMessage<TValues, TError>>
   >(formikReducer, {
     values: props.initialValues,
     errors: props.initialErrors || emptyErrors,
@@ -160,7 +168,10 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   });
 
   const runValidateHandler = React.useCallback(
-    (values: Values, field?: string): Promise<FormikErrors<Values>> => {
+    (
+      values: TValues,
+      field?: string
+    ): Promise<FormikErrors<TValues, TError>> => {
       return new Promise((resolve, reject) => {
         const maybePromisedErrors = (props.validate as any)(values, field);
         if (maybePromisedErrors == null) {
@@ -194,7 +205,10 @@ export function useFormik<Values extends FormikValues = FormikValues>({
    * Run validation against a Yup schema and optionally run a function if successful
    */
   const runValidationSchema = React.useCallback(
-    (values: Values, field?: string): Promise<FormikErrors<Values>> => {
+    (
+      values: TValues,
+      field?: string
+    ): Promise<FormikErrors<TValues, TError>> => {
       return new Promise((resolve, reject) => {
         const validationSchema = props.validationSchema;
         const schema = isFunction(validationSchema)
@@ -243,7 +257,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   );
 
   const runFieldLevelValidations = React.useCallback(
-    (values: Values): Promise<FormikErrors<Values>> => {
+    (values: TValues): Promise<FormikErrors<TValues, TError>> => {
       const fieldKeysWithValidation: string[] = Object.keys(
         fieldRegistry.current
       ).filter(f => isFunction(fieldRegistry.current[f].validate));
@@ -273,13 +287,13 @@ export function useFormik<Values extends FormikValues = FormikValues>({
 
   // Run all validations and return the result
   const runAllValidations = React.useCallback(
-    (values: Values) => {
+    (values: TValues) => {
       return Promise.all([
         runFieldLevelValidations(values),
         props.validationSchema ? runValidationSchema(values) : {},
         props.validate ? runValidateHandler(values) : {},
       ]).then(([fieldErrors, schemaErrors, validateErrors]) => {
-        const combinedErrors = deepmerge.all<FormikErrors<Values>>(
+        const combinedErrors = deepmerge.all<FormikErrors<TValues, TError>>(
           [fieldErrors, schemaErrors, validateErrors],
           { arrayMerge }
         );
@@ -303,7 +317,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   // is actaully high-priority since we absolutely need to guarantee the
   // form is valid before executing props.onSubmit.
   const validateFormWithLowPriority = useEventCallback(
-    (values: Values = state.values) => {
+    (values: TValues = state.values) => {
       return unstable_runWithPriority(LowPriority, () => {
         return runAllValidations(values).then(combinedErrors => {
           if (!!isMounted.current) {
@@ -317,7 +331,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
 
   // Run all validations methods and update state accordingly
   const validateFormWithHighPriority = useEventCallback(
-    (values: Values = state.values) => {
+    (values: TValues = state.values) => {
       dispatch({ type: 'SET_ISVALIDATING', payload: true });
       return runAllValidations(values).then(combinedErrors => {
         if (!!isMounted.current) {
@@ -332,7 +346,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   );
 
   const resetForm = React.useCallback(
-    (nextState?: Partial<FormikState<Values>>) => {
+    (nextState?: Partial<FormikState<TValues, TError>>) => {
       const values =
         nextState && nextState.values
           ? nextState.values
@@ -405,7 +419,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
         dispatch({ type: 'SET_ISVALIDATING', payload: true });
         return maybePromise
           .then((x: any) => x)
-          .then((error: string) => {
+          .then((error: TError) => {
             dispatch({
               type: 'SET_FIELD_ERROR',
               payload: { field: name, value: error },
@@ -417,10 +431,10 @@ export function useFormik<Values extends FormikValues = FormikValues>({
           type: 'SET_FIELD_ERROR',
           payload: {
             field: name,
-            value: maybePromise as string | undefined,
+            value: maybePromise as TError | undefined,
           },
         });
-        return Promise.resolve(maybePromise as string | undefined);
+        return Promise.resolve(maybePromise as TError | undefined);
       }
     } else {
       return Promise.resolve();
@@ -437,18 +451,21 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     delete fieldRegistry.current[name];
   }, []);
 
-  const setTouched = useEventCallback((touched: FormikTouched<Values>) => {
+  const setTouched = useEventCallback((touched: FormikTouched<TValues>) => {
     dispatch({ type: 'SET_TOUCHED', payload: touched });
     return validateOnBlur
       ? validateFormWithLowPriority(state.values)
       : Promise.resolve();
   });
 
-  const setErrors = React.useCallback((errors: FormikErrors<Values>) => {
-    dispatch({ type: 'SET_ERRORS', payload: errors });
-  }, []);
+  const setErrors = React.useCallback(
+    (errors: FormikErrors<TValues, TError>) => {
+      dispatch({ type: 'SET_ERRORS', payload: errors });
+    },
+    []
+  );
 
-  const setValues = useEventCallback((values: Values) => {
+  const setValues = useEventCallback((values: TValues) => {
     dispatch({ type: 'SET_VALUES', payload: values });
     return validateOnChange
       ? validateFormWithLowPriority(state.values)
@@ -456,7 +473,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   });
 
   const setFieldError = React.useCallback(
-    (field: string, value: string | undefined) => {
+    (field: string, value: TError | undefined) => {
       dispatch({
         type: 'SET_FIELD_ERROR',
         payload: { field, value },
@@ -598,8 +615,8 @@ export function useFormik<Values extends FormikValues = FormikValues>({
 
   function setFormikState(
     stateOrCb:
-      | FormikState<Values>
-      | ((state: FormikState<Values>) => FormikState<Values>)
+      | FormikState<TValues, TError>
+      | ((state: FormikState<TValues, TError>) => FormikState<TValues, TError>)
   ): void {
     if (isFunction(stateOrCb)) {
       dispatch({ type: 'SET_FORMIK_STATE', payload: stateOrCb(state) });
@@ -639,7 +656,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   const submitForm = useEventCallback(() => {
     dispatch({ type: 'SUBMIT_ATTEMPT' });
     return validateFormWithHighPriority().then(
-      (combinedErrors: FormikErrors<Values>) => {
+      (combinedErrors: FormikErrors<TValues, TError>) => {
         const isActuallyValid = Object.keys(combinedErrors).length === 0;
         if (isActuallyValid) {
           return Promise.resolve(executeSubmit())
@@ -722,7 +739,9 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   });
 
   const getFieldMeta = React.useCallback(
-    (name: string) => {
+    function<TFieldName extends keyof TValues & string>(
+      name: TFieldName
+    ): FieldMetaProps<TValues[TFieldName], TError> {
       return {
         value: getIn(state.values, name),
         error: getIn(state.errors, name),
@@ -735,17 +754,23 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     [state.errors, state.touched, state.values]
   );
 
-  const getFieldProps = React.useCallback(
-    ({
+  const getFieldProps: FormikProps<
+    TValues,
+    TError
+  >['getFieldProps'] = React.useCallback(
+    function<TFieldName extends keyof TValues & string>({
       name,
       type,
       value: valueProp, // value is special for checkboxes
       as: is,
       multiple,
-    }): [FieldInputProps<any>, FieldMetaProps<any>] => {
+    }: FieldPropsQuery<TFieldName, TValues>): [
+      FieldInputProps<TFieldName, TValues[TFieldName], TError>,
+      FieldMetaProps<TValues[TFieldName], TError>
+    ] {
       const valueState = getIn(state.values, name);
 
-      const field: FieldInputProps<any> = {
+      const field: FieldInputProps<TFieldName, TValues[TFieldName], TError> = {
         name,
         value: valueState,
         onChange: handleChange,
@@ -784,7 +809,9 @@ export function useFormik<Values extends FormikValues = FormikValues>({
         ? dirty
           ? state.errors && Object.keys(state.errors).length === 0
           : isInitialValid !== false && isFunction(isInitialValid)
-          ? (isInitialValid as (props: FormikConfig<Values>) => boolean)(props)
+          ? (isInitialValid as (
+              props: FormikConfig<TValues, TError>
+            ) => boolean)(props)
           : (isInitialValid as boolean)
         : state.errors && Object.keys(state.errors).length === 0,
     [isInitialValid, dirty, state.errors, props]
@@ -826,10 +853,11 @@ export function useFormik<Values extends FormikValues = FormikValues>({
 }
 
 export function Formik<
-  Values extends FormikValues = FormikValues,
-  ExtraProps = {}
->(props: FormikConfig<Values> & ExtraProps) {
-  const formikbag = useFormik<Values>(props);
+  TValues extends FormikValues = FormikValues,
+  ExtraProps = {},
+  TError = string
+>(props: FormikConfig<TValues, TError> & ExtraProps) {
+  const formikbag = useFormik<TValues, TError>(props);
   const { component, children, render } = props;
   return (
     <FormikProvider value={formikbag}>
@@ -839,9 +867,9 @@ export function Formik<
         ? render(formikbag)
         : children // children come last, always called
         ? isFunction(children)
-          ? (children as ((bag: FormikProps<Values>) => React.ReactNode))(
-              formikbag as FormikProps<Values>
-            )
+          ? (children as ((
+              bag: FormikProps<TValues, TError>
+            ) => React.ReactNode))(formikbag as FormikProps<TValues, TError>)
           : !isEmptyChildren(children)
           ? React.Children.only(children)
           : null
@@ -870,8 +898,10 @@ function warnAboutMissingIdentifier({
 /**
  * Transform Yup ValidationError to a more usable object
  */
-export function yupToFormErrors<Values>(yupError: any): FormikErrors<Values> {
-  let errors: FormikErrors<Values> = {};
+export function yupToFormErrors<TValues, TError = string>(
+  yupError: any
+): FormikErrors<TValues, TError> {
+  let errors: FormikErrors<TValues, TError> = {};
   if (yupError.inner) {
     if (yupError.inner.length === 0) {
       return setIn(errors, yupError.path, yupError.message);
@@ -932,7 +962,9 @@ function arrayMerge(target: any[], source: any[], options: any): any[] {
 
 /** Return multi select values based on an array of options */
 function getSelectedValues(options: any[]) {
-  return Array.from(options).filter(el => el.selected).map(el => el.value);
+  return Array.from(options)
+    .filter(el => el.selected)
+    .map(el => el.value);
 }
 
 /** Return the next value for a checkbox */

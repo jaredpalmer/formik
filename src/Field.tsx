@@ -5,32 +5,42 @@ import {
   FieldMetaProps,
   FieldInputProps,
   FieldValidator,
+  FormikValues,
+  FieldPropsQuery,
 } from './types';
 import { useFormikContext } from './FormikContext';
 import { isFunction, isEmptyChildren, isObject } from './utils';
 import invariant from 'tiny-warning';
 
-export interface FieldProps<V = any> {
-  field: FieldInputProps<V>;
-  form: FormikProps<V>; // if ppl want to restrict this for a given form, let them.
-  meta: FieldMetaProps<V>;
+export interface FieldProps<
+  TFieldName extends keyof TValues & string = any,
+  TValues extends FormikValues = FormikValues,
+  TError = string
+> {
+  field: FieldInputProps<TFieldName, TValues, TError>;
+  form: FormikProps<TValues, TError>; // if ppl want to restrict this for a given form, let them.
+  meta: FieldMetaProps<TValues[TFieldName], TError>;
 }
 
-export interface FieldConfig {
+export interface FieldConfig<
+  TFieldName extends keyof TValues & string = any,
+  TValues extends FormikValues = FormikValues,
+  TError = string
+> {
   /**
    * Field component to render. Can either be a string like 'select' or a component.
    * @deprecated
    */
   component?:
     | string
-    | React.ComponentType<FieldProps<any>>
+    | React.ComponentType<FieldProps<TFieldName, TValues, TError>>
     | React.ComponentType;
 
   /**
    * Component to render. Can either be a string e.g. 'select', 'input', or 'textarea', or a component.
    */
   as?:
-    | React.ComponentType<FieldProps<any>['field']>
+    | React.ComponentType<FieldProps<TFieldName, TValues, TError>['field']>
     | keyof JSX.IntrinsicElements
     | React.ComponentType;
 
@@ -38,48 +48,72 @@ export interface FieldConfig {
    * Render prop (works like React router's <Route render={props =>} />)
    * @deprecated
    */
-  render?: (props: FieldProps<any>) => React.ReactNode;
+  render?: (props: FieldProps<TFieldName, TValues, TError>) => React.ReactNode;
 
   /**
    * Children render function <Field name>{props => ...}</Field>)
    */
-  children?: ((props: FieldProps<any>) => React.ReactNode) | React.ReactNode;
+  children?:
+    | ((props: FieldProps<TFieldName, TValues, TError>) => React.ReactNode)
+    | React.ReactNode;
 
   /**
    * Validate a single field value independently
    */
-  validate?: FieldValidator;
+  validate?: FieldValidator<TValues[TFieldName], TError>;
 
   /**
    * Field name
    */
-  name: string;
+  name: TFieldName;
 
   /** HTML input type */
   type?: string;
 
   /** Field value */
-  value?: any;
+  value?: TValues[TFieldName];
 
   /** Inner ref */
   innerRef?: (instance: any) => void;
 }
 
-export type FieldAttributes<T> = GenericFieldHTMLAttributes &
-  FieldConfig &
-  T & { name: string };
+export type FieldAttributes<
+  TAttributes,
+  TFieldName extends keyof TValues & string,
+  TValues extends FormikValues = FormikValues,
+  TError = string
+> = GenericFieldHTMLAttributes &
+  FieldConfig<TFieldName, TValues, TError> &
+  TAttributes;
 
-export function useField<Val = any>(
-  propsOrFieldName: string | FieldAttributes<Val>
+export function useField<
+  TAttributes = any,
+  TFieldName extends keyof TValues & string = any,
+  TValues = FormikValues,
+  TError = string
+>(
+  propsOrFieldName:
+    | TFieldName
+    | FieldAttributes<TAttributes, TFieldName, TValues, TError>
 ) {
-  const formik = useFormikContext();
+  const formik = useFormikContext<TValues, TError>();
   const { getFieldProps, registerField, unregisterField } = formik;
   const isAnObject = isObject(propsOrFieldName);
   const fieldName = isAnObject
-    ? (propsOrFieldName as FieldAttributes<Val>).name
-    : (propsOrFieldName as string);
+    ? (propsOrFieldName as FieldAttributes<
+        TAttributes,
+        TFieldName,
+        TValues,
+        TError
+      >).name
+    : (propsOrFieldName as TFieldName);
   const validateFn = isAnObject
-    ? (propsOrFieldName as FieldAttributes<Val>).validate
+    ? (propsOrFieldName as FieldAttributes<
+        TAttributes,
+        TFieldName,
+        TValues,
+        TError
+      >).validate
     : undefined;
   React.useEffect(() => {
     if (fieldName) {
@@ -103,17 +137,29 @@ export function useField<Val = any>(
   if (isObject(propsOrFieldName)) {
     if (__DEV__) {
       invariant(
-        (propsOrFieldName as FieldAttributes<Val>).name,
+        (propsOrFieldName as FieldAttributes<
+          TAttributes,
+          TFieldName,
+          TValues,
+          TError
+        >).name,
         'Invalid field name. Either pass `useField` a string or an object containing a `name` key.'
       );
     }
-    return getFieldProps(propsOrFieldName);
+    return getFieldProps(propsOrFieldName as FieldPropsQuery<
+      TFieldName,
+      TValues
+    >);
   }
 
-  return getFieldProps({ name: propsOrFieldName });
+  return getFieldProps({ name: propsOrFieldName as TFieldName });
 }
 
-export function Field({
+export function Field<
+  TFieldName extends keyof TValues & string = any,
+  TValues = FormikValues,
+  TError = string
+>({
   validate,
   name,
   render,
@@ -121,13 +167,13 @@ export function Field({
   as: is, // `as` is reserved in typescript lol
   component,
   ...props
-}: FieldAttributes<any>) {
+}: FieldAttributes<any, TFieldName, TValues, TError>) {
   const {
     validate: _validate,
     validationSchema: _validationSchema,
 
     ...formik
-  } = useFormikContext();
+  } = useFormikContext<TValues, TError>();
 
   React.useEffect(() => {
     if (__DEV__) {
@@ -169,7 +215,10 @@ export function Field({
       unregisterField(name);
     };
   }, [registerField, unregisterField, name, validate]);
-  const [field, meta] = formik.getFieldProps({ name, ...props });
+  const [field, meta] = formik.getFieldProps({
+    name,
+    ...props,
+  } as FieldPropsQuery<TFieldName, TValues>);
   const legacyBag = { field, form: formik };
 
   if (render) {
@@ -192,7 +241,7 @@ export function Field({
     }
     // We don't pass `meta` for backwards compat
     return React.createElement(
-      component,
+      component as any,
       { field, form: formik, ...props },
       children
     );
@@ -210,6 +259,10 @@ export function Field({
     );
   }
 
-  return React.createElement(asElement, { ...field, ...props }, children);
+  return React.createElement(
+    asElement as any,
+    { ...field, ...props },
+    children
+  );
 }
 export const FastField = Field;

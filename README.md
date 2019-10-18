@@ -8,7 +8,7 @@
 
 <br>
 
-[![Stable Release](https://img.shields.io/npm/v/formik.svg)](https://npm.im/formik)
+[![Financial Contributors on Open Collective](https://opencollective.com/formik/all/badge.svg?label=financial+contributors)](https://opencollective.com/formik) [![Stable Release](https://img.shields.io/npm/v/formik.svg)](https://npm.im/formik)
 [![Blazing Fast](https://badgen.now.sh/badge/speed/blazing%20%F0%9F%94%A5/green)](https://npm.im/formik)
 [![gzip size](http://img.badgesize.io/https://unpkg.com/formik@latest/dist/formik.umd.production.js?compression=gzip)](https://unpkg.com/formik@latest/dist/formik.umd.production.js)
 [![license](https://badgen.now.sh/badge/license/MIT)](./LICENSE)
@@ -103,3 +103,33 @@ specification. Contributions of any kind welcome!
 [MIT License.](https://github.com/jaredpalmer/formik/blob/master/LICENSE)
 
 ---
+
+## Contributors
+
+### Code Contributors
+
+This project exists thanks to all the people who contribute. [[Contribute](CONTRIBUTING.md)].
+<a href="https://github.com/jaredpalmer/formik/graphs/contributors"><img src="https://opencollective.com/formik/contributors.svg?width=890&button=false" /></a>
+
+### Financial Contributors
+
+Become a financial contributor and help us sustain our community. [[Contribute](https://opencollective.com/formik/contribute)]
+
+#### Individuals
+
+<a href="https://opencollective.com/formik"><img src="https://opencollective.com/formik/individuals.svg?width=890"></a>
+
+#### Organizations
+
+Support this project with your organization. Your logo will show up here with a link to your website. [[Contribute](https://opencollective.com/formik/contribute)]
+
+<a href="https://opencollective.com/formik/organization/0/website"><img src="https://opencollective.com/formik/organization/0/avatar.svg"></a>
+<a href="https://opencollective.com/formik/organization/1/website"><img src="https://opencollective.com/formik/organization/1/avatar.svg"></a>
+<a href="https://opencollective.com/formik/organization/2/website"><img src="https://opencollective.com/formik/organization/2/avatar.svg"></a>
+<a href="https://opencollective.com/formik/organization/3/website"><img src="https://opencollective.com/formik/organization/3/avatar.svg"></a>
+<a href="https://opencollective.com/formik/organization/4/website"><img src="https://opencollective.com/formik/organization/4/avatar.svg"></a>
+<a href="https://opencollective.com/formik/organization/5/website"><img src="https://opencollective.com/formik/organization/5/avatar.svg"></a>
+<a href="https://opencollective.com/formik/organization/6/website"><img src="https://opencollective.com/formik/organization/6/avatar.svg"></a>
+<a href="https://opencollective.com/formik/organization/7/website"><img src="https://opencollective.com/formik/organization/7/avatar.svg"></a>
+<a href="https://opencollective.com/formik/organization/8/website"><img src="https://opencollective.com/formik/organization/8/avatar.svg"></a>
+<a href="https://opencollective.com/formik/organization/9/website"><img src="https://opencollective.com/formik/organization/9/avatar.svg"></a>

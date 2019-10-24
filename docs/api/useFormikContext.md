@@ -19,8 +19,8 @@ const AutoSubmitToken = () => {
   const { values, submitForm } = useFormikContext();
   React.useEffect(() => {
     // Submit the form imperatively as an effect as soon as form values.token are 6 digits long
-    if (formik.values.token.length === 6) {
-      formik.submitForm();
+    if (values.token.length === 6) {
+      submitForm();
     }
   }, [values, submitForm]);
   return null;
@@ -50,7 +50,7 @@ const TwoFactorVerificationForm = () => (
           <Field name="token" type="tel" />
           <AutoSubmitToken />
         </Form>
-    </Form>
+    </Formik>
   </div>
 );
 ```

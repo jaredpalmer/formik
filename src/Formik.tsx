@@ -934,17 +934,39 @@ export function validateYupSchema<T extends FormikValues>(
   sync: boolean = false,
   context: any = {}
 ): Promise<Partial<T>> {
-  let validateData: FormikValues = {};
-  for (let k in values) {
-    if (values.hasOwnProperty(k)) {
-      const key = String(k);
-      validateData[key] = values[key] !== '' ? values[key] : undefined;
-    }
-  }
+  const validateData: FormikValues = prepareDataForValidation(values);
   return schema[sync ? 'validateSync' : 'validate'](validateData, {
     abortEarly: false,
     context: context,
   });
+}
+
+/**
+ * Recursively prepare values.
+ */
+function prepareDataForValidation<T extends FormikValues>(
+  values: T
+): FormikValues {
+  let data: FormikValues = {};
+  for (let k in values) {
+    if (values.hasOwnProperty(k)) {
+      const key = String(k);
+      if (Array.isArray(values[key]) === true) {
+        data[key] = values[key].map((value: any) => {
+          if (Array.isArray(value) === true || typeof value === 'object') {
+            return prepareDataForValidation(value);
+          } else {
+            return value !== '' ? value : undefined;
+          }
+        });
+      } else if (typeof values[key] === 'object' && values[key] !== null) {
+        data[key] = prepareDataForValidation(values[key]);
+      } else {
+        data[key] = values[key] !== '' ? values[key] : undefined;
+      }
+    }
+  }
+  return data;
 }
 
 /**

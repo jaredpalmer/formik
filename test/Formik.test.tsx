@@ -1146,4 +1146,19 @@ describe('<Formik>', () => {
       users: [{ firstName: 'required', lastName: 'required' }],
     });
   });
+
+  it('should not eat an error thrown by the validationSchema', async () => {
+    const validationSchema = function() {
+      throw new Error('broken validations');
+    };
+
+    const { getProps } = renderFormik({
+      initialValues: { users: [{ firstName: '', lastName: '' }] },
+      validationSchema,
+    });
+
+    expect(() => {
+      getProps().validateForm();
+    }).toThrow('broken validations');
+  });
 });

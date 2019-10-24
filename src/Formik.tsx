@@ -1013,7 +1013,7 @@ const useIsomorphicLayoutEffect =
     : React.useEffect;
 
 function useEventCallback<T extends (...args: any[]) => any>(fn: T): T {
-  const ref: any = React.useRef();
+  const ref: any = React.useRef(fn);
 
   // we copy a ref to the callback scoped to the current state/props on each render
   useIsomorphicLayoutEffect(() => {

@@ -4,7 +4,7 @@ title: useFormikContext()
 custom_edit_url: https://github.com/jaredpalmer/formik/edit/master/docs/api/useFormikContext.md
 ---
 
-`useFormikContext()` is a custom React hook that will return all Formik state and helpers via React Context.
+`useFormikContext()` is a custom React hook that will return all Formik state and helpers via [React Context](https://reactjs.org/docs/context.html).
 
 ## Example
 
@@ -61,4 +61,4 @@ const TwoFactorVerificationForm = () => (
 
 ## `useFormikContext(): FormikProps<Values>`
 
-A custom React Hook that returns Formik states and helpers. This is the hooks version of using `connect()` and `<FormikConsumer>`. If called without a parent context, you will get a warning in your console.
+A custom React Hook that returns Formik states and helpers via React Context. Thus, this hook will only work if there is a parent Formik React Context from which it can pull from. If called without a parent context (i.e. a descendent of a `<Formik>` component or `withFormik` higher-order component), you will get a warning in your console.

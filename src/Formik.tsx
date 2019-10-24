@@ -381,16 +381,56 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     [props.initialErrors, props.initialStatus, props.initialTouched]
   );
 
-  React.useEffect(() => {
-    if (
-      enableReinitialize &&
-      isMounted.current === true &&
-      !isEqual(initialValues.current, props.initialValues)
-    ) {
-      initialValues.current = props.initialValues;
-      resetForm();
-    }
-  }, [enableReinitialize, props.initialValues, resetForm]);
+  React.useEffect(
+    function() {
+      if (enableReinitialize && isMounted.current === true) {
+        initialValues.current = props.initialValues;
+        if (!isEqual(state.values, props.initialValues)) {
+          resetForm();
+        }
+      }
+    },
+    [enableReinitialize, props.initialValues]
+  );
+
+  React.useEffect(
+    function() {
+      if (enableReinitialize && isMounted.current === true) {
+        initialErrors.current = props.initialErrors || emptyErrors;
+        dispatch({
+          type: 'SET_ERRORS',
+          payload: props.initialErrors || emptyErrors,
+        });
+      }
+    },
+    [enableReinitialize, props.initialErrors]
+  );
+
+  React.useEffect(
+    function() {
+      if (enableReinitialize && isMounted.current === true) {
+        initialTouched.current = props.initialTouched || emptyTouched;
+        dispatch({
+          type: 'SET_TOUCHED',
+          payload: props.initialTouched || emptyTouched,
+        });
+      }
+    },
+    [enableReinitialize, props.initialTouched]
+  );
+
+  React.useEffect(
+    function() {
+      if (enableReinitialize && isMounted.current === true) {
+        initialStatus.current = props.initialStatus;
+        dispatch({
+          type: 'SET_STATUS',
+          payload: props.initialStatus,
+        });
+      }
+    },
+    [enableReinitialize, props.initialStatus]
+  );
 
   const validateField = useEventCallback((name: string) => {
     // This will efficiently validate a single field by avoiding state

@@ -7,7 +7,7 @@ title: Tutorial
 
 Welcome to the Formik tutorial. This will teach you everything you need to know to build simple and complex forms in React.
 
-If you're impatient and just want to start hacking on your machine locally, checkout [the 60-second quickstart](@todo).
+If you're impatient and just want to start hacking on your machine locally, checkout [the 60-second quickstart](/formik/docs/overview#installation).
 
 ### What are we building?
 
@@ -54,7 +54,7 @@ organized--making testing, refactoring, and reasoning about your forms a breeze.
 
 ## The Basics
 
-We're going to start with the _most verbose and explicit_ way of using Formik and then gradually introduce you to utilities and helpers that will make things more concise _and_ flexible. However, it's important for you to see how Formik builds on itself so you have a full grasp of what's possible and a complete mental model.
+We're going to start with the _most concise_ way of using Formik. We're not going to worry about anything other than what you need to be prroductive. However, it's important for you to see how Formik builds on itself so you have a full grasp of what's possible and a complete mental model of how it worrks. For that, checkout ["Thinking in Formik." ](/@todo)
 
 ### A simple newsletter signup form
 
@@ -67,13 +67,8 @@ import { useFormik } from 'formik';
 const SignupForm = () => {
   // Pass the useFormik() hook initial form values and a submit function that will
   // be called when the form is submitted
-  const formik = useFormik({
-    initialValues: { email: '' },
-    onSubmit: values => {
-      alert(JSON.stringify(values, null, 2));
-    },
-  });
   return (
+  <Formik>
     <form onSubmit={formik.handleSubmit}>
       <label htmlFor="email">Email Address</label>
       <input

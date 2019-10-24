@@ -39,7 +39,7 @@ type FormikMessage<Values> =
   | { type: 'SET_TOUCHED'; payload: FormikTouched<Values> }
   | { type: 'SET_ERRORS'; payload: FormikErrors<Values> }
   | { type: 'SET_STATUS'; payload: any }
-  | { type: 'SET_FORMIK_STATE'; payload: FormikState<Values> }
+  | { type: 'SET_FORMIK_STATE'; payload: (s: FormikState<Values>) => FormikState<Values> }
   | { type: 'RESET_FORM'; payload: FormikState<Values> };
 
 // State reducer
@@ -77,7 +77,7 @@ function formikReducer<Values>(
       };
     case 'RESET_FORM':
     case 'SET_FORMIK_STATE':
-      return { ...state, ...msg.payload };
+      return msg.payload(state);
     case 'SUBMIT_ATTEMPT':
       return {
         ...state,
@@ -596,17 +596,17 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     [executeBlur]
   );
 
-  function setFormikState(
+  const setFormikState = React.useCallback((
     stateOrCb:
       | FormikState<Values>
       | ((state: FormikState<Values>) => FormikState<Values>)
-  ): void {
+  ): void => {
     if (isFunction(stateOrCb)) {
-      dispatch({ type: 'SET_FORMIK_STATE', payload: stateOrCb(state) });
-    } else {
       dispatch({ type: 'SET_FORMIK_STATE', payload: stateOrCb });
+    } else {
+      dispatch({ type: 'SET_FORMIK_STATE', payload: () => stateOrCb });
     }
-  }
+  }, [dispatch])
 
   const setStatus = React.useCallback((status: any) => {
     dispatch({ type: 'SET_STATUS', payload: status });

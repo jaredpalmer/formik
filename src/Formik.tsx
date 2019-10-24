@@ -39,7 +39,7 @@ type FormikMessage<Values> =
   | { type: 'SET_TOUCHED'; payload: FormikTouched<Values> }
   | { type: 'SET_ERRORS'; payload: FormikErrors<Values> }
   | { type: 'SET_STATUS'; payload: any }
-  | { type: 'SET_FORMIK_STATE'; payload: FormikState<Values> }
+  | { type: 'SET_FORMIK_STATE'; payload: (s: FormikState<Values>) => FormikState<Values> }
   | { type: 'RESET_FORM'; payload: FormikState<Values> };
 
 // State reducer
@@ -77,7 +77,7 @@ function formikReducer<Values>(
       };
     case 'RESET_FORM':
     case 'SET_FORMIK_STATE':
-      return { ...state, ...msg.payload };
+      return msg.payload(state);
     case 'SUBMIT_ATTEMPT':
       return {
         ...state,
@@ -195,15 +195,15 @@ export function useFormik<Values extends FormikValues = FormikValues>({
    */
   const runValidationSchema = React.useCallback(
     (values: Values, field?: string): Promise<FormikErrors<Values>> => {
+      const validationSchema = props.validationSchema;
+      const schema = isFunction(validationSchema)
+        ? validationSchema(field)
+        : validationSchema;
+      const promise =
+        field && schema.validateAt
+          ? schema.validateAt(field, values)
+          : validateYupSchema(values, schema);
       return new Promise((resolve, reject) => {
-        const validationSchema = props.validationSchema;
-        const schema = isFunction(validationSchema)
-          ? validationSchema(field)
-          : validationSchema;
-        let promise =
-          field && schema.validateAt
-            ? schema.validateAt(field, values)
-            : validateYupSchema(values, schema);
         promise.then(
           () => {
             resolve(emptyErrors);
@@ -381,16 +381,56 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     [props.initialErrors, props.initialStatus, props.initialTouched]
   );
 
-  React.useEffect(() => {
-    if (
-      enableReinitialize &&
-      isMounted.current === true &&
-      !isEqual(initialValues.current, props.initialValues)
-    ) {
-      initialValues.current = props.initialValues;
-      resetForm();
-    }
-  }, [enableReinitialize, props.initialValues, resetForm]);
+  React.useEffect(
+    function() {
+      if (enableReinitialize && isMounted.current === true) {
+        initialValues.current = props.initialValues;
+        if (!isEqual(state.values, props.initialValues)) {
+          resetForm();
+        }
+      }
+    },
+    [enableReinitialize, props.initialValues]
+  );
+
+  React.useEffect(
+    function() {
+      if (enableReinitialize && isMounted.current === true) {
+        initialErrors.current = props.initialErrors || emptyErrors;
+        dispatch({
+          type: 'SET_ERRORS',
+          payload: props.initialErrors || emptyErrors,
+        });
+      }
+    },
+    [enableReinitialize, props.initialErrors]
+  );
+
+  React.useEffect(
+    function() {
+      if (enableReinitialize && isMounted.current === true) {
+        initialTouched.current = props.initialTouched || emptyTouched;
+        dispatch({
+          type: 'SET_TOUCHED',
+          payload: props.initialTouched || emptyTouched,
+        });
+      }
+    },
+    [enableReinitialize, props.initialTouched]
+  );
+
+  React.useEffect(
+    function() {
+      if (enableReinitialize && isMounted.current === true) {
+        initialStatus.current = props.initialStatus;
+        dispatch({
+          type: 'SET_STATUS',
+          payload: props.initialStatus,
+        });
+      }
+    },
+    [enableReinitialize, props.initialStatus]
+  );
 
   const validateField = useEventCallback((name: string) => {
     // This will efficiently validate a single field by avoiding state
@@ -596,17 +636,17 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     [executeBlur]
   );
 
-  function setFormikState(
+  const setFormikState = React.useCallback((
     stateOrCb:
       | FormikState<Values>
       | ((state: FormikState<Values>) => FormikState<Values>)
-  ): void {
+  ): void => {
     if (isFunction(stateOrCb)) {
-      dispatch({ type: 'SET_FORMIK_STATE', payload: stateOrCb(state) });
-    } else {
       dispatch({ type: 'SET_FORMIK_STATE', payload: stateOrCb });
+    } else {
+      dispatch({ type: 'SET_FORMIK_STATE', payload: () => stateOrCb });
     }
-  }
+  }, [dispatch])
 
   const setStatus = React.useCallback((status: any) => {
     dispatch({ type: 'SET_STATUS', payload: status });
@@ -894,17 +934,39 @@ export function validateYupSchema<T extends FormikValues>(
   sync: boolean = false,
   context: any = {}
 ): Promise<Partial<T>> {
-  let validateData: FormikValues = {};
-  for (let k in values) {
-    if (values.hasOwnProperty(k)) {
-      const key = String(k);
-      validateData[key] = values[key] !== '' ? values[key] : undefined;
-    }
-  }
+  const validateData: FormikValues = prepareDataForValidation(values);
   return schema[sync ? 'validateSync' : 'validate'](validateData, {
     abortEarly: false,
     context: context,
   });
+}
+
+/**
+ * Recursively prepare values.
+ */
+function prepareDataForValidation<T extends FormikValues>(
+  values: T
+): FormikValues {
+  let data: FormikValues = {};
+  for (let k in values) {
+    if (values.hasOwnProperty(k)) {
+      const key = String(k);
+      if (Array.isArray(values[key]) === true) {
+        data[key] = values[key].map((value: any) => {
+          if (Array.isArray(value) === true || typeof value === 'object') {
+            return prepareDataForValidation(value);
+          } else {
+            return value !== '' ? value : undefined;
+          }
+        });
+      } else if (typeof values[key] === 'object' && values[key] !== null) {
+        data[key] = prepareDataForValidation(values[key]);
+      } else {
+        data[key] = values[key] !== '' ? values[key] : undefined;
+      }
+    }
+  }
+  return data;
 }
 
 /**
@@ -932,7 +994,7 @@ function arrayMerge(target: any[], source: any[], options: any): any[] {
 
 /** Return multi select values based on an array of options */
 function getSelectedValues(options: any[]) {
-  return options.filter(el => el.selected).map(el => el.value);
+  return Array.from(options).filter(el => el.selected).map(el => el.value);
 }
 
 /** Return the next value for a checkbox */
@@ -973,7 +1035,7 @@ const useIsomorphicLayoutEffect =
     : React.useEffect;
 
 function useEventCallback<T extends (...args: any[]) => any>(fn: T): T {
-  const ref: any = React.useRef();
+  const ref: any = React.useRef(fn);
 
   // we copy a ref to the callback scoped to the current state/props on each render
   useIsomorphicLayoutEffect(() => {

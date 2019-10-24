@@ -27,7 +27,7 @@ title: Resources
 - [Building an Add Channel Form with Formik](https://www.youtube.com/watch?v=anwo_i0wgNo) by [Ben Awad](https://twitter.com/benawad97) - Oct 27, 2017
 
 ## Community Articles / Tutorials
-
+- [Accessible Formik forms](https://dev.to/ptrin/accessible-formik-forms-2gld) by [Perry Trinier](https://twitter.com/ptrin) - Oct 16, 2019
 - [Building dynamic forms with Formik with React and TypeScript](https://scottdj92.ghost.io/building-dynamic-forms-with-formik-with-react-and-typescript/) by [Scott Jones](https://twitter.com/sdj2964) - Sep 1, 2018
 - [Simple React form validation with Formik, Yup and/or Spected](https://itnext.io/simple-react-form-validation-with-formik-yup-and-or-spected-206ebe9e7dcc) by [Jakub Kočí](https://github.com/jakubkoci) - May 21, 2018
 - [ Formik —Handling files and reCaptcha](https://hackernoon.com/formik-handling-files-and-recaptcha-209cbeae10bc) by [João Miguel Cunha](https://twitter.com/lokuzt) - Dec 18, 2017

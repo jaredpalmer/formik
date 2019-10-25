@@ -9,7 +9,7 @@
 
 ### `resetForm`
 
-**There is only one tiny breaking change in Formik 2.x.** Luckily, it probably won't impact verry many people. Long story short, because we introduced `initialErrors`, `initialTouched`, `initialStatus` props, `resetForm`'s signature has changed. It now accepts the next initial state of Formik (instead of just the next initial values).
+**There is only one tiny breaking change in Formik 2.x.** Luckily, it probably won't impact very many people. Long story short, because we introduced the new `initialErrors`, `initialTouched`, `initialStatus` props, `resetForm`'s signature has changed since there is more stuff to _reset_. It now accepts the next initial state of Formik (instead of just the next initial values).
 
 **v1**
 

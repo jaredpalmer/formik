@@ -1,7 +1,7 @@
 import * as React from 'react';
 import hoistNonReactStatics from 'hoist-non-react-statics';
 
-import { FormikContext } from './types';
+import { FormikContextType } from './types';
 import { FormikConsumer } from './FormikContext';
 import invariant from 'tiny-warning';
 
@@ -10,7 +10,7 @@ import invariant from 'tiny-warning';
  * @param Comp React Component
  */
 export function connect<OuterProps, Values = {}>(
-  Comp: React.ComponentType<OuterProps & { formik: FormikContext<Values> }>
+  Comp: React.ComponentType<OuterProps & { formik: FormikContextType<Values> }>
 ) {
   const C: React.SFC<OuterProps> = (props: OuterProps) => (
     <FormikConsumer>
@@ -39,6 +39,8 @@ export function connect<OuterProps, Values = {}>(
 
   return hoistNonReactStatics(
     C,
-    Comp as React.ComponentClass<OuterProps & { formik: FormikContext<Values> }> // cast type to ComponentClass (even if SFC)
+    Comp as React.ComponentClass<
+      OuterProps & { formik: FormikContextType<Values> }
+    > // cast type to ComponentClass (even if SFC)
   ) as React.ComponentType<OuterProps>;
 }

@@ -21,7 +21,7 @@ export interface FieldConfig {
    * Field component to render. Can either be a string like 'select' or a component.
    */
   component?:
-    | string
+    | keyof JSX.IntrinsicElements
     | React.ComponentType<FieldProps<any>>
     | React.ComponentType;
 
@@ -167,7 +167,7 @@ export function Field({
   const legacyBag = { field, form: formik };
 
   if (render) {
-    return render(legacyBag);
+    return render({ ...legacyBag, meta });
   }
 
   if (isFunction(children)) {
@@ -206,4 +206,3 @@ export function Field({
 
   return React.createElement(asElement, { ...field, ...props }, children);
 }
-export const FastField = Field;

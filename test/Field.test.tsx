@@ -16,6 +16,8 @@ const initialValues = { name: 'jared', email: 'hello@reason.nyc' };
 type Values = typeof initialValues;
 type FastFieldConfig = FieldConfig;
 
+type $FixMe = any;
+
 function renderForm(
   ui?: React.ReactNode,
   props?: Partial<FormikConfig<Values>>
@@ -128,7 +130,7 @@ describe('Field / FastField', () => {
         expect(props.field.onChange).toBe(handleChange);
         expect(props.field.onBlur).toBe(handleBlur);
         expect(props.form).toEqual(getFormProps());
-        if (idx === 0) {
+        if (idx !== 2) {
           expect(props.meta.value).toBe('jared');
           expect(props.meta.error).toBeUndefined();
           expect(props.meta.touched).toBe(false);
@@ -161,7 +163,8 @@ describe('Field / FastField', () => {
         <>
           <FastField name="name" children={Component} />
           <FastField name="name" render={Component} />
-          <FastField name="name" component={Component} />
+          {/* @todo fix the types here?? #shipit */}
+          <FastField name="name" component={Component as $FixMe} />
           <FastField name="name" as={AsComponent} />
         </>
       );
@@ -173,7 +176,7 @@ describe('Field / FastField', () => {
         expect(props.field.onChange).toBe(handleChange);
         expect(props.field.onBlur).toBe(handleBlur);
         expect(props.form).toEqual(getFormProps());
-        if (idx === 0) {
+        if (idx !== 2) {
           expect(props.meta.value).toBe('jared');
           expect(props.meta.error).toBeUndefined();
           expect(props.meta.touched).toBe(false);

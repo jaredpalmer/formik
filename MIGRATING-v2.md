@@ -1,6 +1,6 @@
 # Formik 2 Migration Guide
 
-## Breaking Changes
+## Breaking Change
 
 ### Minimum Requirements
 
@@ -23,7 +23,7 @@ resetForm(nextValues);
 resetForm({ values: nextValues /* errors, touched, etc ... */ });
 ```
 
-## What's New?
+## What's New in Formik 2?
 
 ### Checkboxes and Select multiple
 

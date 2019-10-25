@@ -354,4 +354,42 @@ describe('<FieldArray />', () => {
       expect(formikBag.values.friends).toEqual(expected);
     });
   });
+
+  describe('given array-like object representing errors', () => {
+    it('should run arrayHelpers successfully', () => {
+      let formikBag: any;
+      let arrayHelpers: any;
+      ReactDOM.render(
+        <TestForm
+          render={(props: any) => {
+            formikBag = props;
+            return (
+              <FieldArray
+                name="friends"
+                render={arrayProps => {
+                  arrayHelpers = arrayProps;
+                  return null;
+                }}
+              />
+            );
+          }}
+        />,
+        node
+      );
+
+      formikBag.setErrors({ friends: { 2: ['Field error'] } });
+
+      arrayHelpers.push('michael');
+      const el = arrayHelpers.pop();
+      arrayHelpers.swap(0, 2);
+      arrayHelpers.insert(1, 'michael');
+      arrayHelpers.replace(1, 'brian');
+      arrayHelpers.unshift('michael');
+      arrayHelpers.remove(1);
+
+      const expected = ['michael', 'brian', 'andrea', 'jared'];
+      expect(el).toEqual('michael');
+      expect(formikBag.values.friends).toEqual(expected);
+    });
+  });
 });

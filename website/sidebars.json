@@ -1,7 +1,25 @@
 {
   "docs": {
     "Getting Started": ["overview", "tutorial", "resources"],
-    "Guides": ["guides/validation", "guides/arrays", "guides/typescript", "guides/react-native", "guides/form-submission"],
-    "API Reference": ["api/formik", "api/withFormik", "api/field", "api/useField", "api/useFormikContext", "api/fieldarray", "api/form", "api/errormessage", "api/connect", "api/fastfield"]
+    "Guides": [
+      "guides/validation",
+      "guides/arrays",
+      "guides/typescript",
+      "guides/react-native",
+      "guides/form-submission"
+    ],
+    "API Reference": [
+      "api/connect",
+      "api/errormessage",
+      "api/fastfield",
+      "api/field",
+      "api/fieldarray",
+      "api/form",
+      "api/formik",
+      "api/useField",
+      "api/useFormik",
+      "api/useFormikContext",
+      "api/withFormik"
+    ]
   }
 }

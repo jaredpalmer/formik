@@ -39,7 +39,10 @@ type FormikMessage<Values> =
   | { type: 'SET_TOUCHED'; payload: FormikTouched<Values> }
   | { type: 'SET_ERRORS'; payload: FormikErrors<Values> }
   | { type: 'SET_STATUS'; payload: any }
-  | { type: 'SET_FORMIK_STATE'; payload: (s: FormikState<Values>) => FormikState<Values> }
+  | {
+      type: 'SET_FORMIK_STATE';
+      payload: (s: FormikState<Values>) => FormikState<Values>;
+    }
   | { type: 'RESET_FORM'; payload: FormikState<Values> };
 
 // State reducer
@@ -118,6 +121,7 @@ interface FieldRegistry {
 export function useFormik<Values extends FormikValues = FormikValues>({
   validateOnChange = true,
   validateOnBlur = true,
+  validateOnMount = true,
   isInitialValid,
   enableReinitialize = false,
   onSubmit,
@@ -331,6 +335,12 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     }
   );
 
+  React.useEffect(() => {
+    if (validateOnMount && isMounted.current === true) {
+      validateFormWithHighPriority(props.initialValues);
+    }
+  }, [props.initialValues, validateFormWithHighPriority, validateOnMount]);
+
   const resetForm = React.useCallback(
     (nextState?: Partial<FormikState<Values>>) => {
       const values =
@@ -390,7 +400,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
         }
       }
     },
-    [enableReinitialize, props.initialValues]
+    [enableReinitialize, props.initialValues, resetForm, state.values]
   );
 
   React.useEffect(
@@ -636,17 +646,20 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     [executeBlur]
   );
 
-  const setFormikState = React.useCallback((
-    stateOrCb:
-      | FormikState<Values>
-      | ((state: FormikState<Values>) => FormikState<Values>)
-  ): void => {
-    if (isFunction(stateOrCb)) {
-      dispatch({ type: 'SET_FORMIK_STATE', payload: stateOrCb });
-    } else {
-      dispatch({ type: 'SET_FORMIK_STATE', payload: () => stateOrCb });
-    }
-  }, [dispatch])
+  const setFormikState = React.useCallback(
+    (
+      stateOrCb:
+        | FormikState<Values>
+        | ((state: FormikState<Values>) => FormikState<Values>)
+    ): void => {
+      if (isFunction(stateOrCb)) {
+        dispatch({ type: 'SET_FORMIK_STATE', payload: stateOrCb });
+      } else {
+        dispatch({ type: 'SET_FORMIK_STATE', payload: () => stateOrCb });
+      }
+    },
+    [dispatch]
+  );
 
   const setStatus = React.useCallback((status: any) => {
     dispatch({ type: 'SET_STATUS', payload: status });
@@ -994,7 +1007,9 @@ function arrayMerge(target: any[], source: any[], options: any): any[] {
 
 /** Return multi select values based on an array of options */
 function getSelectedValues(options: any[]) {
-  return Array.from(options).filter(el => el.selected).map(el => el.value);
+  return Array.from(options)
+    .filter(el => el.selected)
+    .map(el => el.value);
 }
 
 /** Return the next value for a checkbox */

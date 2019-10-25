@@ -207,6 +207,11 @@ Default is `true`. Use this option to tell Formik to run validations on `change`
 events and `change`-related methods. More specifically, when either
 `handleChange`, `setFieldValue`, or `setValues` are called.
 
+### `validateOnMount?: boolean`
+
+Default is `true`. Use this option to tell Formik to run validations when the Formik component mounts
+or `initialValues` change.
+
 ### `validationSchema?: Schema | ((props: Props) => Schema)`
 
 [A Yup schema](https://github.com/jquense/yup) or a function that returns a Yup

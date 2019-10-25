@@ -169,6 +169,7 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
 
   /**
    * Render prop (works like React router's <Route render={props =>} />)
+   * @deprecated
    */
   render?: (props: FormikProps<Values>) => React.ReactNode;
 

@@ -39,8 +39,8 @@ describe('<FieldArray />', () => {
 
   it('renders with render callback with array helpers as props', () => {
     ReactDOM.render(
-      <TestForm
-        render={() => (
+      <TestForm>
+        {() => (
           <FieldArray
             name="friends"
             render={arrayProps => {
@@ -49,15 +49,15 @@ describe('<FieldArray />', () => {
             }}
           />
         )}
-      />,
+      </TestForm>,
       node
     );
   });
 
   it('renders with "children as a function" with array helpers as props', () => {
     ReactDOM.render(
-      <TestForm
-        render={() => (
+      <TestForm>
+        {() => (
           <FieldArray name="friends">
             {arrayProps => {
               expect(isFunction(arrayProps.push)).toBeTruthy();
@@ -65,15 +65,15 @@ describe('<FieldArray />', () => {
             }}
           </FieldArray>
         )}
-      />,
+      </TestForm>,
       node
     );
   });
 
   it('renders with name as props', () => {
     ReactDOM.render(
-      <TestForm
-        render={() => (
+      <TestForm>
+        {() => (
           <FieldArray
             name="friends"
             render={arrayProps => {
@@ -82,7 +82,7 @@ describe('<FieldArray />', () => {
             }}
           />
         )}
-      />,
+      </TestForm>,
       node
     );
   });
@@ -92,8 +92,8 @@ describe('<FieldArray />', () => {
       let formikBag: any;
       let arrayHelpers: any;
       ReactDOM.render(
-        <TestForm
-          render={(props: any) => {
+        <TestForm>
+          {(props: any) => {
             formikBag = props;
             return (
               <FieldArray
@@ -105,7 +105,7 @@ describe('<FieldArray />', () => {
               />
             );
           }}
-        />,
+        </TestForm>,
         node
       );
 
@@ -131,12 +131,12 @@ describe('<FieldArray />', () => {
       };
 
       ReactDOM.render(
-        <TestForm
-          render={(props: any) => {
+        <TestForm>
+          {(props: any) => {
             formikBag = props;
             return <FieldArray name="friends" render={AddFriendsButton} />;
           }}
-        />,
+        </TestForm>,
         node
       );
 
@@ -158,9 +158,8 @@ describe('<FieldArray />', () => {
       let formikBag: any;
       let arrayHelpers: any;
       ReactDOM.render(
-        <TestForm
-          initialValues={{ people: [] }}
-          render={(props: any) => {
+        <TestForm initialValues={{ people: [] }}>
+          {(props: any) => {
             formikBag = props;
             return (
               <FieldArray
@@ -172,7 +171,7 @@ describe('<FieldArray />', () => {
               />
             );
           }}
-        />,
+        </TestForm>,
         node
       );
 
@@ -191,8 +190,8 @@ describe('<FieldArray />', () => {
       let formikBag: any;
       let arrayHelpers: any;
       ReactDOM.render(
-        <TestForm
-          render={(props: any) => {
+        <TestForm>
+          {(props: any) => {
             formikBag = props;
             return (
               <FieldArray
@@ -204,7 +203,7 @@ describe('<FieldArray />', () => {
               />
             );
           }}
-        />,
+        </TestForm>,
         node
       );
 
@@ -220,8 +219,8 @@ describe('<FieldArray />', () => {
       let formikBag: any;
       let arrayHelpers: any;
       ReactDOM.render(
-        <TestForm
-          render={(props: any) => {
+        <TestForm>
+          {(props: any) => {
             formikBag = props;
             return (
               <FieldArray
@@ -233,7 +232,7 @@ describe('<FieldArray />', () => {
               />
             );
           }}
-        />,
+        </TestForm>,
         node
       );
 
@@ -248,8 +247,8 @@ describe('<FieldArray />', () => {
       let formikBag: any;
       let arrayHelpers: any;
       ReactDOM.render(
-        <TestForm
-          render={(props: any) => {
+        <TestForm>
+          {(props: any) => {
             formikBag = props;
             return (
               <FieldArray
@@ -261,7 +260,7 @@ describe('<FieldArray />', () => {
               />
             );
           }}
-        />,
+        </TestForm>,
         node
       );
 
@@ -276,8 +275,8 @@ describe('<FieldArray />', () => {
       let formikBag: any;
       let arrayHelpers: any;
       ReactDOM.render(
-        <TestForm
-          render={(props: any) => {
+        <TestForm>
+          {(props: any) => {
             formikBag = props;
             return (
               <FieldArray
@@ -289,7 +288,7 @@ describe('<FieldArray />', () => {
               />
             );
           }}
-        />,
+        </TestForm>,
         node
       );
 
@@ -304,8 +303,8 @@ describe('<FieldArray />', () => {
       let formikBag: any;
       let arrayHelpers: any;
       ReactDOM.render(
-        <TestForm
-          render={(props: any) => {
+        <TestForm>
+          {(props: any) => {
             formikBag = props;
             return (
               <FieldArray
@@ -317,7 +316,7 @@ describe('<FieldArray />', () => {
               />
             );
           }}
-        />,
+        </TestForm>,
         node
       );
 
@@ -333,8 +332,8 @@ describe('<FieldArray />', () => {
       let formikBag: any;
       let arrayHelpers: any;
       ReactDOM.render(
-        <TestForm
-          render={(props: any) => {
+        <TestForm>
+          {(props: any) => {
             formikBag = props;
             return (
               <FieldArray
@@ -346,7 +345,7 @@ describe('<FieldArray />', () => {
               />
             );
           }}
-        />,
+        </TestForm>,
         node
       );
 

@@ -2,7 +2,7 @@ import * as React from 'react';
 import cloneDeep from 'lodash/cloneDeep';
 import { connect } from './connect';
 import {
-  FormikContext,
+  FormikContextType,
   FormikState,
   SharedRenderProps,
   FormikProps,
@@ -86,14 +86,14 @@ export const replace = (array: any[], index: number, value: any) => {
   return copy;
 };
 class FieldArrayInner<Values = {}> extends React.Component<
-  FieldArrayConfig & { formik: FormikContext<Values> },
+  FieldArrayConfig & { formik: FormikContextType<Values> },
   {}
 > {
   static defaultProps = {
     validateOnChange: true,
   };
 
-  constructor(props: FieldArrayConfig & { formik: FormikContext<Values> }) {
+  constructor(props: FieldArrayConfig & { formik: FormikContextType<Values> }) {
     super(props);
     // We need TypeScript generics on these, so we'll bind them in the constructor
     // @todo Fix TS 3.2.1

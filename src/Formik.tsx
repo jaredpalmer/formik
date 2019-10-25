@@ -125,13 +125,19 @@ interface FieldRegistry {
 export function useFormik<Values extends FormikValues = FormikValues>({
   validateOnChange = true,
   validateOnBlur = true,
-  validateOnMount = true,
+  validateOnMount = false,
   isInitialValid,
   enableReinitialize = false,
   onSubmit,
   ...rest
 }: FormikConfig<Values>) {
-  const props = { validateOnChange, validateOnBlur, onSubmit, ...rest };
+  const props = {
+    validateOnChange,
+    validateOnBlur,
+    validateOnMount,
+    onSubmit,
+    ...rest,
+  };
   const initialValues = React.useRef(props.initialValues);
   const initialErrors = React.useRef(props.initialErrors || emptyErrors);
   const initialTouched = React.useRef(props.initialTouched || emptyTouched);
@@ -339,11 +345,11 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     }
   );
 
-  React.useEffect(() => {
-    if (validateOnMount && isMounted.current === true) {
-      validateFormWithHighPriority(props.initialValues);
-    }
-  }, [props.initialValues, validateFormWithHighPriority, validateOnMount]);
+  // React.useEffect(() => {
+  //   if (validateOnMount && isMounted.current === true) {
+  //     validateFormWithLowPriority(props.initialValues);
+  //   }
+  // }, [props.initialValues, validateFormWithLowPriority]);
 
   const resetForm = React.useCallback(
     (nextState?: Partial<FormikState<Values>>) => {
@@ -879,6 +885,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     getFieldProps,
     validateOnBlur,
     validateOnChange,
+    validateOnMount,
   };
 
   return ctx;

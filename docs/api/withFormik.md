@@ -209,8 +209,8 @@ events and `change`-related methods. More specifically, when either
 
 ### `validateOnMount?: boolean`
 
-Default is `true`. Use this option to tell Formik to run validations when the Formik component mounts
-or `initialValues` change.
+Default is `false`. Use this option to tell Formik to run validation (at low priority) when the wrapped component mounts
+and/or `initialValues` change.
 
 ### `validationSchema?: Schema | ((props: Props) => Schema)`
 

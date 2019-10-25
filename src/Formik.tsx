@@ -148,10 +148,11 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     if (__DEV__) {
       invariant(
         typeof isInitialValid === 'undefined',
-        'isInitialValid has been deprecated and will be removed in future versions of Formik. Please use initialErrors instead.'
+        'isInitialValid has been deprecated and will be removed in future versions of Formik. Please use initialErrors or validateOnMount instead.'
       );
     }
-  }, [isInitialValid]);
+    // eslint-disable-next-line
+  }, []);
 
   React.useEffect(() => {
     isMounted.current = true;
@@ -897,6 +898,15 @@ export function Formik<
 >(props: FormikConfig<Values> & ExtraProps) {
   const formikbag = useFormik<Values>(props);
   const { component, children, render } = props;
+  React.useEffect(() => {
+    if (__DEV__) {
+      invariant(
+        !props.render,
+        `<Formik render> has been deprecated and will be removed in future versions of Formik. Please use a child callback function instead. To get rid of this warning, replace <Formik render={(props) => ...} /> with <Formik>{(props) => ...}</Formik>`
+      );
+    }
+    // eslint-disable-next-line
+  }, []);
   return (
     <FormikProvider value={formikbag}>
       {component

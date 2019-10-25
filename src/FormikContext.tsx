@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { FormikContext as FormikContextType } from './types';
+import { FormikContextType } from './types';
 import invariant from 'tiny-warning';
 
 export const FormikContext = React.createContext<FormikContextType<any>>(

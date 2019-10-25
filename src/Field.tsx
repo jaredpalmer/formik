@@ -50,6 +50,10 @@ export interface FieldConfig {
    */
   validate?: FieldValidator;
 
+  required?: boolean;
+  minLength?: number;
+  maxLength?: number;
+
   /**
    * Field name
    */
@@ -69,6 +73,43 @@ export type FieldAttributes<T> = GenericFieldHTMLAttributes &
   FieldConfig &
   T & { name: string };
 
+class Validators {
+  required?: boolean;
+  minLength?: number;
+  maxLength?: number;
+
+  validate?: FieldValidator;
+
+  static empty: Validators = {};
+
+  static createFromProps<Val = any>(props: FieldAttributes<Val>) {
+    return Validators.create(
+      props.required,
+      props.minLength,
+      props.maxLength,
+
+      props.validate
+    );
+  }
+
+  static create(
+    required?: boolean,
+    minLength?: number,
+    maxLength?: number,
+    validate?: FieldValidator
+  ): Validators {
+    const result = new Validators();
+
+    if (required !== undefined) result.required = required;
+    if (minLength !== undefined) result.minLength = minLength;
+    if (maxLength !== undefined) result.maxLength = maxLength;
+
+    if (validate !== undefined) result.validate = validate;
+
+    return result;
+  }
+}
+
 export function useField<Val = any>(
   propsOrFieldName: string | FieldAttributes<Val>
 ) {
@@ -78,13 +119,14 @@ export function useField<Val = any>(
   const fieldName = isAnObject
     ? (propsOrFieldName as FieldAttributes<Val>).name
     : (propsOrFieldName as string);
-  const validateFn = isAnObject
-    ? (propsOrFieldName as FieldAttributes<Val>).validate
-    : undefined;
+  const validators = isAnObject
+    ? Validators.createFromProps(propsOrFieldName as FieldAttributes<Val>)
+    : Validators.empty;
+
   React.useEffect(() => {
     if (fieldName) {
       registerField(fieldName, {
-        validate: validateFn,
+        validate: createValidator(validators),
       });
     }
     return () => {
@@ -92,7 +134,7 @@ export function useField<Val = any>(
         unregisterField(fieldName);
       }
     };
-  }, [registerField, unregisterField, fieldName, validateFn]);
+  }, [registerField, unregisterField, fieldName, validators]);
   if (__DEV__) {
     invariant(
       formik,
@@ -113,8 +155,43 @@ export function useField<Val = any>(
   return getFieldProps({ name: propsOrFieldName });
 }
 
+function createValidator(validators: Validators) {
+  const { required, minLength, maxLength, validate } = validators;
+
+  return (value: any) =>
+    new Promise<string | void>(async (resolve, _) => {
+      try {
+        if (required && !!!value) {
+          resolve('The field is required');
+        } else if (
+          minLength != undefined &&
+          !!value &&
+          value.length < minLength
+        ) {
+          resolve(`The field length must be at least ${minLength}.`);
+        } else if (
+          maxLength != undefined &&
+          !!value &&
+          value.length > maxLength
+        ) {
+          resolve(`The field length must be no more than ${maxLength}.`);
+        } else if (validate) {
+          resolve(await validate(value));
+        } else {
+          resolve(undefined);
+        }
+      } catch (error) {
+        console.error('Validation failed', error);
+        resolve(undefined);
+      }
+    });
+}
+
 export function Field({
   validate,
+  required,
+  minLength,
+  maxLength,
   name,
   render,
   children,
@@ -159,16 +236,33 @@ export function Field({
     // eslint-disable-next-line
   }, []);
 
+  // construct validators
+  const validators = Validators.create(
+    required,
+    minLength,
+    maxLength,
+    validate
+  );
+
   // Register field and field-level validation with parent <Formik>
   const { registerField, unregisterField } = formik;
+
   React.useEffect(() => {
     registerField(name, {
-      validate: validate,
+      validate: createValidator(validators),
     });
     return () => {
       unregisterField(name);
     };
-  }, [registerField, unregisterField, name, validate]);
+  }, [
+    registerField,
+    unregisterField,
+    name,
+    required,
+    minLength,
+    maxLength,
+    validate,
+  ]);
   const [field, meta] = formik.getFieldProps({ name, ...props });
   const legacyBag = { field, form: formik };
 

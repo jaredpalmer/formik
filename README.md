@@ -8,12 +8,13 @@
 
 <br>
 
-[![Financial Contributors on Open Collective](https://opencollective.com/formik/all/badge.svg?label=financial+contributors)](https://opencollective.com/formik) [![Stable Release](https://img.shields.io/npm/v/formik.svg)](https://npm.im/formik)
+[![Stable Release](https://img.shields.io/npm/v/formik.svg)](https://npm.im/formik)
 [![Blazing Fast](https://badgen.now.sh/badge/speed/blazing%20%F0%9F%94%A5/green)](https://npm.im/formik)
 [![gzip size](http://img.badgesize.io/https://unpkg.com/formik@latest/dist/formik.umd.production.js?compression=gzip)](https://unpkg.com/formik@latest/dist/formik.umd.production.js)
 [![license](https://badgen.now.sh/badge/license/MIT)](./LICENSE)
 [![Discord](https://img.shields.io/discord/102860784329052160.svg?style=flat-square)](https://discord.gg/cU6MCve)
 [![Join the community on Spectrum](https://withspectrum.github.io/badge/badge.svg)](https://spectrum.chat/palmer)
+
 
 **Visit [https://jaredpalmer.com/formik/](https://jaredpalmer.com/formik/) to get started with Formik.**
 
@@ -105,11 +106,6 @@ specification. Contributions of any kind welcome!
 ---
 
 ## Contributors
-
-### Code Contributors
-
-This project exists thanks to all the people who contribute. [[Contribute](CONTRIBUTING.md)].
-<a href="https://github.com/jaredpalmer/formik/graphs/contributors"><img src="https://opencollective.com/formik/contributors.svg?width=890&button=false" /></a>
 
 ### Financial Contributors
 

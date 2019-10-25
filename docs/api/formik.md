@@ -54,13 +54,13 @@ const BasicExample = () => (
 
 ### Formik render methods and props
 
-There are three ways to render things with `<Formik />`
+There are 2 ways to render things with `<Formik />`
 
 - `<Formik component>`
-- `<Formik render>`
 - `<Formik children>`
+- ~~`<Formik render>`~~ Deprecated in 2.x
 
-All three render methods will be passed the same props:
+Each render methods will be passed the same props:
 
 #### `dirty: boolean`
 
@@ -218,6 +218,8 @@ const ContactForm = ({
 don’t use both in the same `<Formik>`.
 
 ### `render: (props: FormikProps<Values>) => ReactNode`
+
+**Deprecated in 2.x**
 
 ```jsx
 <Formik render={props => <ContactForm {...props} />} />

@@ -19,7 +19,6 @@ export interface FieldProps<V = any> {
 export interface FieldConfig {
   /**
    * Field component to render. Can either be a string like 'select' or a component.
-   * @deprecated
    */
   component?:
     | string
@@ -134,11 +133,6 @@ export function Field({
       invariant(
         !render,
         `<Field render> has been deprecated and will be removed in future versions of Formik. Please use a child callback function instead. To get rid of this warning, replace <Field name="${name}" render={({field, form}) => ...} /> with <Field name="${name}">{({field, form, meta}) => ...}</Field>`
-      );
-
-      invariant(
-        !component,
-        '<Field component> has been deprecated and will be removed in future versions of Formik. Use <Field as> instead. Note that with the `as` prop, all props are passed directly through and not grouped in `field` object key.'
       );
 
       invariant(

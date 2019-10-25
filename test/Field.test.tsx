@@ -385,29 +385,6 @@ describe('Field / FastField', () => {
   });
 
   describe('warnings', () => {
-    cases('warns if component is a string', renderField => {
-      global.console.warn = jest.fn();
-
-      const { rerender } = renderField({
-        component: 'select',
-      });
-      rerender();
-      expect((global.console.warn as jest.Mock).mock.calls[0][0]).toContain(
-        'Warning:'
-      );
-    });
-
-    cases('warns about compnent prop deprecation', renderField => {
-      global.console.warn = jest.fn();
-      const { rerender } = renderField({
-        component: () => null,
-      });
-      rerender();
-      expect((global.console.warn as jest.Mock).mock.calls[0][0]).toContain(
-        'deprecated'
-      );
-    });
-
     cases('warns about render prop deprecation', renderField => {
       global.console.warn = jest.fn();
       const { rerender } = renderField({
@@ -416,17 +393,6 @@ describe('Field / FastField', () => {
       rerender();
       expect((global.console.warn as jest.Mock).mock.calls[0][0]).toContain(
         'deprecated'
-      );
-    });
-
-    cases('warns if component is fn', renderField => {
-      global.console.warn = jest.fn();
-      const { rerender } = renderField({
-        component: () => null,
-      });
-      rerender();
-      expect((global.console.warn as jest.Mock).mock.calls[0][0]).toContain(
-        'Warning:'
       );
     });
 

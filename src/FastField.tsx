@@ -4,80 +4,29 @@ import {
   FormikProps,
   GenericFieldHTMLAttributes,
   FormikContextType,
+  FieldMetaProps,
+  FieldInputProps,
 } from './types';
 import invariant from 'tiny-warning';
 import { getIn, isEmptyChildren, isFunction } from './utils';
 import { FormikContext } from './FormikContext';
+import { FieldConfig } from './Field';
 
 type $FixMe = any;
 
 export interface FastFieldProps<V = any> {
-  field: {
-    /** Classic React change handler, keyed by input name */
-    onChange: (e: React.ChangeEvent<any>) => void;
-    /** Mark input as touched */
-    onBlur: (e: any) => void;
-    /** Value of the input */
-    value: any;
-    /* name of the input */
-    name: string;
-  };
+  field: FieldInputProps<V>;
+  meta: FieldMetaProps<V>;
   form: FormikProps<V>; // if ppl want to restrict this for a given form, let them.
 }
 
-export interface FastFieldConfig<T> {
-  /**
-   * Field component to render. Can either be a string like 'select' or a component.
-   */
-  as?: string | React.ComponentType<FastFieldProps<any>> | React.ComponentType;
-  /**
-   * Field component to render. Can either be a string like 'select' or a component.
-   */
-  component?:
-    | string
-    | React.ComponentType<FastFieldProps<any>>
-    | React.ComponentType;
-
-  /**
-   * Render prop (works like React router's <Route render={props =>} />)
-   */
-  render?: (props: FastFieldProps<any>) => React.ReactNode;
-
-  /**
-   * Children render function <Field name>{props => ...}</Field>)
-   */
-  children?:
-    | ((props: FastFieldProps<any>) => React.ReactNode)
-    | React.ReactNode;
-
-  /**
-   * Validate a single field value independently
-   */
-  validate?: (value: any) => string | Promise<void> | undefined;
-
+export type FastFieldConfig<T> = FieldConfig & {
   /** Override FastField's default shouldComponentUpdate */
   shouldUpdate?: (
     nextProps: T & GenericFieldHTMLAttributes,
     props: {}
   ) => boolean;
-
-  /**
-   * Field name
-   */
-  name: string;
-
-  /** HTML class */
-  className?: string;
-
-  /** HTML input type */
-  type?: string;
-
-  /** Field value */
-  value?: any;
-
-  /** Inner ref */
-  innerRef?: (instance: any) => void;
-}
+};
 
 export type FastFieldAttributes<T> = GenericFieldHTMLAttributes &
   FastFieldConfig<T> &
@@ -87,7 +36,7 @@ export type FastFieldAttributes<T> = GenericFieldHTMLAttributes &
  * Custom Field component for quickly hooking into Formik
  * context and wiring up forms.
  */
-class FastFieldInner<Values = {}, Props = {}> extends React.Component<
+export class FastField<Values = {}, Props = {}> extends React.Component<
   FastFieldAttributes<Props>,
   {}
 > {
@@ -146,17 +95,23 @@ class FastFieldInner<Values = {}, Props = {}> extends React.Component<
   componentDidMount() {
     // Register the Field with the parent Formik. Parent will cycle through
     // registered Field's validate fns right prior to submit
-    this.context.registerField(this.props.name, this);
+    this.context.registerField(this.props.name, {
+      validate: this.props.validate,
+    });
   }
 
   componentDidUpdate(prevProps: FastFieldAttributes<Props>) {
     if (this.props.name !== prevProps.name) {
       this.context.unregisterField(prevProps.name);
-      this.context.registerField(this.props.name, this);
+      this.context.registerField(this.props.name, {
+        validate: this.props.validate,
+      });
     }
 
     if (this.props.validate !== prevProps.validate) {
-      this.context.registerField(this.props.name, this);
+      this.context.registerField(this.props.name, {
+        validate: this.props.validate,
+      });
     }
   }
 
@@ -191,7 +146,16 @@ class FastFieldInner<Values = {}, Props = {}> extends React.Component<
       onChange: formik.handleChange,
       onBlur: formik.handleBlur,
     };
-    const bag = { field, form: restOfFormik };
+    const meta = {
+      value: getIn(formik.values, name),
+      error: getIn(formik.errors, name),
+      touched: !!getIn(formik.touched, name),
+      initialValue: getIn(formik.initialValues, name),
+      initialTouched: !!getIn(formik.initialTouched, name),
+      initialError: getIn(formik.initialErrors, name),
+    };
+
+    const bag = { field, meta, form: restOfFormik };
 
     if (render) {
       return (render as any)(bag);
@@ -238,5 +202,3 @@ class FastFieldInner<Values = {}, Props = {}> extends React.Component<
     );
   }
 }
-
-export const FastField = FastFieldInner;

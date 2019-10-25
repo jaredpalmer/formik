@@ -192,7 +192,7 @@ describe('Field / FastField', () => {
       expect(asInjectedProps.value).toBe('jared');
       expect(asInjectedProps.onChange).toBe(handleChange);
       expect(asInjectedProps.onBlur).toBe(handleBlur);
-      expect(queryAllByText(TEXT)).toHaveLength(3);
+      expect(queryAllByText(TEXT)).toHaveLength(4);
     });
   });
 

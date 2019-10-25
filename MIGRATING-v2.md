@@ -158,12 +158,6 @@ A hook that is equivalent to `connect()`.
 
 `<Field/>` now accepts a prop called `as` which will inject `onChange`, `onBlur`, `value` etc. directly through to the component or string. This is useful for folks using Emotion or Styled components as they no longer need to clean up `component`'s render props in a wrapped function.
 
-### Misc
-
-- `FormikContext` is now exported
-- `validateOnMount?: boolean = false`
-- `initialErrors`, `initialTouched`, `initialStatus` have been added
-
 ```jsx
 // <input className="form-input" placeHolder="Jane"  />
 <Field name="firstName" className="form-input" placeholder="Jane" />
@@ -192,6 +186,7 @@ const MyStyledTextarea = MyStyledInput.withComponent('textarea');
 // <textarea  placeHolder="Post a message..." rows={5}></textarea>
 <Field name="message" as={MyStyledTextArea} placeHolder="Post a message.." rows={4}/>
 ```
+
 
 ### `getFieldProps(nameOrProps)`
 
@@ -234,6 +229,12 @@ export interface FieldMetaProps<Value> {
   initialError?: string;
 }
 ```
+
+### Other Stuff
+
+- `FormikContext` is now exported
+- `validateOnMount?: boolean = false`
+- `initialErrors`, `initialTouched`, `initialStatus` have been added
 
 ## Deprecation Warnings
 

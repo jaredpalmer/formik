@@ -31,7 +31,7 @@
     "start": "cross-env NODE_ENV=development tsdx watch",
     "prebuild": "rimraf dist",
     "build": "cross-env NODE_ENV=production tsdx build --format=cjs,esm,umd",
-    "prepublish": "npm run build",
+    "prepublishOnly": "npm run build",
     "format": "prettier --trailing-comma es5 --single-quote --write 'src/**/*' 'test/**/*' 'README.md' '/docs/**/*.md'",
     "precommit": "lint-staged",
     "storybook": "start-storybook -p 9001",

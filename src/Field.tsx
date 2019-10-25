@@ -155,23 +155,29 @@ export function useField<Val = any>(
   return getFieldProps({ name: propsOrFieldName });
 }
 
+function isEmpty(value: any) {
+  return value === undefined || value === '' || value === null;
+}
+
 function createValidator(validators: Validators) {
   const { required, minLength, maxLength, validate } = validators;
 
   return (value: any) =>
     new Promise<string | void>(async (resolve, _) => {
       try {
-        if (required && !!!value) {
+        const emptyValue = isEmpty(value);
+
+        if (required && emptyValue) {
           resolve('The field is required');
         } else if (
           minLength != undefined &&
-          !!value &&
+          !emptyValue &&
           value.length < minLength
         ) {
           resolve(`The field length must be at least ${minLength}.`);
         } else if (
           maxLength != undefined &&
-          !!value &&
+          !emptyValue &&
           value.length > maxLength
         ) {
           resolve(`The field length must be no more than ${maxLength}.`);

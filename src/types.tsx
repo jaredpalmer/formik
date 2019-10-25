@@ -137,9 +137,8 @@ export interface FormikHandlers {
     ? void
     : ((e: string | React.ChangeEvent<any>) => void);
 
-  getFieldProps<Value = any>(
-    props: any
-  ): [FieldInputProps<Value>, FieldMetaProps<Value>];
+  getFieldProps<Value = any>(props: any): FieldInputProps<Value>;
+  getFieldMeta<Value>(name: string): FieldMetaProps<Value>;
 }
 
 /**

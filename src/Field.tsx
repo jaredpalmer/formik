@@ -72,7 +72,12 @@ export function useField<Val = any>(
   propsOrFieldName: string | FieldAttributes<Val>
 ) {
   const formik = useFormikContext();
-  const { getFieldProps, registerField, unregisterField } = formik;
+  const {
+    getFieldProps,
+    getFieldMeta,
+    registerField,
+    unregisterField,
+  } = formik;
   const isAnObject = isObject(propsOrFieldName);
   const fieldName = isAnObject
     ? (propsOrFieldName as FieldAttributes<Val>).name
@@ -100,16 +105,21 @@ export function useField<Val = any>(
   }
 
   if (isObject(propsOrFieldName)) {
-    if (__DEV__) {
-      invariant(
-        (propsOrFieldName as FieldAttributes<Val>).name,
-        'Invalid field name. Either pass `useField` a string or an object containing a `name` key.'
-      );
-    }
-    return getFieldProps(propsOrFieldName);
+    invariant(
+      (propsOrFieldName as FieldAttributes<Val>).name,
+      'Invalid field name. Either pass `useField` a string or an object containing a `name` key.'
+    );
+
+    return [
+      getFieldProps(propsOrFieldName),
+      getFieldMeta((propsOrFieldName as FieldAttributes<Val>).name),
+    ];
   }
 
-  return getFieldProps({ name: propsOrFieldName });
+  return [
+    getFieldProps({ name: propsOrFieldName }),
+    getFieldMeta(propsOrFieldName),
+  ];
 }
 
 export function Field({
@@ -163,7 +173,8 @@ export function Field({
       unregisterField(name);
     };
   }, [registerField, unregisterField, name, validate]);
-  const [field, meta] = formik.getFieldProps({ name, ...props });
+  const field = formik.getFieldProps({ name, ...props });
+  const meta = formik.getFieldMeta(name);
   const legacyBag = { field, form: formik };
 
   if (render) {

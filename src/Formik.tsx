@@ -39,8 +39,14 @@ type FormikMessage<Values> =
   | { type: 'SET_TOUCHED'; payload: FormikTouched<Values> }
   | { type: 'SET_ERRORS'; payload: FormikErrors<Values> }
   | { type: 'SET_STATUS'; payload: any }
-  | { type: 'SET_FORMIK_STATE'; payload: (s: FormikState<Values>) => FormikState<Values> }
-  | { type: 'RESET_FORM'; payload: FormikState<Values> };
+  | {
+      type: 'SET_FORMIK_STATE';
+      payload: (s: FormikState<Values>) => FormikState<Values>;
+    }
+  | {
+      type: 'RESET_FORM';
+      payload: FormikState<Values>;
+    };
 
 // State reducer
 function formikReducer<Values>(
@@ -76,6 +82,7 @@ function formikReducer<Values>(
         errors: setIn(state.errors, msg.payload.field, msg.payload.value),
       };
     case 'RESET_FORM':
+      return { ...state, ...msg.payload };
     case 'SET_FORMIK_STATE':
       return msg.payload(state);
     case 'SUBMIT_ATTEMPT':
@@ -381,56 +388,58 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     [props.initialErrors, props.initialStatus, props.initialTouched]
   );
 
-  React.useEffect(
-    function() {
-      if (enableReinitialize && isMounted.current === true) {
-        initialValues.current = props.initialValues;
-        if (!isEqual(state.values, props.initialValues)) {
-          resetForm();
-        }
-      }
-    },
-    [enableReinitialize, props.initialValues]
-  );
+  React.useEffect(() => {
+    if (
+      enableReinitialize &&
+      isMounted.current === true &&
+      !isEqual(initialValues.current, props.initialValues)
+    ) {
+      initialValues.current = props.initialValues;
+      resetForm();
+    }
+  }, [enableReinitialize, props.initialValues, resetForm]);
 
-  React.useEffect(
-    function() {
-      if (enableReinitialize && isMounted.current === true) {
-        initialErrors.current = props.initialErrors || emptyErrors;
-        dispatch({
-          type: 'SET_ERRORS',
-          payload: props.initialErrors || emptyErrors,
-        });
-      }
-    },
-    [enableReinitialize, props.initialErrors]
-  );
+  React.useEffect(() => {
+    if (
+      enableReinitialize &&
+      isMounted.current === true &&
+      !isEqual(initialErrors.current, props.initialErrors)
+    ) {
+      initialErrors.current = props.initialErrors || emptyErrors;
+      dispatch({
+        type: 'SET_ERRORS',
+        payload: props.initialErrors || emptyErrors,
+      });
+    }
+  }, [enableReinitialize, props.initialErrors]);
 
-  React.useEffect(
-    function() {
-      if (enableReinitialize && isMounted.current === true) {
-        initialTouched.current = props.initialTouched || emptyTouched;
-        dispatch({
-          type: 'SET_TOUCHED',
-          payload: props.initialTouched || emptyTouched,
-        });
-      }
-    },
-    [enableReinitialize, props.initialTouched]
-  );
+  React.useEffect(() => {
+    if (
+      enableReinitialize &&
+      isMounted.current === true &&
+      !isEqual(initialTouched.current, props.initialTouched)
+    ) {
+      initialTouched.current = props.initialTouched || emptyTouched;
+      dispatch({
+        type: 'SET_TOUCHED',
+        payload: props.initialTouched || emptyTouched,
+      });
+    }
+  }, [enableReinitialize, props.initialTouched]);
 
-  React.useEffect(
-    function() {
-      if (enableReinitialize && isMounted.current === true) {
-        initialStatus.current = props.initialStatus;
-        dispatch({
-          type: 'SET_STATUS',
-          payload: props.initialStatus,
-        });
-      }
-    },
-    [enableReinitialize, props.initialStatus]
-  );
+  React.useEffect(() => {
+    if (
+      enableReinitialize &&
+      isMounted.current === true &&
+      !isEqual(initialStatus.current, props.initialStatus)
+    ) {
+      initialStatus.current = props.initialStatus;
+      dispatch({
+        type: 'SET_STATUS',
+        payload: props.initialStatus,
+      });
+    }
+  }, [enableReinitialize, props.initialStatus, props.initialTouched]);
 
   const validateField = useEventCallback((name: string) => {
     // This will efficiently validate a single field by avoiding state
@@ -636,17 +645,20 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     [executeBlur]
   );
 
-  const setFormikState = React.useCallback((
-    stateOrCb:
-      | FormikState<Values>
-      | ((state: FormikState<Values>) => FormikState<Values>)
-  ): void => {
-    if (isFunction(stateOrCb)) {
-      dispatch({ type: 'SET_FORMIK_STATE', payload: stateOrCb });
-    } else {
-      dispatch({ type: 'SET_FORMIK_STATE', payload: () => stateOrCb });
-    }
-  }, [dispatch])
+  const setFormikState = React.useCallback(
+    (
+      stateOrCb:
+        | FormikState<Values>
+        | ((state: FormikState<Values>) => FormikState<Values>)
+    ): void => {
+      if (isFunction(stateOrCb)) {
+        dispatch({ type: 'SET_FORMIK_STATE', payload: stateOrCb });
+      } else {
+        dispatch({ type: 'SET_FORMIK_STATE', payload: () => stateOrCb });
+      }
+    },
+    []
+  );
 
   const setStatus = React.useCallback((status: any) => {
     dispatch({ type: 'SET_STATUS', payload: status });
@@ -994,7 +1006,9 @@ function arrayMerge(target: any[], source: any[], options: any): any[] {
 
 /** Return multi select values based on an array of options */
 function getSelectedValues(options: any[]) {
-  return Array.from(options).filter(el => el.selected).map(el => el.value);
+  return Array.from(options)
+    .filter(el => el.selected)
+    .map(el => el.value);
 }
 
 /** Return the next value for a checkbox */

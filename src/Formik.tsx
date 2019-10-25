@@ -20,6 +20,7 @@ import {
   setNestedObjectValues,
   getActiveElement,
   getIn,
+  isObject,
 } from './utils';
 import { FormikProvider } from './FormikContext';
 import invariant from 'tiny-warning';
@@ -788,7 +789,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   });
 
   const getFieldMeta = React.useCallback(
-    (name: string) => {
+    (name: string): FieldMetaProps<any> => {
       return {
         value: getIn(state.values, name),
         error: getIn(state.errors, name),
@@ -802,13 +803,9 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   );
 
   const getFieldProps = React.useCallback(
-    ({
-      name,
-      type,
-      value: valueProp, // value is special for checkboxes
-      as: is,
-      multiple,
-    }): [FieldInputProps<any>, FieldMetaProps<any>] => {
+    (nameOrOptions): FieldInputProps<any> => {
+      const isAnObject = isObject(nameOrOptions);
+      const name = isAnObject ? nameOrOptions.name : nameOrOptions;
       const valueState = getIn(state.values, name);
 
       const field: FieldInputProps<any> = {
@@ -817,26 +814,34 @@ export function useFormik<Values extends FormikValues = FormikValues>({
         onChange: handleChange,
         onBlur: handleBlur,
       };
+      if (isAnObject) {
+        const {
+          type,
+          value: valueProp, // value is special for checkboxes
+          as: is,
+          multiple,
+        } = nameOrOptions;
 
-      if (type === 'checkbox') {
-        if (valueProp === undefined) {
-          field.checked = !!valueState;
-        } else {
-          field.checked = !!(
-            Array.isArray(valueState) && ~valueState.indexOf(valueProp)
-          );
+        if (type === 'checkbox') {
+          if (valueProp === undefined) {
+            field.checked = !!valueState;
+          } else {
+            field.checked = !!(
+              Array.isArray(valueState) && ~valueState.indexOf(valueProp)
+            );
+            field.value = valueProp;
+          }
+        } else if (type === 'radio') {
+          field.checked = valueState === valueProp;
           field.value = valueProp;
+        } else if (is === 'select' && multiple) {
+          field.value = field.value || [];
+          field.multiple = true;
         }
-      } else if (type === 'radio') {
-        field.checked = valueState === valueProp;
-        field.value = valueProp;
-      } else if (is === 'select' && multiple) {
-        field.value = field.value || [];
-        field.multiple = true;
       }
-      return [field, getFieldMeta(name)];
+      return field;
     },
-    [getFieldMeta, handleBlur, handleChange, state.values]
+    [handleBlur, handleChange, state.values]
   );
 
   const dirty = React.useMemo(
@@ -884,6 +889,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     unregisterField,
     registerField,
     getFieldProps,
+    getFieldMeta,
     validateOnBlur,
     validateOnChange,
     validateOnMount,

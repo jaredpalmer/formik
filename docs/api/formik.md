@@ -24,7 +24,8 @@ const BasicExample = () => (
           actions.setSubmitting(false);
         }, 1000);
       }}
-      render={props => (
+    >
+      {props => (
         <form onSubmit={props.handleSubmit}>
           <input
             type="text"
@@ -37,7 +38,7 @@ const BasicExample = () => (
           <button type="submit">Submit</button>
         </form>
       )}
-    />
+    </Formik>
   </div>
 );
 ```

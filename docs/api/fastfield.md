@@ -6,12 +6,12 @@ custom_edit_url: https://github.com/jaredpalmer/formik/edit/master/docs/api/fast
 
 ## Before we start
 
-`<FastField />` is meant for performance _optimization_. However, you really do not need to use it until you do. Only proceed if you are familiar with how React's [`shouldComponentUpdate()`](https://reactjs.org/docs/react-component.html#shouldcomponentupdate) works. You have been warned.\*\*
+`<FastField />` is meant for performance _optimization_. However, you really do not need to use it until you do. Only proceed if you are familiar with how React's [`shouldComponentUpdate()`](https://reactjs.org/docs/react-component.html#shouldcomponentupdate) works. You have been warned.
 
 **No. Seriously. Please review the following parts of the official React documentation before continuing**
 
-* [React `shouldComponentUpdate()` Reference](https://reactjs.org/docs/react-component.html#shouldcomponentupdate)
-* [`shouldComponentUpdate` in Action](https://reactjs.org/docs/optimizing-performance.html#shouldcomponentupdate-in-action)
+- [React `shouldComponentUpdate()` Reference](https://reactjs.org/docs/react-component.html#shouldcomponentupdate)
+- [`shouldComponentUpdate` in Action](https://reactjs.org/docs/optimizing-performance.html#shouldcomponentupdate-in-action)
 
 ## Overview
 
@@ -19,9 +19,9 @@ custom_edit_url: https://github.com/jaredpalmer/formik/edit/master/docs/api/fast
 
 For example, `<FastField name="firstName" />` will only re-render when there are:
 
-* Changes to `values.firstName`, `errors.firstName`, `touched.firstName`, or `isSubmitting`. This is determined by shallow comparison. Note: dotpaths are supported.
-* A prop is added/removed to the `<FastField name="firstName" />`
-* The `name` prop changes
+- Changes to `values.firstName`, `errors.firstName`, `touched.firstName`, or `isSubmitting`. This is determined by shallow comparison. Note: dotpaths are supported.
+- A prop is added/removed to the `<FastField name="firstName" />`
+- The `name` prop changes
 
 Other than for these aforementioned situations, `<FastField />` will not re-render when other parts of of Formik state change. However, all updates triggered by a `<FastField />` will trigger re-renders to other "vanilla" `<Field />` components.
 
@@ -36,6 +36,7 @@ More specifically, if the `<Field />` does not change behavior or render anythin
 ```jsx
 import React from 'react';
 import { Formik, Field, FastField, Form } from 'formik';
+import * as Yup from 'yup';
 
 const Basic = () => (
   <div>
@@ -72,17 +73,15 @@ const Basic = () => (
             form.errors.firstName && <div>{form.errors.firstName}</div>}
 
           <label htmlFor="middleInitial">Middle Initial</label>
-          <FastField
-            name="middleInitial"
-            placeholder="F"
-            render={({ field, form }) => (
+          <FastField name="middleInitial" placeholder="F">
+            {({ field, form, meta }) => (
               <div>
                 <input {...field} />
                 {/**
                  * This updates normally because it's from the same slice of Formik state,
                  * i.e. path to the object matches the name of this <FastField />
                  */}
-                {form.touched.middleInitial ? form.errors.middleInitial : null}
+                {meta.touched ? meta.error : null}
 
                 {/** This won't ever update since it's coming from
                  from another <Field>/<FastField>'s (i.e. firstName's) slice   */}
@@ -102,25 +101,23 @@ const Basic = () => (
                 </button>
               </div>
             )}
-          />
+          </FastField>
 
           {/** Updates for all changes to Formik state
            and all changes by all <Field>s and <FastField>s */}
           <label htmlFor="lastName">LastName</label>
-          <Field
-            name="lastName"
-            placeholder="Baby"
-            render={({ field, form }) => (
+          <Field name="lastName" placeholder="Baby">
+            {( }) => (
               <div>
                 <input {...field} />
-                {/** Works because this is inside
+                {/**  Works because this is inside
                  of a <Field/>, which gets all updates */}
                 {form.touched.firstName && form.errors.firstName
                   ? form.errors.firstName
                   : null}
               </div>
             )}
-          />
+          </Field>
 
           {/** Updates for all changes to Formik state and
            all changes by all <Field>s and <FastField>s */}

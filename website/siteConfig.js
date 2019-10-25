@@ -31,7 +31,18 @@ const users = [
     infoLink: 'https://walmart.com',
     pinned: true,
   },
-
+  {
+    caption: 'Lyft',
+    image: '/formik/img/logos/lyft.svg',
+    infoLink: 'https://lyft.com',
+    pinned: true,
+  },
+  {
+    caption: 'Nasa',
+    image: '/formik/img/logos/nasa.svg',
+    infoLink: 'https://www.nasa.gov',
+    pinned: true,
+  },
   {
     caption: 'OpenTable',
     image: '/formik/img/logos/opentable.svg',
@@ -39,9 +50,33 @@ const users = [
     pinned: true,
   },
   {
-    caption: 'Lyft',
-    image: '/formik/img/logos/lyft.svg',
-    infoLink: 'https://lyft.com',
+    caption: 'Priceline.com',
+    image: '/formik/img/logos/priceline.png',
+    infoLink: 'https://priceline.com',
+    pinned: true,
+  },
+  {
+    caption: 'Booking.com',
+    image: '/formik/img/logos/booking.svg',
+    infoLink: 'https://booking.com',
+    pinned: true,
+  },
+  {
+    caption: 'NASDAQ',
+    image: '/formik/img/logos/nasdaq.svg',
+    infoLink: 'https://www.nasdaq.com',
+    pinned: true,
+  },
+  {
+    caption: 'PWC',
+    image: '/formik/img/logos/pwc.svg',
+    infoLink: 'https://www.pwc.com',
+    pinned: true,
+  },
+  {
+    caption: 'NOAA',
+    image: '/formik/img/logos/noaa.svg',
+    infoLink: 'https://www.noaa.gov',
     pinned: true,
   },
   {
@@ -69,14 +104,39 @@ const users = [
     pinned: true,
   },
   {
+    caption: 'State Street',
+    image: '/formik/img/logos/state-street.png',
+    infoLink: 'https://statestreet.com',
+  },
+  {
+    caption: 'Wayfair',
+    image: '/formik/img/logos/wayfair.svg',
+    infoLink: 'https://wayfair.com',
+    pinned: true,
+  },
+  {
+    caption: 'Artsy',
+    image: '/formik/img/logos/artsy.png',
+    infoLink: 'https://artsy.com',
+    pinned: true,
+  },
+  {
     caption: 'Postmates',
     image: '/formik/img/logos/postmates.svg',
     infoLink: 'https://postmates.com',
+    pinned: true,
   },
   {
     caption: 'Capsule Health',
     image: '/formik/img/logos/capsule.svg',
     infoLink: 'https://capsulecares.com',
+    pinned: true,
+  },
+  {
+    caption: 'Egghead',
+    image: '/formik/img/logos/egghead.svg',
+    infoLink: 'https://egghead.io',
+    pinned: true,
   },
   {
     caption: 'Frame.io',
@@ -93,11 +153,36 @@ const users = [
     image: '/formik/img/logos/extendi.svg',
     infoLink: 'https://www.extendi.it',
   },
+  {
+    caption: 'Gusto',
+    image: '/formik/img/logos/gusto.svg',
+    infoLink: 'https://gusto.com',
+  },
+  {
+    caption: 'Campusjäger',
+    image: '/formik/img/logos/campusjaeger.png',
+    infoLink: 'https://www.campusjaeger.de/',
+  },
+  {
+    caption: 'Letgo',
+    image: '/formik/img/logos/letgo-logo.png',
+    infoLink: 'https://we.letgo.com/',
+  },
+  {
+    caption: 'gitconnected',
+    image: '/formik/img/logos/gitconnected-logo.png',
+    infoLink: 'https://gitconnected.com',
+  },
+  {
+    caption: 'zauberware',
+    image: '/formik/img/logos/zauberware-logo.svg',
+    infoLink: 'https://www.zauberware.com',
+  },
 ];
 
 const siteConfig = {
   title: 'Formik', // Title for your website.
-  tagline: `Build forms in React, without tears.`,
+  tagline: `Build forms in React, without the tears.`,
   url: 'https://jaredpalmer.com', // Your website URL
   baseUrl: '/formik/', // Base URL for your project */
   // For github.io type URLs, you would set the url and baseUrl like:
@@ -114,6 +199,7 @@ const siteConfig = {
   // For no header links in the top nav bar -> headerLinks: [],
   headerLinks: [
     { doc: 'overview', label: 'Docs' },
+    { page: 'users', label: 'Users' },
     { page: 'help', label: 'Help' },
     {
       href: 'https://github.com/jaredpalmer/formik',
@@ -128,33 +214,36 @@ const siteConfig = {
 
   /* path to images for header/footer */
   headerIcon: 'img/formik.svg',
-  footerIcon: 'img/formik.svg',
+  footerIcon: 'img/formik-mark.svg',
   favicon: 'img/favicon.png',
 
   /* Colors for website */
   colors: {
-    primaryColor: '#111',
-    secondaryColor: '#111',
-    grayDarker: '#333',
-    gray: '#555',
-    grayLighter: '#888',
+    primaryColor: '#1B2638',
+    secondaryColor: '#0E1624',
+    grayDarker: '#344563',
+    gray: '#505F79',
+    grayLighter: '#7A869A',
     accentColor: '#785BA3',
     actionColor: '#008cf2',
   },
 
   /* Custom fonts for website */
-  /*
   fonts: {
-    myFont: [
-      "Times New Roman",
-      "Serif"
+    sans: [
+      `FormikSans`,
+      `-apple-system`,
+      `BlinkMacSystemFont`,
+      `Segoe UI`,
+      `Roboto`,
+      `Oxygen`,
+      `Ubuntu`,
+      `Cantarell`,
+      'Open Sans',
+      'Helvetica Neue',
+      `sans-serif`,
     ],
-    myOtherFont: [
-      "-apple-system",
-      "system-ui"
-    ]
   },
-  */
 
   // This copyright info is used in /core/Footer.js and blog RSS/Atom feeds.
   copyright: `Copyright © ${new Date().getFullYear()} Jared Palmer. All Rights Reserved.`,
@@ -170,7 +259,6 @@ const siteConfig = {
     'https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.0/clipboard.min.js',
     '/formik/js/code-blocks-buttons.js',
   ],
-  stylesheets: ['/formik/css/code-blocks-buttons.css'],
 
   // On page navigation for the current documentation page.
   onPageNav: 'separate',
@@ -193,7 +281,9 @@ const siteConfig = {
   scrollToTopOptions: {
     zIndex: 100,
   },
+  disableHeaderTitle: true,
   enableUpdateTime: true,
+  enableUpdateBy: true,
   gaTrackingId: 'UA-55176740-4',
   twitter: true,
   twitterUsername: 'jaredpalmer',

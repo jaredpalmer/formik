@@ -56,9 +56,9 @@ const BasicExample = () => (
 
 There are three ways to render things with `<Formik />`
 
-* `<Formik component>`
-* `<Formik render>`
-* `<Formik children>`
+- `<Formik component>`
+- `<Formik render>`
+- `<Formik children>`
 
 All three render methods will be passed the same props:
 
@@ -81,16 +81,12 @@ the `errors` objects shape.
 `onBlur` event handler. Useful for when you need to track whether an input has
 been `touched` or not. This should be passed to `<input onBlur={handleBlur} ... />`
 
-DOM-only. Use `setFieldTouched` in React Native.
-
 #### `handleChange: (e: React.ChangeEvent<any>) => void`
 
 General input change event handler. This will update the `values[key]` where
 `key` is the event-emitting input's `name` attribute. If the `name` attribute is
 not present, `handleChange` will look for an input's `id` attribute. Note:
 "input" here means all HTML inputs.
-
-DOM-only. Use `setFieldValue` in React Native.
 
 #### `handleReset: () => void`
 
@@ -107,19 +103,17 @@ Submitting state of the form. Returns `true` if submission is in progress and `f
 
 #### `isValid: boolean`
 
-Returns `true` if the there are no `errors`, or the result of
-`isInitialValid` the form if is in "pristine" condition (i.e. not `dirty`).
+Returns `true` if there are no `errors` (i.e. the `errors` object is empty) and `false` otherwise.
+
+> Note: `isInitialValid` was deprecated in 2.x. However, for backwards compatibility, if the `isInitialValid` prop is specified, `isValid` will return `true` if the there are no `errors`, or the result of `isInitialValid` of the form if it is in "pristine" condition (i.e. not `dirty`).
 
 #### `isValidating: boolean`
 
-Returns `true` if Formik is running any validation function, `false` otherwise. To learn more about what happens with `isValidating` during the submission process, see [Form Submission](guides/form-submission.md).
+Returns `true` if Formik is running validation during submission, or by calling [`validateForm`] directly `false` otherwise. To learn more about what happens with `isValidating` during the submission process, see [Form Submission](guides/form-submission.md).
 
-#### `resetForm: (nextValues?: Values) => void`
+#### `resetForm: (nextInitialState?: FormikState<Values>) => void`
 
-Imperatively reset the form. This will clear `errors` and `touched`, set
-`isSubmitting` to `false`, `isValidating` to `false`, and rerun `mapPropsToValues` with the current
-`WrappedComponent`'s `props` or what's passed as an argument. The latter is
-useful for calling `resetForm` within `componentWillReceiveProps`.
+Imperatively reset the form. If `nextInitialState` is specified, Formik will set this state as the new "initial state" and use the related values of `nextInitialState` to update the form's `initialValues` as well as `initialTouched`, `initialStatus`, `initialErrors`. This is useful for altering the initial state (i.e. "base") of the form after changes have been made. If `nextInitialState` is not defined, then Formik will reset state to the original initial state. The latter is useful for calling `resetForm` within `componentDidUpdate` or `useEffect`.
 
 #### `setErrors: (fields: { [field: string]: string }) => void`
 
@@ -135,9 +129,9 @@ Set the error message of a field imperatively. `field` should match the key of
 Set the touched state of a field imperatively. `field` should match the key of
 `touched` you wish to update. Useful for creating custom input blur handlers. Calling this method will trigger validation to run if `validateOnBlur` is set to `true` (which it is by default). `isTouched` defaults to `true` if not specified. You can also explicitly prevent/skip validation by passing a third argument as `false`.
 
-#### `submitForm: () => void`
+#### `submitForm: () => Promise`
 
-Trigger a form submission.
+Trigger a form submission. The promise will be rejected if form is invalid.
 
 #### `submitCount: number`
 
@@ -157,7 +151,7 @@ use it to pass API responses back into your component in `handleSubmit`.
 
 #### `setSubmitting: (isSubmitting: boolean) => void`
 
-Set `isSubmitting` imperatively.
+Set `isSubmitting` imperatively. You would call it with `setSubmitting(false)` in your `onSubmit` handler to finish the cycle. To learn more about the submission process, see [Form Submission](guides/form-submission.md).
 
 #### `setTouched: (fields: { [field: string]: boolean }) => void`
 
@@ -194,7 +188,7 @@ Imperatively call your `validate` or `validateSchema` depending on what was spec
 
 Imperatively call field's `validate` function if specified for given field. Formik will use the current field value.
 
-### `component`
+### `component?: React.ComponentType<FormikProps<Values>>`
 
 ```jsx
 <Formik component={ContactForm} />;
@@ -217,7 +211,7 @@ const ContactForm = ({
     {errors.name && <div>{errors.name}</div>}
     <button type="submit">Submit</button>
   </form>
-};
+);
 ```
 
 **Warning:** `<Formik component>` takes precendence over `<Formik render>` so
@@ -248,7 +242,7 @@ don’t use both in the same `<Formik>`.
 />
 ```
 
-### `children: func`
+### `children?: React.ReactNode | (props: FormikProps<Values>) => ReactNode`
 
 ```jsx
 <Formik children={props => <ContactForm {...props} />} />
@@ -282,11 +276,36 @@ Default is `false`. Control whether Formik should reset the form if
 
 ### `isInitialValid?: boolean`
 
-Default is `false`. Control the initial value of `isValid` prop prior to
+**Deprecated in 2.x, use `initialErrors` instead**
+
+Control the initial value of `isValid` prop prior to
 mount. You can also pass a function. Useful for situations when you want to
 enable/disable a submit and reset buttons on initial mount.
 
-### `initialValues?: Values`
+### `initialErrors?: FormikErrors<Values>`
+
+Initial field errors of the form, Formik will make these values available to
+render methods component as `errors`.
+
+Note: `initialErrors` is not available to the higher-order component `withFormik`, use
+`mapPropsToErrors` instead.
+
+### `initialStatus?: any`
+
+An arbitrary value for the initial `status` of the form. If the form is reset, this value will be restored.
+
+Note: `initialStatus` is not available to the higher-order component `withFormik`, use
+`mapPropsToStatus` instead.
+
+### `initialTouched?: FormikTouched<Values>`
+
+Initial visitied fields of the form, Formik will make these values available to
+render methods component as `touched`.
+
+Note: `initialTouched` is not available to the higher-order component `withFormik`, use
+`mapPropsToTouched` instead.
+
+### `initialValues: Values`
 
 Initial field values of the form, Formik will make these values available to
 render methods component as `values`.
@@ -325,7 +344,7 @@ Validate the form's `values` with function. This function can either be:
 
 ```js
 // Synchronous validation
-const validate = (values) => {
+const validate = values => {
   let errors = {};
 
   if (!values.email) {
@@ -340,22 +359,20 @@ const validate = (values) => {
 };
 ```
 
-* Asynchronous and return a Promise that's error in an `errors` object
+- Asynchronous and return a Promise that's resolves to an object containing `errors`
 
 ```js
 // Async Validation
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-const validate = (values) => {
+const validate = values => {
   return sleep(2000).then(() => {
     let errors = {};
     if (['admin', 'null', 'god'].includes(values.username)) {
       errors.username = 'Nice try';
     }
     // ...
-    if (Object.keys(errors).length) {
-      throw errors;
-    }
+    return errors;
   });
 };
 ```

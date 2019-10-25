@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { connect } from './connect';
+import { useFormikContext } from './FormikContext';
 
 export type FormikFormProps = Pick<
   React.FormHTMLAttributes<HTMLFormElement>,
@@ -9,10 +9,13 @@ export type FormikFormProps = Pick<
   >
 >;
 
-export const Form = connect<FormikFormProps>(
-  ({ formik: { handleReset, handleSubmit }, ...props }) => (
-    <form onReset={handleReset} onSubmit={handleSubmit} {...props} />
-  )
-);
+export function Form(props: FormikFormProps) {
+  // iOS needs an "action" attribute for nice input: https://stackoverflow.com/a/39485162/406725
+  // We default the action to "#" in case the preventDefault fails (just updates the URL hash)
+  const { action, ...rest } = props;
+  const _action = action || "#"
+  const { handleReset, handleSubmit } = useFormikContext();
+  return <form onSubmit={handleSubmit} onReset={handleReset} action={_action} {...rest} />;
+}
 
 Form.displayName = 'Form';

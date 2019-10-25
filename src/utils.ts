@@ -1,9 +1,66 @@
-import cloneDeep from 'lodash/cloneDeep';
+import clone from 'lodash/clone';
 import toPath from 'lodash/toPath';
 import * as React from 'react';
 
+// Assertions
+
+/** @private is the given object a Function? */
+export const isFunction = (obj: any): obj is Function =>
+  typeof obj === 'function';
+
+/** @private is the given object an Object? */
+export const isObject = (obj: any): obj is Object =>
+  obj !== null && typeof obj === 'object';
+
+/** @private is the given object an integer? */
+export const isInteger = (obj: any): boolean =>
+  String(Math.floor(Number(obj))) === obj;
+
+/** @private is the given object a string? */
+export const isString = (obj: any): obj is string =>
+  Object.prototype.toString.call(obj) === '[object String]';
+
+/** @private is the given object a NaN? */
+// eslint-disable-next-line no-self-compare
+export const isNaN = (obj: any): boolean => obj !== obj;
+
+/** @private Does a React component have exactly 0 children? */
+export const isEmptyChildren = (children: any): boolean =>
+  React.Children.count(children) === 0;
+
+/** @private is the given object/value a promise? */
+export const isPromise = (value: any): value is PromiseLike<any> =>
+  isObject(value) && isFunction(value.then);
+
+/** @private is the given object/value a type of synthetic event? */
+export const isInputEvent = (value: any): value is React.SyntheticEvent<any> =>
+  value && isObject(value) && isObject(value.target);
+
 /**
- * Deeply get a value from an object via it's path.
+ * Same as document.activeElement but wraps in a try-catch block. In IE it is
+ * not safe to call document.activeElement if there is nothing focused.
+ *
+ * The activeElement will be null only if the document or document body is not
+ * yet defined.
+ *
+ * @param {?Document} doc Defaults to current document.
+ * @return {Element | null}
+ * @see https://github.com/facebook/fbjs/blob/master/packages/fbjs/src/core/dom/getActiveElement.js
+ */
+export function getActiveElement(doc?: Document): Element | null {
+  doc = doc || (typeof document !== 'undefined' ? document : undefined);
+  if (typeof doc === 'undefined') {
+    return null;
+  }
+  try {
+    return doc.activeElement || doc.body;
+  } catch (e) {
+    return doc.body;
+  }
+}
+
+/**
+ * Deeply get a value from an object via its path.
  */
 export function getIn(
   obj: any,
@@ -19,11 +76,31 @@ export function getIn(
 }
 
 /**
- * Deeply set a value from in object via it's path.
+ * Deeply set a value from in object via it's path. If the value at `path`
+ * has changed, return a shallow copy of obj with `value` set at `path`.
+ * If `value` has not changed, return the original `obj`.
+ *
+ * Existing objects / arrays along `path` are also shallow copied. Sibling
+ * objects along path retain the same internal js reference. Since new
+ * objects / arrays are only created along `path`, we can test if anything
+ * changed in a nested structure by comparing the object's reference in
+ * the old and new object, similar to how russian doll cache invalidation
+ * works.
+ *
+ * In earlier versions of this function, which used cloneDeep, there were
+ * issues whereby settings a nested value would mutate the parent
+ * instead of creating a new object. `clone` avoids that bug making a
+ * shallow copy of the objects along the update path
+ * so no object is mutated in place.
+ *
+ * Before changing this function, please read through the following
+ * discussions.
+ *
  * @see https://github.com/developit/linkstate
+ * @see https://github.com/jaredpalmer/formik/pull/123
  */
 export function setIn(obj: any, path: string, value: any): any {
-  let res: any = {};
+  let res: any = clone(obj); // this keeps inheritance when obj is a class
   let resVal: any = res;
   let i = 0;
   let pathArray = toPath(path);
@@ -32,10 +109,8 @@ export function setIn(obj: any, path: string, value: any): any {
     const currentPath: string = pathArray[i];
     let currentObj: any = getIn(obj, pathArray.slice(0, i + 1));
 
-    if (resVal[currentPath]) {
-      resVal = resVal[currentPath];
-    } else if (currentObj) {
-      resVal = resVal[currentPath] = cloneDeep(currentObj);
+    if (currentObj && (isObject(currentObj) || Array.isArray(currentObj))) {
+      resVal = resVal[currentPath] = clone(currentObj);
     } else {
       const nextPath: string = pathArray[i + 1];
       resVal = resVal[currentPath] =
@@ -54,15 +129,13 @@ export function setIn(obj: any, path: string, value: any): any {
     resVal[pathArray[i]] = value;
   }
 
-  const result = { ...obj, ...res };
-
   // If the path array has a single element, the loop did not run.
   // Deleting on `resVal` had no effect in this scenario, so we delete on the result instead.
   if (i === 0 && value === undefined) {
-    delete result[pathArray[i]];
+    delete res[pathArray[i]];
   }
 
-  return result;
+  return res;
 }
 
 /**
@@ -95,56 +168,4 @@ export function setNestedObjectValues<T>(
   }
 
   return response;
-}
-
-// Assertions
-
-/** @private is the given object a Function? */
-export const isFunction = (obj: any): obj is Function =>
-  typeof obj === 'function';
-
-/** @private is the given object an Object? */
-export const isObject = (obj: any): boolean =>
-  obj !== null && typeof obj === 'object';
-
-/** @private is the given object an integer? */
-export const isInteger = (obj: any): boolean =>
-  String(Math.floor(Number(obj))) === obj;
-
-/** @private is the given object a string? */
-export const isString = (obj: any): obj is string =>
-  Object.prototype.toString.call(obj) === '[object String]';
-
-/** @private is the given object a NaN? */
-export const isNaN = (obj: any): boolean => obj !== obj;
-
-/** @private Does a React component have exactly 0 children? */
-export const isEmptyChildren = (children: any): boolean =>
-  React.Children.count(children) === 0;
-
-/** @private is the given object/value a promise? */
-export const isPromise = (value: any): value is PromiseLike<any> =>
-  isObject(value) && isFunction(value.then);
-
-/**
- * Same as document.activeElement but wraps in a try-catch block. In IE it is
- * not safe to call document.activeElement if there is nothing focused.
- *
- * The activeElement will be null only if the document or document body is not
- * yet defined.
- *
- * @param {?Document} doc Defaults to current document.
- * @return {Element | null}
- * @see https://github.com/facebook/fbjs/blob/master/packages/fbjs/src/core/dom/getActiveElement.js
- */
-export function getActiveElement(doc?: Document): Element | null {
-  doc = doc || (typeof document !== 'undefined' ? document : undefined);
-  if (typeof doc === 'undefined') {
-    return null;
-  }
-  try {
-    return doc.activeElement || doc.body;
-  } catch (e) {
-    return doc.body;
-  }
 }

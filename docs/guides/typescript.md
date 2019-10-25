@@ -7,36 +7,46 @@ custom_edit_url: https://github.com/jaredpalmer/formik/edit/master/docs/guides/t
 [![TypeScript Types](https://img.shields.io/npm/types/formik.svg)](https://npm.im/formik)
 
 The Formik source code is written in TypeScript, so you can rest easy that Formik's
-types will always be up-to-date. As a mental model, Formik's type signature(s) is/are very
+types will always be up-to-date. As a mental model, Formik's type signatures are very
 similar to React Router 4's `<Route>`.
 
 #### Render props (`<Formik />` and `<Field />`)
 
 ```typescript
 import * as React from 'react';
-import { Formik, FormikProps, Form, Field, FieldProps } from 'formik';
+import {
+  Formik,
+  FormikHelpers,
+  FormikProps,
+  Form,
+  Field,
+  FieldProps,
+} from 'formik';
 
 interface MyFormValues {
   firstName: string;
 }
 
-export const MyApp: React.SFC<{}> = () => {
+export const MyApp: React.FC<{}> = () => {
+  const initialValues: MyFormValues = { firstName: '' };
   return (
     <div>
       <h1>My Example</h1>
       <Formik
-        initialValues={{ firstName: '' }}
-        onSubmit={(values: MyFormValues) => alert(JSON.stringify(values))}
-        render={(formikBag: FormikProps<MyFormValues>) => (
+        initialValues={initialValues}
+        onSubmit={(values, actions) => {
+          console.log({ values, actions });
+          alert(JSON.stringify(values, null, 2));
+          actions.setSubmitting(false);
+        }}
+        render={formikBag => (
           <Form>
             <Field
               name="firstName"
-              render={({ field, form }: FieldProps<MyFormValues>) => (
+              render={({ field, form, meta }) => (
                 <div>
                   <input type="text" {...field} placeholder="First Name" />
-                  {form.touched.firstName &&
-                    form.errors.firstName &&
-                    form.errors.firstName}
+                  {meta.touched && meta.error && meta.error}
                 </div>
               )}
             />
@@ -50,7 +60,7 @@ export const MyApp: React.SFC<{}> = () => {
 
 #### `withFormik()`
 
-```typescript
+```tsx
 import React from 'react';
 import * as Yup from 'yup';
 import { withFormik, FormikProps, FormikErrors, Form, Field } from 'formik';

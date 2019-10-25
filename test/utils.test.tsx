@@ -1,4 +1,10 @@
-import { setIn, setNestedObjectValues, isPromise } from '../src/utils';
+import {
+  setIn,
+  setNestedObjectValues,
+  isPromise,
+  getActiveElement,
+  isNaN,
+} from '../src/utils';
 
 describe('utils', () => {
   describe('setNestedObjectValues', () => {
@@ -187,6 +193,23 @@ describe('utils', () => {
       expect(newObj.twofoldly.nested).not.toHaveProperty('value');
     });
 
+    it('shallow clone data along the update path', () => {
+      const obj = {
+        x: 'y',
+        twofoldly: { nested: ['a', { c: 'd' }] },
+        other: { nestedOther: 'o' },
+      };
+      const newObj = setIn(obj, 'twofoldly.nested.0', 'b');
+      // All new objects/arrays created along the update path.
+      expect(obj).not.toBe(newObj);
+      expect(obj.twofoldly).not.toBe(newObj.twofoldly);
+      expect(obj.twofoldly.nested).not.toBe(newObj.twofoldly.nested);
+      // All other objects/arrays copied, not cloned (retain same memory
+      // location).
+      expect(obj.other).toBe(newObj.other);
+      expect(obj.twofoldly.nested[1]).toBe(newObj.twofoldly.nested[1]);
+    });
+
     it('sets new array', () => {
       const obj = { x: 'y' };
       const newObj = setIn(obj, 'nested.0', 'value');
@@ -228,6 +251,28 @@ describe('utils', () => {
       expect(obj).toEqual({ x: 'y' });
       expect(newObj).toEqual({ x: 'y', a: { x: { c: 'value' } } });
     });
+
+    it('should keep class inheritance for the top level object', () => {
+      class TestClass {
+        constructor(public key: string, public setObj?: any) {}
+      }
+      const obj = new TestClass('value');
+      const newObj = setIn(obj, 'setObj.nested', 'setInValue');
+      expect(obj).toEqual(new TestClass('value'));
+      expect(newObj).toEqual({
+        key: 'value',
+        setObj: { nested: 'setInValue' },
+      });
+      expect(obj instanceof TestClass).toEqual(true);
+      expect(newObj instanceof TestClass).toEqual(true);
+    });
+
+    it('can convert primitives to objects before setting', () => {
+      const obj = { x: [{ y: true }] };
+      const newObj = setIn(obj, 'x.0.y.z', true);
+      expect(obj).toEqual({ x: [{ y: true }] });
+      expect(newObj).toEqual({ x: [{ y: { z: true } }] });
+    });
   });
 
   describe('isPromise', () => {
@@ -250,6 +295,31 @@ describe('utils', () => {
 
       expect(isPromise(undefined)).toEqual(false);
       expect(isPromise(null)).toEqual(false);
+    });
+  });
+
+  describe('getActiveElement', () => {
+    it('test getActiveElement with undefined', () => {
+      const result = getActiveElement(undefined);
+      expect(result).toEqual(document.body);
+    });
+
+    it('test getActiveElement with valid document', () => {
+      const result = getActiveElement(document);
+      expect(result).toEqual(document.body);
+    });
+  });
+
+  describe('isNaN', () => {
+    it('correctly validate NaN', () => {
+      expect(isNaN(NaN)).toBe(true);
+    });
+
+    it('correctly validate not NaN', () => {
+      expect(isNaN(undefined)).toBe(false);
+      expect(isNaN(1)).toBe(false);
+      expect(isNaN('')).toBe(false);
+      expect(isNaN([])).toBe(false);
     });
   });
 });

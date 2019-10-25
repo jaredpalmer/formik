@@ -66,7 +66,11 @@ You can install Formik with [NPM](https://npmjs.com),
 
 ```sh
 npm install formik --save
-# or
+```
+
+or
+
+```
 yarn add formik
 ```
 
@@ -91,8 +95,8 @@ Once you've added this you will have access to the `window.Formik.<Insert_Compon
 
 You can play with Formik in your web browser with these live online playgrounds.
 
-* CodeSandbox (ReactDOM) https://codesandbox.io/s/zKrK5YLDZ
-* Expo Snack (React Native) https://snack.expo.io/Bk9pPK87X
+- CodeSandbox (ReactDOM) https://codesandbox.io/s/zKrK5YLDZ
+- Expo Snack (React Native) https://snack.expo.io/@jaredpalmer/basic-formik-x-react-native-example
 
 ## The Gist
 
@@ -225,7 +229,7 @@ validators or use a 3rd party library. Personally, I use
 [Yup](https://github.com/jquense/yup) for object schema validation. It has an
 API that's pretty similar [Joi](https://github.com/hapijs/joi) /
 [React PropTypes](https://github.com/facebook/prop-types) but is small enough
-for the browser and fast enough for runtime usage. Because I :heart: Yup sooo
+for the browser and fast enough for runtime usage. Because I ❤️ Yup sooo
 much, Formik has a special config option / prop for Yup called
 [`validationSchema`](api/formik.md#validationschema-schema-schema) which will
 automatically transform Yup's validation errors into a pretty object whose keys
@@ -235,4 +239,10 @@ install Yup from npm...
 
 ```
 npm install yup --save
+```
+
+or
+
+```
+yarn add yup
 ```

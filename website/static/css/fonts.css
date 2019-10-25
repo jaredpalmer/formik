@@ -1,0 +1,23 @@
+@font-face {
+  font-family: 'FormikSans';
+  font-weight: 400;
+  src: url('/formik/fonts/FormikSans-Book.woff2') format('woff2'),
+    url('/formik/fonts/FormikSans-Book.woff') format('woff'),
+    url('/formik/fonts/FormikSans-Book.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'FormikSans';
+  font-weight: 500;
+  src: url('/formik/fonts/FormikSans-Medium.woff2') format('woff2'),
+    url('/formik/fonts/FormikSans-Medium.woff') format('woff'),
+    url('/formik/fonts/FormikSans-Medium.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'FormikSans';
+  font-weight: 700;
+  src: url('/formik/fonts/FormikSans-Demi.woff2') format('woff2'),
+    url('/formik/fonts/FormikSans-Demi.woff') format('woff'),
+    url('/formik/fonts/FormikSans-Demi.ttf') format('truetype');
+}

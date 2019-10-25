@@ -130,7 +130,7 @@ describe('<FieldArray />', () => {
         return <button type="button" onClick={addFriends} />;
       };
 
-      const tree = ReactDOM.render(
+      ReactDOM.render(
         <TestForm
           render={(props: any) => {
             formikBag = props;

@@ -1,6 +1,6 @@
 {
   "docs": {
-    "Getting Started": ["overview", "tutorial", "resources"],
+    "Getting Started": ["overview", "tutorial", "migrating-v2", "resources"],
     "Guides": [
       "guides/validation",
       "guides/arrays",

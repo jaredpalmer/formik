@@ -16,6 +16,8 @@ const initialValues = { name: 'jared', email: 'hello@reason.nyc' };
 type Values = typeof initialValues;
 type FastFieldConfig = FieldConfig;
 
+type $FixMe = any;
+
 function renderForm(
   ui?: React.ReactNode,
   props?: Partial<FormikConfig<Values>>
@@ -128,7 +130,7 @@ describe('Field / FastField', () => {
         expect(props.field.onChange).toBe(handleChange);
         expect(props.field.onBlur).toBe(handleBlur);
         expect(props.form).toEqual(getFormProps());
-        if (idx === 2) {
+        if (idx !== 2) {
           expect(props.meta.value).toBe('jared');
           expect(props.meta.error).toBeUndefined();
           expect(props.meta.touched).toBe(false);
@@ -161,23 +163,29 @@ describe('Field / FastField', () => {
         <>
           <FastField name="name" children={Component} />
           <FastField name="name" render={Component} />
-          {/* @todo fix the types here?? #shipit *}
-          {/* <FastField name="name" component={Component} /> */}
+          {/* @todo fix the types here?? #shipit */}
+          <FastField name="name" component={Component as $FixMe} />
           <FastField name="name" as={AsComponent} />
         </>
       );
 
       const { handleBlur, handleChange } = getFormProps();
-      injected.forEach(props => {
+      injected.forEach((props, idx) => {
         expect(props.field.name).toBe('name');
         expect(props.field.value).toBe('jared');
         expect(props.field.onChange).toBe(handleChange);
         expect(props.field.onBlur).toBe(handleBlur);
         expect(props.form).toEqual(getFormProps());
-        expect(props.meta.value).toBe('jared');
-        expect(props.meta.error).toBeUndefined();
-        expect(props.meta.touched).toBe(false);
-        expect(props.meta.initialValue).toEqual('jared');
+        if (idx !== 2) {
+          expect(props.meta.value).toBe('jared');
+          expect(props.meta.error).toBeUndefined();
+          expect(props.meta.touched).toBe(false);
+          expect(props.meta.initialValue).toEqual('jared');
+        } else {
+          // Ensure that we do not pass through `meta` to
+          // <Field component> or <Field render>
+          expect(props.meta).toBeUndefined();
+        }
       });
 
       expect(asInjectedProps.name).toBe('name');

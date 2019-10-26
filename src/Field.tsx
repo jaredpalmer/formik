@@ -113,13 +113,13 @@ export function useField<Val = any>(
     return [
       getFieldProps(propsOrFieldName),
       getFieldMeta((propsOrFieldName as FieldAttributes<Val>).name),
-    ];
+    ] as const;
   }
 
   return [
     getFieldProps({ name: propsOrFieldName }),
     getFieldMeta(propsOrFieldName),
-  ];
+  ] as const;
 }
 
 export function Field({

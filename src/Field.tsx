@@ -1,114 +1,14 @@
 import * as React from 'react';
-import {
-  FormikProps,
-  GenericFieldHTMLAttributes,
-  FieldMetaProps,
-  FieldInputProps,
-  FieldValidator,
-} from './types';
 import { useFormikContext } from './FormikContext';
 import { isFunction, isEmptyChildren, isObject } from './utils';
 import invariant from 'tiny-warning';
+import { FieldAttributes } from './field-types';
 
-export interface FieldProps<V = any> {
-  field: FieldInputProps<V>;
-  form: FormikProps<V>; // if ppl want to restrict this for a given form, let them.
-  meta: FieldMetaProps<V>;
-}
-
-export interface FieldConfig {
-  /**
-   * Field component to render. Can either be a string like 'select' or a component.
-   * @deprecated
-   */
-  component?:
-    | string
-    | React.ComponentType<FieldProps<any>>
-    | React.ComponentType;
-
-  /**
-   * Component to render. Can either be a string e.g. 'select', 'input', or 'textarea', or a component.
-   */
-  as?:
-    | React.ComponentType<FieldProps<any>['field']>
-    | keyof JSX.IntrinsicElements
-    | React.ComponentType;
-
-  /**
-   * Render prop (works like React router's <Route render={props =>} />)
-   * @deprecated
-   */
-  render?: (props: FieldProps<any>) => React.ReactNode;
-
-  /**
-   * Children render function <Field name>{props => ...}</Field>)
-   */
-  children?: ((props: FieldProps<any>) => React.ReactNode) | React.ReactNode;
-
-  /**
-   * Validate a single field value independently
-   */
-  validate?: FieldValidator;
-
-  required?: boolean;
-  minLength?: number;
-  maxLength?: number;
-
-  /**
-   * Field name
-   */
-  name: string;
-
-  /** HTML input type */
-  type?: string;
-
-  /** Field value */
-  value?: any;
-
-  /** Inner ref */
-  innerRef?: (instance: any) => void;
-}
-
-export type FieldAttributes<T> = GenericFieldHTMLAttributes &
-  FieldConfig &
-  T & { name: string };
-
-class Validators {
-  required?: boolean;
-  minLength?: number;
-  maxLength?: number;
-
-  validate?: FieldValidator;
-
-  static empty: Validators = {};
-
-  static createFromProps<Val = any>(props: FieldAttributes<Val>) {
-    return Validators.create(
-      props.required,
-      props.minLength,
-      props.maxLength,
-
-      props.validate
-    );
-  }
-
-  static create(
-    required?: boolean,
-    minLength?: number,
-    maxLength?: number,
-    validate?: FieldValidator
-  ): Validators {
-    const result = new Validators();
-
-    if (required !== undefined) result.required = required;
-    if (minLength !== undefined) result.minLength = minLength;
-    if (maxLength !== undefined) result.maxLength = maxLength;
-
-    if (validate !== undefined) result.validate = validate;
-
-    return result;
-  }
-}
+import {
+  createConstraints,
+  createValidator,
+  removeConstraints,
+} from './validation';
 
 export function useField<Val = any>(
   propsOrFieldName: string | FieldAttributes<Val>
@@ -119,14 +19,14 @@ export function useField<Val = any>(
   const fieldName = isAnObject
     ? (propsOrFieldName as FieldAttributes<Val>).name
     : (propsOrFieldName as string);
-  const validators = isAnObject
-    ? Validators.createFromProps(propsOrFieldName as FieldAttributes<Val>)
-    : Validators.empty;
+  const constraints = isAnObject
+    ? createConstraints(propsOrFieldName as FieldAttributes<Val>)
+    : {};
 
   React.useEffect(() => {
     if (fieldName) {
       registerField(fieldName, {
-        validate: createValidator(validators),
+        validate: createValidator(constraints),
       });
     }
     return () => {
@@ -134,7 +34,7 @@ export function useField<Val = any>(
         unregisterField(fieldName);
       }
     };
-  }, [registerField, unregisterField, fieldName, validators]);
+  }, [registerField, unregisterField, fieldName, constraints]);
   if (__DEV__) {
     invariant(
       formik,
@@ -155,56 +55,16 @@ export function useField<Val = any>(
   return getFieldProps({ name: propsOrFieldName });
 }
 
-function isEmpty(value: any) {
-  return value === undefined || value === '' || value === null;
-}
-
-function createValidator(validators: Validators) {
-  const { required, minLength, maxLength, validate } = validators;
-
-  return (value: any) =>
-    new Promise<string | void>(async (resolve, _) => {
-      try {
-        const emptyValue = isEmpty(value);
-
-        if (required && emptyValue) {
-          resolve('The field is required');
-        } else if (
-          minLength != undefined &&
-          !emptyValue &&
-          value.length < minLength
-        ) {
-          resolve(`The field length must be at least ${minLength}.`);
-        } else if (
-          maxLength != undefined &&
-          !emptyValue &&
-          value.length > maxLength
-        ) {
-          resolve(`The field length must be no more than ${maxLength}.`);
-        } else if (validate) {
-          resolve(await validate(value));
-        } else {
-          resolve(undefined);
-        }
-      } catch (error) {
-        console.error('Validation failed', error);
-        resolve(undefined);
-      }
-    });
-}
-
-export function Field({
-  validate,
-  required,
-  minLength,
-  maxLength,
-  name,
-  render,
-  children,
-  as: is, // `as` is reserved in typescript lol
-  component,
-  ...props
-}: FieldAttributes<any>) {
+export function Field(props: FieldAttributes<any>) {
+  const {
+    validate,
+    name,
+    render,
+    children,
+    as: is, // `as` is reserved in typescript lol
+    component,
+    ...otherProps
+  } = removeConstraints(props);
   const {
     validate: _validate,
     validationSchema: _validationSchema,
@@ -243,33 +103,20 @@ export function Field({
   }, []);
 
   // construct validators
-  const validators = Validators.create(
-    required,
-    minLength,
-    maxLength,
-    validate
-  );
+  const constraints = createConstraints(props);
 
   // Register field and field-level validation with parent <Formik>
   const { registerField, unregisterField } = formik;
 
   React.useEffect(() => {
     registerField(name, {
-      validate: createValidator(validators),
+      validate: createValidator(constraints),
     });
     return () => {
       unregisterField(name);
     };
-  }, [
-    registerField,
-    unregisterField,
-    name,
-    required,
-    minLength,
-    maxLength,
-    validate,
-  ]);
-  const [field, meta] = formik.getFieldProps({ name, ...props });
+  }, [registerField, unregisterField, name, constraints]);
+  const [field, meta] = formik.getFieldProps({ name, ...otherProps });
   const legacyBag = { field, form: formik };
 
   if (render) {
@@ -283,7 +130,7 @@ export function Field({
   if (component) {
     // This behavior is backwards compat with earlier Formik 0.9 to 1.x
     if (typeof component === 'string') {
-      const { innerRef, ...rest } = props;
+      const { innerRef, ...rest } = otherProps;
       return React.createElement(
         component,
         { ref: innerRef, ...field, ...rest },
@@ -293,7 +140,7 @@ export function Field({
     // We don't pass `meta` for backwards compat
     return React.createElement(
       component,
-      { field, form: formik, ...props },
+      { field, form: formik, ...otherProps },
       children
     );
   }
@@ -302,7 +149,7 @@ export function Field({
   const asElement = is || 'input';
 
   if (typeof asElement === 'string') {
-    const { innerRef, ...rest } = props;
+    const { innerRef, ...rest } = otherProps;
     return React.createElement(
       asElement,
       { ref: innerRef, ...field, ...rest },
@@ -310,6 +157,6 @@ export function Field({
     );
   }
 
-  return React.createElement(asElement, { ...field, ...props }, children);
+  return React.createElement(asElement, { ...field, ...otherProps }, children);
 }
 export const FastField = Field;

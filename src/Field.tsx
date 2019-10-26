@@ -70,7 +70,7 @@ export type FieldAttributes<T> = GenericFieldHTMLAttributes &
 
 export function useField<Val = any>(
   propsOrFieldName: string | FieldAttributes<Val>
-) {
+): [FieldInputProps<Val>, FieldMetaProps<Val>] {
   const formik = useFormikContext();
   const {
     getFieldProps,

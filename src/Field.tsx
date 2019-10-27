@@ -2,13 +2,13 @@ import * as React from 'react';
 import { useFormikContext } from './FormikContext';
 import { isFunction, isEmptyChildren, isObject } from './utils';
 import invariant from 'tiny-warning';
-import { FieldAttributes } from './field-types';
+import { FieldAttributes } from './fieldTypes';
 
 import {
   createConstraints,
   createValidator,
   removeConstraints,
-} from './validation';
+} from './fieldConstraints';
 
 export function useField<Val = any>(
   propsOrFieldName: string | FieldAttributes<Val>

@@ -53,6 +53,8 @@ export interface FieldConfig {
   min?: number;
   max?: number;
   equal?: any;
+  isEmail?: boolean;
+  match?: string;
 
   /**
    * Field name

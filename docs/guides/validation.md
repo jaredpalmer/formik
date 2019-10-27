@@ -188,6 +188,94 @@ export const FieldLevelValidationExample = () => (
   </div>
 );
 ```
+> Note: You can provide dependecies between the fields.
+
+```jsx
+import React from 'react';
+import { Formik, Form, Field } from 'formik';
+
+export const FieldLevelConstraintsExample = () => (
+  <div>
+    <h1>Signup</h1>
+    <Formik
+      initialValues={{
+        username: '',
+        password: '',
+        confirmPassword: '',
+      }}
+      onSubmit={values => {
+        // same shape as initial values
+        console.log(values);
+      }}
+    >
+      {({ errors, touched, isValidating, values }) => (
+        <Form>
+          <Field name="username" required />
+          {errors.username && touched.username && <div>{errors.username}</div>}
+
+          <Field name="password" required minLength={8} />
+          {errors.password && touched.password && <div>{errors.password}</div>}
+
+          <Field name="confirmPassword" required={!!values.password} equals={values.password} />
+          {errors.confirmPassword && touched.confirmPassword && <div>{errors.confirmPassword}</div>}
+
+          <button type="submit">Submit</button>
+        </Form>
+      )}
+    </Formik>
+  </div>
+);
+```
+
+### Field Constraints
+
+Field constraints is an alternate way of validating a field and provides a clear and consice way of specifying a field's allowed values. Field constraints do not replace the other validation techniques. Instead, they are designed to complement them. Like the field level validate, field constraints will run after any `onChange` and `onBlur` by default. This behavior can be altered at the top level `<Formik/>` component using the `validateOnChange` and `validateOnBlur` props respectively. In addition to change/blur, all field-level validations are run at the beginning of a submission attempt and then the results are deeply merged with any top-level validation results. Also, if there is a field level validate, field constrains will be applied first and if there are no errors, the validate function is executed.
+
+**Available field constraints**
+
+- `required`. The field is required.
+- `minLength`. The minimum lenth for the field. 
+- `maxLength`. The maximum length for the field.
+- `numeric`. The field must be a numeric
+- `min`. The minimum value for a field (ie. the age must be at least 18)
+- `max`. The maximum value for a field (i.e. the age must be no more than 65)
+- `equals`. The field must equal some value (i.e. the comfirmPassord must equal the password)
+- `isEmail`. The fields must be a valid email.
+- `match`. The field matches some pattern
+
+```jsx
+import React from 'react';
+import { Formik, Form, Field } from 'formik';
+
+export const FieldLevelValidationExample = () => (
+  <div>
+    <h1>Signup</h1>
+    <Formik
+      initialValues={{
+        username: '',
+        email: '',
+      }}
+      onSubmit={values => {
+        // same shape as initial values
+        console.log(values);
+      }}
+    >
+      {({ errors, touched, isValidating }) => (
+        <Form>
+          <Field name="email" required isEmail />
+          {errors.email && touched.email && <div>{errors.email}</div>}
+
+          <Field name="username" required minLength={6} />
+          {errors.username && touched.username && <div>{errors.username}</div>}
+
+          <button type="submit">Submit</button>
+        </Form>
+      )}
+    </Formik>
+  </div>
+);
+```
+
 
 ### Manually Triggering Validation
 

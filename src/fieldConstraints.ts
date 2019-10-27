@@ -1,5 +1,5 @@
 import { FieldValidator } from './types';
-import { FieldAttributes } from './field-types';
+import { FieldAttributes } from './fieldTypes';
 
 interface Test {
   test: (context: ValidationContext) => boolean;
@@ -15,6 +15,8 @@ export interface FieldConstraints {
   min?: number;
   max?: number;
   equal?: any;
+  isEmail?: boolean;
+  match?: string;
 
   validate?: FieldValidator;
 }
@@ -28,6 +30,8 @@ export function createConstraints<Val = any>({
   min,
   max,
   equal,
+  isEmail,
+  match,
   validate,
 }: FieldAttributes<Val>): FieldConstraints {
   return {
@@ -39,6 +43,8 @@ export function createConstraints<Val = any>({
     min,
     max,
     equal,
+    isEmail,
+    match,
     validate,
   };
 }
@@ -51,6 +57,8 @@ export function removeConstraints<Val = any>({
   min,
   max,
   equal,
+  isEmail,
+  match,
   ...rest
 }: FieldAttributes<Val>) {
   return rest;
@@ -82,51 +90,67 @@ class ValidationContext {
   }
 }
 
-const requiredTest: () => Test = () => ({
-  test: (context: ValidationContext) => context.isEmpty(),
+const requiredConstraint: () => Test = () => ({
+  test: (context: ValidationContext) => !context.isEmpty(),
   message: (context: ValidationContext) => `The ${context.name} is required`,
 });
 
-const minLengthTest = (minLength: number) => ({
+const minLengthConstraint = (minLength: number) => ({
   test: (context: ValidationContext) =>
-    !context.isEmpty() && context.value.length < minLength,
+    !context.isEmpty() && context.value.length >= minLength,
   message: (context: ValidationContext) =>
-    `The ${context.name} length must be at least ${minLength}.`,
+    `${context.name} length must be at least ${minLength} characters long.`,
 });
 
-const maxLengthTest = (maxLength: number) => ({
+const maxLengthConstraint = (maxLength: number) => ({
   test: (context: ValidationContext) =>
-    !context.isEmpty() && context.value.length > maxLength,
+    !context.isEmpty() && context.value.length <= maxLength,
   message: (context: ValidationContext) =>
-    `The ${context.name} must be no more than ${maxLength}.`,
+    `${context.name} must be no more than ${maxLength} characters long.`,
 });
 
-const numericTest = () => ({
+const numericConstraint = (test: boolean) => ({
   test: (context: ValidationContext) =>
-    !context.isEmpty() && !context.isNumeric(),
+    test && !context.isEmpty() && context.isNumeric(),
   message: (context: ValidationContext) =>
-    `The ${context.name} is not a valid number`,
+    `${context.name} is not a valid number`,
 });
 
-const minTest = (min: number) => ({
+const minConstraint = (min: number) => ({
   test: (context: ValidationContext) =>
-    !context.empty && context.isNumeric() && Number(context.value) < min,
+    !context.empty && context.isNumeric() && Number(context.value) >= min,
   message: (context: ValidationContext) =>
-    `The ${context.name} must be at least ${min}.`,
+    `${context.name} must be at least ${min}.`,
 });
 
-const maxTest = (max: number) => ({
+const maxConstraint = (max: number) => ({
   test: (context: ValidationContext) =>
-    !context.empty && context.isNumeric() && Number(context.value) > max,
+    !context.empty && context.isNumeric() && Number(context.value) <= max,
   message: (context: ValidationContext) =>
-    `The ${context.name} must be no greater than ${max}.`,
+    `${context.name} must be no greater than ${max}.`,
 });
 
-const equalTest = (value: any) => ({
+const equalConstraint = (value: any) => ({
   test: (context: ValidationContext) =>
     !context.empty && context.value == value,
   message: (context: ValidationContext) =>
-    `The ${context.name} must be equal to ${value}.`,
+    `${context.name} does not equal ${value}.`,
+});
+
+const emailConstraint = (test: boolean) => ({
+  test: (context: ValidationContext) =>
+    test &&
+    !context.isEmpty() &&
+    /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(
+      context.value
+    ),
+  message: (context: ValidationContext) => `${context.name} is not valid`,
+});
+
+const matchConstraint = (pattern: string) => ({
+  test: (context: ValidationContext) =>
+    !context.isEmpty() && new RegExp(pattern).test(context.value),
+  message: (context: ValidationContext) => `${context.name} is invalid`,
 });
 
 function isEmpty(value: any) {
@@ -142,36 +166,42 @@ function createTestPlan(constraints: FieldConstraints) {
   let plan: Array<Test> = []; // no plans
 
   if (constraints.required) {
-    plan.push(requiredTest());
+    plan.push(requiredConstraint());
   }
   if (constraints.minLength) {
-    plan.push(minLengthTest(constraints.minLength));
+    plan.push(minLengthConstraint(constraints.minLength));
   }
   if (constraints.maxLength) {
-    plan.push(maxLengthTest(constraints.maxLength));
+    plan.push(maxLengthConstraint(constraints.maxLength));
   }
   if (constraints.numeric) {
-    plan.push(numericTest());
+    plan.push(numericConstraint(constraints.numeric));
   }
   if (constraints.min) {
-    plan.push(minTest(constraints.min));
+    plan.push(minConstraint(constraints.min));
   }
   if (constraints.max) {
-    plan.push(maxTest(constraints.max));
+    plan.push(maxConstraint(constraints.max));
   }
   if (constraints.equal) {
-    plan.push(equalTest(constraints.equal));
+    plan.push(equalConstraint(constraints.equal));
+  }
+  if (constraints.isEmail) {
+    plan.push(emailConstraint(constraints.isEmail));
+  }
+  if (constraints.match) {
+    plan.push(matchConstraint(constraints.match));
   }
 
   return plan;
 }
 
-function executePlan(context: ValidationContext, testPlan: Test[]) {
+function executeTestPlan(context: ValidationContext, testPlan: Test[]) {
   let length = testPlan.length;
 
   if (length > 0) {
     for (var index = 0; index < length; index++) {
-      if (testPlan[index].test(context)) {
+      if (!testPlan[index].test(context)) {
         return testPlan[index].message(context);
       }
     }
@@ -188,7 +218,7 @@ export function createValidator(constraints: FieldConstraints): FieldValidator {
       try {
         const context = new ValidationContext(name, value);
 
-        const errorMessage = executePlan(context, testPlan);
+        const errorMessage = executeTestPlan(context, testPlan);
 
         if (!!errorMessage) resolve(errorMessage);
         else if (validate) {

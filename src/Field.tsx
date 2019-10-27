@@ -8,6 +8,7 @@ import {
   createConstraints,
   createValidator,
   removeConstraints,
+  constraintsToArray,
 } from './fieldConstraints';
 
 export function useField<Val = any>(
@@ -19,14 +20,19 @@ export function useField<Val = any>(
   const fieldName = isAnObject
     ? (propsOrFieldName as FieldAttributes<Val>).name
     : (propsOrFieldName as string);
-  const constraints = isAnObject
-    ? createConstraints(propsOrFieldName as FieldAttributes<Val>)
-    : {};
+
+  const props: FieldAttributes<Val> = isAnObject
+    ? (propsOrFieldName as FieldAttributes<Val>)
+    : ({} as FieldAttributes<Val>);
+  const constraints = React.useMemo(
+    () => createConstraints(props),
+    constraintsToArray(props)
+  );
 
   React.useEffect(() => {
     if (fieldName) {
       registerField(fieldName, {
-        validate: createValidator(constraints),
+        validate: createValidator(fieldName, constraints),
       });
     }
     return () => {
@@ -103,20 +109,25 @@ export function Field(props: FieldAttributes<any>) {
   }, []);
 
   // construct validators
-  const constraints = createConstraints(props);
+  const constraints = React.useMemo(
+    () => createConstraints(props),
+    constraintsToArray(props)
+  );
 
   // Register field and field-level validation with parent <Formik>
   const { registerField, unregisterField } = formik;
 
   React.useEffect(() => {
     registerField(name, {
-      validate: createValidator(constraints),
+      validate: createValidator(name, constraints),
     });
     return () => {
       unregisterField(name);
     };
   }, [registerField, unregisterField, name, constraints]);
-  const [field, meta] = formik.getFieldProps({ name, ...otherProps });
+  const field = formik.getFieldProps({ name, ...otherProps });
+  const meta = formik.getFieldMeta(name);
+
   const legacyBag = { field, form: formik };
 
   if (render) {
@@ -159,4 +170,3 @@ export function Field(props: FieldAttributes<any>) {
 
   return React.createElement(asElement, { ...field, ...otherProps }, children);
 }
-export const FastField = Field;

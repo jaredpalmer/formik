@@ -1,6 +1,7 @@
 ---
-id: resources
+id: version-2.0.1-resources
 title: Resources
+original_id: resources
 ---
 
 ## Conference Talks

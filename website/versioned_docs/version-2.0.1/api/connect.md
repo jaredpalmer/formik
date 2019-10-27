@@ -1,7 +1,8 @@
 ---
-id: connect
+id: version-2.0.1-connect
 title: connect()
 custom_edit_url: https://github.com/jaredpalmer/formik/edit/master/docs/api/connect.md
+original_id: connect
 ---
 
 `connect()` is a higher-order component (HoC) that allows you to hook anything into Formik's context. It is used internally to construct `<Field>` and `<Form>`, but you can use it to build out new components as your needs change.

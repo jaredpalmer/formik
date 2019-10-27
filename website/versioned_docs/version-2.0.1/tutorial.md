@@ -1,6 +1,7 @@
 ---
-id: tutorial
+id: version-2.0.1-tutorial
 title: Tutorial
+original_id: tutorial
 ---
 
 ## Before we start

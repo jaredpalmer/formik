@@ -1,28 +1,31 @@
 import { FieldValidator } from './types';
-import { FieldAttributes } from './fieldTypes';
+import { FieldAttributes, FieldConstraints } from './fieldTypes';
 
 interface Test {
   test: (context: ValidationContext) => boolean;
   message: (context: ValidationContext) => string;
 }
 
-export interface FieldConstraints {
-  name?: string;
-  required?: boolean;
-  minLength?: number;
-  maxLength?: number;
-  numeric?: boolean;
-  min?: number;
-  max?: number;
-  equal?: any;
-  isEmail?: boolean;
-  match?: string;
+const constraintNames = [
+  'required',
+  'minLength',
+  'maxLength',
+  'numeric',
+  'min',
+  'max',
+  'equal',
+  'isEmail',
+  'match',
+  'validate',
+];
 
-  validate?: FieldValidator;
-}
-
+/**
+ * Used to isolate the constrains from the props so that we can use it
+ * to detect changes.
+ *
+ * @param props
+ */
 export function createConstraints<Val = any>({
-  name,
   required,
   minLength,
   maxLength,
@@ -35,7 +38,6 @@ export function createConstraints<Val = any>({
   validate,
 }: FieldAttributes<Val>): FieldConstraints {
   return {
-    name: name === undefined ? 'field' : name,
     required,
     minLength,
     maxLength,
@@ -49,6 +51,27 @@ export function createConstraints<Val = any>({
   };
 }
 
+type ConstraintLookup = { [id: string]: any };
+
+export function constraintsToArray(constraints: FieldConstraints) {
+  const c: ConstraintLookup = constraints;
+  return constraintNames.map(name => c[name]);
+}
+
+export function constraintsHaveChanged(
+  previous: FieldConstraints,
+  current: FieldConstraints
+) {
+  const p: ConstraintLookup = previous;
+  const c: ConstraintLookup = current;
+  return constraintNames.some(name => p[name] != c[name]);
+}
+
+/**
+ * This is used to remove constraints from the props so that the elements
+ * don't end up in the dom.
+ * @param props
+ */
 export function removeConstraints<Val = any>({
   required,
   minLength,
@@ -209,8 +232,11 @@ function executeTestPlan(context: ValidationContext, testPlan: Test[]) {
   return undefined;
 }
 
-export function createValidator(constraints: FieldConstraints): FieldValidator {
-  const { name, validate } = constraints;
+export function createValidator(
+  name: string,
+  constraints: FieldConstraints
+): FieldValidator {
+  const { validate } = constraints;
   const testPlan = createTestPlan(constraints);
 
   return (value: any) =>

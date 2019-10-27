@@ -137,9 +137,8 @@ export interface FormikHandlers {
     ? void
     : ((e: string | React.ChangeEvent<any>) => void);
 
-  getFieldProps<Value = any>(
-    props: any
-  ): [FieldInputProps<Value>, FieldMetaProps<Value>];
+  getFieldProps<Value = any>(props: any): FieldInputProps<Value>;
+  getFieldMeta<Value>(name: string): FieldMetaProps<Value>;
 }
 
 /**
@@ -150,6 +149,8 @@ export interface FormikSharedConfig<Props = {}> {
   validateOnChange?: boolean;
   /** Tells Formik to validate the form on each input's onBlur event */
   validateOnBlur?: boolean;
+  /** Tells Formik to validate upon mount */
+  validateOnMount?: boolean;
   /** Tell Formik if initial form values are valid or not on first render */
   isInitialValid?: boolean | ((props: Props) => boolean);
   /** Should Formik reset the form when new initialValues change */
@@ -167,6 +168,7 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
 
   /**
    * Render prop (works like React router's <Route render={props =>} />)
+   * @deprecated
    */
   render?: (props: FormikProps<Values>) => React.ReactNode;
 
@@ -234,7 +236,7 @@ export interface FormikRegistration {
 /**
  * State, handlers, and helpers made available to Formik's primitive components through context.
  */
-export type FormikContext<Values> = FormikProps<Values> &
+export type FormikContextType<Values> = FormikProps<Values> &
   Pick<FormikConfig<Values>, 'validate' | 'validationSchema'>;
 
 export interface SharedRenderProps<T> {

@@ -12,13 +12,30 @@ export interface FieldProps<V = any> {
   meta: FieldMetaProps<V>;
 }
 
-export interface FieldConfig {
+export interface FieldConstraints {
+  required?: boolean;
+  minLength?: number;
+  maxLength?: number;
+  numeric?: boolean;
+  min?: number;
+  max?: number;
+  equal?: any;
+  isEmail?: boolean;
+  match?: string;
+
+  /**
+   * Validate a single field value independently
+   */
+  validate?: FieldValidator;
+}
+
+export interface FieldConfig extends FieldConstraints {
   /**
    * Field component to render. Can either be a string like 'select' or a component.
    * @deprecated
    */
   component?:
-    | string
+    | keyof JSX.IntrinsicElements
     | React.ComponentType<FieldProps<any>>
     | React.ComponentType;
 
@@ -40,21 +57,6 @@ export interface FieldConfig {
    * Children render function <Field name>{props => ...}</Field>)
    */
   children?: ((props: FieldProps<any>) => React.ReactNode) | React.ReactNode;
-
-  /**
-   * Validate a single field value independently
-   */
-  validate?: FieldValidator;
-
-  required?: boolean;
-  minLength?: number;
-  maxLength?: number;
-  numeric?: boolean;
-  min?: number;
-  max?: number;
-  equal?: any;
-  isEmail?: boolean;
-  match?: string;
 
   /**
    * Field name

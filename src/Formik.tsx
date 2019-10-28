@@ -1001,7 +1001,11 @@ function prepareDataForValidation<T extends FormikValues>(
             return value !== '' ? value : undefined;
           }
         });
-      } else if (typeof values[key] === 'object' && values[key] !== null) {
+      } else if (
+        typeof values[key] === 'object' &&
+        values[key] !== null &&
+        Object.getPrototypeOf(values[key]).constructor.name === Object.name
+      ) {
         data[key] = prepareDataForValidation(values[key]);
       } else {
         data[key] = values[key] !== '' ? values[key] : undefined;

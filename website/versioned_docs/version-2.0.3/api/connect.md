@@ -1,5 +1,5 @@
 ---
-id: version-2.0.1-connect
+id: version-2.0.3-connect
 title: connect()
 custom_edit_url: https://github.com/jaredpalmer/formik/edit/master/docs/api/connect.md
 original_id: connect

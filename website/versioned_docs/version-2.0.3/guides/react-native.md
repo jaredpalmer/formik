@@ -1,5 +1,5 @@
 ---
-id: version-2.0.1-react-native
+id: version-2.0.3-react-native
 title: React Native
 custom_edit_url: https://github.com/jaredpalmer/formik/edit/master/docs/guides/react-native.md
 original_id: react-native

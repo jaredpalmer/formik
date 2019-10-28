@@ -1,5 +1,5 @@
 ---
-id: version-2.0.1-migrating-v2
+id: version-2.0.3-migrating-v2
 title: Migrating from v1.x to v2.x
 original_id: migrating-v2
 ---

@@ -1,11 +1,11 @@
 ---
-id: version-2.0.1-useFormik
+id: version-2.0.3-useFormik
 title: useFormik()
 custom_edit_url: https://github.com/jaredpalmer/formik/edit/master/docs/api/useFormik.md
 original_id: useFormik
 ---
 
-`useFormik()` is a custom React hook that will return all Formik state and helpers directly. Despite it's name, it should is not meant for the majority of usecases. Internally, Formik uses `useFormik` to create the `<Formik>` component (which rernders a [React Context](https://reactjs.org/docs/context.html) Provider). If you are trying to access Formik state via context, use [useFormikContext]. Only use this hook if you are NOT using `<Formik>` or `withFormik`. \*\*Be aware that `<Field>`, `<FastField>`, `<ErrorMessage>`, `connect()`, and `<FieldArray>` will NOT work with `useFormik()` as they all require React Context.
+`useFormik()` is a custom React hook that will return all Formik state and helpers directly. Despite it's name, it is not meant for the majority of usecases. Internally, Formik uses `useFormik` to create the `<Formik>` component (which renders a [React Context](https://reactjs.org/docs/context.html) Provider). If you are trying to access Formik state via context, use [useFormikContext]. Only use this hook if you are NOT using `<Formik>` or `withFormik`. \*\*Be aware that `<Field>`, `<FastField>`, `<ErrorMessage>`, `connect()`, and `<FieldArray>` will NOT work with `useFormik()` as they all require React Context.
 
 ## Use cases for `useFormik()`
 

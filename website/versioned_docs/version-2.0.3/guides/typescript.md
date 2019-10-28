@@ -1,5 +1,5 @@
 ---
-id: version-2.0.1-typescript
+id: version-2.0.3-typescript
 title: TypeScript
 custom_edit_url: https://github.com/jaredpalmer/formik/edit/master/docs/guides/typescript.md
 original_id: typescript

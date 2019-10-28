@@ -8,7 +8,7 @@ title: Migrating from v1.x to v2.x
 ### Minimum Requirements
 
 - Since Formik 2 is built on top of React Hooks, you must be on React 16.8.x or higher
-- Since Formik 2 uses the `unknown` type, you must be on TypeScript 3.0 or higher
+- Since Formik 2 uses the `unknown` type, you must be on TypeScript 3.0 or higher (if you use TypeScript)
 
 ### `resetForm`
 

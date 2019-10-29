@@ -19,6 +19,12 @@ const constraintNames = [
   'validate',
 ];
 
+function constraintToTouple<T>(constraint: T | [T, string]): [T, string] {
+  return Array.isArray(constraint)
+    ? (constraint as [T, string])
+    : [constraint, (undefined as unknown) as string];
+}
+
 /**
  * Used to isolate the constrains from the props so that we can use it
  * to detect changes.
@@ -55,7 +61,7 @@ type ConstraintLookup = { [id: string]: any };
 
 export function constraintsToArray(constraints: FieldConstraints) {
   const c: ConstraintLookup = constraints;
-  return constraintNames.map(name => c[name]);
+  return constraintNames.map(name => constraintToTouple(c[name])).flat();
 }
 
 export function constraintsHaveChanged(
@@ -113,68 +119,139 @@ class ValidationContext {
   }
 }
 
-const requiredConstraint: () => Test = () => ({
-  test: (context: ValidationContext) => !context.isEmpty(),
-  message: (context: ValidationContext) => `The ${context.name} is required`,
-});
+const requiredConstraint = (arg: [boolean, string]) => {
+  const [required, message] = arg;
+  const msgFn =
+    message == undefined
+      ? (context: ValidationContext) => `The ${context.name} is required`
+      : (_: ValidationContext) => message;
+  return {
+    test: (context: ValidationContext) => required && !context.isEmpty(),
+    message: msgFn,
+  };
+};
 
-const minLengthConstraint = (minLength: number) => ({
-  test: (context: ValidationContext) =>
-    !context.isEmpty() && context.value.length >= minLength,
-  message: (context: ValidationContext) =>
-    `${context.name} length must be at least ${minLength} characters long.`,
-});
+const minLengthConstraint = (arg: [number, string]) => {
+  const [minLength, message] = arg;
+  const msgFn =
+    message == undefined
+      ? (context: ValidationContext) =>
+          `${context.name} length must be at least ${minLength} characters long.`
+      : (_: ValidationContext) => message;
 
-const maxLengthConstraint = (maxLength: number) => ({
-  test: (context: ValidationContext) =>
-    !context.isEmpty() && context.value.length <= maxLength,
-  message: (context: ValidationContext) =>
-    `${context.name} must be no more than ${maxLength} characters long.`,
-});
+  return {
+    test: (context: ValidationContext) =>
+      !context.isEmpty() && context.value.length >= minLength,
+    message: msgFn,
+  };
+};
 
-const numericConstraint = (test: boolean) => ({
-  test: (context: ValidationContext) =>
-    test && !context.isEmpty() && context.isNumeric(),
-  message: (context: ValidationContext) =>
-    `${context.name} is not a valid number`,
-});
+const maxLengthConstraint = (arg: [number, string]) => {
+  const [maxLength, message] = arg;
+  const msgFn =
+    message == undefined
+      ? (context: ValidationContext) =>
+          `${context.name} must be no more than ${maxLength} characters long.`
+      : (_: ValidationContext) => message;
 
-const minConstraint = (min: number) => ({
-  test: (context: ValidationContext) =>
-    !context.empty && context.isNumeric() && Number(context.value) >= min,
-  message: (context: ValidationContext) =>
-    `${context.name} must be at least ${min}.`,
-});
+  return {
+    test: (context: ValidationContext) =>
+      !context.isEmpty() && context.value.length <= maxLength,
+    message: msgFn,
+  };
+};
 
-const maxConstraint = (max: number) => ({
-  test: (context: ValidationContext) =>
-    !context.empty && context.isNumeric() && Number(context.value) <= max,
-  message: (context: ValidationContext) =>
-    `${context.name} must be no greater than ${max}.`,
-});
+const numericConstraint = (arg: [boolean, string]) => {
+  const [test, message] = arg;
+  const msgFn =
+    message == undefined
+      ? (context: ValidationContext) => `${context.name} is not a valid number`
+      : (_: ValidationContext) => message;
 
-const equalConstraint = (value: any) => ({
-  test: (context: ValidationContext) =>
-    !context.empty && context.value == value,
-  message: (context: ValidationContext) =>
-    `${context.name} does not equal ${value}.`,
-});
+  return {
+    test: (context: ValidationContext) =>
+      test && !context.isEmpty() && context.isNumeric(),
+    message: msgFn,
+  };
+};
 
-const emailConstraint = (test: boolean) => ({
-  test: (context: ValidationContext) =>
-    test &&
-    !context.isEmpty() &&
-    /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(
-      context.value
-    ),
-  message: (context: ValidationContext) => `${context.name} is not valid`,
-});
+const minConstraint = (arg: [number, string]) => {
+  const [min, message] = arg;
+  const msgFn =
+    message == undefined
+      ? (context: ValidationContext) =>
+          `${context.name} must be at least ${min}.`
+      : (_: ValidationContext) => message;
 
-const matchConstraint = (pattern: string) => ({
-  test: (context: ValidationContext) =>
-    !context.isEmpty() && new RegExp(pattern).test(context.value),
-  message: (context: ValidationContext) => `${context.name} is invalid`,
-});
+  return {
+    test: (context: ValidationContext) =>
+      !context.empty && context.isNumeric() && Number(context.value) >= min,
+    message: msgFn,
+  };
+};
+
+const maxConstraint = (arg: [number, string]) => {
+  const [max, message] = arg;
+  const msgFn =
+    message == undefined
+      ? (context: ValidationContext) =>
+          `${context.name} must be no greater than ${max}.`
+      : (_: ValidationContext) => message;
+
+  return {
+    test: (context: ValidationContext) =>
+      !context.empty && context.isNumeric() && Number(context.value) <= max,
+    message: msgFn,
+  };
+};
+
+const equalConstraint = (arg: [any, string]) => {
+  const [value, message] = arg;
+  const msgFn =
+    message == undefined
+      ? (context: ValidationContext) =>
+          `${context.name} does not equal ${value}.`
+      : (_: ValidationContext) => message;
+
+  return {
+    test: (context: ValidationContext) =>
+      !context.empty && context.value == value,
+    message: msgFn,
+  };
+};
+
+const emailConstraint = (arg: [boolean, string]) => {
+  const [test, message] = arg;
+  const msgFn =
+    message == undefined
+      ? (context: ValidationContext) =>
+          `${context.name} is not a valid email address`
+      : (_: ValidationContext) => message;
+
+  return {
+    test: (context: ValidationContext) =>
+      test &&
+      !context.isEmpty() &&
+      /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(
+        context.value
+      ),
+    message: msgFn,
+  };
+};
+
+const matchConstraint = (arg: [string, string]) => {
+  const [pattern, message] = arg;
+  const msgFn =
+    message == undefined
+      ? (context: ValidationContext) => `${context.name} is invalid`
+      : (_: ValidationContext) => message;
+
+  return {
+    test: (context: ValidationContext) =>
+      !context.isEmpty() && new RegExp(pattern).test(context.value),
+    message: msgFn,
+  };
+};
 
 function isEmpty(value: any) {
   return value === undefined || value === '' || value === null;
@@ -189,31 +266,31 @@ function createTestPlan(constraints: FieldConstraints) {
   let plan: Array<Test> = []; // no plans
 
   if (constraints.required) {
-    plan.push(requiredConstraint());
+    plan.push(requiredConstraint(constraintToTouple(constraints.required)));
   }
   if (constraints.minLength) {
-    plan.push(minLengthConstraint(constraints.minLength));
+    plan.push(minLengthConstraint(constraintToTouple(constraints.minLength)));
   }
   if (constraints.maxLength) {
-    plan.push(maxLengthConstraint(constraints.maxLength));
+    plan.push(maxLengthConstraint(constraintToTouple(constraints.maxLength)));
   }
   if (constraints.numeric) {
-    plan.push(numericConstraint(constraints.numeric));
+    plan.push(numericConstraint(constraintToTouple(constraints.numeric)));
   }
   if (constraints.min) {
-    plan.push(minConstraint(constraints.min));
+    plan.push(minConstraint(constraintToTouple(constraints.min)));
   }
   if (constraints.max) {
-    plan.push(maxConstraint(constraints.max));
+    plan.push(maxConstraint(constraintToTouple(constraints.max)));
   }
   if (constraints.equal) {
-    plan.push(equalConstraint(constraints.equal));
+    plan.push(equalConstraint(constraintToTouple(constraints.equal)));
   }
   if (constraints.isEmail) {
-    plan.push(emailConstraint(constraints.isEmail));
+    plan.push(emailConstraint(constraintToTouple(constraints.isEmail)));
   }
   if (constraints.match) {
-    plan.push(matchConstraint(constraints.match));
+    plan.push(matchConstraint(constraintToTouple(constraints.match)));
   }
 
   return plan;

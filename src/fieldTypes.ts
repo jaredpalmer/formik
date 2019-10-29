@@ -13,15 +13,15 @@ export interface FieldProps<V = any> {
 }
 
 export interface FieldConstraints {
-  required?: boolean;
-  minLength?: number;
-  maxLength?: number;
-  numeric?: boolean;
-  min?: number;
-  max?: number;
-  equal?: any;
-  isEmail?: boolean;
-  match?: string;
+  required?: boolean | [boolean, string];
+  minLength?: number | [number, string];
+  maxLength?: number | [number, string];
+  numeric?: boolean | [boolean, string];
+  min?: number | [number, string];
+  max?: number | [number, string];
+  equal?: any | [any, string];
+  isEmail?: boolean | [boolean, string];
+  match?: string | [string, string];
 
   /**
    * Validate a single field value independently

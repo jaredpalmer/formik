@@ -275,7 +275,20 @@ export const FieldLevelValidationExample = () => (
   </div>
 );
 ```
+**Customizing Constraint Messages
 
+Field constraints have defined error messages. However, it is possible to change these to better suite your
+business requirements. For example, localization support.
+
+To change the error message provide an array (or touple) with the first value the constraint's value and the second the error message.
+
+For example:
+```
+    <Field 
+      name="password" 
+      required minLength={[6, 'For security reasons, the username must be longer than 6 characters']} 
+    />
+```
 
 ### Manually Triggering Validation
 

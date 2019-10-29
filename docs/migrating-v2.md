@@ -90,7 +90,7 @@ const CheckboxExample = () => (
             Product Manager
           </label>
           {/*
-           You do not _need_ to use <Field>/useField to get this behaviorr, 
+           You do not _need_ to use <Field>/useField to get this behavior, 
            using handleChange, handleBlur, and values works as well. 
           */}
           <label>

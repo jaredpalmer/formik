@@ -25,6 +25,7 @@ import {
 import { FormikProvider } from './FormikContext';
 import invariant from 'tiny-warning';
 import { LowPriority, unstable_runWithPriority } from 'scheduler';
+import isPlainObject from 'lodash/isPlainObject';
 
 // We already used FormikActions. So we'll go all Elm-y, and use Message.
 type FormikMessage<Values> =
@@ -1001,11 +1002,7 @@ function prepareDataForValidation<T extends FormikValues>(
             return value !== '' ? value : undefined;
           }
         });
-      } else if (
-        typeof values[key] === 'object' &&
-        values[key] !== null &&
-        Object.getPrototypeOf(values[key]).constructor.name === Object.name
-      ) {
+      } else if (isPlainObject(values[key])) {
         data[key] = prepareDataForValidation(values[key]);
       } else {
         data[key] = values[key] !== '' ? values[key] : undefined;

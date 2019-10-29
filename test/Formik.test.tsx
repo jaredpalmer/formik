@@ -2,7 +2,12 @@ import * as React from 'react';
 import { render, fireEvent, wait } from 'react-testing-library';
 import * as Yup from 'yup';
 
-import { Formik, FormikProps, FormikConfig } from '../src';
+import {
+  Formik,
+  prepareDataForValidation,
+  FormikProps,
+  FormikConfig,
+} from '../src';
 import { noop } from './testHelpers';
 
 jest.spyOn(global.console, 'warn');
@@ -873,6 +878,36 @@ describe('<Formik>', () => {
 
       getProps().handleReset();
       expect(getProps().submitCount).toEqual(0);
+    });
+  });
+
+  describe('prepareDataForValidation', () => {
+    it('should works correctly with instances', () => {
+      class SomeClass {}
+      const expected = {
+        string: 'string',
+        date: new Date(),
+        someInstance: new SomeClass(),
+      };
+
+      const dataForValidation = prepareDataForValidation(expected);
+      expect(dataForValidation).toEqual(expected);
+    });
+
+    it('should works correctly with mixed data', () => {
+      const date = new Date();
+      const dataForValidation = prepareDataForValidation({
+        string: 'string',
+        empty: '',
+        arr: [],
+        date,
+      });
+      expect(dataForValidation).toEqual({
+        string: 'string',
+        empty: undefined,
+        arr: [],
+        date,
+      });
     });
   });
 

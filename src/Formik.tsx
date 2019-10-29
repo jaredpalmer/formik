@@ -1,6 +1,7 @@
 import * as React from 'react';
 import isEqual from 'react-fast-compare';
 import deepmerge from 'deepmerge';
+import isPlainObject from 'lodash/isPlainObject';
 import {
   FormikConfig,
   FormikErrors,
@@ -986,7 +987,7 @@ export function validateYupSchema<T extends FormikValues>(
 /**
  * Recursively prepare values.
  */
-function prepareDataForValidation<T extends FormikValues>(
+export function prepareDataForValidation<T extends FormikValues>(
   values: T
 ): FormikValues {
   let data: FormikValues = {};
@@ -1001,7 +1002,7 @@ function prepareDataForValidation<T extends FormikValues>(
             return value !== '' ? value : undefined;
           }
         });
-      } else if (typeof values[key] === 'object' && values[key] !== null) {
+      } else if (isPlainObject(values[key])) {
         data[key] = prepareDataForValidation(values[key]);
       } else {
         data[key] = values[key] !== '' ? values[key] : undefined;

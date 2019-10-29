@@ -328,10 +328,20 @@ pre[class*="language-"] {
 
 .reactNavSearchWrapper input#search_input_react {
   background-color: #283447;
-  padding-top: .2rem;
-  padding-bottom: .2rem;
+  line-height: 30px;
+  border-radius: 4px
 }
 
 .reactNavSearchWrapper input#search_input_react:focus {
   background-color: #344563;
+}
+
+.reactNavSearchWrapper {
+  top: 9px;
+}
+
+@media only screen and (min-width: 1024px) {
+  .reactNavSearchWrapper {
+    top: auto;
+  }
 }

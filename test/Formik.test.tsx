@@ -894,7 +894,7 @@ describe('<Formik>', () => {
       expect(dataForValidation).toEqual(expected);
     });
 
-    it('should works correctly with mixed deta', () => {
+    it('should works correctly with mixed data', () => {
       const date = new Date();
       const dataForValidation = prepareDataForValidation({
         string: 'string',

@@ -33,7 +33,7 @@ const TwoFactorVerificationForm = () => (
     <Formik
       initialValues={{ token: '' }}
       validate={values => {
-        let errors;
+        const errors = {};
         if (values.token.length < 5) {
           errors.token = 'Invalid code. Too short.'
         }

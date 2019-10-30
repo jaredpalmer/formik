@@ -903,7 +903,10 @@ export function Formik<
   ExtraProps = {}
 >(props: FormikConfig<Values> & ExtraProps) {
   const formikbag = useFormik<Values>(props);
-  const { component, children, render } = props;
+  const { component, children, render, innerRef } = props;
+
+  React.useImperativeHandle(innerRef, () => ({ ...formikbag }));
+
   React.useEffect(() => {
     if (__DEV__) {
       invariant(

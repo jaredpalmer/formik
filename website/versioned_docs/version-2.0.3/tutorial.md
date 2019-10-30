@@ -117,8 +117,15 @@ import { useFormik } from 'formik';
 const SignupForm = () => {
   // Pass the useFormik() hook initial form values and a submit function that will
   // be called when the form is submitted
+  const formik = useFormik({
+    initialValues: {      
+      email: '',
+    },
+    onSubmit: values => {
+      alert(JSON.stringify(values, null, 2));
+    },
+  });  
   return (
-  <Formik>
     <form onSubmit={formik.handleSubmit}>
       <label htmlFor="email">Email Address</label>
       <input
@@ -503,10 +510,10 @@ const SignupForm = () => {
     },
     validationSchema: Yup.object({
       firstName: Yup.string()
-        .min(15, 'Must be 15 characters or less')
+        .max(15, 'Must be 15 characters or less')
         .required('Required'),
       lastName: Yup.string()
-        .min(20, 'Must be 20 characters or less')
+        .max(20, 'Must be 20 characters or less')
         .required('Required'),
       email: Yup.string()
         .email('Invalid email addresss`')
@@ -620,7 +627,7 @@ const SignupForm = () => {
 
 ### Leveraging React Context
 
-Our code above is again very explicit about exactly what Formik is doing. `onChange` -> `handleChange`, `onBlur` -> `handleBlur`, and so on. However, we still have to manually pass each input this "prop getter" `getFieldProps()`. To save you even more time, Formik comes with [React Context](https://reactjs.org/docs/context.html)-powered API/component make life easier and less verbose: `<Formik/>`, `<Form />`, `<Field />`, and `<ErrorMessage />`. More explicitly, they use React Context implicitly connect to the parent `<Formik />` state/methods.
+Our code above is again very explicit about exactly what Formik is doing. `onChange` -> `handleChange`, `onBlur` -> `handleBlur`, and so on. However, we still have to manually pass each input this "prop getter" `getFieldProps()`. To save you even more time, Formik comes with [React Context](https://reactjs.org/docs/context.html)-powered API/component make life easier and less verbose: `<Formik/>`, `<Form />`, `<Field />`, and `<ErrorMessage />`. More explicitly, they use React Context implicitly to connect to the parent `<Formik />` state/methods.
 
 Since these components use React Context, we need to render a [React Context Provider](https://reactjs.org/docs/context.html#contextprovider) that holds our form state and helpers in our tree. If you did this yourself, it would look like:
 
@@ -700,7 +707,7 @@ const SignupForm = () => {
 };
 ```
 
-As you can see above, we swapped out `useFormik()` hook and replaced it with the `<Formik>` component. The `<Formik>` accept a function as it's children (a.k.a. a render prop). It's argument is the _exact_ same object returned by `useFormik()` (in fact, `<Formik>` calls `useFormik()` internally!!). Thus, our form works the same as before, except now we can use new components to express ourselves in a more concise manner.
+As you can see above, we swapped out `useFormik()` hook and replaced it with the `<Formik>` component. The `<Formik>` accepts a function as it's children (a.k.a. a render prop). It's argument is the _exact_ same object returned by `useFormik()` (in fact, `<Formik>` calls `useFormik()` internally!!). Thus, our form works the same as before, except now we can use new components to express ourselves in a more concise manner.
 
 ```jsx
 import React from 'react';
@@ -746,9 +753,7 @@ const SignupForm = () => {
 };
 ```
 
-The `<Field>` component by default will render an `<input>` component that given a `name` prop will implicitly grab the respective `onChange`, `onBlur`, `value` props and pass them to the element as well as any props you pass to it. However,Since not everything is an input, `<Field>` also accepts a few other props to let you render whatever you want. Some examples..
-
-// @todo Is this necessary here?
+The `<Field>` component by default will render an `<input>` component that given a `name` prop will implicitly grab the respective `onChange`, `onBlur`, `value` props and pass them to the element as well as any props you pass to it. However, since not everything is an input, `<Field>` also accepts a few other props to let you render whatever you want. Some examples..
 
 ```jsx
 // <input className="form-input" placeHolder="Jane"  />

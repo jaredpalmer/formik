@@ -754,8 +754,6 @@ const SignupForm = () => {
 
 The `<Field>` component by default will render an `<input>` component that given a `name` prop will implicitly grab the respective `onChange`, `onBlur`, `value` props and pass them to the element as well as any props you pass to it. However,Since not everything is an input, `<Field>` also accepts a few other props to let you render whatever you want. Some examples..
 
-// @todo Is this necessary here?
-
 ```jsx
 // <input className="form-input" placeHolder="Jane"  />
 <Field name="firstName" className="form-input" placeholder="Jane" />

@@ -7,7 +7,7 @@ const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 const validate = (values) => {
   return sleep(300).then(() => {
-    let errors = {};
+    const errors = {};
 
     if (['admin', 'null', 'god'].includes(values.username)) {
       errors.username = 'Nice try';

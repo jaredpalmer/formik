@@ -172,7 +172,7 @@ A hook that is equivalent to `connect()`.
 <Field name="firstName" className="form-input" placeholder="Jane" />
 
 // <textarea className="form-textarea"/></textarea>
-<Field name="message" as="textarea"  className="form-input"/>
+<Field name="message" as="textarea"  className="form-textarea"/>
 
 // <select className="my-select"/>
 <Field name="colors" as="select" className="my-select">

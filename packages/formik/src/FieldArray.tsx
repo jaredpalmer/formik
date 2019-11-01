@@ -16,8 +16,8 @@ import {
 } from './utils';
 import isEqual from 'react-fast-compare';
 
-export type FieldArrayRenderProps = ArrayHelpers & {
-  form: FormikProps<any>;
+export type FieldArrayRenderProps<Values = any, T = any> = ArrayHelpers<T> & {
+  form: FormikProps<Values>;
   name: string;
 };
 
@@ -27,11 +27,11 @@ export type FieldArrayConfig = {
   /** Should field array validate the form AFTER array updates/changes? */
   validateOnChange?: boolean;
 } & SharedRenderProps<FieldArrayRenderProps>;
-export interface ArrayHelpers {
+export interface ArrayHelpers<T = any> {
   /** Imperatively add a value to the end of an array */
-  push: (obj: any) => void;
+  push: (obj: T) => void;
   /** Curried fn to add a value to the end of an array */
-  handlePush: (obj: any) => () => void;
+  handlePush: (obj: T) => () => void;
   /** Imperatively swap two values in an array */
   swap: (indexA: number, indexB: number) => void;
   /** Curried fn to swap two values in an array */
@@ -41,25 +41,25 @@ export interface ArrayHelpers {
   /** Imperatively move an element in an array to another index */
   handleMove: (from: number, to: number) => () => void;
   /** Imperatively insert an element at a given index into the array */
-  insert: (index: number, value: any) => void;
+  insert: (index: number, value: T) => void;
   /** Curried fn to insert an element at a given index into the array */
-  handleInsert: (index: number, value: any) => () => void;
+  handleInsert: (index: number, value: T) => () => void;
   /** Imperatively replace a value at an index of an array  */
-  replace: (index: number, value: any) => void;
+  replace: (index: number, value: T) => void;
   /** Curried fn to replace an element at a given index into the array */
-  handleReplace: (index: number, value: any) => () => void;
+  handleReplace: (index: number, value: T) => () => void;
   /** Imperatively add an element to the beginning of an array and return its length */
-  unshift: (value: any) => number;
+  unshift: (value: T) => number;
   /** Curried fn to add an element to the beginning of an array */
-  handleUnshift: (value: any) => () => void;
+  handleUnshift: (value: T) => () => void;
   /** Curried fn to remove an element at an index of an array */
   handleRemove: (index: number) => () => void;
   /** Curried fn to remove a value from the end of the array */
   handlePop: () => () => void;
   /** Imperatively remove and element at an index of an array */
-  remove<T>(index: number): T | undefined;
+  remove: (index: number) => T | undefined;
   /** Imperatively remove and return value from the end of the array */
-  pop<T>(): T | undefined;
+  pop: () => T | undefined;
 }
 
 /**
@@ -125,14 +125,6 @@ class FieldArrayInner<Values = {}> extends React.Component<
   static defaultProps = {
     validateOnChange: true,
   };
-
-  constructor(props: FieldArrayConfig & { formik: FormikContextType<Values> }) {
-    super(props);
-    // We need TypeScript generics on these, so we'll bind them in the constructor
-    // @todo Fix TS 3.2.1
-    this.remove = this.remove.bind(this) as any;
-    this.pop = this.pop.bind(this) as any;
-  }
 
   componentDidUpdate(
     prevProps: FieldArrayConfig & { formik: FormikContextType<Values> }

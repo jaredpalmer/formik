@@ -881,6 +881,19 @@ describe('<Formik>', () => {
     });
   });
 
+  describe('resetForm', () => {
+    it('should reset dirty when reseting to same values', () => {
+      const { getProps } = renderFormik();
+      expect(getProps().dirty).toBe(false);
+
+      getProps().setFieldValue('name', 'jared-next');
+      expect(getProps().dirty).toBe(true);
+
+      getProps().resetForm({ values: getProps().values });
+      expect(getProps().dirty).toBe(false);
+    });
+  });
+
   describe('prepareDataForValidation', () => {
     it('should works correctly with instances', () => {
       class SomeClass {}

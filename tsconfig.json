@@ -5,6 +5,10 @@
     "baseUrl": "./",
     "paths": {
       "formik": ["src/"]
-    }
+    },
+    "typeRoots": [
+      "node_modules/@types",
+      "types"
+    ]
   }
 }

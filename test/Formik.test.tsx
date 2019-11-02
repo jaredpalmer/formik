@@ -1144,7 +1144,7 @@ describe('<Formik>', () => {
     expect(getProps().submitCount).toEqual(1);
   });
 
-  it('isSubmitting is fired when submit is attempted', async () => {
+  it('isSubmitting is fired when submit is attempted (v1)', async () => {
     const onSubmit = jest.fn();
     const validate = jest.fn(() => Promise.resolve({}));
 
@@ -1164,6 +1164,34 @@ describe('<Formik>', () => {
     // do it again async
     await validatePromise;
     // done validating and submitting
+    expect(getProps().isSubmitting).toBe(true);
+    expect(getProps().isValidating).toBe(false);
+    expect(validate).toHaveBeenCalled();
+    expect(onSubmit).toHaveBeenCalled();
+    expect(getProps().submitCount).toEqual(1);
+  });
+
+  it('isSubmitting is fired when submit is attempted (v2, promise)', async () => {
+    const onSubmit = jest.fn().mockResolvedValue(undefined);
+    const validate = jest.fn(() => Promise.resolve({}));
+
+    const { getProps } = renderFormik({
+      onSubmit,
+      validate,
+    });
+
+    expect(getProps().submitCount).toEqual(0);
+    expect(getProps().isSubmitting).toBe(false);
+    expect(getProps().isValidating).toBe(false);
+    // we call set isValidating synchronously
+    const validatePromise = getProps().submitForm();
+    // so it should change
+    expect(getProps().isSubmitting).toBe(true);
+    expect(getProps().isValidating).toBe(true);
+    // do it again async
+    await validatePromise;
+    // done validating and submitting
+    expect(getProps().isSubmitting).toBe(false);
     expect(getProps().isValidating).toBe(false);
     expect(validate).toHaveBeenCalled();
     expect(onSubmit).toHaveBeenCalled();

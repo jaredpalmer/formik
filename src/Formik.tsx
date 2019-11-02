@@ -710,7 +710,12 @@ export function useFormik<Values extends FormikValues = FormikValues>({
       (combinedErrors: FormikErrors<Values>) => {
         const isActuallyValid = Object.keys(combinedErrors).length === 0;
         if (isActuallyValid) {
-          return Promise.resolve(executeSubmit())
+          const promiseOrUndefined = executeSubmit();
+          if (promiseOrUndefined === undefined) {
+            return;
+          }
+
+          return Promise.resolve(promiseOrUndefined)
             .then(() => {
               if (!!isMounted.current) {
                 dispatch({ type: 'SUBMIT_SUCCESS' });

@@ -719,10 +719,10 @@ const SignupForm = () => {
       initialValues={{ firstName: '', lastName: '', email: '' }}
       validationSchema={Yup.object({
         firstName: Yup.string()
-          .min(15, 'Must be 15 characters or less')
+          .max(15, 'Must be 15 characters or less')
           .required('Required'),
         lastName: Yup.string()
-          .min(20, 'Must be 20 characters or less')
+          .max(20, 'Must be 20 characters or less')
           .required('Required'),
         email: Yup.string()
           .email('Invalid email addresss`')
@@ -737,14 +737,14 @@ const SignupForm = () => {
     >
       <Form>
         <label htmlFor="firstName">First Name</label>
-        <Field id="firstName" type="text" />
+        <Field id="firstName" name="firstName" type="text" />
         <ErrorMessage name="firstName" />
         <label htmlFor="lastName">Last Name</label>
-        <Field id="lastName" type="text" />
-        <ErrorMessage name="firstName" />
+        <Field id="lastName" name="lastName" type="text" />
+        <ErrorMessage name="lastName" />
         <label htmlFor="email">Email Address</label>
-        <Field id="email" type="email" />
-        <ErrorMessage name="firstName" />
+        <Field id="email" type="email" name="email" />
+        <ErrorMessage name="email" />
         <button type="submit">Submit</button>
       </Form>
     </Formik>

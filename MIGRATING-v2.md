@@ -235,6 +235,7 @@ export interface FieldMetaProps<Value> {
 - `FormikContext` is now exported
 - `validateOnMount?: boolean = false`
 - `initialErrors`, `initialTouched`, `initialStatus` have been added
+- `FormikActions` type has been renamed to `FormikHelpers`
 
 ## Deprecation Warnings
 

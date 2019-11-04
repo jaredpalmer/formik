@@ -1,5 +1,5 @@
 import * as React from 'react';
-import cloneDeep from 'lodash/cloneDeep';
+import cloneDeep from 'lodash.clonedeep';
 import { connect } from './connect';
 import {
   FormikContextType,

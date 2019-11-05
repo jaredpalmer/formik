@@ -7,7 +7,7 @@
 
 // See https://docusaurus.io/docs/site-config for all the possible
 // site configuration options.
-const path = require('path');
+
 // List of projects/orgs using your project for the users page.
 const users = [
   {
@@ -186,7 +186,6 @@ const users = [
 ];
 
 const siteConfig = {
-  customDocsPath: path.basename(__dirname) + '/docs',
   title: 'Formik', // Title for your website.
   tagline: `Build forms in React, without the tears.`,
   url: 'https://jaredpalmer.com', // Your website URL

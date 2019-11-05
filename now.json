@@ -2,7 +2,7 @@
   "name": "formik-docs",
   "version": 2,
   "builds": [{
-    "src": "website/package.json",
+    "src": "package.json",
     "use": "@now/static-build",
     "config": {
       "distDir": "website/build"

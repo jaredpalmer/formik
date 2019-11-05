@@ -38,6 +38,7 @@
     "addc": "all-contributors add",
     "start-website": "cd website && yarn start",
     "build-website": "cd website && yarn install && yarn build",
+    "now-build": "npm run build-website",
     "gen-docs": "all-contributors generate && doctoc README.md",
     "size": "size-limit"
   },
@@ -123,8 +124,7 @@
       "<rootDir>/test/setupTests.ts"
     ]
   },
-  "size-limit": [
-    {
+  "size-limit": [{
       "path": "./dist/index.js",
       "limit": "14 kB"
     },

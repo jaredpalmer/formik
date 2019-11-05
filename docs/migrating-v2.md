@@ -26,6 +26,21 @@ resetForm(nextValues);
 resetForm({ values: nextValues /* errors, touched, etc ... */ });
 ```
 
+### Typescript changes
+**`FormikActions` has been renamed to `FormikHelpers`** It should be a straightforward change to import or alias the type
+
+**v1**
+
+```tsx
+import { FormikActions } from 'formik';
+```
+
+**v2**
+
+```tsx
+import { FormikHelpers as FormikActions } from 'formik';
+```
+
 ## What's New?
 
 ### Checkboxes and Select multiple

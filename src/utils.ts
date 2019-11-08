@@ -169,3 +169,33 @@ export function setNestedObjectValues<T>(
 
   return response;
 }
+
+export type Batch = (cb: Function) => void;
+
+function getBatchedUpdates(): Batch {
+  let renderer: {
+    unstable_batchedUpdates?: Batch;
+    batchedUpdates?: Batch;
+  };
+
+  try {
+    renderer = require('react-dom');
+  } catch {
+    try {
+      renderer = require('react-native');
+    } catch {
+      renderer = {};
+    }
+  }
+
+  const {
+    unstable_batchedUpdates = (cb: Function) => {
+      cb();
+    },
+    batchedUpdates = unstable_batchedUpdates,
+  } = renderer;
+
+  return batchedUpdates;
+}
+
+export const batch = getBatchedUpdates();

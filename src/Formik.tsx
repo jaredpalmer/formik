@@ -22,6 +22,7 @@ import {
   getActiveElement,
   getIn,
   isObject,
+  batch,
 } from './utils';
 import { FormikProvider } from './FormikContext';
 import invariant from 'tiny-warning';
@@ -323,9 +324,11 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     (values: Values = state.values) => {
       return unstable_runWithPriority(LowPriority, () => {
         return runAllValidations(values).then(combinedErrors => {
-          if (!!isMounted.current) {
-            dispatch({ type: 'SET_ERRORS', payload: combinedErrors });
-          }
+          batch(() => {
+            if (!!isMounted.current) {
+              dispatch({ type: 'SET_ERRORS', payload: combinedErrors });
+            }
+          });
           return combinedErrors;
         });
       });
@@ -337,12 +340,14 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     (values: Values = state.values) => {
       dispatch({ type: 'SET_ISVALIDATING', payload: true });
       return runAllValidations(values).then(combinedErrors => {
-        if (!!isMounted.current) {
-          dispatch({ type: 'SET_ISVALIDATING', payload: false });
-          if (!isEqual(state.errors, combinedErrors)) {
-            dispatch({ type: 'SET_ERRORS', payload: combinedErrors });
+        batch(() => {
+          if (!!isMounted.current) {
+            dispatch({ type: 'SET_ISVALIDATING', payload: false });
+            if (!isEqual(state.errors, combinedErrors)) {
+              dispatch({ type: 'SET_ERRORS', payload: combinedErrors });
+            }
           }
-        }
+        });
         return combinedErrors;
       });
     }
@@ -471,11 +476,13 @@ export function useFormik<Values extends FormikValues = FormikValues>({
         return maybePromise
           .then((x: any) => x)
           .then((error: string) => {
-            dispatch({
-              type: 'SET_FIELD_ERROR',
-              payload: { field: name, value: error },
+            batch(() => {
+              dispatch({
+                type: 'SET_FIELD_ERROR',
+                payload: { field: name, value: error },
+              });
+              dispatch({ type: 'SET_ISVALIDATING', payload: false });
             });
-            dispatch({ type: 'SET_ISVALIDATING', payload: false });
           });
       } else {
         dispatch({
@@ -712,22 +719,29 @@ export function useFormik<Values extends FormikValues = FormikValues>({
         if (isActuallyValid) {
           return Promise.resolve(executeSubmit())
             .then(() => {
-              if (!!isMounted.current) {
-                dispatch({ type: 'SUBMIT_SUCCESS' });
-              }
+              batch(() => {
+                if (!!isMounted.current) {
+                  dispatch({ type: 'SUBMIT_SUCCESS' });
+                }
+              });
             })
             .catch(_errors => {
-              if (!!isMounted.current) {
-                dispatch({ type: 'SUBMIT_FAILURE' });
-                throw _errors;
-              }
+              batch(() => {
+                if (!!isMounted.current) {
+                  dispatch({ type: 'SUBMIT_FAILURE' });
+                  throw _errors;
+                }
+              });
             });
-        } else if (!!isMounted.current) {
-          // ^^^ Make sure Formik is still mounted before calling setState
-          dispatch({ type: 'SUBMIT_FAILURE' });
+        } else {
+          batch(() => {
+            // ^^^ Make sure Formik is still mounted before calling setState
+            if (!!isMounted.current) {
+              dispatch({ type: 'SUBMIT_FAILURE' });
+            }
+          });
           return;
         }
-        return;
       }
     );
   });
@@ -780,7 +794,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
       );
 
       if (isPromise(maybePromisedOnReset)) {
-        (maybePromisedOnReset as Promise<any>).then(resetForm);
+        (maybePromisedOnReset as Promise<any>).then(() => batch(resetForm));
       } else {
         resetForm();
       }

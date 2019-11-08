@@ -27,7 +27,6 @@ import { FormikProvider } from './FormikContext';
 import invariant from 'tiny-warning';
 import { LowPriority, unstable_runWithPriority } from 'scheduler';
 
-// We already used FormikActions. So we'll go all Elm-y, and use Message.
 type FormikMessage<Values> =
   | { type: 'SUBMIT_ATTEMPT' }
   | { type: 'SUBMIT_FAILURE' }

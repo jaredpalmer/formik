@@ -825,7 +825,9 @@ export function useFormik<Values extends FormikValues = FormikValues>({
 
         if (type === 'checkbox') {
           if (valueProp === undefined) {
-            field.checked = !!valueState;
+            field.checked = Array.isArray(valueState)
+              ? valueState.length > 0
+              : !!valueState;
           } else {
             field.checked = !!(
               Array.isArray(valueState) && ~valueState.indexOf(valueProp)

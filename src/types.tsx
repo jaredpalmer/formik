@@ -86,8 +86,8 @@ export interface FormikHelpers<Values> {
   /** Manually set values object  */
   setValues(values: Values): void;
   /** Set value of form field directly */
-  setFieldValue(
-    field: keyof Values & string,
+  setFieldValue<Field extends keyof Values>(
+    field: Field & string,
     value: any,
     shouldValidate?: boolean
   ): void;
@@ -127,7 +127,7 @@ export interface FormikHandlers {
   /** Preact-like linkState. Will return a handleBlur function. */
   handleBlur<T = string | any>(
     fieldOrEvent: T
-  ): T extends string ? ((e: any) => void) : void;
+  ): T extends string ? (e: any) => void : void;
   /** Classic React change handler, keyed by input name */
   handleChange(e: React.ChangeEvent<any>): void;
   /** Preact-like linkState. Will return a handleChange function.  */
@@ -135,7 +135,7 @@ export interface FormikHandlers {
     field: T
   ): T extends React.ChangeEvent<any>
     ? void
-    : ((e: string | React.ChangeEvent<any>) => void);
+    : (e: string | React.ChangeEvent<any>) => void;
 
   getFieldProps<Value = any>(props: any): FieldInputProps<Value>;
   getFieldMeta<Value>(name: string): FieldMetaProps<Value>;

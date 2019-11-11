@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { render, wait } from 'react-testing-library';
 
 import { FieldArray, Formik, isFunction } from '../src';
 
@@ -153,7 +154,7 @@ describe('<FieldArray />', () => {
       expect(formikBag.values.friends).toEqual(expected);
     });
 
-    it('should push clone not actual referance', () => {
+    it('should push clone not actual reference', () => {
       let personTemplate = { firstName: '', lastName: '' };
       let formikBag: any;
       let arrayHelpers: any;
@@ -182,6 +183,29 @@ describe('<FieldArray />', () => {
       expect(
         formikBag.values.people[formikBag.values.people.length - 1]
       ).toMatchObject(personTemplate);
+    });
+
+    it('should validate form after adding the value', async () => {
+      let arrayHelpers: any;
+      let validate = jest.fn();
+      let form = (
+        <TestForm validate={validate}>
+          <FieldArray
+            name="friends"
+            render={arrayProps => {
+              arrayHelpers = arrayProps;
+              return null;
+            }}
+          />
+        </TestForm>
+      );
+
+      let { rerender } = render(form);
+      arrayHelpers.push('tom');
+      rerender(form);
+      await wait(() => {
+        expect(validate).toHaveBeenCalled();
+      });
     });
   });
 

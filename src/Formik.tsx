@@ -996,7 +996,7 @@ export function prepareDataForValidation<T extends FormikValues>(
       const key = String(k);
       if (Array.isArray(values[key]) === true) {
         data[key] = values[key].map((value: any) => {
-          if (Array.isArray(value) === true || typeof value === 'object') {
+          if (Array.isArray(value) === true || isPlainObject(value)) {
             return prepareDataForValidation(value);
           } else {
             return value !== '' ? value : undefined;

@@ -516,7 +516,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   const setValues = useEventCallback((values: Values) => {
     dispatch({ type: 'SET_VALUES', payload: values });
     return validateOnChange
-      ? validateFormWithLowPriority(state.values)
+      ? validateFormWithLowPriority(values)
       : Promise.resolve();
   });
 
@@ -922,7 +922,7 @@ export function Formik<
         ? render(formikbag)
         : children // children come last, always called
         ? isFunction(children)
-          ? (children as ((bag: FormikProps<Values>) => React.ReactNode))(
+          ? (children as (bag: FormikProps<Values>) => React.ReactNode)(
               formikbag as FormikProps<Values>
             )
           : !isEmptyChildren(children)

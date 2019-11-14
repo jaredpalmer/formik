@@ -591,13 +591,15 @@ describe('<Formik>', () => {
       });
 
       it('setValues should run validations when validateOnChange is true (default)', async () => {
-        const validate = jest.fn(() => ({}));
-        const { getProps, rerender } = renderFormik({ validate });
+        const newValue: Values = { name: 'ian' };
+        const validate = jest.fn(_values => ({}));
+        // const { getProps, rerender } = renderFormik({ validate });
+        const { getProps } = renderFormik({ validate });
 
-        getProps().setValues({ name: 'ian' });
-        rerender();
+        getProps().setValues(newValue);
+        // rerender();
         await wait(() => {
-          expect(validate).toHaveBeenCalled();
+          expect(validate).toHaveBeenCalledWith(newValue, undefined);
         });
       });
       it('setValues should NOT run validations when validateOnChange is false', async () => {

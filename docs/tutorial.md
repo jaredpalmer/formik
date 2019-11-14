@@ -227,7 +227,7 @@ While our contact form works, it's not quite feature-complete. While users can s
 
 If we are okay with using the browser's built-in HTML input validation, you could add a `required` prop to each of our inputs, specify minimum/maximum lengths (`maxlength` and `minlength`), and/or add a `pattern` prop for regex validation for each of these inputs. These are great if you can get away with them. However, HTML validation has its limitations. First, it only works in the browser! So this clearly is not viable for React Native. Second, it's hard/impossible to show custom error messages to our user. Third, it's very janky.
 
-As mentioned earlier, Formik keeps track of not only your form's `values`, but also it's error messages and validation. To add validation with JS, let's specify a custom validation function and pass it as `validate` to the `useFormik()` hook. If an error exists, this custom validation function should an object a matching shape to our `values`/`initialValues`. Again..._symmetry_...yes...
+As mentioned earlier, Formik keeps track of not only your form's `values`, but also it's error messages and validation. To add validation with JS, let's specify a custom validation function and pass it as `validate` to the `useFormik()` hook. If an error exists, this custom validation function should produce an `error` object with a matching shape to our `values`/`initialValues`. Again..._symmetry_...yes...
 
 ```jsx
 import React from 'react';

@@ -107,7 +107,7 @@ const Basic = () => (
     <Formik
       initialValues={{ email: '', password: '' }}
       validate={values => {
-        let errors = {};
+        const errors = {};
         if (!values.email) {
           errors.email = 'Required';
         } else if (
@@ -178,7 +178,7 @@ const Basic = () => (
     <Formik
       initialValues={{ email: '', password: '' }}
       validate={values => {
-        let errors = {};
+        const errors = {};
         if (!values.email) {
           errors.email = 'Required';
         } else if (

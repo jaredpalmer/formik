@@ -4,7 +4,7 @@ title: useFormikContext()
 custom_edit_url: https://github.com/jaredpalmer/formik/edit/master/docs/api/useFormikContext.md
 ---
 
-`useFormikContext()` is a custom React hook that will return all Formik state and helpers via React Context.
+`useFormikContext()` is a custom React hook that will return all Formik state and helpers via [React Context](https://reactjs.org/docs/context.html).
 
 ## Example
 
@@ -19,8 +19,8 @@ const AutoSubmitToken = () => {
   const { values, submitForm } = useFormikContext();
   React.useEffect(() => {
     // Submit the form imperatively as an effect as soon as form values.token are 6 digits long
-    if (formik.values.token.length === 6) {
-      formik.submitForm();
+    if (values.token.length === 6) {
+      submitForm();
     }
   }, [values, submitForm]);
   return null;
@@ -33,7 +33,7 @@ const TwoFactorVerificationForm = () => (
     <Formik
       initialValues={{ token: '' }}
       validate={values => {
-        let errors;
+        const errors = {};
         if (values.token.length < 5) {
           errors.token = 'Invalid code. Too short.'
         }
@@ -50,7 +50,7 @@ const TwoFactorVerificationForm = () => (
           <Field name="token" type="tel" />
           <AutoSubmitToken />
         </Form>
-    </Form>
+    </Formik>
   </div>
 );
 ```
@@ -61,4 +61,4 @@ const TwoFactorVerificationForm = () => (
 
 ## `useFormikContext(): FormikProps<Values>`
 
-A custom React Hook that returns Formik states and helpers. This is the hooks version of using `connect()` and `<FormikConsumer>`. If called without a parent context, you will get a warning in your console.
+A custom React Hook that returns Formik states and helpers via React Context. Thus, this hook will only work if there is a parent Formik React Context from which it can pull from. If called without a parent context (i.e. a descendent of a `<Formik>` component or `withFormik` higher-order component), you will get a warning in your console.

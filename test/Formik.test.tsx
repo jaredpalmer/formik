@@ -2,7 +2,12 @@ import * as React from 'react';
 import { render, fireEvent, wait } from 'react-testing-library';
 import * as Yup from 'yup';
 
-import { Formik, FormikProps, FormikConfig } from '../src';
+import {
+  Formik,
+  prepareDataForValidation,
+  FormikProps,
+  FormikConfig,
+} from '../src';
 import { noop } from './testHelpers';
 
 jest.spyOn(global.console, 'warn');
@@ -876,6 +881,36 @@ describe('<Formik>', () => {
     });
   });
 
+  describe('prepareDataForValidation', () => {
+    it('should works correctly with instances', () => {
+      class SomeClass {}
+      const expected = {
+        string: 'string',
+        date: new Date(),
+        someInstance: new SomeClass(),
+      };
+
+      const dataForValidation = prepareDataForValidation(expected);
+      expect(dataForValidation).toEqual(expected);
+    });
+
+    it('should works correctly with mixed data', () => {
+      const date = new Date();
+      const dataForValidation = prepareDataForValidation({
+        string: 'string',
+        empty: '',
+        arr: [],
+        date,
+      });
+      expect(dataForValidation).toEqual({
+        string: 'string',
+        empty: undefined,
+        arr: [],
+        date,
+      });
+    });
+  });
+
   // describe('componentDidUpdate', () => {
   //   let formik: any, initialValues: any;
   //   beforeEach(() => {
@@ -1145,5 +1180,20 @@ describe('<Formik>', () => {
     expect(getProps().errors).toEqual({
       users: [{ firstName: 'required', lastName: 'required' }],
     });
+  });
+
+  it('should not eat an error thrown by the validationSchema', async () => {
+    const validationSchema = function() {
+      throw new Error('broken validations');
+    };
+
+    const { getProps } = renderFormik({
+      initialValues: { users: [{ firstName: '', lastName: '' }] },
+      validationSchema,
+    });
+
+    expect(() => {
+      getProps().validateForm();
+    }).toThrow('broken validations');
   });
 });

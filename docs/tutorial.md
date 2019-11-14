@@ -204,7 +204,7 @@ const SignupForm = () => {
 If you look carefully at our new code, you'll notice some patterns and symmetry _forming_.
 
 1. We reuse the same exact change handler function `handleChange` for each HTML input.
-2. We pass an `id` and `name` HTML attribute that _matches_ the we defined in `initialValues`
+2. We pass an `id` and `name` HTML attribute that _matches_ the property we defined in `initialValues`
 3. We access the field's value using the same name (`email` -> `formik.values.email`).
 
 If you're familiar with building forms with plain React, you can think of Formik's `handleChange` as working like this:

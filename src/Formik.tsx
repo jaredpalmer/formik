@@ -1053,13 +1053,13 @@ function getValueForCheckbox(
     return !!checked;
   }
 
-  if (checked) {
+  if (checked && valueProp) {
     return Array.isArray(currentValue)
       ? currentValue.concat(valueProp)
       : [valueProp];
   }
   if (!Array.isArray(currentValue)) {
-    return !!currentValue;
+    return !currentValue;
   }
   const index = currentValue.indexOf(valueProp);
   if (index < 0) {

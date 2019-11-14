@@ -394,7 +394,7 @@ const SignupForm = () => {
 };
 ```
 
-Almost there! Now that we're tracking `touched`, we can now change our error message render logic to _only_ show a field's error message if it exists _and_ if our user has visted a given field.
+Almost there! Now that we're tracking `touched`, we can now change our error message render logic to _only_ show a field's error message if it exists _and_ if our user has visited a given field.
 
 ```jsx
 import React from 'react';

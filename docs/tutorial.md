@@ -588,10 +588,10 @@ const SignupForm = () => {
     },
     validationSchema: Yup.object({
       firstName: Yup.string()
-        .min(15, 'Must be 15 characters or less')
+        .max(15, 'Must be 15 characters or less')
         .required('Required'),
       lastName: Yup.string()
-        .min(20, 'Must be 20 characters or less')
+        .max(20, 'Must be 20 characters or less')
         .required('Required'),
       email: Yup.string()
         .email('Invalid email addresss`')
@@ -665,10 +665,10 @@ const SignupForm = () => {
       initialValues={{ firstName: '', lastName: '', email: '' }}
       validationSchema={Yup.object({
         firstName: Yup.string()
-          .min(15, 'Must be 15 characters or less')
+          .max(15, 'Must be 15 characters or less')
           .required('Required'),
         lastName: Yup.string()
-          .min(20, 'Must be 20 characters or less')
+          .max(20, 'Must be 20 characters or less')
           .required('Required'),
         email: Yup.string()
           .email('Invalid email addresss`')
@@ -719,10 +719,10 @@ const SignupForm = () => {
       initialValues={{ firstName: '', lastName: '', email: '' }}
       validationSchema={Yup.object({
         firstName: Yup.string()
-          .min(15, 'Must be 15 characters or less')
+          .max(15, 'Must be 15 characters or less')
           .required('Required'),
         lastName: Yup.string()
-          .min(20, 'Must be 20 characters or less')
+          .max(20, 'Must be 20 characters or less')
           .required('Required'),
         email: Yup.string()
           .email('Invalid email addresss`')
@@ -866,10 +866,10 @@ const SignupForm = () => {
         }}
         validationSchema={Yup.object({
           firstName: Yup.string()
-            .min(15, 'Must be 15 characters or less')
+            .max(15, 'Must be 15 characters or less')
             .required('Required'),
           lastName: Yup.string()
-            .min(20, 'Must be 20 characters or less')
+            .max(20, 'Must be 20 characters or less')
             .required('Required'),
           email: Yup.string()
             .email('Invalid email addresss`')

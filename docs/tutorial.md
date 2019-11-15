@@ -794,7 +794,7 @@ import * as Yup from 'yup';
 
 const MyTextInput = ({ label, ...props }) => {
   // useField() returns [formik.getFieldProps(), formik.getFieldMeta()]
-  // which we can spread on <input> and alse replace ErrorMessage entirely.
+  // which we can spread on <input> and also replace ErrorMessage entirely.
   const [field, meta] = useField(props);
   return (
     <>

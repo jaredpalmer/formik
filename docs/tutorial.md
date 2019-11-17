@@ -515,7 +515,7 @@ const SignupForm = () => {
         .max(20, 'Must be 20 characters or less')
         .required('Required'),
       email: Yup.string()
-        .email('Invalid email addresss`')
+        .email('Invalid email address')
         .required('Required'),
     }),
     onSubmit: values => {
@@ -594,7 +594,7 @@ const SignupForm = () => {
         .max(20, 'Must be 20 characters or less')
         .required('Required'),
       email: Yup.string()
-        .email('Invalid email addresss`')
+        .email('Invalid email address')
         .required('Required'),
     }),
     onSubmit: values => {
@@ -671,7 +671,7 @@ const SignupForm = () => {
           .max(20, 'Must be 20 characters or less')
           .required('Required'),
         email: Yup.string()
-          .email('Invalid email addresss`')
+          .email('Invalid email address')
           .required('Required'),
       })}
       onSubmit={(values, { setSubmitting }) => {
@@ -725,7 +725,7 @@ const SignupForm = () => {
           .max(20, 'Must be 20 characters or less')
           .required('Required'),
         email: Yup.string()
-          .email('Invalid email addresss`')
+          .email('Invalid email address')
           .required('Required'),
       })}
       onSubmit={(values, { setSubmitting }) => {
@@ -872,7 +872,7 @@ const SignupForm = () => {
             .max(20, 'Must be 20 characters or less')
             .required('Required'),
           email: Yup.string()
-            .email('Invalid email addresss`')
+            .email('Invalid email address')
             .required('Required'),
           acceptedTerms: Yup.boolean()
             .required('Required')

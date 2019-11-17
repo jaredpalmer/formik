@@ -884,7 +884,7 @@ describe('<Formik>', () => {
   });
 
   describe('prepareDataForValidation', () => {
-    it('should works correctly with instances', () => {
+    it('should work correctly with instances', () => {
       class SomeClass {}
       const expected = {
         string: 'string',
@@ -896,7 +896,33 @@ describe('<Formik>', () => {
       expect(dataForValidation).toEqual(expected);
     });
 
-    it('should works correctly with mixed data', () => {
+    it('should work correctly with instances in arrays', () => {
+      class SomeClass {}
+      const expected = {
+        string: 'string',
+        dateArr: [new Date(), new Date()],
+        someInstanceArr: [new SomeClass(), new SomeClass()],
+      };
+
+      const dataForValidation = prepareDataForValidation(expected);
+      expect(dataForValidation).toEqual(expected);
+    });
+
+    it('should work correctly with instances in objects', () => {
+      class SomeClass {}
+      const expected = {
+        string: 'string',
+        object: {
+          date: new Date(),
+          someInstance: new SomeClass(),
+        },
+      };
+
+      const dataForValidation = prepareDataForValidation(expected);
+      expect(dataForValidation).toEqual(expected);
+    });
+
+    it('should work correctly with mixed data', () => {
       const date = new Date();
       const dataForValidation = prepareDataForValidation({
         string: 'string',

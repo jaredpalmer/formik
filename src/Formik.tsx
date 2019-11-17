@@ -711,10 +711,11 @@ export function useFormik<Values extends FormikValues = FormikValues>({
         const isActuallyValid = Object.keys(combinedErrors).length === 0;
         if (isActuallyValid) {
           return Promise.resolve(executeSubmit())
-            .then(() => {
+            .then(result => {
               if (!!isMounted.current) {
                 dispatch({ type: 'SUBMIT_SUCCESS' });
               }
+              return result;
             })
             .catch(_errors => {
               if (!!isMounted.current) {

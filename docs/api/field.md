@@ -8,6 +8,8 @@ custom_edit_url: https://github.com/jaredpalmer/formik/edit/master/docs/api/fiel
 attribute to match up with Formik state. `<Field />` will default to an HTML
 `<input />` element.
 
+*Note* - Formik doesn't currently support `type="file"`. Please refer to [this issue](https://github.com/jaredpalmer/formik/issues/45) for various solutions as to uploading a file while using Formik. 
+
 ## Rendering
 
 There are 2 ways to render things with `<Field>`.

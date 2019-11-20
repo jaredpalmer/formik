@@ -737,13 +737,13 @@ const SignupForm = () => {
     >
       <Form>
         <label htmlFor="firstName">First Name</label>
-        <Field id="firstName" type="text" />
+        <Field name="firstName" type="text" />
         <ErrorMessage name="firstName" />
         <label htmlFor="lastName">Last Name</label>
-        <Field id="lastName" type="text" />
+        <Field name="lastName" type="text" />
         <ErrorMessage name="lastName" />
         <label htmlFor="email">Email Address</label>
-        <Field id="email" type="email" />
+        <Field name="email" type="email" />
         <ErrorMessage name="email" />
         <button type="submit">Submit</button>
       </Form>

@@ -8,7 +8,7 @@ export type FormikFormProps = Pick<
     'onReset' | 'onSubmit'
   >
 >;
-    
+
 type FormProps = React.ComponentPropsWithoutRef<'form'>;
 
 // @todo tests

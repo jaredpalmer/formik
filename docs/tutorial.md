@@ -604,17 +604,17 @@ const SignupForm = () => {
   return (
     <form onSubmit={formik.handleSubmit}>
       <label htmlFor="firstName">First Name</label>
-      <input id="firstName" {...formik.getFieldProps('firstName')} />
+      <input name="firstName" {...formik.getFieldProps('firstName')} />
       {formik.touched.firstName && formik.errors.firstName ? (
         <div>{formik.errors.firstName}</div>
       ) : null}
       <label htmlFor="lastName">Last Name</label>
-      <input id="lastName" {...formik.getFieldProps('lastName')} />
+      <input name="lastName" {...formik.getFieldProps('lastName')} />
       {formik.touched.lastName && formik.errors.lastName ? (
         <div>{formik.errors.lastName}</div>
       ) : null}
       <label htmlFor="email">Email Address</label>
-      <input id="email" {...formik.getFieldProps('email')} />
+      <input name="email" {...formik.getFieldProps('email')} />
       {formik.touched.email && formik.errors.email ? (
         <div>{formik.errors.email}</div>
       ) : null}

@@ -87,7 +87,7 @@ class components (e.g. `class XXXXX extends React.Component {..}`).
 Default is `false`. Control whether Formik should reset the form if the wrapped
 component props change (using deep equality).
 
-### `handleSubmit: (values: Values, formikBag: FormikBag) => void`
+### `handleSubmit: (values: Values, formikBag: FormikBag) => void | Promise<void>`
 
 Your form submission handler. It is passed your forms `values` and the
 "FormikBag", which includes an object containing a subset of the
@@ -110,6 +110,8 @@ passed to the wrapped component.
 
 Note: `errors`, `touched`, `status` and all event handlers are NOT
 included in the `FormikBag`.
+
+> IMPORTANT: If `onSubmit` is async, then Formik will automatically set `isSubmitting` to `false` on your behalf once it has resolved. This means you do NOT need to call `formikBag.setSubmitting(false)` manually. However, if your `onSubmit` function is synchronous, then you need to call `setSubmitting(false)` on your own.
 
 ### `isInitialValid?: boolean | (props: Props) => boolean`
 

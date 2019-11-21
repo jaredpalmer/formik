@@ -117,13 +117,13 @@ const SignupForm = () => {
   // Pass the useFormik() hook initial form values and a submit function that will
   // be called when the form is submitted
   const formik = useFormik({
-    initialValues: {      
+    initialValues: {
       email: '',
     },
     onSubmit: values => {
       alert(JSON.stringify(values, null, 2));
     },
-  });  
+  });
   return (
     <form onSubmit={formik.handleSubmit}>
       <label htmlFor="email">Email Address</label>
@@ -737,14 +737,14 @@ const SignupForm = () => {
     >
       <Form>
         <label htmlFor="firstName">First Name</label>
-        <Field id="firstName" type="text" />
+        <Field name="firstName" type="text" />
         <ErrorMessage name="firstName" />
         <label htmlFor="lastName">Last Name</label>
-        <Field id="lastName" type="text" />
-        <ErrorMessage name="firstName" />
+        <Field name="lastName" type="text" />
+        <ErrorMessage name="lastName" />
         <label htmlFor="email">Email Address</label>
-        <Field id="email" type="email" />
-        <ErrorMessage name="firstName" />
+        <Field name="email" type="email" />
+        <ErrorMessage name="email" />
         <button type="submit">Submit</button>
       </Form>
     </Formik>

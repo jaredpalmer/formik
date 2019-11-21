@@ -206,7 +206,7 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
   onSubmit: (
     values: Values,
     formikHelpers: FormikHelpers<Values>
-  ) => void | Promise<void>;
+  ) => void | Promise<any>;
   /**
    * A Yup Schema or a function that returns a Yup schema
    */
@@ -228,7 +228,7 @@ export type FormikProps<Values> = FormikSharedConfig &
   FormikHelpers<Values> &
   FormikHandlers &
   FormikComputedProps<Values> &
-  FormikRegistration & { submitForm: () => Promise<void> };
+  FormikRegistration & { submitForm: () => Promise<any> };
 
 /** Internal Formik registration methods that get passed down as props */
 export interface FormikRegistration {

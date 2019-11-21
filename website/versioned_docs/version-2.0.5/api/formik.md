@@ -326,7 +326,7 @@ Note: `initialValues` not available to the higher-order component, use
 Your optional form reset handler. It is passed your forms `values` and the
 "FormikBag".
 
-### `onSubmit: (values: Values, formikBag: FormikBag) => void | Promise<any>`
+### `onSubmit: (values: Values, formikBag: FormikBag) => void | Promise<void>`
 
 Your form submission handler. It is passed your forms `values` and the
 "FormikBag", which includes an object containing a subset of the

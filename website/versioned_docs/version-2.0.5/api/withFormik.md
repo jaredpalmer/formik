@@ -88,7 +88,7 @@ class components (e.g. `class XXXXX extends React.Component {..}`).
 Default is `false`. Control whether Formik should reset the form if the wrapped
 component props change (using deep equality).
 
-### `handleSubmit: (values: Values, formikBag: FormikBag) => void | Promise<any>`
+### `handleSubmit: (values: Values, formikBag: FormikBag) => void | Promise<void>`
 
 Your form submission handler. It is passed your forms `values` and the
 "FormikBag", which includes an object containing a subset of the

@@ -582,7 +582,7 @@ describe('<Formik>', () => {
       });
     });
 
-    describe('FormikActions', () => {
+    describe('FormikHelpers', () => {
       it('setValues sets values', () => {
         const { getProps } = renderFormik<Values>();
 

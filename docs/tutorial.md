@@ -737,14 +737,14 @@ const SignupForm = () => {
     >
       <Form>
         <label htmlFor="firstName">First Name</label>
-        <Field id="firstName" type="text" />
+        <Field id="firstName" name="firstName" type="text" />
         <ErrorMessage name="firstName" />
         <label htmlFor="lastName">Last Name</label>
-        <Field id="lastName" type="text" />
-        <ErrorMessage name="firstName" />
+        <Field id="lastName" name="lastName" type="text" />
+        <ErrorMessage name="lastName" />
         <label htmlFor="email">Email Address</label>
-        <Field id="email" type="email" />
-        <ErrorMessage name="firstName" />
+        <Field id="email" type="email" name="email" />
+        <ErrorMessage name="email" />
         <button type="submit">Submit</button>
       </Form>
     </Formik>

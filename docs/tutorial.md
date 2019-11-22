@@ -13,7 +13,7 @@ If you're impatient and just want to start hacking on your machine locally, chec
 
 In this tutorial, we'll show how to build a complex newsletter signup form with React and Formik.
 
-You can see what we'll be building here: [Final Result](https://codesandbox.io/s/formik-v2-tutorial-final-t5fe0). If the code doesn't make sense to you, don't worry! The goal of this tutorial is to help you understand Formik.
+You can see what we'll be building here: [Final Result](https://codesandbox.io/s/formik-v2-tutorial-final-bq0li). If the code doesn't make sense to you, don't worry! The goal of this tutorial is to help you understand Formik.
 
 ### Prerequisites
 
@@ -941,7 +941,7 @@ Congratulations! You've created a signup form with Formik that:
 
 Nice work! We hope you now feel like you have a decent grasp on how Formik works.
 
-Check out the final result here: [Final Result](https://codesandbox.io/s/formik-v2-tutorial-final-t5fe0).
+Check out the final result here: [Final Result](https://codesandbox.io/s/formik-v2-tutorial-final-bq0li).
 
 If you have extra time or want to practice your new Formik skills, here are some ideas for improvements that you could make to the signup form which are listed in order of increasing difficulty:
 

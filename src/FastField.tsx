@@ -36,12 +36,27 @@ export type FastFieldAttributes<T> = GenericFieldHTMLAttributes &
  * Custom Field component for quickly hooking into Formik
  * context and wiring up forms.
  */
-export class FastField<Values = {}, Props = {}> extends React.Component<
-  FastFieldAttributes<Props>,
+export function FastField<Values = {}, Props = {}>(
+  props: FastFieldAttributes<Props>
+) {
+  const formik = React.useContext(FormikContext);
+  invariant(
+    !!formik,
+    'Formik context is undefined, please verify you are rendering <FastField> as a child of a <Formik> component.'
+  );
+
+  return <WrappedFastField<Values, Props> {...props} formik={formik} />;
+}
+
+type WrappedFastFieldProps<Values, Props> = FastFieldAttributes<Props> & {
+  formik: FormikContextType<Values>;
+};
+
+class WrappedFastField<Values = {}, Props = {}> extends React.Component<
+  WrappedFastFieldProps<Values, Props>,
   {}
 > {
-  static contextType = FormikContext;
-  constructor(props: FastFieldAttributes<Props>) {
+  constructor(props: WrappedFastFieldProps<Values, Props>) {
     super(props);
     const { render, children, component, as: is, name } = props;
     invariant(
@@ -69,22 +84,19 @@ export class FastField<Values = {}, Props = {}> extends React.Component<
     );
   }
 
-  shouldComponentUpdate(
-    props: FastFieldAttributes<Props>,
-    _state: {},
-    context: FormikContextType<Values>
-  ) {
+  shouldComponentUpdate(props: WrappedFastFieldProps<Values, Props>) {
     if (this.props.shouldUpdate) {
       return this.props.shouldUpdate(props, this.props);
     } else if (
-      getIn(this.context.values, this.props.name) !==
-        getIn(context.values, this.props.name) ||
-      getIn(this.context.errors, this.props.name) !==
-        getIn(context.errors, this.props.name) ||
-      getIn(this.context.touched, this.props.name) !==
-        getIn(context.touched, this.props.name) ||
+      props.name !== this.props.name ||
+      getIn(props.formik.values, this.props.name) !==
+        getIn(this.props.formik.values, this.props.name) ||
+      getIn(props.formik.errors, this.props.name) !==
+        getIn(this.props.formik.errors, this.props.name) ||
+      getIn(props.formik.touched, this.props.name) !==
+        getIn(this.props.formik.touched, this.props.name) ||
       Object.keys(this.props).length !== Object.keys(props).length ||
-      this.context.isSubmitting !== context.isSubmitting
+      props.formik.isSubmitting !== this.props.formik.isSubmitting
     ) {
       return true;
     } else {
@@ -95,28 +107,28 @@ export class FastField<Values = {}, Props = {}> extends React.Component<
   componentDidMount() {
     // Register the Field with the parent Formik. Parent will cycle through
     // registered Field's validate fns right prior to submit
-    this.context.registerField(this.props.name, {
+    this.props.formik.registerField(this.props.name, {
       validate: this.props.validate,
     });
   }
 
   componentDidUpdate(prevProps: FastFieldAttributes<Props>) {
     if (this.props.name !== prevProps.name) {
-      this.context.unregisterField(prevProps.name);
-      this.context.registerField(this.props.name, {
+      this.props.formik.unregisterField(prevProps.name);
+      this.props.formik.registerField(this.props.name, {
         validate: this.props.validate,
       });
     }
 
     if (this.props.validate !== prevProps.validate) {
-      this.context.registerField(this.props.name, {
+      this.props.formik.registerField(this.props.name, {
         validate: this.props.validate,
       });
     }
   }
 
   componentWillUnmount() {
-    this.context.unregisterField(this.props.name);
+    this.props.formik.unregisterField(this.props.name);
   }
 
   render() {
@@ -128,10 +140,10 @@ export class FastField<Values = {}, Props = {}> extends React.Component<
       children,
       component,
       shouldUpdate,
+      formik,
       ...props
-    } = this.props as FastFieldAttributes<Props>;
+    } = this.props as WrappedFastFieldProps<Values, Props>;
 
-    const formik = this.context;
     const {
       validate: _validate,
       validationSchema: _validationSchema,

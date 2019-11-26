@@ -4,6 +4,10 @@ import * as React from 'react';
 
 // Assertions
 
+/** @private is the value an empty array? */
+export const isEmptyArray = (value?: any) =>
+  Array.isArray(value) && value.length === 0;
+
 /** @private is the given object a Function? */
 export const isFunction = (obj: any): obj is Function =>
   typeof obj === 'function';
@@ -123,7 +127,7 @@ export function setIn(obj: any, path: string, value: any): any {
     return obj;
   }
 
-  if (value === undefined) {
+  if (value === undefined || isEmptyArray(value)) {
     delete resVal[pathArray[i]];
   } else {
     resVal[pathArray[i]] = value;
@@ -131,7 +135,7 @@ export function setIn(obj: any, path: string, value: any): any {
 
   // If the path array has a single element, the loop did not run.
   // Deleting on `resVal` had no effect in this scenario, so we delete on the result instead.
-  if (i === 0 && value === undefined) {
+  if ((i === 0 && value === undefined) || isEmptyArray(value)) {
     delete res[pathArray[i]];
   }
 

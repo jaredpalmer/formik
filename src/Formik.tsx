@@ -729,7 +729,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
         } else if (!!isMounted.current) {
           // ^^^ Make sure Formik is still mounted before calling setState
           dispatch({ type: 'SUBMIT_FAILURE' });
-          return;
+          throw combinedErrors;
         }
         return;
       }

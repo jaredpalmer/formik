@@ -60,6 +60,10 @@ function formikReducer<Values>(
     case 'SET_TOUCHED':
       return { ...state, touched: msg.payload };
     case 'SET_ERRORS':
+      if (isEqual(state.errors, msg.payload)) {
+        return state;
+      }
+
       return { ...state, errors: msg.payload };
     case 'SET_STATUS':
       return { ...state, status: msg.payload };

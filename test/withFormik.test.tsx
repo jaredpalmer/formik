@@ -90,6 +90,7 @@ describe('withFormik()', () => {
       isValid: true,
       isValidating: false,
       getFieldProps: expect.any(Function),
+      getFieldMeta: expect.any(Function),
       registerField: expect.any(Function),
       resetForm: expect.any(Function),
       setErrors: expect.any(Function),
@@ -108,6 +109,7 @@ describe('withFormik()', () => {
       validateField: expect.any(Function),
       validateForm: expect.any(Function),
       validateOnBlur: true,
+      validateOnMount: false,
       validateOnChange: true,
     });
   });

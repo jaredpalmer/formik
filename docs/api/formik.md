@@ -24,7 +24,8 @@ const BasicExample = () => (
           actions.setSubmitting(false);
         }, 1000);
       }}
-      render={props => (
+    >
+      {props => (
         <form onSubmit={props.handleSubmit}>
           <input
             type="text"
@@ -37,7 +38,7 @@ const BasicExample = () => (
           <button type="submit">Submit</button>
         </form>
       )}
-    />
+    </Formik>
   </div>
 );
 ```
@@ -54,13 +55,13 @@ const BasicExample = () => (
 
 ### Formik render methods and props
 
-There are three ways to render things with `<Formik />`
+There are 2 ways to render things with `<Formik />`
 
 - `<Formik component>`
-- `<Formik render>`
 - `<Formik children>`
+- ~~`<Formik render>`~~ Deprecated in 2.x
 
-All three render methods will be passed the same props:
+Each render methods will be passed the same props:
 
 #### `dirty: boolean`
 
@@ -151,7 +152,7 @@ use it to pass API responses back into your component in `handleSubmit`.
 
 #### `setSubmitting: (isSubmitting: boolean) => void`
 
-Set `isSubmitting` imperatively.
+Set `isSubmitting` imperatively. You would call it with `setSubmitting(false)` in your `onSubmit` handler to finish the cycle. To learn more about the submission process, see [Form Submission](guides/form-submission.md).
 
 #### `setTouched: (fields: { [field: string]: boolean }) => void`
 
@@ -218,6 +219,8 @@ const ContactForm = ({
 don’t use both in the same `<Formik>`.
 
 ### `render: (props: FormikProps<Values>) => ReactNode`
+
+**Deprecated in 2.x**
 
 ```jsx
 <Formik render={props => <ContactForm {...props} />} />
@@ -322,7 +325,7 @@ Note: `initialValues` not available to the higher-order component, use
 Your optional form reset handler. It is passed your forms `values` and the
 "FormikBag".
 
-### `onSubmit: (values: Values, formikBag: FormikBag) => void`
+### `onSubmit: (values: Values, formikBag: FormikBag) => void | Promise<any>`
 
 Your form submission handler. It is passed your forms `values` and the
 "FormikBag", which includes an object containing a subset of the
@@ -332,6 +335,8 @@ passed to the wrapped component.
 
 Note: `errors`, `touched`, `status` and all event handlers are NOT
 included in the `FormikBag`.
+
+> IMPORTANT: If `onSubmit` is async, then Formik will automatically set `isSubmitting` to `false` on your behalf once it has resolved. This means you do NOT need to call `formikBag.setSubmitting(false)` manually. However, if your `onSubmit` function is synchronous, then you need to call `setSubmitting(false)` on your own.
 
 ### `validate?: (values: Values) => FormikErrors<Values> | Promise<any>`
 
@@ -345,7 +350,7 @@ Validate the form's `values` with function. This function can either be:
 ```js
 // Synchronous validation
 const validate = values => {
-  let errors = {};
+  const errors = {};
 
   if (!values.email) {
     errors.email = 'Required';
@@ -367,7 +372,7 @@ const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 const validate = values => {
   return sleep(2000).then(() => {
-    let errors = {};
+    const errors = {};
     if (['admin', 'null', 'god'].includes(values.username)) {
       errors.username = 'Nice try';
     }
@@ -388,6 +393,11 @@ are called.
 Default is `true`. Use this option to tell Formik to run validations on `change`
 events and `change`-related methods. More specifically, when either
 `handleChange`, `setFieldValue`, or `setValues` are called.
+
+### `validateOnMount?: boolean`
+
+Default is `false`. Use this option to tell Formik to run validations when the `<Formik />` component mounts
+and/or `initialValues` change.
 
 ### `validationSchema?: Schema | (() => Schema)`
 

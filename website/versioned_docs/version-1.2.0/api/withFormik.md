@@ -142,7 +142,7 @@ Validate the form's `values` with function. This function can either be:
 ```js
 // Synchronous validation
 const validate = (values, props) => {
-  let errors = {};
+  const errors = {};
 
   if (!values.email) {
     errors.email = 'Required';
@@ -164,7 +164,7 @@ const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 const validate = (values, props) => {
   return sleep(2000).then(() => {
-    let errors = {};
+    const errors = {};
     if (['admin', 'null', 'god'].includes(values.username)) {
       errors.username = 'Nice try';
     }

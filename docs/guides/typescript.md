@@ -27,7 +27,7 @@ interface MyFormValues {
   firstName: string;
 }
 
-export const MyApp: React.SFC<{}> = () => {
+export const MyApp: React.FC<{}> = () => {
   const initialValues: MyFormValues = { firstName: '' };
   return (
     <div>
@@ -100,7 +100,7 @@ interface MyFormProps {
   message: string; // if this passed all the way through you might do this or make a union type
 }
 
-// Wrap our form with the using withFormik HoC
+// Wrap our form with the withFormik HoC
 const MyForm = withFormik<MyFormProps, FormValues>({
   // Transform outer props into form values
   mapPropsToValues: props => {

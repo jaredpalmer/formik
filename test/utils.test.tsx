@@ -1,4 +1,5 @@
 import {
+  isEmptyArray,
   setIn,
   setNestedObjectValues,
   isPromise,
@@ -7,6 +8,20 @@ import {
 } from '../src/utils';
 
 describe('utils', () => {
+  describe('isEmptyArray', () => {
+    it('returns true when an empty array is passed in', () => {
+      expect(isEmptyArray([])).toBe(true);
+    });
+    it('returns false when anything other than empty array is passed in', () => {
+      expect(isEmptyArray()).toBe(false);
+      expect(isEmptyArray(null)).toBe(false);
+      expect(isEmptyArray(123)).toBe(false);
+      expect(isEmptyArray('abc')).toBe(false);
+      expect(isEmptyArray({})).toBe(false);
+      expect(isEmptyArray({ a: 1 })).toBe(false);
+      expect(isEmptyArray(['abc'])).toBe(false);
+    });
+  });
   describe('setNestedObjectValues', () => {
     it('sets value flat object', () => {
       const obj = { x: 'y' };
@@ -265,6 +280,13 @@ describe('utils', () => {
       });
       expect(obj instanceof TestClass).toEqual(true);
       expect(newObj instanceof TestClass).toEqual(true);
+    });
+
+    it('can convert primitives to objects before setting', () => {
+      const obj = { x: [{ y: true }] };
+      const newObj = setIn(obj, 'x.0.y.z', true);
+      expect(obj).toEqual({ x: [{ y: true }] });
+      expect(newObj).toEqual({ x: [{ y: { z: true } }] });
     });
   });
 

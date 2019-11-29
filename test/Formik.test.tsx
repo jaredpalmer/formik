@@ -2,7 +2,12 @@ import * as React from 'react';
 import { render, fireEvent, wait } from 'react-testing-library';
 import * as Yup from 'yup';
 
-import { Formik, FormikProps, FormikConfig } from '../src';
+import {
+  Formik,
+  prepareDataForValidation,
+  FormikProps,
+  FormikConfig,
+} from '../src';
 import { noop } from './testHelpers';
 
 jest.spyOn(global.console, 'warn');
@@ -672,9 +677,20 @@ describe('<Formik>', () => {
           },
         },
       });
+      it('should not submit the form if validate function rejects with an error', async () => {
+        const onSubmit = jest.fn();
+        const validationSchema = Yup.object().shape({
+          field: Yup.string().required('required'),
+        });
+
+        const { getProps } = renderFormik({ onSubmit, validationSchema });
+        await expect(getProps().submitForm()).rejects.toEqual({
+          field: 'required',
+        });
+      });
     });
 
-    describe('FormikActions', () => {
+    describe('FormikHelpers', () => {
       it('setValues sets values', () => {
         const { getProps } = renderFormik<Values>();
 
@@ -683,13 +699,15 @@ describe('<Formik>', () => {
       });
 
       it('setValues should run validations when validateOnChange is true (default)', async () => {
-        const validate = jest.fn(() => ({}));
-        const { getProps, rerender } = renderFormik({ validate });
+        const newValue: Values = { name: 'ian' };
+        const validate = jest.fn(_values => ({}));
+        // const { getProps, rerender } = renderFormik({ validate });
+        const { getProps } = renderFormik({ validate });
 
-        getProps().setValues({ name: 'ian' });
-        rerender();
+        getProps().setValues(newValue);
+        // rerender();
         await wait(() => {
-          expect(validate).toHaveBeenCalled();
+          expect(validate).toHaveBeenCalledWith(newValue, undefined);
         });
       });
       it('setValues should NOT run validations when validateOnChange is false', async () => {
@@ -973,6 +991,62 @@ describe('<Formik>', () => {
     });
   });
 
+  describe('prepareDataForValidation', () => {
+    it('should work correctly with instances', () => {
+      class SomeClass {}
+      const expected = {
+        string: 'string',
+        date: new Date(),
+        someInstance: new SomeClass(),
+      };
+
+      const dataForValidation = prepareDataForValidation(expected);
+      expect(dataForValidation).toEqual(expected);
+    });
+
+    it('should work correctly with instances in arrays', () => {
+      class SomeClass {}
+      const expected = {
+        string: 'string',
+        dateArr: [new Date(), new Date()],
+        someInstanceArr: [new SomeClass(), new SomeClass()],
+      };
+
+      const dataForValidation = prepareDataForValidation(expected);
+      expect(dataForValidation).toEqual(expected);
+    });
+
+    it('should work correctly with instances in objects', () => {
+      class SomeClass {}
+      const expected = {
+        string: 'string',
+        object: {
+          date: new Date(),
+          someInstance: new SomeClass(),
+        },
+      };
+
+      const dataForValidation = prepareDataForValidation(expected);
+      expect(dataForValidation).toEqual(expected);
+    });
+
+    it('should work correctly with mixed data', () => {
+      const date = new Date();
+      const dataForValidation = prepareDataForValidation({
+        string: 'string',
+        empty: '',
+        arr: [],
+        date,
+      });
+      expect(dataForValidation).toEqual({
+        string: 'string',
+        empty: undefined,
+        arr: [],
+        date,
+      });
+    });
+  });
+
   // describe('componentDidUpdate', () => {
   //   let formik: any, initialValues: any;
   //   beforeEach(() => {
@@ -1169,7 +1243,9 @@ describe('<Formik>', () => {
     expect(getProps().isSubmitting).toBe(true);
     expect(getProps().isValidating).toBe(true);
     // do it again async
-    await validatePromise;
+    try {
+      await validatePromise;
+    } catch (err) {}
     // now both should be false because validation failed
     expect(getProps().isSubmitting).toBe(false);
     expect(getProps().isValidating).toBe(false);
@@ -1178,7 +1254,7 @@ describe('<Formik>', () => {
     expect(getProps().submitCount).toEqual(1);
   });
 
-  it('isSubmitting is fired when submit is attempted', async () => {
+  it('isSubmitting is fired when submit is attempted (v1)', async () => {
     const onSubmit = jest.fn();
     const validate = jest.fn(() => Promise.resolve({}));
 
@@ -1198,6 +1274,34 @@ describe('<Formik>', () => {
     // do it again async
     await validatePromise;
     // done validating and submitting
+    expect(getProps().isSubmitting).toBe(true);
+    expect(getProps().isValidating).toBe(false);
+    expect(validate).toHaveBeenCalled();
+    expect(onSubmit).toHaveBeenCalled();
+    expect(getProps().submitCount).toEqual(1);
+  });
+
+  it('isSubmitting is fired when submit is attempted (v2, promise)', async () => {
+    const onSubmit = jest.fn().mockResolvedValue(undefined);
+    const validate = jest.fn(() => Promise.resolve({}));
+
+    const { getProps } = renderFormik({
+      onSubmit,
+      validate,
+    });
+
+    expect(getProps().submitCount).toEqual(0);
+    expect(getProps().isSubmitting).toBe(false);
+    expect(getProps().isValidating).toBe(false);
+    // we call set isValidating synchronously
+    const validatePromise = getProps().submitForm();
+    // so it should change
+    expect(getProps().isSubmitting).toBe(true);
+    expect(getProps().isValidating).toBe(true);
+    // do it again async
+    await validatePromise;
+    // done validating and submitting
+    expect(getProps().isSubmitting).toBe(false);
     expect(getProps().isValidating).toBe(false);
     expect(validate).toHaveBeenCalled();
     expect(onSubmit).toHaveBeenCalled();
@@ -1242,5 +1346,20 @@ describe('<Formik>', () => {
     expect(getProps().errors).toEqual({
       users: [{ firstName: 'required', lastName: 'required' }],
     });
+  });
+
+  it('should not eat an error thrown by the validationSchema', async () => {
+    const validationSchema = function() {
+      throw new Error('broken validations');
+    };
+
+    const { getProps } = renderFormik({
+      initialValues: { users: [{ firstName: '', lastName: '' }] },
+      validationSchema,
+    });
+
+    expect(() => {
+      getProps().validateForm();
+    }).toThrow('broken validations');
   });
 });

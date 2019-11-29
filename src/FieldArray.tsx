@@ -2,7 +2,7 @@ import * as React from 'react';
 import cloneDeep from 'lodash/cloneDeep';
 import { connect } from './connect';
 import {
-  FormikContext,
+  FormikContextType,
   FormikState,
   SharedRenderProps,
   FormikProps,
@@ -59,41 +59,67 @@ export interface ArrayHelpers {
  * Some array helpers!
  */
 export const move = (array: any[], from: number, to: number) => {
-  const copy = [...(array || [])];
+  const copy = copyArrayLike(array);
   const value = copy[from];
   copy.splice(from, 1);
   copy.splice(to, 0, value);
   return copy;
 };
 
-export const swap = (array: any[], indexA: number, indexB: number) => {
-  const copy = [...(array || [])];
+export const swap = (
+  arrayLike: ArrayLike<any>,
+  indexA: number,
+  indexB: number
+) => {
+  const copy = copyArrayLike(arrayLike);
   const a = copy[indexA];
   copy[indexA] = copy[indexB];
   copy[indexB] = a;
   return copy;
 };
 
-export const insert = (array: any[], index: number, value: any) => {
-  const copy = [...(array || [])];
+export const insert = (
+  arrayLike: ArrayLike<any>,
+  index: number,
+  value: any
+) => {
+  const copy = copyArrayLike(arrayLike);
   copy.splice(index, 0, value);
   return copy;
 };
 
-export const replace = (array: any[], index: number, value: any) => {
-  const copy = [...(array || [])];
+export const replace = (
+  arrayLike: ArrayLike<any>,
+  index: number,
+  value: any
+) => {
+  const copy = copyArrayLike(arrayLike);
   copy[index] = value;
   return copy;
 };
+
+const copyArrayLike = (arrayLike: ArrayLike<any>) => {
+  if (!arrayLike) {
+    return [];
+  } else if (Array.isArray(arrayLike)) {
+    return [...arrayLike];
+  } else {
+    const maxIndex = Object.keys(arrayLike)
+      .map(key => parseInt(key))
+      .reduce((max, el) => (el > max ? el : max), 0);
+    return Array.from({ ...arrayLike, length: maxIndex + 1 });
+  }
+};
+
 class FieldArrayInner<Values = {}> extends React.Component<
-  FieldArrayConfig & { formik: FormikContext<Values> },
+  FieldArrayConfig & { formik: FormikContextType<Values> },
   {}
 > {
   static defaultProps = {
     validateOnChange: true,
   };
 
-  constructor(props: FieldArrayConfig & { formik: FormikContext<Values> }) {
+  constructor(props: FieldArrayConfig & { formik: FormikContextType<Values> }) {
     super(props);
     // We need TypeScript generics on these, so we'll bind them in the constructor
     // @todo Fix TS 3.2.1
@@ -150,7 +176,10 @@ class FieldArrayInner<Values = {}> extends React.Component<
 
   push = (value: any) =>
     this.updateArrayField(
-      (array: any[]) => [...(array || []), cloneDeep(value)],
+      (arrayLike: ArrayLike<any>) => [
+        ...copyArrayLike(arrayLike),
+        cloneDeep(value),
+      ],
       false,
       false
     );
@@ -227,7 +256,7 @@ class FieldArrayInner<Values = {}> extends React.Component<
     this.updateArrayField(
       // so this gets call 3 times
       (array?: any[]) => {
-        const copy = array ? [...array] : [];
+        const copy = array ? copyArrayLike(array) : [];
         if (!result) {
           result = copy[index];
         }

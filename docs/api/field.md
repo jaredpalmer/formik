@@ -15,11 +15,13 @@ There are 2 ways to render things with `<Field>`.
 - `<Field as>`
 - `<Field children>`
 - ~~`<Field render>`~~ _deprecated in 2.x. Using these will log warning_
-- ~~`<Field component>`~~ _deprecated in 2.x. Using these will log warning_
+- `<Field component>`
 
 `as` can either be a React component or the name of an HTML element to render. Formik will automagically inject `onChange`, `onBlur`, `name`, and `value` props of the field designated by the `name` prop to the (custom) component.
 
 `children` can either be an array of elements (e.g. `<option>` in the case of `<Field as="select">`) or a callback function (a.k.a render prop). The render props are an object containing:
+
+`component` can either be a React component or the name of an HTML element to render. All additional props will be passed through.
 
 - `field`: An object containing `onChange`, `onBlur`, `name`, and `value` of the field (see [`FieldInputProps`](./useField#fieldinputprops))
 - `form`: The Formik bag
@@ -33,11 +35,15 @@ There are 2 ways to render things with `<Field>`.
 import React from 'react';
 import { Formik, Field, Form } from 'formik';
 
+const MyInput = ({ field, form, ...props }) => {
+  return <input {...field} {...props} />;
+};
+
 const Example = () => (
   <div>
     <h1>My Form</h1>
     <Formik
-      initialValues={{ email: '', color: 'red', firstName: '' }}
+      initialValues={{ email: '', color: 'red', firstName: '', lastName: '' }}
       onSubmit={(values, actions) => {
         setTimeout(() => {
           alert(JSON.stringify(values, null, 2));
@@ -52,6 +58,7 @@ const Example = () => (
             <option value="green">Green</option>
             <option value="blue">Blue</option>
           </Field>
+
           <Field name="lastName">
             {({
               field, // { name, value, onChange, onBlur }
@@ -66,6 +73,7 @@ const Example = () => (
               </div>
             )}
           </Field>
+          <Field name="lastName" placeholder="Doe" component={MyInput} />
           <button type="submit">Submit</button>
         </Form>
       )}
@@ -148,8 +156,6 @@ Either JSX elements or callback function. Same as `render`.
 ### `component`
 
 `component?: string | React.ComponentType<FieldProps>`
-
-**Deprecated in 2.x. Use `as` instead.**
 
 Either a React component or the name of an HTML element to render. That is, one of the following:
 

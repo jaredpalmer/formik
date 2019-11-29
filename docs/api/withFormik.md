@@ -87,7 +87,7 @@ class components (e.g. `class XXXXX extends React.Component {..}`).
 Default is `false`. Control whether Formik should reset the form if the wrapped
 component props change (using deep equality).
 
-### `handleSubmit: (values: Values, formikBag: FormikBag) => void`
+### `handleSubmit: (values: Values, formikBag: FormikBag) => void | Promise<any>`
 
 Your form submission handler. It is passed your forms `values` and the
 "FormikBag", which includes an object containing a subset of the
@@ -111,6 +111,8 @@ passed to the wrapped component.
 Note: `errors`, `touched`, `status` and all event handlers are NOT
 included in the `FormikBag`.
 
+> IMPORTANT: If `onSubmit` is async, then Formik will automatically set `isSubmitting` to `false` on your behalf once it has resolved. This means you do NOT need to call `formikBag.setSubmitting(false)` manually. However, if your `onSubmit` function is synchronous, then you need to call `setSubmitting(false)` on your own.
+
 ### `isInitialValid?: boolean | (props: Props) => boolean`
 
 **Deprecated in 2.x, use `mapPropsToErrors` instead**
@@ -123,19 +125,19 @@ enable/disable a submit and reset buttons on initial mount.
 
 If this option is specified, then Formik will transfer its results into
 updatable form state and make these values available to the new component as
-`props.errors` initially. Useful for instatiating arbitrary error state into your form. As a reminder, `props.errors` will be overwritten as soon as validation runs. Formik will also reset `props.errors` to this initial value (and this function will be re-run) if the form is reset.
+`props.errors` initially. Useful for instantiating arbitrary error state into your form. As a reminder, `props.errors` will be overwritten as soon as validation runs. Formik will also reset `props.errors` to this initial value (and this function will be re-run) if the form is reset.
 
 ### `mapPropsToStatus?: (props: Props) => any`
 
 If this option is specified, then Formik will transfer its results into
 updatable form state and make these values available to the new component as
-`props.status`. Useful for storing or instatiating arbitrary state into your form. As a reminder, `status` will be reset to this initial value (and this function will be re-run) if the form is reset.
+`props.status`. Useful for storing or instantiating arbitrary state into your form. As a reminder, `status` will be reset to this initial value (and this function will be re-run) if the form is reset.
 
 ### `mapPropsToTouched?: (props: Props) => FormikTocuhed<Values>`
 
 If this option is specified, then Formik will transfer its results into
 updatable form state and make these values available to the new component as
-`props.errors`. Useful for instatiating arbitrary touched state (i.e. marking fields as visited) into your form. As a reminder, Formik will use this initial value (and this function will be re-run) if the form is reset.
+`props.errors`. Useful for instantiating arbitrary touched state (i.e. marking fields as visited) into your form. As a reminder, Formik will use this initial value (and this function will be re-run) if the form is reset.
 
 ### `mapPropsToValues?: (props: Props) => Values`
 
@@ -161,7 +163,7 @@ Validate the form's `values` with function. This function can either be:
 ```js
 // Synchronous validation
 const validate = (values, props) => {
-  let errors = {};
+  const errors = {};
 
   if (!values.email) {
     errors.email = 'Required';
@@ -183,7 +185,7 @@ const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 const validate = (values, props) => {
   return sleep(2000).then(() => {
-    let errors = {};
+    const errors = {};
     if (['admin', 'null', 'god'].includes(values.username)) {
       errors.username = 'Nice try';
     }
@@ -206,6 +208,11 @@ are called.
 Default is `true`. Use this option to tell Formik to run validations on `change`
 events and `change`-related methods. More specifically, when either
 `handleChange`, `setFieldValue`, or `setValues` are called.
+
+### `validateOnMount?: boolean`
+
+Default is `false`. Use this option to tell Formik to run validation (at low priority) when the wrapped component mounts
+and/or `initialValues` change.
 
 ### `validationSchema?: Schema | ((props: Props) => Schema)`
 

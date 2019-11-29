@@ -9,7 +9,7 @@ custom_edit_url: https://github.com/jaredpalmer/formik/edit/master/docs/api/conn
 ## Type signature
 
 ```tsx
-connect<OuterProps, Values = any>(Comp: React.ComponentType<OuterProps & FormikProps<Values>>) => React.ComponentType<OuterProps>
+connect<OuterProps, Values = any>(Comp: React.ComponentType<OuterProps & { formik: FormikContext<Values> }>) => React.ComponentType<OuterProps>
 ```
 
 ## Example

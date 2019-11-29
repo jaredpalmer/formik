@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { FormikContext } from './types';
+import { FormikContextType } from './types';
 import { getIn, isFunction } from './utils';
 import { connect } from './connect';
 
@@ -12,10 +12,10 @@ export interface ErrorMessageProps {
 }
 
 class ErrorMessageImpl extends React.Component<
-  ErrorMessageProps & { formik: FormikContext<any> }
+  ErrorMessageProps & { formik: FormikContextType<any> }
 > {
   shouldComponentUpdate(
-    props: ErrorMessageProps & { formik: FormikContext<any> }
+    props: ErrorMessageProps & { formik: FormikContextType<any> }
   ) {
     if (
       getIn(this.props.formik.errors, this.props.name) !==
@@ -54,5 +54,5 @@ class ErrorMessageImpl extends React.Component<
 
 export const ErrorMessage = connect<
   ErrorMessageProps,
-  ErrorMessageProps & { formik: FormikContext<any> }
+  ErrorMessageProps & { formik: FormikContextType<any> }
 >(ErrorMessageImpl);

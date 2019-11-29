@@ -19,10 +19,9 @@ export interface FieldProps<V = any> {
 export interface FieldConfig {
   /**
    * Field component to render. Can either be a string like 'select' or a component.
-   * @deprecated
    */
   component?:
-    | string
+    | keyof JSX.IntrinsicElements
     | React.ComponentType<FieldProps<any>>
     | React.ComponentType;
 
@@ -71,9 +70,14 @@ export type FieldAttributes<T> = GenericFieldHTMLAttributes &
 
 export function useField<Val = any>(
   propsOrFieldName: string | FieldAttributes<Val>
-) {
+): [FieldInputProps<Val>, FieldMetaProps<Val>] {
   const formik = useFormikContext();
-  const { getFieldProps, registerField, unregisterField } = formik;
+  const {
+    getFieldProps,
+    getFieldMeta,
+    registerField,
+    unregisterField,
+  } = formik;
   const isAnObject = isObject(propsOrFieldName);
   const fieldName = isAnObject
     ? (propsOrFieldName as FieldAttributes<Val>).name
@@ -101,16 +105,21 @@ export function useField<Val = any>(
   }
 
   if (isObject(propsOrFieldName)) {
-    if (__DEV__) {
-      invariant(
-        (propsOrFieldName as FieldAttributes<Val>).name,
-        'Invalid field name. Either pass `useField` a string or an object containing a `name` key.'
-      );
-    }
-    return getFieldProps(propsOrFieldName);
+    invariant(
+      (propsOrFieldName as FieldAttributes<Val>).name,
+      'Invalid field name. Either pass `useField` a string or an object containing a `name` key.'
+    );
+
+    return [
+      getFieldProps(propsOrFieldName),
+      getFieldMeta((propsOrFieldName as FieldAttributes<Val>).name),
+    ];
   }
 
-  return getFieldProps({ name: propsOrFieldName });
+  return [
+    getFieldProps({ name: propsOrFieldName }),
+    getFieldMeta(propsOrFieldName),
+  ];
 }
 
 export function Field({
@@ -134,11 +143,6 @@ export function Field({
       invariant(
         !render,
         `<Field render> has been deprecated and will be removed in future versions of Formik. Please use a child callback function instead. To get rid of this warning, replace <Field name="${name}" render={({field, form}) => ...} /> with <Field name="${name}">{({field, form, meta}) => ...}</Field>`
-      );
-
-      invariant(
-        !component,
-        '<Field component> has been deprecated and will be removed in future versions of Formik. Use <Field as> instead. Note that with the `as` prop, all props are passed directly through and not grouped in `field` object key.'
       );
 
       invariant(
@@ -169,11 +173,12 @@ export function Field({
       unregisterField(name);
     };
   }, [registerField, unregisterField, name, validate]);
-  const [field, meta] = formik.getFieldProps({ name, ...props });
+  const field = formik.getFieldProps({ name, ...props });
+  const meta = formik.getFieldMeta(name);
   const legacyBag = { field, form: formik };
 
   if (render) {
-    return render(legacyBag);
+    return render({ ...legacyBag, meta });
   }
 
   if (isFunction(children)) {
@@ -212,4 +217,3 @@ export function Field({
 
   return React.createElement(asElement, { ...field, ...props }, children);
 }
-export const FastField = Field;

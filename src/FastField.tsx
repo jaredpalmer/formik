@@ -9,8 +9,8 @@ import {
 } from './types';
 import invariant from 'tiny-warning';
 import { getIn, isEmptyChildren, isFunction } from './utils';
-import { FormikContext } from './FormikContext';
 import { FieldConfig } from './Field';
+import { connect } from './connect';
 
 type $FixMe = any;
 
@@ -32,31 +32,19 @@ export type FastFieldAttributes<T> = GenericFieldHTMLAttributes &
   FastFieldConfig<T> &
   T;
 
+type FastFieldInnerProps<Values = {}, Props = {}> = FastFieldAttributes<
+  Props
+> & { formik: FormikContextType<Values> };
+
 /**
  * Custom Field component for quickly hooking into Formik
  * context and wiring up forms.
  */
-export function FastField<Values = {}, Props = {}>(
-  props: FastFieldAttributes<Props>
-) {
-  const formik = React.useContext(FormikContext);
-  invariant(
-    !!formik,
-    'Formik context is undefined, please verify you are rendering <FastField> as a child of a <Formik> component.'
-  );
-
-  return <WrappedFastField<Values, Props> {...props} formik={formik} />;
-}
-
-type WrappedFastFieldProps<Values, Props> = FastFieldAttributes<Props> & {
-  formik: FormikContextType<Values>;
-};
-
-class WrappedFastField<Values = {}, Props = {}> extends React.Component<
-  WrappedFastFieldProps<Values, Props>,
+class FastFieldInner<Values = {}, Props = {}> extends React.Component<
+  FastFieldInnerProps<Values, Props>,
   {}
 > {
-  constructor(props: WrappedFastFieldProps<Values, Props>) {
+  constructor(props: FastFieldInnerProps<Values, Props>) {
     super(props);
     const { render, children, component, as: is, name } = props;
     invariant(
@@ -84,7 +72,7 @@ class WrappedFastField<Values = {}, Props = {}> extends React.Component<
     );
   }
 
-  shouldComponentUpdate(props: WrappedFastFieldProps<Values, Props>) {
+  shouldComponentUpdate(props: FastFieldInnerProps<Values, Props>) {
     if (this.props.shouldUpdate) {
       return this.props.shouldUpdate(props, this.props);
     } else if (
@@ -142,7 +130,7 @@ class WrappedFastField<Values = {}, Props = {}> extends React.Component<
       shouldUpdate,
       formik,
       ...props
-    } = this.props as WrappedFastFieldProps<Values, Props>;
+    } = this.props as FastFieldInnerProps<Values, Props>;
 
     const {
       validate: _validate,
@@ -214,3 +202,5 @@ class WrappedFastField<Values = {}, Props = {}> extends React.Component<
     );
   }
 }
+
+export const FastField = connect<FastFieldAttributes<any>, any>(FastFieldInner);

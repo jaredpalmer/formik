@@ -46,3 +46,29 @@ DOM and React Native are:
     instead of HTML `<form onSubmit={...} />` component (since there is no
     `<form />` element in React Native).
 2.  `<TextInput />` uses Formik's `handleChange(fieldName)` and `handleBlur(fieldName)` instead of directly assigning the callbacks to props, because we have to get the `fieldName` from somewhere and with React Native we can't get it automatically like in web (using input name attribute). You can also use `setFieldValue(fieldName, value)` and `setFieldTouched(fieldName, bool)` as an alternative.
+
+#### The `useField` hook
+
+Simlar to the above, onChange/onBlur need to be passed the field name:
+
+```jsx
+// Formik x React Native with hooks
+import React from 'react';
+import { Text, TextInput } from 'react-native';
+import { useField } from 'formik';
+
+export const MyCustomTextInput = ({ name, label }) => {
+  const [field, meta] = useField(name);
+
+  return (
+    <>
+      <Text>{label}</Text>
+      <TextInput
+        onChangeText={field.onChange(name)}
+        onBlur={field.onBlur(name)}
+        value={field.value}
+      />
+    </>
+  );
+}
+```

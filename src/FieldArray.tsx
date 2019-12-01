@@ -12,6 +12,7 @@ import { getIn, isEmptyChildren, isFunction, setIn } from './utils';
 export type FieldArrayRenderProps = ArrayHelpers & {
   form: FormikProps<any>;
   name: string;
+  [key: string]: any;
 };
 
 export type FieldArrayConfig = {
@@ -19,7 +20,10 @@ export type FieldArrayConfig = {
   name: string;
   /** Should field array validate the form AFTER array updates/changes? */
   validateOnChange?: boolean;
+  /** Allow users to pass props through to component/render/children */
+  [key: string]: any;
 } & SharedRenderProps<FieldArrayRenderProps>;
+
 export interface ArrayHelpers {
   /** Imperatively add a value to the end of an array */
   push: (obj: any) => void;
@@ -325,9 +329,12 @@ class FieldArrayInner<Values = {}> extends React.Component<
         validationSchema: _validationSchema,
         ...restOfFormik
       },
+      validateOnChange,
+      ...passedProps // grab any props dropped in by a user
     } = this.props;
 
     const props: FieldArrayRenderProps = {
+      ...passedProps,
       ...arrayHelpers,
       form: restOfFormik,
       name,

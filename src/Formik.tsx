@@ -564,6 +564,8 @@ export function useFormik<Values extends FormikValues = FormikValues>({
         if ((eventOrTextValue as React.ChangeEvent<any>).persist) {
           (eventOrTextValue as React.ChangeEvent<any>).persist();
         }
+        const target = eventOrTextValue.target ? (eventOrTextValue as React.ChangeEvent<any>).target : (eventOrTextValue as React.ChangeEvent<any>).currentTarget;
+        
         const {
           type,
           name,
@@ -573,7 +575,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
           outerHTML,
           options,
           multiple,
-        } = (eventOrTextValue as React.ChangeEvent<any>).target;
+        } = target;
 
         field = maybePath ? maybePath : name ? name : id;
         if (!field && __DEV__) {

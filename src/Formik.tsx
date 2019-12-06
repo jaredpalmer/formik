@@ -855,7 +855,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
 
   const dirty = React.useMemo(
     () => !isEqual(initialValues.current, state.values),
-    [state.values]
+    [initialValues.current, state.values]
   );
 
   const isValid = React.useMemo(

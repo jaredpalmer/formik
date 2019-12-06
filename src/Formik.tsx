@@ -564,8 +564,10 @@ export function useFormik<Values extends FormikValues = FormikValues>({
         if ((eventOrTextValue as React.ChangeEvent<any>).persist) {
           (eventOrTextValue as React.ChangeEvent<any>).persist();
         }
-        const target = eventOrTextValue.target ? (eventOrTextValue as React.ChangeEvent<any>).target : (eventOrTextValue as React.ChangeEvent<any>).currentTarget;
-        
+        const target = eventOrTextValue.target
+          ? (eventOrTextValue as React.ChangeEvent<any>).target
+          : (eventOrTextValue as React.ChangeEvent<any>).currentTarget;
+
         const {
           type,
           name,
@@ -914,7 +916,7 @@ export function Formik<
   ExtraProps = {}
 >(props: FormikConfig<Values> & ExtraProps) {
   const formikbag = useFormik<Values>(props);
-  const { component, children, render } = props;
+  const { component, children, render, validationSchema } = props;
   React.useEffect(() => {
     if (__DEV__) {
       invariant(
@@ -925,7 +927,12 @@ export function Formik<
     // eslint-disable-next-line
   }, []);
   return (
-    <FormikProvider value={formikbag}>
+    <FormikProvider
+      value={{
+        ...formikbag,
+        validationSchema,
+      }}
+    >
       {component
         ? React.createElement(component as any, formikbag)
         : render

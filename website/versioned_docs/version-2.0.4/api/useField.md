@@ -1,7 +1,8 @@
 ---
-id: useField
+id: version-2.0.4-useField
 title: useField()
 custom_edit_url: https://github.com/jaredpalmer/formik/edit/master/docs/api/usefield.md
+original_id: useField
 ---
 
 `useField` is a custom React hook that will automagically help you hook up inputs to Formik. You can and should use it to build your own custom input primitives. There are 2 ways to use it.

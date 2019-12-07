@@ -86,16 +86,12 @@ export interface FormikHelpers<Values> {
   /** Manually set values object  */
   setValues(values: Values): void;
   /** Set value of form field directly */
-  setFieldValue(
-    field: keyof Values & string,
-    value: any,
-    shouldValidate?: boolean
-  ): void;
+  setFieldValue(field: string, value: any, shouldValidate?: boolean): void;
   /** Set error message of a form field directly */
-  setFieldError(field: keyof Values & string, message: string): void;
+  setFieldError(field: string, message: string): void;
   /** Set whether field has been touched directly */
   setFieldTouched(
-    field: keyof Values & string,
+    field: string,
     isTouched?: boolean,
     shouldValidate?: boolean
   ): void;
@@ -203,7 +199,10 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
   /**
    * Submission handler
    */
-  onSubmit: (values: Values, formikHelpers: FormikHelpers<Values>) => void;
+  onSubmit: (
+    values: Values,
+    formikHelpers: FormikHelpers<Values>
+  ) => void | Promise<any>;
   /**
    * A Yup Schema or a function that returns a Yup schema
    */
@@ -225,7 +224,7 @@ export type FormikProps<Values> = FormikSharedConfig &
   FormikHelpers<Values> &
   FormikHandlers &
   FormikComputedProps<Values> &
-  FormikRegistration & { submitForm: () => Promise<void> };
+  FormikRegistration & { submitForm: () => Promise<any> };
 
 /** Internal Formik registration methods that get passed down as props */
 export interface FormikRegistration {

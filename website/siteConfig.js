@@ -183,6 +183,11 @@ const users = [
     image: '/formik/img/logos/brightwheel.svg',
     infoLink: 'https://mybrightwheel.com',
   },
+  {
+    caption: 'restaurant365',
+    image: '/formik/img/logos/restaurant365.svg',
+    infoLink: 'https://restaurant365.com',
+  },
 ];
 
 const siteConfig = {

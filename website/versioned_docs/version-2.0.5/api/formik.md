@@ -1,7 +1,8 @@
 ---
-id: formik
+id: version-2.0.5-formik
 title: <Formik />
 custom_edit_url: https://github.com/jaredpalmer/formik/edit/master/docs/api/formik.md
+original_id: formik
 ---
 
 `<Formik>` is a component that helps you with building forms. It uses a render
@@ -325,7 +326,7 @@ Note: `initialValues` not available to the higher-order component, use
 Your optional form reset handler. It is passed your forms `values` and the
 "FormikBag".
 
-### `onSubmit: (values: Values, formikBag: FormikBag) => void | Promise<any>`
+### `onSubmit: (values: Values, formikBag: FormikBag) => void | Promise<void>`
 
 Your form submission handler. It is passed your forms `values` and the
 "FormikBag", which includes an object containing a subset of the

@@ -28,7 +28,6 @@ import { FormikProvider } from './FormikContext';
 import invariant from 'tiny-warning';
 import { LowPriority, unstable_runWithPriority } from 'scheduler';
 
-// We already used FormikActions. So we'll go all Elm-y, and use Message.
 type FormikMessage<Values> =
   | { type: 'SUBMIT_ATTEMPT' }
   | { type: 'SUBMIT_FAILURE' }
@@ -62,6 +61,10 @@ function formikReducer<Values>(
     case 'SET_TOUCHED':
       return { ...state, touched: msg.payload };
     case 'SET_ERRORS':
+      if (isEqual(state.errors, msg.payload)) {
+        return state;
+      }
+
       return { ...state, errors: msg.payload };
     case 'SET_STATUS':
       return { ...state, status: msg.payload };
@@ -523,7 +526,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   const setValues = useEventCallback((values: Values) => {
     dispatch({ type: 'SET_VALUES', payload: values });
     return validateOnChange
-      ? validateFormWithLowPriority(state.values)
+      ? validateFormWithLowPriority(values)
       : Promise.resolve();
   });
 
@@ -568,6 +571,10 @@ export function useFormik<Values extends FormikValues = FormikValues>({
         if ((eventOrTextValue as React.ChangeEvent<any>).persist) {
           (eventOrTextValue as React.ChangeEvent<any>).persist();
         }
+        const target = eventOrTextValue.target
+          ? (eventOrTextValue as React.ChangeEvent<any>).target
+          : (eventOrTextValue as React.ChangeEvent<any>).currentTarget;
+
         const {
           type,
           name,
@@ -577,7 +584,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
           outerHTML,
           options,
           multiple,
-        } = (eventOrTextValue as React.ChangeEvent<any>).target;
+        } = target;
 
         field = maybePath ? maybePath : name ? name : id;
         if (!field && __DEV__) {
@@ -717,7 +724,12 @@ export function useFormik<Values extends FormikValues = FormikValues>({
       (combinedErrors: FormikErrors<Values>) => {
         const isActuallyValid = Object.keys(combinedErrors).length === 0;
         if (isActuallyValid) {
-          return Promise.resolve(executeSubmit())
+          const promiseOrUndefined = executeSubmit();
+          if (promiseOrUndefined === undefined) {
+            return;
+          }
+
+          return Promise.resolve(promiseOrUndefined)
             .then(() => {
               batch(() => {
                 if (!!isMounted.current) {
@@ -733,14 +745,12 @@ export function useFormik<Values extends FormikValues = FormikValues>({
                 }
               });
             });
-        } else {
+        } else if (!!isMounted.current) {
           batch(() => {
             // ^^^ Make sure Formik is still mounted before calling setState
-            if (!!isMounted.current) {
-              dispatch({ type: 'SUBMIT_FAILURE' });
-            }
+            dispatch({ type: 'SUBMIT_FAILURE' });
+            throw combinedErrors;
           });
-          return;
         }
       }
     );
@@ -861,7 +871,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
 
   const dirty = React.useMemo(
     () => !isEqual(initialValues.current, state.values),
-    [state.values]
+    [initialValues.current, state.values]
   );
 
   const isValid = React.useMemo(
@@ -936,7 +946,7 @@ export function Formik<
         ? render(formikbag)
         : children // children come last, always called
         ? isFunction(children)
-          ? (children as ((bag: FormikProps<Values>) => React.ReactNode))(
+          ? (children as (bag: FormikProps<Values>) => React.ReactNode)(
               formikbag as FormikProps<Values>
             )
           : !isEmptyChildren(children)
@@ -1010,7 +1020,7 @@ export function prepareDataForValidation<T extends FormikValues>(
       const key = String(k);
       if (Array.isArray(values[key]) === true) {
         data[key] = values[key].map((value: any) => {
-          if (Array.isArray(value) === true || typeof value === 'object') {
+          if (Array.isArray(value) === true || isPlainObject(value)) {
             return prepareDataForValidation(value);
           } else {
             return value !== '' ? value : undefined;
@@ -1067,13 +1077,13 @@ function getValueForCheckbox(
     return !!checked;
   }
 
-  if (checked) {
+  if (checked && valueProp) {
     return Array.isArray(currentValue)
       ? currentValue.concat(valueProp)
       : [valueProp];
   }
   if (!Array.isArray(currentValue)) {
-    return !!currentValue;
+    return !currentValue;
   }
   const index = currentValue.indexOf(valueProp);
   if (index < 0) {

@@ -1,7 +1,8 @@
 ---
-id: withFormik
+id: version-2.0.5-withFormik
 title: withFormik()
 custom_edit_url: https://github.com/jaredpalmer/formik/edit/master/docs/api/withFormik.md
+original_id: withFormik
 ---
 
 Create a higher-order React component class that passes props and form handlers
@@ -87,7 +88,7 @@ class components (e.g. `class XXXXX extends React.Component {..}`).
 Default is `false`. Control whether Formik should reset the form if the wrapped
 component props change (using deep equality).
 
-### `handleSubmit: (values: Values, formikBag: FormikBag) => void | Promise<any>`
+### `handleSubmit: (values: Values, formikBag: FormikBag) => void | Promise<void>`
 
 Your form submission handler. It is passed your forms `values` and the
 "FormikBag", which includes an object containing a subset of the

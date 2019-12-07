@@ -40,6 +40,13 @@ export const isPromise = (value: any): value is PromiseLike<any> =>
 export const isInputEvent = (value: any): value is React.SyntheticEvent<any> =>
   value && isObject(value) && isObject(value.target);
 
+/** @private are we running in React Native? */
+export const isReactNative =
+  typeof window !== 'undefined' &&
+  window.navigator &&
+  window.navigator.product &&
+  window.navigator.product === 'ReactNative';
+
 /**
  * Same as document.activeElement but wraps in a try-catch block. In IE it is
  * not safe to call document.activeElement if there is nothing focused.
@@ -175,31 +182,3 @@ export function setNestedObjectValues<T>(
 }
 
 export type Batch = (cb: Function) => void;
-
-function getBatchedUpdates(): Batch {
-  let renderer: {
-    unstable_batchedUpdates?: Batch;
-    batchedUpdates?: Batch;
-  };
-
-  try {
-    renderer = require('react-dom');
-  } catch {
-    try {
-      renderer = require('react-native');
-    } catch {
-      renderer = {};
-    }
-  }
-
-  const {
-    unstable_batchedUpdates = (cb: Function) => {
-      cb();
-    },
-    batchedUpdates = unstable_batchedUpdates,
-  } = renderer;
-
-  return batchedUpdates;
-}
-
-export const batch = getBatchedUpdates();

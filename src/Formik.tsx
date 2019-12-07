@@ -22,11 +22,11 @@ import {
   getActiveElement,
   getIn,
   isObject,
-  batch,
 } from './utils';
 import { FormikProvider } from './FormikContext';
 import invariant from 'tiny-warning';
 import { LowPriority, unstable_runWithPriority } from 'scheduler';
+import { batch } from './batch';
 
 type FormikMessage<Values> =
   | { type: 'SUBMIT_ATTEMPT' }
@@ -752,6 +752,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
             throw combinedErrors;
           });
         }
+        return;
       }
     );
   });

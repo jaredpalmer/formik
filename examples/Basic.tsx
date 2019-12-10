@@ -31,7 +31,12 @@ const Basic: React.SFC<{}> = () => (
           <Field id="lastName" name="lastName" placeholder="Doe" />
 
           <label htmlFor="email">Email</label>
-          <Field id="email" name="email" placeholder="john@acme.com" type="email" />
+          <Field
+            id="email"
+            name="email"
+            placeholder="john@acme.com"
+            type="email"
+          />
 
           <button type="submit">Submit</button>
         </Form>

@@ -73,6 +73,13 @@ export interface WithFormikConfig<
   validationSchema?: any | ((props: Props) => any);
 
   /**
+   * An object or a function that returns an object that will be used as Yup context
+   */
+  validationSchemaContext?:
+    | Record<string, any>
+    | ((values: Values) => Record<string, any>);
+
+  /**
    * Validation function. Must return an error object or promise that
    * throws an error object where that object keys map to corresponding value.
    */

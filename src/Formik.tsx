@@ -219,10 +219,14 @@ export function useFormik<Values extends FormikValues = FormikValues>({
       const schema = isFunction(validationSchema)
         ? validationSchema(field)
         : validationSchema;
+      const validationSchemaContext = props.validationSchemaContext;
+      const schemaContext = isFunction(validationSchemaContext)
+        ? validationSchemaContext(values)
+        : validationSchemaContext;
       const promise =
         field && schema.validateAt
-          ? schema.validateAt(field, values)
-          : validateYupSchema(values, schema);
+          ? schema.validateAt(field, values, { context: schemaContext })
+          : validateYupSchema(values, schema, undefined, schemaContext);
       return new Promise((resolve, reject) => {
         promise.then(
           () => {

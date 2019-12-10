@@ -12,12 +12,13 @@
     "dev": "lerna run start --stream --parallel",
     "test": "lerna run test",
     "postinstall": "lerna bootstrap",
+    "build": "lerna run build",
     "prepublish": "lerna run prepublish",
     "publish-canary": "lerna version prerelease --preid canary --force-publish && release --pre",
     "publish-stable": "lerna version --force-publish",
     "git-reset": "git reset --hard HEAD",
     "git-clean": "git clean -d -x -e node_modules -e packages -f",
-    "now-build": "lerna run build-website",
+    "now-build": "npm run build-website",
     "start-website": "cd website && yarn start",
     "build-website": "cd website && yarn install && yarn build"
   }

@@ -1,4 +1,5 @@
 {
   "sandboxes": ["ooh2y"],
-  "buildCommand": "build" 
+  "buildCommand": "build",
+  "packages": ["packages/formik", "packages/formik-native"]
 }

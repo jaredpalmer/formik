@@ -10,7 +10,7 @@
   "scripts": {
     "lerna": "lerna",
     "dev": "lerna run start --stream --parallel",
-    "test": "lerna run test",
+    "test": "lerna run test --",
     "postinstall": "lerna bootstrap",
     "build": "lerna run build",
     "prepublish": "lerna run prepublish",

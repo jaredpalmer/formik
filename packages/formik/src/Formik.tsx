@@ -721,7 +721,14 @@ export function useFormik<Values extends FormikValues = FormikValues>({
         // If we don't do that, calling `Object.keys(new Error())` yields an
         // empty array, which causes the validation to pass and the form
         // to be submitted.
-        const isInstanceOfError = combinedErrors instanceof Error;
+        if (combinedErrors instanceof Error) {
+          if (!!isMounted.current) {
+            // ^^^ Make sure Formik is still mounted before calling setState
+            dispatch({ type: 'SUBMIT_FAILURE' });
+          }
+          throw combinedErrors;
+        }
+
         const isActuallyValid = Object.keys(combinedErrors).length === 0;
         if (isActuallyValid) {
           // Proceed with submit
@@ -746,12 +753,6 @@ export function useFormik<Values extends FormikValues = FormikValues>({
                 throw _errors;
               }
             });
-        } else if (!!isMounted.current) {
-          // ^^^ Make sure Formik is still mounted before calling setState
-          dispatch({ type: 'SUBMIT_FAILURE' });
-          if (isInstanceOfError) {
-            throw combinedErrors;
-          }
         }
         return;
       }

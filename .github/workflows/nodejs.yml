@@ -9,7 +9,7 @@ on:
 
   pull_request:
     types: [opened, synchronize, reopened]
-    
+
 jobs:
   build:
     runs-on: ${{ matrix.os }}
@@ -29,11 +29,20 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
 
-      - name: Install yarn package manager
-        run: npm install -g yarn
+      - uses: actions/cache@v1
+        with:
+          path: ~/.cache/yarn
+          key: ${{ runner.os }}-yarn-${{ hashFiles(format('{0}{1}', github.workspace, '/yarn.lock')) }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
 
-      - name: Install deps and build
-        run: yarn install --frozen-lockfile
-
-      - name: Run tests
-        run: yarn test --runInBand --no-cache --coverage
+      - name: Install deps, build, and test
+        run: |
+          node --version
+          npm --version
+          yarn --version        
+          yarn install --frozen-lockfile
+          yarn test --coverage
+        env:
+          CI: true
+          NODE_OPTIONS: --max-old-space-size=4096

@@ -715,6 +715,13 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     dispatch({ type: 'SUBMIT_ATTEMPT' });
     return validateFormWithHighPriority().then(
       (combinedErrors: FormikErrors<Values>) => {
+        // In case an error was thrown and passed to the resolved Promise,
+        // `combinedErrors` can be an instance of an Error. We need to check
+        // that and abort the submit.
+        // If we don't do that, calling `Object.keys(new Error())` yields an
+        // empty array, which causes the validation to pass and the form
+        // to be submitted.
+        const isInstanceOfError = combinedErrors instanceof Error;
         const isActuallyValid = Object.keys(combinedErrors).length === 0;
         if (isActuallyValid) {
           // Proceed with submit
@@ -742,6 +749,9 @@ export function useFormik<Values extends FormikValues = FormikValues>({
         } else if (!!isMounted.current) {
           // ^^^ Make sure Formik is still mounted before calling setState
           dispatch({ type: 'SUBMIT_FAILURE' });
+          if (isInstanceOfError) {
+            throw combinedErrors;
+          }
         }
         return;
       }

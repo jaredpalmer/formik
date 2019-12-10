@@ -564,8 +564,10 @@ export function useFormik<Values extends FormikValues = FormikValues>({
         if ((eventOrTextValue as React.ChangeEvent<any>).persist) {
           (eventOrTextValue as React.ChangeEvent<any>).persist();
         }
-        const target = eventOrTextValue.target ? (eventOrTextValue as React.ChangeEvent<any>).target : (eventOrTextValue as React.ChangeEvent<any>).currentTarget;
-        
+        const target = eventOrTextValue.target
+          ? (eventOrTextValue as React.ChangeEvent<any>).target
+          : (eventOrTextValue as React.ChangeEvent<any>).currentTarget;
+
         const {
           type,
           name,
@@ -715,7 +717,10 @@ export function useFormik<Values extends FormikValues = FormikValues>({
       (combinedErrors: FormikErrors<Values>) => {
         const isActuallyValid = Object.keys(combinedErrors).length === 0;
         if (isActuallyValid) {
+          // Proceed with submit
           const promiseOrUndefined = executeSubmit();
+          // Bail if it's sync, consumer is responsible for cleaning up
+          // via setSubmitting(false)
           if (promiseOrUndefined === undefined) {
             return;
           }
@@ -729,13 +734,14 @@ export function useFormik<Values extends FormikValues = FormikValues>({
             .catch(_errors => {
               if (!!isMounted.current) {
                 dispatch({ type: 'SUBMIT_FAILURE' });
+                // This is a legit error rejected by the onSubmit fn
+                // so we don't want to break the promise chain
                 throw _errors;
               }
             });
         } else if (!!isMounted.current) {
           // ^^^ Make sure Formik is still mounted before calling setState
           dispatch({ type: 'SUBMIT_FAILURE' });
-          throw combinedErrors;
         }
         return;
       }

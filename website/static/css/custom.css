@@ -344,4 +344,7 @@ pre[class*="language-"] {
   .reactNavSearchWrapper {
     top: auto;
   }
+  .reactNavSearchWrapper input#search_input_react {
+    line-height: 18px;
+  }
 }

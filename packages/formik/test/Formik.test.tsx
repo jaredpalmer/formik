@@ -1132,7 +1132,9 @@ describe('<Formik>', () => {
 
   it('isValidating is fired when submit is attempted', async () => {
     const onSubmit = jest.fn();
-    const validate = jest.fn(() => ({ name: 'no' }));
+    const validate = jest.fn(() => ({
+      name: 'no',
+    }));
 
     const { getProps } = renderFormik({
       onSubmit,

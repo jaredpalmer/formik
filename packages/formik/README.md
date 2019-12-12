@@ -19,7 +19,7 @@
 
 ---
 
-**The below readme is the documentation for the `next` (prerelease) version of Formik. To view the documentation for the latest stable Formik version visit [jaredpalmer.com/formik/docs](https://jaredpalmer.com/formik/docs/overview)**
+**The below readme is the documentation for the `canary` (prerelease) version of Formik. To view the documentation for the latest stable Formik version visit [jaredpalmer.com/formik/docs](https://jaredpalmer.com/formik/docs/overview)**
 
 ---
 

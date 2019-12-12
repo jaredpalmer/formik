@@ -2,7 +2,8 @@
   "name": "formik-project",
   "private": true,
   "devDependencies": {
-    "lerna": "^3.19.0"
+    "lerna": "^3.19.0",
+    "release": "6.0.1"
   },
   "workspaces": [
     "packages/*"
@@ -11,7 +12,6 @@
     "lerna": "lerna",
     "dev": "lerna run start --stream --parallel",
     "test": "lerna run test --",
-    "postinstall": "lerna bootstrap",
     "build": "lerna run build",
     "prepublish": "lerna run prepublish",
     "publish-canary": "lerna version prerelease --preid canary --force-publish && release --pre",

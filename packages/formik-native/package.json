@@ -1,6 +1,6 @@
 {
   "name": "formik-native",
-  "version": "0.1.0",
+  "version": "2.0.8-canary.0",
   "license": "MIT",
   "author": "Jared Palmer <jared@palmer.net>",
   "repository": "jaredpalmer/formik",
@@ -44,19 +44,19 @@
     "trailingComma": "es5"
   },
   "dependencies": {
-    "formik": "^2.0.7"
+    "formik": "2.0.8-canary.0"
   },
   "devDependencies": {
-    "@types/jest": "^24.0.23",
-    "husky": "^3.1.0",
-    "tsdx": "^0.11.0",
-    "tslib": "^1.10.0",
-    "typescript": "^3.7.3",
-    "react": "^16.8.6",
-    "react-native": "https://github.com/expo/react-native/archive/sdk-33.0.0.tar.gz",
     "@react-native-community/eslint-config": "^0.0.5",
     "@semantic-release/changelog": "^3.0.5",
+    "@types/jest": "^24.0.23",
     "@types/react": "^16.8.23",
-    "@types/react-native": "^0.57.65"
+    "@types/react-native": "^0.57.65",
+    "husky": "^3.1.0",
+    "react": "^16.8.6",
+    "react-native": "https://github.com/expo/react-native/archive/sdk-33.0.0.tar.gz",
+    "tsdx": "^0.11.0",
+    "tslib": "^1.10.0",
+    "typescript": "^3.7.3"
   }
 }

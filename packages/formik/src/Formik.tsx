@@ -505,23 +505,31 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     delete fieldRegistry.current[name];
   }, []);
 
-  const setTouched = useEventCallback((touched: FormikTouched<Values>) => {
-    dispatch({ type: 'SET_TOUCHED', payload: touched });
-    return validateOnBlur
-      ? validateFormWithLowPriority(state.values)
-      : Promise.resolve();
-  });
+  const setTouched = useEventCallback(
+    (touched: FormikTouched<Values>, shouldValidate?: boolean) => {
+      dispatch({ type: 'SET_TOUCHED', payload: touched });
+      const willValidate =
+        shouldValidate === undefined ? validateOnBlur : shouldValidate;
+      return willValidate
+        ? validateFormWithLowPriority(state.values)
+        : Promise.resolve();
+    }
+  );
 
   const setErrors = React.useCallback((errors: FormikErrors<Values>) => {
     dispatch({ type: 'SET_ERRORS', payload: errors });
   }, []);
 
-  const setValues = useEventCallback((values: Values) => {
-    dispatch({ type: 'SET_VALUES', payload: values });
-    return validateOnChange
-      ? validateFormWithLowPriority(values)
-      : Promise.resolve();
-  });
+  const setValues = useEventCallback(
+    (values: Values, shouldValidate?: boolean) => {
+      dispatch({ type: 'SET_VALUES', payload: values });
+      const willValidate =
+        shouldValidate === undefined ? validateOnChange : shouldValidate;
+      return willValidate
+        ? validateFormWithLowPriority(values)
+        : Promise.resolve();
+    }
+  );
 
   const setFieldError = React.useCallback(
     (field: string, value: string | undefined) => {
@@ -534,7 +542,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   );
 
   const setFieldValue = useEventCallback(
-    (field: string, value: any, shouldValidate: boolean = true) => {
+    (field: string, value: any, shouldValidate?: boolean) => {
       dispatch({
         type: 'SET_FIELD_VALUE',
         payload: {
@@ -542,7 +550,9 @@ export function useFormik<Values extends FormikValues = FormikValues>({
           value,
         },
       });
-      return validateOnChange && shouldValidate
+      const willValidate =
+        shouldValidate === undefined ? validateOnChange : shouldValidate;
+      return willValidate
         ? validateFormWithLowPriority(setIn(state.values, field, value))
         : Promise.resolve();
     }
@@ -618,11 +628,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   );
 
   const setFieldTouched = useEventCallback(
-    (
-      field: string,
-      touched: boolean = true,
-      shouldValidate: boolean = true
-    ) => {
+    (field: string, touched: boolean = true, shouldValidate?: boolean) => {
       dispatch({
         type: 'SET_FIELD_TOUCHED',
         payload: {
@@ -630,7 +636,9 @@ export function useFormik<Values extends FormikValues = FormikValues>({
           value: touched,
         },
       });
-      return validateOnBlur && shouldValidate
+      const willValidate =
+        shouldValidate === undefined ? validateOnBlur : shouldValidate;
+      return willValidate
         ? validateFormWithLowPriority(state.values)
         : Promise.resolve();
     }

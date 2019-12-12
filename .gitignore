@@ -14,7 +14,7 @@ yarn.lock
 !/yarn.lock
 
 website/translated_docs
-website/build/
+website/build
 website/yarn.lock
 website/node_modules
-website/i18n/*
+website/i18n

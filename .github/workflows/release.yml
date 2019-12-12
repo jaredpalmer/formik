@@ -18,7 +18,7 @@ jobs:
       - run: yarn test
         env:
           CI: true
-      - name: publish to npm
+      - name: Publish to npm
         run: yarn run lerna publish from-git --npm-tag canary --yes
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

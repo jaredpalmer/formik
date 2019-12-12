@@ -18,6 +18,9 @@ jobs:
       - run: yarn test
         env:
           CI: true
+      - name: Potentially save npm token
+        run: |
+          ([[ ! -z ${{ secrets.NPM_TOKEN }} ]] && echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" >> ~/.npmrc) || echo "Did not write npm token"
       - name: Publish to npm
         run: yarn run lerna publish from-git --npm-tag canary --yes
         env:

@@ -8,6 +8,7 @@ import {
   FormikProps,
 } from './types';
 import { getIn, isEmptyChildren, isFunction, setIn } from './utils';
+import isEqual from 'react-fast-compare';
 
 export type FieldArrayRenderProps = ArrayHelpers & {
   form: FormikProps<any>;
@@ -127,6 +128,20 @@ class FieldArrayInner<Values = {}> extends React.Component<
     this.pop = this.pop.bind(this) as any;
   }
 
+  componentDidUpdate(
+    prevProps: FieldArrayConfig & { formik: FormikContextType<Values> }
+  ) {
+    if (
+      !isEqual(
+        getIn(prevProps.formik.values, prevProps.name),
+        getIn(this.props.formik.values, this.props.name)
+      ) &&
+      this.props.formik.validateOnChange
+    ) {
+      this.props.formik.validateForm();
+    }
+  }
+
   updateArrayField = (
     fn: Function,
     alterTouched: boolean | Function,
@@ -134,27 +149,21 @@ class FieldArrayInner<Values = {}> extends React.Component<
   ) => {
     const {
       name,
-      validateOnChange,
-      formik: { setFormikState, validateForm },
+
+      formik: { setFormikState },
     } = this.props;
     setFormikState((prevState: FormikState<any>) => {
       let updateErrors = typeof alterErrors === 'function' ? alterErrors : fn;
       let updateTouched =
         typeof alterTouched === 'function' ? alterTouched : fn;
 
-      const values = setIn(
-        prevState.values,
-        name,
-        fn(getIn(prevState.values, name))
-      );
-
-      if (validateOnChange) {
-        validateForm(values);
-      }
-
       return {
         ...prevState,
-        values,
+        values: setIn(
+          prevState.values,
+          name,
+          fn(getIn(prevState.values, name))
+        ),
         errors: alterErrors
           ? setIn(
               prevState.errors,

@@ -154,13 +154,13 @@ use it to pass API responses back into your component in `handleSubmit`.
 
 Set `isSubmitting` imperatively. You would call it with `setSubmitting(false)` in your `onSubmit` handler to finish the cycle. To learn more about the submission process, see [Form Submission](guides/form-submission.md).
 
-#### `setTouched: (fields: { [field: string]: boolean }) => void`
+#### `setTouched: (fields: { [field: string]: boolean }, shouldValidate?: boolean) => void`
 
-Set `touched` imperatively.
+Set `touched` imperatively. Calling this will trigger validation to run if `validateOnBlur` is set to `true` (which it is by default). You can also explicitly prevent/skip validation by passing a second argument as `false`.
 
-#### `setValues: (fields: { [field: string]: any }) => void`
+#### `setValues: (fields: { [field: string]: any }, shouldValidate?: boolean) => void`
 
-Set `values` imperatively.
+Set `values` imperatively. Calling this will trigger validation to run if `validateOnChange` is set to `true` (which it is by default). You can also explicitly prevent/skip validation by passing a second argument as `false`.
 
 #### `status?: any`
 

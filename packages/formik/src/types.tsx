@@ -82,9 +82,9 @@ export interface FormikHelpers<Values> {
   /** Manually set isSubmitting */
   setSubmitting(isSubmitting: boolean): void;
   /** Manually set touched object */
-  setTouched(touched: FormikTouched<Values>): void;
+  setTouched(touched: FormikTouched<Values>, shouldValidate?: boolean): void;
   /** Manually set values object  */
-  setValues(values: Values): void;
+  setValues(values: Values, shouldValidate?: boolean): void;
   /** Set value of form field directly */
   setFieldValue(field: string, value: any, shouldValidate?: boolean): void;
   /** Set error message of a form field directly */
@@ -123,7 +123,7 @@ export interface FormikHandlers {
   /** Preact-like linkState. Will return a handleBlur function. */
   handleBlur<T = string | any>(
     fieldOrEvent: T
-  ): T extends string ? ((e: any) => void) : void;
+  ): T extends string ? (e: any) => void : void;
   /** Classic React change handler, keyed by input name */
   handleChange(e: React.ChangeEvent<any>): void;
   /** Preact-like linkState. Will return a handleChange function.  */
@@ -131,7 +131,7 @@ export interface FormikHandlers {
     field: T
   ): T extends React.ChangeEvent<any>
     ? void
-    : ((e: string | React.ChangeEvent<any>) => void);
+    : (e: string | React.ChangeEvent<any>) => void;
 
   getFieldProps<Value = any>(props: any): FieldInputProps<Value>;
   getFieldMeta<Value>(name: string): FieldMetaProps<Value>;

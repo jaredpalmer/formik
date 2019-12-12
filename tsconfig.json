@@ -1,10 +1,10 @@
 {
   "extends": "./tsconfig.base.json",
-  "include": ["src", "types"],
   "compilerOptions": {
-    "baseUrl": "./",
+    "baseUrl": ".",
     "paths": {
-      "formik": ["src/"]
+      "formik": ["./packages/react/src"],
+      "formik-native": ["./packages/react-native/src"]
     }
   }
 }

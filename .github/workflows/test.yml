@@ -1,0 +1,41 @@
+name: Test
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node: ['10.x', '12.x']
+
+    name: Test on node ${{ matrix.node }}
+
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Use Node.js ${{ matrix.node }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node }}
+
+      - uses: actions/cache@v1
+        with:
+          path: ~/.cache/yarn
+          key: ${{ runner.os }}-yarn-${{ hashFiles(format('{0}{1}', github.workspace, '/yarn.lock')) }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - name: Install deps, build, and test
+        run: |
+          node --version
+          npm --version
+          yarn --version        
+          yarn install --frozen-lockfile
+          yarn test --coverage
+        env:
+          CI: true
+          NODE_OPTIONS: --max-old-space-size=4096

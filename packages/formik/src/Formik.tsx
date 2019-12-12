@@ -564,8 +564,10 @@ export function useFormik<Values extends FormikValues = FormikValues>({
         if ((eventOrTextValue as React.ChangeEvent<any>).persist) {
           (eventOrTextValue as React.ChangeEvent<any>).persist();
         }
-        const target = eventOrTextValue.target ? (eventOrTextValue as React.ChangeEvent<any>).target : (eventOrTextValue as React.ChangeEvent<any>).currentTarget;
-        
+        const target = eventOrTextValue.target
+          ? (eventOrTextValue as React.ChangeEvent<any>).target
+          : (eventOrTextValue as React.ChangeEvent<any>).currentTarget;
+
         const {
           type,
           name,
@@ -713,11 +715,37 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     dispatch({ type: 'SUBMIT_ATTEMPT' });
     return validateFormWithHighPriority().then(
       (combinedErrors: FormikErrors<Values>) => {
-        const isActuallyValid = Object.keys(combinedErrors).length === 0;
+        // In case an error was thrown and passed to the resolved Promise,
+        // `combinedErrors` can be an instance of an Error. We need to check
+        // that and abort the submit.
+        // If we don't do that, calling `Object.keys(new Error())` yields an
+        // empty array, which causes the validation to pass and the form
+        // to be submitted.
+
+        const isInstanceOfError = combinedErrors instanceof Error;
+        const isActuallyValid =
+          !isInstanceOfError && Object.keys(combinedErrors).length === 0;
         if (isActuallyValid) {
-          const promiseOrUndefined = executeSubmit();
-          if (promiseOrUndefined === undefined) {
-            return;
+          // Proceed with submit...
+          //
+          // To respect sync submit fns, we can't simply wrap executeSubmit in a promise and
+          // _always_ dispatch SUBMIT_SUCCESS because isSubmitting would then always be false.
+          // This would be fine in simple cases, but make it impossible to disable submit
+          // buttons where people use callbacks or promises as side effects (which is basically
+          // all of v1 Formik code). Instead, recall that we are inside of a promise chain already,
+          //  so we can try/catch executeSubmit(), if it returns undefined, then just bail.
+          // If there are errors, throw em. Otherwise, wrap executeSubmit in a promise and handle
+          // cleanup of isSubmitting on behalf of the consumer.
+          let promiseOrUndefined;
+          try {
+            promiseOrUndefined = executeSubmit();
+            // Bail if it's sync, consumer is responsible for cleaning up
+            // via setSubmitting(false)
+            if (promiseOrUndefined === undefined) {
+              return;
+            }
+          } catch (error) {
+            throw error;
           }
 
           return Promise.resolve(promiseOrUndefined)
@@ -729,13 +757,18 @@ export function useFormik<Values extends FormikValues = FormikValues>({
             .catch(_errors => {
               if (!!isMounted.current) {
                 dispatch({ type: 'SUBMIT_FAILURE' });
+                // This is a legit error rejected by the onSubmit fn
+                // so we don't want to break the promise chain
                 throw _errors;
               }
             });
         } else if (!!isMounted.current) {
-          // ^^^ Make sure Formik is still mounted before calling setState
+          // ^^^ Make sure Formik is still mounted before updating state
           dispatch({ type: 'SUBMIT_FAILURE' });
-          throw combinedErrors;
+          // throw combinedErrors;
+          if (isInstanceOfError) {
+            throw combinedErrors;
+          }
         }
         return;
       }

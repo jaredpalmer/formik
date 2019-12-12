@@ -580,18 +580,6 @@ describe('<Formik>', () => {
         fireEvent.submit(getByTestId('form'));
         expect(validate).toHaveBeenCalled();
       });
-
-      it('should not submit the form if validate function rejects with an error', async () => {
-        const onSubmit = jest.fn();
-        const validationSchema = Yup.object().shape({
-          field: Yup.string().required('required'),
-        });
-
-        const { getProps } = renderFormik({ onSubmit, validationSchema });
-        await expect(getProps().submitForm()).rejects.toEqual({
-          field: 'required',
-        });
-      });
     });
 
     describe('FormikHelpers', () => {
@@ -1144,7 +1132,9 @@ describe('<Formik>', () => {
 
   it('isValidating is fired when submit is attempted', async () => {
     const onSubmit = jest.fn();
-    const validate = jest.fn(() => ({ name: 'no' }));
+    const validate = jest.fn(() => ({
+      name: 'no',
+    }));
 
     const { getProps } = renderFormik({
       onSubmit,

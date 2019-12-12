@@ -137,41 +137,40 @@ class FieldArrayInner<Values = {}> extends React.Component<
       validateOnChange,
       formik: { setFormikState, validateForm },
     } = this.props;
-    setFormikState(
-      (prevState: FormikState<any>) => {
-        let updateErrors = typeof alterErrors === 'function' ? alterErrors : fn;
-        let updateTouched =
-          typeof alterTouched === 'function' ? alterTouched : fn;
+    setFormikState((prevState: FormikState<any>) => {
+      let updateErrors = typeof alterErrors === 'function' ? alterErrors : fn;
+      let updateTouched =
+        typeof alterTouched === 'function' ? alterTouched : fn;
 
-        return {
-          ...prevState,
-          values: setIn(
-            prevState.values,
-            name,
-            fn(getIn(prevState.values, name))
-          ),
-          errors: alterErrors
-            ? setIn(
-                prevState.errors,
-                name,
-                updateErrors(getIn(prevState.errors, name))
-              )
-            : prevState.errors,
-          touched: alterTouched
-            ? setIn(
-                prevState.touched,
-                name,
-                updateTouched(getIn(prevState.touched, name))
-              )
-            : prevState.touched,
-        };
-      },
-      () => {
-        if (validateOnChange) {
-          validateForm();
-        }
+      const values = setIn(
+        prevState.values,
+        name,
+        fn(getIn(prevState.values, name))
+      );
+
+      if (validateOnChange) {
+        validateForm(values);
       }
-    );
+
+      return {
+        ...prevState,
+        values,
+        errors: alterErrors
+          ? setIn(
+              prevState.errors,
+              name,
+              updateErrors(getIn(prevState.errors, name))
+            )
+          : prevState.errors,
+        touched: alterTouched
+          ? setIn(
+              prevState.touched,
+              name,
+              updateTouched(getIn(prevState.touched, name))
+            )
+          : prevState.touched,
+      };
+    });
   };
 
   push = (value: any) =>

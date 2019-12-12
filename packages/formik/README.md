@@ -19,7 +19,7 @@
 
 ---
 
-**The below readme is the documentation for the `next` (prerelease) version of Formik. To view the documentation for the latest stable Formik version visit [jaredpalmer.com/formik/docs](https://jaredpalmer.com/formik/docs/overview)**
+**The below readme is the documentation for the `canary` (prerelease) version of Formik. To view the documentation for the latest stable Formik version visit [jaredpalmer.com/formik/docs](https://jaredpalmer.com/formik/docs/overview)**
 
 ---
 
@@ -96,7 +96,7 @@ specification. Contributions of any kind welcome!
 
 ## Related
 
-- [TSDX](https://github.com/palmerhq/tsdx) - Zero-config CLI for TypeScript used by this repo.
+- [TSDX](https://github.com/jaredpalmer/tsdx) - Zero-config CLI for TypeScript used by this repo.
 
 ---
 

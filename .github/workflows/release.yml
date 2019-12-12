@@ -1,4 +1,4 @@
-name: Publish Canary
+name: Publish
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    name: Build and test
+    name: Build, test, Publish
     steps:
       - uses: actions/checkout@v1
       - uses: actions/setup-node@v1
@@ -18,21 +18,10 @@ jobs:
       - run: yarn test
         env:
           CI: true
-
-  publish:
-    needs: build
-    runs-on: ubuntu-latest
-    name: Publish canary to NPM
-    if: github.event_name == 'push'
-    steps:
-      - uses: actions/checkout@v1
-      - uses: actions/setup-node@v1
-        with:
-          node-version: 12
-
-      - run: yarn install --frozen-lockfile
-
-      - name: Publish
+      - name: Potentially save npm token
+        run: |
+          ([[ ! -z ${{ secrets.NPM_TOKEN }} ]] && echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" >> ~/.npmrc) || echo "Did not write npm token"
+      - name: Publish to npm
         run: yarn run lerna publish from-git --npm-tag canary --yes
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

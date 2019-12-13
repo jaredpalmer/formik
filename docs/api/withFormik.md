@@ -190,7 +190,7 @@ const validate = (values, props) => {
       errors.username = 'Nice try';
     }
     // ...
-    throw errors;
+    return errors;
   });
 };
 ```

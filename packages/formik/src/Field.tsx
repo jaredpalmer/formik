@@ -3,6 +3,7 @@ import {
   FormikProps,
   GenericFieldHTMLAttributes,
   FieldMetaProps,
+  FieldHelperProps,
   FieldInputProps,
   FieldValidator,
 } from './types';
@@ -70,11 +71,12 @@ export type FieldAttributes<T> = GenericFieldHTMLAttributes &
 
 export function useField<Val = any>(
   propsOrFieldName: string | FieldAttributes<Val>
-): [FieldInputProps<Val>, FieldMetaProps<Val>] {
+): [FieldInputProps<Val>, FieldMetaProps<Val>, FieldHelperProps] {
   const formik = useFormikContext();
   const {
     getFieldProps,
     getFieldMeta,
+    getFieldHelpers,
     registerField,
     unregisterField,
   } = formik;
@@ -113,12 +115,14 @@ export function useField<Val = any>(
     return [
       getFieldProps(propsOrFieldName),
       getFieldMeta((propsOrFieldName as FieldAttributes<Val>).name),
+      getFieldHelpers((propsOrFieldName as FieldAttributes<Val>).name),
     ];
   }
 
   return [
     getFieldProps({ name: propsOrFieldName }),
     getFieldMeta(propsOrFieldName),
+    getFieldHelpers(propsOrFieldName),
   ];
 }
 

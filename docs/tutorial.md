@@ -769,6 +769,8 @@ The `<Field>` component by default will render an `<input>` component that given
 </Field>
 
 // with styled-components/emotion
+//Please refer to the following URL when emotion installing.
+// https://emotion.sh/docs/@emotion/styled#gatsby-focus-wrapper
 const MyStyledInput = styled.input`
   padding: .5em;
   border: 1px solid #eee;

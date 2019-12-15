@@ -16,7 +16,23 @@ export interface FieldProps<V = any> {
   meta: FieldMetaProps<V>;
 }
 
-export interface FieldConfig {
+export interface UseFieldOptions {
+  /**  Field name */
+  name: string;
+
+  /** HTML input type */
+  type?: string;
+
+  /** Field value */
+  value?: any;
+
+  /**
+   * Validate a single field value independently
+   */
+  validate?: FieldValidator;
+}
+
+export interface FieldConfig extends UseFieldOptions {
   /**
    * Field component to render. Can either be a string like 'select' or a component.
    */
@@ -44,22 +60,6 @@ export interface FieldConfig {
    */
   children?: ((props: FieldProps<any>) => React.ReactNode) | React.ReactNode;
 
-  /**
-   * Validate a single field value independently
-   */
-  validate?: FieldValidator;
-
-  /**
-   * Field name
-   */
-  name: string;
-
-  /** HTML input type */
-  type?: string;
-
-  /** Field value */
-  value?: any;
-
   /** Inner ref */
   innerRef?: (instance: any) => void;
 }
@@ -67,6 +67,8 @@ export interface FieldConfig {
 export type FieldAttributes<T> = GenericFieldHTMLAttributes &
   FieldConfig &
   T & { name: string };
+
+
 
 export function useField<Val = any>(
   propsOrFieldName: string | FieldAttributes<Val>

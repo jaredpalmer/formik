@@ -110,6 +110,7 @@ export interface FormikHelpers<Values> {
   ): void;
 }
 
+export type HandleChangeReturn<T> = T extends string ? (e: string | React.ChangeEvent<any>) => void : void;
 /**
  * Formik form event handlers
  */
@@ -128,10 +129,10 @@ export interface FormikHandlers {
   handleChange(e: React.ChangeEvent<any>): void;
   /** Preact-like linkState. Will return a handleChange function.  */
   handleChange<T = string | React.ChangeEvent<any>>(
-    field: T
-  ): T extends React.ChangeEvent<any>
-    ? void
-    : (e: string | React.ChangeEvent<any>) => void;
+    fieldOrEvent: T
+  ): T extends string 
+    ? (eventOrValue: string | React.ChangeEvent<any>) => void 
+    : void;
 
   getFieldProps<Value = any>(props: any): FieldInputProps<Value>;
   getFieldMeta<Value>(name: string): FieldMetaProps<Value>;

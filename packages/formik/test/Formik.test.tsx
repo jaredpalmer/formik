@@ -7,7 +7,7 @@ import {
   prepareDataForValidation,
   FormikProps,
   FormikConfig,
-} from '../src';
+} from '../src/sync';
 import { noop } from './testHelpers';
 
 jest.spyOn(global.console, 'warn');

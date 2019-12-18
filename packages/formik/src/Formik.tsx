@@ -812,7 +812,12 @@ export function useFormik<Values extends FormikValues = FormikValues>({
         }
       }
 
-      submitForm();
+      submitForm().catch(reason => {
+        console.warn(
+          `Warning: An unhandled error was caught from submitForm()`,
+          reason
+        );
+      });
     }
   );
   const handleReset = useEventCallback(e => {

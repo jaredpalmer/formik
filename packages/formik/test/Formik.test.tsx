@@ -426,6 +426,29 @@ describe('<Formik>', () => {
       }).not.toThrow();
     });
 
+    it('should not error if onSubmit throws an error', () => {
+      const FormNoPreventDefault = (
+        <Formik
+          initialValues={{ name: 'jared' }}
+          onSubmit={() => Promise.reject('oops')}
+        >
+          {({ handleSubmit }) => (
+            <button
+              data-testid="submit-button"
+              onClick={() =>
+                handleSubmit(undefined as any /* undefined event */)
+              }
+            />
+          )}
+        </Formik>
+      );
+      const { getByTestId } = render(FormNoPreventDefault);
+
+      expect(() => {
+        fireEvent.click(getByTestId('submit-button'));
+      }).not.toThrow();
+    });
+
     it('should touch all fields', () => {
       const { getProps, getByTestId } = renderFormik();
       expect(getProps().touched).toEqual({});

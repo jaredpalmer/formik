@@ -325,11 +325,21 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   const validateFormWithLowPriority = useEventCallback(
     (values: Values = state.values) => {
       return unstable_runWithPriority(LowPriority, () => {
-        return runAllValidations(values).then(combinedErrors => {
+        return runAllValidations(values)
+        .then(combinedErrors => {
           if (!!isMounted.current) {
             dispatch({ type: 'SET_ERRORS', payload: combinedErrors });
           }
           return combinedErrors;
+        })
+        .catch(actualException => {
+          if (process.env.NODE_ENV !== 'production') {
+            // Users can throw during validate, however they have no way of handling their error on touch / blur. In low priority, we need to handle it
+            console.warn(
+              `Warning: An unhandled error was caught during low priority validation in <Formik validate />`,
+              actualException
+            );
+          }
         });
       });
     }

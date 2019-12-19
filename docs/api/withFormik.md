@@ -177,7 +177,7 @@ const validate = (values, props) => {
 };
 ```
 
-- Asynchronous and return a Promise that's error is an `errors` object
+- Asynchronous and return a Promise that's resolves to an object containing `errors`
 
 ```js
 // Async Validation
@@ -190,9 +190,7 @@ const validate = (values, props) => {
       errors.username = 'Nice try';
     }
     // ...
-    if (Object.keys(errors).length) {
-      throw errors;
-    }
+    return errors;
   });
 };
 ```

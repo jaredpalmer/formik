@@ -127,7 +127,7 @@ export function setIn(obj: any, path: string, value: any): any {
     return obj;
   }
 
-  if (value === undefined || isEmptyArray(value)) {
+  if (value === undefined) {
     delete resVal[pathArray[i]];
   } else {
     resVal[pathArray[i]] = value;
@@ -135,7 +135,7 @@ export function setIn(obj: any, path: string, value: any): any {
 
   // If the path array has a single element, the loop did not run.
   // Deleting on `resVal` had no effect in this scenario, so we delete on the result instead.
-  if ((i === 0 && value === undefined) || isEmptyArray(value)) {
+  if (i === 0 && value === undefined) {
     delete res[pathArray[i]];
   }
 

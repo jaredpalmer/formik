@@ -157,7 +157,8 @@ class FieldArrayInner<Values = {}> extends React.Component<
       let updateTouched =
         typeof alterTouched === 'function' ? alterTouched : fn;
 
-
+      // values fn should be executed before updateErrors and updateTouched,
+      // otherwise it causes an error with unshift.
       let values = setIn(
         prevState.values,
         name,

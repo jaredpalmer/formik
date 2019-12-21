@@ -365,6 +365,7 @@ describe('<FieldArray />', () => {
       expect(formikBag.values.friends).toEqual(expected);
     });
     it('should clean field from errors and touched', () => {
+      // seems weird calling 0 multiple times, but every time we call remove, the indexes get updated.
       arrayHelpers.remove(0);
       arrayHelpers.remove(0);
       arrayHelpers.remove(0);

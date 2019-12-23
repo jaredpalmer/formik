@@ -132,11 +132,12 @@ class FieldArrayInner<Values = {}> extends React.Component<
     prevProps: FieldArrayConfig & { formik: FormikContextType<Values> }
   ) {
     if (
+      this.props.validateOnChange &&
+      this.props.formik.validateOnChange &&
       !isEqual(
         getIn(prevProps.formik.values, prevProps.name),
         getIn(this.props.formik.values, this.props.name)
-      ) &&
-      this.props.formik.validateOnChange
+      ) 
     ) {
       this.props.formik.validateForm();
     }

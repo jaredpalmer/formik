@@ -10,9 +10,9 @@ import { useFormikContext } from './FormikContext';
 import { isFunction, isEmptyChildren, isObject } from './utils';
 import invariant from 'tiny-warning';
 
-export interface FieldProps<V = any> {
+export interface FieldProps<V = any, FormValues = any> {
   field: FieldInputProps<V>;
-  form: FormikProps<V>; // if ppl want to restrict this for a given form, let them.
+  form: FormikProps<FormValues>; // if ppl want to restrict this for a given form, let them.
   meta: FieldMetaProps<V>;
 }
 

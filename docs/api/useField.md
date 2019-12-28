@@ -12,8 +12,14 @@ custom_edit_url: https://github.com/jaredpalmer/formik/edit/master/docs/api/usef
 import React from 'react';
 import { useField, Formik } from 'formik';
 
+type FormValues = {
+  firstName: string;
+  lastName: string;
+  email: string;
+};
+
 const MyTextField = ({ label, ...props }) => {
-  const [field, meta] = useField(props);
+  const [field, meta] = useField<string>(props);
   return (
     <>
       <label>
@@ -57,7 +63,7 @@ const Example = () => (
 
 ## `useField<Value = any>(name: string | FieldAttributes<Val>): [FieldInputProps<Value>, FieldMetaProps<Value>]`
 
-A custom React Hook that returns a tuple (2 element array) containing `FieldProps` and `FieldMetaProps`. It accepts either a string of a field name or an object as an argument. The object must at least contain a `name` key. This object should identical to the props that you would pass to `<Field>` and the returned helpers will mimic the behavior of `<Field>` exactly. This is useful, and generally preferred, since it allows you to take advantage of formik's checkbox, radio, and multiple select behavior when the object contains the relevant key/values (e.g. `type: 'checkbox'`, `multiple: true`, etc.).
+A custom React Hook that returns a tuple (2 element array) containing `FieldInputProps` and `FieldMetaProps`. It accepts either a string of a field name or an object as an argument. The object must at least contain a `name` key. This object should be identical to the props that you would pass to `<Field>` and the returned helpers will mimic the behavior of `<Field>` exactly. This is useful, and generally preferred, since it allows you to take advantage of formik's checkbox, radio, and multiple select behavior when the object contains the relevant key/values (e.g. `type: 'checkbox'`, `multiple: true`, etc.).
 
 ```jsx
 import React from 'react';
@@ -65,7 +71,7 @@ import { useField } from 'formik';
 
 function MyTextField(props) {
   // this will return field props for an <input />
-  const [field, meta] = useField(props.name);
+  const [field, meta] = useField<string>(props.name);
   return (
     <>
       <input {...field} {...props} />
@@ -86,7 +92,7 @@ function MyInput(props) {
 }
 ```
 
-### `FieldInputProps`
+### `FieldInputProps<Value>`
 
 An object that contains:
 
@@ -94,16 +100,16 @@ An object that contains:
 - `checked?: boolean` - Whether or not the input is checked, this is _only_ defined if `useField` is passed an object with a `name`, `type: "checkbox"` or `type: radio`.
 - `onBlur: () => void;` - A blur event handler
 - `onChange: (e: React.ChangeEvent<any>) => void` - A change event handler
-- `value: any` - The field's value (plucked out of `values`) or, if it is a checkbox or radio input, then potentially the `value` passed into `useField`.
+- `value: Value` - The field's value (plucked out of `values`) or, if it is a checkbox or radio input, then potentially the `value` passed into `useField`.
 - `multiple?: boolean` - Whether or not the multiple values can be selected. This is only ever defined when `useField` is passed an object with `multiple: true`
 
-### `FieldMetaProps`
+### `FieldMetaProps<Value>`
 
 An object that contains relevant computed metadata about a field. More specifically,
 
 - `error?: string` - The field's error message (plucked out of `errors`)
 - `initialError?: string` - The field's initial error if the field is present in `initialErrors` (plucked out of `initialErrors`)
 - `initialTouched: boolean` - The field's initial value if the field is present in `initialTouched` (plucked out of `initialTouched`)
-- `initialValue?: any` - The field's initial value if the field is given a value in `initialValues` (plucked out of `initialValues`)
+- `initialValue?: Value` - The field's initial value if the field is given a value in `initialValues` (plucked out of `initialValues`)
 - `touched: boolean` - Whether the field has been visited (plucked out of `touched`)
-- `value: any` - The field's value (plucked out of `values`)
+- `value: Value` - The field's value (plucked out of `values`)

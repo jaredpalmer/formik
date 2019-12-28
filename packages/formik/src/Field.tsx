@@ -80,13 +80,16 @@ export function useField<Val = any>(
     registerField,
     unregisterField,
   } = formik;
+
   const isAnObject = isObject(propsOrFieldName);
-  const fieldName = isAnObject
-    ? (propsOrFieldName as FieldHookConfig<Val>).name
-    : (propsOrFieldName as string);
-  const validateFn = isAnObject
-    ? (propsOrFieldName as FieldHookConfig<Val>).validate
-    : undefined;
+
+  // Normalize propsOrFieldName to FieldHookConfig<Val>
+  const props: FieldHookConfig<Val> = isAnObject
+    ? (propsOrFieldName as FieldHookConfig<Val>)
+    : { name: propsOrFieldName as string };
+
+  const { name: fieldName, validate: validateFn } = props;
+
   React.useEffect(() => {
     if (fieldName) {
       registerField(fieldName, {
@@ -99,6 +102,7 @@ export function useField<Val = any>(
       }
     };
   }, [registerField, unregisterField, fieldName, validateFn]);
+
   if (__DEV__) {
     invariant(
       formik,
@@ -106,22 +110,12 @@ export function useField<Val = any>(
     );
   }
 
-  if (isObject(propsOrFieldName)) {
-    invariant(
-      (propsOrFieldName as FieldAttributes<Val>).name,
-      'Invalid field name. Either pass `useField` a string or an object containing a `name` key.'
-    );
+  invariant(
+    fieldName,
+    'Invalid field name. Either pass `useField` a string or an object containing a `name` key.'
+  );
 
-    return [
-      getFieldProps(propsOrFieldName),
-      getFieldMeta((propsOrFieldName as FieldAttributes<Val>).name),
-    ];
-  }
-
-  return [
-    getFieldProps({ name: propsOrFieldName }),
-    getFieldMeta(propsOrFieldName),
-  ];
+  return [getFieldProps(props), getFieldMeta(fieldName)];
 }
 
 export function Field({

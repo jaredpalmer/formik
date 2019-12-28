@@ -16,20 +16,20 @@ export interface FieldProps<V = any> {
   meta: FieldMetaProps<V>;
 }
 
-export interface FieldConfig {
+export interface FieldConfig<V = any> {
   /**
    * Field component to render. Can either be a string like 'select' or a component.
    */
   component?:
     | keyof JSX.IntrinsicElements
-    | React.ComponentType<FieldProps<any>>
+    | React.ComponentType<FieldProps<V>>
     | React.ComponentType;
 
   /**
    * Component to render. Can either be a string e.g. 'select', 'input', or 'textarea', or a component.
    */
   as?:
-    | React.ComponentType<FieldProps<any>['field']>
+    | React.ComponentType<FieldProps<V>['field']>
     | keyof JSX.IntrinsicElements
     | React.ComponentType;
 
@@ -37,12 +37,12 @@ export interface FieldConfig {
    * Render prop (works like React router's <Route render={props =>} />)
    * @deprecated
    */
-  render?: (props: FieldProps<any>) => React.ReactNode;
+  render?: (props: FieldProps<V>) => React.ReactNode;
 
   /**
    * Children render function <Field name>{props => ...}</Field>)
    */
-  children?: ((props: FieldProps<any>) => React.ReactNode) | React.ReactNode;
+  children?: ((props: FieldProps<V>) => React.ReactNode) | React.ReactNode;
 
   /**
    * Validate a single field value independently
@@ -65,11 +65,13 @@ export interface FieldConfig {
 }
 
 export type FieldAttributes<T> = GenericFieldHTMLAttributes &
-  FieldConfig &
+  FieldConfig<T> &
   T & { name: string };
 
+export type FieldHookConfig<T> = GenericFieldHTMLAttributes & FieldConfig<T>;
+
 export function useField<Val = any>(
-  propsOrFieldName: string | FieldAttributes<Val>
+  propsOrFieldName: string | FieldHookConfig<Val>
 ): [FieldInputProps<Val>, FieldMetaProps<Val>] {
   const formik = useFormikContext();
   const {
@@ -80,10 +82,10 @@ export function useField<Val = any>(
   } = formik;
   const isAnObject = isObject(propsOrFieldName);
   const fieldName = isAnObject
-    ? (propsOrFieldName as FieldAttributes<Val>).name
+    ? (propsOrFieldName as FieldHookConfig<Val>).name
     : (propsOrFieldName as string);
   const validateFn = isAnObject
-    ? (propsOrFieldName as FieldAttributes<Val>).validate
+    ? (propsOrFieldName as FieldHookConfig<Val>).validate
     : undefined;
   React.useEffect(() => {
     if (fieldName) {

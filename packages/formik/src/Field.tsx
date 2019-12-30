@@ -10,26 +10,26 @@ import { useFormikContext } from './FormikContext';
 import { isFunction, isEmptyChildren, isObject } from './utils';
 import invariant from 'tiny-warning';
 
-export interface FieldProps<V = any> {
+export interface FieldProps<V = any, FormValues = any> {
   field: FieldInputProps<V>;
-  form: FormikProps<V>; // if ppl want to restrict this for a given form, let them.
+  form: FormikProps<FormValues>; // if ppl want to restrict this for a given form, let them.
   meta: FieldMetaProps<V>;
 }
 
-export interface FieldConfig {
+export interface FieldConfig<V = any> {
   /**
    * Field component to render. Can either be a string like 'select' or a component.
    */
   component?:
     | keyof JSX.IntrinsicElements
-    | React.ComponentType<FieldProps<any>>
+    | React.ComponentType<FieldProps<V>>
     | React.ComponentType;
 
   /**
    * Component to render. Can either be a string e.g. 'select', 'input', or 'textarea', or a component.
    */
   as?:
-    | React.ComponentType<FieldProps<any>['field']>
+    | React.ComponentType<FieldProps<V>['field']>
     | keyof JSX.IntrinsicElements
     | React.ComponentType;
 
@@ -37,12 +37,12 @@ export interface FieldConfig {
    * Render prop (works like React router's <Route render={props =>} />)
    * @deprecated
    */
-  render?: (props: FieldProps<any>) => React.ReactNode;
+  render?: (props: FieldProps<V>) => React.ReactNode;
 
   /**
    * Children render function <Field name>{props => ...}</Field>)
    */
-  children?: ((props: FieldProps<any>) => React.ReactNode) | React.ReactNode;
+  children?: ((props: FieldProps<V>) => React.ReactNode) | React.ReactNode;
 
   /**
    * Validate a single field value independently
@@ -65,11 +65,13 @@ export interface FieldConfig {
 }
 
 export type FieldAttributes<T> = GenericFieldHTMLAttributes &
-  FieldConfig &
+  FieldConfig<T> &
   T & { name: string };
 
+export type FieldHookConfig<T> = GenericFieldHTMLAttributes & FieldConfig<T>;
+
 export function useField<Val = any>(
-  propsOrFieldName: string | FieldAttributes<Val>
+  propsOrFieldName: string | FieldHookConfig<Val>
 ): [FieldInputProps<Val>, FieldMetaProps<Val>] {
   const formik = useFormikContext();
   const {
@@ -78,13 +80,16 @@ export function useField<Val = any>(
     registerField,
     unregisterField,
   } = formik;
+
   const isAnObject = isObject(propsOrFieldName);
-  const fieldName = isAnObject
-    ? (propsOrFieldName as FieldAttributes<Val>).name
-    : (propsOrFieldName as string);
-  const validateFn = isAnObject
-    ? (propsOrFieldName as FieldAttributes<Val>).validate
-    : undefined;
+
+  // Normalize propsOrFieldName to FieldHookConfig<Val>
+  const props: FieldHookConfig<Val> = isAnObject
+    ? (propsOrFieldName as FieldHookConfig<Val>)
+    : { name: propsOrFieldName as string };
+
+  const { name: fieldName, validate: validateFn } = props;
+
   React.useEffect(() => {
     if (fieldName) {
       registerField(fieldName, {
@@ -97,6 +102,7 @@ export function useField<Val = any>(
       }
     };
   }, [registerField, unregisterField, fieldName, validateFn]);
+
   if (__DEV__) {
     invariant(
       formik,
@@ -104,22 +110,12 @@ export function useField<Val = any>(
     );
   }
 
-  if (isObject(propsOrFieldName)) {
-    invariant(
-      (propsOrFieldName as FieldAttributes<Val>).name,
-      'Invalid field name. Either pass `useField` a string or an object containing a `name` key.'
-    );
+  invariant(
+    fieldName,
+    'Invalid field name. Either pass `useField` a string or an object containing a `name` key.'
+  );
 
-    return [
-      getFieldProps(propsOrFieldName),
-      getFieldMeta((propsOrFieldName as FieldAttributes<Val>).name),
-    ];
-  }
-
-  return [
-    getFieldProps({ name: propsOrFieldName }),
-    getFieldMeta(propsOrFieldName),
-  ];
+  return [getFieldProps(props), getFieldMeta(fieldName)];
 }
 
 export function Field({

@@ -22,5 +22,10 @@
     "now-build": "npm run build-website",
     "start-website": "cd website && yarn start",
     "build-website": "cd website && yarn install && yarn build"
+  },
+  "prettier": {
+    "trailingComma": "es5",
+    "singleQuote": true,
+    "semi": true
   }
 }

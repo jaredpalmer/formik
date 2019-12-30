@@ -10,13 +10,13 @@ custom_edit_url: https://github.com/jaredpalmer/formik/edit/master/docs/api/usef
 
 ```tsx
 import React from 'react';
-import { useField, Formik } from 'formik';
+import { useField, Form, Formik } from 'formik';
 
-type FormValues = {
+interface Values {
   firstName: string;
   lastName: string;
   email: string;
-};
+}
 
 const MyTextField = ({ label, ...props }) => {
   const [field, meta] = useField<string>(props);
@@ -37,22 +37,27 @@ const Example = () => (
   <div>
     <h1>My Form</h1>
     <Formik
-      initialValues={{ email: '', firstName: 'red', lastName: '' }}
+      initialValues={{
+        email: '',
+        firstName: 'red',
+        lastName: '',
+      }}
       onSubmit={(values, actions) => {
         setTimeout(() => {
           alert(JSON.stringify(values, null, 2));
           actions.setSubmitting(false);
         }, 1000);
       }}
-      render={(props: FormikProps<Values>) => (
-        <form onSubmit={props.handleSubmit}>
+    >
+      {(props: FormikProps<Values>) => (
+        <Form>
           <MyTextField name="firstName" type="text" label="First Name" />
           <MyTextField name="lastName" type="text" label="Last Name" />
           <MyTextField name="email" type="email" label="Email" />
           <button type="submit">Submit</button>
-        </form>
+        </Form>
       )}
-    />
+    </Formik>
   </div>
 );
 ```
@@ -71,7 +76,7 @@ import { useField } from 'formik';
 
 function MyTextField(props) {
   // this will return field props for an <input />
-  const [field, meta] = useField<string>(props.name);
+  const [field, meta] = useField < string > props.name;
   return (
     <>
       <input {...field} {...props} />

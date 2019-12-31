@@ -10,6 +10,7 @@ import {
   FormikValues,
   FormikProps,
   FieldMetaProps,
+  FieldHelperProps,
   FieldInputProps,
 } from './types';
 import {
@@ -869,6 +870,17 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     [state.errors, state.touched, state.values]
   );
 
+  const getFieldHelpers = React.useCallback(
+    (name: string): FieldHelperProps => {
+      return {
+        setValue: (value: any) => setFieldValue(name, value),
+        setTouched: (value: boolean) => setFieldTouched(name, value),
+        setError: (value: any) => setFieldError(name, value),
+      };
+    },
+    [setFieldValue, setFieldTouched, setFieldError]
+  );
+
   const getFieldProps = React.useCallback(
     (nameOrOptions): FieldInputProps<any> => {
       const isAnObject = isObject(nameOrOptions);
@@ -957,6 +969,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     registerField,
     getFieldProps,
     getFieldMeta,
+    getFieldHelpers,
     validateOnBlur,
     validateOnChange,
     validateOnMount,

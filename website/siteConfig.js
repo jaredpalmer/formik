@@ -188,6 +188,11 @@ const users = [
     image: '/formik/img/logos/restaurant365.svg',
     infoLink: 'https://restaurant365.com',
   },
+  {
+    caption: 'CarGurus',
+    image: '/formik/img/logos/cargurus.svg',
+    infoLink: 'https://www.cargurus.com',
+  }
 ];
 
 const siteConfig = {

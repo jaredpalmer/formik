@@ -328,9 +328,10 @@ describe('<FieldArray />', () => {
   });
 
   describe('props.remove()', () => {
-    it('should remove a value at given index of field array', () => {
-      let formikBag: any;
-      let arrayHelpers: any;
+    let formikBag: any;
+    let arrayHelpers: any;
+
+    beforeEach(() => {
       ReactDOM.render(
         <TestForm>
           {(props: any) => {
@@ -348,10 +349,29 @@ describe('<FieldArray />', () => {
         </TestForm>,
         node
       );
-
+    });
+    it('should remove a value at given index of field array', () => {
       arrayHelpers.remove(1);
       const expected = ['jared', 'brent'];
       expect(formikBag.values.friends).toEqual(expected);
+    });
+
+    it('should be an empty array when removing all values', () => {
+      arrayHelpers.remove(0);
+      arrayHelpers.remove(0);
+      arrayHelpers.remove(0);
+      const expected: any[] = [];
+
+      expect(formikBag.values.friends).toEqual(expected);
+    });
+    it('should clean field from errors and touched', () => {
+      // seems weird calling 0 multiple times, but every time we call remove, the indexes get updated.
+      arrayHelpers.remove(0);
+      arrayHelpers.remove(0);
+      arrayHelpers.remove(0);
+
+      expect(formikBag.errors.friends).toEqual(undefined);
+      expect(formikBag.touched.friends).toEqual(undefined);
     });
   });
 

@@ -45,7 +45,7 @@ class Users extends React.Component {
               </p>
             </div>
             <div className="logos">{showcase}</div>
-            <p>Are you using this Formik?</p>
+            <p>Are you using Formik?</p>
             <a href={editUrl} className="button">
               Add your company
             </a>

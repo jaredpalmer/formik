@@ -10,7 +10,13 @@ custom_edit_url: https://github.com/jaredpalmer/formik/edit/master/docs/api/usef
 
 ```tsx
 import React from 'react';
-import { useField, Formik } from 'formik';
+import { useField, Form, Formik } from 'formik';
+
+interface Values {
+  firstName: string;
+  lastName: string;
+  email: string;
+}
 
 const MyTextField = ({ label, ...props }) => {
   const [field, meta, helpers] = useField(props);
@@ -31,22 +37,27 @@ const Example = () => (
   <div>
     <h1>My Form</h1>
     <Formik
-      initialValues={{ email: '', firstName: 'red', lastName: '' }}
+      initialValues={{
+        email: '',
+        firstName: 'red',
+        lastName: '',
+      }}
       onSubmit={(values, actions) => {
         setTimeout(() => {
           alert(JSON.stringify(values, null, 2));
           actions.setSubmitting(false);
         }, 1000);
       }}
-      render={(props: FormikProps<Values>) => (
-        <form onSubmit={props.handleSubmit}>
-          <MyTextField name='firstName' type='text' label='First Name' />
-          <MyTextField name='lastName' type="text" label='Last Name' />
-          <MyTextField name='email' type='email' label='Email' />
-          <button type='submit'>Submit</button>
-        </form>
+    >
+      {(props: FormikProps<Values>) => (
+        <Form>
+          <MyTextField name="firstName" type="text" label="First Name" />
+          <MyTextField name="lastName" type="text" label="Last Name" />
+          <MyTextField name="email" type="email" label="Email" />
+          <button type="submit">Submit</button>
+        </Form>
       )}
-    />
+    </Formik>
   </div>
 );
 ```
@@ -113,7 +124,7 @@ function MyOtherComponent(props) {
 }
 ```
 
-### `FieldInputProps`
+### `FieldInputProps<Value>`
 
 An object that contains:
 
@@ -121,17 +132,17 @@ An object that contains:
 - `checked?: boolean` - Whether or not the input is checked, this is _only_ defined if `useField` is passed an object with a `name`, `type: 'checkbox'` or `type: radio`.
 - `onBlur: () => void;` - A blur event handler
 - `onChange: (e: React.ChangeEvent<any>) => void` - A change event handler
-- `value: any` - The field's value (plucked out of `values`) or, if it is a checkbox or radio input, then potentially the `value` passed into `useField`.
+- `value: Value` - The field's value (plucked out of `values`) or, if it is a checkbox or radio input, then potentially the `value` passed into `useField`.
 - `multiple?: boolean` - Whether or not the multiple values can be selected. This is only ever defined when `useField` is passed an object with `multiple: true`
 
-### `FieldMetaProps`
+### `FieldMetaProps<Value>`
 
 An object that contains relevant computed metadata about a field. More specifically,
 
 - `error?: string` - The field's error message (plucked out of `errors`)
 - `initialError?: string` - The field's initial error if the field is present in `initialErrors` (plucked out of `initialErrors`)
 - `initialTouched: boolean` - The field's initial value if the field is present in `initialTouched` (plucked out of `initialTouched`)
-- `initialValue?: any` - The field's initial value if the field is given a value in `initialValues` (plucked out of `initialValues`)
+- `initialValue?: Value` - The field's initial value if the field is given a value in `initialValues` (plucked out of `initialValues`)
 - `touched: boolean` - Whether the field has been visited (plucked out of `touched`)
 - `value: any` - The field's value (plucked out of `values`)
 

@@ -7,7 +7,7 @@ import {
   SharedRenderProps,
   FormikProps,
 } from './types';
-import { getIn, isEmptyChildren, isFunction, setIn } from './utils';
+import { getIn, isEmptyChildren, isFunction, setIn, isEmptyArray } from './utils';
 import isEqual from 'react-fast-compare';
 
 export type FieldArrayRenderProps = ArrayHelpers & {
@@ -157,25 +157,39 @@ class FieldArrayInner<Values = {}> extends React.Component<
       let updateTouched =
         typeof alterTouched === 'function' ? alterTouched : fn;
 
+      // values fn should be executed before updateErrors and updateTouched,
+      // otherwise it causes an error with unshift.
+      let values = setIn(
+        prevState.values,
+        name,
+        fn(getIn(prevState.values, name))
+        );
+
+      let fieldError = alterErrors ? updateErrors(getIn(prevState.errors, name)) : undefined;
+      let fieldTouched = alterTouched ? updateTouched(getIn(prevState.touched, name)) : undefined;
+
+      if (isEmptyArray(fieldError)) {
+        fieldError = undefined;
+      }
+      if (isEmptyArray(fieldTouched)) {
+        fieldTouched = undefined;
+      }
+
       return {
         ...prevState,
-        values: setIn(
-          prevState.values,
-          name,
-          fn(getIn(prevState.values, name))
-        ),
+        values,
         errors: alterErrors
           ? setIn(
               prevState.errors,
               name,
-              updateErrors(getIn(prevState.errors, name))
+              fieldError,
             )
           : prevState.errors,
         touched: alterTouched
           ? setIn(
               prevState.touched,
               name,
-              updateTouched(getIn(prevState.touched, name))
+              fieldTouched
             )
           : prevState.touched,
       };

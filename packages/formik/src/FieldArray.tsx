@@ -7,7 +7,13 @@ import {
   SharedRenderProps,
   FormikProps,
 } from './types';
-import { getIn, isEmptyChildren, isFunction, setIn, isEmptyArray } from './utils';
+import {
+  getIn,
+  isEmptyChildren,
+  isFunction,
+  setIn,
+  isEmptyArray,
+} from './utils';
 import isEqual from 'react-fast-compare';
 
 export type FieldArrayRenderProps = ArrayHelpers & {
@@ -138,7 +144,7 @@ class FieldArrayInner<Values = {}> extends React.Component<
       ) &&
       this.props.formik.validateOnChange
     ) {
-      this.props.formik.validateForm();
+      this.props.formik.validateForm(this.props.formik.values);
     }
   }
 
@@ -163,10 +169,14 @@ class FieldArrayInner<Values = {}> extends React.Component<
         prevState.values,
         name,
         fn(getIn(prevState.values, name))
-        );
+      );
 
-      let fieldError = alterErrors ? updateErrors(getIn(prevState.errors, name)) : undefined;
-      let fieldTouched = alterTouched ? updateTouched(getIn(prevState.touched, name)) : undefined;
+      let fieldError = alterErrors
+        ? updateErrors(getIn(prevState.errors, name))
+        : undefined;
+      let fieldTouched = alterTouched
+        ? updateTouched(getIn(prevState.touched, name))
+        : undefined;
 
       if (isEmptyArray(fieldError)) {
         fieldError = undefined;
@@ -179,18 +189,10 @@ class FieldArrayInner<Values = {}> extends React.Component<
         ...prevState,
         values,
         errors: alterErrors
-          ? setIn(
-              prevState.errors,
-              name,
-              fieldError,
-            )
+          ? setIn(prevState.errors, name, fieldError)
           : prevState.errors,
         touched: alterTouched
-          ? setIn(
-              prevState.touched,
-              name,
-              fieldTouched
-            )
+          ? setIn(prevState.touched, name, fieldTouched)
           : prevState.touched,
       };
     });

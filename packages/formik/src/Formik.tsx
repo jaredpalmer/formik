@@ -1127,24 +1127,39 @@ function getValueForCheckbox(
   checked: boolean,
   valueProp: any
 ) {
-  // eslint-disable-next-line eqeqeq
-  if (valueProp == 'true' || valueProp == 'false') {
-    return !!checked;
+  // If the current value was a boolean, return a boolean
+  if (typeof currentValue === 'boolean') {
+    return Boolean(checked);
   }
 
-  if (checked && valueProp) {
-    return Array.isArray(currentValue)
-      ? currentValue.concat(valueProp)
-      : [valueProp];
-  }
+  // If the currentValue was not a boolean we want to return an array
+  let currentArrayOfValues = []
+
   if (!Array.isArray(currentValue)) {
-    return !currentValue;
+    // eslint-disable-next-line eqeqeq
+    if (valueProp == 'true' || valueProp == 'false') {
+      return !!checked;
+    }
+  } else {
+    // If the current value is already an array, use it
+    currentArrayOfValues = currentValue
   }
+
   const index = currentValue.indexOf(valueProp);
-  if (index < 0) {
-    return currentValue;
+  const isValueInArray = index >= 0;
+
+  // If the checkbox was checked and the value is not already present in the aray we want to add the new value to the array of values
+  if (checked && valueProp && !isValueInArray) {
+    return currentArrayOfValues.concat(valueProp);
   }
-  return currentValue.slice(0, index).concat(currentValue.slice(index + 1));
+
+  // If the checkbox was unchecked and the value is not in the array, simply return the already existing array of values
+  if (!isValueInArray) {
+    return currentArrayOfValues
+  }
+
+  // If the checkbox was unchecked and the value is in the array, remove the value and return the array
+  return currentArrayOfValues.slice(0, index).concat(currentArrayOfValues.slice(index + 1));
 }
 
 // React currently throws a warning when using useLayoutEffect on the server.

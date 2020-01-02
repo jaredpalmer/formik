@@ -231,7 +231,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
           },
           (err: any) => {
             // Yup will throw a validation error if validation fails. We catch those and
-            // resolve them into Formik errors. We can sniff is something is a Yup error
+            // resolve them into Formik errors. We can sniff if something is a Yup error
             // by checking error.name.
             // @see https://github.com/jquense/yup#validationerrorerrors-string--arraystring-value-any-path-string
             if (err.name === 'ValidationError') {

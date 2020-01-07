@@ -1,33 +1,33 @@
-import * as React from 'react';
-import isEqual from 'react-fast-compare';
 import deepmerge from 'deepmerge';
 import isPlainObject from 'lodash/isPlainObject';
+import * as React from 'react';
+import isEqual from 'react-fast-compare';
+import { LowPriority, unstable_runWithPriority } from 'scheduler';
+import invariant from 'tiny-warning';
+import { FormikProvider } from './FormikContext';
 import {
+  FieldHelperProps,
+  FieldInputProps,
+  FieldMetaProps,
   FormikConfig,
   FormikErrors,
+  FormikHelpers,
+  FormikProps,
   FormikState,
   FormikTouched,
   FormikValues,
-  FormikProps,
-  FieldMetaProps,
-  FieldHelperProps,
-  FieldInputProps,
-  FormikHelpers,
 } from './types';
 import {
-  isFunction,
-  isString,
-  setIn,
-  isEmptyChildren,
-  isPromise,
-  setNestedObjectValues,
   getActiveElement,
   getIn,
+  isEmptyChildren,
+  isFunction,
   isObject,
+  isPromise,
+  isString,
+  setIn,
+  setNestedObjectValues,
 } from './utils';
-import { FormikProvider } from './FormikContext';
-import invariant from 'tiny-warning';
-import { LowPriority, unstable_runWithPriority } from 'scheduler';
 
 type FormikMessage<Values> =
   | { type: 'SUBMIT_ATTEMPT' }
@@ -906,14 +906,19 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   const getFieldProps = React.useCallback(
     (nameOrOptions): FieldInputProps<any> => {
       const isAnObject = isObject(nameOrOptions);
-      const name = isAnObject ? nameOrOptions.name : nameOrOptions;
+      const name: string = isAnObject ? nameOrOptions.name : nameOrOptions;
       const valueState = getIn(state.values, name);
+      // Use curried version of field
+      const onChange = handleChange(name) as (
+        eventOrString: string | React.ChangeEvent<any>
+      ) => void;
+      const onBlur = handleBlur(name) as (event: any) => void;
 
       const field: FieldInputProps<any> = {
         name,
         value: valueState,
-        onChange: handleChange,
-        onBlur: handleBlur,
+        onChange,
+        onBlur,
       };
       if (isAnObject) {
         const {

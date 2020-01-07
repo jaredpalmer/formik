@@ -1071,7 +1071,7 @@ export function prepareDataForValidation<T extends FormikValues>(
 ): FormikValues {
   let data: FormikValues = {};
   for (let k in values) {
-    if (values.hasOwnProperty(k)) {
+    if (Object.prototype.hasOwnProperty.call(values, k)) {
       const key = String(k);
       if (Array.isArray(values[key]) === true) {
         data[key] = values[key].map((value: any) => {

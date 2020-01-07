@@ -1,4 +1,3 @@
-node_modules
 dist
 compiled
 *.log
@@ -8,19 +7,14 @@ next.d.ts
 legacy.d.ts
 .idea
 *.orig
-.DS_Store
 
 node_modules
-
-lib/core/metadata.js
-lib/core/MetadataBlog.js
+package-lock.json
+yarn.lock
+!/yarn.lock
 
 website/translated_docs
-website/build/
+website/build
 website/yarn.lock
 website/node_modules
-website/i18n/*
-.rts2_cache_es
-.rts2_cache_esm
-.rts2_cache_cjs
-.rts2_cache_umd
+website/i18n

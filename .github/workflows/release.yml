@@ -1,0 +1,47 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Build, test, Publish
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 12
+      - run: yarn install --frozen-lockfile
+      - run: yarn test
+        env:
+          CI: true
+      - name: Potentially save npm token
+        run: |
+          ([[ ! -z ${{ secrets.NPM_TOKEN }} ]] && echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" >> ~/.npmrc) || echo "Did not write npm token"
+      - name: Potentially publish canary to npm
+        run: |
+          if \
+            ls ~/.npmrc >/dev/null 2>&1 && \
+            [[ $(git describe --exact-match 2> /dev/null || :) =~ -canary ]]; \
+          then
+            yarn run lerna publish from-git --npm-tag canary --yes
+          else
+            echo "Did not publish canary"
+          fi
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Potentially publish stable to npm
+        run: |
+          if \
+            ls ~/.npmrc >/dev/null 2>&1 && \
+            [[ ! $(git describe --exact-match 2> /dev/null || :) =~ -canary ]]; \
+          then
+            yarn run lerna publish from-git --yes
+          else
+            echo "Did not publish"
+          fi
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

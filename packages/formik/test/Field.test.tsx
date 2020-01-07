@@ -128,8 +128,8 @@ describe('Field / FastField', () => {
       injected.forEach((props, idx) => {
         expect(props.field.name).toBe('name');
         expect(props.field.value).toBe('jared');
-        expect(props.field.onChange).toBe(handleChange);
-        expect(props.field.onBlur).toBe(handleBlur);
+        expect(props.field.onChange).toBe(handleChange('name'));
+        expect(props.field.onBlur).toBe(handleBlur('name'));
         expect(props.form).toEqual(getFormProps());
         if (idx !== 2) {
           expect(props.meta.value).toBe('jared');
@@ -145,8 +145,8 @@ describe('Field / FastField', () => {
 
       expect(asInjectedProps.name).toBe('name');
       expect(asInjectedProps.value).toBe('jared');
-      expect(asInjectedProps.onChange).toBe(handleChange);
-      expect(asInjectedProps.onBlur).toBe(handleBlur);
+      expect(asInjectedProps.onChange).toBe(handleChange('name'));
+      expect(asInjectedProps.onBlur).toBe(handleBlur('name'));
 
       expect(queryAllByText(TEXT)).toHaveLength(4);
     });
@@ -174,8 +174,8 @@ describe('Field / FastField', () => {
       injected.forEach((props, idx) => {
         expect(props.field.name).toBe('name');
         expect(props.field.value).toBe('jared');
-        expect(props.field.onChange).toBe(handleChange);
-        expect(props.field.onBlur).toBe(handleBlur);
+        expect(props.field.onChange).toBe(handleChange('name'));
+        expect(props.field.onBlur).toBe(handleBlur('name'));
         expect(props.form).toEqual(getFormProps());
         if (idx !== 2) {
           expect(props.meta.value).toBe('jared');
@@ -191,8 +191,8 @@ describe('Field / FastField', () => {
 
       expect(asInjectedProps.name).toBe('name');
       expect(asInjectedProps.value).toBe('jared');
-      expect(asInjectedProps.onChange).toBe(handleChange);
-      expect(asInjectedProps.onBlur).toBe(handleBlur);
+      expect(asInjectedProps.onChange).toBe(handleChange('name'));
+      expect(asInjectedProps.onBlur).toBe(handleBlur('name'));
       expect(queryAllByText(TEXT)).toHaveLength(4);
     });
   });

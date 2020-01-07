@@ -135,7 +135,7 @@ export interface FormikHandlers {
 
   getFieldProps<Value = any>(props: any): FieldInputProps<Value>;
   getFieldMeta<Value>(name: string): FieldMetaProps<Value>;
-  getFieldHelpers(name: string): FieldHelperProps;
+  getFieldHelpers<Value = any>(name: string): FieldHelperProps<Value>;
 }
 
 /**
@@ -278,13 +278,13 @@ export interface FieldMetaProps<Value> {
 }
 
 /** Imperative handles to change a field's value, error and touched */
-export interface FieldHelperProps {
+export interface FieldHelperProps<Value> {
   /** Set the field's value */
-  setValue(value: any): void;
+  setValue(value: Value): void;
   /** Set the field's touched value */
   setTouched(value: boolean): void;
   /** Set the field's error value */
-  setError(value: any): void;
+  setError(value: Value): void;
 }
 
 /** Field input value, name, and event handlers */

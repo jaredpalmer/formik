@@ -871,7 +871,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   );
 
   const getFieldHelpers = React.useCallback(
-    (name: string): FieldHelperProps => {
+    (name: string): FieldHelperProps<any> => {
       return {
         setValue: (value: any) => setFieldValue(name, value),
         setTouched: (value: boolean) => setFieldTouched(name, value),

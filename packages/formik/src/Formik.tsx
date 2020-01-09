@@ -12,6 +12,7 @@ import {
   FieldMetaProps,
   FieldHelperProps,
   FieldInputProps,
+  FormikHelpers,
 } from './types';
 import {
   isFunction,
@@ -710,26 +711,6 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     dispatch({ type: 'SET_ISSUBMITTING', payload: isSubmitting });
   }, []);
 
-  const imperativeMethods = {
-    resetForm,
-
-    validateForm: validateFormWithHighPriority,
-    validateField,
-    setErrors,
-    setFieldError,
-    setFieldTouched,
-    setFieldValue,
-    setStatus,
-    setSubmitting,
-    setTouched,
-    setValues,
-    setFormikState,
-  };
-
-  const executeSubmit = useEventCallback(() => {
-    return onSubmit(state.values, imperativeMethods);
-  });
-
   const submitForm = useEventCallback(() => {
     dispatch({ type: 'SUBMIT_ATTEMPT' });
     return validateFormWithHighPriority().then(
@@ -831,6 +812,28 @@ export function useFormik<Values extends FormikValues = FormikValues>({
       });
     }
   );
+
+  const imperativeMethods: FormikHelpers<Values> = {
+    resetForm,
+
+    validateForm: validateFormWithHighPriority,
+    validateField,
+    setErrors,
+    setFieldError,
+    setFieldTouched,
+    setFieldValue,
+    setStatus,
+    setSubmitting,
+    setTouched,
+    setValues,
+    setFormikState,
+    submitForm,
+  };
+
+  const executeSubmit = useEventCallback(() => {
+    return onSubmit(state.values, imperativeMethods);
+  });
+
   const handleReset = useEventCallback(e => {
     if (e && e.preventDefault && isFunction(e.preventDefault)) {
       e.preventDefault();

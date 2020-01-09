@@ -184,6 +184,7 @@ describe('withFormik()', () => {
           setValues: expect.any(Function),
           validateField: expect.any(Function),
           validateForm: expect.any(Function),
+          submitForm: expect.any(Function),
         }
       )
     );

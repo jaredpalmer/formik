@@ -101,6 +101,8 @@ export interface FormikHelpers<Values> {
   validateField(field: string): void;
   /** Reset form */
   resetForm(nextState?: Partial<FormikState<Values>>): void;
+  /** Submit the form imperatively */
+  submitForm(): Promise<void>;
   /** Set Formik state, careful! */
   setFormikState(
     f:

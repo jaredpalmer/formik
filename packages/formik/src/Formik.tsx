@@ -1134,6 +1134,8 @@ function getValueForCheckbox(
 
   // If the currentValue was not a boolean we want to return an array
   let currentArrayOfValues = []
+  let isValueInArray = false
+  let index = -1
 
   if (!Array.isArray(currentValue)) {
     // eslint-disable-next-line eqeqeq
@@ -1143,10 +1145,10 @@ function getValueForCheckbox(
   } else {
     // If the current value is already an array, use it
     currentArrayOfValues = currentValue
+    index = currentValue.indexOf(valueProp);
+    isValueInArray = index >= 0;
   }
 
-  const index = currentValue.indexOf(valueProp);
-  const isValueInArray = index >= 0;
 
   // If the checkbox was checked and the value is not already present in the aray we want to add the new value to the array of values
   if (checked && valueProp && !isValueInArray) {

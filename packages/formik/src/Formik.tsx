@@ -625,7 +625,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     [setFieldValue, state.values]
   );
 
-  const handleChange = React.useCallback(
+  const handleChange = useEventCallback(
     (
       eventOrPath: string | React.ChangeEvent<any>
     ): void | ((eventOrTextValue: string | React.ChangeEvent<any>) => void) => {
@@ -635,7 +635,6 @@ export function useFormik<Values extends FormikValues = FormikValues>({
         executeChange(eventOrPath);
       }
     },
-    [executeChange]
   );
 
   const setFieldTouched = useEventCallback(
@@ -676,7 +675,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     [setFieldTouched]
   );
 
-  const handleBlur = React.useCallback(
+  const handleBlur = useEventCallback(
     (eventOrString: any): void | ((e: any) => void) => {
       if (isString(eventOrString)) {
         return event => executeBlur(event, eventOrString);
@@ -684,7 +683,6 @@ export function useFormik<Values extends FormikValues = FormikValues>({
         executeBlur(eventOrString);
       }
     },
-    [executeBlur]
   );
 
   const setFormikState = React.useCallback(

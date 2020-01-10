@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { cleanup, render, wait, fireEvent } from 'react-testing-library';
+import * as Yup from 'yup';
 import {
   Formik,
   Field,
@@ -383,6 +384,26 @@ describe('Field / FastField', () => {
 
         expect(validate).toHaveBeenCalled();
         await wait(() => expect(getFormProps().errors.name).toBe('Error!'));
+      }
+    );
+
+    cases(
+      'runs validationSchema validation when validateField is called',
+      async renderField => {
+        const errorMessage = 'Name must be 100 characters in length';
+
+        const validationSchema = Yup.object({
+          name: Yup.string().min(100, errorMessage),
+        });
+        const { getFormProps, rerender } = renderField({}, { validationSchema });
+
+        rerender();
+
+        getFormProps().validateField('name');
+
+        await wait(() => expect(getFormProps().errors).toEqual({
+          name: errorMessage
+        }));
       }
     );
   });

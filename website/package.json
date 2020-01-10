@@ -10,5 +10,6 @@
   },
   "devDependencies": {
     "docusaurus": "^1.14.0"
-  }
+  },
+  "engines": { "node": "12.x" }
 }

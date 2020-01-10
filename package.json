@@ -27,5 +27,6 @@
     "trailingComma": "es5",
     "singleQuote": true,
     "semi": true
-  }
+  },
+  "engines": { "node": "12.x" }
 }

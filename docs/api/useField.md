@@ -150,6 +150,6 @@ An object that contains relevant computed metadata about a field. More specifica
 
 An object that contains helper functions which you can use to imperatively change the value, error value or touched status for the field in question. This is useful for components which need to change a field's status directly, without triggering change or blur events.
 
-`setValue(value: any): void` - A function to change the field's value
-`setTouched(value: boolean): void` - A function to change the field's touched status
-`setError(value: any): void` - A function to change the field's error value
+- `setValue(value: any): void` - A function to change the field's value
+- `setTouched(value: boolean): void` - A function to change the field's touched status
+- `setError(value: any): void` - A function to change the field's error value

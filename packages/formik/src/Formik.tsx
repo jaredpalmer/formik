@@ -636,7 +636,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     [setFieldValue, state.values]
   );
 
-  const handleChange = React.useCallback(
+  const handleChange = useEventCallback(
     (
       eventOrPath: string | React.ChangeEvent<any>
     ): void | ((eventOrTextValue: string | React.ChangeEvent<any>) => void) => {
@@ -646,7 +646,6 @@ export function useFormik<Values extends FormikValues = FormikValues>({
         executeChange(eventOrPath);
       }
     },
-    [executeChange]
   );
 
   const setFieldTouched = useEventCallback(
@@ -687,7 +686,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     [setFieldTouched]
   );
 
-  const handleBlur = React.useCallback(
+  const handleBlur = useEventCallback(
     (eventOrString: any): void | ((e: any) => void) => {
       if (isString(eventOrString)) {
         return event => executeBlur(event, eventOrString);
@@ -695,7 +694,6 @@ export function useFormik<Values extends FormikValues = FormikValues>({
         executeBlur(eventOrString);
       }
     },
-    [executeBlur]
   );
 
   const setFormikState = React.useCallback(
@@ -882,7 +880,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   );
 
   const getFieldHelpers = React.useCallback(
-    (name: string): FieldHelperProps => {
+    (name: string): FieldHelperProps<any> => {
       return {
         setValue: (value: any) => setFieldValue(name, value),
         setTouched: (value: boolean) => setFieldTouched(name, value),
@@ -1082,7 +1080,7 @@ export function prepareDataForValidation<T extends FormikValues>(
 ): FormikValues {
   let data: FormikValues = {};
   for (let k in values) {
-    if (values.hasOwnProperty(k)) {
+    if (Object.prototype.hasOwnProperty.call(values, k)) {
       const key = String(k);
       if (Array.isArray(values[key]) === true) {
         data[key] = values[key].map((value: any) => {
@@ -1145,6 +1143,8 @@ function getValueForCheckbox(
 
   // If the currentValue was not a boolean we want to return an array
   let currentArrayOfValues = []
+  let isValueInArray = false
+  let index = -1
 
   if (!Array.isArray(currentValue)) {
     // eslint-disable-next-line eqeqeq
@@ -1154,10 +1154,10 @@ function getValueForCheckbox(
   } else {
     // If the current value is already an array, use it
     currentArrayOfValues = currentValue
+    index = currentValue.indexOf(valueProp);
+    isValueInArray = index >= 0;
   }
 
-  const index = currentValue.indexOf(valueProp);
-  const isValueInArray = index >= 0;
 
   // If the checkbox was checked and the value is not already present in the aray we want to add the new value to the array of values
   if (checked && valueProp && !isValueInArray) {

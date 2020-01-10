@@ -73,7 +73,7 @@ export type FieldHookConfig<T> = GenericFieldHTMLAttributes & FieldConfig<T>;
 
 export function useField<Val = any>(
   propsOrFieldName: string | FieldHookConfig<Val>
-): [FieldInputProps<Val>, FieldMetaProps<Val>, FieldHelperProps] {
+): [FieldInputProps<Val>, FieldMetaProps<Val>, FieldHelperProps<Val>] {
   const formik = useFormikContext();
   const {
     getFieldProps,

@@ -24,7 +24,8 @@ export interface FieldConfig<V = any> {
   component?:
     | keyof JSX.IntrinsicElements
     | React.ComponentType<FieldProps<V>>
-    | React.ComponentType;
+    | React.ComponentType
+    | React.ForwardRefExoticComponent<any>;
 
   /**
    * Component to render. Can either be a string e.g. 'select', 'input', or 'textarea', or a component.
@@ -32,7 +33,8 @@ export interface FieldConfig<V = any> {
   as?:
     | React.ComponentType<FieldProps<V>['field']>
     | keyof JSX.IntrinsicElements
-    | React.ComponentType;
+    | React.ComponentType
+    | React.ForwardRefExoticComponent<any>;
 
   /**
    * Render prop (works like React router's <Route render={props =>} />)

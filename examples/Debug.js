@@ -4,10 +4,9 @@ import { FormikConsumer } from 'formik';
 export const Debug = () => (
   <div
     style={{
-      margin: '3rem 0',
+      margin: '3rem 1rem',
       borderRadius: 4,
       background: '#f6f8fa',
-
       boxShadow: '0 0 1px  #eee inset',
     }}
   >
@@ -30,7 +29,7 @@ export const Debug = () => (
       {({ validationSchema, validate, onSubmit, ...rest }) => (
         <pre
           style={{
-            fontSize: '.65rem',
+            fontSize: '.85rem',
             padding: '.25rem .5rem',
             overflowX: 'scroll',
           }}

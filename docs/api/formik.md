@@ -187,7 +187,7 @@ Imperatively call your `validate` or `validateSchema` depending on what was spec
 
 #### `validateField: (field: string) => void`
 
-Imperatively call field's `validate` function if specified for given field. Formik will use the current field value.
+Imperatively call field's `validate` function if specified for given field or run schema validation using [Yup's `schema.validteAt`](https://github.com/jquense/yup#mixedvalidateatpath-string-value-any-options-object-promiseany-validationerror) and the provided top-level `validationSchema` prop. Formik will use the current field value.
 
 ### `component?: React.ComponentType<FormikProps<Values>>`
 

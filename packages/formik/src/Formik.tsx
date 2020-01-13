@@ -327,21 +327,21 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     (values: Values = state.values) => {
       return unstable_runWithPriority(LowPriority, () => {
         return runAllValidations(values)
-        .then(combinedErrors => {
-          if (!!isMounted.current) {
-            dispatch({ type: 'SET_ERRORS', payload: combinedErrors });
-          }
-          return combinedErrors;
-        })
-        .catch(actualException => {
-          if (process.env.NODE_ENV !== 'production') {
-            // Users can throw during validate, however they have no way of handling their error on touch / blur. In low priority, we need to handle it
-            console.warn(
-              `Warning: An unhandled error was caught during low priority validation in <Formik validate />`,
-              actualException
-            );
-          }
-        });
+          .then(combinedErrors => {
+            if (!!isMounted.current) {
+              dispatch({ type: 'SET_ERRORS', payload: combinedErrors });
+            }
+            return combinedErrors;
+          })
+          .catch(actualException => {
+            if (process.env.NODE_ENV !== 'production') {
+              // Users can throw during validate, however they have no way of handling their error on touch / blur. In low priority, we need to handle it
+              console.warn(
+                `Warning: An unhandled error was caught during low priority validation in <Formik validate />`,
+                actualException
+              );
+            }
+          });
       });
     }
   );
@@ -634,7 +634,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
       } else {
         executeChange(eventOrPath);
       }
-    },
+    }
   );
 
   const setFieldTouched = useEventCallback(
@@ -675,15 +675,15 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     [setFieldTouched]
   );
 
-  const handleBlur = useEventCallback(
-    (eventOrString: any): void | ((e: any) => void) => {
-      if (isString(eventOrString)) {
-        return event => executeBlur(event, eventOrString);
-      } else {
-        executeBlur(eventOrString);
-      }
-    },
-  );
+  const handleBlur = useEventCallback((eventOrString: any):
+    | void
+    | ((e: any) => void) => {
+    if (isString(eventOrString)) {
+      return event => executeBlur(event, eventOrString);
+    } else {
+      executeBlur(eventOrString);
+    }
+  });
 
   const setFormikState = React.useCallback(
     (
@@ -1131,22 +1131,21 @@ function getValueForCheckbox(
   }
 
   // If the currentValue was not a boolean we want to return an array
-  let currentArrayOfValues = []
-  let isValueInArray = false
-  let index = -1
+  let currentArrayOfValues = [];
+  let isValueInArray = false;
+  let index = -1;
 
   if (!Array.isArray(currentValue)) {
     // eslint-disable-next-line eqeqeq
-    if (valueProp == 'true' || valueProp == 'false') {
-      return !!checked;
+    if (!valueProp || valueProp == 'true' || valueProp == 'false') {
+      return Boolean(checked);
     }
   } else {
     // If the current value is already an array, use it
-    currentArrayOfValues = currentValue
+    currentArrayOfValues = currentValue;
     index = currentValue.indexOf(valueProp);
     isValueInArray = index >= 0;
   }
-
 
   // If the checkbox was checked and the value is not already present in the aray we want to add the new value to the array of values
   if (checked && valueProp && !isValueInArray) {
@@ -1155,11 +1154,13 @@ function getValueForCheckbox(
 
   // If the checkbox was unchecked and the value is not in the array, simply return the already existing array of values
   if (!isValueInArray) {
-    return currentArrayOfValues
+    return currentArrayOfValues;
   }
 
   // If the checkbox was unchecked and the value is in the array, remove the value and return the array
-  return currentArrayOfValues.slice(0, index).concat(currentArrayOfValues.slice(index + 1));
+  return currentArrayOfValues
+    .slice(0, index)
+    .concat(currentArrayOfValues.slice(index + 1));
 }
 
 // React currently throws a warning when using useLayoutEffect on the server.

@@ -10,6 +10,7 @@
     "react",
     "react-dom",
     "form",
+    "hooks",
     "validation",
     "forms",
     "higher order component",
@@ -45,13 +46,13 @@
     "lodash": "^4.17.14",
     "lodash-es": "^4.17.14",
     "react-fast-compare": "^2.0.1",
-    "scheduler": "^0.17.0",
+    "scheduler": "^0.18.0",
     "tiny-warning": "^1.0.2",
     "tslib": "^1.10.0"
   },
   "resolutions": {
-    "@types/react": "16.9.11",
-    "@types/react-dom": "16.9.3"
+    "@types/react": "16.9.17",
+    "@types/react-dom": "16.9.4"
   },
   "devDependencies": {
     "@babel/core": "^7.1.2",
@@ -61,8 +62,8 @@
     "@types/hoist-non-react-statics": "^3.3.1",
     "@types/jest": "^24.0.5",
     "@types/lodash": "^4.14.119",
-    "@types/react": "^16.9.11",
-    "@types/react-dom": "^16.9.3",
+    "@types/react": "^16.9.17",
+    "@types/react-dom": "^16.9.4",
     "@types/warning": "^3.0.0",
     "@types/yup": "^0.24.9",
     "@typescript-eslint/eslint-plugin": "^1.9.0",
@@ -86,16 +87,16 @@
     "husky": "0.14.3",
     "just-debounce-it": "^1.1.0",
     "lint-staged": "4.0.2",
-    "prettier": "^1.18.2",
+    "prettier": "^1.19.1",
     "raw-loader": "^2.0.0",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
     "react-testing-library": "^7.0.0",
     "rimraf": "^2.6.2",
     "tsdx": "0.9",
-    "typescript": "^3.6.4",
+    "typescript": "^3.7.4",
     "webpack": "^4.31.0",
-    "yup": "^0.27.0"
+    "yup": "^0.28.0"
   },
   "lint-staged": {
     "**/*.{ts,tsx}": [

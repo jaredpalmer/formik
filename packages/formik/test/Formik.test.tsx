@@ -1288,4 +1288,12 @@ describe('<Formik>', () => {
       getProps().validateForm();
     }).toThrow('broken validations');
   });
+
+  it('exposes formikbag as imperative methods', () => {
+    const innerRef: any = React.createRef();
+
+    const { getProps } = renderFormik({ innerRef });
+
+    expect(innerRef.current).toEqual(getProps());
+  });
 });

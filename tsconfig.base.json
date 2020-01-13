@@ -1,15 +1,7 @@
 {
   "compilerOptions": {
-    "target": "es5",
-    "module": "esnext",
-    "lib": ["dom", "esnext"],
-    "importHelpers": true,
-    "declaration": true,
-    "sourceMap": true,
-    "rootDir": "./",
     "strict": true,
     "pretty": true,
-    "removeComments": true,
     "noImplicitAny": true,
     "strictNullChecks": true,
     "strictFunctionTypes": true,
@@ -23,11 +15,7 @@
     "noFallthroughCasesInSwitch": true,
     "emitDecoratorMetadata": false,
     "experimentalDecorators": false,
-    "moduleResolution": "node",
-    "jsx": "react",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-  },
-  "include": ["src", "types"],
-  "exclude": ["node_modules", "dist"]
+  }
 }

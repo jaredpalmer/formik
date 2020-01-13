@@ -27,6 +27,7 @@ title: Resources
 - [Building an Add Channel Form with Formik](https://www.youtube.com/watch?v=anwo_i0wgNo) by [Ben Awad](https://twitter.com/benawad97) - Oct 27, 2017
 
 ## Community Articles / Tutorials
+- [Managing list of form fields with formik by creating Todo App](https://dev.to/mrmuhammadali/managing-list-of-form-fields-with-formik-through-example-7o5) by [Muhammad Ali](https://twitter.com/muhammadali_io) - Dec 31, 2019
 - [Accessible Formik forms](https://dev.to/ptrin/accessible-formik-forms-2gld) by [Perry Trinier](https://twitter.com/ptrin) - Oct 16, 2019
 - [Building dynamic forms with Formik with React and TypeScript](https://scottdj92.ghost.io/building-dynamic-forms-with-formik-with-react-and-typescript/) by [Scott Jones](https://twitter.com/sdj2964) - Sep 1, 2018
 - [Simple React form validation with Formik, Yup and/or Spected](https://itnext.io/simple-react-form-validation-with-formik-yup-and-or-spected-206ebe9e7dcc) by [Jakub Kočí](https://github.com/jakubkoci) - May 21, 2018

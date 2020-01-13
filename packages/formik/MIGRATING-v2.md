@@ -1,15 +1,21 @@
 # Formik 2 Migration Guide
 
-## Breaking Change
+## Breaking Changes
 
 ### Minimum Requirements
 
 - Since Formik 2 is built on top of React Hooks, you must be on React 16.8.x or higher
 - Since Formik 2 uses the `unknown` type, you must be on TypeScript 3.0 or higher (if you use TypeScript)
 
+**There are only two tiny breaking changes in Formik 2.x.** Luckily, these probably won't impact many people:
+
 #### `resetForm`
 
-**There is only one tiny breaking change in Formik 2.x.** Luckily, it probably won't impact very many people. Long story short, because we introduced the new `initialErrors`, `initialTouched`, `initialStatus` props, `resetForm`'s signature has changed since there is more stuff to _reset_. It now accepts the next initial state of Formik (instead of just the next initial values).
+Because we introduced the new `initialErrors`, `initialTouched`, `initialStatus` props, `resetForm`'s signature has changed since there is more stuff to _reset_. It now accepts the next initial state of Formik (instead of just the next initial values).
+
+### `validate`
+
+As you may know, you can return a Promise of a validation error from `validate`. In 1.x, it didn't matter if this promise is resolved or rejected as in both cases the payload of the promise was interpreted as the validation error. In 2.x, rejection will be interpreted as an actual exception and it won't update the form error state. Any validation function that returns a rejected promise of errors needs to be adjusted to return a resolved promise of errors instead.
 
 **v1**
 

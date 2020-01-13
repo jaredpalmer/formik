@@ -826,6 +826,22 @@ describe('<Formik>', () => {
   });
 
   describe('handleReset', () => {
+    it('should call onReset if onReset prop is set', () => {
+      const onReset = jest.fn();
+      const { getProps } = renderFormik({
+        initialValues: InitialValues,
+        onReset: onReset,
+        onSubmit: noop,
+      });
+
+      const { handleReset } = getProps();
+      handleReset();
+
+      expect(onReset).toHaveBeenCalled();
+    });
+  });
+
+  describe('resetForm', () => {
     it('should call onReset with values and actions when form is reset', () => {
       const onReset = jest.fn();
       const { getProps } = renderFormik({
@@ -834,7 +850,7 @@ describe('<Formik>', () => {
         onReset,
       });
 
-      getProps().handleReset();
+      getProps().resetForm();
 
       expect(onReset).toHaveBeenCalledWith(
         { name: 'jared' },
@@ -854,27 +870,9 @@ describe('<Formik>', () => {
 
     it('should not error resetting form if onReset is not a prop', () => {
       const { getProps } = renderFormik();
-      getProps().handleReset();
+      getProps().resetForm();
       expect(true);
     });
-
-    // it('should call onReset with values and actions when onReset is a promise', async () => {
-    //   const ref = React.createRef<Formik>();
-    //   const onReset = jest.fn(() => Promise.resolve('data'));
-
-    //   const { getProps } = renderFormik({
-    //     ref,
-    //     onReset,
-    //   });
-
-    //   ref.current!.resetForm = jest.fn();
-
-    //   getProps().handleReset();
-
-    //   await wait(() =>
-    //     expect(ref.current!.resetForm).toHaveBeenCalledWith('data')
-    //   );
-    // });
 
     it('should reset dirty flag even if initialValues has changed', () => {
       const { getProps, getByTestId } = renderFormik();
@@ -891,7 +889,7 @@ describe('<Formik>', () => {
       });
       expect(getProps().dirty).toBeTruthy();
 
-      getProps().handleReset();
+      getProps().resetForm();
       expect(getProps().dirty).toBeFalsy();
     });
 
@@ -901,13 +899,11 @@ describe('<Formik>', () => {
       getProps().handleSubmit();
       expect(getProps().submitCount).toEqual(1);
 
-      getProps().handleReset();
+      getProps().resetForm();
       expect(getProps().submitCount).toEqual(0);
     });
-  });
 
-  describe('resetForm', () => {
-    it('should reset dirty when reseting to same values', () => {
+    it('should reset dirty when resetting to same values', () => {
       const { getProps } = renderFormik();
       expect(getProps().dirty).toBe(false);
 

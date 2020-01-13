@@ -397,23 +397,40 @@ export function useFormik<Values extends FormikValues = FormikValues>({
       initialTouched.current = touched;
       initialStatus.current = status;
 
-      dispatch({
-        type: 'RESET_FORM',
-        payload: {
-          isSubmitting: !!nextState && !!nextState.isSubmitting,
-          errors,
-          touched,
-          status,
-          values,
-          isValidating: !!nextState && !!nextState.isValidating,
-          submitCount:
-            !!nextState &&
-            !!nextState.submitCount &&
-            typeof nextState.submitCount === 'number'
-              ? nextState.submitCount
-              : 0,
-        },
-      });
+      const dispatchFn = () => {
+        dispatch({
+          type: 'RESET_FORM',
+          payload: {
+            isSubmitting: !!nextState && !!nextState.isSubmitting,
+            errors,
+            touched,
+            status,
+            values,
+            isValidating: !!nextState && !!nextState.isValidating,
+            submitCount:
+              !!nextState &&
+              !!nextState.submitCount &&
+              typeof nextState.submitCount === 'number'
+                ? nextState.submitCount
+                : 0,
+          },
+        });
+      };
+
+      if (props.onReset) {
+        const maybePromisedOnReset = (props.onReset as any)(
+          state.values,
+          imperativeMethods
+        );
+
+        if (isPromise(maybePromisedOnReset)) {
+          (maybePromisedOnReset as Promise<any>).then(dispatchFn);
+        } else {
+          dispatchFn();
+        }
+      } else {
+        dispatchFn();
+      }
     },
     [props.initialErrors, props.initialStatus, props.initialTouched]
   );
@@ -838,20 +855,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
       e.stopPropagation();
     }
 
-    if (props.onReset) {
-      const maybePromisedOnReset = (props.onReset as any)(
-        state.values,
-        imperativeMethods
-      );
-
-      if (isPromise(maybePromisedOnReset)) {
-        (maybePromisedOnReset as Promise<any>).then(resetForm);
-      } else {
-        resetForm();
-      }
-    } else {
-      resetForm();
-    }
+    resetForm();
   });
 
   const getFieldMeta = React.useCallback(

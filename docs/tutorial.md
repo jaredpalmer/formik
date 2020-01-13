@@ -7,13 +7,13 @@ title: Tutorial
 
 Welcome to the Formik tutorial. This will teach you everything you need to know to build simple and complex forms in React.
 
-If you're impatient and just want to start hacking on your machine locally, checkout [the 60-second quickstart](/docs/overview.md#installation).
+If you're impatient and just want to start hacking on your machine locally, checkout [the 60-second quickstart](overview.md#installation).
 
 ### What are we building?
 
 In this tutorial, we'll show how to build a complex newsletter signup form with React and Formik.
 
-You can see what we'll be building here: [Final Result](https://codesandbox.io/s/formik-v2-tutorial-final-t5fe0). If the code doesn't make sense to you, don't worry! The goal of this tutorial is to help you understand Formik.
+You can see what we'll be building here: [Final Result](https://codesandbox.io/s/formik-v2-tutorial-final-bq0li). If the code doesn't make sense to you, don't worry! The goal of this tutorial is to help you understand Formik.
 
 ### Prerequisites
 
@@ -116,8 +116,15 @@ import { useFormik } from 'formik';
 const SignupForm = () => {
   // Pass the useFormik() hook initial form values and a submit function that will
   // be called when the form is submitted
+  const formik = useFormik({
+    initialValues: {
+      email: '',
+    },
+    onSubmit: values => {
+      alert(JSON.stringify(values, null, 2));
+    },
+  });
   return (
-  <Formik>
     <form onSubmit={formik.handleSubmit}>
       <label htmlFor="email">Email Address</label>
       <input
@@ -197,7 +204,7 @@ const SignupForm = () => {
 If you look carefully at our new code, you'll notice some patterns and symmetry _forming_.
 
 1. We reuse the same exact change handler function `handleChange` for each HTML input.
-2. We pass an `id` and `name` HTML attribute that _matches_ the we defined in `initialValues`
+2. We pass an `id` and `name` HTML attribute that _matches_ the property we defined in `initialValues`
 3. We access the field's value using the same name (`email` -> `formik.values.email`).
 
 If you're familiar with building forms with plain React, you can think of Formik's `handleChange` as working like this:
@@ -216,11 +223,11 @@ const handleChange = event => {
 
 ## Validation
 
-While our contact form works, it's not quite feature-complete. While users can submit it, it doesn't tell them that which (if any) field's are required.
+While our contact form works, it's not quite feature-complete. While users can submit it, it doesn't tell them which (if any) fields are required.
 
 If we are okay with using the browser's built-in HTML input validation, you could add a `required` prop to each of our inputs, specify minimum/maximum lengths (`maxlength` and `minlength`), and/or add a `pattern` prop for regex validation for each of these inputs. These are great if you can get away with them. However, HTML validation has its limitations. First, it only works in the browser! So this clearly is not viable for React Native. Second, it's hard/impossible to show custom error messages to our user. Third, it's very janky.
 
-As mentioned earlier, Formik keeps track of not only your form's `values`, but also it's error messages and validation. To add validation with JS, let's specify a custom validation function and pass it as `validate` to the `useFormik()` hook. If an error exists, this custom validation function should an object a matching shape to our `values`/`initialValues`. Again..._symmetry_...yes...
+As mentioned earlier, Formik keeps track of not only your form's `values`, but also its error messages and validation. To add validation with JS, let's specify a custom validation function and pass it as `validate` to the `useFormik()` hook. If an error exists, this custom validation function should produce an `error` object with a matching shape to our `values`/`initialValues`. Again..._symmetry_...yes...
 
 ```jsx
 import React from 'react';
@@ -387,7 +394,7 @@ const SignupForm = () => {
 };
 ```
 
-Almost there! Now that we're tracking `touched`, we can now change our error message render logic to _only_ show a field's error message if it exists _and_ if our user has visted a given field.
+Almost there! Now that we're tracking `touched`, we can now change our error message render logic to _only_ show a field's error message if it exists _and_ if our user has visited a given field.
 
 ```jsx
 import React from 'react';
@@ -502,13 +509,13 @@ const SignupForm = () => {
     },
     validationSchema: Yup.object({
       firstName: Yup.string()
-        .min(15, 'Must be 15 characters or less')
+        .max(15, 'Must be 15 characters or less')
         .required('Required'),
       lastName: Yup.string()
-        .min(20, 'Must be 20 characters or less')
+        .max(20, 'Must be 20 characters or less')
         .required('Required'),
       email: Yup.string()
-        .email('Invalid email addresss`')
+        .email('Invalid email address')
         .required('Required'),
     }),
     onSubmit: values => {
@@ -581,13 +588,13 @@ const SignupForm = () => {
     },
     validationSchema: Yup.object({
       firstName: Yup.string()
-        .min(15, 'Must be 15 characters or less')
+        .max(15, 'Must be 15 characters or less')
         .required('Required'),
       lastName: Yup.string()
-        .min(20, 'Must be 20 characters or less')
+        .max(20, 'Must be 20 characters or less')
         .required('Required'),
       email: Yup.string()
-        .email('Invalid email addresss`')
+        .email('Invalid email address')
         .required('Required'),
     }),
     onSubmit: values => {
@@ -597,17 +604,17 @@ const SignupForm = () => {
   return (
     <form onSubmit={formik.handleSubmit}>
       <label htmlFor="firstName">First Name</label>
-      <input id="firstName" {...formik.getFieldProps('firstName')} />
+      <input name="firstName" {...formik.getFieldProps('firstName')} />
       {formik.touched.firstName && formik.errors.firstName ? (
         <div>{formik.errors.firstName}</div>
       ) : null}
       <label htmlFor="lastName">Last Name</label>
-      <input id="lastName" {...formik.getFieldProps('lastName')} />
+      <input name="lastName" {...formik.getFieldProps('lastName')} />
       {formik.touched.lastName && formik.errors.lastName ? (
         <div>{formik.errors.lastName}</div>
       ) : null}
       <label htmlFor="email">Email Address</label>
-      <input id="email" {...formik.getFieldProps('email')} />
+      <input name="email" {...formik.getFieldProps('email')} />
       {formik.touched.email && formik.errors.email ? (
         <div>{formik.errors.email}</div>
       ) : null}
@@ -619,7 +626,7 @@ const SignupForm = () => {
 
 ### Leveraging React Context
 
-Our code above is again very explicit about exactly what Formik is doing. `onChange` -> `handleChange`, `onBlur` -> `handleBlur`, and so on. However, we still have to manually pass each input this "prop getter" `getFieldProps()`. To save you even more time, Formik comes with [React Context](https://reactjs.org/docs/context.html)-powered API/component make life easier and less verbose: `<Formik/>`, `<Form />`, `<Field />`, and `<ErrorMessage />`. More explicitly, they use React Context implicitly connect to the parent `<Formik />` state/methods.
+Our code above is again very explicit about exactly what Formik is doing. `onChange` -> `handleChange`, `onBlur` -> `handleBlur`, and so on. However, we still have to manually pass each input this "prop getter" `getFieldProps()`. To save you even more time, Formik comes with [React Context](https://reactjs.org/docs/context.html)-powered API/component make life easier and less verbose: `<Formik />`, `<Form />`, `<Field />`, and `<ErrorMessage />`. More explicitly, they use React Context implicitly to connect to the parent `<Formik />` state/methods.
 
 Since these components use React Context, we need to render a [React Context Provider](https://reactjs.org/docs/context.html#contextprovider) that holds our form state and helpers in our tree. If you did this yourself, it would look like:
 
@@ -658,13 +665,13 @@ const SignupForm = () => {
       initialValues={{ firstName: '', lastName: '', email: '' }}
       validationSchema={Yup.object({
         firstName: Yup.string()
-          .min(15, 'Must be 15 characters or less')
+          .max(15, 'Must be 15 characters or less')
           .required('Required'),
         lastName: Yup.string()
-          .min(20, 'Must be 20 characters or less')
+          .max(20, 'Must be 20 characters or less')
           .required('Required'),
         email: Yup.string()
-          .email('Invalid email addresss`')
+          .email('Invalid email address')
           .required('Required'),
       })}
       onSubmit={(values, { setSubmitting }) => {
@@ -699,7 +706,7 @@ const SignupForm = () => {
 };
 ```
 
-As you can see above, we swapped out `useFormik()` hook and replaced it with the `<Formik>` component. The `<Formik>` accept a function as it's children (a.k.a. a render prop). It's argument is the _exact_ same object returned by `useFormik()` (in fact, `<Formik>` calls `useFormik()` internally!!). Thus, our form works the same as before, except now we can use new components to express ourselves in a more concise manner.
+As you can see above, we swapped out `useFormik()` hook and replaced it with the `<Formik>` component. The `<Formik>` accepts a function as its children (a.k.a. a render prop). Its argument is the _exact_ same object returned by `useFormik()` (in fact, `<Formik>` calls `useFormik()` internally!!). Thus, our form works the same as before, except now we can use new components to express ourselves in a more concise manner.
 
 ```jsx
 import React from 'react';
@@ -712,13 +719,13 @@ const SignupForm = () => {
       initialValues={{ firstName: '', lastName: '', email: '' }}
       validationSchema={Yup.object({
         firstName: Yup.string()
-          .min(15, 'Must be 15 characters or less')
+          .max(15, 'Must be 15 characters or less')
           .required('Required'),
         lastName: Yup.string()
-          .min(20, 'Must be 20 characters or less')
+          .max(20, 'Must be 20 characters or less')
           .required('Required'),
         email: Yup.string()
-          .email('Invalid email addresss`')
+          .email('Invalid email address')
           .required('Required'),
       })}
       onSubmit={(values, { setSubmitting }) => {
@@ -730,14 +737,14 @@ const SignupForm = () => {
     >
       <Form>
         <label htmlFor="firstName">First Name</label>
-        <Field id="firstName" type="text" />
+        <Field name="firstName" type="text" />
         <ErrorMessage name="firstName" />
         <label htmlFor="lastName">Last Name</label>
-        <Field id="lastName" type="text" />
-        <ErrorMessage name="firstName" />
+        <Field name="lastName" type="text" />
+        <ErrorMessage name="lastName" />
         <label htmlFor="email">Email Address</label>
-        <Field id="email" type="email" />
-        <ErrorMessage name="firstName" />
+        <Field name="email" type="email" />
+        <ErrorMessage name="email" />
         <button type="submit">Submit</button>
       </Form>
     </Formik>
@@ -745,9 +752,7 @@ const SignupForm = () => {
 };
 ```
 
-The `<Field>` component by default will render an `<input>` component that given a `name` prop will implicitly grab the respective `onChange`, `onBlur`, `value` props and pass them to the element as well as any props you pass to it. However,Since not everything is an input, `<Field>` also accepts a few other props to let you render whatever you want. Some examples..
-
-// @todo Is this necessary here?
+The `<Field>` component by default will render an `<input>` component that given a `name` prop will implicitly grab the respective `onChange`, `onBlur`, `value` props and pass them to the element as well as any props you pass to it. However, since not everything is an input, `<Field>` also accepts a few other props to let you render whatever you want. Some examples..
 
 ```jsx
 // <input className="form-input" placeHolder="Jane"  />
@@ -789,7 +794,7 @@ import * as Yup from 'yup';
 
 const MyTextInput = ({ label, ...props }) => {
   // useField() returns [formik.getFieldProps(), formik.getFieldMeta()]
-  // which we can spread on <input> and alse replace ErrorMessage entirely.
+  // which we can spread on <input> and also replace ErrorMessage entirely.
   const [field, meta] = useField(props);
   return (
     <>
@@ -861,13 +866,13 @@ const SignupForm = () => {
         }}
         validationSchema={Yup.object({
           firstName: Yup.string()
-            .min(15, 'Must be 15 characters or less')
+            .max(15, 'Must be 15 characters or less')
             .required('Required'),
           lastName: Yup.string()
-            .min(20, 'Must be 20 characters or less')
+            .max(20, 'Must be 20 characters or less')
             .required('Required'),
           email: Yup.string()
-            .email('Invalid email addresss`')
+            .email('Invalid email address')
             .required('Required'),
           acceptedTerms: Yup.boolean()
             .required('Required')
@@ -924,19 +929,19 @@ const SignupForm = () => {
 };
 ```
 
-As you can above, `useField()` gives us the ability to connect any kind input of React component to Formik as if it were a `<Field>` + `<ErrorMessage>`. We can use it to build a group of reusable inputs that fit our needs.
+As you can see above, `useField()` gives us the ability to connect any kind input of React component to Formik as if it were a `<Field>` + `<ErrorMessage>`. We can use it to build a group of reusable inputs that fit our needs.
 
 ## Wrapping Up
 
-Congratulations! You've create a signup form with Formik that:
+Congratulations! You've created a signup form with Formik that:
 
 - Has complex validation logic and rich error messages
-- Properly displays errors messages to the user at correct time (after they have blurred a field)
+- Properly displays errors messages to the user at the correct time (after they have blurred a field)
 - Leverages your own custom input components you can use on other forms in your app
 
 Nice work! We hope you now feel like you have a decent grasp on how Formik works.
 
-Check out the final result here: [Final Result](https://codesandbox.io/s/formik-v2-tutorial-final-t5fe0).
+Check out the final result here: [Final Result](https://codesandbox.io/s/formik-v2-tutorial-final-bq0li).
 
 If you have extra time or want to practice your new Formik skills, here are some ideas for improvements that you could make to the signup form which are listed in order of increasing difficulty:
 

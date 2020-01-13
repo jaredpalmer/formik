@@ -154,13 +154,13 @@ use it to pass API responses back into your component in `handleSubmit`.
 
 Set `isSubmitting` imperatively. You would call it with `setSubmitting(false)` in your `onSubmit` handler to finish the cycle. To learn more about the submission process, see [Form Submission](guides/form-submission.md).
 
-#### `setTouched: (fields: { [field: string]: boolean }) => void`
+#### `setTouched: (fields: { [field: string]: boolean }, shouldValidate?: boolean) => void`
 
-Set `touched` imperatively.
+Set `touched` imperatively. Calling this will trigger validation to run if `validateOnBlur` is set to `true` (which it is by default). You can also explicitly prevent/skip validation by passing a second argument as `false`.
 
-#### `setValues: (fields: { [field: string]: any }) => void`
+#### `setValues: (fields: { [field: string]: any }, shouldValidate?: boolean) => void`
 
-Set `values` imperatively.
+Set `values` imperatively. Calling this will trigger validation to run if `validateOnChange` is set to `true` (which it is by default). You can also explicitly prevent/skip validation by passing a second argument as `false`.
 
 #### `status?: any`
 
@@ -325,7 +325,7 @@ Note: `initialValues` not available to the higher-order component, use
 Your optional form reset handler. It is passed your forms `values` and the
 "FormikBag".
 
-### `onSubmit: (values: Values, formikBag: FormikBag) => void`
+### `onSubmit: (values: Values, formikBag: FormikBag) => void | Promise<any>`
 
 Your form submission handler. It is passed your forms `values` and the
 "FormikBag", which includes an object containing a subset of the
@@ -335,6 +335,8 @@ passed to the wrapped component.
 
 Note: `errors`, `touched`, `status` and all event handlers are NOT
 included in the `FormikBag`.
+
+> IMPORTANT: If `onSubmit` is async, then Formik will automatically set `isSubmitting` to `false` on your behalf once it has resolved. This means you do NOT need to call `formikBag.setSubmitting(false)` manually. However, if your `onSubmit` function is synchronous, then you need to call `setSubmitting(false)` on your own.
 
 ### `validate?: (values: Values) => FormikErrors<Values> | Promise<any>`
 
@@ -348,7 +350,7 @@ Validate the form's `values` with function. This function can either be:
 ```js
 // Synchronous validation
 const validate = values => {
-  let errors = {};
+  const errors = {};
 
   if (!values.email) {
     errors.email = 'Required';
@@ -370,7 +372,7 @@ const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 const validate = values => {
   return sleep(2000).then(() => {
-    let errors = {};
+    const errors = {};
     if (['admin', 'null', 'god'].includes(values.username)) {
       errors.username = 'Nice try';
     }

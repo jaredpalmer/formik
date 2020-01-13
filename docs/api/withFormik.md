@@ -87,7 +87,7 @@ class components (e.g. `class XXXXX extends React.Component {..}`).
 Default is `false`. Control whether Formik should reset the form if the wrapped
 component props change (using deep equality).
 
-### `handleSubmit: (values: Values, formikBag: FormikBag) => void`
+### `handleSubmit: (values: Values, formikBag: FormikBag) => void | Promise<any>`
 
 Your form submission handler. It is passed your forms `values` and the
 "FormikBag", which includes an object containing a subset of the
@@ -110,6 +110,8 @@ passed to the wrapped component.
 
 Note: `errors`, `touched`, `status` and all event handlers are NOT
 included in the `FormikBag`.
+
+> IMPORTANT: If `onSubmit` is async, then Formik will automatically set `isSubmitting` to `false` on your behalf once it has resolved. This means you do NOT need to call `formikBag.setSubmitting(false)` manually. However, if your `onSubmit` function is synchronous, then you need to call `setSubmitting(false)` on your own.
 
 ### `isInitialValid?: boolean | (props: Props) => boolean`
 
@@ -161,7 +163,7 @@ Validate the form's `values` with function. This function can either be:
 ```js
 // Synchronous validation
 const validate = (values, props) => {
-  let errors = {};
+  const errors = {};
 
   if (!values.email) {
     errors.email = 'Required';
@@ -175,7 +177,7 @@ const validate = (values, props) => {
 };
 ```
 
-- Asynchronous and return a Promise that's error is an `errors` object
+- Asynchronous and return a Promise that's resolves to an object containing `errors`
 
 ```js
 // Async Validation
@@ -183,14 +185,12 @@ const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 const validate = (values, props) => {
   return sleep(2000).then(() => {
-    let errors = {};
+    const errors = {};
     if (['admin', 'null', 'god'].includes(values.username)) {
       errors.username = 'Nice try';
     }
     // ...
-    if (Object.keys(errors).length) {
-      throw errors;
-    }
+    return errors;
   });
 };
 ```

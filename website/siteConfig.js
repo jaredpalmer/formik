@@ -181,7 +181,17 @@ const users = [
   {
     caption: 'brightwheel',
     image: '/formik/img/logos/brightwheel.svg',
-    infoLink: 'https://mybrightwheel.com'
+    infoLink: 'https://mybrightwheel.com',
+  },
+  {
+    caption: 'restaurant365',
+    image: '/formik/img/logos/restaurant365.svg',
+    infoLink: 'https://restaurant365.com',
+  },
+  {
+    caption: 'CarGurus',
+    image: '/formik/img/logos/cargurus.svg',
+    infoLink: 'https://www.cargurus.com',
   }
 ];
 

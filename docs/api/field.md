@@ -123,7 +123,7 @@ Default is `'input'` (so an `<input>` is rendered by default)
 <Field name="firstName" as={CustomInputComponent} placeholder="First Name"/>
 
 const CustomInputComponent = (props) => (
-  <input clasName="my-custom-input" type="text" {...props} />
+  <input className="my-custom-input" type="text" {...props} />
 );
 ```
 

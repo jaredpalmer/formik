@@ -91,7 +91,7 @@ const CheckboxExample = () => (
             Product Manager
           </label>
           {/*
-           You do not _need_ to use <Field>/useField to get this behaviorr, 
+           You do not _need_ to use <Field>/useField to get this behavior, 
            using handleChange, handleBlur, and values works as well. 
           */}
           <label>
@@ -169,7 +169,7 @@ A hook that is equivalent to `connect()`.
 - `initialErrors`, `initialTouched`, `initialStatus` have been added
 
 ```jsx
-// <input className="form-input" placeHolder="Jane"  />
+// <input className="form-input" placeholder="Jane"  />
 <Field name="firstName" className="form-input" placeholder="Jane" />
 
 // <textarea className="form-textarea"/></textarea>
@@ -190,11 +190,11 @@ const MyStyledInput = styled.input`
 `
 const MyStyledTextarea = MyStyledInput.withComponent('textarea');
 
-// <input className="czx_123" placeHolder="google.com"  />
-<Field name="website" as={MyStyledInput} placeHolder="google.com"/>
+// <input className="czx_123" placeholder="google.com"  />
+<Field name="website" as={MyStyledInput} placeholder="google.com"/>
 
-// <textarea  placeHolder="Post a message..." rows={5}></textarea>
-<Field name="message" as={MyStyledTextArea} placeHolder="Post a message.." rows={4}/>
+// <textarea placeholder="Post a message..." rows={5}></textarea>
+<Field name="message" as={MyStyledTextArea} placeholder="Post a message.." rows={4}/>
 ```
 
 ### `getFieldProps(nameOrProps)`

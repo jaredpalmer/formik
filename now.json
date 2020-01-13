@@ -1,0 +1,11 @@
+{
+  "name": "formik-docs",
+  "version": 2,
+  "builds": [{
+    "src": "package.json",
+    "use": "@now/static-build",
+    "config": {
+      "distDir": "website/build"
+    }
+  }]
+}

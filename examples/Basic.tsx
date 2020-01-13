@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Formik, Field, Form, FormikActions } from 'formik';
+import { Formik, Field, Form, FormikHelpers } from 'formik';
 
 interface Values {
   firstName: string;
@@ -16,7 +16,7 @@ const Basic: React.SFC<{}> = () => (
         lastName: '',
         email: '',
       }}
-      onSubmit={(values: Values, { setSubmitting }: FormikActions<Values>) => {
+      onSubmit={(values: Values, { setSubmitting }: FormikHelpers<Values>) => {
         setTimeout(() => {
           alert(JSON.stringify(values, null, 2));
           setSubmitting(false);

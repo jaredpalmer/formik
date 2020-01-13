@@ -50,8 +50,8 @@
     "tslib": "^1.10.0"
   },
   "resolutions": {
-    "@types/react": "16.9.11",
-    "@types/react-dom": "16.9.3"
+    "@types/react": "16.9.17",
+    "@types/react-dom": "16.9.4"
   },
   "devDependencies": {
     "@babel/core": "^7.1.2",
@@ -61,8 +61,8 @@
     "@types/hoist-non-react-statics": "^3.3.1",
     "@types/jest": "^24.0.5",
     "@types/lodash": "^4.14.119",
-    "@types/react": "^16.9.11",
-    "@types/react-dom": "^16.9.3",
+    "@types/react": "^16.9.17",
+    "@types/react-dom": "^16.9.4",
     "@types/warning": "^3.0.0",
     "@types/yup": "^0.24.9",
     "@typescript-eslint/eslint-plugin": "^1.9.0",
@@ -92,7 +92,7 @@
     "react-dom": "^16.12.0",
     "react-testing-library": "^7.0.0",
     "rimraf": "^2.6.2",
-    "tsdx": "0.9",
+    "tsdx": "0.12.3",
     "typescript": "^3.6.4",
     "webpack": "^4.31.0",
     "yup": "^0.27.0"

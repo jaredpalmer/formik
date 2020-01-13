@@ -148,6 +148,8 @@ export interface FormikSharedConfig<Props = {}> {
   validateOnBlur?: boolean;
   /** Tells Formik to validate upon mount */
   validateOnMount?: boolean;
+  /** Tells Formik to validate before proceeding with submission */
+  validateOnSubmit?: boolean;
   /** Tell Formik if initial form values are valid or not on first render */
   isInitialValid?: boolean | ((props: Props) => boolean);
   /** Should Formik reset the form when new initialValues change */

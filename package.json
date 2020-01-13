@@ -4,7 +4,8 @@
   "devDependencies": {
     "lerna": "^3.19.0",
     "release": "6.0.1",
-    "got": "10.0.4"
+    "got": "10.0.4",
+    "prettier": "^1.19.1"
   },
   "workspaces": [
     "packages/*"
@@ -28,5 +29,7 @@
     "singleQuote": true,
     "semi": true
   },
-  "engines": { "node": "12.x" }
+  "engines": {
+    "node": "12.x"
+  }
 }

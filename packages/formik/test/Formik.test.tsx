@@ -491,6 +491,19 @@ describe('<Formik>', () => {
         expect(onSubmit).not.toBeCalled();
       });
 
+      it('should submit the form if invalid, but validateOnSubmit is true', () => {
+        const onSubmit = jest.fn();
+        const validate = jest.fn(() => ({ name: 'Error!' }));
+        const { getByTestId } = renderFormik({
+          onSubmit,
+          validate,
+          validateOnSubmit: true,
+        });
+
+        fireEvent.submit(getByTestId('form'));
+        expect(onSubmit).not.toBeCalled();
+      });
+
       it('should not submit the form if validate function throws an error', async () => {
         const onSubmit = jest.fn();
         const err = new Error('Async Error');

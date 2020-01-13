@@ -132,6 +132,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   validateOnChange = true,
   validateOnBlur = true,
   validateOnMount = false,
+  validateOnSubmit = true,
   isInitialValid,
   enableReinitialize = false,
   onSubmit,
@@ -327,21 +328,21 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     (values: Values = state.values) => {
       return unstable_runWithPriority(LowPriority, () => {
         return runAllValidations(values)
-        .then(combinedErrors => {
-          if (!!isMounted.current) {
-            dispatch({ type: 'SET_ERRORS', payload: combinedErrors });
-          }
-          return combinedErrors;
-        })
-        .catch(actualException => {
-          if (process.env.NODE_ENV !== 'production') {
-            // Users can throw during validate, however they have no way of handling their error on touch / blur. In low priority, we need to handle it
-            console.warn(
-              `Warning: An unhandled error was caught during low priority validation in <Formik validate />`,
-              actualException
-            );
-          }
-        });
+          .then(combinedErrors => {
+            if (!!isMounted.current) {
+              dispatch({ type: 'SET_ERRORS', payload: combinedErrors });
+            }
+            return combinedErrors;
+          })
+          .catch(actualException => {
+            if (process.env.NODE_ENV !== 'production') {
+              // Users can throw during validate, however they have no way of handling their error on touch / blur. In low priority, we need to handle it
+              console.warn(
+                `Warning: An unhandled error was caught during low priority validation in <Formik validate />`,
+                actualException
+              );
+            }
+          });
       });
     }
   );
@@ -634,7 +635,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
       } else {
         executeChange(eventOrPath);
       }
-    },
+    }
   );
 
   const setFieldTouched = useEventCallback(
@@ -675,15 +676,15 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     [setFieldTouched]
   );
 
-  const handleBlur = useEventCallback(
-    (eventOrString: any): void | ((e: any) => void) => {
-      if (isString(eventOrString)) {
-        return event => executeBlur(event, eventOrString);
-      } else {
-        executeBlur(eventOrString);
-      }
-    },
-  );
+  const handleBlur = useEventCallback((eventOrString: any):
+    | void
+    | ((e: any) => void) => {
+    if (isString(eventOrString)) {
+      return event => executeBlur(event, eventOrString);
+    } else {
+      executeBlur(eventOrString);
+    }
+  });
 
   const setFormikState = React.useCallback(
     (
@@ -730,66 +731,75 @@ export function useFormik<Values extends FormikValues = FormikValues>({
 
   const submitForm = useEventCallback(() => {
     dispatch({ type: 'SUBMIT_ATTEMPT' });
-    return validateFormWithHighPriority().then(
-      (combinedErrors: FormikErrors<Values>) => {
-        // In case an error was thrown and passed to the resolved Promise,
-        // `combinedErrors` can be an instance of an Error. We need to check
-        // that and abort the submit.
-        // If we don't do that, calling `Object.keys(new Error())` yields an
-        // empty array, which causes the validation to pass and the form
-        // to be submitted.
 
-        const isInstanceOfError = combinedErrors instanceof Error;
-        const isActuallyValid =
-          !isInstanceOfError && Object.keys(combinedErrors).length === 0;
-        if (isActuallyValid) {
-          // Proceed with submit...
-          //
-          // To respect sync submit fns, we can't simply wrap executeSubmit in a promise and
-          // _always_ dispatch SUBMIT_SUCCESS because isSubmitting would then always be false.
-          // This would be fine in simple cases, but make it impossible to disable submit
-          // buttons where people use callbacks or promises as side effects (which is basically
-          // all of v1 Formik code). Instead, recall that we are inside of a promise chain already,
-          //  so we can try/catch executeSubmit(), if it returns undefined, then just bail.
-          // If there are errors, throw em. Otherwise, wrap executeSubmit in a promise and handle
-          // cleanup of isSubmitting on behalf of the consumer.
-          let promiseOrUndefined;
-          try {
-            promiseOrUndefined = executeSubmit();
-            // Bail if it's sync, consumer is responsible for cleaning up
-            // via setSubmitting(false)
-            if (promiseOrUndefined === undefined) {
-              return;
-            }
-          } catch (error) {
-            throw error;
-          }
-
-          return Promise.resolve(promiseOrUndefined)
-            .then(() => {
-              if (!!isMounted.current) {
-                dispatch({ type: 'SUBMIT_SUCCESS' });
-              }
-            })
-            .catch(_errors => {
-              if (!!isMounted.current) {
-                dispatch({ type: 'SUBMIT_FAILURE' });
-                // This is a legit error rejected by the onSubmit fn
-                // so we don't want to break the promise chain
-                throw _errors;
-              }
-            });
-        } else if (!!isMounted.current) {
-          // ^^^ Make sure Formik is still mounted before updating state
-          dispatch({ type: 'SUBMIT_FAILURE' });
-          // throw combinedErrors;
-          if (isInstanceOfError) {
-            throw combinedErrors;
-          }
+    async function runSubmissionFn() {
+      // Proceed with submit...
+      //
+      // To respect sync submit fns, we can't simply wrap executeSubmit in a promise and
+      // _always_ dispatch SUBMIT_SUCCESS because isSubmitting would then always be false.
+      // This would be fine in simple cases, but make it impossible to disable submit
+      // buttons where people use callbacks or promises as side effects (which is basically
+      // all of v1 Formik code). Instead, recall that we are inside of a promise chain already,
+      //  so we can try/catch executeSubmit(), if it returns undefined, then just bail.
+      // If there are errors, throw em. Otherwise, wrap executeSubmit in a promise and handle
+      // cleanup of isSubmitting on behalf of the consumer.
+      let promiseOrUndefined;
+      try {
+        promiseOrUndefined = executeSubmit();
+        // Bail if it's sync, consumer is responsible for cleaning up
+        // via setSubmitting(false)
+        if (promiseOrUndefined === undefined) {
+          return;
         }
-        return;
+      } catch (error) {
+        throw error;
       }
-    );
+
+      return Promise.resolve(promiseOrUndefined)
+        .then(() => {
+          if (!!isMounted.current) {
+            dispatch({ type: 'SUBMIT_SUCCESS' });
+          }
+        })
+        .catch(_errors => {
+          if (!!isMounted.current) {
+            dispatch({ type: 'SUBMIT_FAILURE' });
+            // This is a legit error rejected by the onSubmit fn
+            // so we don't want to break the promise chain
+            throw _errors;
+          }
+        });
+    }
+
+    if (validateOnSubmit) {
+      return validateFormWithHighPriority().then(
+        (combinedErrors: FormikErrors<Values>) => {
+          // In case an error was thrown and passed to the resolved Promise,
+          // `combinedErrors` can be an instance of an Error. We need to check
+          // that and abort the submit.
+          // If we don't do that, calling `Object.keys(new Error())` yields an
+          // empty array, which causes the validation to pass and the form
+          // to be submitted.
+
+          const isInstanceOfError = combinedErrors instanceof Error;
+          const isActuallyValid =
+            !isInstanceOfError && Object.keys(combinedErrors).length === 0;
+          if (isActuallyValid) {
+            return runSubmissionFn();
+          } else if (!!isMounted.current) {
+            // ^^^ Make sure Formik is still mounted before updating state
+            dispatch({ type: 'SUBMIT_FAILURE' });
+            // throw combinedErrors;
+            if (isInstanceOfError) {
+              throw combinedErrors;
+            }
+          }
+          return;
+        }
+      );
+    }
+
+    return runSubmissionFn();
   });
 
   const handleSubmit = useEventCallback(
@@ -1131,9 +1141,9 @@ function getValueForCheckbox(
   }
 
   // If the currentValue was not a boolean we want to return an array
-  let currentArrayOfValues = []
-  let isValueInArray = false
-  let index = -1
+  let currentArrayOfValues = [];
+  let isValueInArray = false;
+  let index = -1;
 
   if (!Array.isArray(currentValue)) {
     // eslint-disable-next-line eqeqeq
@@ -1142,11 +1152,10 @@ function getValueForCheckbox(
     }
   } else {
     // If the current value is already an array, use it
-    currentArrayOfValues = currentValue
+    currentArrayOfValues = currentValue;
     index = currentValue.indexOf(valueProp);
     isValueInArray = index >= 0;
   }
-
 
   // If the checkbox was checked and the value is not already present in the aray we want to add the new value to the array of values
   if (checked && valueProp && !isValueInArray) {
@@ -1155,11 +1164,13 @@ function getValueForCheckbox(
 
   // If the checkbox was unchecked and the value is not in the array, simply return the already existing array of values
   if (!isValueInArray) {
-    return currentArrayOfValues
+    return currentArrayOfValues;
   }
 
   // If the checkbox was unchecked and the value is in the array, remove the value and return the array
-  return currentArrayOfValues.slice(0, index).concat(currentArrayOfValues.slice(index + 1));
+  return currentArrayOfValues
+    .slice(0, index)
+    .concat(currentArrayOfValues.slice(index + 1));
 }
 
 // React currently throws a warning when using useLayoutEffect on the server.

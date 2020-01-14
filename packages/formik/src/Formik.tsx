@@ -994,15 +994,16 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   return ctx;
 }
 
-export function Formik<
+export const Formik = React.forwardRef(function Formik<
   Values extends FormikValues = FormikValues,
   ExtraProps = {}
->(props: FormikConfig<Values> & ExtraProps) {
+>(props: FormikConfig<Values> & ExtraProps, ref: any) {
   const formikbag = useFormik<Values>(props);
   const { component, children, render, innerRef } = props;
 
   // This allows folks to pass a ref to <Formik />
   React.useImperativeHandle(innerRef, () => formikbag);
+  React.useImperativeHandle(ref, () => formikbag);
 
   React.useEffect(() => {
     if (__DEV__) {
@@ -1030,7 +1031,7 @@ export function Formik<
         : null}
     </FormikProvider>
   );
-}
+})
 
 function warnAboutMissingIdentifier({
   htmlContent,

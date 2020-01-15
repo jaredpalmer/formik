@@ -1009,8 +1009,8 @@ export const Formik = React.forwardRef(function Formik<
   const { component, children, render, innerRef } = props;
 
   // This allows folks to pass a ref to <Formik />
-  React.useImperativeHandle(innerRef, () => formikbag);
   React.useImperativeHandle(ref, () => formikbag);
+  React.useImperativeHandle(innerRef, () => formikbag);
 
   React.useEffect(() => {
     if (__DEV__) {

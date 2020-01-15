@@ -994,6 +994,13 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   return ctx;
 }
 
+type FormikComponent = <
+  Values extends FormikValues = FormikValues,
+  ExtraProps = {}
+>(
+  props: FormikConfig<Values> & ExtraProps & React.RefAttributes<any>
+) => JSX.Element | null;
+
 export const Formik = React.forwardRef(function Formik<
   Values extends FormikValues = FormikValues,
   ExtraProps = {}
@@ -1031,7 +1038,7 @@ export const Formik = React.forwardRef(function Formik<
         : null}
     </FormikProvider>
   );
-})
+}) as FormikComponent;
 
 function warnAboutMissingIdentifier({
   htmlContent,

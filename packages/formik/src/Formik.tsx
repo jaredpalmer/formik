@@ -1159,8 +1159,8 @@ function getValueForCheckbox(
 
   if (!Array.isArray(currentValue)) {
     // eslint-disable-next-line eqeqeq
-    if (valueProp == 'true' || valueProp == 'false') {
-      return !!checked;
+    if (!valueProp || valueProp == 'true' || valueProp == 'false') {
+      return Boolean(checked);
     }
   } else {
     // If the current value is already an array, use it

@@ -22,7 +22,7 @@ export interface FieldConfig<V = any> {
    * Field component to render. Can either be a string like 'select' or a component.
    */
   component?:
-    | keyof JSX.IntrinsicElements
+    | string
     | React.ComponentType<FieldProps<V>>
     | React.ComponentType
     | React.ForwardRefExoticComponent<any>;
@@ -32,7 +32,7 @@ export interface FieldConfig<V = any> {
    */
   as?:
     | React.ComponentType<FieldProps<V>['field']>
-    | keyof JSX.IntrinsicElements
+    | string
     | React.ComponentType
     | React.ForwardRefExoticComponent<any>;
 
@@ -119,7 +119,11 @@ export function useField<Val = any>(
     'Invalid field name. Either pass `useField` a string or an object containing a `name` key.'
   );
 
-  return [getFieldProps(props), getFieldMeta(fieldName), getFieldHelpers(fieldName)];
+  return [
+    getFieldProps(props),
+    getFieldMeta(fieldName),
+    getFieldHelpers(fieldName),
+  ];
 }
 
 export function Field({

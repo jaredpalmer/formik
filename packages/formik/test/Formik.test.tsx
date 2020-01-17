@@ -1303,8 +1303,6 @@ describe('<Formik>', () => {
 
     const { getProps } = renderFormik({ ref });
 
-    ref.current.values.name;
-
     expect(ref.current).toEqual(getProps());
   });
 });

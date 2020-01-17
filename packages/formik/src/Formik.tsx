@@ -1000,9 +1000,10 @@ export const Formik = React.forwardRef(<
   ExtraProps = {}
 >(props: FormikConfig<Values> & ExtraProps, ref: React.Ref<FormikContextType<Values>>) => {
   const formikbag = useFormik<Values>(props);
-  const { component, children, render } = props;
+  const { component, children, render, innerRef } = props;
 
   // This allows folks to pass a ref to <Formik />
+  React.useImperativeHandle(innerRef, () => formikbag);
   React.useImperativeHandle(ref, () => formikbag);
 
   React.useEffect(() => {

@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { render, fireEvent, wait } from 'react-testing-library';
-import { FormikContextType } from '../src/types';
 import * as Yup from 'yup';
 
 import {
@@ -51,7 +50,7 @@ function Form({
 
 const InitialValues = { name: 'jared' };
 
-function renderFormik<V = Values>(props?: Partial<FormikConfig<V>> & React.RefAttributes<FormikContextType<V>>) {
+function renderFormik<V = Values>(props?: Partial<FormikConfig<V>> & React.RefAttributes<FormikProps<V>>) {
   let injected: any;
   const { rerender, ...rest } = render(
     <Formik
@@ -1299,7 +1298,7 @@ describe('<Formik>', () => {
   });
 
   it('exposes formikbag with forwardRef', () => {
-    const ref = React.createRef<FormikContextType<Values>>();
+    const ref = React.createRef<FormikProps<Values>>();
 
     const { getProps } = renderFormik({ ref });
 

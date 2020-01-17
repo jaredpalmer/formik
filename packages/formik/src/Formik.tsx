@@ -13,7 +13,6 @@ import {
   FieldHelperProps,
   FieldInputProps,
   FormikHelpers,
-  FormikContextType,
 } from './types';
 import {
   isFunction,
@@ -138,7 +137,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   enableReinitialize = false,
   onSubmit,
   ...rest
-}: FormikConfig<Values>) {
+}: FormikConfig<Values>): FormikProps<Values> {
   const props = {
     validateOnChange,
     validateOnBlur,
@@ -998,7 +997,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
 export const Formik = React.forwardRef(<
   Values extends FormikValues = FormikValues,
   ExtraProps = {}
->(props: FormikConfig<Values> & ExtraProps, ref: React.Ref<FormikContextType<Values>>) => {
+>(props: FormikConfig<Values> & ExtraProps, ref: React.Ref<FormikProps<Values>>) => {
   const formikbag = useFormik<Values>(props);
   const { component, children, render, innerRef } = props;
 
@@ -1035,7 +1034,7 @@ export const Formik = React.forwardRef(<
 }) as <
   Values extends FormikValues = FormikValues,
   ExtraProps = {}
->(props: FormikConfig<Values> & ExtraProps & React.RefAttributes<FormikContextType<Values>>) => JSX.Element;
+>(props: FormikConfig<Values> & ExtraProps & React.RefAttributes<FormikProps<Values>>) => JSX.Element;
 
 function warnAboutMissingIdentifier({
   htmlContent,

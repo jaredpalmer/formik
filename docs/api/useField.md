@@ -51,10 +51,10 @@ const Example = () => (
     >
       {(props: FormikProps<Values>) => (
         <Form>
-          <MyTextField name="firstName" type="text" label="First Name" />
-          <MyTextField name="lastName" type="text" label="Last Name" />
-          <MyTextField name="email" type="email" label="Email" />
-          <button type="submit">Submit</button>
+          <MyTextField name='firstName' type='text' label='First Name' />
+          <MyTextField name='lastName' type='text' label='Last Name' />
+          <MyTextField name='email' type='email' label='Email' />
+          <button type='submit'>Submit</button>
         </Form>
       )}
     </Formik>
@@ -150,6 +150,6 @@ An object that contains relevant computed metadata about a field. More specifica
 
 An object that contains helper functions which you can use to imperatively change the value, error value or touched status for the field in question. This is useful for components which need to change a field's status directly, without triggering change or blur events.
 
-- `setValue(value: any): void` - A function to change the field's value
-- `setTouched(value: boolean): void` - A function to change the field's touched status
+- `setValue(value: any, shouldValidate?: boolean): void` - A function to change the field's value
+- `setTouched(value: boolean, shouldValidate?: boolean): void` - A function to change the field's touched status
 - `setError(value: any): void` - A function to change the field's error value

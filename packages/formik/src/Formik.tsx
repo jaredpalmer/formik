@@ -13,7 +13,6 @@ import {
   FieldHelperProps,
   FieldInputProps,
   FormikHelpers,
-  FormikContextType,
 } from './types';
 import {
   isFunction,
@@ -29,7 +28,6 @@ import {
 import { FormikProvider } from './FormikContext';
 import invariant from 'tiny-warning';
 import { LowPriority, unstable_runWithPriority } from 'scheduler';
-import { FormikBag } from './withFormik';
 
 type FormikMessage<Values> =
   | { type: 'SUBMIT_ATTEMPT' }
@@ -996,15 +994,15 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   return ctx;
 }
 
-export const Formik = React.forwardRef(<
+export function Formik<
   Values extends FormikValues = FormikValues,
   ExtraProps = {}
->(props: FormikConfig<Values> & ExtraProps, ref: React.Ref<FormikContextType<Values>>) => {
+>(props: FormikConfig<Values> & ExtraProps) {
   const formikbag = useFormik<Values>(props);
-  const { component, children, render } = props;
+  const { component, children, render, innerRef } = props;
 
   // This allows folks to pass a ref to <Formik />
-  React.useImperativeHandle(ref, () => formikbag);
+  React.useImperativeHandle(innerRef, () => formikbag);
 
   React.useEffect(() => {
     if (__DEV__) {
@@ -1032,10 +1030,7 @@ export const Formik = React.forwardRef(<
         : null}
     </FormikProvider>
   );
-}) as <
-  Values extends FormikValues = FormikValues,
-  ExtraProps = {}
->(props: FormikConfig<Values> & ExtraProps & React.RefAttributes<FormikContextType<Values>>) => JSX.Element;
+}
 
 function warnAboutMissingIdentifier({
   htmlContent,

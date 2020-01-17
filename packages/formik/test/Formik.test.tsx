@@ -51,7 +51,7 @@ function Form({
 
 const InitialValues = { name: 'jared' };
 
-function renderFormik<V = Values>(props?: Partial<FormikConfig<V>> & React.RefAttributes<FormikContextType<Values>>) {
+function renderFormik<V = Values>(props?: Partial<FormikConfig<V>> & React.RefAttributes<FormikContextType<V>>) {
   let injected: any;
   const { rerender, ...rest } = render(
     <Formik

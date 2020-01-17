@@ -29,7 +29,6 @@ import {
 import { FormikProvider } from './FormikContext';
 import invariant from 'tiny-warning';
 import { LowPriority, unstable_runWithPriority } from 'scheduler';
-import { FormikBag } from './withFormik';
 
 type FormikMessage<Values> =
   | { type: 'SUBMIT_ATTEMPT' }

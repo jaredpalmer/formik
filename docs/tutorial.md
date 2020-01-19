@@ -780,7 +780,7 @@ const MyStyledTextarea = MyStyledInput.withComponent('textarea');
 <Field name="website" as={MyStyledInput} placeHolder="google.com"/>
 
 // <textarea  placeHolder="Post a message..." rows={5}></textarea>
-<Field name="message" as={MyStyledTextArea} placeHolder="Post a message.." rows={4}/>
+<Field name="message" as={MyStyledTextArea} placeHolder="Post a message.." rows={5}/>
 ```
 
 React is all about composition, and while we've cut down on a lot of the prop-drilling, we are still repeating ourselves with a `label`, `<Field>`, and `<ErrorMessage>` for each of our inputs. We can do better with an abstraction! With Formik, you can and should build reusable input primitive components that you can share around your application. Turns out our `<Field>` render-prop component has a sister and her name is `useField` that's going to do the same thing, but via React Hooks! Check this out...

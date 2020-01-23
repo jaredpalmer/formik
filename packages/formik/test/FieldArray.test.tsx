@@ -398,6 +398,8 @@ describe('<FieldArray />', () => {
       );
 
       formikBag.setErrors({ friends: { 2: ['Field error'] } });
+      const rowErrors = arrayHelpers.errors(2);
+      expect(rowErrors).toEqual(['Field error']);
 
       arrayHelpers.push('michael');
       const el = arrayHelpers.pop();

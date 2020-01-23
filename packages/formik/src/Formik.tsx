@@ -516,6 +516,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
             payload: { field: name, value: error },
           });
           dispatch({ type: 'SET_ISVALIDATING', payload: false });
+          return error;
         });
       } else {
         dispatch({
@@ -535,6 +536,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
           payload: { field: name, value: error[name] },
         });
         dispatch({ type: 'SET_ISVALIDATING', payload: false });
+        return error[name];
       });
     }
 

@@ -395,15 +395,21 @@ describe('Field / FastField', () => {
         const validationSchema = Yup.object({
           name: Yup.string().min(100, errorMessage),
         });
-        const { getFormProps, rerender } = renderField({}, { validationSchema });
+        const { getFormProps, rerender } = renderField(
+          {},
+          { validationSchema }
+        );
 
         rerender();
 
-        getFormProps().validateField('name');
+        const error = await getFormProps().validateField('name');
+        expect(error).toEqual(errorMessage);
 
-        await wait(() => expect(getFormProps().errors).toEqual({
-          name: errorMessage
-        }));
+        await wait(() =>
+          expect(getFormProps().errors).toEqual({
+            name: errorMessage,
+          })
+        );
       }
     );
   });

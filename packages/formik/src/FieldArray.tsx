@@ -6,6 +6,7 @@ import {
   FormikState,
   SharedRenderProps,
   FormikProps,
+  FormikErrors,
 } from './types';
 import {
   getIn,
@@ -60,6 +61,8 @@ export interface ArrayHelpers {
   remove<T>(index: number): T | undefined;
   /** Imperatively remove and return value from the end of the array */
   pop<T>(): T | undefined;
+  /** Imperatively get errors for a row */
+  error<T>(index:number):FormikErrors<T> | undefined
 }
 
 /**
@@ -132,6 +135,7 @@ class FieldArrayInner<Values = {}> extends React.Component<
     // @todo Fix TS 3.2.1
     this.remove = this.remove.bind(this) as any;
     this.pop = this.pop.bind(this) as any;
+    this.error = this.error.bind(this) as any;
   }
 
   componentDidUpdate(
@@ -319,6 +323,10 @@ class FieldArrayInner<Values = {}> extends React.Component<
 
   handlePop = () => () => this.pop<any>();
 
+  error<T>(index:number): FormikErrors<T> | undefined {
+    return getIn(this.props.formik.errors, `${this.props.name}.[${index}]`) as FormikErrors<T> | undefined;
+  }
+
   render() {
     const arrayHelpers: ArrayHelpers = {
       push: this.push,
@@ -337,6 +345,7 @@ class FieldArrayInner<Values = {}> extends React.Component<
       handleReplace: this.handleReplace,
       handleUnshift: this.handleUnshift,
       handleRemove: this.handleRemove,
+      error: this.error,
     };
 
     const {

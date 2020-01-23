@@ -500,21 +500,23 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     // changes if the validation function is synchronous. It's different from
     // what is called when using validateForm.
 
-    if (isFunction(fieldRegistry.current[name].validate)) {
+    if (
+      isFunction(
+        fieldRegistry.current[name] && fieldRegistry.current[name].validate
+      )
+    ) {
       const value = getIn(state.values, name);
       const maybePromise = fieldRegistry.current[name].validate(value);
       if (isPromise(maybePromise)) {
         // Only flip isValidating if the function is async.
         dispatch({ type: 'SET_ISVALIDATING', payload: true });
-        return maybePromise
-          .then((x: any) => x)
-          .then((error: string) => {
-            dispatch({
-              type: 'SET_FIELD_ERROR',
-              payload: { field: name, value: error },
-            });
-            dispatch({ type: 'SET_ISVALIDATING', payload: false });
+        return maybePromise.then((error: string) => {
+          dispatch({
+            type: 'SET_FIELD_ERROR',
+            payload: { field: name, value: error },
           });
+          dispatch({ type: 'SET_ISVALIDATING', payload: false });
+        });
       } else {
         dispatch({
           type: 'SET_FIELD_ERROR',
@@ -527,15 +529,13 @@ export function useFormik<Values extends FormikValues = FormikValues>({
       }
     } else if (props.validationSchema) {
       dispatch({ type: 'SET_ISVALIDATING', payload: true });
-      return runValidationSchema(state.values, name)
-        .then((x: any) => x)
-        .then((error: any) => {
-          dispatch({
-            type: 'SET_FIELD_ERROR',
-            payload: { field: name, value: error[name] },
-          });
-          dispatch({ type: 'SET_ISVALIDATING', payload: false });
+      return runValidationSchema(state.values, name).then((error: any) => {
+        dispatch({
+          type: 'SET_FIELD_ERROR',
+          payload: { field: name, value: error[name] },
         });
+        dispatch({ type: 'SET_ISVALIDATING', payload: false });
+      });
     }
 
     return Promise.resolve();

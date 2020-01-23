@@ -131,13 +131,23 @@ describe('withFormik()', () => {
     );
   });
 
-  it('calls validationSchema', async () => {
+  it('calls validationSchema on submitForm', async () => {
     const validate = jest.fn(() => Promise.resolve());
     const { getProps } = renderWithFormik({
       validationSchema: { validate },
     });
 
     getProps().submitForm();
+    await wait(() => expect(validate).toHaveBeenCalled());
+  });
+
+  it(`calls validationSchema on validateField`, async () => {
+    const validate = jest.fn(() => Promise.resolve());
+    const { getProps } = renderWithFormik({
+      validationSchema: { validate },
+    });
+
+    await getProps().validateField('name');
     await wait(() => expect(validate).toHaveBeenCalled());
   });
 

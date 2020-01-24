@@ -95,8 +95,8 @@ Once you've added this you will have access to the `window.Formik.<Insert_Compon
 
 You can play with Formik in your web browser with these live online playgrounds.
 
-- CodeSandbox (ReactDOM) https://codesandbox.io/s/zKrK5YLDZ
-- Expo Snack (React Native) https://snack.expo.io/@jaredpalmer/basic-formik-x-react-native-example
+- [CodeSandbox (ReactDOM)](https://codesandbox.io/s/zKrK5YLDZ)
+- [Snack (React Native)](https://snack.expo.io/?dependencies=yup%2Cformik%2Creact-native-paper%2Cexpo-constants&sourceUrl=https%3A%2F%2Fgist.githubusercontent.com%2Fbrentvatne%2F700e1dbf9c3e88a11aef8e557627ce3f%2Fraw%2Feeee57721c9890c1212ac34a4c37707f6354f469%2FApp.js)
 
 ## The Gist
 

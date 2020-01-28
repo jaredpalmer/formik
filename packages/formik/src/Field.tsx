@@ -53,6 +53,22 @@ export interface FieldConfig<V = any> {
   validate?: FieldValidator;
 
   /**
+   * Function to parse raw input value before setting it to state
+   */
+  parse?: (value: any, name: string) => any;
+
+  /**
+   * Function to transform value passed to input
+   */
+  format?: (value: any, name: string) => any;
+
+  /**
+   * Wait until blur event before formatting input value?
+   * @default false
+   */
+  formatOnBlur?: boolean;
+
+  /**
    * Field name
    */
   name: string;

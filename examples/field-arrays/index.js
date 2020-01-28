@@ -1,14 +1,14 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { Formik, Field, Form, ErrorMessage, FieldArray } from 'formik';
+import React from "react";
+import ReactDOM from "react-dom";
+import { Formik, Field, Form, ErrorMessage, FieldArray } from "formik";
 
 const initialValues = {
   friends: [
     {
-      name: '',
-      email: '',
-    },
-  ],
+      name: "",
+      email: ""
+    }
+  ]
 };
 
 const InviteFriends = () => (
@@ -69,7 +69,7 @@ const InviteFriends = () => (
                 <button
                   type="button"
                   className="secondary"
-                  onClick={() => push({ name: '', email: '' })}
+                  onClick={() => push({ name: "", email: "" })}
                 >
                   Add Friend
                 </button>
@@ -77,11 +77,10 @@ const InviteFriends = () => (
             )}
           </FieldArray>
           <button type="submit">Invite</button>
-          <Debug />
         </Form>
       )}
     </Formik>
   </div>
 );
 
-ReactDOM.render(<InviteFriends />, document.getElementById('root'));
+ReactDOM.render(<InviteFriends />, document.getElementById("root"));

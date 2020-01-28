@@ -437,6 +437,12 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   );
 
   React.useEffect(() => {
+    if (!enableReinitialize) {
+      initialValues.current = props.initialValues;
+    }
+  }, [enableReinitialize, props.initialValues]);
+
+  React.useEffect(() => {
     if (
       enableReinitialize &&
       isMounted.current === true &&

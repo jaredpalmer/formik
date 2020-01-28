@@ -1,6 +1,6 @@
 {
   "extends": "../../tsconfig.json",
-  "include": ["src", "types"],
+  "include": ["src", "types", "stories"],
   "compilerOptions": {
     "target": "es5",
     "module": "esnext",
@@ -25,6 +25,7 @@
     "esModuleInterop": true,
     "baseUrl": "./",
     "paths": {
+      "@": ["./"],
       "*": ["src/*", "node_modules/*"]
     }
   }

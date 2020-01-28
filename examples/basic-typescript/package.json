@@ -4,15 +4,13 @@
   "description": "This example demonstrates how to use Formik with TypeScript",
   "main": "index.tsx",
   "dependencies": {
-    "react-app-polyfill": "^1.0.5",
-    "react": "latest",
-    "react-dom": "latest",
-    "formik": "latest"
-  },
-  "devDependencies": {
-    "@types/react": "^16.9.11",
     "@types/react-dom": "^16.8.4",
+    "@types/react": "^16.9.11",
+    "formik": "latest",
     "parcel": "latest",
+    "react-app-polyfill": "^1.0.5",
+    "react-dom": "latest",
+    "react": "latest",
     "typescript": "latest"
   },
   "prettier": {

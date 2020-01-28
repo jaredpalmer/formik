@@ -1,13 +1,13 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { Formik, Field, Form } from 'formik';
+import React from "react";
+import ReactDOM from "react-dom";
+import { Formik, Field, Form } from "formik";
 
 const Example = () => (
   <div>
     <h1>Sign Up</h1>
     <Formik
       initialValues={{
-        picked: '',
+        picked: ""
       }}
       onSubmit={async values => {
         await new Promise(r => setTimeout(r, 500));
@@ -17,7 +17,7 @@ const Example = () => (
       {({ values }) => (
         <Form>
           <div id="my-radio-group">Picked</div>
-          <div role="group" aria-labeledby="my-radio-group">
+          <div role="group" aria-labelledby="my-radio-group">
             <label>
               <Field type="radio" name="picked" value="One" />
               One
@@ -36,4 +36,4 @@ const Example = () => (
   </div>
 );
 
-ReactDOM.render(<Example />, document.getElementById('root'));
+ReactDOM.render(<Example />, document.getElementById("root"));

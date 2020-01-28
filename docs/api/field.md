@@ -253,7 +253,7 @@ A function that returns one or more JSX elements.
 You can run independent field-level validations by passing a function to the
 `validate` prop. The function will respect the `validateOnBlur` and
 `validateOnChange` config/props specified in the `<Field>'s` parent `<Formik>`
-/ `withFormik`. This function can be either be synchronous or asynchronous:
+/ `withFormik`. This function can either be synchronous or asynchronous:
 
 - Sync: if invalid, return a `string` containing the error message or
   return `undefined`.

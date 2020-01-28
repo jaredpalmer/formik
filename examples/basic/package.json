@@ -1,0 +1,12 @@
+{
+  "name": "formik-basic-example",
+  "version": "0.1.0",
+  "description": "This example demonstrates how to use Formik in it's most basic way",
+  "main": "index.js",
+  "dependencies": {
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0",
+    "react-scripts": "3.3.0",
+    "formik": "latest"
+  }
+}

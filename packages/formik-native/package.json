@@ -1,6 +1,6 @@
 {
   "name": "formik-native",
-  "version": "2.1.3",
+  "version": "2.1.3-canary.1",
   "license": "MIT",
   "author": "Jared Palmer <jared@palmer.net>",
   "repository": "jaredpalmer/formik",

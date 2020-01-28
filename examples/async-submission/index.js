@@ -1,10 +1,10 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import { Formik, Field, Form } from 'formik';
-import { Debug } from './Debug';
 
-const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+const sleep = ms => new Promise(r => setTimeout(r, ms));
 
-const AsyncSubmit = () => (
+const Example = () => (
   <div>
     <h1>Sign Up</h1>
     <Formik
@@ -14,7 +14,7 @@ const AsyncSubmit = () => (
         email: '',
       }}
       onSubmit={async values => {
-        await sleep(1000);
+        await sleep(500);
         alert(JSON.stringify(values, null, 2));
       }}
     >
@@ -28,14 +28,14 @@ const AsyncSubmit = () => (
 
           <label htmlFor="email">Email</label>
           <Field name="email" placeholder="jane@acme.com" type="email" />
+
           <button type="submit" disabled={isSubmitting}>
             Submit
           </button>
-          <Debug />
         </Form>
       )}
     </Formik>
   </div>
 );
 
-export default AsyncSubmit;
+ReactDOM.render(<Example />, document.getElementById('root'));

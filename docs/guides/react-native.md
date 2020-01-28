@@ -46,3 +46,45 @@ DOM and React Native are:
     instead of HTML `<form onSubmit={...} />` component (since there is no
     `<form />` element in React Native).
 2.  `<TextInput />` uses Formik's `handleChange(fieldName)` and `handleBlur(fieldName)` instead of directly assigning the callbacks to props, because we have to get the `fieldName` from somewhere and with React Native we can't get it automatically like in web (using input name attribute). You can also use `setFieldValue(fieldName, value)` and `setFieldTouched(fieldName, bool)` as an alternative.
+
+
+### React Native and Formik hooks example
+
+The same example but based on hooks api.
+
+```js
+// Formik hooks x React Native example
+import React, { forwardRef } from 'react';
+import { Button, TextInput, View } from 'react-native';
+import { Formik, useField } from 'formik';
+
+const FormikTextInput = forwardRef(({ name, ...props }, ref) => {
+  const [{ value }, _, { setValue, setTouched }] = useField(name);
+
+  return (
+    <TextInput
+      value={value}
+      onChangeText={setValue}
+      onBlur={() => setTouched(true)}
+      {...props}
+      ref={ref}
+    />
+  );
+});
+
+const EMAIL_FIELD = 'email';
+
+export const MyReactNativeForm = (props) => (
+  <Formik
+    initialValues={{ [EMAIL_FIELD]: '' }}
+    onSubmit={(values) => console.log(values)}
+  >
+    {({ handleChange, handleBlur, handleSubmit, values }) => (
+      <View>
+        <FormikTextInput name={EMAIL_FIELD} />
+        <Button onPress={handleSubmit} title="Submit" />
+      </View>
+    )}
+  </Formik>
+);
+```

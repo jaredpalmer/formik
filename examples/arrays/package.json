@@ -1,7 +1,7 @@
 {
-  "name": "formik-example-basic",
+  "name": "formik-example-arrays",
   "version": "0.1.0",
-  "description": "This example demonstrates how to use Formik in it's most basic way",
+  "description": "This example demonstrates how to work with arrays in Formik",
   "main": "index.js",
   "dependencies": {
     "react": "^16.12.0",

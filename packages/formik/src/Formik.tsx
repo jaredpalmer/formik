@@ -151,7 +151,6 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   const initialStatus = React.useRef(props.initialStatus);
   const isMounted = React.useRef<boolean>(false);
   const fieldRegistry = React.useRef<FieldRegistry>({});
-  const fieldValidationRegistry = React.useRef<FieldRegistry>({});
   React.useEffect(() => {
     if (__DEV__) {
       invariant(
@@ -327,25 +326,11 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   // form is valid before executing props.onSubmit.
   const validateFormWithLowPriority = useEventCallback(
     (values: Values = state.values) => {
-      const maybeCombinedErrorsOrPromise = validateFormBetter(values);
-      if (!isPromise(maybeCombinedErrorsOrPromise)) {
-        if (!!isMounted.current) {
-          dispatch({
-            type: 'SET_ERRORS',
-            payload: maybeCombinedErrorsOrPromise,
-          });
-        }
-        return maybeCombinedErrorsOrPromise;
-      }
-      dispatch({ type: 'SET_ISVALIDATING', payload: true });
       return unstable_runWithPriority(LowPriority, () => {
-        return maybeCombinedErrorsOrPromise
+        return runAllValidations(values)
           .then(combinedErrors => {
             if (!!isMounted.current) {
-              dispatch({ type: 'SET_ISVALIDATING', payload: false });
-              if (!isEqual(state.errors, combinedErrors)) {
-                dispatch({ type: 'SET_ERRORS', payload: combinedErrors });
-              }
+              dispatch({ type: 'SET_ERRORS', payload: combinedErrors });
             }
             return combinedErrors;
           })
@@ -363,22 +348,10 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   );
 
   // Run all validations methods and update state accordingly
-  // try to run it sync if possible.
   const validateFormWithHighPriority = useEventCallback(
     (values: Values = state.values) => {
-      const maybeCombinedErrorsOrPromise = validateFormBetter(values);
-      if (!isPromise(maybeCombinedErrorsOrPromise)) {
-        if (!!isMounted.current) {
-          dispatch({
-            type: 'SET_ERRORS',
-            payload: maybeCombinedErrorsOrPromise,
-          });
-        }
-        return maybeCombinedErrorsOrPromise;
-      }
-      // async
       dispatch({ type: 'SET_ISVALIDATING', payload: true });
-      return maybeCombinedErrorsOrPromise.then(combinedErrors => {
+      return runAllValidations(values).then(combinedErrors => {
         if (!!isMounted.current) {
           dispatch({ type: 'SET_ISVALIDATING', payload: false });
           if (!isEqual(state.errors, combinedErrors)) {
@@ -387,99 +360,6 @@ export function useFormik<Values extends FormikValues = FormikValues>({
         }
         return combinedErrors;
       });
-    }
-  );
-
-  const validateFormBetter = useEventCallback(
-    (values: Values = state.values, fieldName?: string) => {
-      // Check for registered fields that have validation
-      let isAsync = false;
-      let mixedAsyncValidations = [];
-      const fieldKeysWithValidation: string[] = Object.keys(
-        fieldValidationRegistry.current
-      );
-      // if field validation exists
-      let fieldErrors: FormikErrors<Values> = emptyErrors;
-      let schemaErrors: FormikErrors<Values> = emptyErrors;
-      let validateErrors: FormikErrors<Values> = emptyErrors;
-      let mapAsyncFieldsToValidationPromises: {
-        [field: string]: Promise<void | string>;
-      } = {};
-
-      // First run as much validation that's sync as possible
-      if (fieldKeysWithValidation.length > 0) {
-        for (let i = 0; i < fieldKeysWithValidation.length; i++) {
-          const currentFieldName = fieldKeysWithValidation[i];
-          const maybePromise = fieldValidationRegistry.current[
-            currentFieldName
-          ].validate(getIn(values, currentFieldName));
-
-          if (isPromise(maybePromise)) {
-            // keep track of what is async
-            isAsync = true;
-            mapAsyncFieldsToValidationPromises[currentFieldName] = maybePromise;
-            // @todo warn about de-opt
-          } else {
-            fieldErrors = setIn(fieldErrors, currentFieldName, maybePromise);
-          }
-        }
-
-        if (isAsync) {
-          // if we found an async field validation, then toss it up
-          mixedAsyncValidations.push(
-            executeAsyncFieldValidations(
-              mapAsyncFieldsToValidationPromises,
-              fieldErrors
-            )
-          );
-        }
-      }
-
-      // if validation schema exists
-      if (props.validationSchema) {
-        const validationSchema = props.validationSchema;
-        const schema = isFunction(validationSchema)
-          ? validationSchema(fieldName)
-          : validationSchema;
-        const maybeErrorsOrYupPromise =
-          fieldName && schema.validateAt
-            ? schema.validateAt(fieldName, values)
-            : validateYupSchema(values, schema);
-
-        if (isPromise(maybeErrorsOrYupPromise)) {
-          mixedAsyncValidations.push(maybeErrorsOrYupPromise);
-        } else {
-          schemaErrors = maybeErrorsOrYupPromise;
-        }
-      }
-
-      if (props.validate) {
-        const maybePromisedErrors = (props.validate as any)(values, fieldName);
-        if (isPromise(maybePromisedErrors)) {
-          isAsync = true;
-          mixedAsyncValidations.push(maybePromisedErrors);
-        } else {
-          validateErrors = maybePromisedErrors;
-        }
-      }
-
-      if (isAsync) {
-        return Promise.all(mixedAsyncValidations).then(([f, s, v]) => {
-          const combinedErrors = deepmerge.all<FormikErrors<Values>>(
-            [f, s, v],
-            { arrayMerge }
-          );
-          return combinedErrors;
-        });
-      } else {
-        const combinedErrors = deepmerge.all<FormikErrors<Values>>(
-          [fieldErrors, schemaErrors, validateErrors],
-          {
-            arrayMerge,
-          }
-        );
-        return combinedErrors;
-      }
     }
   );
 
@@ -665,16 +545,10 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     fieldRegistry.current[name] = {
       validate,
     };
-    if (isFunction(validate)) {
-      fieldValidationRegistry.current[name] = {
-        validate,
-      };
-    }
   }, []);
 
   const unregisterField = React.useCallback((name: string) => {
     delete fieldRegistry.current[name];
-    delete fieldValidationRegistry.current[name];
   }, []);
 
   const setTouched = useEventCallback(
@@ -682,7 +556,6 @@ export function useFormik<Values extends FormikValues = FormikValues>({
       dispatch({ type: 'SET_TOUCHED', payload: touched });
       const willValidate =
         shouldValidate === undefined ? validateOnBlur : shouldValidate;
-
       return willValidate
         ? validateFormWithLowPriority(state.values)
         : Promise.resolve();
@@ -872,7 +745,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
 
   const submitForm = useEventCallback(() => {
     dispatch({ type: 'SUBMIT_ATTEMPT' });
-    return Promise.resolve(validateFormWithHighPriority()).then(
+    return validateFormWithHighPriority().then(
       (combinedErrors: FormikErrors<Values>) => {
         // In case an error was thrown and passed to the resolved Promise,
         // `combinedErrors` can be an instance of an Error. We need to check
@@ -974,6 +847,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
 
   const imperativeMethods: FormikHelpers<Values> = {
     resetForm,
+
     validateForm: validateFormWithHighPriority,
     validateField,
     setErrors,
@@ -1340,49 +1214,4 @@ function useEventCallback<T extends (...args: any[]) => any>(fn: T): T {
     (...args: any[]) => ref.current.apply(void 0, args),
     []
   ) as T;
-}
-
-async function executeAsyncFieldValidations(
-  asyncFieldValidations: { [field: string]: Promise<void | string> },
-  currentErrors: { [field: string]: any }
-) {
-  const keys = Object.keys(asyncFieldValidations);
-  return Promise.all(keys.map(k => asyncFieldValidations[k])).then(
-    (fieldErrorsList: (string | void)[]) =>
-      fieldErrorsList.reduce((prev, curr, index) => {
-        if (curr) {
-          prev = setIn(prev, keys[index], curr);
-        }
-        return prev;
-      }, currentErrors)
-  );
-}
-
-function executeAsyncYupSchema(promise: Promise<any>, fallback = emptyErrors) {
-  return new Promise((resolve, reject) => {
-    promise.then(
-      () => {
-        resolve(fallback);
-      },
-      (err: any) => {
-        // Yup will throw a validation error if validation fails. We catch those and
-        // resolve them into Formik errors. We can sniff if something is a Yup error
-        // by checking error.name.
-        // @see https://github.com/jquense/yup#validationerrorerrors-string--arraystring-value-any-path-string
-        if (err.name === 'ValidationError') {
-          resolve(yupToFormErrors(err));
-        } else {
-          // We throw any other errors
-          if (process.env.NODE_ENV !== 'production') {
-            console.warn(
-              `Warning: An unhandled error was caught during validation in <Formik validationSchema />`,
-              err
-            );
-          }
-
-          reject(err);
-        }
-      }
-    );
-  });
 }

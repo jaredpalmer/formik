@@ -58,7 +58,7 @@ export interface WithFormikConfig<
   mapPropsToTouched?: (props: Props) => FormikTouched<Values>;
 
   /**
-   * Map props to the form touched state
+   * Map props to the form errors state
    */
   mapPropsToErrors?: (props: Props) => FormikErrors<Values>;
 

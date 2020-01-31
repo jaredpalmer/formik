@@ -1,7 +1,7 @@
 {
-  "name": "formik-example-instant-feedback",
+  "name": "accesible-instant-feedback-with-formik",
   "version": "0.1.0",
-  "description": "This example demonstrates how to provide accessible inline instant feedback with Formik 2.x",
+  "description": "",
   "main": "index.js",
   "dependencies": {
     "formik": "latest",
@@ -14,5 +14,6 @@
     "trailingComma": "es5",
     "singleQuote": true,
     "semi": true
-  }
+  },
+  "keywords": []
 }

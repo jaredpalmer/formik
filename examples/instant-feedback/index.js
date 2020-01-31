@@ -3,9 +3,10 @@ import ReactDOM from "react-dom";
 import { useFormik, FormikProvider, Form, useField } from "formik";
 import "./styles.css";
 import * as Yup from "yup";
+
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
-const TextInputLiveFeedback = ({ label, ...props }) => {
+const TextInputLiveFeedback = ({ label, helpText, ...props }) => {
   const [field, meta] = useField(props);
 
   // Show inline feedback if the input is in focus
@@ -41,7 +42,7 @@ const TextInputLiveFeedback = ({ label, ...props }) => {
         aria-describedby={`${props.id}-feedback`}
         onFocus={handleFocus}
       />
-      <div className="text-xs">{props.helpText}</div>
+      <div className="text-xs">{helpText}</div>
     </div>
   );
 };
@@ -88,7 +89,7 @@ const Example = () => {
 
 ReactDOM.render(
   <div className="app">
-    <h1 className="text-4xl">Accessible instant feeback with Formik 2.x</h1>
+    <h1 className="text-4xl">Accessible instant feeback with Formik 2</h1>
     <p className="text-lg">
       Instant feedback during typing can be extremely helpful in certain
       situations. For example, checking the validity (or availability) of a

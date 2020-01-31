@@ -38,10 +38,12 @@ const TextInputLiveFeedback = ({ label, helpText, ...props }) => {
       <input
         {...props}
         {...field}
-        aria-describedby={`${props.id}-feedback`}
+        aria-describedby={`${props.id}-feedback ${props.id}-help`}
         onFocus={handleFocus}
       />
-      <div className="text-xs">{helpText}</div>
+      <div className="text-xs" id={`${props.id}-help`} tabIndex="-1">
+        {helpText}
+      </div>
     </div>
   );
 };

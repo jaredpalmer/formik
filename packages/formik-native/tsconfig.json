@@ -1,0 +1,31 @@
+{
+  "extends": "../../tsconfig.json",
+  "include": ["src", "types"],
+  "compilerOptions": {
+    "target": "es5",
+    "module": "esnext",
+    "lib": ["es2015", "es2016", "esnext"],
+    "jsx": "react-native",
+    "importHelpers": true,
+    "declaration": true,
+    "sourceMap": true,
+    "rootDir": "./",
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictPropertyInitialization": true,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "baseUrl": "./",
+    "paths": {
+      "*": ["src/*", "node_modules/*"]
+    }
+  }
+}

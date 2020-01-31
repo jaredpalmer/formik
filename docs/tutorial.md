@@ -223,11 +223,11 @@ const handleChange = event => {
 
 ## Validation
 
-While our contact form works, it's not quite feature-complete. While users can submit it, it doesn't tell them that which (if any) field's are required.
+While our contact form works, it's not quite feature-complete. While users can submit it, it doesn't tell them which (if any) fields are required.
 
 If we are okay with using the browser's built-in HTML input validation, you could add a `required` prop to each of our inputs, specify minimum/maximum lengths (`maxlength` and `minlength`), and/or add a `pattern` prop for regex validation for each of these inputs. These are great if you can get away with them. However, HTML validation has its limitations. First, it only works in the browser! So this clearly is not viable for React Native. Second, it's hard/impossible to show custom error messages to our user. Third, it's very janky.
 
-As mentioned earlier, Formik keeps track of not only your form's `values`, but also it's error messages and validation. To add validation with JS, let's specify a custom validation function and pass it as `validate` to the `useFormik()` hook. If an error exists, this custom validation function should produce an `error` object with a matching shape to our `values`/`initialValues`. Again..._symmetry_...yes...
+As mentioned earlier, Formik keeps track of not only your form's `values`, but also its error messages and validation. To add validation with JS, let's specify a custom validation function and pass it as `validate` to the `useFormik()` hook. If an error exists, this custom validation function should produce an `error` object with a matching shape to our `values`/`initialValues`. Again..._symmetry_...yes...
 
 ```jsx
 import React from 'react';
@@ -706,7 +706,7 @@ const SignupForm = () => {
 };
 ```
 
-As you can see above, we swapped out `useFormik()` hook and replaced it with the `<Formik>` component. The `<Formik>` accepts a function as it's children (a.k.a. a render prop). It's argument is the _exact_ same object returned by `useFormik()` (in fact, `<Formik>` calls `useFormik()` internally!!). Thus, our form works the same as before, except now we can use new components to express ourselves in a more concise manner.
+As you can see above, we swapped out `useFormik()` hook and replaced it with the `<Formik>` component. The `<Formik>` accepts a function as its children (a.k.a. a render prop). Its argument is the _exact_ same object returned by `useFormik()` (in fact, `<Formik>` calls `useFormik()` internally!!). Thus, our form works the same as before, except now we can use new components to express ourselves in a more concise manner.
 
 ```jsx
 import React from 'react';
@@ -780,7 +780,7 @@ const MyStyledTextarea = MyStyledInput.withComponent('textarea');
 <Field name="website" as={MyStyledInput} placeHolder="google.com"/>
 
 // <textarea  placeHolder="Post a message..." rows={5}></textarea>
-<Field name="message" as={MyStyledTextArea} placeHolder="Post a message.." rows={4}/>
+<Field name="message" as={MyStyledTextArea} placeHolder="Post a message.." rows={5}/>
 ```
 
 React is all about composition, and while we've cut down on a lot of the prop-drilling, we are still repeating ourselves with a `label`, `<Field>`, and `<ErrorMessage>` for each of our inputs. We can do better with an abstraction! With Formik, you can and should build reusable input primitive components that you can share around your application. Turns out our `<Field>` render-prop component has a sister and her name is `useField` that's going to do the same thing, but via React Hooks! Check this out...

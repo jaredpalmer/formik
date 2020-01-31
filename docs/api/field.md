@@ -33,52 +33,51 @@ There are 2 ways to render things with `<Field>`.
 
 ```jsx
 import React from 'react';
-import { Formik, Field, Form } from 'formik';
+import {Field, Form, Formik, FormikProps} from 'formik';
 
-const MyInput = ({ field, form, ...props }) => {
-  return <input {...field} {...props} />;
+const MyInput = ({field, form, ...props}) => {
+    return <input {...field} {...props} />;
 };
 
 const Example = () => (
-  <div>
-    <h1>My Form</h1>
-    <Formik
-      initialValues={{ email: '', color: 'red', firstName: '', lastName: '' }}
-      onSubmit={(values, actions) => {
-        setTimeout(() => {
-          alert(JSON.stringify(values, null, 2));
-          actions.setSubmitting(false);
-        }, 1000);
-      }}
-      render={(props: FormikProps<Values>) => (
-        <Form>
-          <Field type="email" name="email" placeholder="Email" />
-          <Field as="select" name="color">
-            <option value="red">Red</option>
-            <option value="green">Green</option>
-            <option value="blue">Blue</option>
-          </Field>
+    <div>
+        <h1>My Form</h1>
+        <Formik
+            initialValues={{email: '', color: 'red', firstName: '', lastName: ''}}
+            onSubmit={(values, actions) => {
+                setTimeout(() => {
+                    alert(JSON.stringify(values, null, 2));
+                    actions.setSubmitting(false);
+                }, 1000);
+            }}>{(props: FormikProps<any>) => (
+            <Form>
+                <Field type="email" name="email" placeholder="Email"/>
+                <Field as="select" name="color">
+                    <option value="red">Red</option>
+                    <option value="green">Green</option>
+                    <option value="blue">Blue</option>
+                </Field>
 
-          <Field name="lastName">
-            {({
-              field, // { name, value, onChange, onBlur }
-              form: { touched, errors }, // also values, setXXXX, handleXXXX, dirty, isValid, status, etc.
-              meta,
-            }) => (
-              <div>
-                <input type="text" placeholder="Email" {...field} />
-                {meta.touched && meta.error && (
-                  <div className="error">{meta.error}</div>
-                )}
-              </div>
-            )}
-          </Field>
-          <Field name="lastName" placeholder="Doe" component={MyInput} />
-          <button type="submit">Submit</button>
-        </Form>
-      )}
-    />
-  </div>
+                <Field name="lastName">
+                    {({
+                          field, // { name, value, onChange, onBlur }
+                          form: {touched, errors}, // also values, setXXXX, handleXXXX, dirty, isValid, status, etc.
+                          meta,
+                      }) => (
+                        <div>
+                            <input type="text" placeholder="Email" {...field} />
+                            {meta.touched && meta.error && (
+                                <div className="error">{meta.error}</div>
+                            )}
+                        </div>
+                    )}
+                </Field>
+                <Field name="lastName" placeholder="Doe" component={MyInput}/>
+                <button type="submit">Submit</button>
+            </Form>
+        )}
+        </Formik>
+    </div>
 );
 ```
 
@@ -123,7 +122,7 @@ Default is `'input'` (so an `<input>` is rendered by default)
 <Field name="firstName" as={CustomInputComponent} placeholder="First Name"/>
 
 const CustomInputComponent = (props) => (
-  <input clasName="my-custom-input" type="text" {...props} />
+  <input className="my-custom-input" type="text" {...props} />
 );
 ```
 
@@ -254,7 +253,7 @@ A function that returns one or more JSX elements.
 You can run independent field-level validations by passing a function to the
 `validate` prop. The function will respect the `validateOnBlur` and
 `validateOnChange` config/props specified in the `<Field>'s` parent `<Formik>`
-/ `withFormik`. This function can be either be synchronous or asynchronous:
+/ `withFormik`. This function can either be synchronous or asynchronous:
 
 - Sync: if invalid, return a `string` containing the error message or
   return `undefined`.

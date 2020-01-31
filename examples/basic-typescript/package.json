@@ -1,0 +1,21 @@
+{
+  "name": "formik-basic-typescript-example",
+  "version": "0.1.0",
+  "description": "This example demonstrates how to use Formik with TypeScript",
+  "main": "index.tsx",
+  "dependencies": {
+    "@types/react-dom": "^16.8.4",
+    "@types/react": "^16.9.11",
+    "formik": "latest",
+    "parcel": "latest",
+    "react-app-polyfill": "^1.0.5",
+    "react-dom": "latest",
+    "react": "latest",
+    "typescript": "latest"
+  },
+  "prettier": {
+    "trailingComma": "es5",
+    "singleQuote": true,
+    "semi": true
+  }
+}

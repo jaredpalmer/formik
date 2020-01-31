@@ -9,8 +9,9 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
 const TextInputLiveFeedback = ({ label, helpText, ...props }) => {
   const [field, meta] = useField(props);
 
-  // Show inline feedback if the input is in focus
-  // and value is longer than 2 charactersor or has been visited
+  // Show inline feedback if EITHER
+  // - the input is focused AND value is longer than 2 characters
+  // - or, the has been visited (touched === true)
   const [didFocus, setDidFocus] = React.useState(false);
   const handleFocus = () => setDidFocus(true);
   const showFeedback =
@@ -23,9 +24,7 @@ const TextInputLiveFeedback = ({ label, helpText, ...props }) => {
       }`}
     >
       <div className="flex items-center space-between">
-        <label style={{ display: "block" }} htmlFor={props.id}>
-          {label}
-        </label>{" "}
+        <label htmlFor={props.id}>{label}</label>{" "}
         {showFeedback ? (
           <div
             id={`${props.id}-feedback`}

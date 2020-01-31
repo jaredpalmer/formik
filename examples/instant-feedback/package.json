@@ -4,10 +4,11 @@
   "description": "This example demonstrates how to provide accessible inline instant feedback with Formik 2.x",
   "main": "index.js",
   "dependencies": {
+    "formik": "latest",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
     "react-scripts": "3.3.0",
-    "formik": "latest"
+    "yup": "0.28.1"
   },
   "prettier": {
     "trailingComma": "es5",

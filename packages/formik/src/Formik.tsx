@@ -1095,7 +1095,7 @@ export function validateYupSchema<T extends FormikValues>(
 export function prepareDataForValidation<T extends FormikValues>(
   values: T
 ): FormikValues {
-  let data: FormikValues = {};
+  let data: FormikValues = Array.isArray(values) ? [] : {};
   for (let k in values) {
     if (Object.prototype.hasOwnProperty.call(values, k)) {
       const key = String(k);

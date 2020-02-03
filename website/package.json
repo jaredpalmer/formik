@@ -9,7 +9,7 @@
     "rename-version": "docusaurus-rename-version"
   },
   "devDependencies": {
-    "docusaurus": "^1.14.0"
+    "docusaurus": "^1.14.4"
   },
   "engines": {
     "node": "12.x"

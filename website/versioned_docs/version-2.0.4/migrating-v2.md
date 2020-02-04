@@ -15,6 +15,10 @@ original_id: migrating-v2
 
 **There is only one tiny breaking change in Formik 2.x.** Luckily, it probably won't impact very many people. Long story short, because we introduced `initialErrors`, `initialTouched`, `initialStatus` props, `resetForm`'s signature has changed. It now accepts the next initial state of Formik (instead of just the next initial values).
 
+### `setError`
+
+Please use Formik's `setStatus(status)` instead. It works identically.
+
 **v1**
 
 ```tsx

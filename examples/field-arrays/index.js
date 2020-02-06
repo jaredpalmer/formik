@@ -1,32 +1,30 @@
-import React from 'react';
-import { Formik, Field, Form, ErrorMessage, FieldArray } from 'formik';
-import { Debug } from './Debug';
+import React from "react";
+import ReactDOM from "react-dom";
+import { Formik, Field, Form, ErrorMessage, FieldArray } from "formik";
 
 const initialValues = {
   friends: [
     {
-      name: '',
-      email: '',
-    },
-  ],
+      name: "",
+      email: ""
+    }
+  ]
 };
 
-const sleep = ms => new Promise(r => setTimeout(r, ms));
-
-const SignIn = () => (
+const InviteFriends = () => (
   <div>
     <h1>Invite friends</h1>
     <Formik
       initialValues={initialValues}
       onSubmit={async values => {
-        await sleep(500);
+        await new Promise(r => setTimeout(r, 500));
         alert(JSON.stringify(values, null, 2));
       }}
-      render={({ values }) => (
+    >
+      {({ values }) => (
         <Form>
-          <FieldArray
-            name="friends"
-            render={({ insert, remove, push }) => (
+          <FieldArray name="friends">
+            {({ insert, remove, push }) => (
               <div>
                 {values.friends.length > 0 &&
                   values.friends.map((friend, index) => (
@@ -71,19 +69,18 @@ const SignIn = () => (
                 <button
                   type="button"
                   className="secondary"
-                  onClick={() => push({ name: '', email: '' })}
+                  onClick={() => push({ name: "", email: "" })}
                 >
                   Add Friend
                 </button>
               </div>
             )}
-          />
+          </FieldArray>
           <button type="submit">Invite</button>
-          <Debug />
         </Form>
       )}
-    />
+    </Formik>
   </div>
 );
 
-export default SignIn;
+ReactDOM.render(<InviteFriends />, document.getElementById("root"));

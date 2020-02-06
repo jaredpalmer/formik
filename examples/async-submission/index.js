@@ -1,8 +1,10 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import { Formik, Field, Form } from 'formik';
-import { Debug } from './Debug';
 
-const Basic = () => (
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+const Example = () => (
   <div>
     <h1>Sign Up</h1>
     <Formik
@@ -11,12 +13,12 @@ const Basic = () => (
         lastName: '',
         email: '',
       }}
-      onSubmit={values => {
-        setTimeout(() => {
-          alert(JSON.stringify(values, null, 2));
-        }, 500);
+      onSubmit={async values => {
+        await sleep(500);
+        alert(JSON.stringify(values, null, 2));
       }}
-      render={() => (
+    >
+      {({ isSubmitting }) => (
         <Form>
           <label htmlFor="firstName">First Name</label>
           <Field name="firstName" placeholder="Jane" />
@@ -26,12 +28,14 @@ const Basic = () => (
 
           <label htmlFor="email">Email</label>
           <Field name="email" placeholder="jane@acme.com" type="email" />
-          <button type="submit">Submit</button>
-          <Debug />
+
+          <button type="submit" disabled={isSubmitting}>
+            Submit
+          </button>
         </Form>
       )}
-    />
+    </Formik>
   </div>
 );
 
-export default Basic;
+ReactDOM.render(<Example />, document.getElementById('root'));

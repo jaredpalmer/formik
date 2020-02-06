@@ -1,7 +1,7 @@
 {
-  "name": "formik-example-arrays",
+  "name": "formik-example-field-arrays",
   "version": "0.1.0",
-  "description": "This example demonstrates how to work with arrays in Formik",
+  "description": "This example demonstrates how to work with array fields in Formik",
   "main": "index.js",
   "dependencies": {
     "react": "^16.12.0",

@@ -10,9 +10,9 @@ const Schema = Yup.object().shape({
 // Async Validation
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-const validate = (values) =>
+const validate = values =>
   sleep(300).then(() => {
-    throw {
+    return {
       zip: 'This field is required',
     };
   });

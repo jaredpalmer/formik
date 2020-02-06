@@ -2,46 +2,35 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Formik, Field, Form } from 'formik';
 
-const masks = [
-  { name: 'phone-1', parse: '999-999-9999' },
-  { name: 'phone-2', parse: '(999) 999-9999' },
-  { name: 'phone-3', parse: '+49 (AAAA) BBBBBB' },
-];
-
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 const Example = () => {
   return (
     <div>
       <Formik
-        initialValues={masks.reduce((prev, curr) => {
-          prev[curr.name] = '';
-          return prev;
-        }, {})}
+        initialValues={{
+          username: '',
+        }}
         onSubmit={async values => {
           await sleep(500);
           alert(JSON.stringify(values, null, 2));
         }}
-        render={({ values }) => (
+      >
+        {({ values }) => (
           <Form>
-            {masks.map(mask => (
-              <div key={mask.name}>
-                <label>
-                  {mask.name}
-                  <Field
-                    name={mask.name}
-                    parse={formatString(mask.parse)}
-                    placeholder={mask.parse}
-                  />
-                </label>
-              </div>
-            ))}
+            <label htmlFor="username">Username</label>
+            <Field
+              id="username"
+              name="username"
+              parse={value => value && value.toUpperCase()}
+              format={value => (value ? value.toLowerCase() : '')}
+            />
 
             <button type="submit">Submit</button>
             <pre>{JSON.stringify(values, null, 2)}</pre>
           </Form>
         )}
-      />
+      </Formik>
     </div>
   );
 };

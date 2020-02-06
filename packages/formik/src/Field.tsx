@@ -55,7 +55,7 @@ export interface FieldConfig<V = any> {
   /**
    * Function to parse raw input value before setting it to state
    */
-  parse?: (value: any, name: string) => any;
+  parse?: (value: unknown, name: string) => any;
 
   /**
    * Function to transform value passed to input

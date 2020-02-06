@@ -7,11 +7,15 @@
 - Since Formik 2 is built on top of React Hooks, you must be on React 16.8.x or higher
 - Since Formik 2 uses the `unknown` type, you must be on TypeScript 3.0 or higher (if you use TypeScript)
 
-**There are only two tiny breaking changes in Formik 2.x.** Luckily, these probably won't impact many people:
+**There are only three tiny breaking changes in Formik 2.x.** Luckily, these probably won't impact many people:
 
 #### `resetForm`
 
 Because we introduced the new `initialErrors`, `initialTouched`, `initialStatus` props, `resetForm`'s signature has changed since there is more stuff to _reset_. It now accepts the next initial state of Formik (instead of just the next initial values).
+
+### `setError`
+
+Please use Formik's `setStatus(status)` instead. It works identically.
 
 ### `validate`
 

@@ -1,7 +1,7 @@
 {
-  "name": "formik-example-async-submission",
+  "name": "formik-example-dependent-fields",
   "version": "0.1.0",
-  "description": "This example demonstrates how to use async/await to submit a Formik form",
+  "description": "This is an example of how to set the value of one field based on the current values of other fields in Formik v2",
   "main": "index.js",
   "dependencies": {
     "react": "^16.12.0",

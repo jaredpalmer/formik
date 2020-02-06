@@ -25,6 +25,7 @@ import {
   getIn,
   isObject,
   isInputEvent,
+  isReactNative,
 } from './utils';
 import { FormikProvider } from './FormikContext';
 import invariant from 'tiny-warning';
@@ -910,9 +911,20 @@ export function useFormik<Values extends FormikValues = FormikValues>({
 
   const getValueFromEvent = useEventCallback(
     (event: React.SyntheticEvent<any>, fieldName: string) => {
-      if (event.persist) {
-        event.persist();
+      // React Native/Expo Web/maybe other render envs
+      if (
+        !isReactNative &&
+        event.nativeEvent &&
+        (event.nativeEvent as any).text !== undefined
+      ) {
+        return (event.nativeEvent as any).text;
       }
+
+      // React Native
+      if (isReactNative && event.nativeEvent) {
+        return (event.nativeEvent as any).text;
+      }
+
       const target = event.target ? event.target : event.currentTarget;
       const { type, value, checked, options, multiple } = target;
       let val;
@@ -1208,9 +1220,16 @@ function arrayMerge(target: any[], source: any[], options: any): any[] {
 
 /** Return multi select values based on an array of options */
 function getSelectedValues(options: any[]) {
-  return Array.from(options)
-    .filter(el => el.selected)
-    .map(el => el.value);
+  const result = [];
+  if (options) {
+    for (let index = 0; index < options.length; index++) {
+      const option = options[index];
+      if (option.selected) {
+        result.push(option.value);
+      }
+    }
+  }
+  return result;
 }
 
 /** Return the next value for a checkbox */

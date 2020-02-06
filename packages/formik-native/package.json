@@ -1,6 +1,6 @@
 {
   "name": "formik-native",
-  "version": "2.1.4-canary.0",
+  "version": "2.1.4",
   "license": "MIT",
   "author": "Jared Palmer <jared@palmer.net>",
   "repository": "jaredpalmer/formik",
@@ -44,7 +44,7 @@
     "trailingComma": "es5"
   },
   "dependencies": {
-    "formik": "2.1.4-canary.0"
+    "formik": "2.1.4"
   },
   "devDependencies": {
     "@react-native-community/eslint-config": "^0.0.5",

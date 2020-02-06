@@ -1,0 +1,30 @@
+{
+  "version-2.1.4-docs": {
+    "Getting Started": [
+      "version-2.1.4-overview",
+      "version-2.1.4-tutorial",
+      "version-2.1.4-migrating-v2",
+      "version-2.1.4-resources"
+    ],
+    "Guides": [
+      "version-2.1.4-guides/validation",
+      "version-2.1.4-guides/arrays",
+      "version-2.1.4-guides/typescript",
+      "version-2.1.4-guides/react-native",
+      "version-2.1.4-guides/form-submission"
+    ],
+    "API Reference": [
+      "version-2.1.4-api/connect",
+      "version-2.1.4-api/errormessage",
+      "version-2.1.4-api/fastfield",
+      "version-2.1.4-api/field",
+      "version-2.1.4-api/fieldarray",
+      "version-2.1.4-api/form",
+      "version-2.1.4-api/formik",
+      "version-2.1.4-api/useField",
+      "version-2.1.4-api/useFormik",
+      "version-2.1.4-api/useFormikContext",
+      "version-2.1.4-api/withFormik"
+    ]
+  }
+}

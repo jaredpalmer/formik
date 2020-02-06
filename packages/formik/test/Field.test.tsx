@@ -227,7 +227,7 @@ describe('Field / FastField', () => {
         component: 'textarea',
       });
 
-      expect(container.firstChild.type).toBe('textarea');
+      expect((container.firstChild as $FixMe).type).toBe('textarea');
     });
 
     cases('assigns innerRef as a ref to string components', renderField => {
@@ -256,7 +256,7 @@ describe('Field / FastField', () => {
         as: 'textarea',
       });
 
-      expect(container.firstChild.type).toBe('textarea');
+      expect((container.firstChild as $FixMe).type).toBe('textarea');
     });
 
     cases('assigns innerRef as a ref to string components', renderField => {
@@ -395,15 +395,20 @@ describe('Field / FastField', () => {
         const validationSchema = Yup.object({
           name: Yup.string().min(100, errorMessage),
         });
-        const { getFormProps, rerender } = renderField({}, { validationSchema });
+        const { getFormProps, rerender } = renderField(
+          {},
+          { validationSchema }
+        );
 
         rerender();
 
         getFormProps().validateField('name');
 
-        await wait(() => expect(getFormProps().errors).toEqual({
-          name: errorMessage
-        }));
+        await wait(() =>
+          expect(getFormProps().errors).toEqual({
+            name: errorMessage,
+          })
+        );
       }
     );
   });

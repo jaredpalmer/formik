@@ -1,6 +1,0 @@
-{
-  "extends": ["react-app"],
-  "globals": {
-    "__DEV__": "readonly"
-  }
-}

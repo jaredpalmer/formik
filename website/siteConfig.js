@@ -197,7 +197,14 @@ const users = [
     caption: 'Gremlin',
     image: '/formik/img/logos/gremlin.svg',
     infoLink: 'https://www.gremlin.com',
-  }
+  },
+{
+    caption: 'Masoko',
+    image: '/formik/img/logos/masoko.svg',
+    infoLink: 'https://www.masoko.com',
+  }  
+  
+ 
 ];
 
 const siteConfig = {

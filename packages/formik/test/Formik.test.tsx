@@ -969,6 +969,18 @@ describe('<Formik>', () => {
         date,
       });
     });
+
+    it('should work correctly for nested arrays', () => {
+      const expected = {
+        content: [
+          ['a1', 'a2'],
+          ['b1', 'b2'],
+        ]
+      }
+
+      const dataForValidation = prepareDataForValidation(expected);
+      expect(dataForValidation).toEqual(expected);
+    });
   });
 
   // describe('componentDidUpdate', () => {

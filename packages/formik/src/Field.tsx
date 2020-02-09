@@ -208,7 +208,7 @@ export function Field({
   if (component) {
     // This behavior is backwards compat with earlier Formik 0.9 to 1.x
     if (typeof component === 'string') {
-      const { innerRef, ...rest } = props;
+      const { innerRef, parse, format, ...rest } = props;
       return React.createElement(
         component,
         { ref: innerRef, ...field, ...rest },
@@ -227,7 +227,7 @@ export function Field({
   const asElement = is || 'input';
 
   if (typeof asElement === 'string') {
-    const { innerRef, ...rest } = props;
+    const { innerRef, parse, format, ...rest } = props;
     return React.createElement(
       asElement,
       { ref: innerRef, ...field, ...rest },

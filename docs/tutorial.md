@@ -68,19 +68,21 @@ del *
 cd ..
 ```
 
-4. Add a file named `index.css` in the `src/` folder with [this CSS code](https://codepen.io/gaearon/pen/oWWQNa?editors=0100).
+4. Add a file named `styles.css` in the `src/` folder and copy the content from `src/styles.css` in [the tutorial codesandbox](https://codesandbox.io/s/formik-v2-tutorial-start-s04yr).
 
-5. Add a file named `index.js` in the `src/` folder with [this JS code](https://codepen.io/gaearon/pen/oWWQNa?editors=0010).
+5. Add a file named `index.js` in the `src/` folder and copy the content from `src/index.js` in [the tutorial codesandbox](https://codesandbox.io/s/formik-v2-tutorial-start-s04yr).
 
-6. Add these three lines to the top of `index.js` in the `src/` folder:
+6. Add all dependencies used in tutorial with NPM/yarn:
 
-```js
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
+```bash
+npm install --save formik yup @emotion/core @emotion/styled
+
+# or via yarn
+
+yarn add formik yup @emotion/core @emotion/styled
 ```
 
-Now if you run `npm start` in the project folder and open `http://localhost:3000` in the browser, you should see an empty tic-tac-toe field.
+Now if you run `npm start` in the project folder and open `http://localhost:3000` in the browser, you should see a simple form.
 
 We recommend following [these instructions](https://babeljs.io/docs/editors/) to configure syntax highlighting for your editor.
 

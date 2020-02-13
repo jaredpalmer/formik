@@ -16,18 +16,6 @@ title: Migrating from v1.x to v2.x
 
 Because we introduced `initialErrors`, `initialTouched`, `initialStatus` props, `resetForm`'s signature has changed. It now accepts the next initial state of Formik (instead of just the next initial values).
 
-### `setError`
-
-Please use Formik's `setStatus(status)` instead. It works identically.
-
-### `validate`
-
-As you may know, you can return a Promise of a validation error from `validate`. In 1.x, it didn't matter if this promise is resolved or rejected as in both cases the payload of the promise was interpreted as the validation error. In 2.x, rejection will be interpreted as an actual exception and it won't update the form error state. Any validation function that returns a rejected promise of errors needs to be adjusted to return a resolved promise of errors instead.
-
-### `ref`
-
-Currently, you can't attach a ref to Formik using the `ref` prop. However, you still can get around this issue using the prop `innerRef`. We have some WIP [#2208](https://github.com/jaredpalmer/formik/issues/2208) to instead use `React.forwardRef`.
-
 **v1**
 
 ```tsx
@@ -39,6 +27,18 @@ resetForm(nextValues);
 ```tsx
 resetForm({ values: nextValues /* errors, touched, etc ... */ });
 ```
+
+### `setError`
+
+Please use Formik's `setStatus(status)` instead. It works identically.
+
+### `validate`
+
+As you may know, you can return a Promise of a validation error from `validate`. In 1.x, it didn't matter if this promise is resolved or rejected as in both cases the payload of the promise was interpreted as the validation error. In 2.x, rejection will be interpreted as an actual exception and it won't update the form error state. Any validation function that returns a rejected promise of errors needs to be adjusted to return a resolved promise of errors instead.
+
+### `ref`
+
+Currently, you can't attach a ref to Formik using the `ref` prop. However, you still can get around this issue using the prop `innerRef`. We have some WIP [#2208](https://github.com/jaredpalmer/formik/issues/2208) to instead use `React.forwardRef`.
 
 ### Typescript changes
 
@@ -90,7 +90,7 @@ const CheckboxExample = () => (
     >
       {({ isSubmitting, getFieldProps, handleChange, handleBlur, values }) => (
         <Form>
-          {/* 
+          {/*
             This first checkbox will result in a boolean value being stored.
           */}
           <div className="label">Basic Info</div>
@@ -98,7 +98,7 @@ const CheckboxExample = () => (
             <Field type="checkbox" name="isAwesome" />
             Are you awesome?
           </label>
-          {/* 
+          {/*
             Multiple checkboxes with the same name attribute, but different
             value attributes will be considered a "checkbox group". Formik will automagically
             bind the checked values to a single array for your benefit. All the add and remove
@@ -120,8 +120,8 @@ const CheckboxExample = () => (
             Product Manager
           </label>
           {/*
-           You do not _need_ to use <Field>/useField to get this behavior, 
-           using handleChange, handleBlur, and values works as well. 
+           You do not _need_ to use <Field>/useField to get this behavior,
+           using handleChange, handleBlur, and values works as well.
           */}
           <label>
             <input
@@ -135,9 +135,9 @@ const CheckboxExample = () => (
             CEO / Founder
           </label>
 
-          {/* 
-           The <select> element will also behave the same way if 
-           you pass `multiple` prop to it. 
+          {/*
+           The <select> element will also behave the same way if
+           you pass `multiple` prop to it.
           */}
           <label htmlFor="location">Where do you work?</label>
           <Field

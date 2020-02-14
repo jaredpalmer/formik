@@ -1,33 +1,33 @@
-import deepmerge from 'deepmerge';
-import isPlainObject from 'lodash/isPlainObject';
 import * as React from 'react';
 import isEqual from 'react-fast-compare';
-import { LowPriority, unstable_runWithPriority } from 'scheduler';
-import invariant from 'tiny-warning';
-import { FormikProvider } from './FormikContext';
+import deepmerge from 'deepmerge';
+import isPlainObject from 'lodash/isPlainObject';
 import {
-  FieldHelperProps,
-  FieldInputProps,
-  FieldMetaProps,
   FormikConfig,
   FormikErrors,
-  FormikHelpers,
-  FormikProps,
   FormikState,
   FormikTouched,
   FormikValues,
+  FormikProps,
+  FieldMetaProps,
+  FieldHelperProps,
+  FieldInputProps,
+  FormikHelpers,
 } from './types';
 import {
-  getActiveElement,
-  getIn,
-  isEmptyChildren,
   isFunction,
-  isObject,
-  isPromise,
   isString,
   setIn,
+  isEmptyChildren,
+  isPromise,
   setNestedObjectValues,
+  getActiveElement,
+  getIn,
+  isObject,
 } from './utils';
+import { FormikProvider } from './FormikContext';
+import invariant from 'tiny-warning';
+import { LowPriority, unstable_runWithPriority } from 'scheduler';
 
 type FormikMessage<Values> =
   | { type: 'SUBMIT_ATTEMPT' }

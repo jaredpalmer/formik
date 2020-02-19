@@ -27,7 +27,7 @@ import {
 } from './utils';
 import { FormikProvider } from './FormikContext';
 import invariant from 'tiny-warning';
-import { LowPriority, unstable_runWithPriority } from 'scheduler';
+import scheduler from 'scheduler';
 
 type FormikMessage<Values> =
   | { type: 'SUBMIT_ATTEMPT' }
@@ -326,7 +326,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   // form is valid before executing props.onSubmit.
   const validateFormWithLowPriority = useEventCallback(
     (values: Values = state.values) => {
-      return unstable_runWithPriority(LowPriority, () => {
+      return scheduler.unstable_runWithPriority(scheduler.LowPriority, () => {
         return runAllValidations(values)
           .then(combinedErrors => {
             if (!!isMounted.current) {

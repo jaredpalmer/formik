@@ -326,7 +326,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   // form is valid before executing props.onSubmit.
   const validateFormWithLowPriority = useEventCallback(
     (values: Values = state.values) => {
-      return scheduler.unstable_runWithPriority(scheduler.LowPriority, () => {
+      return scheduler.unstable_runWithPriority(scheduler.unstable_LowPriority, () => {
         return runAllValidations(values)
           .then(combinedErrors => {
             if (!!isMounted.current) {

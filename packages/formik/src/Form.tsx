@@ -1,12 +1,9 @@
 import * as React from 'react';
 import { useFormikContext } from './FormikContext';
 
-export type FormikFormProps = Pick<
+export type FormikFormProps = Omit<
   React.FormHTMLAttributes<HTMLFormElement>,
-  Exclude<
-    keyof React.FormHTMLAttributes<HTMLFormElement>,
-    'onReset' | 'onSubmit'
-  >
+  'onReset' | 'onSubmit'
 >;
 
 // @todo tests

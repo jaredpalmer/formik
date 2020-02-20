@@ -6,8 +6,15 @@ export type FormikFormProps = Omit<
   'onReset' | 'onSubmit'
 >;
 
+// This type is the same that forwardRef returns. Assigning it explicitly seems
+// to stop TS from inlining all picked form attributes into the Form.d.ts file
+// which causes compilation to fail for users on different @types/react versions.
+type FormWrapper = React.ForwardRefExoticComponent<
+  React.PropsWithoutRef<FormikFormProps> & React.RefAttributes<HTMLFormElement>
+>;
+
 // @todo tests
-export const Form = React.forwardRef<HTMLFormElement, FormikFormProps>(
+export const Form: FormWrapper = React.forwardRef<HTMLFormElement, FormikFormProps>(
   (props, ref) => {
     // iOS needs an "action" attribute for nice input: https://stackoverflow.com/a/39485162/406725
     // We default the action to "#" in case the preventDefault fails (just updates the URL hash)

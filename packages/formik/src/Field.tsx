@@ -131,7 +131,7 @@ export function Field({
   name,
   render,
   children,
-  as: is, // `as` is reserved in typescript lol
+  is: as, // `as` is reserved in typescript lol
   component,
   ...props
 }: FieldAttributes<any>) {

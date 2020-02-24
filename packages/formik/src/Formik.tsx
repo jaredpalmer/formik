@@ -694,7 +694,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
       if (e.persist) {
         e.persist();
       }
-      const { name, id, outerHTML } = e.target;
+      const { name, id, outerHTML } = e?.target ?? {};
       const field = path ? path : name ? name : id;
 
       if (!field && __DEV__) {

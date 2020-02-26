@@ -42,44 +42,19 @@ This is completely optional and not required for this tutorial!
 This setup requires more work but allows you to complete the tutorial using an editor of your choice. Here are the steps to follow:
 
 1. Make sure you have a recent version of [Node.js](https://nodejs.org/en/) installed.
-2. Follow the [installation instructions for Create React App](/docs/create-a-new-react-app.html#create-react-app) to make a new project.
+
+2. Open [the Starter Code on codesandbox](https://codesandbox.io/s/formik-v2-tutorial-start-s04yr).
+
+3. Download the source as a ZIP (`File > Export to ZIP`), unzip it, and `cd` into the directory.
+
+4. Install dependencies with NPM/yarn:
 
 ```bash
-npx create-react-app my-app
-```
-
-3. Delete all files in the `src/` folder of the new project
-
-> Note:
->
-> **Don't delete the entire `src` folder, just the original source files inside it.** We'll replace the default source files with examples for this project in the next step.
-
-```bash
-cd my-app
-cd src
-
-# If you're using a Mac or Linux:
-rm -f *
-
-# Or, if you're on Windows:
-del *
-
-# Then, switch back to the project folder
-cd ..
-```
-
-4. Add a file named `styles.css` in the `src/` folder and copy the content from `src/styles.css` in [the tutorial codesandbox](https://codesandbox.io/s/formik-v2-tutorial-start-s04yr).
-
-5. Add a file named `index.js` in the `src/` folder and copy the content from `src/index.js` in [the tutorial codesandbox](https://codesandbox.io/s/formik-v2-tutorial-start-s04yr).
-
-6. Add all dependencies used in tutorial with NPM/yarn:
-
-```bash
-npm install --save formik yup @emotion/core @emotion/styled
+npm install
 
 # or via yarn
 
-yarn add formik yup @emotion/core @emotion/styled
+yarn install
 ```
 
 Now if you run `npm start` in the project folder and open `http://localhost:3000` in the browser, you should see a simple form.

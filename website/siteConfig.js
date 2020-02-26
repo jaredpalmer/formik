@@ -193,10 +193,15 @@ const users = [
     image: '/formik/img/logos/cargurus.svg',
     infoLink: 'https://www.cargurus.com',
   },
-    {
+  {
     caption: 'Gremlin',
     image: '/formik/img/logos/gremlin.svg',
     infoLink: 'https://www.gremlin.com',
+  },
+  {
+    caption: 'Ubidots',
+    image: '/formik/img/logos/ubidots.svg',
+    infoLink: 'https://www.ubidots.com',
   }
 ];
 

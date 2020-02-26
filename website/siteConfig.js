@@ -200,7 +200,7 @@ const users = [
   },
   {
     caption: 'Octopulse',
-    image: '/formik/img/logos/gremlin.svg',
+    image: '/formik/img/logos/octopulse.svg',
     infoLink: 'https://octopulse.io',
   },
 ];

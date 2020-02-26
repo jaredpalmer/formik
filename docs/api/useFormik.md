@@ -16,8 +16,6 @@ custom_edit_url: https://github.com/jaredpalmer/formik/edit/master/docs/api/useF
 
 ## Example
 
-Here's an example of a form that works similarly to Stripe's 2-factor verification form. As soon as you type a 6 digit number, the form will automatically submit (i.e. no enter keypress is needed).
-
 ```jsx
 import React from 'react';
 import { useFormik } from 'formik';

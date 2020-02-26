@@ -203,6 +203,11 @@ const users = [
     image: '/formik/img/logos/octopulse.svg',
     infoLink: 'https://octopulse.io',
   },
+  {
+    caption: 'Ubidots',
+    image: '/formik/img/logos/ubidots.svg',
+    infoLink: 'https://www.ubidots.com',
+  }
 ];
 
 const siteConfig = {

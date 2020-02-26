@@ -145,6 +145,7 @@ class FastFieldInner<Values = {}, Props = {}> extends React.Component<
       name,
       onChange: formik.handleChange,
       onBlur: formik.handleBlur,
+      onFocus: formik.handleFocus,
     };
     const meta = {
       value: getIn(formik.values, name),

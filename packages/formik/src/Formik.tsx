@@ -42,6 +42,7 @@ type FormikMessage<Values> =
   | { type: 'SET_TOUCHED'; payload: FormikTouched<Values> }
   | { type: 'SET_ERRORS'; payload: FormikErrors<Values> }
   | { type: 'SET_STATUS'; payload: any }
+  | { type: 'SET_FOCUS'; payload?: string }
   | {
       type: 'SET_FORMIK_STATE';
       payload: (s: FormikState<Values>) => FormikState<Values>;
@@ -81,6 +82,7 @@ function formikReducer<Values>(
     case 'SET_FIELD_TOUCHED':
       return {
         ...state,
+        focus: undefined,
         touched: setIn(state.touched, msg.payload.field, msg.payload.value),
       };
     case 'SET_FIELD_ERROR':
@@ -719,7 +721,36 @@ export function useFormik<Values extends FormikValues = FormikValues>({
       executeBlur(eventOrString);
     }
   });
+  const executeFocus = React.useCallback(
+    (e: any, path?: string) => {
+      if (e.persist) {
+        e.persist();
+      }
+      const { name, id, outerHTML } = e.target;
+      const field = path ? path : name ? name : id;
 
+      if (!field && __DEV__) {
+        warnAboutMissingIdentifier({
+          htmlContent: outerHTML,
+          documentationAnchorLink: 'handleblur-e-any--void',
+          handlerName: 'handleBlur',
+        });
+      }
+
+      setFocus(field);
+    },
+    [setFieldTouched]
+  );
+
+  const handleFocus = useEventCallback((eventOrString: any):
+    | void
+    | ((e: any) => void) => {
+    if (isString(eventOrString)) {
+      return event => executeFocus(event, eventOrString);
+    } else {
+      executeFocus(eventOrString);
+    }
+  });
   const setFormikState = React.useCallback(
     (
       stateOrCb:
@@ -836,7 +867,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
         }
       }
 
-      submitForm().catch(reason => {
+      submitForm().catch((reason: unknown) => {
         console.warn(
           `Warning: An unhandled error was caught from submitForm()`,
           reason
@@ -845,12 +876,19 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     }
   );
 
+  const setFocus = React.useCallback(
+    (field?: string) => {
+      dispatch({ type: 'SET_FOCUS', payload: field });
+    },
+    [dispatch]
+  );
+
   const imperativeMethods: FormikHelpers<Values> = {
     resetForm,
-
     validateForm: validateFormWithHighPriority,
     validateField,
     setErrors,
+    setFocus,
     setFieldError,
     setFieldTouched,
     setFieldValue,
@@ -904,7 +942,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   );
 
   const getFieldProps = React.useCallback(
-    (nameOrOptions): FieldInputProps<any> => {
+    (nameOrOptions: any): FieldInputProps<any> => {
       const isAnObject = isObject(nameOrOptions);
       const name = isAnObject ? nameOrOptions.name : nameOrOptions;
       const valueState = getIn(state.values, name);
@@ -914,6 +952,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
         value: valueState,
         onChange: handleChange,
         onBlur: handleBlur,
+        onFocus: handleFocus,
       };
       if (isAnObject) {
         const {
@@ -942,7 +981,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
       }
       return field;
     },
-    [handleBlur, handleChange, state.values]
+    [handleBlur, handleChange, handleFocus, state.values]
   );
 
   const dirty = React.useMemo(
@@ -972,8 +1011,10 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     handleChange,
     handleReset,
     handleSubmit,
+    handleFocus,
     resetForm,
     setErrors,
+    setFocus,
     setFormikState,
     setFieldTouched,
     setFieldValue,

@@ -17,12 +17,12 @@ import { isFunction } from './utils';
  *
  * @deprecated  Use `OuterProps & FormikProps<Values>` instead.
  */
-export type InjectedFormikProps<Props, Values> = Props & FormikProps<Values>;
+export type InjectedFormikProps<Props, Values, Status> = Props & FormikProps<Values, Status>;
 
 /**
  * Formik actions + { props }
  */
-export type FormikBag<P, V> = { props: P } & FormikHelpers<V>;
+export type FormikBag<P, V, S> = { props: P } & FormikHelpers<V, S>;
 
 /**
  * withFormik() configuration options. Backwards compatible.
@@ -30,7 +30,8 @@ export type FormikBag<P, V> = { props: P } & FormikHelpers<V>;
 export interface WithFormikConfig<
   Props,
   Values extends FormikValues = FormikValues,
-  DeprecatedPayload = Values
+  DeprecatedPayload = Values,
+  Status = any
 > extends FormikSharedConfig<Props> {
   /**
    * Set the display name of the component. Useful for React DevTools.
@@ -40,7 +41,7 @@ export interface WithFormikConfig<
   /**
    * Submission handler
    */
-  handleSubmit: (values: Values, formikBag: FormikBag<Props, Values>) => void;
+  handleSubmit: (values: Values, formikBag: FormikBag<Props, Values, Status>) => void;
 
   /**
    * Map props to the form values
@@ -97,7 +98,8 @@ export interface InferableComponentDecorator<TOwnProps> {
 export function withFormik<
   OuterProps extends object,
   Values extends FormikValues,
-  Payload = Values
+  Payload = Values,
+  Status = any
 >({
   mapPropsToValues = (vanillaProps: OuterProps): Values => {
     let val: Values = {} as Values;
@@ -115,10 +117,10 @@ export function withFormik<
   ...config
 }: WithFormikConfig<OuterProps, Values, Payload>): ComponentDecorator<
   OuterProps,
-  OuterProps & FormikProps<Values>
+  OuterProps & FormikProps<Values, Status>
 > {
   return function createFormik(
-    Component: CompositeComponent<OuterProps & FormikProps<Values>>
+    Component: CompositeComponent<OuterProps & FormikProps<Values, Status>>
   ): React.ComponentClass<OuterProps> {
     const componentDisplayName =
       Component.displayName ||
@@ -142,7 +144,7 @@ export function withFormik<
           : config.validationSchema;
       };
 
-      handleSubmit = (values: Values, actions: FormikHelpers<Values>) => {
+      handleSubmit = (values: Values, actions: FormikHelpers<Values, Status>) => {
         return config.handleSubmit(values, {
           ...actions,
           props: this.props,
@@ -152,7 +154,7 @@ export function withFormik<
       /**
        * Just avoiding a render callback for perf here
        */
-      renderFormComponent = (formikProps: FormikProps<Values>) => {
+      renderFormComponent = (formikProps: FormikProps<Values, Status>) => {
         return <Component {...this.props} {...formikProps} />;
       };
 
@@ -183,7 +185,7 @@ export function withFormik<
 
     return hoistNonReactStatics(
       C,
-      Component as React.ComponentClass<OuterProps & FormikProps<Values>> // cast type to ComponentClass (even if SFC)
+      Component as React.ComponentClass<OuterProps & FormikProps<Values, Status>> // cast type to ComponentClass (even if SFC)
     ) as React.ComponentClass<OuterProps>;
   };
 }

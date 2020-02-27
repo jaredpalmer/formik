@@ -9,8 +9,8 @@ import invariant from 'tiny-warning';
  * Connect any component to Formik context, and inject as a prop called `formik`;
  * @param Comp React Component
  */
-export function connect<OuterProps, Values = {}>(
-  Comp: React.ComponentType<OuterProps & { formik: FormikContextType<Values> }>
+export function connect<OuterProps, Values = {}, Status = any>(
+  Comp: React.ComponentType<OuterProps & { formik: FormikContextType<Values, Status> }>
 ) {
   const C: React.SFC<OuterProps> = (props: OuterProps) => (
     <FormikConsumer>
@@ -40,7 +40,7 @@ export function connect<OuterProps, Values = {}>(
   return hoistNonReactStatics(
     C,
     Comp as React.ComponentClass<
-      OuterProps & { formik: FormikContextType<Values> }
+      OuterProps & { formik: FormikContextType<Values, Status> }
     > // cast type to ComponentClass (even if SFC)
   ) as React.ComponentType<OuterProps>;
 }

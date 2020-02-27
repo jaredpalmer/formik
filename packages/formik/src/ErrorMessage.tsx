@@ -12,10 +12,10 @@ export interface ErrorMessageProps {
 }
 
 class ErrorMessageImpl extends React.Component<
-  ErrorMessageProps & { formik: FormikContextType<any> }
+  ErrorMessageProps & { formik: FormikContextType<any, any> }
 > {
   shouldComponentUpdate(
-    props: ErrorMessageProps & { formik: FormikContextType<any> }
+    props: ErrorMessageProps & { formik: FormikContextType<any, any> }
   ) {
     if (
       getIn(this.props.formik.errors, this.props.name) !==
@@ -54,5 +54,5 @@ class ErrorMessageImpl extends React.Component<
 
 export const ErrorMessage = connect<
   ErrorMessageProps,
-  ErrorMessageProps & { formik: FormikContextType<any> }
+  ErrorMessageProps & { formik: FormikContextType<any, any> }
 >(ErrorMessageImpl);

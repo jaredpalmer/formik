@@ -16,6 +16,10 @@ interface Values {
   name: string;
 }
 
+interface Status {
+  myStatusMessage?: string;
+}
+
 function Form({
   values,
   touched,
@@ -25,7 +29,7 @@ function Form({
   status,
   errors,
   isSubmitting,
-}: FormikProps<Values>) {
+}: FormikProps<Values, Status>) {
   return (
     <form onSubmit={handleSubmit} data-testid="form">
       <input
@@ -50,7 +54,7 @@ function Form({
 
 const InitialValues = { name: 'jared' };
 
-function renderFormik<V = Values>(props?: Partial<FormikConfig<V>>) {
+function renderFormik<V = Values, S = Status>(props?: Partial<FormikConfig<V, S>>) {
   let injected: any;
   const { rerender, ...rest } = render(
     <Formik
@@ -60,13 +64,13 @@ function renderFormik<V = Values>(props?: Partial<FormikConfig<V>>) {
     >
       {formikProps =>
         (injected = formikProps) && (
-          <Form {...((formikProps as unknown) as FormikProps<Values>)} />
+          <Form {...((formikProps as unknown) as FormikProps<Values, Status>)} />
         )
       }
     </Formik>
   );
   return {
-    getProps(): FormikProps<V> {
+    getProps(): FormikProps<V, S> {
       return injected;
     },
     ...rest,
@@ -79,7 +83,7 @@ function renderFormik<V = Values>(props?: Partial<FormikConfig<V>>) {
         >
           {formikProps =>
             (injected = formikProps) && (
-              <Form {...((formikProps as unknown) as FormikProps<Values>)} />
+              <Form {...((formikProps as unknown) as FormikProps<Values, Status>)} />
             )
           }
         </Formik>

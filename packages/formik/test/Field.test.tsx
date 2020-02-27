@@ -15,32 +15,33 @@ import { noop } from './testHelpers';
 
 const initialValues = { name: 'jared', email: 'hello@reason.nyc' };
 type Values = typeof initialValues;
+type Status = any;
 type FastFieldConfig = FieldConfig;
 
 type $FixMe = any;
 
 function renderForm(
   ui?: React.ReactNode,
-  props?: Partial<FormikConfig<Values>>
+  props?: Partial<FormikConfig<Values, Status>>
 ) {
-  let injected: FormikProps<Values>;
+  let injected: FormikProps<Values, Status>;
   const { rerender, ...rest } = render(
     <Formik onSubmit={noop} initialValues={initialValues} {...props}>
-      {(formikProps: FormikProps<Values>) =>
+      {(formikProps: FormikProps<Values, Status>) =>
         (injected = formikProps) && ui ? ui : null
       }
     </Formik>
   );
 
   return {
-    getFormProps(): FormikProps<Values> {
+    getFormProps(): FormikProps<Values, Status> {
       return injected;
     },
     ...rest,
     rerender: () =>
       rerender(
         <Formik onSubmit={noop} initialValues={initialValues} {...props}>
-          {(formikProps: FormikProps<Values>) =>
+          {(formikProps: FormikProps<Values, Status>) =>
             (injected = formikProps) && ui ? ui : null
           }
         </Formik>
@@ -52,7 +53,7 @@ const createRenderField = (
   FieldComponent: React.ComponentType<FieldConfig>
 ) => (
   props: Partial<FieldConfig> | Partial<FastFieldConfig> = {},
-  formProps?: Partial<FormikConfig<Values>>
+  formProps?: Partial<FormikConfig<Values, Status>>
 ) => {
   let injected: FieldProps;
 

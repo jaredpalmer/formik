@@ -27,7 +27,7 @@ describe('<ErrorMessage />', () => {
     let message = 'Wrong';
     ReactDOM.render(
       <TestForm
-        render={(fProps: FormikProps<TestFormValues>) => {
+        render={(fProps: FormikProps<TestFormValues, any>) => {
           actualFProps = fProps;
           return (
             <div>

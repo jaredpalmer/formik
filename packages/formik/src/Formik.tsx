@@ -2,6 +2,9 @@ import * as React from 'react';
 import isEqual from 'react-fast-compare';
 import deepmerge from 'deepmerge';
 import isPlainObject from 'lodash/isPlainObject';
+import every from 'lodash/every'
+import reject from 'lodash/reject';
+import head from 'lodash/head'
 import {
   FormikConfig,
   FormikErrors,
@@ -125,7 +128,7 @@ const emptyTouched: FormikTouched<unknown> = {};
 // and their validate functions
 interface FieldRegistry {
   [field: string]: {
-    validate: (value: any) => string | Promise<string> | undefined;
+    validate: any;
   };
 }
 
@@ -256,10 +259,18 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   );
 
   const runSingleFieldLevelValidation = React.useCallback(
-    (field: string, value: void | string): Promise<string> => {
-      return new Promise(resolve =>
-        resolve(fieldRegistry.current[field].validate(value))
-      );
+    (field: string, value: void | string): Promise<any> => {
+      if (Array.isArray(fieldRegistry.current[field].validate) && fieldRegistry.current[field].validate.length > 0) {
+        return Promise.all(fieldRegistry.current[field].validate.map((validate: any) => {
+          return new Promise((resolve: any) => {
+            return resolve(validate(value));
+          })
+        }))
+      } else {
+        return new Promise(resolve =>
+          resolve(fieldRegistry.current[field].validate(value))
+        );
+      }
     },
     []
   );
@@ -268,7 +279,9 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     (values: Values): Promise<FormikErrors<Values>> => {
       const fieldKeysWithValidation: string[] = Object.keys(
         fieldRegistry.current
-      ).filter(f => isFunction(fieldRegistry.current[f].validate));
+      ).filter(f => Array.isArray(fieldRegistry.current[f].validate) ?
+        every(fieldRegistry.current[f].validate.map((item: any) => isFunction(item))) :
+         isFunction(fieldRegistry.current[f].validate));
 
       // Construct an array with all of the field validation functions
       const fieldValidations: Promise<string>[] =
@@ -284,7 +297,8 @@ export function useFormik<Values extends FormikValues = FormikValues>({
             return prev;
           }
           if (curr) {
-            prev = setIn(prev, fieldKeysWithValidation[index], curr);
+            prev = setIn(prev, fieldKeysWithValidation[index], Array.isArray(curr) ?
+             head(reject(curr, e => e === undefined)): curr);
           }
           return prev;
         }, {})

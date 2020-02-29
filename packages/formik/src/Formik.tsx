@@ -907,6 +907,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     (nameOrOptions): FieldInputProps<any> => {
       const isAnObject = isObject(nameOrOptions);
       const name = isAnObject ? nameOrOptions.name : nameOrOptions;
+      const checked = isAnObject ? nameOrOptions.checked : false;
       const valueState = getIn(state.values, name);
 
       const field: FieldInputProps<any> = {
@@ -924,7 +925,9 @@ export function useFormik<Values extends FormikValues = FormikValues>({
         } = nameOrOptions;
 
         if (type === 'checkbox') {
-          if (valueProp === undefined) {
+          if (checked) {
+            field.checked = checked;
+          } else if (valueProp === undefined) {
             field.checked = !!valueState;
           } else {
             field.checked = !!(

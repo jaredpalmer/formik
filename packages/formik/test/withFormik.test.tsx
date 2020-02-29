@@ -195,14 +195,14 @@ describe('withFormik()', () => {
     expect(getProps().my).toEqual('prop');
   });
 
-  it('should return checked true if getFieldProps is passed checked', () => {
+  it('should return checked.field equal to true if checked is passed to getFieldProps', () => {
     const { getProps } = renderWithFormik();
     const props = getProps();
     const field = props.getFieldProps({name: 'test box', type: 'checkbox', checked: true});
     expect(field.checked).toEqual(true);
   });
 
-  it('should return checked false if getFieldProps is not passed checked', () => {
+  it('should return checked.field equal to false if is not is passed to getFieldProps', () => {
     const { getProps } = renderWithFormik();
     const props = getProps();
     const field = props.getFieldProps({name: 'test box', type: 'checkbox',});

@@ -195,6 +195,20 @@ describe('withFormik()', () => {
     expect(getProps().my).toEqual('prop');
   });
 
+  it('should return checked true if getFieldProps is passed checked', () => {
+    const { getProps } = renderWithFormik();
+    const props = getProps();
+    const field = props.getFieldProps({name: 'test box', type: 'checkbox', checked: true});
+    expect(field.checked).toEqual(true);
+  });
+
+  it('should return checked false if getFieldProps is not passed checked', () => {
+    const { getProps } = renderWithFormik();
+    const props = getProps();
+    const field = props.getFieldProps({name: 'test box', type: 'checkbox',});
+    expect(field.checked).toEqual(false);
+  })
+
   // no ref, WONTFIX?
   // it('should correctly set displayName', () => {
   //   const tree = mount(<BasicForm user={{ name: 'jared' }} />);

@@ -206,7 +206,7 @@ describe('withFormik()', () => {
     const { getProps } = renderWithFormik();
     const props = getProps();
     const field = props.getFieldProps({name: 'test box', type: 'checkbox',});
-    expect(field.checked).toEqual(false);
+    expect(field.checked).toBeFalsy();
   })
 
   // no ref, WONTFIX?

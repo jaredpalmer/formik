@@ -84,7 +84,7 @@ You can also try before you buy with this
 If you're not using a module bundler or package manager we also have a global ("UMD") build hosted on the [unpkg.com](https://unpkg.com) CDN. Simply add the following `<script>` tag to the bottom of your HTML file:
 
 ```html
-<script src="https://unpkg.com/formik/dist/formik.umd.production.js"></script>
+<script src="https://unpkg.com/formik/dist/formik.umd.production.min.js"></script>
 ```
 
 Once you've added this you will have access to the `window.Formik.<Insert_Component_Name_Here>` variables.

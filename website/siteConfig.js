@@ -38,6 +38,12 @@ const users = [
     pinned: true,
   },
   {
+    caption: 'Appknit',
+    image: '/formik/img/logos/lyft.svg',
+    infoLink: 'https://app-knit.com/',
+    pinned: true,
+  },
+  {
     caption: 'Nasa',
     image: '/formik/img/logos/nasa.svg',
     infoLink: 'https://www.nasa.gov',

@@ -54,6 +54,11 @@ type FormikMessage<Values> =
     };
 
 const defaultParseFn = (value: unknown, _name: string) => value;
+const numberParseFn = (value: any, _name: string) => {
+  const parsed = parseFloat(value);
+
+  return isNaN(parsed) ? '' : parsed;
+};
 
 const defaultFormatFn = (value: unknown, _name: string) =>
   value === undefined ? '' : value;
@@ -927,16 +932,12 @@ export function useFormik<Values extends FormikValues = FormikValues>({
 
       const target = event.target ? event.target : event.currentTarget;
       const { type, value, checked, options, multiple } = target;
-      let val;
-      let parsed;
-      val = /number|range/.test(type)
-        ? ((parsed = parseFloat(value)), isNaN(parsed) ? '' : parsed)
-        : /checkbox/.test(type) // checkboxes
+
+      return /checkbox/.test(type) // checkboxes
         ? getValueForCheckbox(getIn(state.values, fieldName!), checked, value)
         : !!multiple // <select multiple>
         ? getSelectedValues(options)
         : value;
-      return val;
     }
   );
 
@@ -963,7 +964,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
           value: valueProp, // value is special for checkboxes
           as: is,
           multiple,
-          parse = defaultParseFn,
+          parse = /number|range/.test(type) ? numberParseFn : defaultParseFn,
           format = defaultFormatFn,
           formatOnBlur = false,
         } = nameOrOptions;

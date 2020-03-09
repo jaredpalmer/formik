@@ -281,7 +281,56 @@ There are also imperative helper methods provided to you via Formik's render/inj
 
 ## Displaying Error Messages
 
-@todo
+Error messages are dependent on the form's validation. If an error exists, and the validation function produces an error object (as it should) with a matching shape to our values/initialValues, dependent field errors can be accessed from the errors object.
+
+```js
+import React from 'react';
+import { Formik, Form, Field } from 'formik';
+import * as Yup from 'yup';
+
+const DisplayingErrorMessagesSchema = Yup.object().shape({
+  username: Yup.string()
+    .min(2, 'Too Short!')
+    .max(50, 'Too Long!')
+    .required('Required'),
+  email: Yup.string()
+    .email('Invalid email')
+    .required('Required'),
+});
+
+export const DisplayingErrorMessagesExample = () => (
+  <div>
+    <h1>Displaying Error Messages</h1>
+    <Formik
+      initialValues={{
+        username: '',
+        email: '',
+      }}
+      validationSchema={DisplayingErrorMessagesSchema}
+      onSubmit={values => {
+        // same shape as initial values
+        console.log(values);
+      }}
+    >
+      {({ errors, touched }) => (
+        <Form>
+          <Field name="username" />
+          {/* If this field has been touched, and it contains an error, display it
+           */}
+          {touched.username && errors.username && <div>{errors.username}</div>}
+          <Field name="email" />
+          {/* If this field has been touched, and it contains an error, display
+          it */}
+          {touched.email && errors.email && <div>{errors.email}</div>}
+          <button type="submit">Submit</button>
+        </Form>
+      )}
+    </Formik>
+  </div>
+);
+```
+
+> The [ErrorMessage](https://jaredpalmer.com/formik/docs/api/errormessage) component can also be used to display error messages.
 
 ## Frequently Asked Questions
 

@@ -315,12 +315,12 @@ export const DisplayingErrorMessagesExample = () => (
       {({ errors, touched }) => (
         <Form>
           <Field name="username" />
-          /* If this field has been touched, and it contains an error, display it
-          */
+          {/* If this field has been touched, and it contains an error, display it
+           */}
           {touched.username && errors.username && <div>{errors.username}</div>}
           <Field name="email" />
-          /* If this field has been touched, and it contains an error, display
-          it */
+          {/* If this field has been touched, and it contains an error, display
+          it */}
           {touched.email && errors.email && <div>{errors.email}</div>}
           <button type="submit">Submit</button>
         </Form>

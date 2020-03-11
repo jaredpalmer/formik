@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) Formik, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
 import * as React from 'react';
 import { FormikContext } from './FormikContext';
 import {
@@ -7,7 +13,7 @@ import {
   useStateAndRef,
   isReactNative,
 } from './utils';
-import { ValidatorFn, FieldStateAndOperations } from './types';
+import { ValidatorFn, FieldStateAndOperations, $FixMe } from './types';
 
 export interface UseFieldOptions<V> {
   name: string;
@@ -64,18 +70,16 @@ export function useField<V = unknown>(
     format = defaultFormatFn,
     formatOnBlur = false,
   } = options;
-  const {
-    register,
-    unregister,
-    initialValues,
-    forceUpdate,
-    ...rest
-  } = React.useContext(FormikContext);
-  const [value, setValue, valueRef] = useStateAndRef(
+  const { register, unregister, initialValues, forceUpdate } = React.useContext(
+    FormikContext
+  );
+  const [value, setValue, valueRef] = useStateAndRef<V>(
     options.initialValue || getIn(initialValues, options.name) || ''
   );
-  const [touched, setTouched, touchedRef] = useStateAndRef(false);
-  const [error, setError, errorsRef] = useStateAndRef();
+  const [touched, setTouched, touchedRef] = useStateAndRef<boolean>(false);
+  const [error, setError, errorsRef] = useStateAndRef<string | undefined>(
+    undefined
+  );
   React.useEffect(() => {
     register(name, {
       valueRef,
@@ -101,6 +105,7 @@ export function useField<V = unknown>(
     touchedRef,
     valueRef,
   ]);
+
   const getValueFromEvent = useEventCallback(
     (event: React.SyntheticEvent<any>) => {
       // React Native/Expo Web/maybe other render envs
@@ -118,7 +123,7 @@ export function useField<V = unknown>(
       const target = event.target ? event.target : event.currentTarget;
       const { type, value: valueProp, checked, options, multiple } = target;
       return /checkbox/.test(type) // checkboxes
-        ? getValueForCheckbox(value, checked, valueProp)
+        ? getValueForCheckbox(value as $FixMe, checked, valueProp)
         : !!multiple // <select multiple>
         ? getSelectedValues(options)
         : valueProp;

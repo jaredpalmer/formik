@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) Formik, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
 import deepmerge from 'deepmerge';
 import isPlainObject from 'lodash/isPlainObject';
 import * as React from 'react';
@@ -8,9 +14,7 @@ import {
   useEventCallback,
   useForceRender,
 } from './utils';
-import { FieldStateAndOperations } from './types';
-
-type $FixMe = any;
+import { FieldStateAndOperations, $FixMe } from './types';
 
 /**
  * Values of fields in the form
@@ -265,9 +269,9 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   });
 
   // @todo we may need ResetButton or useResetButton()
-  const handleReset = useEventCallback(() => {
-    throw new Error('not implemented');
-  });
+  // const handleReset = useEventCallback(() => {
+  //   throw new Error('not implemented');
+  // });
 
   const setFormikState = useEventCallback(() => {
     throw new Error('not implemented');

@@ -1,3 +1,10 @@
+/**
+ * Copyright (c) Formik, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 import clone from 'lodash/clone';
 import toPath from 'lodash/toPath';
 import * as React from 'react';
@@ -175,14 +182,10 @@ export function useEventCallback<T extends (...args: any[]) => any>(fn: T): T {
 }
 
 export function useStateAndRef<T>(
-  initialValue?: T
-): [
-  T | undefined,
-  React.Dispatch<React.SetStateAction<T | undefined>>,
-  React.MutableRefObject<T | undefined>
-] {
-  const ref = React.useRef<T | undefined>(initialValue);
-  const [state, setState] = React.useState<T | undefined>(initialValue);
+  initialValue: T
+): [T, React.Dispatch<React.SetStateAction<T>>, React.MutableRefObject<T>] {
+  const ref = React.useRef<T>(initialValue);
+  const [state, setState] = React.useState<T>(initialValue);
   const update = useEventCallback(v => {
     ref.current = v;
     setState(v);

@@ -16,6 +16,10 @@ export const FormikContext = createNamedContext<FormikContextType>(
   {} as FormikContextType
 );
 
+export const useFormikContext = () => {
+  return React.useContext(FormikContext);
+};
+
 function createNamedContext<ContextValueType>(
   name: string,
   defaultValue: ContextValueType

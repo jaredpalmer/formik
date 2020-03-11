@@ -1,20 +1,19 @@
 import * as React from 'react';
-import { FormikContextType } from './types';
-import invariant from 'tiny-warning';
+import { useFormik } from './useFormik';
 
-export const FormikContext = React.createContext<FormikContextType<any>>(
-  undefined as any
+// @todo fix type def
+export type FormikContextType = ReturnType<typeof useFormik>;
+
+export const FormikContext = createNamedContext<FormikContextType>(
+  'FormikContext',
+  {} as FormikContextType
 );
-export const FormikProvider = FormikContext.Provider;
-export const FormikConsumer = FormikContext.Consumer;
 
-export function useFormikContext<Values>() {
-  const formik = React.useContext<FormikContextType<Values>>(FormikContext);
-
-  invariant(
-    !!formik,
-    `Formik context is undefined, please verify you are calling useFormikContext() as child of a <Formik> component.`
-  );
-
-  return formik;
+function createNamedContext<ContextValueType>(
+  name: string,
+  defaultValue: ContextValueType
+): React.Context<ContextValueType> {
+  const Ctx = React.createContext<ContextValueType>(defaultValue);
+  Ctx.displayName = name;
+  return Ctx;
 }

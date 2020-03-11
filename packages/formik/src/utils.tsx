@@ -40,6 +40,13 @@ export const isPromise = (value: any): value is PromiseLike<any> =>
 export const isInputEvent = (value: any): value is React.SyntheticEvent<any> =>
   value && isObject(value) && isObject(value.target);
 
+/** @private Are we in RN? */
+export const isReactNative =
+  typeof window !== 'undefined' &&
+  window.navigator &&
+  window.navigator.product &&
+  window.navigator.product === 'ReactNative';
+
 /**
  * Same as document.activeElement but wraps in a try-catch block. In IE it is
  * not safe to call document.activeElement if there is nothing focused.
@@ -142,34 +149,49 @@ export function setIn(obj: any, path: string, value: any): any {
   return res;
 }
 
-/**
- * Recursively a set the same value for all keys and arrays nested object, cloning
- * @param object
- * @param value
- * @param visited
- * @param response
- */
-export function setNestedObjectValues<T>(
-  object: any,
-  value: any,
-  visited: any = new WeakMap(),
-  response: any = {}
-): T {
-  for (let k of Object.keys(object)) {
-    const val = object[k];
-    if (isObject(val)) {
-      if (!visited.get(val)) {
-        visited.set(val, true);
-        // In order to keep array values consistent for both dot path  and
-        // bracket syntax, we need to check if this is an array so that
-        // this will output  { friends: [true] } and not { friends: { "0": true } }
-        response[k] = Array.isArray(val) ? [] : {};
-        setNestedObjectValues(val, value, visited, response[k]);
-      }
-    } else {
-      response[k] = value;
-    }
-  }
+// React currently throws a warning when using useLayoutEffect on the server.
+// To get around it, we can conditionally useEffect on the server (no-op) and
+// useLayoutEffect in the browser.
+// @see https://gist.github.com/gaearon/e7d97cdf38a2907924ea12e4ebdf3c85
+const useIsomorphicLayoutEffect =
+  typeof window !== 'undefined' &&
+  typeof window.document !== 'undefined' &&
+  typeof window.document.createElement !== 'undefined'
+    ? React.useLayoutEffect
+    : React.useEffect;
 
-  return response;
+export function useEventCallback<T extends (...args: any[]) => any>(fn: T): T {
+  const ref: any = React.useRef(fn);
+
+  // we copy a ref to the callback scoped to the current state/props on each render
+  useIsomorphicLayoutEffect(() => {
+    ref.current = fn;
+  });
+
+  return React.useCallback(
+    (...args: any[]) => ref.current.apply(void 0, args),
+    []
+  ) as T;
+}
+
+export function useStateAndRef<T>(
+  initialValue?: T
+): [
+  T | undefined,
+  React.Dispatch<React.SetStateAction<T | undefined>>,
+  React.MutableRefObject<T | undefined>
+] {
+  const ref = React.useRef<T | undefined>(initialValue);
+  const [state, setState] = React.useState<T | undefined>(initialValue);
+  const update = useEventCallback(v => {
+    ref.current = v;
+    setState(v);
+  });
+  return [state, update, ref];
+}
+
+const noopReducer = (s: number) => s + 1;
+export function useForceRender() {
+  const [, forceRender] = React.useReducer(noopReducer, 0);
+  return forceRender;
 }

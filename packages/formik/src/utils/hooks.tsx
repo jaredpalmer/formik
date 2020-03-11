@@ -6,6 +6,57 @@
  */
 import * as React from 'react';
 
+const noopReducer = (s: number) => s + 1;
+
+export function useForceRender() {
+  const [, forceRender] = React.useReducer(noopReducer, 0);
+  return forceRender;
+}
+
+// React currently throws a warning when using useLayoutEffect on the server.
+// To get around it, we can conditionally useEffect on the server (no-op) and
+// useLayoutEffect in the browser.
+// @see https://gist.github.com/gaearon/e7d97cdf38a2907924ea12e4ebdf3c85
+export const useIsomorphicLayoutEffect =
+  typeof window !== 'undefined' &&
+  typeof window.document !== 'undefined' &&
+  typeof window.document.createElement !== 'undefined'
+    ? React.useLayoutEffect
+    : React.useEffect;
+
+/**
+ * Akin to an instance variable on a class, this method keeps referential equality of a fn
+ * between renders.
+ *
+ * @param fn callback function
+ */
+export function useEventCallback<T extends (...args: any[]) => any>(fn: T): T {
+  const ref: any = React.useRef(fn);
+  // we copy a ref to the callback scoped to the current state/props on each render
+  useIsomorphicLayoutEffect(() => {
+    ref.current = fn;
+  });
+  return React.useCallback(
+    (...args: any[]) => ref.current.apply(void 0, args),
+    []
+  ) as T;
+}
+
+/**
+ * Like React.useState, but it keeps value in a ref as well for reading.
+ */
+export function useStateAndRef<T>(
+  initialValue: T
+): [T, React.Dispatch<React.SetStateAction<T>>, React.MutableRefObject<T>] {
+  const ref = React.useRef<T>(initialValue);
+  const [state, setState] = React.useState<T>(initialValue);
+  const update = useEventCallback(v => {
+    ref.current = v;
+    setState(v);
+  });
+  return [state, update, ref];
+}
+
 /**
  * React.Ref uses the readonly type `React.RefObject` instead of
  * `React.MutableRefObject`, We pretty much always assume ref objects are
@@ -18,6 +69,26 @@ export type AssignableRef<ValueType> =
     }['bivarianceHack']
   | React.MutableRefObject<ValueType | null>
   | null;
+
+/**
+ * Wraps a lib-defined event handler and a user-defined event handler, returning
+ * a single handler that allows a user to prevent lib-defined handlers from
+ * firing.
+ *
+ * @param theirHandler User-supplied event handler
+ * @param ourHandler Library-supplied event handler
+ */
+export function wrapEvent<EventType extends React.SyntheticEvent | Event>(
+  theirHandler: ((event: EventType) => any) | undefined,
+  ourHandler: (event: EventType) => any
+): (event: EventType) => any {
+  return event => {
+    theirHandler && theirHandler(event);
+    if (!event.defaultPrevented) {
+      return ourHandler(event);
+    }
+  };
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 // The following types help us deal with the `as` prop.

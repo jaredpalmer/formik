@@ -10,8 +10,7 @@ import * as React from 'react';
 import { setIn } from './utils/setIn';
 import { getIn } from './utils/getIn';
 import { isPromise } from './utils/is';
-import { useForceRender } from './utils/useForceRender';
-import { useEventCallback } from './utils/useEventCallback';
+import { useForceRender, useEventCallback } from './utils/hooks';
 import { FieldStateAndOperations, $FixMe } from './types';
 
 /**

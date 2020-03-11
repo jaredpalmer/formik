@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { forwardRefWithAs } from 'utils/forwardWithRefAs';
-import { useFormikContext } from 'FormikContext';
+import { forwardRefWithAs } from './utils/hooks';
+import { useFormikContext } from './FormikContext';
 
 export type FormProps = Omit<React.HTMLProps<HTMLFormElement>, 'onSubmit'>;
 

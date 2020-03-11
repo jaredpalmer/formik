@@ -8,8 +8,7 @@ import * as React from 'react';
 import { FormikContext } from './FormikContext';
 import { getIn } from './utils/getIn';
 import { isInputEvent, isReactNative } from './utils/is';
-import { useStateAndRef } from './utils/useStateAndRef';
-import { useEventCallback } from './utils/useEventCallback';
+import { useStateAndRef, useEventCallback } from './utils/hooks';
 import { ValidatorFn, FieldStateAndOperations, $FixMe } from './types';
 
 export interface UseFieldOptions<V> {

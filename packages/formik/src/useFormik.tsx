@@ -7,13 +7,11 @@
 import deepmerge from 'deepmerge';
 import isPlainObject from 'lodash/isPlainObject';
 import * as React from 'react';
-import {
-  isPromise,
-  setIn,
-  getIn,
-  useEventCallback,
-  useForceRender,
-} from './utils';
+import { setIn } from './utils/setIn';
+import { getIn } from './utils/getIn';
+import { isPromise } from './utils/is';
+import { useForceRender } from './utils/useForceRender';
+import { useEventCallback } from './utils/useEventCallback';
 import { FieldStateAndOperations, $FixMe } from './types';
 
 /**

@@ -560,6 +560,10 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     dispatch({ type: 'SET_ERRORS', payload: errors });
   }, []);
 
+  const getInitialValues = React.useCallback(() => {
+    return initialValues.current;
+  }, [initialValues]);
+
   const setValues = useEventCallback(
     (values: Values, shouldValidate?: boolean) => {
       dispatch({ type: 'SET_VALUES', payload: values });
@@ -844,6 +848,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
 
     validateForm: validateFormWithHighPriority,
     validateField,
+    getInitialValues,
     setErrors,
     setFieldError,
     setFieldTouched,
@@ -976,6 +981,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     setSubmitting,
     setTouched,
     setValues,
+    getInitialValues,
     submitForm,
     validateForm: validateFormWithHighPriority,
     validateField,

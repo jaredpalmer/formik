@@ -606,6 +606,12 @@ describe('<Formik>', () => {
     });
 
     describe('FormikHelpers', () => {
+      it('getInitialValues should get initial values', () => {
+        const { getProps } = renderFormik<Values>();
+
+        expect(getProps().getInitialValues()).toEqual(InitialValues);
+      });
+
       it('setValues sets values', () => {
         const { getProps } = renderFormik<Values>();
 

@@ -202,6 +202,11 @@ const users = [
     caption: 'Ubidots',
     image: '/formik/img/logos/ubidots.svg',
     infoLink: 'https://www.ubidots.com',
+  },
+    {
+    caption: 'SwissDev DevOps Jobs',
+    image: '/formik/img/logos/swissdev-devops-jobs-200-100.png',
+    infoLink: 'https://swissdevjobs.ch/jobs/Dev-Ops/All',
   }
 ];
 

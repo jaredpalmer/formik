@@ -889,8 +889,8 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   const getFieldHelpers = React.useCallback(
     (name: string): FieldHelperProps<any> => {
       return {
-        setValue: (value: any) => setFieldValue(name, value),
-        setTouched: (value: boolean) => setFieldTouched(name, value),
+        setValue: (value: any, shouldValidate?: boolean) => setFieldValue(name, value, shouldValidate),
+        setTouched: (value: boolean, shouldValidate?: boolean) => setFieldTouched(name, value, shouldValidate),
         setError: (value: any) => setFieldError(name, value),
       };
     },

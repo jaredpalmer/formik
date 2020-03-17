@@ -150,6 +150,6 @@ An object that contains relevant computed metadata about a field. More specifica
 
 An object that contains helper functions which you can use to imperatively change the value, error value or touched status for the field in question. This is useful for components which need to change a field's status directly, without triggering change or blur events.
 
-- `setValue(value: any): void` - A function to change the field's value
-- `setTouched(value: boolean): void` - A function to change the field's touched status
+- `setValue(value: any, shouldValidate?: boolean): void` - A function to change the field's value.  Calling this will trigger validation to run if `validateOnChange` is set to `true` (which it is by default). You can also explicitly prevent/skip validation by passing a second argument as `false`.
+- `setTouched(value: boolean, shouldValidate?: boolean): void` - A function to change the field's touched status. Calling this will trigger validation to run if `validateOnBlur` is set to `true` (which it is by default). You can also explicitly prevent/skip validation by passing a second argument as `false`.
 - `setError(value: any): void` - A function to change the field's error value

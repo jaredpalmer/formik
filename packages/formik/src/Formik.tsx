@@ -737,7 +737,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     dispatch({ type: 'SET_ISSUBMITTING', payload: isSubmitting });
   }, []);
 
-  const submitForm = useEventCallback(() => {
+  const submitForm = useEventCallback((submitContext?: any) => {
     dispatch({ type: 'SUBMIT_ATTEMPT' });
     return validateFormWithHighPriority().then(
       (combinedErrors: FormikErrors<Values>) => {
@@ -764,7 +764,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
           // cleanup of isSubmitting on behalf of the consumer.
           let promiseOrUndefined;
           try {
-            promiseOrUndefined = executeSubmit();
+            promiseOrUndefined = executeSubmit(submitContext);
             // Bail if it's sync, consumer is responsible for cleaning up
             // via setSubmitting(false)
             if (promiseOrUndefined === undefined) {
@@ -856,8 +856,8 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     submitForm,
   };
 
-  const executeSubmit = useEventCallback(() => {
-    return onSubmit(state.values, imperativeMethods);
+  const executeSubmit = useEventCallback((submitContext?: any) => {
+    return onSubmit(state.values, imperativeMethods, submitContext);
   });
 
   const handleReset = useEventCallback(e => {

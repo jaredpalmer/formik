@@ -130,9 +130,9 @@ Set the error message of a field imperatively. `field` should match the key of
 Set the touched state of a field imperatively. `field` should match the key of
 `touched` you wish to update. Useful for creating custom input blur handlers. Calling this method will trigger validation to run if `validateOnBlur` is set to `true` (which it is by default). `isTouched` defaults to `true` if not specified. You can also explicitly prevent/skip validation by passing a third argument as `false`.
 
-#### `submitForm: () => Promise`
+#### `submitForm: (submitContext?: any) => Promise`
 
-Trigger a form submission. The promise will be rejected if form is invalid.
+Trigger a form submission. The promise will be rejected if form is invalid. Value of `submitContext` will be passed to `onSubmit` handler.
 
 #### `submitCount: number`
 
@@ -325,13 +325,15 @@ Note: `initialValues` not available to the higher-order component, use
 Your optional form reset handler. It is passed your forms `values` and the
 "FormikBag".
 
-### `onSubmit: (values: Values, formikBag: FormikBag) => void | Promise<any>`
+### `onSubmit: (values: Values, formikBag: FormikBag, submitContext?: any) => void | Promise<any>`
 
-Your form submission handler. It is passed your forms `values` and the
-"FormikBag", which includes an object containing a subset of the
+Your form submission handler. It is passed your:
+ - Forms `values`
+ - The "FormikBag", which includes an object containing a subset of the
 [injected props and methods](#formik-render-methods-and-props) (i.e. all the methods
 with names that start with `set<Thing>` + `resetForm`) and any props that were
 passed to the wrapped component.
+ - `submitContext` which was passed to `submitForm` method
 
 Note: `errors`, `touched`, `status` and all event handlers are NOT
 included in the `FormikBag`.

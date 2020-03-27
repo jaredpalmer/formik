@@ -46,7 +46,7 @@ export const MyApp: React.FC<{}> = () => {
               render={({ field, form, meta }) => (
                 <div>
                   <input type="text" {...field} placeholder="First Name" />
-                  {meta.touched && meta.error && meta.error}
+                  {meta.touched && meta.error}
                 </div>
               )}
             />

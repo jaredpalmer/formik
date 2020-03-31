@@ -165,9 +165,7 @@ class FieldArrayInner<Values = {}> extends React.Component<
           ? alterErrors
           : (error: FormikErrors<Values>) => error;
       let updateTouched =
-        typeof alterTouched === 'function'
-          ? alterTouched
-          : () => setIn({}, name, true);
+        typeof alterTouched === 'function' ? alterTouched : fn;
 
       // values fn should be executed before updateErrors and updateTouched,
       // otherwise it causes an error with unshift.
@@ -226,8 +224,17 @@ class FieldArrayInner<Values = {}> extends React.Component<
   handleSwap = (indexA: number, indexB: number) => () =>
     this.swap(indexA, indexB);
 
-  move = (from: number, to: number) =>
-    this.updateArrayField((array: any[]) => move(array, from, to), true, true);
+  move = (from: number, to: number) => {
+    this.updateArrayField(
+      (array: any[]) => move(array, from, to),
+      (touched: Array<boolean>) => {
+        let touchedArr = copyArrayLike(touched);
+        touchedArr[to] = true;
+        return touchedArr;
+      },
+      true
+    );
+  };
 
   handleMove = (from: number, to: number) => () => this.move(from, to);
 

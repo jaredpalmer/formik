@@ -381,7 +381,7 @@ describe('<FieldArray />', () => {
 
     beforeEach(() => {
       ReactDOM.render(
-        <TestForm initialTouched={'friends'}>
+        <TestForm>
           {(props: any) => {
             formikBag = props;
             return (
@@ -399,10 +399,11 @@ describe('<FieldArray />', () => {
       );
     });
 
-    it('should move value given a current and ending index', () => {
+    it('should move value given a current and ending index and mark final location as touched', () => {
       arrayHelpers.move(0, 1);
       const expected = ['andrea', 'jared', 'brent'];
       expect(formikBag.values.friends).toEqual(expected);
+      expect(formikBag.touched.friends).toEqual([undefined, true]);
     });
   });
 
@@ -427,8 +428,6 @@ describe('<FieldArray />', () => {
         />,
         node
       );
-
-      formikBag.setErrors({ friends: { 2: ['Field error'] } });
 
       arrayHelpers.push('michael');
       const el = arrayHelpers.pop();

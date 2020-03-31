@@ -6,6 +6,7 @@ import {
   FormikState,
   SharedRenderProps,
   FormikProps,
+  FormikErrors,
 } from './types';
 import {
   getIn,
@@ -159,9 +160,14 @@ class FieldArrayInner<Values = {}> extends React.Component<
       formik: { setFormikState },
     } = this.props;
     setFormikState((prevState: FormikState<any>) => {
-      let updateErrors = typeof alterErrors === 'function' ? alterErrors : fn;
+      let updateErrors =
+        typeof alterErrors === 'function'
+          ? alterErrors
+          : (error: FormikErrors<Values>) => error;
       let updateTouched =
-        typeof alterTouched === 'function' ? alterTouched : fn;
+        typeof alterTouched === 'function'
+          ? alterTouched
+          : () => setIn({}, name, true);
 
       // values fn should be executed before updateErrors and updateTouched,
       // otherwise it causes an error with unshift.

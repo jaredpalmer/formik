@@ -375,6 +375,37 @@ describe('<FieldArray />', () => {
     });
   });
 
+  describe('props.move()', () => {
+    let formikBag: any;
+    let arrayHelpers: any;
+
+    beforeEach(() => {
+      ReactDOM.render(
+        <TestForm initialTouched={'friends'}>
+          {(props: any) => {
+            formikBag = props;
+            return (
+              <FieldArray
+                name="friends"
+                render={arrayProps => {
+                  arrayHelpers = arrayProps;
+                  return null;
+                }}
+              />
+            );
+          }}
+        </TestForm>,
+        node
+      );
+    });
+
+    it('should move value given a current and ending index', () => {
+      arrayHelpers.move(0, 1);
+      const expected = ['andrea', 'jared', 'brent'];
+      expect(formikBag.values.friends).toEqual(expected);
+    });
+  });
+
   describe('given array-like object representing errors', () => {
     it('should run arrayHelpers successfully', () => {
       let formikBag: any;

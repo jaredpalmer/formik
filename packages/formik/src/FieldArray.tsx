@@ -60,6 +60,8 @@ export interface ArrayHelpers {
   remove<T>(index: number): T | undefined;
   /** Imperatively remove and return value from the end of the array */
   pop<T>(): T | undefined;
+  /** Imperatively get an element at the given index of an array */
+  get<T>(index: number): T | undefined;
 }
 
 /**
@@ -132,6 +134,7 @@ class FieldArrayInner<Values = {}> extends React.Component<
     // @todo Fix TS 3.2.1
     this.remove = this.remove.bind(this) as any;
     this.pop = this.pop.bind(this) as any;
+    this.get = this.get.bind(this) as any;
   }
 
   componentDidUpdate(
@@ -319,6 +322,17 @@ class FieldArrayInner<Values = {}> extends React.Component<
 
   handlePop = () => () => this.pop<any>();
 
+  get<T>(index: number): T {
+    const {
+      name,
+      formik: { values },
+    } = this.props;
+
+    let result: any = getIn(values, name)[index];
+
+    return result as T;
+  }
+
   render() {
     const arrayHelpers: ArrayHelpers = {
       push: this.push,
@@ -329,6 +343,7 @@ class FieldArrayInner<Values = {}> extends React.Component<
       replace: this.replace,
       unshift: this.unshift,
       remove: this.remove,
+      get: this.get,
       handlePush: this.handlePush,
       handlePop: this.handlePop,
       handleSwap: this.handleSwap,

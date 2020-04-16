@@ -375,6 +375,35 @@ describe('<FieldArray />', () => {
     });
   });
 
+  describe('props.get()', () => {
+    let arrayHelpers: any;
+
+    beforeEach(() => {
+      ReactDOM.render(
+        <TestForm>
+          {() => {
+            return (
+              <FieldArray
+                name="friends"
+                render={arrayProps => {
+                  arrayHelpers = arrayProps;
+                  return null;
+                }}
+              />
+            );
+          }}
+        </TestForm>,
+        node
+      );
+    });
+
+    it('should return the value at the given index', () => {
+      const el = arrayHelpers.get(0);
+
+      expect(el).toEqual('jared');
+    });
+  });
+
   describe('given array-like object representing errors', () => {
     it('should run arrayHelpers successfully', () => {
       let formikBag: any;

@@ -185,6 +185,7 @@ The following methods are made available via render props.
 - `remove<T>(index: number): T | undefined`: Remove an element at an index of an array and return it
 - `pop<T>(): T | undefined`: Remove and return value from the end of the array
 - `replace: (index: number, value: any) => void`: Replace a value at the given index into the array
+- `get<T>(index: number): T | undefined`: Get an element at the given index of an array
 
 ## FieldArray render methods
 

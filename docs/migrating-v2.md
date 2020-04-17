@@ -60,7 +60,7 @@ import { FormikHelpers as FormikActions } from 'formik';
 
 #### `FieldProps`
 
-**`FieldProps` now accepts two generic type parameters.** Both are optional but `FormValues` needs to be passed as the second parameter.
+**`FieldProps` now accepts two generic type parameters.** Both parameters are optional, but `FormValues` has been moved from the first to the second parameter.
 
 **v1**
 

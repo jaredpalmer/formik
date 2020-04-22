@@ -830,7 +830,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
         }
       }
 
-      submitForm().catch(reason => {
+      submitForm(e).catch(reason => {
         console.warn(
           `Warning: An unhandled error was caught from submitForm()`,
           reason

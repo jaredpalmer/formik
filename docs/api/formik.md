@@ -334,6 +334,45 @@ Your form submission handler. It is passed your:
 with names that start with `set<Thing>` + `resetForm`) and any props that were
 passed to the wrapped component.
  - `submitContext` which was passed to `submitForm` method
+    (will contain event object if form submission was invoked via `handleSubmit` method), e.g.:
+    
+    ```js
+      <Formik
+        onSubmit={(values, actions, context) => {
+          if (context instanceof SubmitEvent) {
+            if (context.submitter) {
+                console.log('Form is submitted using native HTML submit button')
+            }
+            else {
+                console.log('Form is submitted using HTMLForm.submit()')
+            }
+          }
+          else if (context instanceof MouseEvent) {
+               console.log(`User clicked on ${context.target.name} button`)
+          }
+          else {
+            console.log(`Submit was invoked programmatically. Current context is: ${context}`)
+          }
+        }}
+      >
+        {props => (
+          <form id="htmlform" onSubmit={props.handleSubmit}>
+            <button name="submit_using_click_handler" onClick={props.handleSubmit}>
+              Submit using click handler
+            </button>
+            <button onClick={() => props.submitForm('My test submit context')}>
+              Submit using formik.submitForm()
+            </button>
+            <button onClick={() => document.getElementById('htmlform').submit()}>
+              Submit using native HTMLForm submit method
+            </button>
+            <button type="submit">
+              Submit using native html submit button
+            </button>
+          </form>
+        )}
+      </Formik>
+    ```
 
 Note: `errors`, `touched`, `status` and all event handlers are NOT
 included in the `FormikBag`.

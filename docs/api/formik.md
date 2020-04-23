@@ -96,7 +96,10 @@ to `<button onClick={handleReset}>...</button>`
 
 #### `handleSubmit: (e: React.FormEvent<HTMLFormEvent>) => void`
 
-Submit handler. This should be passed to `<form onSubmit={props.handleSubmit}>...</form>`. To learn more about the submission process, see [Form Submission](guides/form-submission.md).
+Submit handler.
+This should be passed to `<form onSubmit={props.handleSubmit}>...</form>`.
+Passes given event as `submitContext` (see more info about submit context in [`onSubmit` handler](#onsubmit-values-values-formikbag-formikbag-submitcontext-any--void--promiseany)).
+To learn more about the submission process, see [Form Submission](guides/form-submission.md).
 
 #### `isSubmitting: boolean`
 

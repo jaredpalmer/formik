@@ -205,8 +205,9 @@ const users = [
   },
     {
     caption: 'SwissDev DevOps Jobs',
-    image: '/formik/img/logos/swissdev-devops-jobs-200-100.png',
+    image: '/formik/img/logos/swissdev-devops-jobs.svg',
     infoLink: 'https://swissdevjobs.ch/jobs/Dev-Ops/All',
+    pinned: true,
   }
 ];
 

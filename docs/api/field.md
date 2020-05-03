@@ -23,9 +23,9 @@ There are 2 ways to render things with `<Field>`.
 
 `component` can either be a React component or the name of an HTML element to render. All additional props will be passed through.
 
-- `field`: An object containing `onChange`, `onBlur`, `name`, and `value` of the field (see [`FieldInputProps`](./useField#fieldinputprops))
+- `field`: An object containing `onChange`, `onBlur`, `name`, and `value` of the field (see [`FieldInputProps`](./useField#fieldinputpropsvalue))
 - `form`: The Formik bag
-- `meta`: An object containing metadata (i.e. `value`, `touched`, `error`, and `initialValue`) about the field (see [`FieldMetaProps`](./useField#fieldmetaprops))
+- `meta`: An object containing metadata (i.e. `value`, `touched`, `error`, and `initialValue`) about the field (see [`FieldMetaProps`](./useField#fieldmetapropsvalue))
 
 > In Formik 0.9 to 1.x, `component` and `render` props could also be used for rendering. These have been deprecated since 2.x. While the code still lives within `<Field>`, they will show a warning in the console.
 

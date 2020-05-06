@@ -4,7 +4,7 @@ title: Arrays and Nested Objects
 custom_edit_url: https://github.com/jaredpalmer/formik/edit/master/docs/guides/arrays.md
 ---
 
-Formik has support for nested objects and arrays out of the box. These 2 subjects are somewhat related because they both leverage the same syntax.
+Formik has support for nested objects and arrays out of the box. These 3 subjects are somewhat related because they leverage the same syntax.
 
 ## Nested Objects
 
@@ -70,3 +70,32 @@ export const BasicArrayExample = () => (
 ```
 
 For more information around manipulating (add/remove/etc) items in lists, see the API reference section on the `<FieldArray>` component.
+
+## Avoid nesting
+
+If you want to avoid this default behavior Formik also has support for it to have fields with dots.
+
+```jsx
+import React from 'react';
+import { Formik, Form, Field } from 'formik';
+
+export const NestedExample = () => (
+  <div>
+    <h1>Social Profiles</h1>
+    <Formik
+      initialValues={{
+        'owner.fullname': '',
+      }}
+      onSubmit={values => {
+        // same shape as initial values
+        console.log(values);
+      }}
+    >
+      <Form>
+        <Field name="['owner.fullname']" />
+        <button type="submit">Submit</button>
+      </Form>
+    </Formik>
+  </div>
+);
+```

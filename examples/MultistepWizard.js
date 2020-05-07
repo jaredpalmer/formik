@@ -1,180 +1,147 @@
-import React from 'react';
-import { Formik, Field, ErrorMessage } from 'formik';
+import React, { useState } from "react";
+import { ErrorMessage, Field, Form, Formik } from "formik";
+import { render } from "react-dom";
+import * as Yup from "yup";
 import { Debug } from './Debug';
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-const required = value => (value ? undefined : 'Required');
+// Wizard is a single Formik instance whose children are each page of the
+// multi-step form. The form is submitted on each forward transition (can only
+// progress with valid input), whereas a backwards step is allowed with
+// incomplete data. A snapshot of form state is used as initialValues after each
+// transition. Each page has an optional submit handler, and the top-level
+// submit is called when the final page is submitted.
+const Wizard = ({ children, initialValues, onSubmit }) => {
+  const [stepNumber, setStepNumber] = useState(0);
+  const steps = React.Children.toArray(children);
+  const [snapshot, setSnapshot] = useState(initialValues);
 
-class Wizard extends React.Component {
-  static Page = ({ children }) => children;
+  const step = steps[stepNumber];
+  const totalSteps = steps.length;
+  const isLastStep = stepNumber === totalSteps - 1;
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      page: 0,
-      values: props.initialValues,
-    };
-  }
-
-  next = values =>
-    this.setState(state => ({
-      page: Math.min(state.page + 1, this.props.children.length - 1),
-      values,
-    }));
-
-  previous = () =>
-    this.setState(state => ({
-      page: Math.max(state.page - 1, 0),
-    }));
-
-  validate = values => {
-    const activePage = React.Children.toArray(this.props.children)[
-      this.state.page
-    ];
-    return activePage.props.validate ? activePage.props.validate(values) : {};
+  const next = values => {
+    setSnapshot(values);
+    setStepNumber(Math.min(stepNumber + 1, totalSteps - 1));
   };
 
-  handleSubmit = (values, bag) => {
-    const { children, onSubmit } = this.props;
-    const { page } = this.state;
-    const isLastPage = page === React.Children.count(children) - 1;
-    if (isLastPage) {
+  const previous = values => {
+    setSnapshot(values);
+    setStepNumber(Math.max(stepNumber - 1, 0));
+  };
+
+  const handleSubmit = async (values, bag) => {
+    if (step.props.onSubmit) {
+      await step.props.onSubmit(values, bag);
+    }
+    if (isLastStep) {
       return onSubmit(values, bag);
     } else {
       bag.setTouched({});
-      bag.setSubmitting(false);
-      this.next(values);
+      next(values);
     }
   };
 
-  render() {
-    const { children } = this.props;
-    const { page, values } = this.state;
-    const activePage = React.Children.toArray(children)[page];
-    const isLastPage = page === React.Children.count(children) - 1;
-    return (
-      <Formik
-        initialValues={values}
-        enableReinitialize={false}
-        validate={this.validate}
-        onSubmit={this.handleSubmit}
-        render={({ values, handleSubmit, isSubmitting, handleReset }) => (
-          <form onSubmit={handleSubmit}>
-            {activePage}
-            <div className="buttons">
-              {page > 0 && (
-                <button
-                  type="button"
-                  className="secondary"
-                  onClick={this.previous}
-                >
-                  « Previous
-                </button>
-              )}
-
-              {!isLastPage && <button type="submit">Next »</button>}
-              {isLastPage && (
-                <button type="submit" disabled={isSubmitting}>
-                  Submit
-                </button>
-              )}
+  return (
+    <Formik
+      initialValues={snapshot}
+      onSubmit={handleSubmit}
+      validationSchema={step.props.validationSchema}
+    >
+      {formik => (
+        <Form>
+          <p>
+            Step {stepNumber + 1} of {totalSteps}
+          </p>
+          {step}
+          <div style={{ display: "flex" }}>
+            {stepNumber > 0 && (
+              <button onClick={() => previous(formik.values)} type="button">
+                Back
+              </button>
+            )}
+            <div>
+              <button disabled={formik.isSubmitting} type="submit">
+                {isLastStep ? "Submit" : "Next"}
+              </button>
             </div>
+          </div>
+          <Debug/>
+        </Form>
+      )}
+    </Formik>
+  );
+};
 
-            <Debug />
-          </form>
-        )}
-      />
-    );
-  }
-}
+const WizardStep = ({ children }) => children;
 
 const App = () => (
-  <div className="App">
-    <h1>Multistep / Form Wizard </h1>
+  <div>
+    <h1>Formik Multistep Wizard</h1>
     <Wizard
       initialValues={{
-        firstName: '',
-        lastName: '',
-        email: '',
-        favoriteColor: '',
+        email: "",
+        firstName: "",
+        lastName: ""
       }}
-      onSubmit={(values, actions) => {
-        sleep(300).then(() => {
-          window.alert(JSON.stringify(values, null, 2));
-          actions.setSubmitting(false);
-        });
-      }}
+      onSubmit={async values =>
+        sleep(300).then(() => console.log("Wizard submit", values))
+      }
     >
-      <Wizard.Page>
-        <div>
-          <label>First Name</label>
-          <Field
-            name="firstName"
-            component="input"
-            type="text"
-            placeholder="First Name"
-            validate={required}
-          />
-          <ErrorMessage
-            name="firstName"
-            component="div"
-            className="field-error"
-          />
-        </div>
-        <div>
-          <label>Last Name</label>
-          <Field
-            name="lastName"
-            component="input"
-            type="text"
-            placeholder="Last Name"
-            validate={required}
-          />
-          <ErrorMessage
-            name="lastName"
-            component="div"
-            className="field-error"
-          />
-        </div>
-      </Wizard.Page>
-      <Wizard.Page
-        validate={values => {
-          const errors = {};
-          if (!values.email) {
-            errors.email = 'Required';
-          }
-          if (!values.favoriteColor) {
-            errors.favoriteColor = 'Required';
-          }
-          return errors;
-        }}
+      <WizardStep
+        onSubmit={() => console.log("Step1 onSubmit")}
+        validationSchema={Yup.object({
+          firstName: Yup.string().required("required"),
+          lastName: Yup.string().required("required")
+        })}
       >
         <div>
-          <label>Email</label>
+          <label htmlFor="firstName">First Name</label>
           <Field
-            name="email"
+            autoComplete="given-name"
             component="input"
-            type="email"
-            placeholder="Email"
+            id="firstName"
+            name="firstName"
+            placeholder="First Name"
+            type="text"
           />
-          <ErrorMessage name="email" component="div" className="field-error" />
+          <ErrorMessage className="error" component="div" name="firstName" />
         </div>
         <div>
-          <label>Favorite Color</label>
-          <Field name="favoriteColor" component="select">
-            <option value="">Select a Color</option>
-            <option value="#ff0000">❤️ Red</option>
-            <option value="#00ff00">💚 Green</option>
-            <option value="#0000ff">💙 Blue</option>
-          </Field>
-          <ErrorMessage
-            name="favoriteColor"
-            component="div"
-            className="field-error"
+          <label htmlFor="lastName">Last Name</label>
+          <Field
+            autoComplete="family-name"
+            component="input"
+            id="lastName"
+            name="lastName"
+            placeholder="Last Name"
+            type="text"
           />
+          <ErrorMessage className="error" component="div" name="lastName" />
         </div>
-      </Wizard.Page>
+      </WizardStep>
+      <WizardStep
+        onSubmit={() => console.log("Step2 onSubmit")}
+        validationSchema={Yup.object({
+          email: Yup.string()
+            .email("Invalid email address")
+            .required("required")
+        })}
+      >
+        <div>
+          <label htmlFor="email">Email</label>
+          <Field
+            autoComplete="email"
+            component="input"
+            id="email"
+            name="email"
+            placeholder="Email"
+            type="text"
+          />
+          <ErrorMessage className="error" component="div" name="email" />
+        </div>
+      </WizardStep>
     </Wizard>
   </div>
 );

@@ -684,11 +684,17 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   );
 
   const executeBlur = React.useCallback(
-    (e: any, path?: string) => {
-      if (e.persist) {
-        e.persist();
+    (
+      e: null | {
+        persist: any;
+        target: { name: any; id: any; outerHTML: any };
+      },
+      path?: string
+    ) => {
+      if (e?.persist) {
+        e?.persist();
       }
-      const { name, id, outerHTML } = e.target;
+      const { name, id, outerHTML } = e?.target ?? {};
       const field = path ? path : name ? name : id;
 
       if (!field && __DEV__) {
@@ -708,7 +714,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     | void
     | ((e: any) => void) => {
     if (isString(eventOrString)) {
-      return event => executeBlur(event, eventOrString);
+      return () => executeBlur(null, eventOrString);
     } else {
       executeBlur(eventOrString);
     }

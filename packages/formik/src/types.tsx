@@ -51,6 +51,8 @@ export interface FormikState<Values> {
   status?: any;
   /** Number of times user tried to submit the form */
   submitCount: number;
+  /** Focused */
+  focus?: string;
 }
 
 /**
@@ -85,6 +87,8 @@ export interface FormikHelpers<Values> {
   setTouched(touched: FormikTouched<Values>, shouldValidate?: boolean): void;
   /** Manually set values object  */
   setValues(values: Values, shouldValidate?: boolean): void;
+  /** Set current focus id */
+  setFocus(field: string): void;
   /** Set value of form field directly */
   setFieldValue(field: string, value: any, shouldValidate?: boolean): void;
   /** Set error message of a form field directly */
@@ -124,6 +128,12 @@ export interface FormikHandlers {
   handleBlur(e: React.FocusEvent<any>): void;
   /** Preact-like linkState. Will return a handleBlur function. */
   handleBlur<T = string | any>(
+    fieldOrEvent: T
+  ): T extends string ? (e: any) => void : void;
+  /** Classic React focus handler, keyed by input name */
+  handleFocus(e?: any): void;
+  /** Preact-like linkState. Will return a handleFocus function. */
+  handleFocus<T = string | any>(
     fieldOrEvent: T
   ): T extends string ? (e: any) => void : void;
   /** Classic React change handler, keyed by input name */
@@ -306,6 +316,8 @@ export interface FieldInputProps<Value> {
   onChange: FormikHandlers['handleChange'];
   /** Blur event handler */
   onBlur: FormikHandlers['handleBlur'];
+  /** Focus event handler */
+  onFocus: FormikHandlers['handleFocus'];
 }
 
 export type FieldValidator = (

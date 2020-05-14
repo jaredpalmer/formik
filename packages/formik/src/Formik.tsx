@@ -12,7 +12,7 @@ import {
   FieldMetaProps,
   FieldHelperProps,
   FieldInputProps,
-  FormikHelpers,
+  FormikHelpers, FormikHandlers,
 } from './types';
 import {
   isFunction,
@@ -654,7 +654,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     [setFieldValue, state.values]
   );
 
-  const handleChange = useEventCallback(
+  const handleChange = useEventCallback<FormikHandlers['handleChange']>(
     (
       eventOrPath: string | React.ChangeEvent<any>
     ): void | ((eventOrTextValue: string | React.ChangeEvent<any>) => void) => {
@@ -704,15 +704,15 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     [setFieldTouched]
   );
 
-  const handleBlur = useEventCallback((eventOrString: any):
-    | void
-    | ((e: any) => void) => {
-    if (isString(eventOrString)) {
-      return event => executeBlur(event, eventOrString);
-    } else {
-      executeBlur(eventOrString);
+  const handleBlur = useEventCallback<FormikHandlers['handleBlur']>(
+    (eventOrString: any): void | ((e: any) => void) => {
+      if (isString(eventOrString)) {
+        return event => executeBlur(event, eventOrString);
+      } else {
+        executeBlur(eventOrString);
+      }
     }
-  });
+  );
 
   const setFormikState = React.useCallback(
     (

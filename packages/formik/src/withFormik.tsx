@@ -43,6 +43,15 @@ export interface WithFormikConfig<
   handleSubmit: (values: Values, formikBag: FormikBag<Props, Values>) => void;
 
   /**
+   * Submission failed handler
+   * This will be called when the user tried to submit the form, but the submission was cancelled by Formik because validation failed.
+   */
+  handleSubmitCancelledByFailingValidation: (
+    validationErrors: FormikErrors<Values>,
+    formikBag: FormikBag<Props, Values>
+  ) => void;
+
+  /**
    * Map props to the form values
    */
   mapPropsToValues?: (props: Props) => Values;
@@ -149,6 +158,19 @@ export function withFormik<
         });
       };
 
+      handleSubmitCancelledByFailingValidation = (
+        validationErrors: FormikErrors<Values>,
+        actions: FormikHelpers<Values>
+      ) => {
+        config.handleSubmitCancelledByFailingValidation(
+          validationErrors,
+          {
+            ...actions,
+            props: this.props,
+          }
+        );
+      };
+
       /**
        * Just avoiding a render callback for perf here
        */
@@ -175,6 +197,9 @@ export function withFormik<
               config.mapPropsToTouched && config.mapPropsToTouched(this.props)
             }
             onSubmit={this.handleSubmit as any}
+            onSubmitCancelledByFailingValidation={
+              this.handleSubmitCancelledByFailingValidation as any
+            }
             children={this.renderFormComponent}
           />
         );

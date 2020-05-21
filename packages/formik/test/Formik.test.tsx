@@ -216,6 +216,32 @@ describe('<Formik>', () => {
       });
     });
 
+    it('does not execute onSubmitCancelledByFailingValidation on non-submit validations', async () => {
+      const onSubmitCancelledByFailingValidation = jest.fn();
+      const validate = jest.fn(() => Promise.resolve());
+      const validationSchema = {
+        validate,
+      };
+      const { getByTestId, rerender } = renderFormik({
+        onSubmitCancelledByFailingValidation,
+        validate,
+        validationSchema,
+      });
+
+      fireEvent.change(getByTestId('name-input'), {
+        persist: noop,
+        target: {
+          name: 'name',
+          value: 'ian',
+        },
+      });
+      rerender();
+      await wait(() => {
+        expect(validate).toHaveBeenCalledTimes(2);
+        expect(onSubmitCancelledByFailingValidation).not.toBeCalled();
+      });
+    });
+
     it('does NOT run validations if validateOnChange is false', async () => {
       const validate = jest.fn(() => Promise.resolve());
       const validationSchema = {
@@ -482,6 +508,23 @@ describe('<Formik>', () => {
         await wait(() => expect(onSubmit).toBeCalled());
       });
 
+      it('should not call onSubmitCancelledByFailingValidation on submitting the form if valid', async () => {
+        const onSubmit = jest.fn();
+        const onSubmitCancelledByFailingValidation = jest.fn();
+        const validate = jest.fn(() => ({}));
+        const { getByTestId } = renderFormik({
+          onSubmit,
+          onSubmitCancelledByFailingValidation,
+          validate,
+        });
+
+        fireEvent.submit(getByTestId('form'));
+        await wait(() => {
+          expect(onSubmit).toBeCalled();
+          expect(onSubmitCancelledByFailingValidation).not.toBeCalled();
+        });
+      });
+
       it('should not submit the form if invalid', () => {
         const onSubmit = jest.fn();
         const validate = jest.fn(() => ({ name: 'Error!' }));
@@ -489,6 +532,23 @@ describe('<Formik>', () => {
 
         fireEvent.submit(getByTestId('form'));
         expect(onSubmit).not.toBeCalled();
+      });
+
+      it('should call onSubmitCancelledByFailingValidation if submiting invalid form', async () => {
+        const onSubmit = jest.fn();
+        const onSubmitCancelledByFailingValidation = jest.fn();
+        const validate = jest.fn(() => ({ name: 'Error!' }));
+        const { getByTestId } = renderFormik({
+          onSubmit,
+          onSubmitCancelledByFailingValidation,
+          validate,
+        });
+
+        fireEvent.submit(getByTestId('form'));
+
+        await wait(() => {
+          expect(onSubmitCancelledByFailingValidation).toBeCalled();
+        });
       });
 
       it('should not submit the form if validate function throws an error', async () => {
@@ -510,6 +570,24 @@ describe('<Formik>', () => {
             ),
             err
           );
+        });
+      });
+
+      it('should call onSubmitCancelledByFailingValidation if validate function throws an error on submit', async () => {
+        const onSubmit = jest.fn();
+        const onSubmitCancelledByFailingValidation = jest.fn();
+        const err = new Error('Async Error');
+        const validate = jest.fn().mockRejectedValue(err);
+        const { getProps } = renderFormik({
+          onSubmit,
+          onSubmitCancelledByFailingValidation,
+          validate,
+        });
+
+        await expect(getProps().submitForm()).rejects.toThrow('Async Error');
+
+        await wait(() => {
+          expect(onSubmitCancelledByFailingValidation).toBeCalled();
         });
       });
 
@@ -545,6 +623,23 @@ describe('<Formik>', () => {
         await wait(() => expect(onSubmit).toBeCalled());
       });
 
+      it('should not call onSubmitCancelledByFailingValidation on submitting the form if valid', async () => {
+        const onSubmit = jest.fn();
+        const onSubmitCancelledByFailingValidation = jest.fn();
+        const validate = jest.fn(() => Promise.resolve({}));
+        const { getByTestId } = renderFormik({
+          onSubmit,
+          onSubmitCancelledByFailingValidation,
+          validate,
+        });
+
+        fireEvent.submit(getByTestId('form'));
+        await wait(() => {
+          expect(onSubmit).toBeCalled();
+          expect(onSubmitCancelledByFailingValidation).not.toBeCalled();
+        });
+      });
+
       it('should not submit the form if invalid', () => {
         const onSubmit = jest.fn();
         const validate = jest.fn(() => Promise.resolve({ name: 'Error!' }));
@@ -552,6 +647,22 @@ describe('<Formik>', () => {
 
         fireEvent.submit(getByTestId('form'));
         expect(onSubmit).not.toBeCalled();
+      });
+
+      it('should call onSubmitCancelledByFailingValidation on submitting the form if invalid', async () => {
+        const onSubmit = jest.fn();
+        const onSubmitCancelledByFailingValidation = jest.fn();
+        const validate = jest.fn(() => Promise.resolve({ name: 'Error!' }));
+        const { getByTestId } = renderFormik({
+          onSubmit,
+          onSubmitCancelledByFailingValidation,
+          validate,
+        });
+
+        fireEvent.submit(getByTestId('form'));
+        await wait(() => {
+          expect(onSubmitCancelledByFailingValidation).toBeCalled();
+        });
       });
 
       it('should not submit the form if validate function rejects with an error', async () => {
@@ -571,6 +682,25 @@ describe('<Formik>', () => {
             ),
             err
           );
+        });
+      });
+
+      it('should call onSubmitCancelledByFailingValidation if validate function rejects with an error on submit', async () => {
+        const onSubmit = jest.fn();
+        const onSubmitCancelledByFailingValidation = jest.fn();
+        const err = new Error('Async Error');
+        const validate = jest.fn().mockRejectedValue(err);
+
+        const { getProps } = renderFormik({
+          onSubmit,
+          onSubmitCancelledByFailingValidation,
+          validate,
+        });
+
+        await expect(getProps().submitForm()).rejects.toThrow('Async Error');
+
+        await wait(() => {
+          expect(onSubmitCancelledByFailingValidation).toBeCalled();
         });
       });
     });
@@ -975,8 +1105,8 @@ describe('<Formik>', () => {
         content: [
           ['a1', 'a2'],
           ['b1', 'b2'],
-        ]
-      }
+        ],
+      };
 
       const dataForValidation = prepareDataForValidation(expected);
       expect(dataForValidation).toEqual(expected);

@@ -136,6 +136,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   isInitialValid,
   enableReinitialize = false,
   onSubmit,
+  onSubmitCancelledByFailingValidation,
   ...rest
 }: FormikConfig<Values>) {
   const props = {
@@ -143,6 +144,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     validateOnBlur,
     validateOnMount,
     onSubmit,
+    onSubmitCancelledByFailingValidation,
     ...rest,
   };
   const initialValues = React.useRef(props.initialValues);
@@ -739,8 +741,8 @@ export function useFormik<Values extends FormikValues = FormikValues>({
 
   const submitForm = useEventCallback(() => {
     dispatch({ type: 'SUBMIT_ATTEMPT' });
-    return validateFormWithHighPriority().then(
-      (combinedErrors: FormikErrors<Values>) => {
+    return validateFormWithHighPriority()
+      .then((combinedErrors: FormikErrors<Values>) => {
         // In case an error was thrown and passed to the resolved Promise,
         // `combinedErrors` can be an instance of an Error. We need to check
         // that and abort the submit.
@@ -790,6 +792,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
             });
         } else if (!!isMounted.current) {
           // ^^^ Make sure Formik is still mounted before updating state
+          executeSubmitCancelledByFailingValidation();
           dispatch({ type: 'SUBMIT_FAILURE' });
           // throw combinedErrors;
           if (isInstanceOfError) {
@@ -797,8 +800,11 @@ export function useFormik<Values extends FormikValues = FormikValues>({
           }
         }
         return;
-      }
-    );
+      })
+      .catch(error => {
+        executeSubmitCancelledByFailingValidation();
+        throw error;
+      });
   });
 
   const handleSubmit = useEventCallback(
@@ -860,6 +866,10 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     return onSubmit(state.values, imperativeMethods);
   });
 
+  const executeSubmitCancelledByFailingValidation = useEventCallback(() => {
+    onSubmitCancelledByFailingValidation?.(state.errors, imperativeMethods);
+  });
+
   const handleReset = useEventCallback(e => {
     if (e && e.preventDefault && isFunction(e.preventDefault)) {
       e.preventDefault();
@@ -889,8 +899,10 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   const getFieldHelpers = React.useCallback(
     (name: string): FieldHelperProps<any> => {
       return {
-        setValue: (value: any, shouldValidate?: boolean) => setFieldValue(name, value, shouldValidate),
-        setTouched: (value: boolean, shouldValidate?: boolean) => setFieldTouched(name, value, shouldValidate),
+        setValue: (value: any, shouldValidate?: boolean) =>
+          setFieldValue(name, value, shouldValidate),
+        setTouched: (value: boolean, shouldValidate?: boolean) =>
+          setFieldTouched(name, value, shouldValidate),
         setError: (value: any) => setFieldError(name, value),
       };
     },

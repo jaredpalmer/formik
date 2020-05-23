@@ -591,7 +591,7 @@ describe('<Formik>', () => {
         });
       });
 
-      describe('submitForm helper should not break promise chain if handleSubmit has returned rejected Promise', () => {
+      describe('handleSubmit returns rejected Promise', () => {
         it('submitForm helper should not break promise chain if handleSubmit has returned rejected Promise', async () => {
           const error = new Error('This Error is typeof Error');
           const handleSubmit = () => {
@@ -601,6 +601,24 @@ describe('<Formik>', () => {
 
           const { submitForm } = getProps();
           await expect(submitForm()).rejects.toEqual(error);
+        });
+
+        it('should not call onSubmitCancelledByFailingValidation if handleSubmit has returned rejected Promise', async () => {
+          const error = new Error('This Error is typeof Error');
+          const handleSubmit = () => {
+            return Promise.reject(error);
+          };
+          const onSubmitCancelledByFailingValidation = jest.fn();
+          const validate = jest.fn(() => Promise.resolve({}));
+          const { getProps } = renderFormik({
+            onSubmit: handleSubmit,
+            onSubmitCancelledByFailingValidation,
+            validate,
+          });
+
+          const { submitForm } = getProps();
+          await expect(submitForm()).rejects.toEqual(error);
+          expect(onSubmitCancelledByFailingValidation).not.toBeCalled();
         });
       });
     });

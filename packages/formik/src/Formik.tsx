@@ -742,6 +742,11 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   const submitForm = useEventCallback(() => {
     dispatch({ type: 'SUBMIT_ATTEMPT' });
     return validateFormWithHighPriority()
+      .catch(error => {
+        // catching only validation throws, not executeSubmit throws
+        executeSubmitCancelledByFailingValidation();
+        throw error;
+      })
       .then((combinedErrors: FormikErrors<Values>) => {
         // In case an error was thrown and passed to the resolved Promise,
         // `combinedErrors` can be an instance of an Error. We need to check
@@ -800,10 +805,6 @@ export function useFormik<Values extends FormikValues = FormikValues>({
           }
         }
         return;
-      })
-      .catch(error => {
-        executeSubmitCancelledByFailingValidation();
-        throw error;
       });
   });
 

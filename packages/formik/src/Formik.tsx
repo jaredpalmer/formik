@@ -35,7 +35,7 @@ type FormikMessage<Values> =
   | { type: 'SUBMIT_SUCCESS' }
   | { type: 'SET_ISVALIDATING'; payload: boolean }
   | { type: 'SET_ISSUBMITTING'; payload: boolean }
-  | { type: 'SET_VALUES'; payload: ValuesOrValuesFactory<Values> }
+  | { type: 'SET_VALUES'; payload: React.SetStateAction<Values> }
   | { type: 'SET_FIELD_VALUE'; payload: { field: string; value?: any } }
   | { type: 'SET_FIELD_TOUCHED'; payload: { field: string; value?: boolean } }
   | { type: 'SET_FIELD_ERROR'; payload: { field: string; value?: string } }
@@ -566,7 +566,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   }, []);
 
   const setValues = useEventCallback(
-    (values: Values, shouldValidate?: boolean) => {
+    (values: React.SetStateAction<Values>, shouldValidate?: boolean) => {
       dispatch({ type: 'SET_VALUES', payload: values });
       const willValidate =
         shouldValidate === undefined ? validateOnChange : shouldValidate;

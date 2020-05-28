@@ -24,7 +24,7 @@
     "dist"
   ],
   "peerDependencies": {
-    "react": ">=16.3.0"
+    "react": ">=16.8.0"
   },
   "scripts": {
     "test": "tsdx test --env=jsdom",

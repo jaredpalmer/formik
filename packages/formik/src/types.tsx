@@ -218,7 +218,7 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
   validate?: (values: Values) => void | object | Promise<FormikErrors<Values>>;
 
   /** Inner ref */
-  innerRef?: (instance: any) => void;
+  innerRef?: React.Ref<FormikProps<Values>>;
 }
 
 /**

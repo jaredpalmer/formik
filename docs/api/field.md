@@ -10,7 +10,7 @@ attribute to match up with Formik state. `<Field />` will default to an HTML
 
 ## Rendering
 
-There are 2 ways to render things with `<Field>`.
+There are different ways to render with `<Field>`:
 
 - `<Field as>`
 - `<Field children>`

@@ -67,6 +67,7 @@ You can play with Formik in your web browser with these live online playgrounds.
 - [React Native](https://snack.expo.io/@ferrannp/react-native-x-formik)
 - [TypeScript](https://codesandbox.io/s/8y578o8152)
 - [Handling API Errors](https://codesandbox.io/s/nw193yq32l)
+- [Multistep Wizard](https://codesandbox.io/s/pedantic-kirch-myg6s)
 
 ## Organizations and projects using Formik
 

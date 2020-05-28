@@ -775,10 +775,11 @@ export function useFormik<Values extends FormikValues = FormikValues>({
           }
 
           return Promise.resolve(promiseOrUndefined)
-            .then(() => {
+            .then(result => {
               if (!!isMounted.current) {
                 dispatch({ type: 'SUBMIT_SUCCESS' });
               }
+              return result;
             })
             .catch(_errors => {
               if (!!isMounted.current) {

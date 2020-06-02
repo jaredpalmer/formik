@@ -31,7 +31,23 @@ class Index extends React.Component {
         </a>
       ));
     return (
-      <div>
+      <div className="frontPage">
+        <div
+          className="center"
+          style={{ background: '#111', paddingBottom: 10, paddingTop: 10 }}
+        >
+          <div className="row" style={{ color: 'white', fontWeight: 'bold' }}>
+            Black Lives Matter.
+            <a
+              className="btn ghost"
+              href="https://support.eji.org/give/153413/#!/donation/checkout"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Support the Equal Justice Initiative.
+            </a>
+          </div>
+        </div>
         <div className="splash">
           <div className="content">
             <svg width={326} height={105} viewBox="0 0 261 84" fill="none">

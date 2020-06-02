@@ -44,7 +44,7 @@ class Index extends React.Component {
               target="_blank"
               rel="noopener noreferrer"
             >
-              Support the Equal Justice Initiative.
+              Support the Equal Justice Initiative
             </a>
           </div>
         </div>

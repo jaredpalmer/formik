@@ -572,7 +572,7 @@ Again, Yup is 100% optional. However, we suggest giving it a try. As you can see
 
 ### `getFieldProps()`
 
-The code above is very explicit about exactly what Formik is doing. `onChange` -> `handleChange`, `onBlur` -> `handleBlur`, and so on. However, to save you time, `useFormik()` returns a helper method called `formik.getFieldProps()` to make it faster to wire up inputs. Given some field-level info, it returns to you the exact group of `onChange`, `onBlur`, `value`, `checked` for a given field. You can then spread that on an input, select, or textarea.
+The code above is very explicit about exactly what Formik is doing. `onChange` -> `handleChange`, `onBlur` -> `handleBlur`, and so on. However, to save you time, `useFormik()` returns a helper method called `formik.getFieldProps()` to make it faster to wire up inputs. Given some field-level info, it returns to you the exact group of `onChange`, `onBlur`, `name`, `value`, `checked` for a given field. You can then spread that on an input, select, or textarea.
 
 ```jsx
 import React from 'react';
@@ -604,17 +604,17 @@ const SignupForm = () => {
   return (
     <form onSubmit={formik.handleSubmit}>
       <label htmlFor="firstName">First Name</label>
-      <input name="firstName" {...formik.getFieldProps('firstName')} />
+      <input {...formik.getFieldProps('firstName')} />
       {formik.touched.firstName && formik.errors.firstName ? (
         <div>{formik.errors.firstName}</div>
       ) : null}
       <label htmlFor="lastName">Last Name</label>
-      <input name="lastName" {...formik.getFieldProps('lastName')} />
+      <input {...formik.getFieldProps('lastName')} />
       {formik.touched.lastName && formik.errors.lastName ? (
         <div>{formik.errors.lastName}</div>
       ) : null}
       <label htmlFor="email">Email Address</label>
-      <input name="email" {...formik.getFieldProps('email')} />
+      <input {...formik.getFieldProps('email')} />
       {formik.touched.email && formik.errors.email ? (
         <div>{formik.errors.email}</div>
       ) : null}

@@ -1,7 +1,7 @@
 {
   "name": "formik",
   "description": "Forms in React, without tears",
-  "version": "2.1.4",
+  "version": "2.1.5",
   "license": "MIT",
   "author": "Jared Palmer <jared@palmer.net>",
   "repository": "jaredpalmer/formik",
@@ -115,5 +115,8 @@
       "path": "./dist/formik.umd.production.js",
       "limit": "14 kB"
     }
-  ]
+  ],
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/@alexispcode"
+  }
 }

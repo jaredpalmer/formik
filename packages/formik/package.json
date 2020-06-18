@@ -1,5 +1,5 @@
 {
-  "name": "formik",
+  "name": "@alexispcode/formik",
   "description": "Forms in React, without tears",
   "version": "2.1.5",
   "license": "MIT",
@@ -117,6 +117,6 @@
     }
   ],
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com/@alexispcode"
+    "access": "public"
   }
 }

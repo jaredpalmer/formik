@@ -58,7 +58,7 @@ function formikReducer<Values>(
 ) {
   switch (msg.type) {
     case 'SET_VALUES':
-      return { ...state, values };
+      return { ...state, values: msg.payload };
     case 'SET_TOUCHED':
       return { ...state, touched: msg.payload };
     case 'SET_ERRORS':

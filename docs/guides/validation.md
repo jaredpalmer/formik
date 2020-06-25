@@ -242,7 +242,7 @@ export const FieldLevelValidationExample = () => (
           </button>
           {/** Trigger form-level validation
            imperatively */}
-          <button type="button" onClick={() => validateForm().then(() => console.log('blah')))}>
+          <button type="button" onClick={() => validateForm().then(() => console.log('blah'))}>
             Validate All
           </button>
           <button type="submit">Submit</button>

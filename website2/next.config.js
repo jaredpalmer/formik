@@ -70,7 +70,7 @@ module.exports = (phase, { defaultConfig }) => {
 
           // These scripts can import components from the app and use ES modules
           // entries['./scripts/build-rss.js'] = './scripts/build-rss.js';
-          entries['./scripts/index-docs.js'] = './scripts/index-docs.js';
+          // entries['./scripts/index-docs.js'] = './scripts/index-docs.js';
 
           return entries;
         };

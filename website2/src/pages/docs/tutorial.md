@@ -68,19 +68,11 @@ del *
 cd ..
 ```
 
-4. Add a file named `index.css` in the `src/` folder with [this CSS code](https://codepen.io/gaearon/pen/oWWQNa?editors=0100).
+4. Add a file named `styles.css` in the `src/` folder with [this CSS code](https://codesandbox.io/s/formik-v2-tutorial-start-s04yr?file=/src/styles.css).
 
-5. Add a file named `index.js` in the `src/` folder with [this JS code](https://codepen.io/gaearon/pen/oWWQNa?editors=0010).
+5. Add a file named `index.js` in the `src/` folder with [this JS code](https://codesandbox.io/s/formik-v2-tutorial-start-s04yr?file=/src/index.js:0-759).
 
-6. Add these three lines to the top of `index.js` in the `src/` folder:
-
-```js
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-```
-
-Now if you run `npm start` in the project folder and open `http://localhost:3000` in the browser, you should see an empty tic-tac-toe field.
+Now if you run `npm start` in the project folder and open `http://localhost:3000` in the browser. You should see an email input and a submit button.
 
 We recommend following [these instructions](https://babeljs.io/docs/editors/) to configure syntax highlighting for your editor.
 

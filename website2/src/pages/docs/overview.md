@@ -224,14 +224,6 @@ export default Basic;
 
 Read below for more information...
 
-!> Here be dragons. Proceed with caution! danger
-
-=> You are victorious! Great victory!
-
-~> Warning
-
--> success
-
 ### Complementary Packages
 
 As you can see above, validation is left up to you. Feel free to write your own

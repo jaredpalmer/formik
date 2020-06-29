@@ -7,6 +7,7 @@ dotenvLoad();
 
 const remarkPlugins = [
   require('remark-slug'),
+  require('./src/lib/docs/remark-paragraph-alerts'),
   [
     require('remark-autolink-headings'),
     {
@@ -60,21 +61,6 @@ module.exports = (phase, { defaultConfig }) => {
       },
     },
     webpack: (config, { dev, isServer, ...options }) => {
-      // only compile build-rss in production server build
-      if (dev || !isServer) return config;
-
-      // we're in build mode so enable shared caching for Notion data
-      process.env.USE_CACHE = 'true';
-
-      const originalEntry = config.entry;
-      config.entry = async () => {
-        const entries = {
-          ...(await originalEntry()),
-        };
-        entries['./scripts/build-rss.js'] = './src/lib/build-rss.ts';
-        return entries;
-      };
-
       config.module.rules.push({
         test: /.mdx?$/, // load both .md and .mdx files
         use: [
@@ -88,6 +74,24 @@ module.exports = (phase, { defaultConfig }) => {
           path.join(__dirname, './src/lib/docs/md-loader'),
         ],
       });
+
+      // only compile build-rss in production server build
+      if (dev || !isServer) {
+        return config;
+      }
+
+      // we're in build mode so enable shared caching for Notion data
+      process.env.USE_CACHE = 'true';
+
+      const originalEntry = config.entry;
+      config.entry = async () => {
+        const entries = {
+          ...(await originalEntry()),
+        };
+        entries['./scripts/build-rss.js'] = './src/lib/build-rss.ts';
+        return entries;
+      };
+
       return config;
     },
   };

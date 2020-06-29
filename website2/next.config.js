@@ -75,13 +75,6 @@ module.exports = (phase, { defaultConfig }) => {
         return entries;
       };
 
-      config.plugins.push(
-        new webpack.ContextReplacementPlugin(
-          /highlight\.js[/\/]lib[/\/]languages$/,
-          /javascript|json|jsx|bash|ts|js|typescript|tsx/
-        )
-      );
-
       config.module.rules.push({
         test: /.mdx?$/, // load both .md and .mdx files
         use: [

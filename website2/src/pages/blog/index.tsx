@@ -19,7 +19,7 @@ export const getStaticProps: GetStaticProps<any> = async ({ preview }) => {
 
   const authorsToGet: Set<string> = new Set();
   const posts: any[] = Object.keys(postsTable)
-    .map((slug) => {
+    .map(slug => {
       const post = postsTable[slug];
       // remove draft posts in production
       if (!preview && !postIsPublished(post)) {
@@ -35,7 +35,7 @@ export const getStaticProps: GetStaticProps<any> = async ({ preview }) => {
 
   const { users } = await getNotionUsers([...(authorsToGet as any)]);
 
-  posts.map((post) => {
+  posts.map(post => {
     post.Authors = post.Authors.map((id: any) => users[id].full_name);
   });
 
@@ -123,7 +123,7 @@ export default function BlogIndex({ posts = [], preview }: any) {
                       </div>
                     )}
                     <h3 className="mt-2 text-2xl leading-7 font-semibold text-gray-900">
-                      <Link href="/blog/[slug]" as={getBlogLink(post.Slug)}>
+                      <Link href="/blog/[...slug]" as={getBlogLink(post.Slug)}>
                         <a className="block">
                           <span className="hover:underline cursor-pointer">
                             {!post.Published && (
@@ -151,7 +151,7 @@ export default function BlogIndex({ posts = [], preview }: any) {
                     </div>
 
                     <div className="mt-3">
-                      <Link href="/blog/[slug]" as={getBlogLink(post.Slug)}>
+                      <Link href="/blog/[...slug]" as={getBlogLink(post.Slug)}>
                         <a className="text-base leading-6 font-semibold text-blue-600 hover:text-blue-500 transition ease-in-out duration-150">
                           Read More <span aria-hidden="true">→</span>
                         </a>

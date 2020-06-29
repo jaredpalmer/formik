@@ -10,7 +10,7 @@ import { ClientsMarquee } from 'components/clients/ClientsMarquee';
 
 export interface HomeProps {}
 
-const Home: React.FC<HomeProps> = (props) => {
+const Home: React.FC<HomeProps> = props => {
   return (
     <div className="bg-gray-50 h-full">
       <Banner />
@@ -297,7 +297,7 @@ const Home: React.FC<HomeProps> = (props) => {
           </h2>
           <div className="mt-8 flex lg:flex-shrink-0 lg:mt-0">
             <div className="inline-flex rounded-md shadow">
-              <Link href="/docs/intro">
+              <Link href="/docs/overview">
                 <a className="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-500 focus:outline-none focus:shadow-outline transition duration-150 ease-in-out">
                   Get started
                 </a>
@@ -308,7 +308,7 @@ const Home: React.FC<HomeProps> = (props) => {
                 href={siteConfig.repoUrl}
                 className="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-blue-600 bg-white hover:text-blue-500 focus:outline-none focus:shadow-outline transition duration-150 ease-in-out"
               >
-                Source Code
+                GitHub
               </a>
             </div>
           </div>

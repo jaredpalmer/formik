@@ -1,0 +1,200 @@
+/* purgecss start ignore */
+:root {
+  --color-code-green: #b5f4a5;
+  --color-code-yellow: #ffe484;
+  --color-code-purple: #d9a9ff;
+  --color-code-red: #ff8383;
+  --color-code-blue: #93ddfd;
+  --color-code-white: #fff;
+}
+@font-face {
+  font-family: 'FormikSans';
+  font-weight: 400;
+  src: url('/fonts/FormikSans-Book.woff2') format('woff2'),
+    url('/fonts/FormikSans-Book.woff') format('woff'),
+    url('/fonts/FormikSans-Book.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'FormikSans';
+  font-weight: 500;
+  src: url('/fonts/FormikSans-Medium.woff2') format('woff2'),
+    url('/fonts/FormikSans-Medium.woff') format('woff'),
+    url('/fonts/FormikSans-Medium.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'FormikSans';
+  font-weight: 700;
+  src: url('/fonts/FormikSans-Demi.woff2') format('woff2'),
+    url('/fonts/FormikSans-Demi.woff') format('woff'),
+    url('/fonts/FormikSans-Demi.ttf') format('truetype');
+}
+
+@tailwind base;
+@tailwind components;
+/* purgecss end ignore */
+
+body,
+html {
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#__next,
+body,
+html {
+  height: 100%;
+}
+
+.top-24 {
+  top: 6rem;
+}
+
+.focus-ring {
+  outline: none;
+  @apply shadow-outline border-blue-400;
+}
+
+.button-primary {
+  @apply inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm leading-5 font-semibold rounded-md text-white bg-blue-600  transition duration-150 ease-in-out;
+  height: 42px;
+}
+
+.button-primary:hover {
+  @apply bg-blue-500;
+}
+
+.button-primary:focus {
+  @apply focus-ring;
+}
+
+.button-primary:active {
+  @apply bg-blue-700;
+}
+
+.button-secondary {
+  @apply inline-flex justify-center items-center px-4 py-2 border border-gray-300 text-sm leading-5 font-semibold rounded-md text-gray-700 bg-white  transition duration-150 ease-in-out;
+  height: 42px;
+}
+
+.button-secondary:hover {
+  @apply text-gray-500;
+}
+
+.button-secondary:active {
+  @apply text-gray-800 bg-gray-100;
+}
+
+.button-secondary:focus {
+  @apply focus-ring;
+}
+/* purgecss start ignore */
+:root {
+  --docsearch-modal-background: #fff;
+  --docsearch-highlight-color: #1965e0;
+  --docsearch-primary-color: #0052cc;
+  --docsearch-searchbox-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5);
+  --ifm-z-index-fixed: 1000;
+  --docsearch-searchbox-height: 48px;
+  --docsearch-icon-stroke-width: 1.4;
+  --hover-overlay: rgba(0, 0, 0, 0.05);
+  --fds-animation-fade-in: cubic-bezier(0, 0, 1, 1);
+  --fds-animation-fade-out: cubic-bezier(0, 0, 1, 1);
+}
+
+.anchor {
+  @apply text-gray-500 absolute ml-2 pr-1 underline;
+}
+
+.anchor::after {
+  content: '#';
+  visibility: hidden;
+}
+
+h1:hover .anchor::after,
+h2:hover .anchor::after,
+h3:hover .anchor::after,
+h4:hover .anchor::after,
+h5:hover .anchor::after,
+h6:hover .anchor::after {
+  visibility: visible;
+}
+
+/* Algolia v3 overrides */
+.DocSearch--active #__next {
+  -webkit-filter: blur(2px);
+  filter: blur(2px);
+}
+.DocSearch-SearchBar {
+  @apply mb-2;
+}
+
+.DocSearch-Form {
+  @apply rounded-md;
+}
+
+.DocSearch-Search-Icon {
+  height: 20px;
+  width: 20px;
+  stroke-width: 1.6;
+  @apply text-gray-600;
+}
+
+/* Custom Remark alerts */
+.alert {
+  @apply p-4 border-l-4  mb-4;
+}
+
+.alert.alert-danger {
+  @apply bg-red-50 text-red-800 border-red-500;
+}
+
+.alert.alert-success {
+  @apply bg-green-50 text-green-700 border-green-500;
+}
+
+.alert.alert-warning {
+  @apply bg-yellow-50 text-yellow-800 border-yellow-500;
+}
+
+.alert.alert-info {
+  @apply bg-blue-50 text-blue-800 border-blue-500;
+}
+
+.font-mono {
+  font-family: monospace;
+}
+/**
+ * GHColors theme by Avi Aryan (http://aviaryan.in)
+ * Inspired by Github syntax coloring
+ */
+
+code[class*='language-'],
+pre[class*='language-'] {
+  color: #374151;
+  font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, Courier,
+    monospace;
+  direction: ltr;
+  text-align: left;
+  white-space: pre;
+  word-spacing: normal;
+  word-break: normal;
+  font-size: 0.85em;
+  line-height: 1.2em;
+
+  -moz-tab-size: 4;
+  -o-tab-size: 4;
+  tab-size: 4;
+
+  -webkit-hyphens: none;
+  -moz-hyphens: none;
+  -ms-hyphens: none;
+  hyphens: none;
+}
+
+/*# sourceMappingURL=prism_light-60c7b31824c7acaee9ff.min.css.map*/
+
+@tailwind utilities;
+/* purgecss end ignore */

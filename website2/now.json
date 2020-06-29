@@ -1,0 +1,13 @@
+{
+  "project": "formik-docs",
+  "build": {
+    "env": {
+      "NOTION_TOKEN": "@notion-token",
+      "BLOG_INDEX_ID": "@prod-notion-blog-id"
+    }
+  },
+  "env": {
+    "NOTION_TOKEN": "@notion-token",
+    "BLOG_INDEX_ID": "@prod-notion-blog-id"
+  }
+}

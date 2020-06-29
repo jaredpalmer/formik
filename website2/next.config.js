@@ -61,8 +61,6 @@ module.exports = (phase, { defaultConfig }) => {
     },
     webpack: (config, { dev, isServer, ...options }) => {
       if (!dev && isServer) {
-        // we're in build mode so enable shared caching for the GitHub API
-        process.env.USE_CACHE = 'true';
         const originalEntry = config.entry;
 
         config.entry = async () => {

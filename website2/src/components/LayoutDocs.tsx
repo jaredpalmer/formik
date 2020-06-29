@@ -30,7 +30,7 @@ interface DocsProps {
   meta?: any;
 }
 
-export const LayoutDocs: React.FC<DocsProps> = (props) => {
+export const LayoutDocs: React.FC<DocsProps> = props => {
   const router = useRouter();
   const routes = manifest.routes;
   const _route = findRouteByPath(router.asPath, routes);
@@ -92,12 +92,13 @@ export const LayoutDocs: React.FC<DocsProps> = (props) => {
           </>
         </div>
       </div>
+      <Footer />
     </>
   );
 };
 
 function getCategoryPath(routes: RouteItem[]) {
-  const route = routes.find((r) => r.path);
+  const route = routes.find(r => r.path);
   return route && removeFromLast(route.path!, '/');
 }
 

@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 export interface FooterProps {}
 
-export const Footer: React.FC<FooterProps> = (props) => {
+export const Footer: React.FC<FooterProps> = props => {
   return (
     <div className="bg-gray-50 border-t border-gray-200">
       <div className="max-w-screen-xl mx-auto py-12 px-4 sm:px-6 lg:py-16 lg:px-8">
@@ -105,86 +105,6 @@ export const Footer: React.FC<FooterProps> = (props) => {
                 </ul>
               </div>
             </div>
-            <div className="md:grid md:grid-cols-2 md:gap-8">
-              <div>
-                <h4 className="text-sm leading-5 font-semibold tracking-wider text-gray-400 uppercase">
-                  Company
-                </h4>
-                <ul className="mt-4">
-                  <li>
-                    <a
-                      href="#"
-                      className="text-base leading-6 text-gray-500 hover:text-gray-900"
-                    >
-                      About
-                    </a>
-                  </li>
-                  <li className="mt-4">
-                    <a
-                      href="#"
-                      className="text-base leading-6 text-gray-500 hover:text-gray-900"
-                    >
-                      Blog
-                    </a>
-                  </li>
-                  <li className="mt-4">
-                    <a
-                      href="#"
-                      className="text-base leading-6 text-gray-500 hover:text-gray-900"
-                    >
-                      Jobs
-                    </a>
-                  </li>
-                  <li className="mt-4">
-                    <a
-                      href="#"
-                      className="text-base leading-6 text-gray-500 hover:text-gray-900"
-                    >
-                      Press
-                    </a>
-                  </li>
-                  <li className="mt-4">
-                    <a
-                      href="#"
-                      className="text-base leading-6 text-gray-500 hover:text-gray-900"
-                    >
-                      Partners
-                    </a>
-                  </li>
-                </ul>
-              </div>
-              <div className="mt-12 md:mt-0">
-                <h4 className="text-sm leading-5 font-semibold tracking-wider text-gray-400 uppercase">
-                  Legal
-                </h4>
-                <ul className="mt-4">
-                  <li>
-                    <a
-                      href="#"
-                      className="text-base leading-6 text-gray-500 hover:text-gray-900"
-                    >
-                      Claim
-                    </a>
-                  </li>
-                  <li className="mt-4">
-                    <a
-                      href="#"
-                      className="text-base leading-6 text-gray-500 hover:text-gray-900"
-                    >
-                      Privacy
-                    </a>
-                  </li>
-                  <li className="mt-4">
-                    <a
-                      href="#"
-                      className="text-base leading-6 text-gray-500 hover:text-gray-900"
-                    >
-                      Terms
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </div>
           </div>
           <div className="mt-8 xl:mt-0">
             <h4 className="text-sm leading-5 font-semibold tracking-wider text-gray-400 uppercase">
@@ -208,7 +128,7 @@ export const Footer: React.FC<FooterProps> = (props) => {
                 className="appearance-none w-full px-4 py-2 border border-gray-300 text-base leading-6 rounded-md text-gray-900 bg-white placeholder-gray-500 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out lg:max-w-xs"
                 placeholder="Enter your email"
               />
-              <span className="ml-3 flex-shrink-0 inline-flex rounded-md shadow-sm">
+              <span className="mt-2 md:ml-3 flex-shrink-0 inline-flex rounded-md shadow-sm">
                 <button
                   type="button"
                   className="inline-flex items-center px-4 py-2 border border-transparent text-base leading-6 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-500 focus:outline-none focus:border-blue-700 focus:shadow-outline-blue active:bg-blue-700 transition ease-in-out duration-150"

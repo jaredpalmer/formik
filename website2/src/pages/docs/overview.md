@@ -43,7 +43,7 @@ to you.**
 
 My talk at React Alicante goes much deeper into Formik's motivation and philosophy, introduces the library (by watching me build a mini version of it), and demos how to build a non-trivial form (with arrays, custom inputs, etc.) using the real thing.
 
-<iframe width="600" height="315" src="https://www.youtube.com/embed/oiNtnehlaTo" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen title="Taming Forms in React - Jared Palmer"></iframe>
+<iframe width="600" height="315" src="https://www.youtube.com/embed/oiNtnehlaTo" frameBorder="0" allow="autoplay; encrypted-media" allowFullscreen title="Taming Forms in React - Jared Palmer"></iframe>
 
 ## Influences
 
@@ -70,7 +70,7 @@ npm install formik --save
 
 or
 
-```
+```sh
 yarn add formik
 ```
 
@@ -222,6 +222,16 @@ const Basic = () => (
 export default Basic;
 ```
 
+Read below for more information...
+
+!> Here be dragons. Proceed with caution! danger
+
+=> You are victorious! Great victory!
+
+~> Warning
+
+-> success
+
 ### Complementary Packages
 
 As you can see above, validation is left up to you. Feel free to write your own
@@ -231,10 +241,10 @@ API that's pretty similar [Joi](https://github.com/hapijs/joi) /
 [React PropTypes](https://github.com/facebook/prop-types) but is small enough
 for the browser and fast enough for runtime usage. Because I ❤️ Yup sooo
 much, Formik has a special config option / prop for Yup called
-[`validationSchema`](api/formik.md#validationschema-schema-schema) which will
+[`validationSchema`](/docs/api/formik.md#validationschema-schema----schema) which will
 automatically transform Yup's validation errors into a pretty object whose keys
-match [`values`](api/formik.md#values-field-string-any) and
-[`touched`](api/formik.md#touched-field-string-boolean). Anyways, you can
+match [`values`](/docs/api/formik.md#values-field-string-any) and
+[`touched`](/docs/api/formik.md#touched-field-string-boolean). Anyways, you can
 install Yup from npm...
 
 ```

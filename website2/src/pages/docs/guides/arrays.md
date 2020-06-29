@@ -4,7 +4,7 @@ title: Arrays and Nested Objects
 custom_edit_url: https://github.com/jaredpalmer/formik/edit/master/docs/guides/arrays.md
 ---
 
-Formik has support for nested objects and arrays out of the box. These 3 subjects are somewhat related because they leverage the same syntax.
+Formik has support for nested objects and arrays out of the box. These subjects are somewhat related because they both leverage the same syntax.
 
 ## Nested Objects
 

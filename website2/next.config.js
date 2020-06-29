@@ -60,19 +60,21 @@ module.exports = (phase, { defaultConfig }) => {
       },
     },
     webpack: (config, { dev, isServer, ...options }) => {
-      if (!dev && isServer) {
-        const originalEntry = config.entry;
+      // only compile build-rss in production server build
+      if (dev || !isServer) return config;
 
-        config.entry = async () => {
-          const entries = { ...(await originalEntry()) };
+      // we're in build mode so enable shared caching for Notion data
+      process.env.USE_CACHE = 'true';
 
-          // These scripts can import components from the app and use ES modules
-          // entries['./scripts/build-rss.js'] = './scripts/build-rss.js';
-          // entries['./scripts/index-docs.js'] = './scripts/index-docs.js';
-
-          return entries;
+      const originalEntry = config.entry;
+      config.entry = async () => {
+        const entries = {
+          ...(await originalEntry()),
         };
-      }
+        entries['./scripts/build-rss.js'] = './src/lib/build-rss.ts';
+        return entries;
+      };
+
       config.plugins.push(
         new webpack.ContextReplacementPlugin(
           /highlight\.js[/\/]lib[/\/]languages$/,

@@ -7,6 +7,13 @@ module.exports = {
     preflight: true,
     float: false,
   },
+  purge: {
+    enabled: process.env.NODE_ENV !== 'development',
+    content: ['./src/**/*.ts', './src/**/*.tsx'],
+    options: {
+      defaultExtractor: content => content.match(/[\w-/.:]+(?<!:)/g) || [],
+    },
+  },
   theme: {
     fontFamily: {
       sans: ['Inter', ...defaultTheme.fontFamily.sans],
@@ -25,15 +32,7 @@ module.exports = {
     container: {
       padding: '1rem',
     },
-    customForms: (theme) => ({
-      // dark: {
-      //   'input, textarea, multiselect, checkbox, radio': {
-      //     backgroundColor: theme('colors.gray.900'),
-      //   },
-      //   select: {
-      //     backgroundColor: theme('colors.gray.600'),
-      //   },
-      // },
+    customForms: theme => ({
       sm: {
         'input, textarea, multiselect, select': {
           fontSize: theme('fontSize.sm'),
@@ -50,21 +49,5 @@ module.exports = {
     }),
   },
   variants: {},
-  extend: {
-    colors: {
-      code: {
-        green: 'var(--color-code-green)',
-        yellow: 'var(--color-code-yellow)',
-        purple: 'var(--color-code-purple)',
-        red: 'var(--color-code-red)',
-        blue: 'var(--color-code-blue)',
-        white: 'var(--color-code-white)',
-      },
-      'green-150': '#e6ffee',
-    },
-  },
-  plugins: [
-    require('@tailwindcss/ui'),
-    require('./src/styles/tailwind-typography'),
-  ],
+  plugins: [require('@tailwindcss/ui')],
 };

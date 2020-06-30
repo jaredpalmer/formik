@@ -26,7 +26,7 @@ const Users: React.FC<UsersProps> = props => {
     </a>
   ));
   return (
-    <div className="bg-gray-50 h-full min-h-full overflow-y-auto">
+    <div className="bg-gray-50 h-full min-h-full">
       <Banner />
       <Sticky>
         <Nav />

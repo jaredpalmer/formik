@@ -50,7 +50,7 @@ export const getStaticProps: GetStaticProps<any> = async ({ preview }) => {
 
 export default function BlogIndex({ posts = [], preview }: any) {
   return (
-    <div className="h-full min-h-full overflow-y-auto">
+    <div className="h-full min-h-full">
       <Banner />
       <Sticky>
         <Nav />

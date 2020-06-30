@@ -149,7 +149,7 @@ const RenderPost = ({ post, redirect, preview }: any) => {
   }
 
   return (
-    <div className="h-full min-h-full overflow-y-auto">
+    <div className="h-full min-h-full">
       <Banner />
       <Sticky className="z-20">
         <Nav />

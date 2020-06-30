@@ -12,6 +12,6 @@ export default {
   a: ExtLink,
 
   Image: dynamic(() => import('./Image')),
-  Code: dynamic(() => import('./Code')),
+  Code: dynamic(() => import('../Highlight')),
   // Counter: dynamic(() => import('./counter')),
 };

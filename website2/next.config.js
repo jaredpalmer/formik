@@ -80,7 +80,6 @@ const remarkPlugins = [
 module.exports = (phase, { defaultConfig }) => {
   return {
     pageExtensions: ['jsx', 'js', 'ts', 'tsx', 'mdx', 'md'],
-    target: 'experimental-serverless-trace',
     env: {},
     experimental: {
       modern: true,

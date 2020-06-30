@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import Router from 'next/router';
 import Link from 'next/link';
 import Head from 'next/head';
-import { DocSearchModal } from '@francoischalifour/docsearch-react';
+import { useDocSearchKeyboardEvents } from '@docsearch/react';
 import { siteConfig } from 'siteConfig';
 
 export interface SearchProps {
@@ -15,20 +15,18 @@ export interface SearchProps {
 
 function Hit({ hit, children }: any) {
   return (
-    <Link href="/docs/[...slug]" as={hit.url}>
+    <Link href={hit.url.replace()}>
       <a>{children}</a>
     </Link>
   );
 }
-
-let DocSearch: any = DocSearchModal;
 
 const options = {
   appId: siteConfig.algolia.appId,
   apiKey: siteConfig.algolia.apiKey,
   indexName: siteConfig.algolia.indexName,
 };
-
+let DocSearchModal: any = null;
 export const Search: React.FC<SearchProps> = ({
   appId,
   searchParameters = {
@@ -39,55 +37,38 @@ export const Search: React.FC<SearchProps> = ({
   const [isShowing, setIsShowing] = React.useState(false);
   const scrollY = React.useRef(0);
 
-  const load = React.useCallback(
-    function load() {
-      return Promise.resolve();
+  const importDocSearchModalIfNeeded = React.useCallback(
+    function importDocSearchModalIfNeeded() {
+      if (DocSearchModal) {
+        return Promise.resolve();
+      }
+
+      return Promise.all([import('@docsearch/react/modal')]).then(
+        ([{ DocSearchModal: Modal }]) => {
+          DocSearchModal = Modal;
+        }
+      );
     },
-    [isLoaded, setIsLoaded]
+    []
   );
 
   const onOpen = React.useCallback(
     function onOpen() {
-      load().then(() => {
-        scrollY.current = window.scrollY;
+      importDocSearchModalIfNeeded().then(() => {
         setIsShowing(true);
-        document.body.classList.add('DocSearch--active');
       });
     },
-    [load, setIsShowing]
+    [importDocSearchModalIfNeeded, setIsShowing]
   );
 
   const onClose = React.useCallback(
     function onClose() {
       setIsShowing(false);
-      document.body.classList.remove('DocSearch--active');
-      window.scrollTo(0, scrollY.current);
     },
     [setIsShowing]
   );
 
-  React.useEffect(() => {
-    function onKeyDown(event: any) {
-      if (
-        (event.key === 'Escape' && isShowing) ||
-        (event.metaKey && event.key === 'k')
-      ) {
-        event.preventDefault();
-
-        if (isShowing) {
-          onClose();
-        } else {
-          onOpen();
-        }
-      }
-    }
-
-    window.addEventListener('keydown', onKeyDown);
-
-    return () => {
-      window.removeEventListener('keydown', onKeyDown);
-    };
-  }, [isShowing, onOpen, onClose]);
+  useDocSearchKeyboardEvents({ isOpen: isShowing, onOpen, onClose });
 
   return (
     <>
@@ -143,20 +124,21 @@ export const Search: React.FC<SearchProps> = ({
       {isLoaded &&
         isShowing &&
         createPortal(
-          <DocSearch
+          <DocSearchModal
             {...options}
             searchParameters={searchParameters}
             onClose={onClose}
             navigator={{
               navigate({ suggestionUrl }: any) {
-                Router.push(suggestionUrl, suggestionUrl);
+                Router.push(suggestionUrl);
               },
             }}
             transformItems={(items: any[]) => {
               return items.map(item => {
+                const url = new URL(item.url);
                 return {
                   ...item,
-                  url: item.url.replace('#__next', ''),
+                  url: item.url.replace(url.origin, '').replace('#__next', ''),
                 };
               });
             }}

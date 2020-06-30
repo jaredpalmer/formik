@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@babel/preset-typescript": "^7.10.1",
-    "@francoischalifour/docsearch-react": "1.0.0-alpha.11",
+    "@docsearch/react": "1.0.0-alpha.14",
     "@mdx-js/loader": "^1.5.1",
     "@mdx-js/mdx": "^1.5.1",
     "@mdx-js/react": "^1.5.1",

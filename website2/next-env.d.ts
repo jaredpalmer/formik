@@ -13,7 +13,7 @@ declare module 'rehype-format';
 declare module 'rehype-stringify';
 declare module 'classnames';
 declare module 'docsearch.js';
-declare module '@francoischalifour/docsearch-react';
+declare module '@docsearch/react';
 declare module 'prismjs';
 declare module 'async-sema';
 declare module 'node-fetch';

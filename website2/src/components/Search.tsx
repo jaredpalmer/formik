@@ -149,7 +149,7 @@ export const Search: React.FC<SearchProps> = ({
             onClose={onClose}
             navigator={{
               navigate({ suggestionUrl }: any) {
-                Router.push('/docs/[...slug]', suggestionUrl);
+                Router.push(suggestionUrl, suggestionUrl);
               },
             }}
             transformItems={(items: any[]) => {

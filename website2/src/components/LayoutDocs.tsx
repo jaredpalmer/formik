@@ -54,11 +54,13 @@ export const LayoutDocs: React.FC<DocsProps> = props => {
         />
         <div className="block">
           <>
-            <Sticky shadow>
-              <SidebarMobile>
-                <SidebarRoutes isMobile={true} routes={routes} />
-              </SidebarMobile>
-            </Sticky>
+            {isMobile ? (
+              <Sticky shadow>
+                <SidebarMobile>
+                  <SidebarRoutes isMobile={true} routes={routes} />
+                </SidebarMobile>
+              </Sticky>
+            ) : null}
             <div className="container mx-auto pb-12 pt-6 content">
               <div className="flex relative">
                 <Sidebar fixed>

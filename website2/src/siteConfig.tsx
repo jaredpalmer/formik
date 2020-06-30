@@ -205,7 +205,7 @@ const users = [
 
 export const siteConfig = {
   users,
-  editUrl: 'https://github.com/jaredpalmer/breezy/edit/master',
+  editUrl: 'https://github.com/formik/formik/edit/master',
   copyright: `Copyright © ${new Date().getFullYear()} Jared Palmer. All Rights Reserved.`,
-  repoUrl: 'https://github.com/jaredpalmer/breezy',
+  repoUrl: 'https://github.com/formik/formik',
 };

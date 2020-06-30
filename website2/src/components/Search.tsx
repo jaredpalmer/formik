@@ -4,6 +4,7 @@ import Router from 'next/router';
 import Link from 'next/link';
 import Head from 'next/head';
 import { DocSearchModal } from '@francoischalifour/docsearch-react';
+import { siteConfig } from 'siteConfig';
 
 export interface SearchProps {
   appId?: string;
@@ -23,9 +24,9 @@ function Hit({ hit, children }: any) {
 let DocSearch: any = DocSearchModal;
 
 const options = {
-  appId: `KEE45EAUY8`,
-  apiKey: `6d2cab21589035d1be6bc63be679c9d3`,
-  indexName: `prod-docs`,
+  appId: siteConfig.algolia.appId,
+  apiKey: siteConfig.algolia.apiKey,
+  indexName: siteConfig.algolia.indexName,
 };
 
 export const Search: React.FC<SearchProps> = ({
@@ -152,7 +153,7 @@ export const Search: React.FC<SearchProps> = ({
               },
             }}
             transformItems={(items: any[]) => {
-              return items.map((item) => {
+              return items.map(item => {
                 return {
                   ...item,
                   url: item.url.replace('#__next', ''),

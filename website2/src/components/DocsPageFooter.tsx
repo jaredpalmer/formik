@@ -59,10 +59,7 @@ export const DocsPageFooter = React.memo<DocsPageFooterProps>(
         <div className="py-12">
           <div className="flex space-between items-center">
             {prevRoute && prevRoute.path ? (
-              <NextLink
-                href={prevRoute.path}
-                as={removeFromLast(prevRoute.path, '.')}
-              >
+              <NextLink href={removeFromLast(prevRoute.path, '.')}>
                 <a className="flex-grow  block">
                   <span className="text-sm block text-gray-500 mb-1 font-semibold">
                     Prev
@@ -76,10 +73,7 @@ export const DocsPageFooter = React.memo<DocsPageFooterProps>(
               <div />
             )}
             {nextRoute && nextRoute.path && (
-              <NextLink
-                href={nextRoute.path}
-                as={removeFromLast(nextRoute.path, '.')}
-              >
+              <NextLink href={removeFromLast(nextRoute.path, '.')}>
                 <a className="flex-grow text-right block">
                   <span className="text-sm block text-gray-500 mb-1 font-semibold">
                     Next

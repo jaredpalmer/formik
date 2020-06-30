@@ -14,6 +14,7 @@ declare module 'rehype-stringify';
 declare module 'classnames';
 declare module 'docsearch.js';
 declare module '@docsearch/react';
+declare module '@docsearch/react/modal';
 declare module 'prismjs';
 declare module 'async-sema';
 declare module 'node-fetch';

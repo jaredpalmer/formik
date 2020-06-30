@@ -93,6 +93,11 @@ export const LayoutDocs: React.FC<DocsProps> = props => {
         </div>
       </div>
       <Footer />
+      <style jsx>{`
+        .docs {
+          min-width: calc(100% - 300px - 1rem - 200px);
+        }
+      `}</style>
     </>
   );
 };

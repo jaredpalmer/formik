@@ -45,7 +45,7 @@ specification. Contributions of any kind welcome!
 
 ## Related
 
-- [TSDX](https://github.com/jaredpalmer/tsdx) - Zero-config CLI for TypeScript used by this repo.
+- [TSDX](https://github.com/jaredpalmer/tsdx) - Zero-config CLI for TypeScript used by this repo. (Formik's Rollup configuration as a CLI)
 
 ---
 

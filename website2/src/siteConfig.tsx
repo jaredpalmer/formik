@@ -17,6 +17,9 @@ const users = [
     image: '/img/logos/lyft.svg',
     infoLink: 'https://lyft.com',
     pinned: true,
+    style: {
+      maxWidth: 100,
+    },
   },
   {
     caption: 'Nasa',

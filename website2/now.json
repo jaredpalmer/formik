@@ -3,11 +3,11 @@
   "build": {
     "env": {
       "NOTION_TOKEN": "@notion-token",
-      "BLOG_INDEX_ID": "@prod-notion-blog-id"
+      "BLOG_INDEX_ID": "@prod-notion-formik-oss-blog-id"
     }
   },
   "env": {
     "NOTION_TOKEN": "@notion-token",
-    "BLOG_INDEX_ID": "@prod-notion-blog-id"
+    "BLOG_INDEX_ID": "@prod-notion-formik-oss-blog-id"
   }
 }

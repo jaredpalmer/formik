@@ -1,31 +1,20 @@
 import React from 'react';
 import { Client } from './Client';
-import { logos } from './logos';
+import { siteConfig } from 'siteConfig';
 
-function splitArray(array: any[], numberOfSplits: number) {
-  const splitLength = array.length / numberOfSplits;
-  const splits = [];
+const pinnedLogos = siteConfig.users.filter(p => p.pinned);
 
-  for (let i = 0; i < numberOfSplits; i += 1) {
-    splits.push(array.slice(i * splitLength, (i + 1) * splitLength));
-  }
-
-  return splits;
-}
-
-export const ClientsMarquee = React.memo((props) => {
-  const [firstLogos, secondLogos] = splitArray(logos, 2);
-
+export const ClientsMarquee = React.memo(props => {
   return (
     <div className="overflow-x-hidden">
       <div className="relative translate-x-1/2" {...props}>
         <div className="wrapper inline-block">
-          {logos.map(({ name, url, image, style }) => (
+          {pinnedLogos.map(({ caption, infoLink, image, style }) => (
             <Client
               className="mx-8 align-middle opacity-50"
-              key={name}
+              key={caption}
               style={style}
-              name={name}
+              name={caption}
               image={image}
             />
           ))}

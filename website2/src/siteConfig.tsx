@@ -18,13 +18,22 @@ const users = [
     infoLink: 'https://lyft.com',
     pinned: true,
     style: {
-      maxWidth: 100,
+      maxWidth: 75,
     },
   },
   {
     caption: 'Nasa',
     image: '/img/logos/nasa.svg',
     infoLink: 'https://www.nasa.gov',
+    pinned: true,
+    style: {
+      maxWidth: 80,
+    },
+  },
+  {
+    caption: 'Stripe',
+    image: '/img/logos/stripe.svg',
+    infoLink: 'https://stripe.com',
     pinned: true,
   },
   {
@@ -57,7 +66,7 @@ const users = [
     infoLink: 'https://www.pwc.com',
     pinned: true,
     style: {
-      maxWidth: 100,
+      maxWidth: 80,
     },
   },
   {
@@ -66,7 +75,7 @@ const users = [
     infoLink: 'https://www.noaa.gov',
     pinned: true,
     style: {
-      maxWidth: 100,
+      maxWidth: 80,
     },
   },
   {

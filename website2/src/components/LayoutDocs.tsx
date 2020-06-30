@@ -66,7 +66,7 @@ export const LayoutDocs: React.FC<DocsProps> = props => {
                 <Sidebar fixed>
                   <SidebarRoutes routes={routes} />
                 </Sidebar>
-                <div className={s['markdown'] + ' w-full'}>
+                <div className={s['markdown'] + ' w-full docs'}>
                   <h1>{props.meta.title}</h1>
                   <MDXProvider components={MDXComponents}>
                     {props.children}

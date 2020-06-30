@@ -933,7 +933,7 @@ Congratulations! You've created a signup form with Formik that:
 
 Nice work! We hope you now feel like you have a decent grasp on how Formik works.
 
-Check out the final result here: [Final Result](https://codesandbox.io/s/formik-v2-tutorial-final-bq0li).
+Check out the final result here: [Final Result](https://codesandbox.io/s/formik-v2-tutorial-final-ge1pt).
 
 If you have extra time or want to practice your new Formik skills, here are some ideas for improvements that you could make to the signup form which are listed in order of increasing difficulty:
 

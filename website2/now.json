@@ -2,12 +2,12 @@
   "project": "formik-docs",
   "build": {
     "env": {
-      "NOTION_TOKEN": "@notion-token",
+      "NOTION_TOKEN": "@prod-notion-formik-oss-token",
       "BLOG_INDEX_ID": "@prod-notion-formik-oss-blog-id"
     }
   },
   "env": {
-    "NOTION_TOKEN": "@notion-token",
+    "NOTION_TOKEN": "@prod-notion-formik-oss-token",
     "BLOG_INDEX_ID": "@prod-notion-formik-oss-blog-id"
   }
 }

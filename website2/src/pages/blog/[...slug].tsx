@@ -149,7 +149,7 @@ const RenderPost = ({ post, redirect, preview }: any) => {
   }
 
   return (
-    <>
+    <div className="h-full min-h-full overflow-y-auto">
       <Banner />
       <Sticky className="z-20">
         <Nav />
@@ -167,7 +167,7 @@ const RenderPost = ({ post, redirect, preview }: any) => {
           </div>
         </div>
       )}
-      <div className="container max-w-4xl  mx-auto px-4 sm:px-6 lg:px-8 max-w-screen pb-12 pt-6">
+      <div className="container max-w-3xl  mx-auto px-4 sm:px-6 lg:px-8 max-w-screen pb-12 pt-6">
         <div className="my-10 space-y-4">
           <div className=" flex items-center">
             {post.Authors.length > 0 && (
@@ -427,7 +427,9 @@ const RenderPost = ({ post, redirect, preview }: any) => {
                     if (properties.html) {
                       toRender.push(
                         <div
-                          dangerouslySetInnerHTML={{ __html: properties.html }}
+                          dangerouslySetInnerHTML={{
+                            __html: properties.html,
+                          }}
                           key={id}
                         />
                       );
@@ -451,7 +453,7 @@ const RenderPost = ({ post, redirect, preview }: any) => {
       </div>
 
       <Footer />
-    </>
+    </div>
   );
 };
 

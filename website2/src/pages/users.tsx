@@ -8,9 +8,9 @@ import { Container } from 'components/Container';
 
 export interface UsersProps {}
 
-const Users: React.FC<UsersProps> = (props) => {
+const Users: React.FC<UsersProps> = props => {
   const editUrl = `${siteConfig.repoUrl}/edit/master/website/src/siteConfig.tsx`;
-  const showcase = siteConfig.users.map((user) => (
+  const showcase = siteConfig.users.map(user => (
     <a
       href={user.infoLink}
       key={user.infoLink}
@@ -25,7 +25,7 @@ const Users: React.FC<UsersProps> = (props) => {
     </a>
   ));
   return (
-    <>
+    <div className="bg-gray-50 h-full min-h-full overflow-y-auto">
       <Banner />
       <Sticky>
         <Nav />
@@ -66,7 +66,7 @@ const Users: React.FC<UsersProps> = (props) => {
       </Container>
 
       <Footer />
-    </>
+    </div>
   );
 };
 

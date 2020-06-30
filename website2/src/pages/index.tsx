@@ -12,7 +12,7 @@ export interface HomeProps {}
 
 const Home: React.FC<HomeProps> = props => {
   return (
-    <div className="bg-gray-50 h-full">
+    <div className="bg-gray-50 h-full min-h-full overflow-y-auto">
       <Banner />
       <Sticky>
         <Nav />

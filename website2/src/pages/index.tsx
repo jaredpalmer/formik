@@ -7,12 +7,21 @@ import { siteConfig } from 'siteConfig';
 import Link from 'next/link';
 import { Footer } from 'components/Footer';
 import { ClientsMarquee } from 'components/clients/ClientsMarquee';
+import { Seo } from 'components/Seo';
+import Head from 'next/head';
 
 export interface HomeProps {}
 
 const Home: React.FC<HomeProps> = props => {
   return (
     <div className="bg-gray-50 h-full min-h-full overflow-y-auto">
+      <Seo
+        title="Formik"
+        description="Production grade forms in React. The world's leading companies use Formik to build forms and surveys in their websites and applications."
+      />
+      <Head>
+        <title>Formik - The React forms API</title>
+      </Head>
       <Banner />
       <Sticky>
         <Nav />
@@ -103,10 +112,10 @@ const Home: React.FC<HomeProps> = props => {
             <div className="lg:grid lg:grid-cols-3 lg:gap-8">
               <div>
                 <div>
-                  <h3 className="text-xl leading-6 lg:text-2xl font-bold text-gray-900">
+                  <h3 className="text-xl leading-6 xl:text-2xl font-bold text-gray-900">
                     Declarative
                   </h3>
-                  <p className="mt-2 lg:mt-4 text-lg lg:leading-normal leading-6 text-gray-600">
+                  <p className="mt-2 lg:mt-4 text-base xl:text-lg lg:leading-normal leading-6 text-gray-600">
                     Formik takes care of the repetitive and annoying
                     stuff—keeping track of values/errors/visited fields,
                     orchestrating validation, and handling submission—so you
@@ -118,10 +127,10 @@ const Home: React.FC<HomeProps> = props => {
               </div>
               <div className="mt-10 lg:mt-0">
                 <div>
-                  <h3 className="text-xl leading-6 lg:text-2xl font-bold text-gray-900">
+                  <h3 className="text-xl leading-6 xl:text-2xl font-bold text-gray-900">
                     Intuitive
                   </h3>
-                  <p className="mt-2  lg:mt-4 text-lg lg:leading-normal leading-6 text-gray-600">
+                  <p className="mt-2  lg:mt-4 text-base xl:text-lg lg:leading-normal leading-6 text-gray-600">
                     No fancy subscriptions or observables under the hood, just
                     plain React state and props. By staying within the core
                     React framework and away from magic, Formik makes debugging,
@@ -132,10 +141,10 @@ const Home: React.FC<HomeProps> = props => {
               </div>
               <div className="mt-10 lg:mt-0">
                 <div>
-                  <h3 className="text-xl leading-6 lg:text-2xl font-bold text-gray-900">
+                  <h3 className="text-xl leading-6 xl:text-2xl font-bold text-gray-900">
                     Adoptable
                   </h3>
-                  <p className="mt-2  lg:mt-4 text-lg lg:leading-normal leading-6 text-gray-600">
+                  <p className="mt-2  lg:mt-4 text-base xl:text-lg lg:leading-normal leading-6 text-gray-600">
                     Since form state is inherently local and ephemeral, Formik
                     does not use external state management libraries like Redux
                     or MobX. This also makes Formik easy to adopt incrementally

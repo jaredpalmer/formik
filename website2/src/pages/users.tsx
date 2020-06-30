@@ -5,6 +5,7 @@ import { Banner } from 'components/Banner';
 import { Sticky } from 'components/Sticky';
 import { Nav } from 'components/Nav';
 import { Container } from 'components/Container';
+import { Seo } from 'components/Seo';
 
 export interface UsersProps {}
 
@@ -30,6 +31,7 @@ const Users: React.FC<UsersProps> = props => {
       <Sticky>
         <Nav />
       </Sticky>
+      <Seo title="Showcase" />
       <Container>
         <div className="my-12 space-y-12">
           <div className="lg:text-center">

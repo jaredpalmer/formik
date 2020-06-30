@@ -5,6 +5,7 @@ import { getSlug, removeFromLast, addTagToSlug } from '../lib/docs/utils';
 import { siteConfig } from 'siteConfig';
 import { Page, RouteItem } from '../lib/types';
 import { FiThumbsDown, FiThumbsUp } from 'react-icons/fi';
+import { TWButton } from './TWButton';
 
 export interface DocsPageFooterProps {
   route: RouteItem;
@@ -44,23 +45,17 @@ export const DocsPageFooter = React.memo<DocsPageFooterProps>(
           </a>
           {/* )} */}
         </div>
-        <hr className="mt-8" />
-        <div className="py-8 md:flex md:items-center md:py-8">
+
+        <div className="py-8 md:flex md:items-center md:py-8 border-t border-b">
           <div className="font-semibold text-xl mr-4 text-center mb-4 md:mb-0  md:text-left">
             Was this page helpful?
           </div>
           <div className="grid grid-cols-2 gap-3 w-auto max-w-xs mx-auto md:mx-2">
-            <button className="button-secondary">
-              <FiThumbsUp className="-ml-1 mr-2" />
-              Yes
-            </button>
-            <button className="button-secondary">
-              <FiThumbsDown className="-ml-1 mr-2" />
-              No
-            </button>
+            <TWButton icon={<FiThumbsUp />}>Yes</TWButton>
+            <TWButton icon={<FiThumbsDown />}>No</TWButton>
           </div>
         </div>
-        <hr />
+
         <div className="py-12">
           <div className="flex space-between items-center">
             {prevRoute && prevRoute.path ? (

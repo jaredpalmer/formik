@@ -10,13 +10,6 @@ html {
   -moz-osx-font-smoothing: grayscale;
 }
 
-#__next,
-body,
-html {
-  height: 100%;
-  min-height: 100%;
-}
-
 .top-24 {
   top: 6rem;
 }

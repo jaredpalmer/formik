@@ -11,6 +11,7 @@ export interface SearchProps {
   apiKey?: string;
   indexName?: string;
   searchParameters?: any;
+  renderModal?: boolean;
 }
 
 function Hit({ hit, children }: any) {
@@ -25,6 +26,7 @@ const options = {
   appId: siteConfig.algolia.appId,
   apiKey: siteConfig.algolia.apiKey,
   indexName: siteConfig.algolia.indexName,
+  rednerModal: true,
 };
 let DocSearchModal: any = null;
 export const Search: React.FC<SearchProps> = ({
@@ -32,7 +34,8 @@ export const Search: React.FC<SearchProps> = ({
   searchParameters = {
     hitsPerPage: 5,
   },
-} = options) => {
+  renderModal = true,
+}) => {
   const [isLoaded, setIsLoaded] = React.useState(true);
   const [isShowing, setIsShowing] = React.useState(false);
   const scrollY = React.useRef(0);

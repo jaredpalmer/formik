@@ -1,11 +1,16 @@
 import * as React from 'react';
 
-import { disableBodyScroll, enableBodyScroll } from 'body-scroll-lock';
+import {
+  disableBodyScroll,
+  enableBodyScroll,
+  clearAllBodyScrollLocks,
+} from 'body-scroll-lock';
 import cn from 'classnames';
 import { Container } from './Container';
 import { FiChevronRight as ArrowRightSidebar } from 'react-icons/fi';
 import { Search } from './Search';
 import { useRouter } from 'next/router';
+
 export function SidebarMobile({ children }: { children: React.ReactNode }) {
   const [opened, setOpen] = React.useState(false);
   const menuRef = React.useRef<HTMLDivElement>(null);
@@ -24,20 +29,10 @@ export function SidebarMobile({ children }: { children: React.ReactNode }) {
     }
   };
   const toggleOpen = () => {
-    if (opened) closeMenu();
-    else openMenu();
-  };
-  // In the following events, only do updates, don't use local states that aren't shared
-  // with the Search component, because they won't be updated once the event happens.
-  const onSearchStart = () => {
-    if (searchRef.current != null) {
-      disableBodyScroll(searchRef.current);
+    if (opened) {
       closeMenu();
-    }
-  };
-  const onSearchClear = () => {
-    if (searchRef.current != null) {
-      enableBodyScroll(searchRef.current);
+    } else {
+      openMenu();
     }
   };
 
@@ -47,13 +42,16 @@ export function SidebarMobile({ children }: { children: React.ReactNode }) {
 
   React.useEffect(() => {
     onRouteChange();
+    return () => {
+      clearAllBodyScrollLocks();
+    };
   }, [router.asPath]);
 
   return (
     <div className="lg:hidden">
       <Container>
         <div className="sidebar-search py-2 z-10">
-          <Search />
+          <Search renderModal={false} />
         </div>
         <label htmlFor="dropdown-input" className={cn('w-full', { opened })}>
           <input

@@ -10,7 +10,7 @@ import { Seo } from 'components/Seo';
 export interface UsersProps {}
 
 const Users: React.FC<UsersProps> = props => {
-  const editUrl = `${siteConfig.repoUrl}/edit/master/website/src/siteConfig.ts`;
+  const editUrl = `${siteConfig.repoUrl}/edit/master/website2/src/siteConfig.tsx`;
   const showcase = siteConfig.users.map(user => (
     <a
       href={user.infoLink}

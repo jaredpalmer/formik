@@ -37,6 +37,15 @@ const users = [
     pinned: true,
   },
   {
+    caption: 'US Army',
+    image: '/img/logos/army.svg',
+    infoLink: 'https://www.army.mil',
+    pinned: true,
+    style: {
+      maxWidth: 80,
+    },
+  },
+  {
     caption: 'OpenTable',
     image: '/img/logos/opentable.svg',
     infoLink: 'https://opentable.com',

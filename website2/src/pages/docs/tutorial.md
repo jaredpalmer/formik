@@ -7,7 +7,7 @@ title: Tutorial
 
 Welcome to the Formik tutorial. This will teach you everything you need to know to build simple and complex forms in React.
 
-If you're impatient and just want to start hacking on your machine locally, checkout [the 60-second quickstart](overview.md#installation).
+If you're impatient and just want to start hacking on your machine locally, checkout [the 60-second quickstart](/docs/overview#installation).
 
 ### What are we building?
 
@@ -42,7 +42,7 @@ This is completely optional and not required for this tutorial!
 This setup requires more work but allows you to complete the tutorial using an editor of your choice. Here are the steps to follow:
 
 1. Make sure you have a recent version of [Node.js](https://nodejs.org/en/) installed.
-2. Follow the [installation instructions for Create React App](/docs/create-a-new-react-app.html#create-react-app) to make a new project.
+2. Follow the [installation instructions for Create React App](https://create-react-app.dev) to make a new project.
 
 ```bash
 npx create-react-app my-app

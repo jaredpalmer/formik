@@ -29,7 +29,7 @@ This is the quickest way to get started!
 
 First, open this [Starter Code](https://codesandbox.io/s/formik-v2-tutorial-start-s04yr) in a new tab. The new tab should display an email address input and submit button and some React code. We will be editing the React code in this tutorial.
 
-You can now skip the second setup option, and go to the [Overview](#what-is-formik) section to get an overview of Formik.
+You can now skip the second setup option, and go to the [Overview](#overview-what-is-formik) section to get an overview of Formik.
 
 ### Setup Option 2: Local Development Environment
 

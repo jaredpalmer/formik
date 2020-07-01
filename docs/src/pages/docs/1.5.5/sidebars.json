@@ -1,7 +1,0 @@
-{
-  "docs": {
-    "Getting Started": ["overview", "tutorial", "resources"],
-    "Guides": ["guides/validation", "guides/arrays", "guides/typescript", "guides/react-native", "guides/form-submission"],
-    "API Reference": ["api/formik", "api/withFormik", "api/field", "api/fieldarray", "api/form", "api/errormessage", "api/connect", "api/fastfield"]
-  }
-}

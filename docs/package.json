@@ -52,6 +52,7 @@
     "remark-toc": "^7.0.0",
     "remark-unwrap-images": "^2.0.0",
     "scroll-into-view-if-needed": "^2.2.24",
+    "semver-regex": "^3.1.1",
     "unist-util-visit": "^2.0.2"
   },
   "devDependencies": {

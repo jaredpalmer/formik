@@ -10,7 +10,7 @@ import { SidebarPost } from 'components/SidebarPost';
 import { Sticky } from 'components/Sticky';
 import { useIsMobile } from 'components/useIsMobile';
 import { findRouteByPath } from 'lib/docs/findRouteByPath';
-import { addTagToSlug, getSlug, removeFromLast } from 'lib/docs/utils';
+import { removeFromLast } from 'lib/docs/utils';
 import { getRouteContext } from 'lib/get-route-context';
 import { Page, RouteItem } from 'lib/types';
 import { useRouter } from 'next/router';
@@ -21,25 +21,52 @@ import { Footer } from './Footer';
 import { DocsPageFooter } from './DocsPageFooter';
 import { Seo } from './Seo';
 import MDXComponents from './MDXComponents';
-import manifest from './manifest.json';
 
+import semverRegex from 'semver-regex';
+import Head from 'next/head';
+import { getManifest } from 'manifests/getManifest';
 interface DocsProps {
   page: Page;
   routes: RouteItem[];
   route: RouteItem;
   meta?: any;
 }
+const getTag = (path: string) => {
+  console.log(path);
+  const parts = path.split('/');
+  console.log(semverRegex().test(parts[2]));
+  return parts[0];
+};
+
+const getSlugAndTag = (path: string) => {
+  const parts = path.split('/');
+
+  if (parts[2] && semverRegex().test(parts[2])) {
+    return { tag: parts[2], slug: `/docs/${parts.slice(2).join('/')}` };
+  }
+  return { slug: path };
+};
+
+const addTagToSlug = (slug: string, tag?: string) => {
+  return tag ? `/docs/${tag}/${slug.replace('/docs/', '')}` : slug;
+};
 
 export const LayoutDocs: React.FC<DocsProps> = props => {
   const router = useRouter();
-  const routes = manifest.routes;
-  const _route = findRouteByPath(removeFromLast(router.asPath, '#'), routes);
+  const { slug, tag } = getSlugAndTag(router.asPath);
+  const { routes } = getManifest(tag);
+  const _route = findRouteByPath(removeFromLast(slug, '#'), routes);
   // @ts-ignore
   const isMobile = useIsMobile();
   const { route, prevRoute, nextRoute } = getRouteContext(_route, routes);
   const title = route && `${route.title}`;
   return (
     <>
+      {tag && (
+        <Head>
+          <meta name="robots" content="noindex" />
+        </Head>
+      )}
       <div>
         {isMobile ? (
           <Nav />
@@ -118,9 +145,8 @@ function SidebarRoutes({
   routes: RouteItem[];
   level?: number;
 }) {
-  const { asPath, query } = useRouter();
-  let tag: any;
-  let slug = removeFromLast(asPath, '.');
+  const { asPath } = useRouter();
+  let { slug, tag } = getSlugAndTag(asPath);
   return (currentRoutes as RouteItem[]).map(
     ({ path, title, routes, heading, open }) => {
       if (routes) {

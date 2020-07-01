@@ -135,13 +135,48 @@ h6:hover .anchor::after {
   font-family: monospace;
 }
 
+details > p > a,
+details > ul > li > a,
+details > ol > li > a,
+details > ul > li a,
+details > ol > li a,
+details > table > tbody > tr > td > a {
+  @apply text-blue-600 font-semibold transition-colors duration-150 ease-out;
+}
+
+details > p > a:hover,
+details > ul > li > a:hover,
+details > ol > li > a:hover,
+details > table > tbody > tr > td > a:hover {
+  @apply text-blue-800 transition-colors duration-150 ease-out;
+}
+
+details strong {
+  @apply font-bold;
+}
+
+details > p,
+details > ul,
+details > ol,
+details > blockquote,
+details > pre,
+details > div > .code-block {
+  @apply mb-4;
+}
+details > ul,
+details > ul > li > ul {
+  @apply ml-8 list-disc;
+}
+
+details > ol {
+  @apply ml-8 list-decimal;
+}
 details {
-  @apply p-3 bg-gray-100 mb-3 rounded-sm text-sm leading-5;
+  @apply p-3 bg-gray-50 rounded-md border mb-3  text-sm leading-5 shadow-sm;
 }
 details > p {
   @apply mt-2;
 }
-
 details > summary {
   @apply font-bold text-base;
 }

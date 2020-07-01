@@ -80,8 +80,13 @@ const remarkPlugins = [
 module.exports = (phase, { defaultConfig }) => {
   return {
     pageExtensions: ['jsx', 'js', 'ts', 'tsx', 'mdx', 'md'],
-    env: {},
+    env: {
+      GA_TRACKING_ID: process.env.GA_TRACKING_ID || '',
+      SENTRY_DSN: process.env.SENTRY_DSN || '',
+      SENTRY_RELEASE: process.env.VERCEL_GITHUB_COMMIT_SHA || '',
+    },
     experimental: {
+      plugins: true,
       modern: true,
       rewrites() {
         return [

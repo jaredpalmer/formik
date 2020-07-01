@@ -15,7 +15,7 @@ export interface DocsPageFooterProps {
 }
 
 function areEqual(prevProps: DocsPageFooterProps, props: DocsPageFooterProps) {
-  return prevProps.route.path === props.route.path;
+  return prevProps.route?.path === props.route?.path;
 }
 
 export const DocsPageFooter = React.memo<DocsPageFooterProps>(

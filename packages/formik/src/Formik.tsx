@@ -27,7 +27,7 @@ import {
 } from './utils';
 import { FormikProvider } from './FormikContext';
 import invariant from 'tiny-warning';
-import { LowPriority, unstable_runWithPriority } from 'scheduler';
+import { unstable_LowPriority, unstable_runWithPriority } from 'scheduler';
 
 type FormikMessage<Values> =
   | { type: 'SUBMIT_ATTEMPT' }
@@ -326,7 +326,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   // form is valid before executing props.onSubmit.
   const validateFormWithLowPriority = useEventCallback(
     (values: Values = state.values) => {
-      return unstable_runWithPriority(LowPriority, () => {
+      return unstable_runWithPriority(unstable_LowPriority, () => {
         return runAllValidations(values)
           .then(combinedErrors => {
             if (!!isMounted.current) {
@@ -890,8 +890,10 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   const getFieldHelpers = React.useCallback(
     (name: string): FieldHelperProps<any> => {
       return {
-        setValue: (value: any, shouldValidate?: boolean) => setFieldValue(name, value, shouldValidate),
-        setTouched: (value: boolean, shouldValidate?: boolean) => setFieldTouched(name, value, shouldValidate),
+        setValue: (value: any, shouldValidate?: boolean) =>
+          setFieldValue(name, value, shouldValidate),
+        setTouched: (value: boolean, shouldValidate?: boolean) =>
+          setFieldTouched(name, value, shouldValidate),
         setError: (value: any) => setFieldError(name, value),
       };
     },

@@ -1,10 +1,7 @@
 import * as React from 'react';
 import Link from 'next/link';
 import { Logo } from './Logo';
-import { AnimatePresence, motion } from 'framer-motion';
-import cn from 'classnames';
 import { siteConfig } from 'siteConfig';
-import ExternalLink from './blog/ExternalLink';
 
 export const Nav: React.FC = () => (
   <div className="bg-white border-b border-gray-200">

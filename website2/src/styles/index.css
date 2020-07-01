@@ -135,5 +135,16 @@ h6:hover .anchor::after {
   font-family: monospace;
 }
 
+details {
+  @apply p-3 bg-gray-100 mb-3 rounded-sm text-sm leading-5;
+}
+details > p {
+  @apply mt-2;
+}
+
+details > summary {
+  @apply font-bold text-base;
+}
+
 @tailwind utilities;
 /* purgecss end ignore */

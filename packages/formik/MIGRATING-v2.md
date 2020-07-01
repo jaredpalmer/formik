@@ -265,11 +265,11 @@ export interface FieldInputProps<Value> {
 Given a name it will return an object:
 
 ```tsx
-export interface FieldMetaProps<Value> {
+export interface FieldMetaProps<Value, Error> {
   /** Value of the field */
   value: Value;
   /** Error message of the field */
-  error?: string;
+  error?: Error;
   /** Has the field been visited? */
   touched: boolean;
   /** Initial value of the field */

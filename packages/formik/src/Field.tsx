@@ -11,10 +11,10 @@ import { useFormikContext } from './FormikContext';
 import { isFunction, isEmptyChildren, isObject } from './utils';
 import invariant from 'tiny-warning';
 
-export interface FieldProps<V = any, FormValues = any> {
+export interface FieldProps<V = any, FormValues = any, E extends {} = string> {
   field: FieldInputProps<V>;
   form: FormikProps<FormValues>; // if ppl want to restrict this for a given form, let them.
-  meta: FieldMetaProps<V>;
+  meta: FieldMetaProps<V, E>;
 }
 
 export interface FieldConfig<V = any> {
@@ -73,9 +73,9 @@ export type FieldAttributes<T> = GenericFieldHTMLAttributes &
 
 export type FieldHookConfig<T> = GenericFieldHTMLAttributes & FieldConfig<T>;
 
-export function useField<Val = any>(
+export function useField<Val = any, Err extends {} = string>(
   propsOrFieldName: string | FieldHookConfig<Val>
-): [FieldInputProps<Val>, FieldMetaProps<Val>, FieldHelperProps<Val>] {
+): [FieldInputProps<Val>, FieldMetaProps<Val, Err>, FieldHelperProps<Val>] {
   const formik = useFormikContext();
   const {
     getFieldProps,

@@ -14,9 +14,9 @@ import { connect } from './connect';
 
 type $FixMe = any;
 
-export interface FastFieldProps<V = any> {
+export interface FastFieldProps<V = any, E extends {} = string> {
   field: FieldInputProps<V>;
-  meta: FieldMetaProps<V>;
+  meta: FieldMetaProps<V, E>;
   form: FormikProps<V>; // if ppl want to restrict this for a given form, let them.
 }
 

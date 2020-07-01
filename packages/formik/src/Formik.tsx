@@ -874,7 +874,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   });
 
   const getFieldMeta = React.useCallback(
-    (name: string): FieldMetaProps<any> => {
+    (name: string): FieldMetaProps<any, any> => {
       return {
         value: getIn(state.values, name),
         error: getIn(state.errors, name),

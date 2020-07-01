@@ -136,7 +136,9 @@ export interface FormikHandlers {
     : (e: string | React.ChangeEvent<any>) => void;
 
   getFieldProps<Value = any>(props: any): FieldInputProps<Value>;
-  getFieldMeta<Value>(name: string): FieldMetaProps<Value>;
+  getFieldMeta<Value, Error extends {} = string>(
+    name: string
+  ): FieldMetaProps<Value, Error>;
   getFieldHelpers<Value = any>(name: string): FieldHelperProps<Value>;
 }
 
@@ -267,11 +269,11 @@ export type GenericFieldHTMLAttributes =
   | JSX.IntrinsicElements['textarea'];
 
 /** Field metadata */
-export interface FieldMetaProps<Value> {
+export interface FieldMetaProps<Value, Error> {
   /** Value of the field */
   value: Value;
   /** Error message of the field */
-  error?: string;
+  error?: Error;
   /** Has the field been visited? */
   touched: boolean;
   /** Initial value of the field */

@@ -33,7 +33,7 @@ interface DocsProps {
 export const LayoutDocs: React.FC<DocsProps> = props => {
   const router = useRouter();
   const routes = manifest.routes;
-  const _route = findRouteByPath(router.asPath, routes);
+  const _route = findRouteByPath(removeFromLast(router.asPath, '#'), routes);
   // @ts-ignore
   const isMobile = useIsMobile();
   const { route, prevRoute, nextRoute } = getRouteContext(_route, routes);

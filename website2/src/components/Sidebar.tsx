@@ -18,7 +18,7 @@ export const Sidebar: React.FC<{
       })}
     >
       <div className="sidebar-search my-2">
-        <Search />
+        <Search renderModal={false} />
       </div>
       <div className="sidebar-content overflow-y-auto pb-4">{children}</div>
       <style jsx>{`

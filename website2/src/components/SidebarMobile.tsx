@@ -51,7 +51,7 @@ export function SidebarMobile({ children }: { children: React.ReactNode }) {
     <div className="lg:hidden">
       <Container>
         <div className="sidebar-search py-2 z-10">
-          <Search renderModal={false} />
+          <Search />
         </div>
         <label htmlFor="dropdown-input" className={cn('w-full', { opened })}>
           <input

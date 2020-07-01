@@ -141,7 +141,10 @@ export const Search: React.FC<SearchProps> = ({
                 const url = new URL(item.url);
                 return {
                   ...item,
-                  url: item.url.replace(url.origin, '').replace('#__next', ''),
+                  url: item.url
+                    .replace(url.origin, '')
+                    .replace('#__next', '')
+                    .replace('/docs/#', '/docs/overview#'),
                 };
               });
             }}

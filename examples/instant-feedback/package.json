@@ -8,7 +8,7 @@
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
     "react-scripts": "3.4.1",
-    "yup": "0.28.1"
+    "yup": "0.29.1"
   },
   "prettier": {
     "trailingComma": "es5",

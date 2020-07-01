@@ -14,20 +14,19 @@ There are different ways to render with `<Field>`:
 
 - `<Field as>`
 - `<Field children>`
-- ~~`<Field render>`~~ _deprecated in 2.x. Using these will log warning_
 - `<Field component>`
+- ~~`<Field render>`~~ _deprecated in 2.x. Using these will log warning_
 
 `as` can either be a React component or the name of an HTML element to render. Formik will automagically inject `onChange`, `onBlur`, `name`, and `value` props of the field designated by the `name` prop to the (custom) component.
 
 `children` can either be an array of elements (e.g. `<option>` in the case of `<Field as="select">`) or a callback function (a.k.a render prop). The render props are an object containing:
-
-`component` can either be a React component or the name of an HTML element to render. All additional props will be passed through.
-
 - `field`: An object containing `onChange`, `onBlur`, `name`, and `value` of the field (see [`FieldInputProps`](./useField#fieldinputpropsvalue))
 - `form`: The Formik bag
 - `meta`: An object containing metadata (i.e. `value`, `touched`, `error`, and `initialValue`) about the field (see [`FieldMetaProps`](./useField#fieldmetapropsvalue))
 
-> In Formik 0.9 to 1.x, `component` and `render` props could also be used for rendering. These have been deprecated since 2.x. While the code still lives within `<Field>`, they will show a warning in the console.
+`component` can either be a React component or the name of an HTML element to render. All additional props will be passed through. `field` and `form` props will also be passed to the component, but `meta` is not passed for backwards compatibility.
+
+> In Formik 0.9 to 1.x, `component` and `render` props could also be used for rendering. `render` has been deprecated since 2.x. While the code still lives within `<Field>`, it will show a warning in the console.
 
 ## Example
 

@@ -96,7 +96,10 @@ to `<button onClick={handleReset}>...</button>`
 
 #### `handleSubmit: (e: React.FormEvent<HTMLFormEvent>) => void`
 
-Submit handler. This should be passed to `<form onSubmit={props.handleSubmit}>...</form>`. To learn more about the submission process, see [Form Submission](guides/form-submission.md).
+Submit handler.
+This should be passed to `<form onSubmit={props.handleSubmit}>...</form>`.
+Passes given event as `submitContext` (see more info about submit context in [`onSubmit` handler](#onsubmit-values-values-formikbag-formikbag-submitcontext-any--void--promiseany)).
+To learn more about the submission process, see [Form Submission](guides/form-submission.md).
 
 #### `isSubmitting: boolean`
 
@@ -130,9 +133,9 @@ Set the error message of a field imperatively. `field` should match the key of
 Set the touched state of a field imperatively. `field` should match the key of
 `touched` you wish to update. Useful for creating custom input blur handlers. Calling this method will trigger validation to run if `validateOnBlur` is set to `true` (which it is by default). `isTouched` defaults to `true` if not specified. You can also explicitly prevent/skip validation by passing a third argument as `false`.
 
-#### `submitForm: () => Promise`
+#### `submitForm: (submitContext?: any) => Promise`
 
-Trigger a form submission. The promise will be rejected if form is invalid.
+Trigger a form submission. The promise will be rejected if form is invalid. Value of `submitContext` will be passed to `onSubmit` handler.
 
 #### `submitCount: number`
 
@@ -325,13 +328,54 @@ Note: `initialValues` not available to the higher-order component, use
 Your optional form reset handler. It is passed your forms `values` and the
 "FormikBag".
 
-### `onSubmit: (values: Values, formikBag: FormikBag) => void | Promise<any>`
+### `onSubmit: (values: Values, formikBag: FormikBag, submitContext?: any) => void | Promise<any>`
 
-Your form submission handler. It is passed your forms `values` and the
-"FormikBag", which includes an object containing a subset of the
+Your form submission handler. It is passed your:
+ - Forms `values`
+ - The "FormikBag", which includes an object containing a subset of the
 [injected props and methods](#formik-render-methods-and-props) (i.e. all the methods
 with names that start with `set<Thing>` + `resetForm`) and any props that were
 passed to the wrapped component.
+ - `submitContext` which was passed to `submitForm` method
+    (will contain event object if form submission was invoked via `handleSubmit` method), e.g.:
+    
+    ```js
+      <Formik
+        onSubmit={(values, actions, context) => {
+          if (context instanceof SubmitEvent) {
+            if (context.submitter) {
+                console.log('Form is submitted using native HTML submit button')
+            }
+            else {
+                console.log('Form is submitted using HTMLForm.submit()')
+            }
+          }
+          else if (context instanceof MouseEvent) {
+               console.log(`User clicked on ${context.target.name} button`)
+          }
+          else {
+            console.log(`Submit was invoked programmatically. Current context is: ${context}`)
+          }
+        }}
+      >
+        {props => (
+          <form id="htmlform" onSubmit={props.handleSubmit}>
+            <button name="submit_using_click_handler" onClick={props.handleSubmit}>
+              Submit using click handler
+            </button>
+            <button onClick={() => props.submitForm('My test submit context')}>
+              Submit using formik.submitForm()
+            </button>
+            <button onClick={() => document.getElementById('htmlform').submit()}>
+              Submit using native HTMLForm submit method
+            </button>
+            <button type="submit">
+              Submit using native html submit button
+            </button>
+          </form>
+        )}
+      </Formik>
+    ```
 
 Note: `errors`, `touched`, `status` and all event handlers are NOT
 included in the `FormikBag`.

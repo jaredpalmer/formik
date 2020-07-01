@@ -102,7 +102,7 @@ export interface FormikHelpers<Values> {
   /** Reset form */
   resetForm(nextState?: Partial<FormikState<Values>>): void;
   /** Submit the form imperatively */
-  submitForm(): Promise<void>;
+  submitForm(submitContext?: any): Promise<void>;
   /** Set Formik state, careful! */
   setFormikState(
     f:
@@ -204,7 +204,8 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
    */
   onSubmit: (
     values: Values,
-    formikHelpers: FormikHelpers<Values>
+    formikHelpers: FormikHelpers<Values>,
+    submitContext?: any
   ) => void | Promise<any>;
   /**
    * A Yup Schema or a function that returns a Yup schema
@@ -230,7 +231,7 @@ export type FormikProps<Values> = FormikSharedConfig &
   FormikHelpers<Values> &
   FormikHandlers &
   FormikComputedProps<Values> &
-  FormikRegistration & { submitForm: () => Promise<any> };
+  FormikRegistration & { submitForm: (submitContext?: any) => Promise<any> };
 
 /** Internal Formik registration methods that get passed down as props */
 export interface FormikRegistration {

@@ -21,7 +21,7 @@ export const Seo = withRouter(
     <Head>
       {/* DEFAULT */}
 
-      {title != undefined && <title key="title">{title} - Formik</title>}
+      {title != undefined && <title key="title">{title} | Formik</title>}
       {description != undefined && (
         <meta name="description" key="description" content={description} />
       )}

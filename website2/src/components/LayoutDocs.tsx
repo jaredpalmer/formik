@@ -37,7 +37,7 @@ export const LayoutDocs: React.FC<DocsProps> = props => {
   // @ts-ignore
   const isMobile = useIsMobile();
   const { route, prevRoute, nextRoute } = getRouteContext(_route, routes);
-  const title = route && `${route.title} | Formik`;
+  const title = route && `${route.title}`;
   return (
     <>
       <div>

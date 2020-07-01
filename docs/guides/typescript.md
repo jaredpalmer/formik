@@ -43,7 +43,7 @@ export const MyApp: React.FC<{}> = () => {
           <Form>
             <Field
               name="firstName"
-              render={({ field, form, meta }) => (
+              render={({ field, form, meta }: FieldProps) => (
                 <div>
                   <input type="text" {...field} placeholder="First Name" />
                   {meta.touched && meta.error && meta.error}

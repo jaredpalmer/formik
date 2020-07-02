@@ -8,12 +8,18 @@
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
     "react-scripts": "3.4.1",
-    "yup": "0.29.1"
+    "yup": "0.29.1",
+    "snyk": "^1.359.0"
   },
   "prettier": {
     "trailingComma": "es5",
     "singleQuote": true,
     "semi": true
   },
-  "keywords": []
+  "keywords": [],
+  "scripts": {
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
+  },
+  "snyk": true
 }

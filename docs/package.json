@@ -31,9 +31,13 @@
     "docsearch.js": "^2.6.3",
     "framer-motion": "^1.11.1",
     "gray-matter": "^4.0.2",
+    "imagemin-mozjpeg": "^9.0.0",
+    "imagemin-optipng": "^8.0.0",
     "intersection-observer": "^0.10.0",
     "isomorphic-unfetch": "^3.0.0",
     "next": "^9.4.4",
+    "next-images": "^1.4.0",
+    "next-optimized-images": "^2.6.1",
     "node-fetch": "^2.6.0",
     "prismjs": "^1.20.0",
     "react": "^16.13.1",
@@ -73,7 +77,8 @@
     "remark-parse": "^8.0.2",
     "tailwindcss": "^1.4.6",
     "typescript": "^3.8.3",
-    "unified": "^9.0.0"
+    "unified": "^9.0.0",
+    "webp-loader": "^0.6.0"
   },
   "engines": {
     "node": ">=12.x"

@@ -1,6 +1,8 @@
 import React from 'react';
 import Head from 'next/head';
 import { withRouter, Router } from 'next/router';
+const ogImage = require('images/formik-og.png?url');
+const favicon = require('images/favicon.png?url');
 
 export interface SeoProps {
   title: string;
@@ -14,7 +16,7 @@ export const Seo = withRouter(
   ({
     title,
     description,
-    image = '/img/formik-og.png',
+    image = ogImage,
     router,
     children,
   }: SeoProps & { router: Router }) => (
@@ -25,15 +27,15 @@ export const Seo = withRouter(
       {description != undefined && (
         <meta name="description" key="description" content={description} />
       )}
-      <link rel="icon" type="image/x-icon" href="/img/favicon.png" />
-      <link rel="apple-touch-icon" href="/img/favicon.png" />
+      <link rel="icon" type="image/x-icon" href={favicon} />
+      <link rel="apple-touch-icon" href={favicon} />
 
       {/* OPEN GRAPH */}
       <meta property="og:type" key="og:type" content="website" />
       <meta
         property="og:url"
         key="og:url"
-        content={`https://formik.com${router.pathname}`}
+        content={`https://formik.org${router.pathname}`}
       />
       {title != undefined && (
         <meta property="og:title" content={title} key="og:title" />
@@ -49,7 +51,7 @@ export const Seo = withRouter(
         <meta
           property="og:image"
           key="og:image"
-          content={`https://formik.com${image}`}
+          content={`https://formik.org${image}`}
         />
       )}
 
@@ -75,7 +77,7 @@ export const Seo = withRouter(
         <meta
           name="twitter:image"
           key="twitter:image"
-          content={`https://formik.com${image}`}
+          content={`https://formik.org${image}`}
         />
       )}
 

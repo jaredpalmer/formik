@@ -65,11 +65,14 @@ const Home: React.FC<HomeProps> = props => {
           </div>
 
           <div className="py-24 mx-auto container px-4 sm:mt-12  relative">
-            <img
-              className="hidden lg:block absolute lg:w-3/5 right-0 lg:-rotate-30    lg:translate-x-1/3 lg:-translate-y-16 md:w-1/2 sm:w-2/3 top-0  transform  -translate-y-12"
-              src="/hero6.png"
-              alt="Formik Forms"
-            />
+            <picture className="hidden lg:block absolute lg:w-3/5 right-0 lg:-rotate-30    lg:translate-x-1/3 lg:-translate-y-16 md:w-1/2 sm:w-2/3 top-0  transform  -translate-y-12">
+              <source
+                srcSet={require('images/hero6.png?webp')}
+                type="image/webp"
+              />
+              <source srcSet={require('images/hero6.png')} type="image/jpeg" />
+              <img src={require('images/hero6.png')} alt="Formik Forms" />
+            </picture>
             <div className="grid grid-cols-12 gap-8">
               <div className="col-span-12 lg:col-span-6 ">
                 <div className="text-center lg:text-left md:max-w-2xl md:mx-auto ">

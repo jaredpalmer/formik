@@ -2,19 +2,19 @@
 const users = [
   {
     caption: 'Airbnb',
-    image: '/img/logos/airbnb.svg',
+    image: require('images/logos/airbnb.svg'),
     infoLink: 'https://airbnb.com',
     pinned: true,
   },
   {
     caption: 'Walmart',
-    image: '/img/logos/walmart.svg',
+    image: require('images/logos/walmart.svg'),
     infoLink: 'https://walmart.com',
     pinned: true,
   },
   {
     caption: 'Lyft',
-    image: '/img/logos/lyft.svg',
+    image: require('images/logos/lyft.svg'),
     infoLink: 'https://lyft.com',
     pinned: true,
     style: {
@@ -23,7 +23,7 @@ const users = [
   },
   {
     caption: 'Nasa',
-    image: '/img/logos/nasa.svg',
+    image: require('images/logos/nasa.svg'),
     infoLink: 'https://www.nasa.gov',
     pinned: true,
     style: {
@@ -32,13 +32,13 @@ const users = [
   },
   {
     caption: 'Stripe',
-    image: '/img/logos/stripe.svg',
+    image: require('images/logos/stripe.svg'),
     infoLink: 'https://stripe.com',
     pinned: true,
   },
   {
     caption: 'US Army',
-    image: '/img/logos/army.svg',
+    image: require('images/logos/army.svg'),
     infoLink: 'https://www.army.mil',
     pinned: true,
     style: {
@@ -47,31 +47,31 @@ const users = [
   },
   {
     caption: 'OpenTable',
-    image: '/img/logos/opentable.svg',
+    image: require('images/logos/opentable.svg'),
     infoLink: 'https://opentable.com',
     pinned: true,
   },
   {
     caption: 'Priceline.com',
-    image: '/img/logos/priceline.png',
+    image: require('images/logos/priceline.png'),
     infoLink: 'https://priceline.com',
     pinned: true,
   },
   {
     caption: 'Booking.com',
-    image: '/img/logos/booking.svg',
+    image: require('images/logos/booking.svg'),
     infoLink: 'https://booking.com',
     pinned: true,
   },
   {
     caption: 'NASDAQ',
-    image: '/img/logos/nasdaq.svg',
+    image: require('images/logos/nasdaq.svg'),
     infoLink: 'https://www.nasdaq.com',
     pinned: true,
   },
   {
     caption: 'PWC',
-    image: '/img/logos/pwc.svg',
+    image: require('images/logos/pwc.svg'),
     infoLink: 'https://www.pwc.com',
     pinned: true,
     style: {
@@ -80,7 +80,7 @@ const users = [
   },
   {
     caption: 'NOAA',
-    image: '/img/logos/noaa.svg',
+    image: require('images/logos/noaa.svg'),
     infoLink: 'https://www.noaa.gov',
     pinned: true,
     style: {
@@ -89,91 +89,91 @@ const users = [
   },
   {
     caption: 'Docker',
-    image: '/img/logos/docker.svg',
+    image: require('images/logos/docker.svg'),
     infoLink: 'https://docker.com',
     pinned: true,
   },
   {
     caption: 'Viacom',
-    image: '/img/logos/viacom.svg',
+    image: require('images/logos/viacom.svg'),
     infoLink: 'https://viacom.com',
     pinned: true,
   },
   {
     caption: 'Nokia',
-    image: '/img/logos/nokia.svg',
+    image: require('images/logos/nokia.svg'),
     infoLink: 'https://nokia.com',
     pinned: true,
   },
   {
     caption: 'Sony',
-    image: '/img/logos/sony.svg',
+    image: require('images/logos/sony.svg'),
     infoLink: 'https://sony.com',
     pinned: true,
   },
   {
     caption: 'State Street',
-    image: '/img/logos/state-street.png',
+    image: require('images/logos/state-street.png'),
     infoLink: 'https://statestreet.com',
   },
   {
     caption: 'Wayfair',
-    image: '/img/logos/wayfair.svg',
+    image: require('images/logos/wayfair.svg'),
     infoLink: 'https://wayfair.com',
     pinned: true,
   },
   {
     caption: 'Artsy',
-    image: '/img/logos/artsy.png',
+    image: require('images/logos/artsy.png'),
     infoLink: 'https://artsy.com',
     pinned: true,
   },
   {
     caption: 'Postmates',
-    image: '/img/logos/postmates.svg',
+    image: require('images/logos/postmates.svg'),
     infoLink: 'https://postmates.com',
     pinned: true,
   },
   {
     caption: 'Capsule Health',
-    image: '/img/logos/capsule.svg',
+    image: require('images/logos/capsule.svg'),
     infoLink: 'https://capsulecares.com',
     pinned: true,
   },
   {
     caption: 'Egghead',
-    image: '/img/logos/egghead.svg',
+    image: require('images/logos/egghead.svg'),
     infoLink: 'https://egghead.io',
     pinned: true,
   },
   {
     caption: 'Frame.io',
-    image: '/img/logos/frameio.png',
+    image: require('images/logos/frameio.png'),
     infoLink: 'https://frame.io',
   },
   {
     caption: 'RVshare',
-    image: '/img/logos/rvshare.svg',
+    image: require('images/logos/rvshare.svg'),
     infoLink: 'https://rvshare.com',
   },
   {
     caption: 'Extendi',
-    image: '/img/logos/extendi.svg',
+    image: require('images/logos/extendi.svg'),
     infoLink: 'https://www.extendi.it',
   },
   {
     caption: 'Gusto',
-    image: '/img/logos/gusto.svg',
+    image: require('images/logos/gusto.svg'),
     infoLink: 'https://gusto.com',
   },
   {
     caption: 'Campusjäger',
-    image: '/img/logos/campusjaeger.png',
+    image: require('images/logos/campusjaeger.png'),
     infoLink: 'https://www.campusjaeger.de/',
   },
   {
     caption: 'Letgo',
-    image: '/img/logos/letgo-logo.png',
+    image: require('images/logos/letgo-logo.png'),
     infoLink: 'https://we.letgo.com/',
     style: {
       maxWidth: 100,
@@ -181,42 +181,42 @@ const users = [
   },
   {
     caption: 'gitconnected',
-    image: '/img/logos/gitconnected-logo.png',
+    image: require('images/logos/gitconnected-logo.png'),
     infoLink: 'https://gitconnected.com',
   },
   {
     caption: 'zauberware',
-    image: '/img/logos/zauberware-logo.svg',
+    image: require('images/logos/zauberware-logo.svg'),
     infoLink: 'https://www.zauberware.com',
   },
   {
     caption: 'brightwheel',
-    image: '/img/logos/brightwheel.svg',
+    image: require('images/logos/brightwheel.svg'),
     infoLink: 'https://mybrightwheel.com',
   },
   {
     caption: 'restaurant365',
-    image: '/img/logos/restaurant365.svg',
+    image: require('images/logos/restaurant365.svg'),
     infoLink: 'https://restaurant365.com',
   },
   {
     caption: 'CarGurus',
-    image: '/img/logos/cargurus.svg',
+    image: require('images/logos/cargurus.svg'),
     infoLink: 'https://www.cargurus.com',
   },
   {
     caption: 'Gremlin',
-    image: '/img/logos/gremlin.svg',
+    image: require('images/logos/gremlin.svg'),
     infoLink: 'https://www.gremlin.com',
   },
   {
     caption: 'Ubidots',
-    image: '/img/logos/ubidots.svg',
+    image: require('images/logos/ubidots.svg'),
     infoLink: 'https://www.ubidots.com',
   },
   {
     caption: 'SwissDev DevOps Jobs',
-    image: '/img/logos/swissdev-devops-jobs.svg',
+    image: require('images/logos/swissdev-devops-jobs.svg'),
     infoLink: 'https://swissdevjobs.ch/jobs/Dev-Ops/All',
     style: {
       maxWidth: 100,

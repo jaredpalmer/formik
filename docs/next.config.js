@@ -78,79 +78,75 @@ const remarkPlugins = [
   ],
 ];
 
-module.exports = (phase, { defaultConfig }) => {
-  return optimizedImages(
-    {
-      /* config for next-optimized-images */
-      mozjpeg: {
-        quality: 70,
-      },
-      optipng: {
-        optimizationLevel: 3,
-      },
-      optimizeImagesInDev: true,
-    },
-    {
-      pageExtensions: ['jsx', 'js', 'ts', 'tsx', 'mdx', 'md'],
-      env: {
-        GA_TRACKING_ID: process.env.GA_TRACKING_ID || '',
-        SENTRY_DSN: process.env.SENTRY_DSN || '',
-        SENTRY_RELEASE: process.env.VERCEL_GITHUB_COMMIT_SHA || '',
-      },
-      experimental: {
-        plugins: true,
-        modern: true,
-        rewrites() {
-          return [
-            {
-              source: '/feed.xml',
-              destination: '/_next/static/feed.xml',
-            },
-            {
-              source: '/docs{/}?',
-              destination: '/docs/overview',
-            },
-            {
-              source: '/docs/tag/:tag{/}?',
-              destination: '/docs/tag/:tag/overview',
-            },
-          ];
+module.exports = optimizedImages({
+  pageExtensions: ['jsx', 'js', 'ts', 'tsx', 'mdx', 'md'],
+  env: {
+    GA_TRACKING_ID: process.env.GA_TRACKING_ID || '',
+    SENTRY_DSN: process.env.SENTRY_DSN || '',
+    SENTRY_RELEASE: process.env.VERCEL_GITHUB_COMMIT_SHA || '',
+  },
+  experimental: {
+    plugins: true,
+    modern: true,
+    rewrites() {
+      return [
+        {
+          source: '/feed.xml',
+          destination: '/_next/static/feed.xml',
         },
-      },
-      webpack: (config, { dev, isServer, ...options }) => {
-        config.module.rules.push({
-          test: /.mdx?$/, // load both .md and .mdx files
-          use: [
-            options.defaultLoaders.babel,
-            {
-              loader: '@mdx-js/loader',
-              options: {
-                remarkPlugins,
-              },
-            },
-            path.join(__dirname, './src/lib/docs/md-loader'),
-          ],
-        });
+        {
+          source: '/docs{/}?',
+          destination: '/docs/overview',
+        },
+        {
+          source: '/docs/tag/:tag{/}?',
+          destination: '/docs/tag/:tag/overview',
+        },
+      ];
+    },
+  },
+  webpack: (config, { dev, isServer, ...options }) => {
+    config.module.rules.push({
+      test: /.mdx?$/, // load both .md and .mdx files
+      use: [
+        options.defaultLoaders.babel,
+        {
+          loader: '@mdx-js/loader',
+          options: {
+            remarkPlugins,
+          },
+        },
+        path.join(__dirname, './src/lib/docs/md-loader'),
+      ],
+    });
 
-        // only compile build-rss in production server build
-        if (dev || !isServer) {
-          return config;
-        }
-
-        // we're in build mode so enable shared caching for Notion data
-        process.env.USE_CACHE = 'true';
-
-        const originalEntry = config.entry;
-        config.entry = async () => {
-          const entries = {
-            ...(await originalEntry()),
-          };
-          entries['./scripts/build-rss.js'] = './src/lib/build-rss.ts';
-          return entries;
-        };
-
-        return config;
-      },
+    // only compile build-rss in production server build
+    if (dev || !isServer) {
+      return config;
     }
-  );
-};
+
+    // we're in build mode so enable shared caching for Notion data
+    process.env.USE_CACHE = 'true';
+
+    const originalEntry = config.entry;
+    config.entry = async () => {
+      const entries = {
+        ...(await originalEntry()),
+      };
+      entries['./scripts/build-rss.js'] = './src/lib/build-rss.ts';
+      return entries;
+    };
+
+    return config;
+  },
+  optimizeImages: {
+    /* config for next-optimized-images */
+    mozjpeg: {
+      quality: 70,
+    },
+    optipng: {
+      optimizationLevel: 3,
+    },
+    optimizeImagesInDev: true,
+  },
+});

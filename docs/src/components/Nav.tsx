@@ -10,6 +10,7 @@ export const Nav: React.FC = () => (
         <div className="md:col-span-3 flex items-center h-16">
           <Link href="/" as="/">
             <a>
+              <span className="sr-only">Home</span>
               <Logo />
             </a>
           </Link>

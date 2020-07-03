@@ -1,8 +1,8 @@
 import React from 'react';
 import { Client } from './Client';
-import { siteConfig } from 'siteConfig';
+import { users } from 'users';
 
-const pinnedLogos = siteConfig.users.filter(p => p.pinned);
+const pinnedLogos = users.filter(p => p.pinned);
 
 export const ClientsMarquee = React.memo(props => {
   return (

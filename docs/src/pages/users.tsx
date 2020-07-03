@@ -6,12 +6,12 @@ import { Sticky } from 'components/Sticky';
 import { Nav } from 'components/Nav';
 import { Container } from 'components/Container';
 import { Seo } from 'components/Seo';
-
+import { users } from 'users';
 export interface UsersProps {}
 
 const Users: React.FC<UsersProps> = props => {
   const editUrl = `${siteConfig.repoUrl}/edit/master/website2/src/siteConfig.tsx`;
-  const showcase = siteConfig.users.map(user => (
+  const showcase = users.map(user => (
     <a
       href={user.infoLink}
       key={user.infoLink}

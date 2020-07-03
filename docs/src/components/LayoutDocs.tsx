@@ -15,14 +15,11 @@ import { getRouteContext } from 'lib/get-route-context';
 import { Page, RouteItem } from 'lib/types';
 import { useRouter } from 'next/router';
 import { Toc } from './Toc';
-import CodeBlock from './CodeBlock';
 import s from './markdown.module.css';
 import { Footer } from './Footer';
 import { DocsPageFooter } from './DocsPageFooter';
 import { Seo } from './Seo';
 import MDXComponents from './MDXComponents';
-
-import semverRegex from 'semver-regex';
 import Head from 'next/head';
 import { getManifest } from 'manifests/getManifest';
 interface DocsProps {
@@ -31,17 +28,11 @@ interface DocsProps {
   route: RouteItem;
   meta?: any;
 }
-const getTag = (path: string) => {
-  console.log(path);
-  const parts = path.split('/');
-  console.log(semverRegex().test(parts[2]));
-  return parts[0];
-};
 
 const getSlugAndTag = (path: string) => {
   const parts = path.split('/');
 
-  if (parts[2] && semverRegex().test(parts[2])) {
+  if (parts[2] === '1.5.8' || parts[2] === '2.1.4') {
     return { tag: parts[2], slug: `/docs/${parts.slice(2).join('/')}` };
   }
   return { slug: path };

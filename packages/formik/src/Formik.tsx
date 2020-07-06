@@ -151,15 +151,16 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   const initialStatus = React.useRef(props.initialStatus);
   const isMounted = React.useRef<boolean>(false);
   const fieldRegistry = React.useRef<FieldRegistry>({});
-  React.useEffect(() => {
-    if (__DEV__) {
+  if (__DEV__) {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    React.useEffect(() => {
       invariant(
         typeof isInitialValid === 'undefined',
         'isInitialValid has been deprecated and will be removed in future versions of Formik. Please use initialErrors or validateOnMount instead.'
       );
-    }
-    // eslint-disable-next-line
-  }, []);
+      // eslint-disable-next-line
+    }, []);
+  }
 
   React.useEffect(() => {
     isMounted.current = true;
@@ -1007,15 +1008,16 @@ export function Formik<
   // This allows folks to pass a ref to <Formik />
   React.useImperativeHandle(innerRef, () => formikbag);
 
-  React.useEffect(() => {
-    if (__DEV__) {
+  if (__DEV__) {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    React.useEffect(() => {
       invariant(
         !props.render,
         `<Formik render> has been deprecated and will be removed in future versions of Formik. Please use a child callback function instead. To get rid of this warning, replace <Formik render={(props) => ...} /> with <Formik>{(props) => ...}</Formik>`
       );
-    }
-    // eslint-disable-next-line
-  }, []);
+      // eslint-disable-next-line
+    }, []);
+  }
   return (
     <FormikProvider value={formikbag}>
       {component

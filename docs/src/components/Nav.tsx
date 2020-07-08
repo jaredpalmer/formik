@@ -11,7 +11,7 @@ export const Nav: React.FC = () => {
   return (
     <div className="bg-white border-b border-gray-200">
       <div className="container mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-12 md:gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-12 md:gap-8">
           <div className="md:col-span-3 flex items-center h-16">
             <Link href="/" as="/">
               <a>
@@ -38,43 +38,45 @@ export const Nav: React.FC = () => {
                 </Link>
               </div>
             </div>
-            <div className="flex items-center space-x-8">
-              <FeedbackInput
-                onSubmit={async values => {
-                  return fetch(
-                    'https://api.formik.com/submit/palmerhq/formik-docs-feedback',
-                    {
-                      method: 'POST',
-                      headers: {
-                        'Content-Type': 'application/json',
-                      },
-                      body: JSON.stringify({
-                        ...values,
-                        pathname: router.pathname,
-                        url: window.location.href,
-                        browserName: navigator.appName,
-                        browserVersion: navigator.appVersion,
-                        userAgent: navigator.userAgent,
-                      }),
-                    }
-                  );
-                }}
-                submitMessage={
-                  <section
-                    className="flex items-center justify-center p-4"
-                    style={{ minHeight: 160 }}
-                  >
-                    <div className="text-center">
-                      <div className="text-xl font-medium">Thanks!</div>
-                      <div className="mt-auto">
-                        <div className="text-xs text-gray-600">
-                          This message will close automatically.
+            <div className="flex items-center">
+              <div className="hidden md:block md:mr-8">
+                <FeedbackInput
+                  onSubmit={async values => {
+                    fetch(
+                      'https://api.formik.com/submit/palmerhq/formik-docs-feedback',
+                      {
+                        method: 'POST',
+                        headers: {
+                          'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                          ...values,
+                          pathname: router.pathname,
+                          url: window.location.href,
+                          browserName: navigator.appName,
+                          browserVersion: navigator.appVersion,
+                          userAgent: navigator.userAgent,
+                        }),
+                      }
+                    );
+                  }}
+                  submitMessage={
+                    <section
+                      className="flex items-center justify-center p-4"
+                      style={{ minHeight: 160 }}
+                    >
+                      <div className="text-center">
+                        <div className="text-xl font-medium">Thanks!</div>
+                        <div className="mt-auto">
+                          <div className="text-xs text-gray-600">
+                            This message will close automatically.
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </section>
-                }
-              />
+                    </section>
+                  }
+                />
+              </div>
               <div>
                 <a
                   href={siteConfig.repoUrl}

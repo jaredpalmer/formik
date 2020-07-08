@@ -1,0 +1,84 @@
+.App {
+  font-family: sans-serif;
+  text-align: center;
+}
+:root {
+  --fi-start-width: 88px;
+  --fi-end-width: 280px;
+  --fi-start-height: 32px;
+  --fi-end-height-container: 160px;
+  --fi-end-height-input: 117px;
+  --fi-text-color: #111;
+  --fi-bg-color: #fff;
+  --fi-font-size: 15px;
+  --fi-border-radius: 6px;
+  --fi-z-index: 50;
+  --fi-border: 1px solid #eee;
+  --fi-box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+}
+
+[data-fi-root='true'] {
+  position: relative;
+  z-index: var(--fi-z-index);
+  width: var(--fi-start-width);
+  height: var(--fi-start-height);
+}
+
+[data-fi-container='true'] {
+  padding: 0;
+  margin-right: 10px;
+  display: block;
+  overflow: hidden;
+  text-rendering: optimizeLegibility;
+  border: var(--fi-border);
+  position: absolute;
+  background: var(--fi-bg-color);
+  border-radius: var(--fi-border-radius);
+  left: 0;
+  top: 0;
+  height: var(--fi-start-height);
+  width: var(--fi-start-width);
+  transition: all 200ms ease-in-out;
+}
+
+[data-fi-container='true'][data-fi-focused='true'] {
+  z-index: var(--fi-z-index);
+  height: var(--fi-end-height-container);
+  width: var(--fi-end-width);
+  box-shadow: var(--fi-box-shadow);
+}
+[data-fi-textarea='true'] {
+  appearance: none;
+  border-width: 0;
+  resize: none;
+  vertical-align: top;
+  height: var(--fi-start-height);
+  outline: 0;
+  overflow-y: hidden;
+  -webkit-appearance: none;
+  padding: 0.2rem 0.5rem 0.25rem;
+  margin: 0;
+  color: var(--fi-text-color);
+  font-size: var(--fi-font-size);
+  background: var(--fi-bg-color);
+  display: block;
+  width: 200px;
+  border-radius: var(--fi-border-radius);
+  border: 0;
+  transition: all 200ms ease;
+}
+
+[data-fi-container='true'][data-fi-focused='true'] [data-fi-textarea] {
+  overflow-y: auto;
+  z-index: var(--fi-z-index);
+  width: var(--fi-end-width);
+  height: var(--fi-end-height-input);
+}
+
+[data-fi-footer] {
+  width: var(--fi-end-width);
+  padding: 0.25rem;
+  background: var(--fi-bg-color);
+  display: flex;
+  transition: 'opacity 100ms ease-in';
+}

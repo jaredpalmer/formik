@@ -1,5 +1,6 @@
 import '@docsearch/react/dist/style.css';
 import '../styles/index.css';
+import '../components/FeedbackInput.css';
 import Head from 'next/head';
 
 function MyApp({ Component, pageProps }) {

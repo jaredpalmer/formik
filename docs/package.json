@@ -29,6 +29,7 @@
     "copy-to-clipboard": "^3.3.1",
     "date-fns": "^2.12.0",
     "docsearch.js": "^2.6.3",
+    "formik": "^2.1.4",
     "framer-motion": "^1.11.1",
     "gray-matter": "^4.0.2",
     "imagemin-mozjpeg": "^9.0.0",
@@ -57,7 +58,8 @@
     "remark-unwrap-images": "^2.0.0",
     "scroll-into-view-if-needed": "^2.2.24",
     "semver-regex": "^3.1.1",
-    "unist-util-visit": "^2.0.2"
+    "unist-util-visit": "^2.0.2",
+    "use-onclickoutside": "^0.3.1"
   },
   "devDependencies": {
     "@tailwindcss/ui": "^0.3.0",

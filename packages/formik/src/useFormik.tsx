@@ -78,6 +78,8 @@ export interface FormikState<Values> {
 interface FormikHelpers<Values> {
   /** Manually set top level status. */
   setStatus(status?: any): void;
+  /** Manually set focus */
+  setFocus(fieldName?: string): void;
   /** Manually set errors object */
   setErrors(errors: FormikErrors<Values>): void;
   /** Manually set isSubmitting */
@@ -173,6 +175,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   const fieldRegistry = React.useRef<FieldRegistry>({});
   const forceUpdate = useForceRender();
   const [isSubmitting, setSubmitting] = React.useState(false);
+  const [focus, setFocus] = React.useState<string | undefined>(undefined);
 
   const register = useEventCallback((name, stuff) => {
     fieldRegistry.current[name] = stuff;
@@ -283,15 +286,21 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   // });
 
   // @todo fake these?
-  // const getFieldProps = useEventCallback(() => {
-  //   throw new Error('not implemented');
-  // });
-  // const getFieldMeta = useEventCallback(() => {
-  //   throw new Error('not implemented');
-  // });
-  // const getFieldHelpers = useEventCallback(() => {
-  //   throw new Error('not implemented');
-  // });
+  const getFieldProps = useEventCallback(() => {
+    throw new Error('not implemented');
+  });
+
+  const getFieldMeta = useEventCallback((fieldName: string) => {
+    return {
+      error: fieldRegistry.current[fieldName]?.error,
+      touched: fieldRegistry.current[fieldName]?.touched,
+      value: fieldRegistry.current[fieldName]?.value,
+    };
+  });
+
+  const getFieldHelpers = useEventCallback(() => {
+    throw new Error('not implemented');
+  });
 
   const handleSubmit = useEventCallback(async e => {
     if (e.preventDefault) {
@@ -341,7 +350,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     }
 
     const combinedErrors = deepmerge.all<FormikErrors<Values>>(
-      [fieldErrors, formSchemaErrors, formValidateErrors],
+      [fieldErrors, formSchemaErrors, formValidateErrors].filter(Boolean),
       { arrayMerge }
     );
 
@@ -358,7 +367,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
         setFieldTouched,
         setFieldValue,
         setFieldError,
-        // setFocus,
+        setFocus,
         validateField,
         validateForm,
         resetForm,
@@ -387,6 +396,9 @@ export function useFormik<Values extends FormikValues = FormikValues>({
       getValues,
       getTouched,
       getErrors,
+      getFieldMeta,
+      getFieldProps,
+      getFieldHelpers,
       handleSubmit,
       setSubmitting,
       setTouched,
@@ -397,6 +409,8 @@ export function useFormik<Values extends FormikValues = FormikValues>({
       setFieldError,
       initialValues,
       isSubmitting,
+      focus,
+      setFocus,
       validateField,
       validateForm,
       resetForm,
@@ -411,6 +425,9 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     getValues,
     getTouched,
     getErrors,
+    getFieldMeta,
+    getFieldProps,
+    getFieldHelpers,
     handleSubmit,
     setTouched,
     setValues,
@@ -420,6 +437,8 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     setFieldError,
     initialValues,
     isSubmitting,
+    focus,
+    setFocus,
     validateField,
     validateForm,
     resetForm,

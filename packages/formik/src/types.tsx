@@ -86,7 +86,7 @@ export interface FormikHelpers<Values> {
   /** Manually set values object  */
   setValues(values: Values, shouldValidate?: boolean): void;
   /** Set value of form field directly */
-  setFieldValue(field: string, value: any, shouldValidate?: boolean): void;
+  setFieldValue(field: string, value: any, shouldValidate?: boolean): Promise<Values>;
   /** Set error message of a form field directly */
   setFieldError(field: string, message: string): void;
   /** Set whether field has been touched directly */

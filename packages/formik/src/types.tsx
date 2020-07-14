@@ -76,40 +76,40 @@ export interface FormikComputedProps<Values> {
  */
 export interface FormikHelpers<Values> {
   /** Manually set top level status. */
-  setStatus(status?: any): void;
+  setStatus: (status?: any) => void;
   /** Manually set errors object */
-  setErrors(errors: FormikErrors<Values>): void;
+  setErrors: (errors: FormikErrors<Values>) => void;
   /** Manually set isSubmitting */
-  setSubmitting(isSubmitting: boolean): void;
+  setSubmitting: (isSubmitting: boolean) => void;
   /** Manually set touched object */
-  setTouched(touched: FormikTouched<Values>, shouldValidate?: boolean): void;
+  setTouched: (touched: FormikTouched<Values>, shouldValidate?: boolean) => void;
   /** Manually set values object  */
-  setValues(values: Values, shouldValidate?: boolean): void;
+  setValues: (values: Values, shouldValidate?: boolean) => void;
   /** Set value of form field directly */
-  setFieldValue(field: string, value: any, shouldValidate?: boolean): void;
+  setFieldValue: (field: string, value: any, shouldValidate?: boolean) => void;
   /** Set error message of a form field directly */
-  setFieldError(field: string, message: string): void;
+  setFieldError: (field: string, message: string) => void;
   /** Set whether field has been touched directly */
-  setFieldTouched(
+  setFieldTouched: (
     field: string,
     isTouched?: boolean,
     shouldValidate?: boolean
-  ): void;
+  ) => void;
   /** Validate form values */
-  validateForm(values?: any): Promise<FormikErrors<Values>>;
+  validateForm: (values?: any) => Promise<FormikErrors<Values>>;
   /** Validate field value */
-  validateField(field: string): void;
+  validateField: (field: string) => void;
   /** Reset form */
-  resetForm(nextState?: Partial<FormikState<Values>>): void;
+  resetForm: (nextState?: Partial<FormikState<Values>>) => void;
   /** Submit the form imperatively */
-  submitForm(): Promise<void>;
+  submitForm: () => Promise<void>;
   /** Set Formik state, careful! */
-  setFormikState(
+  setFormikState: (
     f:
       | FormikState<Values>
       | ((prevState: FormikState<Values>) => FormikState<Values>),
     cb?: () => void
-  ): void;
+  ) => void;
 }
 
 /**
@@ -135,9 +135,9 @@ export interface FormikHandlers {
     ? void
     : (e: string | React.ChangeEvent<any>) => void;
 
-  getFieldProps<Value = any>(props: any): FieldInputProps<Value>;
-  getFieldMeta<Value>(name: string): FieldMetaProps<Value>;
-  getFieldHelpers<Value = any>(name: string): FieldHelperProps<Value>;
+  getFieldProps: <Value = any>(props: any) => FieldInputProps<Value>;
+  getFieldMeta: <Value>(name: string) => FieldMetaProps<Value>;
+  getFieldHelpers: <Value = any>(name: string) => FieldHelperProps<Value>;
 }
 
 /**
@@ -234,8 +234,8 @@ export type FormikProps<Values> = FormikSharedConfig &
 
 /** Internal Formik registration methods that get passed down as props */
 export interface FormikRegistration {
-  registerField(name: string, fns: { validate?: FieldValidator }): void;
-  unregisterField(name: string): void;
+  registerField: (name: string, fns: { validate?: FieldValidator }) => void;
+  unregisterField: (name: string) => void;
 }
 
 /**
@@ -285,11 +285,11 @@ export interface FieldMetaProps<Value> {
 /** Imperative handles to change a field's value, error and touched */
 export interface FieldHelperProps<Value> {
   /** Set the field's value */
-  setValue(value: Value, shouldValidate?: boolean): void;
+  setValue: (value: Value, shouldValidate?: boolean) => void;
   /** Set the field's touched value */
-  setTouched(value: boolean, shouldValidate?: boolean): void;
+  setTouched: (value: boolean, shouldValidate?: boolean) => void;
   /** Set the field's error value */
-  setError(value: Value): void;
+  setError: (value: Value) => void;
 }
 
 /** Field input value, name, and event handlers */

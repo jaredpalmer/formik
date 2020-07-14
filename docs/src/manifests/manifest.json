@@ -49,9 +49,57 @@
               "path": "/docs/guides/form-submission.md"
             }
           ]
+        },
+        {
+          "title": "Examples",
+          "open": true,
+          "routes": [
+            {
+              "title": "Basic",
+              "path": "/docs/examples/basic.md"
+            },
+            {
+              "title": "TypeScript",
+              "path": "/docs/examples/typescript.md"
+            },
+            {
+              "title": "Async Submission",
+              "path": "/docs/examples/async-submission.md"
+            },
+
+            {
+              "title": "Checkboxes",
+              "path": "/docs/examples/checkboxes.md"
+            },
+            {
+              "title": "Radio Group",
+              "path": "/docs/examples/radio-group.md"
+            },
+            {
+              "title": "Dependent Fields",
+              "path": "/docs/examples/dependent-fields.md"
+            },
+            {
+              "title": "Dependent Fields with Async API Request",
+              "path": "/docs/examples/dependent-fields-async-api-request.md"
+            },
+            {
+              "title": "Arrays and Lists",
+              "path": "/docs/examples/field-arrays.md"
+            },
+            {
+              "title": "Instant Feedback",
+              "path": "/docs/examples/instant-feedback.md"
+            },
+            {
+              "title": "More Examples",
+              "path": "/docs/examples/more-examples.md"
+            }
+          ]
         }
       ]
     },
+
     {
       "title": "API Reference",
       "heading": true,

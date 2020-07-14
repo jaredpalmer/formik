@@ -42,8 +42,6 @@ const BasicExample = () => (
 );
 ```
 
-
-
 ## Table of Contents
 
 ---
@@ -56,9 +54,9 @@ const BasicExample = () => (
 
 There are three ways to render things with `<Formik />`
 
-* `<Formik component>`
-* `<Formik render>`
-* `<Formik children>`
+- `<Formik component>`
+- `<Formik render>`
+- `<Formik children>`
 
 All three render methods will be passed the same props:
 
@@ -95,11 +93,11 @@ to `<button onClick={handleReset}>...</button>`
 
 #### `handleSubmit: (e: React.FormEvent<HTMLFormEvent>) => void`
 
-Submit handler. This should be passed to `<form onSubmit={props.handleSubmit}>...</form>`. To learn more about the submission process, see [Form Submission](guides/form-submission.md).
+Submit handler. This should be passed to `<form onSubmit={props.handleSubmit}>...</form>`. To learn more about the submission process, see [Form Submission](../guides/form-submission.md).
 
 #### `isSubmitting: boolean`
 
-Submitting state of the form. Returns `true` if submission is in progress and `false` otherwise. IMPORTANT: Formik will set this to `true` as soon as submission is _attempted_. To learn more about the submission process, see [Form Submission](guides/form-submission.md).
+Submitting state of the form. Returns `true` if submission is in progress and `false` otherwise. IMPORTANT: Formik will set this to `true` as soon as submission is _attempted_. To learn more about the submission process, see [Form Submission](../guides/form-submission.md).
 
 #### `isValid: boolean`
 
@@ -108,7 +106,7 @@ Returns `true` if the there are no `errors`, or the result of
 
 #### `isValidating: boolean`
 
-Returns `true` if Formik is running validation during submission, or by calling [`validateForm`] directly `false` otherwise. To learn more about what happens with `isValidating` during the submission process, see [Form Submission](guides/form-submission.md).
+Returns `true` if Formik is running validation during submission, or by calling [`validateForm`] directly `false` otherwise. To learn more about what happens with `isValidating` during the submission process, see [Form Submission](../guides/form-submission.md).
 
 #### `resetForm: (nextValues?: Values) => void`
 
@@ -133,7 +131,7 @@ Set the touched state of a field imperatively. `field` should match the key of
 
 #### `submitForm: () => Promise`
 
-Trigger a form submission. The promise will be rejected if form is invalid. 
+Trigger a form submission. The promise will be rejected if form is invalid.
 
 #### `submitCount: number`
 
@@ -343,7 +341,7 @@ const validate = values => {
 };
 ```
 
-* Asynchronous and return a Promise that's error in an `errors` object
+- Asynchronous and return a Promise that's error in an `errors` object
 
 ```js
 // Async Validation

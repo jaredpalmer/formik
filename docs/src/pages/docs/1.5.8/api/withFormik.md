@@ -97,16 +97,16 @@ passed to the the wrapped component.
 
 #### The "FormikBag":
 
-* `props` (props passed to the wrapped component)
-* `resetForm`
-* `setErrors`
-* `setFieldError`
-* `setFieldTouched`
-* `setFieldValue`
-* `setStatus`
-* `setSubmitting`
-* `setTouched`
-* `setValues`
+- `props` (props passed to the wrapped component)
+- `resetForm`
+- `setErrors`
+- `setFieldError`
+- `setFieldTouched`
+- `setFieldValue`
+- `setStatus`
+- `setSubmitting`
+- `setTouched`
+- `setValues`
 
 Note: `errors`, `touched`, `status` and all event handlers are NOT
 included in the `FormikBag`.
@@ -161,7 +161,7 @@ const validate = (values, props) => {
 };
 ```
 
-* Asynchronous and return a Promise that's error is an `errors` object
+- Asynchronous and return a Promise that's error is an `errors` object
 
 ```js
 // Async Validation
@@ -201,4 +201,4 @@ component's `errors`. Its keys should match those of `values`.
 
 ## Injected props and methods
 
-These are identical to the props of [`<Formik render={props => ...} />`](api/formik.md#formik-render-methods-and-props)
+These are identical to the props of [`<Formik render={props => ...} />`](./formik.md#formik-render-methods-and-props)

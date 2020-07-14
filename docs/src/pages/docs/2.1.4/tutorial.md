@@ -7,7 +7,7 @@ title: Tutorial
 
 Welcome to the Formik tutorial. This will teach you everything you need to know to build simple and complex forms in React.
 
-If you're impatient and just want to start hacking on your machine locally, checkout [the 60-second quickstart](/docs/overview#installation).
+If you're impatient and just want to start hacking on your machine locally, checkout [the 60-second quickstart](./overview#installation).
 
 ### What are we building?
 

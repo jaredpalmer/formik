@@ -3,7 +3,7 @@
   "version": "2.1.4",
   "license": "MIT",
   "author": "Jared Palmer <jared@palmer.net>",
-  "repository": "jaredpalmer/formik",
+  "repository": "formik/formik",
   "keywords": [
     "formik",
     "react",

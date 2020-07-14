@@ -80,7 +80,7 @@ We recommend following [these instructions](https://babeljs.io/docs/editors/) to
 
 ### Help, I’m Stuck!
 
-If you get stuck, check out the [community support resources](https://jaredpalmer.com/formik/help). In particular, [Reactiflux Chat](https://discord.gg/cU6MCve) is a great way to get help quickly. If you don’t receive an answer, or if you remain stuck, please file an issue, and we’ll help you out.
+If you get stuck, check out the [community support resources](https://github.com/formik/formik/discussions). In particular, [Reactiflux Chat](https://discord.gg/cU6MCve) is a great way to get help quickly. If you don’t receive an answer, or if you remain stuck, please file an issue, and we’ll help you out.
 
 ## Overview: What is Formik?
 
@@ -944,4 +944,4 @@ If you have extra time or want to practice your new Formik skills, here are some
 - Add a shake animation to each field when it displays an error and has been visited
 - Persist form state to the browser's sessionStorage so that form progress is kept inbetween page refreshes
 
-Throughout this tutorial, we touched on Formik concepts including form state, fields, validation, hooks, render props, and React context. For a more detailed explanation of each of these topics, check out the rest of the [documentation](https://jaredpalmer.com/formik/docs/next/overview). To learn more about defining the components and hooks in the tutorial, check out the [API reference](https://jaredpalmer.com/formik/docs/next/api/formik).
+Throughout this tutorial, we touched on Formik concepts including form state, fields, validation, hooks, render props, and React context. For a more detailed explanation of each of these topics, check out the rest of the [documentation](./overview). To learn more about defining the components and hooks in the tutorial, check out the [API reference](./api/formik).

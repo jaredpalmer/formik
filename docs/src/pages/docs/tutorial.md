@@ -47,8 +47,17 @@ This setup requires more work but allows you to complete the tutorial using an e
 ```bash
 npx create-react-app my-app
 ```
+3. Install Formik
 
-3. Delete all files in the `src/` folder of the new project
+```bash
+npm i formik
+```
+Or
+```bash
+yarn add formik
+```
+
+4. Delete all files in the `src/` folder of the new project
 
 > Note:
 >
@@ -68,9 +77,9 @@ del *
 cd ..
 ```
 
-4. Add a file named `styles.css` in the `src/` folder with [this CSS code](https://codesandbox.io/s/formik-v2-tutorial-start-s04yr?file=/src/styles.css).
+5. Add a file named `styles.css` in the `src/` folder with [this CSS code](https://codesandbox.io/s/formik-v2-tutorial-start-s04yr?file=/src/styles.css).
 
-5. Add a file named `index.js` in the `src/` folder with [this JS code](https://codesandbox.io/s/formik-v2-tutorial-start-s04yr?file=/src/index.js:0-759).
+6. Add a file named `index.js` in the `src/` folder with [this JS code](https://codesandbox.io/s/formik-v2-tutorial-start-s04yr?file=/src/index.js:0-759).
 
 Now if you run `npm start` in the project folder and open `http://localhost:3000` in the browser. You should see an email input and a submit button.
 
@@ -596,17 +605,17 @@ const SignupForm = () => {
   return (
     <form onSubmit={formik.handleSubmit}>
       <label htmlFor="firstName">First Name</label>
-      <input name="firstName" {...formik.getFieldProps('firstName')} />
+      <input name="firstName" type="text" {...formik.getFieldProps('firstName')} />
       {formik.touched.firstName && formik.errors.firstName ? (
         <div>{formik.errors.firstName}</div>
       ) : null}
       <label htmlFor="lastName">Last Name</label>
-      <input name="lastName" {...formik.getFieldProps('lastName')} />
+      <input name="lastName" type="text" {...formik.getFieldProps('lastName')} />
       {formik.touched.lastName && formik.errors.lastName ? (
         <div>{formik.errors.lastName}</div>
       ) : null}
       <label htmlFor="email">Email Address</label>
-      <input name="email" {...formik.getFieldProps('email')} />
+      <input name="email" type="email" {...formik.getFieldProps('email')} />
       {formik.touched.email && formik.errors.email ? (
         <div>{formik.errors.email}</div>
       ) : null}
@@ -676,17 +685,17 @@ const SignupForm = () => {
       {formik => (
         <form onSubmit={formik.handleSubmit}>
           <label htmlFor="firstName">First Name</label>
-          <input id="firstName" {...formik.getFieldProps('firstName')} />
+          <input id="firstName" type="text" {...formik.getFieldProps('firstName')} />
           {formik.touched.firstName && formik.errors.firstName ? (
             <div>{formik.errors.firstName}</div>
           ) : null}
           <label htmlFor="lastName">Last Name</label>
-          <input id="lastName" {...formik.getFieldProps('lastName')} />
+          <input id="lastName" type="text" {...formik.getFieldProps('lastName')} />
           {formik.touched.lastName && formik.errors.lastName ? (
             <div>{formik.errors.lastName}</div>
           ) : null}
           <label htmlFor="email">Email Address</label>
-          <input id="email" {...formik.getFieldProps('email')} />
+          <input id="email" type="email" {...formik.getFieldProps('email')} />
           {formik.touched.email && formik.errors.email ? (
             <div>{formik.errors.email}</div>
           ) : null}

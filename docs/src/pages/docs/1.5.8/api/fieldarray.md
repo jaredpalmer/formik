@@ -68,7 +68,7 @@ export const FriendList = () => (
 
 ### `name: string`
 
-The name or path to the relevant key in [`values`](api/formik.md#values-field-string-any).
+The name or path to the relevant key in [`values`](./formik.md#values-field-string-any).
 
 ### `validateOnChange?: boolean`
 
@@ -87,7 +87,8 @@ You can also iterate through an array of objects, by following a convention of `
         {values.friends.map((friend, index) => (
           <div key={index}>
             <Field name={`friends[${index}].name`} />
-            <Field name={`friends.${index}.age`} /> // both these conventions do the same
+            <Field name={`friends.${index}.age`} /> // both these conventions do
+            the same
             <button type="button" onClick={() => arrayHelpers.remove(index)}>
               -
             </button>
@@ -109,7 +110,7 @@ You can also iterate through an array of objects, by following a convention of `
 
 Validation can be tricky with `<FieldArray>`.
 
-If you use [`validationSchema`](api/formik.md#validationschema-schema-schema) and your form has array validation requirements (like a min length) as well as nested array field requirements, displaying errors can be tricky. Formik/Yup will show validation errors inside out. For example,
+If you use [`validationSchema`](./formik.md#validationschema-schema-schema) and your form has array validation requirements (like a min length) as well as nested array field requirements, displaying errors can be tricky. Formik/Yup will show validation errors inside out. For example,
 
 ```js
 const schema = Yup.object().shape({
@@ -175,22 +176,22 @@ _NOTE_: In Formik v0.12 / 1.0, a new `meta` prop may be added to `Field` and `Fi
 
 The following methods are made available via render props.
 
-* `push: (obj: any) => void`: Add a value to the end of an array
-* `swap: (indexA: number, indexB: number) => void`: Swap two values in an array
-* `move: (from: number, to: number) => void`: Move an element in an array to another index
-* `insert: (index: number, value: any) => void`: Insert an element at a given index into the array
-* `unshift: (value: any) => number`: Add an element to the beginning of an array and return its length
-* `remove<T>(index: number): T | undefined`: Remove an element at an index of an array and return it
-* `pop<T>(): T | undefined`: Remove and return value from the end of the array
-* `replace: (index: number, value: any) => void`: Replace a value at the given index into the array
+- `push: (obj: any) => void`: Add a value to the end of an array
+- `swap: (indexA: number, indexB: number) => void`: Swap two values in an array
+- `move: (from: number, to: number) => void`: Move an element in an array to another index
+- `insert: (index: number, value: any) => void`: Insert an element at a given index into the array
+- `unshift: (value: any) => number`: Add an element to the beginning of an array and return its length
+- `remove<T>(index: number): T | undefined`: Remove an element at an index of an array and return it
+- `pop<T>(): T | undefined`: Remove and return value from the end of the array
+- `replace: (index: number, value: any) => void`: Replace a value at the given index into the array
 
 ## FieldArray render methods
 
 There are three ways to render things with `<FieldArray />`
 
-* `<FieldArray name="..." component>`
-* `<FieldArray name="..." render>`
-* `<FieldArray name="..." children>`
+- `<FieldArray name="..." component>`
+- `<FieldArray name="..." render>`
+- `<FieldArray name="..." children>`
 
 ### `render: (arrayHelpers: ArrayHelpers) => React.ReactNode`
 

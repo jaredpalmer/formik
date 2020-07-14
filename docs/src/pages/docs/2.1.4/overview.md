@@ -235,10 +235,10 @@ API that's pretty similar [Joi](https://github.com/hapijs/joi) /
 [React PropTypes](https://github.com/facebook/prop-types) but is small enough
 for the browser and fast enough for runtime usage. Because I ❤️ Yup sooo
 much, Formik has a special config option / prop for Yup called
-[`validationSchema`](/docs/api/formik.md#validationschema-schema----schema) which will
+[`validationSchema`](./api/formik.md#validationschema-schema----schema) which will
 automatically transform Yup's validation errors into a pretty object whose keys
-match [`values`](/docs/api/formik.md#values-field-string-any) and
-[`touched`](/docs/api/formik.md#touched-field-string-boolean). Anyways, you can
+match [`values`](./api/formik.md#values-field-string-any) and
+[`touched`](./api/formik.md#touched-field-string-boolean). Anyways, you can
 install Yup from npm...
 
 ```

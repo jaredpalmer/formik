@@ -7,7 +7,7 @@ title: Tutorial
 
 Welcome to the Formik tutorial. This will teach you everything you need to know to build simple and complex forms in React.
 
-If you're impatient and just want to start hacking on your machine locally, checkout [the 60-second quickstart](/docs/overview#installation).
+If you're impatient and just want to start hacking on your machine locally, checkout [the 60-second quickstart](./overview#installation).
 
 ### What are we building?
 
@@ -47,8 +47,17 @@ This setup requires more work but allows you to complete the tutorial using an e
 ```bash
 npx create-react-app my-app
 ```
+3. Install Formik
 
-3. Delete all files in the `src/` folder of the new project
+```bash
+npm i formik
+```
+Or
+```bash
+yarn add formik
+```
+
+4. Delete all files in the `src/` folder of the new project
 
 > Note:
 >
@@ -68,9 +77,9 @@ del *
 cd ..
 ```
 
-4. Add a file named `styles.css` in the `src/` folder with [this CSS code](https://codesandbox.io/s/formik-v2-tutorial-start-s04yr?file=/src/styles.css).
+5. Add a file named `styles.css` in the `src/` folder with [this CSS code](https://codesandbox.io/s/formik-v2-tutorial-start-s04yr?file=/src/styles.css).
 
-5. Add a file named `index.js` in the `src/` folder with [this JS code](https://codesandbox.io/s/formik-v2-tutorial-start-s04yr?file=/src/index.js:0-759).
+6. Add a file named `index.js` in the `src/` folder with [this JS code](https://codesandbox.io/s/formik-v2-tutorial-start-s04yr?file=/src/index.js:0-759).
 
 Now if you run `npm start` in the project folder and open `http://localhost:3000` in the browser. You should see an email input and a submit button.
 
@@ -80,7 +89,7 @@ We recommend following [these instructions](https://babeljs.io/docs/editors/) to
 
 ### Help, I’m Stuck!
 
-If you get stuck, check out the [community support resources](https://jaredpalmer.com/formik/help). In particular, [Reactiflux Chat](https://discord.gg/cU6MCve) is a great way to get help quickly. If you don’t receive an answer, or if you remain stuck, please file an issue, and we’ll help you out.
+If you get stuck, check out the [community support resources](https://github.com/formik/formik/discussions). In particular, [Reactiflux Chat](https://discord.gg/cU6MCve) is a great way to get help quickly. If you don’t receive an answer, or if you remain stuck, please file an issue, and we’ll help you out.
 
 ## Overview: What is Formik?
 
@@ -596,17 +605,17 @@ const SignupForm = () => {
   return (
     <form onSubmit={formik.handleSubmit}>
       <label htmlFor="firstName">First Name</label>
-      <input id="firstName" {...formik.getFieldProps('firstName')} />
+      <input id="firstName" type="text" {...formik.getFieldProps('firstName')} />
       {formik.touched.firstName && formik.errors.firstName ? (
         <div>{formik.errors.firstName}</div>
       ) : null}
       <label htmlFor="lastName">Last Name</label>
-      <input id="lastName" {...formik.getFieldProps('lastName')} />
+      <input id="lastName" type="text" {...formik.getFieldProps('lastName')} />
       {formik.touched.lastName && formik.errors.lastName ? (
         <div>{formik.errors.lastName}</div>
       ) : null}
       <label htmlFor="email">Email Address</label>
-      <input id="email" {...formik.getFieldProps('email')} />
+      <input id="email" type="email" {...formik.getFieldProps('email')} />
       {formik.touched.email && formik.errors.email ? (
         <div>{formik.errors.email}</div>
       ) : null}
@@ -676,17 +685,17 @@ const SignupForm = () => {
       {formik => (
         <form onSubmit={formik.handleSubmit}>
           <label htmlFor="firstName">First Name</label>
-          <input id="firstName" {...formik.getFieldProps('firstName')} />
+          <input id="firstName" type="text" {...formik.getFieldProps('firstName')} />
           {formik.touched.firstName && formik.errors.firstName ? (
             <div>{formik.errors.firstName}</div>
           ) : null}
           <label htmlFor="lastName">Last Name</label>
-          <input id="lastName" {...formik.getFieldProps('lastName')} />
+          <input id="lastName" type="text" {...formik.getFieldProps('lastName')} />
           {formik.touched.lastName && formik.errors.lastName ? (
             <div>{formik.errors.lastName}</div>
           ) : null}
           <label htmlFor="email">Email Address</label>
-          <input id="email" {...formik.getFieldProps('email')} />
+          <input id="email" type="email" {...formik.getFieldProps('email')} />
           {formik.touched.email && formik.errors.email ? (
             <div>{formik.errors.email}</div>
           ) : null}
@@ -944,4 +953,4 @@ If you have extra time or want to practice your new Formik skills, here are some
 - Add a shake animation to each field when it displays an error and has been visited
 - Persist form state to the browser's sessionStorage so that form progress is kept inbetween page refreshes
 
-Throughout this tutorial, we touched on Formik concepts including form state, fields, validation, hooks, render props, and React context. For a more detailed explanation of each of these topics, check out the rest of the [documentation](https://jaredpalmer.com/formik/docs/next/overview). To learn more about defining the components and hooks in the tutorial, check out the [API reference](https://jaredpalmer.com/formik/docs/next/api/formik).
+Throughout this tutorial, we touched on Formik concepts including form state, fields, validation, hooks, render props, and React context. For a more detailed explanation of each of these topics, check out the rest of the [documentation](./overview). To learn more about defining the components and hooks in the tutorial, check out the [API reference](./api/formik).

@@ -331,7 +331,7 @@ export const DisplayingErrorMessagesExample = () => (
 );
 ```
 
-> The [ErrorMessage](https://jaredpalmer.com/formik/docs/api/errormessage) component can also be used to display error messages.
+> The [ErrorMessage](../api/errormessage) component can also be used to display error messages.
 
 ## Frequently Asked Questions
 

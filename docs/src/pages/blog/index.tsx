@@ -91,7 +91,7 @@ export default function BlogIndex({ posts = [], preview }: any) {
                   aria-label="Email address"
                   type="email"
                   name="email"
-                  required
+                  required={true}
                   className="appearance-none w-full px-4 py-2 border border-gray-300 text-base leading-6 rounded-md text-gray-900 bg-white placeholder-gray-500 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out lg:max-w-xs"
                   placeholder="Enter your email"
                 />

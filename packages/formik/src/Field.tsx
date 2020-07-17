@@ -126,7 +126,7 @@ export function useField<Val = any>(
   ];
 }
 
-export function Field({
+export function Field<T extends object = {}>({
   validate,
   name,
   render,
@@ -134,7 +134,7 @@ export function Field({
   as: is, // `as` is reserved in typescript lol
   component,
   ...props
-}: FieldAttributes<any>) {
+}: FieldAttributes<T>) {
   const {
     validate: _validate,
     validationSchema: _validationSchema,

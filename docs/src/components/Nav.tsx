@@ -37,46 +37,17 @@ export const Nav: React.FC = () => {
                   <a className="leading-6 font-medium">Users</a>
                 </Link>
               </div>
-            </div>
-            <div className="flex items-center">
-              <div className="hidden md:block md:mr-8">
-                <FeedbackInput
-                  onSubmit={async values => {
-                    fetch(
-                      'https://api.formik.com/submit/palmerhq/formik-docs-feedback',
-                      {
-                        method: 'POST',
-                        headers: {
-                          'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                          ...values,
-                          pathname: router.pathname,
-                          url: window.location.href,
-                          browserName: navigator.appName,
-                          browserVersion: navigator.appVersion,
-                          userAgent: navigator.userAgent,
-                        }),
-                      }
-                    );
-                  }}
-                  submitMessage={
-                    <section
-                      className="flex items-center justify-center p-4"
-                      style={{ minHeight: 160 }}
-                    >
-                      <div className="text-center">
-                        <div className="text-xl font-medium">Thanks!</div>
-                        <div className="mt-auto">
-                          <div className="text-xs text-gray-600">
-                            This message will close automatically.
-                          </div>
-                        </div>
-                      </div>
-                    </section>
-                  }
-                />
+              <div>
+                <a
+                  href="https://forms.formium.io/f/5f06126f5b703c00012005fa"
+                  className="leading-6 font-medium"
+                  rel="noopener"
+                  target="_blank"
+                >
+                  Feedback
+                </a>
               </div>
+
               <div>
                 <a
                   href={siteConfig.repoUrl}

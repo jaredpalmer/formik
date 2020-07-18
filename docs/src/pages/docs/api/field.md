@@ -112,7 +112,7 @@ Default is `'input'` (so an `<input>` is rendered by default)
 <Field name="lastName" placeholder="Last Name"/>
 
 // Renders an HTML <select>
-<Field name="color" as="select" placeholder="Favorite Color">
+<Field name="color" as="select">
   <option value="red">Red</option>
   <option value="green">Green</option>
   <option value="blue">Blue</option>

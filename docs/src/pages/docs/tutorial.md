@@ -946,7 +946,7 @@ Check out the final result here: [Final Result](https://codesandbox.io/s/formik-
 
 If you have extra time or want to practice your new Formik skills, here are some ideas for improvements that you could make to the signup form which are listed in order of increasing difficulty:
 
-- Disable the submit button while the user is attempted a submit (hint: `formik.isSubmitting`)
+- Disable the submit button while the user has attempted to submit (hint: `formik.isSubmitting`)
 - Add a reset button with `formik.handleReset` or `<button type="reset">`.
 - Prepopulate `initialValues` based on URL query string or props passed to `<SignupForm>`.
 - Change input border color to red when a field has an error and isn't focused

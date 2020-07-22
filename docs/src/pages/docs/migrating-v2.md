@@ -42,7 +42,7 @@ resetForm({ values: nextValues /* errors, touched, etc ... */ });
 
 ### `isValid`
 
-This property does not take the value of `dirty` into account anymore. This means that if you want to disable a submit button when the form is not `dirty` (i.e. on first render and when values are unchenged), you have to explicitly check for it.
+This property does not take the value of `dirty` into account anymore. This means that if you want to disable a submit button when the form is not `dirty` (i.e. on first render and when values are unchanged), you have to explicitly check for it.
 
 ```tsx
 <button disabled={!isValid || !dirty} type="submit">

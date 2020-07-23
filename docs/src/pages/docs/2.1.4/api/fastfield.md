@@ -10,7 +10,7 @@ custom_edit_url: https://github.com/jaredpalmer/formik/edit/master/docs/api/fast
 
 **No. Seriously. Please review the following parts of the official React documentation before continuing**
 
-- [React `shouldComponentUpdate()` Reference](https://reactjs.org/docs-component.html#shouldcomponentupdate)
+- [React `shouldComponentUpdate()` Reference](https://reactjs.org/docs/react-component.html#shouldcomponentupdate)
 - [`shouldComponentUpdate` in Action](https://reactjs.org/docs/optimizing-performance.html#shouldcomponentupdate-in-action)
 
 ## Overview

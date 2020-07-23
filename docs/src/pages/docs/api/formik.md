@@ -300,7 +300,7 @@ Note: `initialStatus` is not available to the higher-order component `withFormik
 
 ### `initialTouched?: FormikTouched<Values>`
 
-Initial visitied fields of the form, Formik will make these values available to
+Initial visited fields of the form, Formik will make these values available to
 render methods component as `touched`.
 
 Note: `initialTouched` is not available to the higher-order component `withFormik`, use

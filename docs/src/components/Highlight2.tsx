@@ -1,6 +1,5 @@
 import * as React from 'react';
 import Highlight, { defaultProps } from 'prism-react-renderer';
-import { LiveProvider, LiveEditor, LiveError, LivePreview } from 'react-live';
 
 // Original: https://raw.githubusercontent.com/PrismJS/prism-themes/master/themes/prism-ghcolors.css
 

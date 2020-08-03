@@ -80,8 +80,11 @@ export const swap = (
 ) => {
   const copy = copyArrayLike(arrayLike);
   const a = copy[indexA];
-  copy[indexA] = copy[indexB];
-  copy[indexB] = a;
+  const b = copy[indexB];
+  if (b === undefined) delete copy[indexA];
+  else copy[indexA] = b;
+  if (a === undefined) delete copy[indexB];
+  else copy[indexB] = a;
   return copy;
 };
 

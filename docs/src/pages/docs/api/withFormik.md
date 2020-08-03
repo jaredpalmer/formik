@@ -131,7 +131,7 @@ If this option is specified, then Formik will transfer its results into
 updatable form state and make these values available to the new component as
 `props.status`. Useful for storing or instantiating arbitrary state into your form. As a reminder, `status` will be reset to this initial value (and this function will be re-run) if the form is reset.
 
-### `mapPropsToTouched?: (props: Props) => FormikTocuhed<Values>`
+### `mapPropsToTouched?: (props: Props) => FormikTouched<Values>`
 
 If this option is specified, then Formik will transfer its results into
 updatable form state and make these values available to the new component as

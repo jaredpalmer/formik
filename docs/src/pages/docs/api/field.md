@@ -134,7 +134,7 @@ Either JSX elements or callback function. Same as `render`.
 
 ```jsx
 // Children can be JSX elements
-<Field name="color" as="select" placeholder="Favorite Color">
+<Field name="color" as="select">
   <option value="red">Red</option>
   <option value="green">Green</option>
   <option value="blue">Blue</option>
@@ -172,7 +172,7 @@ Default is `'input'` (so an `<input>` is rendered by default)
 <Field name="lastName" placeholder="Last Name"/>
 
 // Renders an HTML <select>
-<Field name="color" component="select" placeholder="Favorite Color">
+<Field name="color" component="select">
   <option value="red">Red</option>
   <option value="green">Green</option>
   <option value="blue">Blue</option>

@@ -26,19 +26,14 @@ const options = {
   appId: siteConfig.algolia.appId,
   apiKey: siteConfig.algolia.apiKey,
   indexName: siteConfig.algolia.indexName,
-  rednerModal: true,
 };
+
 let DocSearchModal: any = null;
-export const Search: React.FC<SearchProps> = ({
-  appId,
-  searchParameters = {
-    hitsPerPage: 5,
-  },
-  renderModal = true,
-}) => {
-  const [isLoaded, setIsLoaded] = React.useState(true);
+
+export const Search: React.FC<SearchProps> = ({ appId }) => {
+  const searchButtonRef = React.useRef<HTMLButtonElement | null>(null);
   const [isShowing, setIsShowing] = React.useState(false);
-  const scrollY = React.useRef(0);
+  const [initialQuery, setInitialQuery] = React.useState<string | null>(null);
 
   const importDocSearchModalIfNeeded = React.useCallback(
     function importDocSearchModalIfNeeded() {
@@ -46,8 +41,8 @@ export const Search: React.FC<SearchProps> = ({
         return Promise.resolve();
       }
 
-      return Promise.all([import('@docsearch/react/modal')]).then(
-        ([{ DocSearchModal: Modal }]) => {
+      return Promise.resolve(import('@docsearch/react/modal')).then(
+        ({ DocSearchModal: Modal }) => {
           DocSearchModal = Modal;
         }
       );
@@ -58,6 +53,12 @@ export const Search: React.FC<SearchProps> = ({
   const onOpen = React.useCallback(
     function onOpen() {
       importDocSearchModalIfNeeded().then(() => {
+        // We check that no other DocSearch modal is showing before opening this
+        // one (we use one instance for desktop and one instance for mobile).
+        if (document.body.classList.contains('DocSearch--active')) {
+          return;
+        }
+
         setIsShowing(true);
       });
     },
@@ -71,7 +72,23 @@ export const Search: React.FC<SearchProps> = ({
     [setIsShowing]
   );
 
-  useDocSearchKeyboardEvents({ isOpen: isShowing, onOpen, onClose });
+  const onInput = React.useCallback(
+    (event: KeyboardEvent) => {
+      importDocSearchModalIfNeeded().then(() => {
+        setIsShowing(true);
+        setInitialQuery(event.key);
+      });
+    },
+    [importDocSearchModalIfNeeded, setIsShowing, setInitialQuery]
+  );
+
+  useDocSearchKeyboardEvents({
+    isOpen: isShowing,
+    onOpen,
+    onClose,
+    onInput,
+    searchButtonRef,
+  });
 
   return (
     <>
@@ -85,6 +102,7 @@ export const Search: React.FC<SearchProps> = ({
 
       <div>
         <button
+          ref={searchButtonRef}
           type="button"
           className="group form-input hover:text-gray-600 hover:border-gray-300 transition duration-150 ease-in-out pointer flex items-center bg-gray-50 text-left w-full  text-gray-500 rounded-lg text-sm align-middle"
           onClick={onOpen}
@@ -124,12 +142,11 @@ export const Search: React.FC<SearchProps> = ({
         </button>
       </div>
 
-      {isLoaded &&
-        isShowing &&
+      {isShowing &&
         createPortal(
           <DocSearchModal
             {...options}
-            searchParameters={searchParameters}
+            initialQuery={initialQuery}
             onClose={onClose}
             navigator={{
               navigate({ suggestionUrl }: any) {
@@ -137,13 +154,12 @@ export const Search: React.FC<SearchProps> = ({
               },
             }}
             transformItems={(items: any[]) => {
-              return items.map(item => {
+              return items.map((item) => {
                 const url = new URL(item.url);
                 return {
                   ...item,
                   url: item.url
                     .replace(url.origin, '')
-                    .replace('#__next', '')
                     .replace('/docs/#', '/docs/overview#'),
                 };
               });

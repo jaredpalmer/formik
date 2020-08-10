@@ -76,7 +76,7 @@ Default is `true`. Determines if form validation should or should not be run _af
 
 ## FieldArray Array of Objects
 
-You can also iterate through an array of objects, by following a convention of `object[index]property` or `object.index.property` for the name attributes of `<Field />` or `<input />` elements in `<FieldArray />`.
+You can also iterate through an array of objects, by following a convention of `object[index].property` or `object.index.property` for the name attributes of `<Field />` or `<input />` elements in `<FieldArray />`.
 
 ```jsx
 <Form>

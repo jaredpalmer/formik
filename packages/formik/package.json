@@ -2,7 +2,7 @@
   "name": "formik",
   "description": "Forms in React, without tears",
   "version": "2.1.5",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "author": "Jared Palmer <jared@palmer.net>",
   "repository": "formik/formik",
   "keywords": [

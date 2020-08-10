@@ -13,7 +13,6 @@
 [![gzip size](http://img.badgesize.io/https://unpkg.com/formik@latest/dist/formik.umd.production.min.js?compression=gzip)](https://unpkg.com/formik@latest/dist/formik.umd.production.min.js)
 [![license](https://badgen.now.sh/badge/license/Apache-2.0)](./LICENSE)
 [![Discord](https://img.shields.io/discord/102860784329052160.svg?style=flat-square)](https://discord.gg/cU6MCve)
-[![Join the community on Spectrum](https://withspectrum.github.io/badge/badge.svg)](https://spectrum.chat/palmer)
 
 **Visit [https://formik.org](https://formik.org) to get started with Formik.**
 

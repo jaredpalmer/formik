@@ -226,4 +226,9 @@ export const users = [
     image: '/img/logos/benchmark-uae.svg',
     infoLink: 'https://benchmark.ae/',
   },
+  {
+    caption: 'JDLT',
+    image: require('/images/logos/jdlt.svg'),
+    infoLink: 'https://jdlt.co.uk/',
+  },
 ];

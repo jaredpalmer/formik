@@ -837,7 +837,6 @@ describe('<Formik>', () => {
       const onReset = jest.fn();
       const { getProps } = renderFormik({
         initialValues: InitialValues,
-
         onReset,
       });
 
@@ -908,7 +907,7 @@ describe('<Formik>', () => {
 
   describe('prepareDataForValidation', () => {
     it('should work correctly with instances', () => {
-      class SomeClass {}
+      class SomeClass { }
       const expected = {
         string: 'string',
         date: new Date(),
@@ -920,7 +919,7 @@ describe('<Formik>', () => {
     });
 
     it('should work correctly with instances in arrays', () => {
-      class SomeClass {}
+      class SomeClass { }
       const expected = {
         string: 'string',
         dateArr: [new Date(), new Date()],
@@ -932,7 +931,7 @@ describe('<Formik>', () => {
     });
 
     it('should work correctly with instances in objects', () => {
-      class SomeClass {}
+      class SomeClass { }
       const expected = {
         string: 'string',
         object: {
@@ -1174,7 +1173,7 @@ describe('<Formik>', () => {
     // do it again async
     try {
       await validatePromise;
-    } catch (err) {}
+    } catch (err) { }
     // now both should be false because validation failed
     expect(getProps().isSubmitting).toBe(false);
     expect(getProps().isValidating).toBe(false);
@@ -1278,7 +1277,7 @@ describe('<Formik>', () => {
   });
 
   it('should not eat an error thrown by the validationSchema', async () => {
-    const validationSchema = function() {
+    const validationSchema = function () {
       throw new Error('broken validations');
     };
 

@@ -97,6 +97,8 @@ export interface FormikHelpers<Values> {
   ) => void;
   /** Validate form values */
   validateForm: (values?: any) => Promise<FormikErrors<Values>>;
+  /** Validate form values w/o blocking UI */
+  validateFormWithLowPriority: (values?: any) => void;
   /** Validate field value */
   validateField: (field: string) => void;
   /** Reset form */

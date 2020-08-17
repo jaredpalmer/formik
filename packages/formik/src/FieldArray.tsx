@@ -144,7 +144,7 @@ class FieldArrayInner<Values = {}> extends React.Component<
       ) &&
       this.props.formik.validateOnChange
     ) {
-      this.props.formik.validateForm(this.props.formik.values);
+      this.props.formik.validateFormWithLowPriority(this.props.formik.values);
     }
   }
 

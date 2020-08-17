@@ -845,6 +845,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     resetForm,
 
     validateForm: validateFormWithHighPriority,
+    validateFormWithLowPriority,
     validateField,
     setErrors,
     setFieldError,
@@ -982,6 +983,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     setValues,
     submitForm,
     validateForm: validateFormWithHighPriority,
+    validateFormWithLowPriority,
     validateField,
     isValid,
     dirty,

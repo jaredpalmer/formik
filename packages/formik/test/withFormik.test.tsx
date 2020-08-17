@@ -3,7 +3,6 @@ import { render, wait } from 'react-testing-library';
 import * as Yup from 'yup';
 
 import { withFormik, FormikProps } from '../src';
-import { noop } from './testHelpers';
 
 interface Values {
   name: string;
@@ -53,7 +52,6 @@ const renderWithFormik = (options?: any, props?: any) => {
 
   const FormikForm = withFormik<{}, Values>({
     mapPropsToValues: () => InitialValues,
-    handleSubmit: noop,
     ...options,
   })(props => (injected = props) && <Form {...props} />);
 

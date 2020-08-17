@@ -12,12 +12,12 @@ export interface FormikValues {
  */
 export type FormikErrors<Values> = {
   [K in keyof Values]?: Values[K] extends any[]
-    ? Values[K][number] extends object // [number] is the special sauce to get the type of array's element. More here https://github.com/Microsoft/TypeScript/pull/21316
-      ? FormikErrors<Values[K][number]>[] | string | string[]
-      : string | string[]
-    : Values[K] extends object
-    ? FormikErrors<Values[K]>
-    : string;
+  ? Values[K][number] extends object // [number] is the special sauce to get the type of array's element. More here https://github.com/Microsoft/TypeScript/pull/21316
+  ? FormikErrors<Values[K][number]>[] | string | string[]
+  : string | string[]
+  : Values[K] extends object
+  ? FormikErrors<Values[K]>
+  : string;
 };
 
 /**
@@ -25,12 +25,12 @@ export type FormikErrors<Values> = {
  */
 export type FormikTouched<Values> = {
   [K in keyof Values]?: Values[K] extends any[]
-    ? Values[K][number] extends object // [number] is the special sauce to get the type of array's element. More here https://github.com/Microsoft/TypeScript/pull/21316
-      ? FormikTouched<Values[K][number]>[]
-      : boolean
-    : Values[K] extends object
-    ? FormikTouched<Values[K]>
-    : boolean;
+  ? Values[K][number] extends object // [number] is the special sauce to get the type of array's element. More here https://github.com/Microsoft/TypeScript/pull/21316
+  ? FormikTouched<Values[K][number]>[]
+  : boolean
+  : Values[K] extends object
+  ? FormikTouched<Values[K]>
+  : boolean;
 };
 
 /**
@@ -175,8 +175,8 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
    * React children or child render callback
    */
   children?:
-    | ((props: FormikProps<Values>) => React.ReactNode)
-    | React.ReactNode;
+  | ((props: FormikProps<Values>) => React.ReactNode)
+  | React.ReactNode;
 
   /**
    * Initial values of the form
@@ -202,7 +202,7 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
   /**
    * Submission handler
    */
-  onSubmit: (
+  onSubmit?: (
     values: Values,
     formikHelpers: FormikHelpers<Values>
   ) => void | Promise<any>;

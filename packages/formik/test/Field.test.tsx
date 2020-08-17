@@ -11,8 +11,6 @@ import {
   FormikConfig,
 } from '../src';
 
-import { noop } from './testHelpers';
-
 const initialValues = { name: 'jared', email: 'hello@reason.nyc' };
 type Values = typeof initialValues;
 type FastFieldConfig = FieldConfig;
@@ -25,7 +23,7 @@ function renderForm(
 ) {
   let injected: FormikProps<Values>;
   const { rerender, ...rest } = render(
-    <Formik onSubmit={noop} initialValues={initialValues} {...props}>
+    <Formik initialValues={initialValues} {...props}>
       {(formikProps: FormikProps<Values>) =>
         (injected = formikProps) && ui ? ui : null
       }
@@ -39,7 +37,7 @@ function renderForm(
     ...rest,
     rerender: () =>
       rerender(
-        <Formik onSubmit={noop} initialValues={initialValues} {...props}>
+        <Formik initialValues={initialValues} {...props}>
           {(formikProps: FormikProps<Values>) =>
             (injected = formikProps) && ui ? ui : null
           }

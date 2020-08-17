@@ -1,7 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Formik, FormikProps, ErrorMessage } from '../src';
-import { noop } from './testHelpers';
 
 interface TestFormValues {
   name: string;
@@ -9,11 +8,7 @@ interface TestFormValues {
 }
 
 const TestForm: React.SFC<any> = p => (
-  <Formik
-    onSubmit={noop}
-    initialValues={{ name: 'jared', email: 'hello@reason.nyc' }}
-    {...p}
-  />
+  <Formik initialValues={{ name: 'jared', email: 'hello@reason.nyc' }} {...p} />
 );
 
 describe('<ErrorMessage />', () => {

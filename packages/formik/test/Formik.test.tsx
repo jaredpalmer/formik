@@ -53,11 +53,7 @@ const InitialValues = { name: 'jared' };
 function renderFormik<V = Values>(props?: Partial<FormikConfig<V>>) {
   let injected: any;
   const { rerender, ...rest } = render(
-    <Formik
-      onSubmit={noop as any}
-      initialValues={InitialValues as any}
-      {...props}
-    >
+    <Formik initialValues={InitialValues as any} {...props}>
       {formikProps =>
         (injected = formikProps) && (
           <Form {...((formikProps as unknown) as FormikProps<Values>)} />
@@ -72,11 +68,7 @@ function renderFormik<V = Values>(props?: Partial<FormikConfig<V>>) {
     ...rest,
     rerender: () =>
       rerender(
-        <Formik
-          onSubmit={noop as any}
-          initialValues={InitialValues as any}
-          {...props}
-        >
+        <Formik initialValues={InitialValues as any} {...props}>
           {formikProps =>
             (injected = formikProps) && (
               <Form {...((formikProps as unknown) as FormikProps<Values>)} />
@@ -122,7 +114,7 @@ describe('<Formik>', () => {
     it('updates values when passed a string (overloaded)', () => {
       let injected: any;
       const { getByTestId } = render(
-        <Formik initialValues={InitialValues} onSubmit={noop}>
+        <Formik initialValues={InitialValues}>
           {formikProps =>
             (injected = formikProps) && (
               <input
@@ -169,7 +161,7 @@ describe('<Formik>', () => {
     it('updates values when passed a string (overloaded)', () => {
       let injected: any;
       const { getByTestId } = render(
-        <Formik initialValues={InitialValues} onSubmit={noop}>
+        <Formik initialValues={InitialValues}>
           {formikProps =>
             (injected = formikProps) && (
               <input
@@ -272,7 +264,7 @@ describe('<Formik>', () => {
     it('updates touched when passed a string (overloaded)', () => {
       let injected: any;
       const { getByTestId } = render(
-        <Formik initialValues={InitialValues} onSubmit={noop}>
+        <Formik initialValues={InitialValues}>
           {formikProps =>
             (injected = formikProps) && (
               <input
@@ -372,7 +364,7 @@ describe('<Formik>', () => {
     it('should call preventDefault()', () => {
       const preventDefault = jest.fn();
       const FormPreventDefault = (
-        <Formik initialValues={{ name: 'jared' }} onSubmit={noop}>
+        <Formik initialValues={{ name: 'jared' }}>
           {({ handleSubmit }) => (
             <button
               data-testid="submit-button"
@@ -390,7 +382,7 @@ describe('<Formik>', () => {
 
     it('should not error if called without an event', () => {
       const FormNoEvent = (
-        <Formik initialValues={{ name: 'jared' }} onSubmit={noop}>
+        <Formik initialValues={{ name: 'jared' }}>
           {({ handleSubmit }) => (
             <button
               data-testid="submit-button"
@@ -410,7 +402,7 @@ describe('<Formik>', () => {
 
     it('should not error if called without preventDefault property', () => {
       const FormNoPreventDefault = (
-        <Formik initialValues={{ name: 'jared' }} onSubmit={noop}>
+        <Formik initialValues={{ name: 'jared' }}>
           {({ handleSubmit }) => (
             <button
               data-testid="submit-button"
@@ -831,7 +823,6 @@ describe('<Formik>', () => {
       const { getProps } = renderFormik({
         initialValues: InitialValues,
         onReset: onReset,
-        onSubmit: noop,
       });
 
       const { handleReset } = getProps();
@@ -846,7 +837,7 @@ describe('<Formik>', () => {
       const onReset = jest.fn();
       const { getProps } = renderFormik({
         initialValues: InitialValues,
-        onSubmit: noop,
+
         onReset,
       });
 
@@ -1054,7 +1045,7 @@ describe('<Formik>', () => {
 
   it('should warn against buttons with unspecified type', () => {
     const { getByText, getByTestId } = render(
-      <Formik onSubmit={noop} initialValues={{ opensource: 'yay' }}>
+      <Formik initialValues={{ opensource: 'yay' }}>
         {({ handleSubmit, handleChange, values }) => (
           <form onSubmit={handleSubmit} data-testid="form">
             <input
@@ -1086,7 +1077,7 @@ describe('<Formik>', () => {
 
   it('should not warn when button has type submit', () => {
     const { getByText, getByTestId } = render(
-      <Formik onSubmit={noop} initialValues={{ opensource: 'yay' }}>
+      <Formik initialValues={{ opensource: 'yay' }}>
         {({ handleSubmit, handleChange, values }) => (
           <form onSubmit={handleSubmit} data-testid="form">
             <input
@@ -1118,7 +1109,7 @@ describe('<Formik>', () => {
 
   it('should not warn when activeElement is not a button', () => {
     const { getByTestId } = render(
-      <Formik onSubmit={noop} initialValues={{ opensource: 'yay' }}>
+      <Formik initialValues={{ opensource: 'yay' }}>
         {({ handleSubmit, handleChange, values }) => (
           <form onSubmit={handleSubmit} data-testid="form">
             <input

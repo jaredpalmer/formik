@@ -3,15 +3,8 @@ import * as ReactDOM from 'react-dom';
 
 import { FieldArray, Formik, isFunction } from '../src';
 
-// tslint:disable-next-line:no-empty
-const noop = () => {};
-
 const TestForm: React.SFC<any> = p => (
-  <Formik
-    onSubmit={noop}
-    initialValues={{ friends: ['jared', 'andrea', 'brent'] }}
-    {...p}
-  />
+  <Formik initialValues={{ friends: ['jared', 'andrea', 'brent'] }} {...p} />
 );
 
 describe('<FieldArray />', () => {

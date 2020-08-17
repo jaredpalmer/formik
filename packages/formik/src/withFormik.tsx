@@ -31,7 +31,7 @@ export interface WithFormikConfig<
   Props,
   Values extends FormikValues = FormikValues,
   DeprecatedPayload = Values
-> extends FormikSharedConfig<Props> {
+  > extends FormikSharedConfig<Props> {
   /**
    * Set the display name of the component. Useful for React DevTools.
    */
@@ -40,7 +40,7 @@ export interface WithFormikConfig<
   /**
    * Submission handler
    */
-  handleSubmit: (values: Values, formikBag: FormikBag<Props, Values>) => void;
+  handleSubmit?: (values: Values, formikBag: FormikBag<Props, Values>) => void;
 
   /**
    * Map props to the form values
@@ -143,7 +143,7 @@ export function withFormik<
       };
 
       handleSubmit = (values: Values, actions: FormikHelpers<Values>) => {
-        return config.handleSubmit(values, {
+        return config.handleSubmit?.(values, {
           ...actions,
           props: this.props,
         });

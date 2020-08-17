@@ -113,7 +113,7 @@ export function withFormik<
     return val as Values;
   },
   ...config
-}: WithFormikConfig<OuterProps, Values, Payload>): ComponentDecorator<
+}: WithFormikConfig<OuterProps, Values, Payload> = {}): ComponentDecorator<
   OuterProps,
   OuterProps & FormikProps<Values>
 > {

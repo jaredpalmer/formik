@@ -113,6 +113,11 @@ describe('withFormik()', () => {
     });
   });
 
+  it('should render without options', () => {
+    const FormikForm = withFormik<{}, Values>()(Form);
+    render(<FormikForm />);
+  })
+
   it('should render child element', () => {
     const { container } = renderWithFormik();
     expect(container.firstChild).toBeDefined();

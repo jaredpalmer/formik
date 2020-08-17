@@ -109,6 +109,7 @@ describe('withFormik()', () => {
       unregisterField: expect.any(Function),
       validateField: expect.any(Function),
       validateForm: expect.any(Function),
+      validateFormWithLowPriority: expect.any(Function),
       validateOnBlur: true,
       validateOnMount: false,
       validateOnChange: true,
@@ -184,6 +185,7 @@ describe('withFormik()', () => {
           setValues: expect.any(Function),
           validateField: expect.any(Function),
           validateForm: expect.any(Function),
+          validateFormWithLowPriority: expect.any(Function),
           submitForm: expect.any(Function),
         }
       )

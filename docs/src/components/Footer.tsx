@@ -177,7 +177,7 @@ export const Footer: React.FC<FooterProps> = props => {
               </svg>
             </a>
             <a
-              href="https://github.com/formik"
+              href="https://github.com/formium"
               className="ml-6 text-gray-400 hover:text-gray-500"
             >
               <span className="sr-only">GitHub</span>

@@ -32,7 +32,7 @@ const MyField = props => {
 };
 
 function App() {
-  // Not that we provide initalValues all 3 fields.
+  // Note that we provide initalValues all 3 fields.
   const initialValues = { textA: '', textB: '', textC: '' };
   return (
     <div className="App">

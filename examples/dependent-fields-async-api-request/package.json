@@ -1,0 +1,17 @@
+{
+  "name": "formik-example-dependent-fields-async-api-request",
+  "version": "0.1.0",
+  "description": "This is an example of how to set the value of one field based on an async API request that uses the current values of other fields in Formik v2",
+  "main": "index.js",
+  "dependencies": {
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0",
+    "react-scripts": "3.4.1",
+    "formik": "latest"
+  },
+  "prettier": {
+    "trailingComma": "es5",
+    "singleQuote": true,
+    "semi": true
+  }
+}

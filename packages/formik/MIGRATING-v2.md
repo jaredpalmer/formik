@@ -1,5 +1,3 @@
-# Formik 2 Migration Guide
-
 ## Breaking Changes
 
 ### Minimum Requirements
@@ -7,15 +5,23 @@
 - Since Formik 2 is built on top of React Hooks, you must be on React 16.8.x or higher
 - Since Formik 2 uses the `unknown` type, you must be on TypeScript 3.0 or higher (if you use TypeScript)
 
-**There are only two tiny breaking changes in Formik 2.x.** Luckily, these probably won't impact many people:
+**There are a few breaking changes in Formik 2.x.** Luckily, these probably won't impact many people:
 
-#### `resetForm`
+### `resetForm`
 
-Because we introduced the new `initialErrors`, `initialTouched`, `initialStatus` props, `resetForm`'s signature has changed since there is more stuff to _reset_. It now accepts the next initial state of Formik (instead of just the next initial values).
+Because we introduced `initialErrors`, `initialTouched`, `initialStatus` props, `resetForm`'s signature has changed. It now accepts the next initial state of Formik (instead of just the next initial values).
+
+### `setError`
+
+Please use Formik's `setStatus(status)` instead. It works identically.
 
 ### `validate`
 
 As you may know, you can return a Promise of a validation error from `validate`. In 1.x, it didn't matter if this promise is resolved or rejected as in both cases the payload of the promise was interpreted as the validation error. In 2.x, rejection will be interpreted as an actual exception and it won't update the form error state. Any validation function that returns a rejected promise of errors needs to be adjusted to return a resolved promise of errors instead.
+
+### `ref`
+
+Currently, you can't attach a ref to Formik using the `ref` prop. However, you still can get around this issue using the prop `innerRef`. We have some WIP [#2208](https://github.com/jaredpalmer/formik/issues/2208) to instead use `React.forwardRef`.
 
 **v1**
 
@@ -29,7 +35,41 @@ resetForm(nextValues);
 resetForm({ values: nextValues /* errors, touched, etc ... */ });
 ```
 
-## What's New in Formik 2?
+### Typescript changes
+
+#### `FormikActions`
+
+**`FormikActions` has been renamed to `FormikHelpers`** It should be a straightforward change to import or alias the type
+
+**v1**
+
+```tsx
+import { FormikActions } from 'formik';
+```
+
+**v2**
+
+```tsx
+import { FormikHelpers as FormikActions } from 'formik';
+```
+
+#### `FieldProps`
+
+**`FieldProps` now accepts two generic type parameters.** Both parameters are optional, but `FormValues` has been moved from the first to the second parameter.
+
+**v1**
+
+```tsx
+type Props = FieldProps<FormValues>;
+```
+
+**v2**
+
+```tsx
+type Props = FieldProps<FieldValue, FormValues>;
+```
+
+## What's New?
 
 ### Checkboxes and Select multiple
 
@@ -164,12 +204,18 @@ A hook that is equivalent to `connect()`.
 
 `<Field/>` now accepts a prop called `as` which will inject `onChange`, `onBlur`, `value` etc. directly through to the component or string. This is useful for folks using Emotion or Styled components as they no longer need to clean up `component`'s render props in a wrapped function.
 
+### Misc
+
+- `FormikContext` is now exported
+- `validateOnMount?: boolean = false`
+- `initialErrors`, `initialTouched`, `initialStatus` have been added
+
 ```jsx
-// <input className="form-input" placeHolder="Jane"  />
+// <input className="form-input" placeholder="Jane"  />
 <Field name="firstName" className="form-input" placeholder="Jane" />
 
 // <textarea className="form-textarea"/></textarea>
-<Field name="message" as="textarea"  className="form-input"/>
+<Field name="message" as="textarea"  className="form-textarea"/>
 
 // <select className="my-select"/>
 <Field name="colors" as="select" className="my-select">
@@ -186,13 +232,12 @@ const MyStyledInput = styled.input`
 `
 const MyStyledTextarea = MyStyledInput.withComponent('textarea');
 
-// <input className="czx_123" placeHolder="google.com"  />
-<Field name="website" as={MyStyledInput} placeHolder="google.com"/>
+// <input className="czx_123" placeholder="google.com"  />
+<Field name="website" as={MyStyledInput} placeholder="google.com"/>
 
-// <textarea  placeHolder="Post a message..." rows={5}></textarea>
-<Field name="message" as={MyStyledTextArea} placeHolder="Post a message.." rows={4}/>
+// <textarea placeholder="Post a message..." rows={5}></textarea>
+<Field name="message" as={MyStyledTextArea} placeholder="Post a message.." rows={4}/>
 ```
-
 
 ### `getFieldProps(nameOrProps)`
 
@@ -235,13 +280,6 @@ export interface FieldMetaProps<Value> {
   initialError?: string;
 }
 ```
-
-### Other Stuff
-
-- `FormikContext` is now exported
-- `validateOnMount?: boolean = false`
-- `initialErrors`, `initialTouched`, `initialStatus` have been added
-- `FormikActions` type has been renamed to `FormikHelpers`
 
 ## Deprecation Warnings
 

@@ -1,6 +1,6 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { Formik, Field, Form } from 'formik';
+import React from "react";
+import ReactDOM from "react-dom";
+import { Formik, Field, Form } from "formik";
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
@@ -10,7 +10,7 @@ const Basic = () => (
     <Formik
       initialValues={{
         toggle: false,
-        checked: [],
+        checked: []
       }}
       onSubmit={async values => {
         await sleep(500);
@@ -35,7 +35,7 @@ const Basic = () => (
             logic will be taken care of for you.
           */}
           <div id="checkbox-group">Checked</div>
-          <div role="group" aria-labeledby="checkbox-group">
+          <div role="group" aria-labelledby="checkbox-group">
             <label>
               <Field type="checkbox" name="checked" value="One" />
               One
@@ -57,4 +57,4 @@ const Basic = () => (
   </div>
 );
 
-ReactDOM.render(<Basic />, document.getElementById('root'));
+ReactDOM.render(<Basic />, document.getElementById("root"));

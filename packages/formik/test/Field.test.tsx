@@ -227,7 +227,7 @@ describe('Field / FastField', () => {
         component: 'textarea',
       });
 
-      expect(container.firstChild.type).toBe('textarea');
+      expect((container.firstChild as $FixMe).type).toBe('textarea');
     });
 
     cases('assigns innerRef as a ref to string components', renderField => {
@@ -256,7 +256,7 @@ describe('Field / FastField', () => {
         as: 'textarea',
       });
 
-      expect(container.firstChild.type).toBe('textarea');
+      expect((container.firstChild as $FixMe).type).toBe('textarea');
     });
 
     cases('assigns innerRef as a ref to string components', renderField => {

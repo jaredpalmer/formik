@@ -17,17 +17,13 @@ class ErrorMessageImpl extends React.Component<
   shouldComponentUpdate(
     props: ErrorMessageProps & { formik: FormikContextType<any> }
   ) {
-    if (
+    return (
       getIn(this.props.formik.errors, this.props.name) !==
         getIn(props.formik.errors, this.props.name) ||
       getIn(this.props.formik.touched, this.props.name) !==
         getIn(props.formik.touched, this.props.name) ||
       Object.keys(this.props).length !== Object.keys(props).length
-    ) {
-      return true;
-    } else {
-      return false;
-    }
+    );
   }
 
   render() {

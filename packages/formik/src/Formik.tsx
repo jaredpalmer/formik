@@ -36,9 +36,6 @@ type FormikMessage<Values> =
   | { type: 'SET_ISVALIDATING'; payload: boolean }
   | { type: 'SET_ISSUBMITTING'; payload: boolean }
   | { type: 'SET_VALUES'; payload: Values }
-  | { type: 'SET_FIELD_VALUE'; payload: { field: string; value?: any } }
-  | { type: 'SET_FIELD_TOUCHED'; payload: { field: string; value?: boolean } }
-  | { type: 'SET_FIELD_ERROR'; payload: { field: string; value?: string } }
   | { type: 'SET_TOUCHED'; payload: FormikTouched<Values> }
   | { type: 'SET_ERRORS'; payload: FormikErrors<Values> }
   | { type: 'SET_STATUS'; payload: any }
@@ -58,14 +55,19 @@ function formikReducer<Values>(
 ) {
   switch (msg.type) {
     case 'SET_VALUES':
+      if (isEqual(state.values, msg.payload)) {
+        return state;
+      }
       return { ...state, values: msg.payload };
     case 'SET_TOUCHED':
+      if (isEqual(state.touched, msg.payload)) {
+        return state;
+      }
       return { ...state, touched: msg.payload };
     case 'SET_ERRORS':
       if (isEqual(state.errors, msg.payload)) {
         return state;
       }
-
       return { ...state, errors: msg.payload };
     case 'SET_STATUS':
       return { ...state, status: msg.payload };
@@ -73,21 +75,6 @@ function formikReducer<Values>(
       return { ...state, isSubmitting: msg.payload };
     case 'SET_ISVALIDATING':
       return { ...state, isValidating: msg.payload };
-    case 'SET_FIELD_VALUE':
-      return {
-        ...state,
-        values: setIn(state.values, msg.payload.field, msg.payload.value),
-      };
-    case 'SET_FIELD_TOUCHED':
-      return {
-        ...state,
-        touched: setIn(state.touched, msg.payload.field, msg.payload.value),
-      };
-    case 'SET_FIELD_ERROR':
-      return {
-        ...state,
-        errors: setIn(state.errors, msg.payload.field, msg.payload.value),
-      };
     case 'RESET_FORM':
       return { ...state, ...msg.payload };
     case 'SET_FORMIK_STATE':
@@ -505,18 +492,19 @@ export function useFormik<Values extends FormikValues = FormikValues>({
           .then((x: any) => x)
           .then((error: string) => {
             dispatch({
-              type: 'SET_FIELD_ERROR',
-              payload: { field: name, value: error },
+              type: 'SET_ERRORS',
+              payload: setIn(state.errors, name, error),
             });
             dispatch({ type: 'SET_ISVALIDATING', payload: false });
           });
       } else {
         dispatch({
-          type: 'SET_FIELD_ERROR',
-          payload: {
-            field: name,
-            value: maybePromise as string | undefined,
-          },
+          type: 'SET_ERRORS',
+          payload: setIn(
+            state.errors,
+            name,
+            maybePromise as string | undefined
+          )
         });
         return Promise.resolve(maybePromise as string | undefined);
       }
@@ -526,8 +514,8 @@ export function useFormik<Values extends FormikValues = FormikValues>({
         .then((x: any) => x)
         .then((error: any) => {
           dispatch({
-            type: 'SET_FIELD_ERROR',
-            payload: { field: name, value: error[name] },
+            type: 'SET_ERRORS',
+            payload: setIn(state.errors, name, error[name]),
           });
           dispatch({ type: 'SET_ISVALIDATING', payload: false });
         });
@@ -575,8 +563,8 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   const setFieldError = React.useCallback(
     (field: string, value: string | undefined) => {
       dispatch({
-        type: 'SET_FIELD_ERROR',
-        payload: { field, value },
+        type: 'SET_ERRORS',
+        payload: setIn(state.errors, field, value),
       });
     },
     []
@@ -584,17 +572,12 @@ export function useFormik<Values extends FormikValues = FormikValues>({
 
   const setFieldValue = useEventCallback(
     (field: string, value: any, shouldValidate?: boolean) => {
-      dispatch({
-        type: 'SET_FIELD_VALUE',
-        payload: {
-          field,
-          value,
-        },
-      });
+      const values = setIn(state.values, field, value);
+      dispatch({ type: 'SET_VALUES', payload: values });
       const willValidate =
         shouldValidate === undefined ? validateOnChange : shouldValidate;
       return willValidate
-        ? validateFormWithLowPriority(setIn(state.values, field, value))
+        ? validateFormWithLowPriority(values)
         : Promise.resolve();
     }
   );
@@ -670,11 +653,8 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   const setFieldTouched = useEventCallback(
     (field: string, touched: boolean = true, shouldValidate?: boolean) => {
       dispatch({
-        type: 'SET_FIELD_TOUCHED',
-        payload: {
-          field,
-          value: touched,
-        },
+        type: 'SET_TOUCHED',
+        payload: setIn(state.touched, field, touched),
       });
       const willValidate =
         shouldValidate === undefined ? validateOnBlur : shouldValidate;

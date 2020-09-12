@@ -92,7 +92,7 @@ not present, `handleChange` will look for an input's `id` attribute. Note:
 Reset handler. Will reset the form to its initial state. This should be passed
 to `<button onClick={handleReset}>...</button>`
 
-#### `handleSubmit: (e: React.FormEvent<HTMLFormEvent>) => void`
+#### `handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void`
 
 Submit handler. This should be passed to `<form onSubmit={props.handleSubmit}>...</form>`. To learn more about the submission process, see [Form Submission](../guides/form-submission).
 
@@ -134,7 +134,7 @@ Trigger a form submission. The promise will be rejected if form is invalid.
 
 #### `submitCount: number`
 
-Number of times user tried to submit the form. Increases when [`handleSubmit`](#handlesubmit-e-reactformevent-htmlformevent-void) is called, resets after calling
+Number of times user tried to submit the form. Increases when [`handleSubmit`](#handlesubmit-e-reactformevent-htmlformelement-void) is called, resets after calling
 [`handleReset`](#handlereset-void). `submitCount` is readonly computed property and should not be mutated directly.
 
 #### `setFieldValue: (field: string, value: any, shouldValidate?: boolean) => void`

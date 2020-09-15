@@ -110,9 +110,9 @@ Returns `true` if there are no `errors` (i.e. the `errors` object is empty) and 
 
 Returns `true` if Formik is running validation during submission, or by calling [`validateForm`] directly `false` otherwise. To learn more about what happens with `isValidating` during the submission process, see [Form Submission](../guides/form-submission).
 
-#### `resetForm: (nextInitialState?: FormikState<Values>) => void`
+#### `resetForm: (nextState?: Partial<FormikState<Values>>) => void`
 
-Imperatively reset the form. If `nextInitialState` is specified, Formik will set this state as the new "initial state" and use the related values of `nextInitialState` to update the form's `initialValues` as well as `initialTouched`, `initialStatus`, `initialErrors`. This is useful for altering the initial state (i.e. "base") of the form after changes have been made. If `nextInitialState` is not defined, then Formik will reset state to the original initial state. The latter is useful for calling `resetForm` within `componentDidUpdate` or `useEffect`.
+Imperatively reset the form. If `nextState.values` is specified, Formik will set these values as the new "initial state" and use the related values of `nextState` to update the form's `initialValues` as well as `initialTouched`, `initialStatus`, `initialErrors`. This is useful for altering the initial state (i.e. "base") of the form after changes have been made. If `nextInitialState` is not defined, then Formik will reset state to the original initial state. The latter is useful for calling `resetForm` within `componentDidUpdate` or `useEffect`.
 
 #### `setErrors: (fields: { [field: string]: string }) => void`
 

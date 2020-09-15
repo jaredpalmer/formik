@@ -364,6 +364,16 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     }
   );
 
+  React.useEffect(() => {
+    if (
+      validateOnMount &&
+      isMounted.current === true &&
+      isEqual(initialValues.current, props.initialValues)
+    ) {
+      validateFormWithLowPriority(initialValues.current);
+    }
+  }, [validateOnMount, validateFormWithLowPriority]);
+
   const resetForm = React.useCallback(
     (nextState?: Partial<FormikState<Values>>) => {
       const values =
@@ -436,9 +446,8 @@ export function useFormik<Values extends FormikValues = FormikValues>({
       isMounted.current === true &&
       !isEqual(initialValues.current, props.initialValues)
     ) {
-      initialValues.current = props.initialValues;
-
       if (enableReinitialize) {
+        initialValues.current = props.initialValues;
         resetForm();
       }
 

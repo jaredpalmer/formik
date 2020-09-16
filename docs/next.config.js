@@ -80,14 +80,8 @@ const remarkPlugins = [
 
 module.exports = optimizedImages({
   pageExtensions: ['jsx', 'js', 'ts', 'tsx', 'mdx', 'md'],
-  env: {
-    NEXT_PUBLIC_GA_TRACKING_ID: process.env.NEXT_PUBLIC_GA_TRACKING_ID || '',
-    SENTRY_DSN: process.env.SENTRY_DSN || '',
-    SENTRY_RELEASE: process.env.VERCEL_GITHUB_COMMIT_SHA || '',
-  },
   experimental: {
     plugins: true,
-    modern: true,
     rewrites() {
       return [
         {

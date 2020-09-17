@@ -48,7 +48,8 @@
     "react-fast-compare": "^2.0.1",
     "scheduler": "^0.18.0",
     "tiny-warning": "^1.0.2",
-    "tslib": "^1.10.0"
+    "tslib": "^1.10.0",
+    "use-context-selector": "^1.1.2"
   },
   "resolutions": {
     "@types/react": "16.9.17",

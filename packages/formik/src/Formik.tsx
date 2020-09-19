@@ -1066,7 +1066,7 @@ function warnAboutMissingIdentifier({
 /**
  * Transform Yup ValidationError to a more usable object
  */
-export function yupToFormErrors<Values>(yupError: any): FormikErrors<Values> {
+export function yupToFormErrors<Values>(yupError: any, concatErrors?: boolean): FormikErrors<Values> {
   let errors: FormikErrors<Values> = {};
   if (yupError.inner) {
     if (yupError.inner.length === 0) {
@@ -1074,7 +1074,7 @@ export function yupToFormErrors<Values>(yupError: any): FormikErrors<Values> {
     }
     for (let err of yupError.inner) {
       if (!getIn(errors, err.path)) {
-        errors = setIn(errors, err.path, err.message);
+        errors = setIn(errors, err.path, err.message, concatErrors);
       }
     }
   }

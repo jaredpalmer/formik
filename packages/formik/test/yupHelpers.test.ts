@@ -13,6 +13,19 @@ const nestedSchema = Yup.object().shape({
     ),
   }),
 });
+const multiSchema = Yup.object().shape({
+  field: Yup.number()
+  .test(
+    'Should be greater than zero',
+    'Field must be greater than zero',
+    (value: number) => value > 0
+  )
+  .test(
+    'Should be greater than five',
+    'Field must be greater than five',
+    (value: number) => value > 5
+  ),
+});
 
 describe('Yup helpers', () => {
   describe('yupToFormErrors()', () => {
@@ -25,6 +38,25 @@ describe('Yup helpers', () => {
         });
       }
     });
+
+    it('should transform multiple Yup ValidationErrors and preserve all values when specified', async () => {
+      let attempts = 0;
+      await multiSchema.validate({field: -1}, { abortEarly: false })
+      .then(() => {})
+      .catch((e: any) => {
+        if (attempts === 0) {
+          expect(yupToFormErrors(e, true)).toEqual({
+            field: 'Field must be greater than zero'
+          });
+        } else {
+          expect(yupToFormErrors(e, true)).toEqual({
+            field: ['Field must be greater than zero', 'Field must be greater than five']
+          });
+        }
+        attempts++;
+      })
+    });
+
   });
 
   describe('validateYupSchema()', () => {

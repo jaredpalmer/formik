@@ -267,6 +267,13 @@ describe('utils', () => {
       expect(newObj).toEqual({ x: 'y', nested: ['a', 'b'] });
     });
 
+    it('adds new item to array of arbitrary length', () => {
+      const obj = { x: 'y', nested: ['a'] };
+      const newObj = setIn(obj, 'nested', 'b', true);
+      expect(obj).toEqual({ x: 'y', nested: ['a'] });
+      expect(newObj).toEqual({ x: 'y', nested: ['a', 'b']});
+    });
+
     it('sticks to object with int key when defined', () => {
       const obj = { x: 'y', nested: { 0: 'a' } };
       const newObj = setIn(obj, 'nested.0', 'b');

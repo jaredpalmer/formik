@@ -103,7 +103,7 @@ export function getIn(
  * @see https://github.com/developit/linkstate
  * @see https://github.com/jaredpalmer/formik/pull/123
  */
-export function setIn(obj: any, path: string, value: any): any {
+export function setIn(obj: any, path: string, value: any, concatValues?: boolean): any {
   let res: any = clone(obj); // this keeps inheritance when obj is a class
   let resVal: any = res;
   let i = 0;
@@ -130,7 +130,9 @@ export function setIn(obj: any, path: string, value: any): any {
   if (value === undefined) {
     delete resVal[pathArray[i]];
   } else {
-    resVal[pathArray[i]] = value;
+    resVal[pathArray[i]] = (concatValues && resVal[pathArray[i]] !== undefined) 
+      ? [...obj[pathArray[i]], value] 
+      : value;
   }
 
   // If the path array has a single element, the loop did not run.

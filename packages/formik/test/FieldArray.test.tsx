@@ -412,4 +412,40 @@ describe('<FieldArray />', () => {
       expect(formikBag.values.friends).toEqual(expected);
     });
   });
+
+  describe('given an error on the array itself', () => {
+    it('should not modify the error if the array is modified', () => {
+      let formikBag: any;
+      let arrayHelpers: any;
+      ReactDOM.render(
+        <TestForm
+          render={(props: any) => {
+            formikBag = props;
+            return (
+              <FieldArray
+                name="friends"
+                render={arrayProps => {
+                  arrayHelpers = arrayProps;
+                  return null;
+                }}
+              />
+            );
+          }}
+        />,
+        node
+      );
+
+      formikBag.setErrors({ friends: 'array error' });
+
+      arrayHelpers.push('michael');
+      arrayHelpers.swap(0, 2);
+      arrayHelpers.insert(1, 'michael');
+      arrayHelpers.replace(1, 'brian');
+      arrayHelpers.unshift('michael');
+      arrayHelpers.remove(1);
+
+      const expected = 'array error';
+      expect(formikBag.errors.friends).toEqual(expected);
+    })
+  });
 });

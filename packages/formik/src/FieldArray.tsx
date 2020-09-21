@@ -173,11 +173,12 @@ class FieldArrayInner<Values = {}> extends React.Component<
         fn(getIn(prevState.values, name))
       );
 
-      // if error is string, that means there is an error on the array level
-      // in that case, errors must not be changed, so no need to update it
+      // if errors is a string, that means there is an error on the array level
+      // in that case, errors must not be changed, so there's no need to update it
+      const previousErrors = getIn(prevState.errors, name);
 
-      let fieldError = alterErrors && !isString(prevState.errors)
-        ? updateErrors(getIn(prevState.errors, name))
+      let fieldError = alterErrors && !isString(previousErrors)
+        ? updateErrors(previousErrors)
         : undefined;
       let fieldTouched = alterTouched
         ? updateTouched(getIn(prevState.touched, name))
@@ -193,7 +194,7 @@ class FieldArrayInner<Values = {}> extends React.Component<
       return {
         ...prevState,
         values,
-        errors: alterErrors && !isString(prevState.errors)
+        errors: alterErrors && !isString(previousErrors)
           ? setIn(prevState.errors, name, fieldError)
           : prevState.errors,
         touched: alterTouched

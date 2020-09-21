@@ -13,6 +13,7 @@ import {
   isFunction,
   setIn,
   isEmptyArray,
+  isString,
 } from './utils';
 import isEqual from 'react-fast-compare';
 
@@ -172,7 +173,10 @@ class FieldArrayInner<Values = {}> extends React.Component<
         fn(getIn(prevState.values, name))
       );
 
-      let fieldError = alterErrors
+      // if error is string, that means there is an error on the array level
+      // in that case, errors must not be changed, so no need to update it
+
+      let fieldError = alterErrors && !isString(prevState.errors)
         ? updateErrors(getIn(prevState.errors, name))
         : undefined;
       let fieldTouched = alterTouched
@@ -189,7 +193,7 @@ class FieldArrayInner<Values = {}> extends React.Component<
       return {
         ...prevState,
         values,
-        errors: alterErrors
+        errors: alterErrors && !isString(prevState.errors)
           ? setIn(prevState.errors, name, fieldError)
           : prevState.errors,
         touched: alterTouched

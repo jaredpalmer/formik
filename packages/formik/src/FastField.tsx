@@ -73,8 +73,8 @@ class FastFieldInner<Values = {}, Props = {}> extends React.Component<
   }
 
   shouldComponentUpdate(props: FastFieldInnerProps<Values, Props>) {
-    if (this.props.shouldUpdate) {
-      return this.props.shouldUpdate(props, this.props);
+    if (this.props.shouldUpdate && this.props.shouldUpdate(props, this.props)) {
+      return true;
     } else if (
       props.name !== this.props.name ||
       getIn(props.formik.values, this.props.name) !==

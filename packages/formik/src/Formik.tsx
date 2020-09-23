@@ -12,7 +12,8 @@ import {
   FieldMetaProps,
   FieldHelperProps,
   FieldInputProps,
-  FormikHelpers, FormikHandlers,
+  FormikHelpers,
+  FormikHandlers,
 } from './types';
 import {
   isFunction,
@@ -455,7 +456,13 @@ export function useFormik<Values extends FormikValues = FormikValues>({
         validateFormWithLowPriority(initialValues.current);
       }
     }
-  }, [enableReinitialize, props.initialValues, resetForm, validateOnMount, validateFormWithLowPriority]);
+  }, [
+    enableReinitialize,
+    props.initialValues,
+    resetForm,
+    validateOnMount,
+    validateFormWithLowPriority,
+  ]);
 
   React.useEffect(() => {
     if (
@@ -571,12 +578,17 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   }, []);
 
   const setValues = useEventCallback(
-    (values: Values | (vals: Values) => Values, shouldValidate?: boolean) => {
-      dispatch({ type: 'SET_VALUES', payload: typeof values === "function" ? values(state.values) : values });
+    (values: Values | ((vals: Values) => Values), shouldValidate?: boolean) => {
+      const actualVals =
+        values instanceof Function ? values(state.values) : values;
+      dispatch({
+        type: 'SET_VALUES',
+        payload: actualVals,
+      });
       const willValidate =
         shouldValidate === undefined ? validateOnChange : shouldValidate;
       return willValidate
-        ? validateFormWithLowPriority(values)
+        ? validateFormWithLowPriority(actualVals)
         : Promise.resolve();
     }
   );

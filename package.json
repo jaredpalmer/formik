@@ -2,9 +2,10 @@
   "name": "formik-project",
   "private": true,
   "devDependencies": {
+    "cypress": "^5.2.0",
+    "got": "10.0.4",
     "lerna": "^3.19.0",
-    "release": "6.0.1",
-    "got": "10.0.4"
+    "release": "6.0.1"
   },
   "workspaces": [
     "packages/*"
@@ -19,9 +20,9 @@
     "publish-stable": "lerna version --force-publish && release && node ./scripts/release-notes.js",
     "git-reset": "git reset --hard HEAD",
     "git-clean": "git clean -d -x -e node_modules -e packages -f",
-    "now-build": "npm run build-website",
-    "start-website": "cd website && yarn start",
-    "build-website": "cd website && yarn install && yarn build"
+    "cypress": "cypress run",
+    "cypress:open": "cypress open",
+    "start:app": "npm run build && yarn --cwd packages/formik link && yarn --cwd node_modules/react link && yarn --cwd ./app link react formik && yarn --cwd ./app && yarn --cwd ./app run dev"
   },
   "prettier": {
     "trailingComma": "es5",

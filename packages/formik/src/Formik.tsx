@@ -571,8 +571,8 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   }, []);
 
   const setValues = useEventCallback(
-    (values: Values, shouldValidate?: boolean) => {
-      dispatch({ type: 'SET_VALUES', payload: values });
+    (values: Values | (vals: Values) => Values, shouldValidate?: boolean) => {
+      dispatch({ type: 'SET_VALUES', payload: typeof values === "function" ? values(state) : values });
       const willValidate =
         shouldValidate === undefined ? validateOnChange : shouldValidate;
       return willValidate

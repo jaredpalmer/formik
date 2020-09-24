@@ -1,0 +1,20 @@
+.App {
+  font-family: sans-serif;
+  max-width: 500px;
+}
+
+.section {
+  padding: 10px;
+  border: 1px solid purple;
+  border-radius: 4px;
+  margin-bottom: 20px;
+}
+
+label,
+input {
+  display: block;
+}
+label,
+button {
+  margin-top: 1rem;
+}

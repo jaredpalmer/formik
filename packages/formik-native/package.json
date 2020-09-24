@@ -39,7 +39,6 @@
     "@react-native-community/eslint-config": "^0.0.5",
     "@types/react": "^16.8.23",
     "@types/react-native": "^0.57.65",
-    "husky": "^3.1.0",
     "react": "^16.8.6",
     "react-native": "https://github.com/expo/react-native/archive/sdk-33.0.0.tar.gz"
   }

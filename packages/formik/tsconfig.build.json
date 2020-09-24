@@ -1,4 +1,7 @@
 {
   "extends": "../../tsconfig.base.json",
-  "include": ["src", "test", "types", "../../types"]
+  "include": ["src", "types", "../../types"],
+  "compilerOptions": {
+    "rootDir": "./src"
+  }
 }

@@ -143,7 +143,7 @@ class FieldArrayInner<Values = {}> extends React.Component<
       !isEqual(
         getIn(prevProps.formik.values, prevProps.name),
         getIn(this.props.formik.values, this.props.name)
-      ) 
+      )
     ) {
       this.props.formik.validateForm(this.props.formik.values);
     }

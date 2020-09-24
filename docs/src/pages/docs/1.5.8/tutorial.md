@@ -80,9 +80,9 @@ const EditUserDialog = ({ user, updateUser, onClose }) => {
               onBlur={handleBlur}
               value={values.social.facebook}
             />
-            {errors.social &&
-              errors.social.facebook &&
-              touched.facebook && <div>{errors.social.facebook}</div>}
+            {errors.social && errors.social.facebook && touched.facebook && (
+              <div>{errors.social.facebook}</div>
+            )}
             <input
               type="text"
               name="social.twitter"
@@ -90,9 +90,9 @@ const EditUserDialog = ({ user, updateUser, onClose }) => {
               onBlur={handleBlur}
               value={values.social.twitter}
             />
-            {errors.social &&
-              errors.social.twitter &&
-              touched.twitter && <div>{errors.social.twitter}</div>}
+            {errors.social && errors.social.twitter && touched.twitter && (
+              <div>{errors.social.twitter}</div>
+            )}
             {status && status.msg && <div>{status.msg}</div>}
             <button type="submit" disabled={isSubmitting}>
               Submit
@@ -108,8 +108,8 @@ const EditUserDialog = ({ user, updateUser, onClose }) => {
 To make writing forms less verbose. Formik comes with a few helpers to save you
 key strokes.
 
-* `<Field>`
-* `<Form />`
+- `<Field>`
+- `<Form />`
 
 This is the **exact** same form as before, but written with `<Form />` and
 `<Field />`:
@@ -145,10 +145,12 @@ const EditUserDialog = ({ user, updateUser, onClose }) => {
             <Field type="email" name="email" />
             {errors.email && touched.email && <div>{errors.email}</div>}
             <Field type="text" name="social.facebook" />
-            {errors.social && errors.social.facebook &&
+            {errors.social &&
+              errors.social.facebook &&
               touched.social.facebook && <div>{errors.social.facebook}</div>}
             <Field type="text" name="social.twitter" />
-            {errors.social && errors.social.twitter &&
+            {errors.social &&
+              errors.social.twitter &&
               touched.social.twitter && <div>{errors.social.twitter}</div>}
             {status && status.msg && <div>{status.msg}</div>}
             <button type="submit" disabled={isSubmitting}>
@@ -193,13 +195,17 @@ const EditUserDialog = ({ user, updateUser, onClose }) => {
         render={({ errors, status, touched, isSubmitting }) => (
           <Form>
             <Field type="email" name="email" />
-            <ErrorMessage name="email" component="div" />  
+            <ErrorMessage name="email" component="div" />
             <Field type="text" className="error" name="social.facebook" />
             <ErrorMessage name="social.facebook">
               {errorMessage => <div className="error">{errorMessage}</div>}
             </ErrorMessage>
             <Field type="text" name="social.twitter" />
-            <ErrorMessage name="social.twitter" className="error" component="div"/>  
+            <ErrorMessage
+              name="social.twitter"
+              className="error"
+              component="div"
+            />
             {status && status.msg && <div>{status.msg}</div>}
             <button type="submit" disabled={isSubmitting}>
               Submit

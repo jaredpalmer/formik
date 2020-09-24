@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Formik, Field, Form } from 'formik';
 
-const sleep = ms => new Promise(r => setTimeout(r, ms));
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 const Example = () => (
   <div>
@@ -13,7 +13,7 @@ const Example = () => (
         lastName: '',
         email: '',
       }}
-      onSubmit={async values => {
+      onSubmit={async (values) => {
         await sleep(500);
         alert(JSON.stringify(values, null, 2));
       }}

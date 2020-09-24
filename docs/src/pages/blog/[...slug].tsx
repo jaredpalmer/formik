@@ -283,9 +283,11 @@ const RenderPost = ({ post, redirect, preview }: any) => {
                     const roundFactor = Math.pow(10, 2);
                     // calculate percentages
                     const width = block_width
-                      ? `${Math.round(
-                          (block_width / baseBlockWidth) * 100 * roundFactor
-                        ) / roundFactor}%`
+                      ? `${
+                          Math.round(
+                            (block_width / baseBlockWidth) * 100 * roundFactor
+                          ) / roundFactor
+                        }%`
                       : block_height || '100%';
 
                     const isImage = type === 'image';

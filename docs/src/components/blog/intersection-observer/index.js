@@ -1,1 +1,1 @@
-export { default } from './intersection-observer'
+export { default } from './intersection-observer';

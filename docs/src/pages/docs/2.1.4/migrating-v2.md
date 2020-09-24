@@ -119,7 +119,7 @@ import React from 'react';
 import { Formik, Field, Form } from 'formik';
 import { Debug } from './Debug';
 
-const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 const CheckboxExample = () => (
   <div>
@@ -135,7 +135,7 @@ const CheckboxExample = () => (
         jobType: ['designer'],
         location: [],
       }}
-      onSubmit={async (values) => {
+      onSubmit={async values => {
         await sleep(1000);
         alert(JSON.stringify(values, null, 2));
       }}

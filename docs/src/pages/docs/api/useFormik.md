@@ -27,7 +27,7 @@ const SignupForm = () => {
       lastName: '',
       email: '',
     },
-    onSubmit: (values) => {
+    onSubmit: values => {
       alert(JSON.stringify(values, null, 2));
     },
   });

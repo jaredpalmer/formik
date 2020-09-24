@@ -13,7 +13,7 @@ Create a higher-order React component class that passes props and form handlers
 import React from 'react';
 import { withFormik } from 'formik';
 
-const MyForm = (props) => {
+const MyForm = props => {
   const {
     values,
     touched,
@@ -41,7 +41,7 @@ const MyEnhancedForm = withFormik({
   mapPropsToValues: () => ({ name: '' }),
 
   // Custom sync validation
-  validate: (values) => {
+  validate: values => {
     const errors = {};
 
     if (!values.name) {
@@ -179,7 +179,7 @@ const validate = (values, props) => {
 
 ```js
 // Async Validation
-const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 const validate = (values, props) => {
   return sleep(2000).then(() => {

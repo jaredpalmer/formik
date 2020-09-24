@@ -10,7 +10,7 @@ import {
 import { Field, ErrorMessage, withFormik } from 'formik';
 import { Debug } from './Debug';
 
-const required = (value) => (value ? undefined : 'Required');
+const required = value => (value ? undefined : 'Required');
 
 const Page1 = () => (
   <Fragment>
@@ -78,11 +78,11 @@ const BaseForm = ({ values, handleSubmit }) => (
         <Switch>
           <Route
             path="/step1"
-            render={(routeProps) => <Page1 {...routeProps} />}
+            render={routeProps => <Page1 {...routeProps} />}
           />
           <Route
             path="/step2"
-            render={(routeProps) => <Page2 {...routeProps} />}
+            render={routeProps => <Page2 {...routeProps} />}
           />
           <Redirect to="/step1" />
         </Switch>

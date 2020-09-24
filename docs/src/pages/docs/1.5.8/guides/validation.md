@@ -41,7 +41,7 @@ const validate = (values, props /* only available when using withFormik */) => {
 };
 
 // Async Validation
-const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 const validate = (values, props /* only available when using withFormik */) => {
   return sleep(2000).then(() => {
@@ -103,7 +103,7 @@ export const ValidationSchemaExample = () => (
         email: '',
       }}
       validationSchema={SignupSchema}
-      onSubmit={(values) => {
+      onSubmit={values => {
         // same shape as initial values
         console.log(values);
       }}
@@ -169,7 +169,7 @@ export const FieldLevelValidationExample = () => (
         username: '',
         email: '',
       }}
-      onSubmit={(values) => {
+      onSubmit={values => {
         // same shape as initial values
         console.log(values);
       }}

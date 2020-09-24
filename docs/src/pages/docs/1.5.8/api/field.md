@@ -223,7 +223,7 @@ import React from 'react';
 import { Formik, Form, Field } from 'formik';
 
 // Synchronous validation function
-const validate = (value) => {
+const validate = value => {
   let errorMessage;
   if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value)) {
     errorMessage = 'Invalid email address';
@@ -232,9 +232,9 @@ const validate = (value) => {
 };
 
 // Async validation function
-const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-const validateAsync = (value) => {
+const validateAsync = value => {
   return sleep(2000).then(() => {
     if (['admin', 'null', 'god'].includes(value)) {
       throw 'Nice try';
@@ -246,7 +246,7 @@ const validateAsync = (value) => {
 const MyForm = () => (
   <Formik
     initialValues={{ email: '', username: '' }}
-    onSubmit={(values) => alert(JSON.stringify(values, null, 2))}
+    onSubmit={values => alert(JSON.stringify(values, null, 2))}
   >
     {({ errors, touched }) => (
       <Form>

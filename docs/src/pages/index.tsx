@@ -12,7 +12,7 @@ import Head from 'next/head';
 
 export interface HomeProps {}
 
-const Home: React.FC<HomeProps> = (props) => {
+const Home: React.FC<HomeProps> = props => {
   return (
     <>
       <Seo

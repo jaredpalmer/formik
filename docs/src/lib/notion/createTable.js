@@ -347,7 +347,7 @@ async function getExistingexistingBlockId() {
   }
   const data = await res.json();
   const id = Object.keys(data ? data.recordMap.block : {}).find(
-    (id) => id !== pageId
+    id => id !== pageId
   );
   return id || uuid();
 }

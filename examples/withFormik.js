@@ -4,7 +4,7 @@ import { withFormik } from '../src/formik';
 import { Debug } from './Debug';
 
 const formikEnhancer = withFormik({
-  mapPropsToValues: (props) => ({ email: props.user.email }),
+  mapPropsToValues: props => ({ email: props.user.email }),
   validationSchema: Yup.object().shape({
     email: Yup.string()
       .email('Invalid email address')
@@ -19,7 +19,7 @@ const formikEnhancer = withFormik({
   displayName: 'MyForm', // helps with React DevTools
 });
 
-const MyForm = (props) => {
+const MyForm = props => {
   const {
     values,
     touched,

@@ -3,9 +3,9 @@ import { Formik, Field, Form, ErrorMessage } from 'formik';
 import { Debug } from './Debug';
 
 // Async Validation
-const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-const validate = (values) => {
+const validate = values => {
   return sleep(300).then(() => {
     const errors = {};
 
@@ -31,7 +31,7 @@ const Username = () => (
         username: '',
       }}
       validate={validate}
-      onSubmit={(values) => {
+      onSubmit={values => {
         sleep(500).then(() => {
           alert(JSON.stringify(values, null, 2));
         });

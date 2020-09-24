@@ -39,7 +39,7 @@ const AutoSavingForm = () => (
         email: '',
       }}
       onSubmit={(values, { setSubmitting }) => {
-        return new Promise((resolve) =>
+        return new Promise(resolve =>
           setTimeout(() => {
             console.log('submitted', JSON.stringify(values, null, 2));
             setSubmitting(false);

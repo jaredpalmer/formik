@@ -18,7 +18,7 @@ export const FriendList = () => (
     <h1>Friend List</h1>
     <Formik
       initialValues={{ friends: ['jared', 'ian', 'brent'] }}
-      onSubmit={(values) =>
+      onSubmit={values =>
         setTimeout(() => {
           alert(JSON.stringify(values, null, 2));
         }, 500)
@@ -27,7 +27,7 @@ export const FriendList = () => (
         <Form>
           <FieldArray
             name="friends"
-            render={(arrayHelpers) => (
+            render={arrayHelpers => (
               <div>
                 {values.friends && values.friends.length > 0 ? (
                   values.friends.map((friend, index) => (
@@ -82,7 +82,7 @@ You can also iterate through an array of objects, by following a convention of `
 <Form>
   <FieldArray
     name="friends"
-    render={(arrayHelpers) => (
+    render={arrayHelpers => (
       <div>
         {values.friends.map((friend, index) => (
           <div key={index}>
@@ -134,7 +134,7 @@ So...to display `'Must have friends'` and `'Minimum of 3 friends'` (our example'
 
 ```jsx
 // within a `FieldArray`'s render
-const FriendArrayErrors = (errors) =>
+const FriendArrayErrors = errors =>
   errors.friends ? <div>{errors.friends}</div> : null; // app will crash
 ```
 
@@ -142,7 +142,7 @@ const FriendArrayErrors = (errors) =>
 
 ```jsx
 // within a `FieldArray`'s render
-const FriendArrayErrors = (errors) =>
+const FriendArrayErrors = errors =>
   typeof errors.friends === 'string' ? <div>{errors.friends}</div> : null;
 ```
 

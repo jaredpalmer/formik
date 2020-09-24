@@ -30,7 +30,7 @@ const SignUp = () => (
         lastName: '',
       }}
       validationSchema={SignUpSchema}
-      onSubmit={(values) => {
+      onSubmit={values => {
         setTimeout(() => {
           alert(JSON.stringify(values, null, 2));
         }, 500);

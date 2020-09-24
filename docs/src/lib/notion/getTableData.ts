@@ -29,7 +29,7 @@ export default async function loadTable(collectionBlock: any, isPosts = false) {
       row.id = entry.value.id;
     }
 
-    schemaKeys.forEach((key) => {
+    schemaKeys.forEach(key => {
       // might be undefined
       let val = props[key] && props[key][0][0];
 

@@ -42,12 +42,12 @@ const EditUserDialog = ({ user, updateUser, onClose }) => {
         initialValues={user /** { email, social } */}
         onSubmit={(values, actions) => {
           MyImaginaryRestApiCall(user.id, values).then(
-            (updatedUser) => {
+            updatedUser => {
               actions.setSubmitting(false);
               updateUser(updatedUser);
               onClose();
             },
-            (error) => {
+            error => {
               actions.setSubmitting(false);
               actions.setErrors(transformMyRestApiErrorsToAnObject(error));
               actions.setStatus({ msg: 'Set some arbitrary status or data' });
@@ -128,12 +128,12 @@ const EditUserDialog = ({ user, updateUser, onClose }) => {
         initialValues={user /** { email, social } */}
         onSubmit={(values, actions) => {
           MyImaginaryRestApiCall(user.id, values).then(
-            (updatedUser) => {
+            updatedUser => {
               actions.setSubmitting(false);
               updateUser(updatedUser);
               onClose();
             },
-            (error) => {
+            error => {
               actions.setSubmitting(false);
               actions.setErrors(transformMyRestApiErrorsToAnObject(error));
               actions.setStatus({ msg: 'Set some arbitrary status or data' });
@@ -180,12 +180,12 @@ const EditUserDialog = ({ user, updateUser, onClose }) => {
         initialValues={user /** { email, social } */}
         onSubmit={(values, actions) => {
           MyImaginaryRestApiCall(user.id, values).then(
-            (updatedUser) => {
+            updatedUser => {
               actions.setSubmitting(false);
               updateUser(updatedUser);
               onClose();
             },
-            (error) => {
+            error => {
               actions.setSubmitting(false);
               actions.setErrors(transformMyRestApiErrorsToAnObject(error));
               actions.setStatus({ msg: 'Set some arbitrary status or data' });
@@ -198,7 +198,7 @@ const EditUserDialog = ({ user, updateUser, onClose }) => {
             <ErrorMessage name="email" component="div" />
             <Field type="text" className="error" name="social.facebook" />
             <ErrorMessage name="social.facebook">
-              {(errorMessage) => <div className="error">{errorMessage}</div>}
+              {errorMessage => <div className="error">{errorMessage}</div>}
             </ErrorMessage>
             <Field type="text" name="social.twitter" />
             <ErrorMessage

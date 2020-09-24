@@ -3,7 +3,7 @@ import { ErrorMessage, Field, Form, Formik } from 'formik';
 import * as Yup from 'yup';
 import { Debug } from './Debug';
 
-const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 // Wizard is a single Formik instance whose children are each page of the
 // multi-step form. The form is submitted on each forward transition (can only
@@ -20,12 +20,12 @@ const Wizard = ({ children, initialValues, onSubmit }) => {
   const totalSteps = steps.length;
   const isLastStep = stepNumber === totalSteps - 1;
 
-  const next = (values) => {
+  const next = values => {
     setSnapshot(values);
     setStepNumber(Math.min(stepNumber + 1, totalSteps - 1));
   };
 
-  const previous = (values) => {
+  const previous = values => {
     setSnapshot(values);
     setStepNumber(Math.max(stepNumber - 1, 0));
   };
@@ -48,7 +48,7 @@ const Wizard = ({ children, initialValues, onSubmit }) => {
       onSubmit={handleSubmit}
       validationSchema={step.props.validationSchema}
     >
-      {(formik) => (
+      {formik => (
         <Form>
           <p>
             Step {stepNumber + 1} of {totalSteps}
@@ -84,7 +84,7 @@ const App = () => (
         firstName: '',
         lastName: '',
       }}
-      onSubmit={async (values) =>
+      onSubmit={async values =>
         sleep(300).then(() => console.log('Wizard submit', values))
       }
     >

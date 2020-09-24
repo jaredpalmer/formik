@@ -8,16 +8,16 @@ const Schema = Yup.object().shape({
 });
 
 // Async Validation
-const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-const validate = (values) =>
+const validate = values =>
   sleep(300).then(() => {
     return {
       zip: 'This field is required',
     };
   });
 
-const isRequired = (message) => (value) => (!!value ? undefined : message);
+const isRequired = message => value => (!!value ? undefined : message);
 
 const FieldLevelValidation = () => (
   <div>
@@ -30,7 +30,7 @@ const FieldLevelValidation = () => (
         email: '',
         zip: '',
       }}
-      onSubmit={(values) => {
+      onSubmit={values => {
         sleep(500).then(() => {
           alert(JSON.stringify(values, null, 2));
         });

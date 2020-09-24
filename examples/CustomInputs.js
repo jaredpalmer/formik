@@ -29,7 +29,7 @@ const SignUp = () => (
         website: Yup.string().url('Invalid URL').required('Required'),
         animal: Yup.string().required('Required'),
       })}
-      onSubmit={(values) => {
+      onSubmit={values => {
         setTimeout(() => {
           alert(JSON.stringify(values, null, 2));
         }, 500);

@@ -106,7 +106,7 @@ function MyOtherComponent(props) {
   const { value } = meta;
   const { setValue } = helpers;
 
-  const isSelected = (v) => (v === value ? 'selected' : '');
+  const isSelected = v => (v === value ? 'selected' : '');
 
   return (
     <div className="itemsPerPage">

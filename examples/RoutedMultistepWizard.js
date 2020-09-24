@@ -9,9 +9,9 @@ const formRootPath = '/step';
 // the specific path for each page
 const locations = ['/step/1', '/step/2'];
 
-const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-const required = (value) => (value ? undefined : 'Required');
+const required = value => (value ? undefined : 'Required');
 
 class WizardBase extends React.Component {
   static Page = ({ children }) => children;
@@ -23,7 +23,7 @@ class WizardBase extends React.Component {
     };
   }
 
-  next = (values) => {
+  next = values => {
     const { location, history } = this.props;
     this.setState(() => ({ values }));
 
@@ -39,7 +39,7 @@ class WizardBase extends React.Component {
     history.push(locations[prevPath]);
   };
 
-  validate = (values) => {
+  validate = values => {
     const { location, children } = this.props;
 
     const page = locations.indexOf(location.pathname);
@@ -112,7 +112,7 @@ const App = () => (
       <h1>Multistep / Form Wizard </h1>
       <Route
         path={formRootPath}
-        render={(routeProps) => (
+        render={routeProps => (
           <Wizard
             {...routeProps}
             initialValues={{
@@ -161,7 +161,7 @@ const App = () => (
               </div>
             </Wizard.Page>
             <Wizard.Page
-              validate={(values) => {
+              validate={values => {
                 const errors = {};
                 if (!values.email) {
                   errors.email = 'Required';

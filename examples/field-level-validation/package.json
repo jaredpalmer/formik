@@ -1,0 +1,17 @@
+{
+  "name": "formik-example-radio-group",
+  "version": "0.1.0",
+  "description": "This example demonstrates how to create a radio group with Formik",
+  "main": "index.js",
+  "dependencies": {
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0",
+    "react-scripts": "3.3.0",
+    "formik": "latest"
+  },
+  "prettier": {
+    "trailingComma": "es5",
+    "singleQuote": true,
+    "semi": true
+  }
+}

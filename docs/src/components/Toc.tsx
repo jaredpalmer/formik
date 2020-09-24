@@ -32,7 +32,7 @@ export const Toc: React.FC<{}> = () => {
     TOP_OFFSET,
     getHeaderAnchors,
     getHeaderDataFromAnchors,
-    (el) => el?.parentElement?.id
+    el => el?.parentElement?.id
   );
   return (
     <ul className="space-y-3">

@@ -4,7 +4,10 @@
   "devDependencies": {
     "cypress": "^5.2.0",
     "got": "10.0.4",
+    "husky": "^4.3.0",
     "lerna": "^3.19.0",
+    "lint-staged": "^10.4.0",
+    "prettier": "^2.1.2",
     "release": "6.0.1"
   },
   "workspaces": [
@@ -16,13 +19,22 @@
     "test": "lerna run test --",
     "build": "lerna run build",
     "prepublish": "lerna run prepublish",
+    "format": "prettier --trailing-comma es5 --single-quote --write 'examples/**/*' 'packages/*/src/**/*' 'docs/src/**/*' 'app/pages/**/*'  'packages/*/test/**/*' 'README.md'",
     "publish-canary": "lerna version prerelease --preid canary --force-publish && release --pre",
     "publish-stable": "lerna version --force-publish && release && node ./scripts/release-notes.js",
     "git-reset": "git reset --hard HEAD",
     "git-clean": "git clean -d -x -e node_modules -e packages -f",
     "cypress": "cypress run",
+    "precommit": "lint-staged",
     "cypress:open": "cypress open",
     "start:app": "npm run build && yarn --cwd packages/formik link && yarn --cwd node_modules/react link && yarn --cwd ./app link react formik && yarn --cwd ./app && yarn --cwd ./app run dev"
+  },
+  "lint-staged": {
+    "**/*.{ts,tsx,md,mdx,js,jsx}": [
+      "npm run format",
+      "tsdx lint",
+      "git add"
+    ]
   },
   "prettier": {
     "trailingComma": "es5",

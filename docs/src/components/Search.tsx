@@ -154,7 +154,7 @@ export const Search: React.FC<SearchProps> = ({ appId }) => {
               },
             }}
             transformItems={(items: any[]) => {
-              return items.map((item) => {
+              return items.map(item => {
                 const url = new URL(item.url);
                 return {
                   ...item,

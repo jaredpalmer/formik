@@ -35,9 +35,9 @@ const TwoFactorVerificationForm = () => (
       validate={values => {
         const errors = {};
         if (values.token.length < 5) {
-          errors.token = 'Invalid code. Too short.'
+          errors.token = 'Invalid code. Too short.';
         }
-        return errors
+        return errors;
       }}
       onSubmit={(values, actions) => {
         setTimeout(() => {
@@ -46,10 +46,10 @@ const TwoFactorVerificationForm = () => (
         }, 1000);
       }}
     >
-        <Form>
-          <Field name="token" type="tel" />
-          <AutoSubmitToken />
-        </Form>
+      <Form>
+        <Field name="token" type="tel" />
+        <AutoSubmitToken />
+      </Form>
     </Formik>
   </div>
 );

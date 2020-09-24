@@ -2,37 +2,33 @@ examples:
   - example/*
   - example/**/*
 
-Formik:
+'Component: Formik':
   - packages/formik/src/Formik.tsx
   - packages/formik/test/Formik.test.tsx
 
-Field:
+'Component: Field':
   - packages/formik/src/Field.tsx
   - packages/formik/test/Field.test.tsx
 
-Form:
+'Component: Form':
   - packages/formik/src/Form.tsx
   - packages/formik/test/Form.test.tsx
 
-FastField:
+'Component: FastField':
   - packages/formik/src/FastField.tsx
   - packages/formik/test/FastField.test.tsx
 
-FieldArray:
+'Component: FieldArray':
   - packages/formik/src/FieldArray.tsx
   - packages/formik/test/FieldArray.test.tsx
 
-ErrorMessage:
+'Component: ErrorMessage':
   - packages/formik/src/ErrorMessage.tsx
   - packages/formik/test/ErrorMessage.test.tsx
 
-withFormik:
+'Component: withFormik':
   - packages/formik/src/withFormik.tsx
   - packages/formik/test/withFormik.t.testsx
-
-utils:
-  - packages/formik/src/utils.ts
-  - packages/formik/test/util.tests.ts
 
 cypress:
   - cypress/*
@@ -41,6 +37,3 @@ cypress:
 docs:
   - ./docs/*
   - ./docs/**
-
-repo:
-  - ./*

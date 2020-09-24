@@ -44,7 +44,7 @@ export const TocNotion: React.FC<{}> = () => {
     TOP_OFFSET,
     getHeaderNotionAnchors,
     getHeadingDataFromAnchor,
-    (el) => el?.id
+    el => el?.id
   );
   return (
     <>

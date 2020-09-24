@@ -57,8 +57,6 @@ export const ValidationSchemaExample = () => (
 );
 ```
 
-
-
 ## Table of Contents
 
 ---

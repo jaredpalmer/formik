@@ -76,7 +76,7 @@ export const getStaticProps: GetStaticProps<any, { slug: string[] }> = async ({
       post,
       preview: preview || false,
     },
-    unstable_revalidate: 10,
+    revalidate: 10,
   };
 };
 

@@ -364,6 +364,16 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     }
   );
 
+  React.useEffect(() => {
+    if (
+      validateOnMount &&
+      isMounted.current === true &&
+      isEqual(initialValues.current, props.initialValues)
+    ) {
+      validateFormWithLowPriority(initialValues.current);
+    }
+  }, [validateOnMount, validateFormWithLowPriority]);
+
   const resetForm = React.useCallback(
     (nextState?: Partial<FormikState<Values>>) => {
       const values =
@@ -436,9 +446,8 @@ export function useFormik<Values extends FormikValues = FormikValues>({
       isMounted.current === true &&
       !isEqual(initialValues.current, props.initialValues)
     ) {
-      initialValues.current = props.initialValues;
-
       if (enableReinitialize) {
+        initialValues.current = props.initialValues;
         resetForm();
       }
 
@@ -495,7 +504,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     // changes if the validation function is synchronous. It's different from
     // what is called when using validateForm.
 
-    if (isFunction(fieldRegistry.current[name].validate)) {
+    if (fieldRegistry.current[name] && isFunction(fieldRegistry.current[name].validate)) {
       const value = getIn(state.values, name);
       const maybePromise = fieldRegistry.current[name].validate(value);
       if (isPromise(maybePromise)) {

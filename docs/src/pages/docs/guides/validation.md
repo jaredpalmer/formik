@@ -20,7 +20,7 @@ There are 2 ways to do form-level validation with Formik:
 
 #### `validate`
 
-`<Formik>` and `withFormik()` take prop/option called `validate` that accepts either a synchronous or asynchronous function.
+`<Formik>` and `withFormik()` take a prop/option called `validate` that accepts either a synchronous or asynchronous function.
 
 ```js
 // Synchronous validation

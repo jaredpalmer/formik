@@ -29,7 +29,7 @@
   "scripts": {
     "test": "tsdx test --env=jsdom",
     "test:watch": "npm run test -- --watchAll",
-    "start": "cross-env NODE_ENV=development tsdx watch --verbose",
+    "start": "cross-env NODE_ENV=development tsdx watch --verbose --noClean",
     "prebuild": "rimraf dist",
     "build": "cross-env NODE_ENV=production tsdx build --format=cjs,esm,umd",
     "prepublish": "npm run build",

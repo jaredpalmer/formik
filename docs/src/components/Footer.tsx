@@ -67,7 +67,7 @@ export const Footer: React.FC<FooterProps> = props => {
                   </li>
                   <li className="mt-4">
                     <a
-                      href="https://github.com/formik/formik/discussions"
+                      href="https://github.com/formium/formik/discussions"
                       className="text-base leading-6 text-gray-500 hover:text-gray-900"
                     >
                       Project Forum
@@ -83,7 +83,7 @@ export const Footer: React.FC<FooterProps> = props => {
                   </li>
                   <li className="mt-4">
                     <a
-                      href="https://github.com/formik/formik/releases/tag/v2.1.3"
+                      href="https://github.com/formik/formik/releases"
                       className="text-base leading-6 text-gray-500 hover:text-gray-900"
                     >
                       Releases
@@ -92,7 +92,7 @@ export const Footer: React.FC<FooterProps> = props => {
                   <li className="mt-4">
                     <a
                       className="github-button"
-                      href="https://github.com/formik/formik"
+                      href="https://github.com/formium/formik"
                       data-color-scheme="no-preference: light; light: light; dark: dark;"
                       data-icon="octicon-star"
                       data-size="large"

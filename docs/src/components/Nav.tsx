@@ -1,9 +1,8 @@
-import * as React from 'react';
 import Link from 'next/link';
-import { Logo } from './Logo';
-import { siteConfig } from 'siteConfig';
-import { FeedbackInput } from './FeedbackInput';
 import { useRouter } from 'next/router';
+import * as React from 'react';
+import { siteConfig } from 'siteConfig';
+import { Logo } from './Logo';
 
 export const Nav: React.FC = () => {
   const router = useRouter();

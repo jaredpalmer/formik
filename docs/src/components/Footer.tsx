@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 export interface FooterProps {}
 
-export const Footer: React.FC<FooterProps> = props => {
+export const Footer: React.FC<FooterProps> = (props) => {
   return (
     <div className="bg-gray-50 border-t border-gray-200">
       <div className="container mx-auto py-12 px-4 sm:px-6 lg:py-16 lg:px-8">

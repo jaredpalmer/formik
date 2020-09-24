@@ -17,17 +17,15 @@ const Basic = () => (
         picked: '',
       }}
       validationSchema={Yup.object().shape({
-        email: Yup.string()
-          .email('Invalid email address')
-          .required('Required'),
+        email: Yup.string().email('Invalid email address').required('Required'),
         firstName: Yup.string().required('Required'),
         lastName: Yup.string()
           .min(2, 'Must be longer than 2 characters')
           .max(20, 'Nice try, nobody has a last name that long')
           .required('Required'),
       })}
-      onSubmit={async values => {
-        await new Promise(r => setTimeout(r, 500));
+      onSubmit={async (values) => {
+        await new Promise((r) => setTimeout(r, 500));
         alert(JSON.stringify(values, null, 2));
       }}
     >

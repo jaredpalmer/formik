@@ -17,8 +17,8 @@ Form-level validation is useful because you have complete access to all of your 
 
 There are 2 ways to do form-level validation with Formik:
 
-* `<Formik validate>` and `withFormik({ validate: ... })`
-* `<Formik validationSchema>` and `withFormik({ validationSchema: ... })`
+- `<Formik validate>` and `withFormik({ validate: ... })`
+- `<Formik validationSchema>` and `withFormik({ validationSchema: ... })`
 
 #### `validate`
 
@@ -41,7 +41,7 @@ const validate = (values, props /* only available when using withFormik */) => {
 };
 
 // Async Validation
-const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const validate = (values, props /* only available when using withFormik */) => {
   return sleep(2000).then(() => {
@@ -90,9 +90,7 @@ const SignupSchema = Yup.object().shape({
     .min(2, 'Too Short!')
     .max(50, 'Too Long!')
     .required('Required'),
-  email: Yup.string()
-    .email('Invalid email')
-    .required('Required'),
+  email: Yup.string().email('Invalid email').required('Required'),
 });
 
 export const ValidationSchemaExample = () => (
@@ -105,7 +103,7 @@ export const ValidationSchemaExample = () => (
         email: '',
       }}
       validationSchema={SignupSchema}
-      onSubmit={values => {
+      onSubmit={(values) => {
         // same shape as initial values
         console.log(values);
       }}
@@ -171,7 +169,7 @@ export const FieldLevelValidationExample = () => (
         username: '',
         email: '',
       }}
-      onSubmit={values => {
+      onSubmit={(values) => {
         // same shape as initial values
         console.log(values);
       }}
@@ -262,25 +260,25 @@ You can control when Formik runs validation by changing the values of `<Formik v
 
 **After "change" events/methods** (things that update`values`)
 
-* `handleChange`
-* `setFieldValue`
-* `setValues`
+- `handleChange`
+- `setFieldValue`
+- `setValues`
 
 **After "blur" events/methods** (things that update `touched`)
 
-* `handleBlur`
-* `setTouched`
-* `setFieldTouched`
+- `handleBlur`
+- `setTouched`
+- `setFieldTouched`
 
 **Whenever submission is attempted**
 
-* `handleSubmit`
-* `submitForm`
+- `handleSubmit`
+- `submitForm`
 
 There are also imperative helper methods provided to you via Formik's render/injected props which you can use to imperatively call validation.
 
-* `validateForm`
-* `validateField`
+- `validateForm`
+- `validateField`
 
 ## Displaying Error Messages
 

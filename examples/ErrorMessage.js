@@ -8,9 +8,7 @@ import { Debug } from './Debug';
 // React PropTypes / Hapi.js's Joi. You can define these inline or, you may want
 // to keep them separate so you can reuse schemas (e.g. address) across your application.
 const SignUpSchema = Yup.object().shape({
-  email: Yup.string()
-    .email('Invalid email address')
-    .required('Required'),
+  email: Yup.string().email('Invalid email address').required('Required'),
   firstName: Yup.string()
     .min(2, 'Must be longer than 2 characters')
     .max(20, 'Nice try, nobody has a first name that long')
@@ -32,7 +30,7 @@ const SignUp = () => (
         lastName: '',
       }}
       validationSchema={SignUpSchema}
-      onSubmit={values => {
+      onSubmit={(values) => {
         setTimeout(() => {
           alert(JSON.stringify(values, null, 2));
         }, 500);

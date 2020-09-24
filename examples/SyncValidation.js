@@ -2,7 +2,7 @@ import React from 'react';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import { Debug } from './Debug';
 
-const validate = values => {
+const validate = (values) => {
   const errors = {};
   if (!values.email) {
     errors.email = 'Required';
@@ -21,7 +21,7 @@ const SignIn = () => (
         password: '',
       }}
       validate={validate}
-      onSubmit={values => {
+      onSubmit={(values) => {
         setTimeout(() => {
           alert(JSON.stringify(values, null, 2));
         }, 500);

@@ -20,12 +20,12 @@ import React from 'react';
 import { Button, TextInput, View } from 'react-native';
 import { Formik } from 'formik';
 
-export const MyReactNativeForm = props => (
+export const MyReactNativeForm = (props) => (
   <Formik
     initialValues={{ email: '' }}
-    onSubmit={values => console.log(values)}
+    onSubmit={(values) => console.log(values)}
   >
-    {props => (
+    {(props) => (
       <View>
         <TextInput
           onChangeText={props.handleChange('email')}

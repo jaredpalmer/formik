@@ -14,7 +14,7 @@ title: Migrating from v1.x to v2.x
 
 ### `resetForm`
 
-With Formik 2, we introduced the new props for more initial state: `initialErrors`, `initialTouched`, `initialStatus`. Therefore, `resetForm`'s signature has changed. Instead of optionally accepting just the next initial values of the form. It now optionally accepts the partial next initial state of Formik. 
+With Formik 2, we introduced the new props for more initial state: `initialErrors`, `initialTouched`, `initialStatus`. Therefore, `resetForm`'s signature has changed. Instead of optionally accepting just the next initial values of the form. It now optionally accepts the partial next initial state of Formik.
 
 **v1**
 
@@ -22,33 +22,33 @@ With Formik 2, we introduced the new props for more initial state: `initialError
 // Reset to `initialValues`
 formik.resetForm();
 // Reset form and set the next `initialValues` of the form
-formik.resetForm({ name: '', email: '' }) ;
+formik.resetForm({ name: '', email: '' });
 ```
 
 **v2**
 
 ```jsx
-// Reset the form. This will set the next initial state of 
+// Reset the form. This will set the next initial state of
 // Formik to the `initialValues`, `initialErrors`, `initialTouched`,
 // `initialStatus` props.
 formik.resetForm();
 
 // Reset the form back to `initialXXXX` but change next
 // `initialValues` to a custom value
-formik.resetForm({ 
-  values: { name: 'Custom initial values', email: '' }
-}) ;
+formik.resetForm({
+  values: { name: 'Custom initial values', email: '' },
+});
 
-// Reset form back to `initialXXXX`, but change next `initialValues` 
+// Reset form back to `initialXXXX`, but change next `initialValues`
 // and `initialErrors` of the form
-formik.resetForm({ 
-  values: { name: '', email: '' }, 
+formik.resetForm({
+  values: { name: '', email: '' },
   errors: { name: 'Something special' },
 });
 
 // Reset form back to `initialXXXX`, but change next `initialStatus` to 'Foo'
-formik.resetForm({   
-  status: 'Foo'
+formik.resetForm({
+  status: 'Foo',
 });
 ```
 
@@ -63,7 +63,6 @@ As you may know, you can return a Promise of a validation error from `validate`.
 ### `ref`
 
 Currently, you can't attach a ref to Formik using the `ref` prop. However, you still can get around this issue using the prop `innerRef`. We have some WIP [#2208](https://github.com/jaredpalmer/formik/issues/2208) to instead use `React.forwardRef`.
-
 
 ### `isValid`
 
@@ -120,7 +119,7 @@ import React from 'react';
 import { Formik, Field, Form } from 'formik';
 import { Debug } from './Debug';
 
-const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const CheckboxExample = () => (
   <div>
@@ -136,7 +135,7 @@ const CheckboxExample = () => (
         jobType: ['designer'],
         location: [],
       }}
-      onSubmit={async values => {
+      onSubmit={async (values) => {
         await sleep(1000);
         alert(JSON.stringify(values, null, 2));
       }}
@@ -272,7 +271,6 @@ const MyStyledTextarea = MyStyledInput.withComponent('textarea');
 // <textarea placeholder="Post a message..." rows={5}></textarea>
 <Field name="message" as={MyStyledTextArea} placeholder="Post a message.." rows={4}/>
 ```
-
 
 ### `getFieldProps(nameOrProps)`
 

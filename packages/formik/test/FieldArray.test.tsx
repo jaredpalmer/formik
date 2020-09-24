@@ -6,7 +6,7 @@ import { FieldArray, Formik, isFunction } from '../src';
 // tslint:disable-next-line:no-empty
 const noop = () => {};
 
-const TestForm: React.SFC<any> = p => (
+const TestForm: React.SFC<any> = (p) => (
   <Formik
     onSubmit={noop}
     initialValues={{ friends: ['jared', 'andrea', 'brent'] }}
@@ -43,7 +43,7 @@ describe('<FieldArray />', () => {
         {() => (
           <FieldArray
             name="friends"
-            render={arrayProps => {
+            render={(arrayProps) => {
               expect(isFunction(arrayProps.push)).toBeTruthy();
               return null;
             }}
@@ -59,7 +59,7 @@ describe('<FieldArray />', () => {
       <TestForm>
         {() => (
           <FieldArray name="friends">
-            {arrayProps => {
+            {(arrayProps) => {
               expect(isFunction(arrayProps.push)).toBeTruthy();
               return null;
             }}
@@ -76,7 +76,7 @@ describe('<FieldArray />', () => {
         {() => (
           <FieldArray
             name="friends"
-            render={arrayProps => {
+            render={(arrayProps) => {
               expect(arrayProps.name).toBe('friends');
               return null;
             }}
@@ -98,7 +98,7 @@ describe('<FieldArray />', () => {
             return (
               <FieldArray
                 name="friends"
-                render={arrayProps => {
+                render={(arrayProps) => {
                   arrayHelpers = arrayProps;
                   return null;
                 }}
@@ -164,7 +164,7 @@ describe('<FieldArray />', () => {
             return (
               <FieldArray
                 name="people"
-                render={arrayProps => {
+                render={(arrayProps) => {
                   arrayHelpers = arrayProps;
                   return null;
                 }}
@@ -196,7 +196,7 @@ describe('<FieldArray />', () => {
             return (
               <FieldArray
                 name="friends"
-                render={arrayProps => {
+                render={(arrayProps) => {
                   arrayHelpers = arrayProps;
                   return null;
                 }}
@@ -225,7 +225,7 @@ describe('<FieldArray />', () => {
             return (
               <FieldArray
                 name="friends"
-                render={arrayProps => {
+                render={(arrayProps) => {
                   arrayHelpers = arrayProps;
                   return null;
                 }}
@@ -253,7 +253,7 @@ describe('<FieldArray />', () => {
             return (
               <FieldArray
                 name="friends"
-                render={arrayProps => {
+                render={(arrayProps) => {
                   arrayHelpers = arrayProps;
                   return null;
                 }}
@@ -281,7 +281,7 @@ describe('<FieldArray />', () => {
             return (
               <FieldArray
                 name="friends"
-                render={arrayProps => {
+                render={(arrayProps) => {
                   arrayHelpers = arrayProps;
                   return null;
                 }}
@@ -309,7 +309,7 @@ describe('<FieldArray />', () => {
             return (
               <FieldArray
                 name="friends"
-                render={arrayProps => {
+                render={(arrayProps) => {
                   arrayHelpers = arrayProps;
                   return null;
                 }}
@@ -339,7 +339,7 @@ describe('<FieldArray />', () => {
             return (
               <FieldArray
                 name="friends"
-                render={arrayProps => {
+                render={(arrayProps) => {
                   arrayHelpers = arrayProps;
                   return null;
                 }}
@@ -386,7 +386,7 @@ describe('<FieldArray />', () => {
             return (
               <FieldArray
                 name="friends"
-                render={arrayProps => {
+                render={(arrayProps) => {
                   arrayHelpers = arrayProps;
                   return null;
                 }}

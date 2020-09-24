@@ -25,7 +25,7 @@ const BasicExample = () => (
         }, 1000);
       }}
     >
-      {props => (
+      {(props) => (
         <form onSubmit={props.handleSubmit}>
           <input
             type="text"
@@ -347,7 +347,7 @@ Validate the form's `values` with function. This function can either be:
 
 ```js
 // Synchronous validation
-const validate = values => {
+const validate = (values) => {
   const errors = {};
 
   if (!values.email) {
@@ -366,9 +366,9 @@ const validate = values => {
 
 ```js
 // Async Validation
-const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-const validate = values => {
+const validate = (values) => {
   return sleep(2000).then(() => {
     const errors = {};
     if (['admin', 'null', 'god'].includes(values.username)) {

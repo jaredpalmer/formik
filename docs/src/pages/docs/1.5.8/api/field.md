@@ -12,17 +12,17 @@ attribute to match up with Formik state. `<Field />` will default to an HTML
 
 There are 3 ways to render things with `<Field>`.
 
-* `<Field component>`
-* `<Field render>`
-* `<Field children>`
+- `<Field component>`
+- `<Field render>`
+- `<Field children>`
 
 Aside from string-only `component`, each render prop is passed the same props for your convenience.
 
 Field's render props are an object containing:
 
-* `field`: An object containing `onChange`, `onBlur`, `name`, and `value` of the field
-* `form`: Formik state and helpers
-* Any other props passed to field
+- `field`: An object containing `onChange`, `onBlur`, `name`, and `value` of the field
+- `form`: Formik state and helpers
+- Any other props passed to field
 
 ## Example
 
@@ -70,13 +70,12 @@ const CustomInputComponent = ({
 }) => (
   <div>
     <input type="text" {...field} {...props} />
-    {touched[field.name] &&
-      errors[field.name] && <div className="error">{errors[field.name]}</div>}
+    {touched[field.name] && errors[field.name] && (
+      <div className="error">{errors[field.name]}</div>
+    )}
   </div>
 );
 ```
-
-
 
 ## Table of Contents
 
@@ -118,10 +117,10 @@ Either JSX elements or callback function. Same as `render`.
 
 Either a React component or the name of an HTML element to render. That is, one of the following:
 
-* `input`
-* `select`
-* `textarea`
-* A custom React Component
+- `input`
+- `select`
+- `textarea`
+- A custom React Component
 
 Custom React Components will be passed `FieldProps` which is same `render` prop parameters of `<Field render>` plus any other props passed to directly to `<Field>`.
 
@@ -212,10 +211,10 @@ You can run independent field-level validations by passing a function to the
 `validateOnChange` config/props specified in the `<Field>'s` parent `<Formik>`
 / `withFormik`. This function can be either be synchronous or asynchronous:
 
-* Sync: if invalid, return a `string` containing the error message or
+- Sync: if invalid, return a `string` containing the error message or
   return `undefined`.
 
-* Async: return a Promise that throws a `string` containing the error message.
+- Async: return a Promise that throws a `string` containing the error message.
   This works like Formik's `validate`, but instead of returning an `errors`
   object, it's just a `string`.
 
@@ -224,7 +223,7 @@ import React from 'react';
 import { Formik, Form, Field } from 'formik';
 
 // Synchronous validation function
-const validate = value => {
+const validate = (value) => {
   let errorMessage;
   if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value)) {
     errorMessage = 'Invalid email address';
@@ -233,9 +232,9 @@ const validate = value => {
 };
 
 // Async validation function
-const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-const validateAsync = value => {
+const validateAsync = (value) => {
   return sleep(2000).then(() => {
     if (['admin', 'null', 'god'].includes(value)) {
       throw 'Nice try';
@@ -247,7 +246,7 @@ const validateAsync = value => {
 const MyForm = () => (
   <Formik
     initialValues={{ email: '', username: '' }}
-    onSubmit={values => alert(JSON.stringify(values, null, 2))}
+    onSubmit={(values) => alert(JSON.stringify(values, null, 2))}
   >
     {({ errors, touched }) => (
       <Form>

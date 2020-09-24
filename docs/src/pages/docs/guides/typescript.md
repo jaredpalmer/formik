@@ -96,7 +96,7 @@ interface MyFormProps {
 // Wrap our form with the withFormik HoC
 const MyForm = withFormik<MyFormProps, FormValues>({
   // Transform outer props into form values
-  mapPropsToValues: props => {
+  mapPropsToValues: (props) => {
     return {
       email: props.initialEmail || '',
       password: '',
@@ -114,7 +114,7 @@ const MyForm = withFormik<MyFormProps, FormValues>({
     return errors;
   },
 
-  handleSubmit: values => {
+  handleSubmit: (values) => {
     // do submitting things
   },
 })(InnerForm);

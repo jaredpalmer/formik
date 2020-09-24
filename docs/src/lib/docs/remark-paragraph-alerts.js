@@ -11,14 +11,14 @@ const sigils = {
 module.exports = function paragraphCustomAlertsPlugin() {
   return function transformer(tree) {
     visit(tree, 'paragraph', (pNode, _, parent) => {
-      visit(pNode, 'text', textNode => {
-        Object.keys(sigils).forEach(symbol => {
+      visit(pNode, 'text', (textNode) => {
+        Object.keys(sigils).forEach((symbol) => {
           if (textNode.value.startsWith(`${symbol} `)) {
             // Remove the literal sigil symbol from string contents
             textNode.value = textNode.value.replace(`${symbol} `, '');
 
             // Wrap matched nodes with <div> (containing proper attributes)
-            parent.children = parent.children.map(node => {
+            parent.children = parent.children.map((node) => {
               return is(pNode, node)
                 ? {
                     type: 'wrapper',

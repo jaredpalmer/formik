@@ -1,23 +1,23 @@
 // commonjs so it can be run without transpiling
-const uuid = require('uuid/v4')
-const fetch = require('node-fetch')
+const uuid = require('uuid/v4');
+const fetch = require('node-fetch');
 const {
   BLOG_INDEX_ID: pageId,
   NOTION_TOKEN,
   API_ENDPOINT,
-} = require('./server-constants')
+} = require('./server-constants');
 
 async function main() {
-  const userId = await getUserId()
-  const transactionId = () => uuid()
-  const collectionId = uuid()
-  const collectionViewId = uuid()
-  const viewId = uuid()
-  const now = Date.now()
-  const pageId1 = uuid()
-  const pageId2 = uuid()
-  const pageId3 = uuid()
-  let existingBlockId = await getExistingexistingBlockId()
+  const userId = await getUserId();
+  const transactionId = () => uuid();
+  const collectionId = uuid();
+  const collectionViewId = uuid();
+  const viewId = uuid();
+  const now = Date.now();
+  const pageId1 = uuid();
+  const pageId2 = uuid();
+  const pageId3 = uuid();
+  let existingBlockId = await getExistingexistingBlockId();
 
   const requestBody = {
     requestId: uuid(),
@@ -308,7 +308,7 @@ async function main() {
         ],
       },
     ],
-  }
+  };
 
   const res = await fetch(`${API_ENDPOINT}/submitTransaction`, {
     method: 'POST',
@@ -317,10 +317,10 @@ async function main() {
       'content-type': 'application/json',
     },
     body: JSON.stringify(requestBody),
-  })
+  });
 
   if (!res.ok) {
-    throw new Error(`Failed to add table, request status ${res.status}`)
+    throw new Error(`Failed to add table, request status ${res.status}`);
   }
 }
 
@@ -338,18 +338,18 @@ async function getExistingexistingBlockId() {
       chunkNumber: 0,
       verticalColumns: false,
     }),
-  })
+  });
 
   if (!res.ok) {
     throw new Error(
       `failed to get existing block id, request status: ${res.status}`
-    )
+    );
   }
-  const data = await res.json()
+  const data = await res.json();
   const id = Object.keys(data ? data.recordMap.block : {}).find(
-    id => id !== pageId
-  )
-  return id || uuid()
+    (id) => id !== pageId
+  );
+  return id || uuid();
 }
 
 async function getUserId() {
@@ -360,15 +360,15 @@ async function getUserId() {
       'content-type': 'application/json',
     },
     body: '{}',
-  })
+  });
 
   if (!res.ok) {
     throw new Error(
       `failed to get Notion user id, request status: ${res.status}`
-    )
+    );
   }
-  const data = await res.json()
-  return Object.keys(data.recordMap.notion_user)[0]
+  const data = await res.json();
+  return Object.keys(data.recordMap.notion_user)[0];
 }
 
-module.exports = main
+module.exports = main;

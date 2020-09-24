@@ -1,8 +1,8 @@
-import React from "react";
-import ReactDOM from "react-dom";
-import { Formik, Field, Form } from "formik";
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { Formik, Field, Form } from 'formik';
 
-const sleep = ms => new Promise(r => setTimeout(r, ms));
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 const Basic = () => (
   <div>
@@ -10,9 +10,9 @@ const Basic = () => (
     <Formik
       initialValues={{
         toggle: false,
-        checked: []
+        checked: [],
       }}
-      onSubmit={async values => {
+      onSubmit={async (values) => {
         await sleep(500);
         alert(JSON.stringify(values, null, 2));
       }}
@@ -57,4 +57,4 @@ const Basic = () => (
   </div>
 );
 
-ReactDOM.render(<Basic />, document.getElementById("root"));
+ReactDOM.render(<Basic />, document.getElementById('root'));

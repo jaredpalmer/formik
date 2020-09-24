@@ -13,7 +13,7 @@ export const useBoolean = (initial: boolean) => {
     value,
     {
       setValue,
-      toggle: useCallback(() => setValue(v => !v), []),
+      toggle: useCallback(() => setValue((v) => !v), []),
       setTrue: useCallback(() => setValue(true), []),
       setFalse: useCallback(() => setValue(false), []),
     },

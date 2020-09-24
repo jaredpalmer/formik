@@ -19,7 +19,7 @@ export const getStaticProps: GetStaticProps<any> = async ({ preview }) => {
 
   const authorsToGet: Set<string> = new Set();
   const posts: any[] = Object.keys(postsTable)
-    .map(slug => {
+    .map((slug) => {
       const post = postsTable[slug];
       // remove draft posts in production
       if (!preview && !postIsPublished(post)) {
@@ -35,7 +35,7 @@ export const getStaticProps: GetStaticProps<any> = async ({ preview }) => {
 
   const { users } = await getNotionUsers([...(authorsToGet as any)]);
 
-  posts.map(post => {
+  posts.map((post) => {
     post.Authors = post.Authors.map((id: any) => users[id].full_name);
   });
 

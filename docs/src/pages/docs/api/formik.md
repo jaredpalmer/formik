@@ -25,7 +25,7 @@ const BasicExample = () => (
         }, 1000);
       }}
     >
-      {props => (
+      {(props) => (
         <form onSubmit={props.handleSubmit}>
           <input
             type="text"
@@ -139,32 +139,34 @@ If `nextState` is specified, Formik will set `nextState.values` as the new "init
 // typescript usage
 function MyForm(props: MyFormProps) {
   // using TSX Generics here to set <Values> to <Blog>
-  return (<Formik<Blog>
+  return (
+    <Formik<Blog>
       initialValues={props.initVals}
       onSubmit={(values, actions) => {
         props.onSubmit(values).then(() => {
           actions.setSubmitting(false);
           actions.resetForm({
-            values: { // the type of `values` inferred to be Blog
-              title: "",
-              image: "",
-              body: "",
+            values: {
+              // the type of `values` inferred to be Blog
+              title: '',
+              image: '',
+              body: '',
             },
             // you can also set the other form states here
           });
         });
       }}
     >
-    // etc
+      // etc
     </Formik>
-    )
+  );
 }
 ```
 
 If `nextState` is omitted, then Formik will reset state to the original initial state. The latter is useful for calling `resetForm` within `componentDidUpdate` or `useEffect`.
 
 ```tsx
-actions.resetForm()
+actions.resetForm();
 ```
 
 #### `setErrors: (fields: { [field: string]: string }) => void`
@@ -400,7 +402,7 @@ Validate the form's `values` with function. This function can either be:
 
 ```js
 // Synchronous validation
-const validate = values => {
+const validate = (values) => {
   const errors = {};
 
   if (!values.email) {
@@ -419,9 +421,9 @@ const validate = values => {
 
 ```js
 // Async Validation
-const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-const validate = values => {
+const validate = (values) => {
   return sleep(2000).then(() => {
     const errors = {};
     if (['admin', 'null', 'god'].includes(values.username)) {

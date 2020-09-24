@@ -69,7 +69,7 @@ export const getStaticProps: GetStaticProps<any, { slug: string[] }> = async ({
   }
 
   const { users } = await getNotionUsers(post.Authors || []);
-  post.Authors = Object.keys(users).map(id => users[id].full_name);
+  post.Authors = Object.keys(users).map((id) => users[id].full_name);
 
   return {
     props: {
@@ -87,8 +87,8 @@ export async function getStaticPaths() {
   // for actually published ones
   return {
     paths: Object.keys(postsTable)
-      .filter(post => postsTable[post].Published === 'Yes')
-      .map(slug => getBlogLink(slug)),
+      .filter((post) => postsTable[post].Published === 'Yes')
+      .map((slug) => getBlogLink(slug)),
     fallback: true,
   };
 }
@@ -223,7 +223,7 @@ const RenderPost = ({ post, redirect, preview }: any) => {
                     React.createElement(
                       listTagName,
                       { key: listLastId! },
-                      Object.keys(listMap).map(itemId => {
+                      Object.keys(listMap).map((itemId) => {
                         if (listMap[itemId].isNested) return null;
 
                         const createEl = (item: any) =>
@@ -283,9 +283,11 @@ const RenderPost = ({ post, redirect, preview }: any) => {
                     const roundFactor = Math.pow(10, 2);
                     // calculate percentages
                     const width = block_width
-                      ? `${Math.round(
-                          (block_width / baseBlockWidth) * 100 * roundFactor
-                        ) / roundFactor}%`
+                      ? `${
+                          Math.round(
+                            (block_width / baseBlockWidth) * 100 * roundFactor
+                          ) / roundFactor
+                        }%`
                       : block_height || '100%';
 
                     const isImage = type === 'image';

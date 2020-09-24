@@ -57,8 +57,6 @@ export const ValidationSchemaExample = () => (
 );
 ```
 
-
-
 ## Table of Contents
 
 ---
@@ -76,7 +74,7 @@ A function that returns a valid React element. Will only be called when the fiel
 ```jsx
 // the render callback will only be called when the
 // field has been touched and an error exists and subsequent updates.
-<ErrorMessage name="email">{msg => <div>{msg}</div>}</ErrorMessage>
+<ErrorMessage name="email">{(msg) => <div>{msg}</div>}</ErrorMessage>
 ```
 
 ### `component`
@@ -116,5 +114,5 @@ A function that returns a valid React element. Will only be called when the fiel
 ```jsx
 // the render callback will only be called when the
 // field has been touched and an error exists and subsequent updates.
-<ErrorMessage name="email" render={msg => <div>{msg}</div>} />
+<ErrorMessage name="email" render={(msg) => <div>{msg}</div>} />
 ```

@@ -39,7 +39,7 @@ const validate = (values, props /* only available when using withFormik */) => {
 };
 
 // Async Validation
-const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const validate = (values, props /* only available when using withFormik */) => {
   return sleep(2000).then(() => {
@@ -86,9 +86,7 @@ const SignupSchema = Yup.object().shape({
     .min(2, 'Too Short!')
     .max(50, 'Too Long!')
     .required('Required'),
-  email: Yup.string()
-    .email('Invalid email')
-    .required('Required'),
+  email: Yup.string().email('Invalid email').required('Required'),
 });
 
 export const ValidationSchemaExample = () => (
@@ -101,7 +99,7 @@ export const ValidationSchemaExample = () => (
         email: '',
       }}
       validationSchema={SignupSchema}
-      onSubmit={values => {
+      onSubmit={(values) => {
         // same shape as initial values
         console.log(values);
       }}
@@ -166,7 +164,7 @@ export const FieldLevelValidationExample = () => (
         username: '',
         email: '',
       }}
-      onSubmit={values => {
+      onSubmit={(values) => {
         // same shape as initial values
         console.log(values);
       }}
@@ -221,7 +219,7 @@ export const FieldLevelValidationExample = () => (
         username: '',
         email: '',
       }}
-      onSubmit={values => {
+      onSubmit={(values) => {
         // same shape as initial values
         console.log(values);
       }}
@@ -294,9 +292,7 @@ const DisplayingErrorMessagesSchema = Yup.object().shape({
     .min(2, 'Too Short!')
     .max(50, 'Too Long!')
     .required('Required'),
-  email: Yup.string()
-    .email('Invalid email')
-    .required('Required'),
+  email: Yup.string().email('Invalid email').required('Required'),
 });
 
 export const DisplayingErrorMessagesExample = () => (
@@ -308,7 +304,7 @@ export const DisplayingErrorMessagesExample = () => (
         email: '',
       }}
       validationSchema={DisplayingErrorMessagesSchema}
-      onSubmit={values => {
+      onSubmit={(values) => {
         // same shape as initial values
         console.log(values);
       }}

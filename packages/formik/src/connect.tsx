@@ -14,7 +14,7 @@ export function connect<OuterProps, Values = {}>(
 ) {
   const C: React.SFC<OuterProps> = (props: OuterProps) => (
     <FormikConsumer>
-      {formik => {
+      {(formik) => {
         invariant(
           !!formik,
           `Formik context is undefined, please verify you are rendering <Form>, <Field>, <FastField>, <FieldArray>, or your custom context-using component as a child of a <Formik> component. Component name: ${Comp.name}`

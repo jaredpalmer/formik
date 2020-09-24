@@ -19,7 +19,7 @@
     "test": "lerna run test --",
     "build": "lerna run build",
     "prepublish": "lerna run prepublish",
-    "format": "prettier --trailing-comma es5 --single-quote --write 'examples/**/*' 'packages/*/src/**/*' 'docs/src/**/*' 'app/pages/**/*'  'packages/*/test/**/*' 'README.md'",
+    "format": "prettier --trailing-comma es5 --single-quote --write 'examples/**/*' 'packages/*/src/**/*' 'docs/src/**/*.{ts,tsx,js,jsx,md,mdx}' 'app/pages/**/*'  'packages/*/test/**/*' 'README.md'",
     "publish-canary": "lerna version prerelease --preid canary --force-publish && release --pre",
     "publish-stable": "lerna version --force-publish && release && node ./scripts/release-notes.js",
     "git-reset": "git reset --hard HEAD",

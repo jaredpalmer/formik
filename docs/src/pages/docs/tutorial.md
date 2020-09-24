@@ -47,12 +47,15 @@ This setup requires more work but allows you to complete the tutorial using an e
 ```bash
 npx create-react-app my-app
 ```
+
 3. Install Formik
 
 ```bash
 npm i formik
 ```
+
 Or
+
 ```bash
 yarn add formik
 ```
@@ -121,7 +124,7 @@ const SignupForm = () => {
     initialValues: {
       email: '',
     },
-    onSubmit: values => {
+    onSubmit: (values) => {
       alert(JSON.stringify(values, null, 2));
     },
   });
@@ -166,7 +169,7 @@ const SignupForm = () => {
       lastName: '',
       email: '',
     },
-    onSubmit: values => {
+    onSubmit: (values) => {
       alert(JSON.stringify(values, null, 2));
     },
   });
@@ -236,7 +239,7 @@ import { useFormik } from 'formik';
 
 // A custom validation function. This must return an object
 // which keys are symmetrical to our values/initialValues
-const validate = values => {
+const validate = (values) => {
   const errors = {};
   if (!values.firstName) {
     errors.firstName = 'Required';
@@ -269,7 +272,7 @@ const SignupForm = () => {
       email: '',
     },
     validate,
-    onSubmit: values => {
+    onSubmit: (values) => {
       alert(JSON.stringify(values, null, 2));
     },
   });
@@ -322,7 +325,7 @@ To take advantage of `touched`, we can pass `formik.handleBlur` to each input's 
 import React from 'react';
 import { useFormik } from 'formik';
 
-const validate = values => {
+const validate = (values) => {
   const errors = {};
   if (!values.firstName) {
     errors.firstName = 'Required';
@@ -353,7 +356,7 @@ const SignupForm = () => {
       email: '',
     },
     validate,
-    onSubmit: values => {
+    onSubmit: (values) => {
       alert(JSON.stringify(values, null, 2));
     },
   });
@@ -401,7 +404,7 @@ Almost there! Now that we're tracking `touched`, we can now change our error mes
 import React from 'react';
 import { useFormik } from 'formik';
 
-const validate = values => {
+const validate = (values) => {
   const errors = {};
   if (!values.firstName) {
     errors.firstName = 'Required';
@@ -432,7 +435,7 @@ const SignupForm = () => {
       email: '',
     },
     validate,
-    onSubmit: values => {
+    onSubmit: (values) => {
       alert(JSON.stringify(values, null, 2));
     },
   });
@@ -515,11 +518,9 @@ const SignupForm = () => {
       lastName: Yup.string()
         .max(20, 'Must be 20 characters or less')
         .required('Required'),
-      email: Yup.string()
-        .email('Invalid email address')
-        .required('Required'),
+      email: Yup.string().email('Invalid email address').required('Required'),
     }),
-    onSubmit: values => {
+    onSubmit: (values) => {
       alert(JSON.stringify(values, null, 2));
     },
   });
@@ -594,18 +595,20 @@ const SignupForm = () => {
       lastName: Yup.string()
         .max(20, 'Must be 20 characters or less')
         .required('Required'),
-      email: Yup.string()
-        .email('Invalid email address')
-        .required('Required'),
+      email: Yup.string().email('Invalid email address').required('Required'),
     }),
-    onSubmit: values => {
+    onSubmit: (values) => {
       alert(JSON.stringify(values, null, 2));
     },
   });
   return (
     <form onSubmit={formik.handleSubmit}>
       <label htmlFor="firstName">First Name</label>
-      <input id="firstName" type="text" {...formik.getFieldProps('firstName')} />
+      <input
+        id="firstName"
+        type="text"
+        {...formik.getFieldProps('firstName')}
+      />
       {formik.touched.firstName && formik.errors.firstName ? (
         <div>{formik.errors.firstName}</div>
       ) : null}
@@ -671,9 +674,7 @@ const SignupForm = () => {
         lastName: Yup.string()
           .max(20, 'Must be 20 characters or less')
           .required('Required'),
-        email: Yup.string()
-          .email('Invalid email address')
-          .required('Required'),
+        email: Yup.string().email('Invalid email address').required('Required'),
       })}
       onSubmit={(values, { setSubmitting }) => {
         setTimeout(() => {
@@ -682,15 +683,23 @@ const SignupForm = () => {
         }, 400);
       }}
     >
-      {formik => (
+      {(formik) => (
         <form onSubmit={formik.handleSubmit}>
           <label htmlFor="firstName">First Name</label>
-          <input id="firstName" type="text" {...formik.getFieldProps('firstName')} />
+          <input
+            id="firstName"
+            type="text"
+            {...formik.getFieldProps('firstName')}
+          />
           {formik.touched.firstName && formik.errors.firstName ? (
             <div>{formik.errors.firstName}</div>
           ) : null}
           <label htmlFor="lastName">Last Name</label>
-          <input id="lastName" type="text" {...formik.getFieldProps('lastName')} />
+          <input
+            id="lastName"
+            type="text"
+            {...formik.getFieldProps('lastName')}
+          />
           {formik.touched.lastName && formik.errors.lastName ? (
             <div>{formik.errors.lastName}</div>
           ) : null}
@@ -725,9 +734,7 @@ const SignupForm = () => {
         lastName: Yup.string()
           .max(20, 'Must be 20 characters or less')
           .required('Required'),
-        email: Yup.string()
-          .email('Invalid email address')
-          .required('Required'),
+        email: Yup.string().email('Invalid email address').required('Required'),
       })}
       onSubmit={(values, { setSubmitting }) => {
         setTimeout(() => {

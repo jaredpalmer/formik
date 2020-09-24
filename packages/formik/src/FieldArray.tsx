@@ -112,7 +112,7 @@ const copyArrayLike = (arrayLike: ArrayLike<any>) => {
     return [...arrayLike];
   } else {
     const maxIndex = Object.keys(arrayLike)
-      .map(key => parseInt(key))
+      .map((key) => parseInt(key))
       .reduce((max, el) => (el > max ? el : max), 0);
     return Array.from({ ...arrayLike, length: maxIndex + 1 });
   }
@@ -143,7 +143,7 @@ class FieldArrayInner<Values = {}> extends React.Component<
       !isEqual(
         getIn(prevProps.formik.values, prevProps.name),
         getIn(this.props.formik.values, this.props.name)
-      ) 
+      )
     ) {
       this.props.formik.validateForm(this.props.formik.values);
     }

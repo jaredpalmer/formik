@@ -24,7 +24,7 @@ export const NestedExample = () => (
           twitter: '',
         },
       }}
-      onSubmit={values => {
+      onSubmit={(values) => {
         // same shape as initial values
         console.log(values);
       }}
@@ -54,7 +54,7 @@ export const BasicArrayExample = () => (
       initialValues={{
         friends: ['jared', 'ian'],
       }}
-      onSubmit={values => {
+      onSubmit={(values) => {
         // same shape as initial values
         console.log(values);
       }}
@@ -86,7 +86,7 @@ export const NestedExample = () => (
       initialValues={{
         'owner.fullname': '',
       }}
-      onSubmit={values => {
+      onSubmit={(values) => {
         // same shape as initial values
         console.log(values);
       }}

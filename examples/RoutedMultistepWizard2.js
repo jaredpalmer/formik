@@ -1,17 +1,16 @@
 /* eslint-disable jsx-a11y/accessible-emoji */
-import React, { Fragment } from "react";
+import React, { Fragment } from 'react';
 import {
   BrowserRouter as Router,
   Route,
   Switch,
   Link,
-  Redirect
-} from "react-router-dom";
-import { Field, ErrorMessage, withFormik } from "formik";
-import { Debug } from "./Debug";
+  Redirect,
+} from 'react-router-dom';
+import { Field, ErrorMessage, withFormik } from 'formik';
+import { Debug } from './Debug';
 
-
-const required = value => (value ? undefined : "Required");
+const required = (value) => (value ? undefined : 'Required');
 
 const Page1 = () => (
   <Fragment>
@@ -79,11 +78,11 @@ const BaseForm = ({ values, handleSubmit }) => (
         <Switch>
           <Route
             path="/step1"
-            render={routeProps => <Page1 {...routeProps} />}
+            render={(routeProps) => <Page1 {...routeProps} />}
           />
           <Route
             path="/step2"
-            render={routeProps => <Page2 {...routeProps} />}
+            render={(routeProps) => <Page2 {...routeProps} />}
           />
           <Redirect to="/step1" />
         </Switch>
@@ -97,18 +96,18 @@ const BaseForm = ({ values, handleSubmit }) => (
 export const EnhancedForm = withFormik({
   /* setup initial values */
   mapPropsToValues: () => ({
-    firstName: "",
-    lastName: "",
-    email: "",
-    favoriteColor: ""
+    firstName: '',
+    lastName: '',
+    email: '',
+    favoriteColor: '',
   }),
 
   validate: (values, props) => {
-    console.log("props", props);
+    console.log('props', props);
     const errors = {};
 
     if (!values.email) {
-      errors.email = "Required";
+      errors.email = 'Required';
     }
 
     return errors;
@@ -121,5 +120,5 @@ export const EnhancedForm = withFormik({
     }, 1000);
   },
 
-  displayName: "BaseForm"
+  displayName: 'BaseForm',
 })(BaseForm);

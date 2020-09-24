@@ -42,7 +42,7 @@ const addTagToSlug = (slug: string, tag?: string) => {
   return tag ? `/docs/${tag}/${slug.replace('/docs/', '')}` : slug;
 };
 
-export const LayoutDocs: React.FC<DocsProps> = props => {
+export const LayoutDocs: React.FC<DocsProps> = (props) => {
   const router = useRouter();
   const { slug, tag } = getSlugAndTag(router.asPath);
   const { routes } = getManifest(tag);
@@ -125,7 +125,7 @@ export const LayoutDocs: React.FC<DocsProps> = props => {
 };
 
 function getCategoryPath(routes: RouteItem[]) {
-  const route = routes.find(r => r.path);
+  const route = routes.find((r) => r.path);
   return route && removeFromLast(route.path!, '/');
 }
 

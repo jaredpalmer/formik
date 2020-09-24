@@ -14,7 +14,14 @@ similar to React Router 4's `<Route>`.
 
 ```typescript
 import * as React from 'react';
-import { Formik, FormikActions, FormikProps, Form, Field, FieldProps } from 'formik';
+import {
+  Formik,
+  FormikActions,
+  FormikProps,
+  Form,
+  Field,
+  FieldProps,
+} from 'formik';
 
 interface MyFormValues {
   firstName: string;
@@ -26,11 +33,14 @@ export const MyApp: React.SFC<{}> = () => {
       <h1>My Example</h1>
       <Formik
         initialValues={{ firstName: '' }}
-        onSubmit={(values: MyFormValues, actions: FormikActions<MyFormValues>) => {
-            console.log({ values, actions });
-            alert(JSON.stringify(values, null, 2));
-            actions.setSubmitting(false)
-         }}
+        onSubmit={(
+          values: MyFormValues,
+          actions: FormikActions<MyFormValues>
+        ) => {
+          console.log({ values, actions });
+          alert(JSON.stringify(values, null, 2));
+          actions.setSubmitting(false);
+        }}
         render={(formikBag: FormikProps<MyFormValues>) => (
           <Form>
             <Field
@@ -97,7 +107,7 @@ interface MyFormProps {
 // Wrap our form with the using withFormik HoC
 const MyForm = withFormik<MyFormProps, FormValues>({
   // Transform outer props into form values
-  mapPropsToValues: props => {
+  mapPropsToValues: (props) => {
     return {
       email: props.initialEmail || '',
       password: '',
@@ -115,7 +125,7 @@ const MyForm = withFormik<MyFormProps, FormValues>({
     return errors;
   },
 
-  handleSubmit: values => {
+  handleSubmit: (values) => {
     // do submitting things
   },
 })(InnerForm);

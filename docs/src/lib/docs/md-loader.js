@@ -4,7 +4,7 @@ const fm = require('gray-matter');
 // the docs are still readable on github
 // (Shamelessly stolen from Expo.io docs)
 // @see https://github.com/expo/expo/blob/master/docs/common/md-loader.js
-module.exports = async function(src) {
+module.exports = async function (src) {
   const callback = this.async();
   const { content, data } = fm(src);
   const layout = data.layout || 'Docs';

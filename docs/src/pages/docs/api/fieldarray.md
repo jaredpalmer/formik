@@ -87,8 +87,7 @@ You can also iterate through an array of objects, by following a convention of `
         {values.friends.map((friend, index) => (
           <div key={index}>
             <Field name={`friends[${index}].name`} />
-            <Field name={`friends.${index}.age`} /> // both these conventions do
-            the same
+            <Field name={`friends.${index}.age`} /> // both these conventions do the same
             <button type="button" onClick={() => arrayHelpers.remove(index)}>
               -
             </button>

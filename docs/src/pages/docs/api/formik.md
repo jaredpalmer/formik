@@ -92,7 +92,7 @@ not present, `handleChange` will look for an input's `id` attribute. Note:
 Reset handler. Will reset the form to its initial state. This should be passed
 to `<button onClick={handleReset}>...</button>`
 
-#### `handleSubmit: (e: React.FormEvent<HTMLFormEvent>) => void`
+#### `handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void`
 
 Submit handler. This should be passed to `<form onSubmit={props.handleSubmit}>...</form>`. To learn more about the submission process, see [Form Submission](../guides/form-submission).
 
@@ -110,9 +110,64 @@ Returns `true` if there are no `errors` (i.e. the `errors` object is empty) and 
 
 Returns `true` if Formik is running validation during submission, or by calling [`validateForm`] directly `false` otherwise. To learn more about what happens with `isValidating` during the submission process, see [Form Submission](../guides/form-submission).
 
-#### `resetForm: (nextInitialState?: FormikState<Values>) => void`
+#### `resetForm: (nextState?: Partial<FormikState<Values>>) => void`
 
-Imperatively reset the form. If `nextInitialState` is specified, Formik will set this state as the new "initial state" and use the related values of `nextInitialState` to update the form's `initialValues` as well as `initialTouched`, `initialStatus`, `initialErrors`. This is useful for altering the initial state (i.e. "base") of the form after changes have been made. If `nextInitialState` is not defined, then Formik will reset state to the original initial state. The latter is useful for calling `resetForm` within `componentDidUpdate` or `useEffect`.
+Imperatively reset the form. The only (optional) argument, `nextState`, is an object on which any of these `FormikState` fields are optional:
+
+```ts
+interface FormikState<Values> {
+  /** Form values */
+  values: Values;
+  /** map of field names to specific error for that field */
+  errors: FormikErrors<Values>;
+  /** map of field names to **whether** the field has been touched */
+  touched: FormikTouched<Values>;
+  /** whether the form is currently submitting */
+  isSubmitting: boolean;
+  /** whether the form is currently validating (prior to submission) */
+  isValidating: boolean;
+  /** Top level status state, in case you need it */
+  status?: any;
+  /** Number of times user tried to submit the form */
+  submitCount: number;
+}
+```
+
+If `nextState` is specified, Formik will set `nextState.values` as the new "initial state" and use the related values of `nextState` to update the form's `initialValues` as well as `initialTouched`, `initialStatus`, `initialErrors`. This is useful for altering the initial state (i.e. "base") of the form after changes have been made.
+
+```tsx
+// typescript usage
+function MyForm(props: MyFormProps) {
+  // using TSX Generics here to set <Values> to <Blog>
+  return (
+    <Formik<Blog>
+      initialValues={props.initVals}
+      onSubmit={(values, actions) => {
+        props.onSubmit(values).then(() => {
+          actions.setSubmitting(false);
+          actions.resetForm({
+            values: {
+              // the type of `values` inferred to be Blog
+              title: '',
+              image: '',
+              body: '',
+            },
+            // you can also set the other form states here
+          });
+        });
+      }}
+    >
+      // etc
+    </Formik>
+  );
+}
+```
+
+If `nextState` is omitted, then Formik will reset state to the original initial state. The latter is useful for calling `resetForm` within `componentDidUpdate` or `useEffect`.
+
+```tsx
+actions.resetForm();
+```
 
 #### `setErrors: (fields: { [field: string]: string }) => void`
 
@@ -134,7 +189,7 @@ Trigger a form submission. The promise will be rejected if form is invalid.
 
 #### `submitCount: number`
 
-Number of times user tried to submit the form. Increases when [`handleSubmit`](#handlesubmit-e-reactformevent-htmlformevent-void) is called, resets after calling
+Number of times user tried to submit the form. Increases when [`handleSubmit`](#handlesubmit-e-reactformevent-htmlformelement-void) is called, resets after calling
 [`handleReset`](#handlereset-void). `submitCount` is readonly computed property and should not be mutated directly.
 
 #### `setFieldValue: (field: string, value: any, shouldValidate?: boolean) => void`

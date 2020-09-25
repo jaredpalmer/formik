@@ -14,11 +14,47 @@ title: Migrating from v1.x to v2.x
 
 ### `resetForm`
 
-Because we introduced `initialErrors`, `initialTouched`, `initialStatus` props, `resetForm`'s signature has changed. It now accepts the next initial state of Formik (instead of just the next initial values).
+With Formik 2, we introduced the new props for more initial state: `initialErrors`, `initialTouched`, `initialStatus`. Therefore, `resetForm`'s signature has changed. Instead of optionally accepting just the next initial values of the form. It now optionally accepts the partial next initial state of Formik.
+
+**v1**
+
+```jsx
+// Reset to `initialValues`
+formik.resetForm();
+// Reset form and set the next `initialValues` of the form
+formik.resetForm({ name: '', email: '' });
+```
+
+**v2**
+
+```jsx
+// Reset the form. This will set the next initial state of
+// Formik to the `initialValues`, `initialErrors`, `initialTouched`,
+// `initialStatus` props.
+formik.resetForm();
+
+// Reset the form back to `initialXXXX` but change next
+// `initialValues` to a custom value
+formik.resetForm({
+  values: { name: 'Custom initial values', email: '' },
+});
+
+// Reset form back to `initialXXXX`, but change next `initialValues`
+// and `initialErrors` of the form
+formik.resetForm({
+  values: { name: '', email: '' },
+  errors: { name: 'Something special' },
+});
+
+// Reset form back to `initialXXXX`, but change next `initialStatus` to 'Foo'
+formik.resetForm({
+  status: 'Foo',
+});
+```
 
 ### `setError`
 
-Please use Formik's `setStatus(status)` instead. It works identically.
+This method has been deprecated for a while with a warning in v1.x releases. It's fully removed in v2. Please use Formik's `setStatus(status)` instead. It works identically. Note: this is/was not `setErrors` (plural) which is still around.
 
 ### `validate`
 
@@ -28,21 +64,9 @@ As you may know, you can return a Promise of a validation error from `validate`.
 
 Currently, you can't attach a ref to Formik using the `ref` prop. However, you still can get around this issue using the prop `innerRef`. We have some WIP [#2208](https://github.com/jaredpalmer/formik/issues/2208) to instead use `React.forwardRef`.
 
-**v1**
-
-```tsx
-resetForm(nextValues);
-```
-
-**v2**
-
-```tsx
-resetForm({ values: nextValues /* errors, touched, etc ... */ });
-```
-
 ### `isValid`
 
-This property does not take the value of `dirty` into account anymore. This means that if you want to disable a submit button when the form is not `dirty` (i.e. on first render and when values are unchenged), you have to explicitly check for it.
+This property does not take the value of `dirty` into account anymore. This means that if you want to disable a submit button when the form is not `dirty` (i.e. on first render and when values are unchanged), you have to explicitly check for it.
 
 ```tsx
 <button disabled={!isValid || !dirty} type="submit">
@@ -219,12 +243,6 @@ A hook that is equivalent to `connect()`.
 
 `<Field/>` now accepts a prop called `as` which will inject `onChange`, `onBlur`, `value` etc. directly through to the component or string. This is useful for folks using Emotion or Styled components as they no longer need to clean up `component`'s render props in a wrapped function.
 
-### Misc
-
-- `FormikContext` is now exported
-- `validateOnMount?: boolean = false`
-- `initialErrors`, `initialTouched`, `initialStatus` have been added
-
 ```jsx
 // <input className="form-input" placeholder="Jane"  />
 <Field name="firstName" className="form-input" placeholder="Jane" />
@@ -295,6 +313,12 @@ export interface FieldMetaProps<Value> {
   initialError?: string;
 }
 ```
+
+### Misc
+
+- `FormikContext` is now exported
+- `validateOnMount?: boolean = false`
+- `initialErrors`, `initialTouched`, `initialStatus` have been added
 
 ## Deprecation Warnings
 

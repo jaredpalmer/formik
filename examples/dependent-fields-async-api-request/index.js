@@ -4,11 +4,11 @@ import { Formik, Field, Form, useField, useFormikContext } from 'formik';
 import './styles.css';
 
 async function fetchNewTextC(a, b) {
-  await new Promise(r => setTimeout(r, 500));
+  await new Promise((r) => setTimeout(r, 500));
   return `textA: ${a}, textB: ${b}`;
 }
 
-const MyField = props => {
+const MyField = (props) => {
   const {
     values: { textA, textB },
     setFieldValue,
@@ -19,7 +19,7 @@ const MyField = props => {
     let isCurrent = true;
     // your business logic around when to fetch goes here.
     if (textA.trim() !== '' && textB.trim() !== '') {
-      fetchNewTextC(textA, textB).then(textC => {
+      fetchNewTextC(textA, textB).then((textC) => {
         if (!!isCurrent) {
           // prevent setting old values
           setFieldValue(props.name, textC);
@@ -45,7 +45,7 @@ function App() {
     <div className="App">
       <Formik
         initialValues={initialValues}
-        onSubmit={async values => alert(JSON.stringify(values, null, 2))}
+        onSubmit={async (values) => alert(JSON.stringify(values, null, 2))}
       >
         <div className="section">
           <h1>Dependent Formik fields with Async Request</h1>

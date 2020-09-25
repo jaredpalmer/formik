@@ -1012,6 +1012,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     validateOnBlur,
     validateOnChange,
     validateOnMount,
+    enableReinitialize,
   };
 
   return ctx;

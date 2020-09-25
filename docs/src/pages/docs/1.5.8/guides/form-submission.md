@@ -10,22 +10,22 @@ To submit a form in Formik, you need to somehow fire off the provided `handleSub
 
 ### Pre-submit
 
-* Touch all fields. `initialValues` are required and should always be specified. See [#445](https://github.com/jaredpalmer/formik/issues/445#issuecomment-366952762)
-* Set `isSubmitting` to `true`
-* Increment `submitCount` + 1
+- Touch all fields. `initialValues` are required and should always be specified. See [#445](https://github.com/jaredpalmer/formik/issues/445#issuecomment-366952762)
+- Set `isSubmitting` to `true`
+- Increment `submitCount` + 1
 
 ### Validation
 
-* Set `isValidating` to `true`
-* Run all field-level validations, `validate`, and `validationSchema` asynchronously and deeply merge results
-* Are there any errors?
-  * Yes: Abort submission. Set `isValidating` to `false`, set `errors`, set `isSubmitting` to `false`
-  * No: Set `isValidating` to `false`, proceed to "Submission"
+- Set `isValidating` to `true`
+- Run all field-level validations, `validate`, and `validationSchema` asynchronously and deeply merge results
+- Are there any errors?
+  - Yes: Abort submission. Set `isValidating` to `false`, set `errors`, set `isSubmitting` to `false`
+  - No: Set `isValidating` to `false`, proceed to "Submission"
 
 ### Submission
 
-* Proceed with running your submission handler (i.e.`onSubmit` or `handleSubmit`)
-* _you call `setSubmitting(false)`_ in your handler to finish the cycle
+- Proceed with running your submission handler (i.e.`onSubmit` or `handleSubmit`)
+- _you call `setSubmitting(false)`_ in your handler to finish the cycle
 
 ## Frequently Asked Questions
 

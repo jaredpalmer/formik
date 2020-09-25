@@ -12,7 +12,8 @@ import {
   FieldMetaProps,
   FieldHelperProps,
   FieldInputProps,
-  FormikHelpers, FormikHandlers,
+  FormikHelpers,
+  FormikHandlers,
 } from './types';
 import {
   isFunction,
@@ -259,7 +260,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   const runSingleFieldLevelValidation = React.useCallback(
     (field: string, value: void | string): Promise<string> => {
       return new Promise(resolve =>
-        resolve(fieldRegistry.current[field].validate(value))
+        resolve(fieldRegistry.current[field].validate(value) as string)
       );
     },
     []
@@ -455,7 +456,13 @@ export function useFormik<Values extends FormikValues = FormikValues>({
         validateFormWithLowPriority(initialValues.current);
       }
     }
-  }, [enableReinitialize, props.initialValues, resetForm, validateOnMount, validateFormWithLowPriority]);
+  }, [
+    enableReinitialize,
+    props.initialValues,
+    resetForm,
+    validateOnMount,
+    validateFormWithLowPriority,
+  ]);
 
   React.useEffect(() => {
     if (
@@ -504,7 +511,10 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     // changes if the validation function is synchronous. It's different from
     // what is called when using validateForm.
 
-    if (fieldRegistry.current[name] && isFunction(fieldRegistry.current[name].validate)) {
+    if (
+      fieldRegistry.current[name] &&
+      isFunction(fieldRegistry.current[name].validate)
+    ) {
       const value = getIn(state.values, name);
       const maybePromise = fieldRegistry.current[name].validate(value);
       if (isPromise(maybePromise)) {
@@ -621,7 +631,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
       if (!isString(eventOrTextValue)) {
         // If we can, persist the event
         // @see https://reactjs.org/docs/events.html#event-pooling
-        if ((eventOrTextValue as React.ChangeEvent<any>).persist) {
+        if ((eventOrTextValue as any).persist) {
           (eventOrTextValue as React.ChangeEvent<any>).persist();
         }
         const target = eventOrTextValue.target
@@ -1132,7 +1142,7 @@ export function prepareDataForValidation<T extends FormikValues>(
 function arrayMerge(target: any[], source: any[], options: any): any[] {
   const destination = target.slice();
 
-  source.forEach(function(e: any, i: number) {
+  source.forEach(function merge(e: any, i: number) {
     if (typeof destination[i] === 'undefined') {
       const cloneRequested = options.clone !== false;
       const shouldClone = cloneRequested && options.isMergeableObject(e);

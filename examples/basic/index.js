@@ -11,8 +11,8 @@ const Basic = () => (
         lastName: '',
         email: '',
       }}
-      onSubmit={async values => {
-        await new Promise(r => setTimeout(r, 500));
+      onSubmit={async (values) => {
+        await new Promise((r) => setTimeout(r, 500));
         alert(JSON.stringify(values, null, 2));
       }}
     >

@@ -51,9 +51,7 @@ const Basic = () => (
         firstName: Yup.string().required(),
         middleInitial: Yup.string(),
         lastName: Yup.string().required(),
-        email: Yup.string()
-          .email()
-          .required(),
+        email: Yup.string().email().required(),
       })}
       onSubmit={values => {
         setTimeout(() => {
@@ -69,8 +67,9 @@ const Basic = () => (
 
           {/** Updates for all changes because it's from the
            top-level formikProps which get all updates */}
-          {form.touched.firstName &&
-            form.errors.firstName && <div>{form.errors.firstName}</div>}
+          {form.touched.firstName && form.errors.firstName && (
+            <div>{form.errors.firstName}</div>
+          )}
 
           <label htmlFor="middleInitial">Middle Initial</label>
           <FastField name="middleInitial" placeholder="F">

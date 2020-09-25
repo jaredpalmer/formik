@@ -1,14 +1,14 @@
-import React from "react";
-import ReactDOM from "react-dom";
-import { Formik, Field, Form, ErrorMessage, FieldArray } from "formik";
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { Formik, Field, Form, ErrorMessage, FieldArray } from 'formik';
 
 const initialValues = {
   friends: [
     {
-      name: "",
-      email: ""
-    }
-  ]
+      name: '',
+      email: '',
+    },
+  ],
 };
 
 const InviteFriends = () => (
@@ -16,8 +16,8 @@ const InviteFriends = () => (
     <h1>Invite friends</h1>
     <Formik
       initialValues={initialValues}
-      onSubmit={async values => {
-        await new Promise(r => setTimeout(r, 500));
+      onSubmit={async (values) => {
+        await new Promise((r) => setTimeout(r, 500));
         alert(JSON.stringify(values, null, 2));
       }}
     >
@@ -69,7 +69,7 @@ const InviteFriends = () => (
                 <button
                   type="button"
                   className="secondary"
-                  onClick={() => push({ name: "", email: "" })}
+                  onClick={() => push({ name: '', email: '' })}
                 >
                   Add Friend
                 </button>
@@ -83,4 +83,4 @@ const InviteFriends = () => (
   </div>
 );
 
-ReactDOM.render(<InviteFriends />, document.getElementById("root"));
+ReactDOM.render(<InviteFriends />, document.getElementById('root'));

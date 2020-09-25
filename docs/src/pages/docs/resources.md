@@ -27,6 +27,7 @@ title: Resources
 - [Building an Add Channel Form with Formik](https://www.youtube.com/watch?v=anwo_i0wgNo) by [Ben Awad](https://twitter.com/benawad97) - Oct 27, 2017
 
 ## Community Articles / Tutorials
+
 - [Managing list of form fields with formik by creating Todo App](https://dev.to/mrmuhammadali/managing-list-of-form-fields-with-formik-through-example-7o5) by [Muhammad Ali](https://twitter.com/muhammadali_io) - Dec 31, 2019
 - [Accessible Formik forms](https://dev.to/ptrin/accessible-formik-forms-2gld) by [Perry Trinier](https://twitter.com/ptrin) - Oct 16, 2019
 - [Building dynamic forms with Formik with React and TypeScript](https://scottdj92.ghost.io/building-dynamic-forms-with-formik-with-react-and-typescript/) by [Scott Jones](https://twitter.com/sdj2964) - Sep 1, 2018
@@ -35,3 +36,4 @@ title: Resources
 - [Better React Forms with Formik](https://mead.io/formik/?utm_source=github&utm_campaign=formikrepo) by [Andrew Mead](https://twitter.com/andrew_j_mead) - Nov 28, 2017
 - [The Joy of Forms with React and Formik](https://keyholesoftware.com/2017/10/23/the-joy-of-forms-with-react-and-formik/) by [Mat Warger](https://twitter.com/mwarger) - Oct 23, 2017
 - [Painless React Forms with Formik](https://hackernoon.com/painless-react-forms-with-formik-e61b70473c60) by [João Miguel Cunha](https://twitter.com/lokuzt) - Sep 8, 2017
+- [Using Formik to Handle Forms in React](https://css-tricks.com/using-formik-to-handle-forms-in-react) by [Adebiyi Adedotun](https://twitter.com/AdebiyiAL) - Apr 28, 2020

@@ -139,32 +139,34 @@ If `nextState` is specified, Formik will set `nextState.values` as the new "init
 // typescript usage
 function MyForm(props: MyFormProps) {
   // using TSX Generics here to set <Values> to <Blog>
-  return (<Formik<Blog>
+  return (
+    <Formik<Blog>
       initialValues={props.initVals}
       onSubmit={(values, actions) => {
         props.onSubmit(values).then(() => {
           actions.setSubmitting(false);
           actions.resetForm({
-            values: { // the type of `values` inferred to be Blog
-              title: "",
-              image: "",
-              body: "",
+            values: {
+              // the type of `values` inferred to be Blog
+              title: '',
+              image: '',
+              body: '',
             },
             // you can also set the other form states here
           });
         });
       }}
     >
-    // etc
+      // etc
     </Formik>
-    )
+  );
 }
 ```
 
 If `nextState` is omitted, then Formik will reset state to the original initial state. The latter is useful for calling `resetForm` within `componentDidUpdate` or `useEffect`.
 
 ```tsx
-actions.resetForm()
+actions.resetForm();
 ```
 
 #### `setErrors: (fields: { [field: string]: string }) => void`

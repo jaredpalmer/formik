@@ -39,20 +39,13 @@ export const MyApp: React.FC<{}> = () => {
           alert(JSON.stringify(values, null, 2));
           actions.setSubmitting(false);
         }}
-        render={formikBag => (
-          <Form>
-            <Field
-              name="firstName"
-              render={({ field, form, meta }) => (
-                <div>
-                  <input type="text" {...field} placeholder="First Name" />
-                  {meta.touched && meta.error && meta.error}
-                </div>
-              )}
-            />
-          </Form>
-        )}
-      />
+      >
+        <Form>
+          <label htmlFor="firstName">First Name</label>
+          <Field id="firstName" name="firstName" placeholder="First Name" />
+          <button type="submit">Submit</button>
+        </Form>
+      </Formik>
     </div>
   );
 };

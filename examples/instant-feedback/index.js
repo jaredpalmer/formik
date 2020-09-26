@@ -1,10 +1,10 @@
-import React from "react";
-import ReactDOM from "react-dom";
-import { useFormik, FormikProvider, Form, useField } from "formik";
-import "./styles.css";
-import * as Yup from "yup";
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { useFormik, FormikProvider, Form, useField } from 'formik';
+import './styles.css';
+import * as Yup from 'yup';
 
-const sleep = ms => new Promise(r => setTimeout(r, ms));
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 const TextInputLiveFeedback = ({ label, helpText, ...props }) => {
   const [field, meta] = useField(props);
@@ -20,18 +20,18 @@ const TextInputLiveFeedback = ({ label, helpText, ...props }) => {
   return (
     <div
       className={`form-control ${
-        showFeedback ? (meta.error ? "invalid" : "valid") : ""
+        showFeedback ? (meta.error ? 'invalid' : 'valid') : ''
       }`}
     >
       <div className="flex items-center space-between">
-        <label htmlFor={props.id}>{label}</label>{" "}
+        <label htmlFor={props.id}>{label}</label>{' '}
         {showFeedback ? (
           <div
             id={`${props.id}-feedback`}
             aria-live="polite"
             className="feedback text-sm"
           >
-            {meta.error ? meta.error : "✓"}
+            {meta.error ? meta.error : '✓'}
           </div>
         ) : null}
       </div>
@@ -51,22 +51,22 @@ const TextInputLiveFeedback = ({ label, helpText, ...props }) => {
 const Example = () => {
   const formik = useFormik({
     initialValues: {
-      username: ""
+      username: '',
     },
-    onSubmit: async values => {
+    onSubmit: async (values) => {
       await sleep(500);
       alert(JSON.stringify(values, null, 2));
     },
     validationSchema: Yup.object({
       username: Yup.string()
-        .min(8, "Must be at least 8 characters")
-        .max(20, "Must be less  than 20 characters")
-        .required("Username is required")
+        .min(8, 'Must be at least 8 characters')
+        .max(20, 'Must be less  than 20 characters')
+        .required('Username is required')
         .matches(
           /^[a-zA-Z0-9]+$/,
-          "Cannot contain special characters or spaces"
-        )
-    })
+          'Cannot contain special characters or spaces'
+        ),
+    }),
   });
 
   return (
@@ -104,7 +104,7 @@ ReactDOM.render(
     </div>
     <p className="text-md mt-1">
       <strong>Note:</strong> The displayed feedback message in this example is
-      coded using a <code>{`<div>`}</code> element that has an{" "}
+      coded using a <code>{`<div>`}</code> element that has an{' '}
       <code>{`aria-live`}</code> attribute with the value <code>polite</code>.
       The contents of this so called "live region" are conveyed to screen
       readers and other assistive technology. The value "polite" de-emphasizes
@@ -115,7 +115,7 @@ ReactDOM.render(
     </p>
     <p className="text-sm">
       <i>
-        Example adapted from{" "}
+        Example adapted from{' '}
         <a
           href="https://www.w3.org/WAI/tutorials/forms/notifications/"
           target="blank"
@@ -126,5 +126,5 @@ ReactDOM.render(
       </i>
     </p>
   </div>,
-  document.getElementById("root")
+  document.getElementById('root')
 );

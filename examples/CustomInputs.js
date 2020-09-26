@@ -24,13 +24,9 @@ const SignUp = () => (
         website: '',
       }}
       validationSchema={Yup.object().shape({
-        email: Yup.string()
-          .email('Invalid email address')
-          .required('Required'),
+        email: Yup.string().email('Invalid email address').required('Required'),
         color: Yup.string().required('Required'),
-        website: Yup.string()
-          .url('Invalid URL')
-          .required('Required'),
+        website: Yup.string().url('Invalid URL').required('Required'),
         animal: Yup.string().required('Required'),
       })}
       onSubmit={values => {

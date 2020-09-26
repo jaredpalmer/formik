@@ -1,18 +1,17 @@
-import React from "react";
-import { BrowserRouter as Router, Route, withRouter } from "react-router-dom";
-import { Formik, Field, ErrorMessage } from "formik";
-import { Debug } from "./Debug";
+import React from 'react';
+import { BrowserRouter as Router, Route, withRouter } from 'react-router-dom';
+import { Formik, Field, ErrorMessage } from 'formik';
+import { Debug } from './Debug';
 
 // the root path. locations should extend from this
-const formRootPath = "/step"
+const formRootPath = '/step';
 
 // the specific path for each page
-const locations = ["/step/1", "/step/2"];
+const locations = ['/step/1', '/step/2'];
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-const required = value => (value ? undefined : "Required");
-
+const required = value => (value ? undefined : 'Required');
 
 class WizardBase extends React.Component {
   static Page = ({ children }) => children;
@@ -20,7 +19,7 @@ class WizardBase extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      values: props.initialValues
+      values: props.initialValues,
     };
   }
 
@@ -107,7 +106,6 @@ class WizardBase extends React.Component {
 
 const Wizard = withRouter(WizardBase);
 
-
 const App = () => (
   <Router>
     <div className="App">
@@ -118,10 +116,10 @@ const App = () => (
           <Wizard
             {...routeProps}
             initialValues={{
-              firstName: "",
-              lastName: "",
-              email: "",
-              favoriteColor: ""
+              firstName: '',
+              lastName: '',
+              email: '',
+              favoriteColor: '',
             }}
             onSubmit={(values, actions) => {
               sleep(300).then(() => {
@@ -166,10 +164,10 @@ const App = () => (
               validate={values => {
                 const errors = {};
                 if (!values.email) {
-                  errors.email = "Required";
+                  errors.email = 'Required';
                 }
                 if (!values.favoriteColor) {
-                  errors.favoriteColor = "Required";
+                  errors.favoriteColor = 'Required';
                 }
                 return errors;
               }}

@@ -48,7 +48,7 @@ export interface WithFormikConfig<
   mapPropsToValues?: (props: Props) => Values;
 
   /**
-   * Map props to the form values
+   * Map props to the form status
    */
   mapPropsToStatus?: (props: Props) => any;
 

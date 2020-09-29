@@ -8,7 +8,7 @@ interface TestFormValues {
   email: string;
 }
 
-const TestForm: React.SFC<any> = p => (
+const TestForm: React.FC<any> = p => (
   <Formik
     onSubmit={noop}
     initialValues={{ name: 'jared', email: 'hello@reason.nyc' }}

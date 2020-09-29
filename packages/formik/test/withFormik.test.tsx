@@ -9,7 +9,7 @@ interface Values {
   name: string;
 }
 
-const Form: React.SFC<FormikProps<Values>> = ({
+const Form: React.FC<FormikProps<Values>> = ({
   values,
   handleSubmit,
   handleChange,

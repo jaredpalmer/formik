@@ -20,7 +20,7 @@ import { isFunction } from './utils';
 export type InjectedFormikProps<Props, Values> = Props & FormikProps<Values>;
 
 /**
- * Formik actions + { props }
+ * Formik helpers + { props }
  */
 export type FormikBag<P, V> = { props: P } & FormikHelpers<V>;
 

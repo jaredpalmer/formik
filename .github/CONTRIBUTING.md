@@ -128,13 +128,14 @@ Make sure the following is true:
   - If the result was already achievable with the library, explain why this feature needs to be added.
   - If this is a common use case, consider adding an example to the documentation.
 - When adding new features or modifying existing, please include tests to confirm the new behavior.
-- The branch is not behind its target.
+- The branch is not behind its target. (We use https://kodiakhq.com) to try to automate this process for you.
 
-Because we will only merge a Pull Request for which all tests pass. The following items need is true. We will provide assistance if not:
+Because we will only merge a Pull Request for which all tests pass. The following items need to be correct. We will provide assistance if not:
 
-- The code is formatted (run `yarn foramt`).
+- The code is formatted (run `yarn format`).
 - The code is linted (run `yarn lint`).
 - The Pull Request title is written imperatively. See [How to Write a Git Commit Message](https://chris.beams.io/posts/git-commit/#imperative) for a great explanation)
+- If you have made a change that impacts semantic versioning, include a [changeset](../.changeset/README.md) by running `yarn changeset` and describing the change you've made. These get rolled together into release notes.
 
 ## Working locally
 

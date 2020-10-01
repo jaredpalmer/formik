@@ -14,7 +14,6 @@ jest.spyOn(global.console, 'warn');
 
 interface Values {
   name: string;
-  age?: number;
 }
 
 function Form({
@@ -49,13 +48,10 @@ function Form({
   );
 }
 
-const InitialValues = {
-  name: 'jared',
-  age: 30,
-};
+const InitialValues = { name: 'jared' };
 
 function renderFormik<V = Values>(props?: Partial<FormikConfig<V>>) {
-  let injected: FormikProps<V>;
+  let injected: any;
   const { rerender, ...rest } = render(
     <Formik
       onSubmit={noop as any}
@@ -458,7 +454,7 @@ describe('<Formik>', () => {
       expect(getProps().touched).toEqual({});
 
       fireEvent.submit(getByTestId('form'));
-      expect(getProps().touched).toEqual({ name: true, age: true });
+      expect(getProps().touched).toEqual({ name: true });
     });
 
     it('should push submission state changes to child component', () => {
@@ -613,20 +609,8 @@ describe('<Formik>', () => {
       it('setValues sets values', () => {
         const { getProps } = renderFormik<Values>();
 
-        getProps().setValues({ name: 'ian', age: 25 });
+        getProps().setValues({ name: 'ian' });
         expect(getProps().values.name).toEqual('ian');
-        expect(getProps().values.age).toEqual(25);
-      });
-
-      it('setValues takes a function which can patch values', () => {
-        const { getProps } = renderFormik<Values>();
-
-        getProps().setValues((values: Values) => ({
-          ...values,
-          age: 80,
-        }));
-        expect(getProps().values.name).toEqual('jared');
-        expect(getProps().values.age).toEqual(80);
       });
 
       it('setValues should run validations when validateOnChange is true (default)', async () => {
@@ -781,7 +765,7 @@ describe('<Formik>', () => {
       const { getProps } = renderFormik();
 
       expect(getProps().dirty).toBeFalsy();
-      getProps().setValues({ name: 'ian', age: 27 });
+      getProps().setValues({ name: 'ian' });
       expect(getProps().dirty).toBeTruthy();
     });
 
@@ -869,7 +853,7 @@ describe('<Formik>', () => {
       getProps().resetForm();
 
       expect(onReset).toHaveBeenCalledWith(
-        InitialValues,
+        { name: 'jared' },
         expect.objectContaining({
           resetForm: expect.any(Function),
           setErrors: expect.any(Function),

@@ -156,7 +156,7 @@ Set `isSubmitting` imperatively. You would call it with `setSubmitting(false)` i
 
 Set `touched` imperatively. Calling this will trigger validation to run if `validateOnBlur` is set to `true` (which it is by default). You can also explicitly prevent/skip validation by passing a second argument as `false`.
 
-#### `setValues: (fields: React.SetStateAction<Values>, shouldValidate?: boolean) => void`
+#### `setValues: (fields: { [field: string]: any }, shouldValidate?: boolean) => void`
 
 Set `values` imperatively. Calling this will trigger validation to run if `validateOnChange` is set to `true` (which it is by default). You can also explicitly prevent/skip validation by passing a second argument as `false`.
 
@@ -169,11 +169,11 @@ and passing through API responses to your inner component.
 `status` should only be modified by calling
 [`setStatus`](#setstatus-status-any-void).
 
-#### `touched: FormikTouched<Values>`
+#### `touched: { [field: string]: boolean }`
 
 Touched fields. Each key corresponds to a field that has been touched/visited.
 
-#### `values: Values`
+#### `values: { [field: string]: any }`
 
 Your form's values. Will have the shape of the result of `mapPropsToValues`
 (if specified) or all props that are not functions passed to your wrapped

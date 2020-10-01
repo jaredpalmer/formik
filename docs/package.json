@@ -8,7 +8,7 @@
     "dev": "next",
     "build": "next build",
     "start": "next start",
-    "index-docs": "node ./.next/serverless/scripts/index-docs.js"
+    "rss": "node ./.next/server/scripts/build-rss.js"
   },
   "dependencies": {
     "@babel/preset-typescript": "^7.10.1",

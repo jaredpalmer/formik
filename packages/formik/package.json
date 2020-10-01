@@ -1,7 +1,7 @@
 {
   "name": "formik",
   "description": "Forms in React, without tears",
-  "version": "2.1.6",
+  "version": "2.1.7",
   "license": "Apache-2.0",
   "author": "Jared Palmer <jared@palmer.net>",
   "repository": "formik/formik",
@@ -20,9 +20,7 @@
   "umd:main": "dist/formik.umd.production.js",
   "module": "dist/formik.esm.js",
   "typings": "dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "peerDependencies": {
     "react": ">=16.8.0"
   },

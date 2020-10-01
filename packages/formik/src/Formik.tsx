@@ -581,12 +581,16 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   }, []);
 
   const setValues = useEventCallback(
-    (values: Values, shouldValidate?: boolean) => {
-      dispatch({ type: 'SET_VALUES', payload: values });
+    (values: React.SetStateAction<Values>, shouldValidate?: boolean) => {
+      const resolvedValues = isFunction(values)
+        ? values(state.values)
+        : values;
+
+      dispatch({ type: 'SET_VALUES', payload: resolvedValues });
       const willValidate =
         shouldValidate === undefined ? validateOnChange : shouldValidate;
       return willValidate
-        ? validateFormWithLowPriority(values)
+        ? validateFormWithLowPriority(resolvedValues)
         : Promise.resolve();
     }
   );

@@ -138,7 +138,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   enableReinitialize = false,
   onSubmit,
   ...rest
-}: FormikConfig<Values>) {
+}: FormikConfig<Values>): FormikProps<Values> {
   const props = {
     validateOnChange,
     validateOnBlur,
@@ -1017,15 +1017,16 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   return ctx;
 }
 
-export function Formik<
+export const Formik = React.forwardRef(<
   Values extends FormikValues = FormikValues,
   ExtraProps = {}
->(props: FormikConfig<Values> & ExtraProps) {
+>(props: FormikConfig<Values> & ExtraProps, ref: React.Ref<FormikProps<Values>>) => {
   const formikbag = useFormik<Values>(props);
   const { component, children, render, innerRef } = props;
 
   // This allows folks to pass a ref to <Formik />
   React.useImperativeHandle(innerRef, () => formikbag);
+  React.useImperativeHandle(ref, () => formikbag);
 
   if (__DEV__) {
     // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -1054,7 +1055,10 @@ export function Formik<
         : null}
     </FormikProvider>
   );
-}
+}) as <
+  Values extends FormikValues = FormikValues,
+  ExtraProps = {}
+>(props: FormikConfig<Values> & ExtraProps & React.RefAttributes<FormikProps<Values>>) => JSX.Element;
 
 function warnAboutMissingIdentifier({
   htmlContent,

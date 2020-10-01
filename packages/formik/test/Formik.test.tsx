@@ -50,7 +50,7 @@ function Form({
 
 const InitialValues = { name: 'jared' };
 
-function renderFormik<V = Values>(props?: Partial<FormikConfig<V>>) {
+function renderFormik<V = Values>(props?: Partial<FormikConfig<V>> & React.RefAttributes<FormikProps<V>>) {
   let injected: any;
   const { rerender, ...rest } = render(
     <Formik
@@ -1307,5 +1307,13 @@ describe('<Formik>', () => {
     const { getProps } = renderFormik({ innerRef });
 
     expect(innerRef.current).toEqual(getProps());
+  });
+
+  it('exposes formikbag with forwardRef', () => {
+    const ref = React.createRef<FormikProps<Values>>();
+
+    const { getProps } = renderFormik({ ref });
+
+    expect(ref.current).toEqual(getProps());
   });
 });

@@ -1,4 +1,4 @@
-import rpc from './rpc'
+import rpc from './rpc';
 
 export default function queryCollection({
   collectionId,
@@ -12,7 +12,7 @@ export default function queryCollection({
     type = 'table',
     userLocale = 'en',
     userTimeZone = 'America/Phoenix',
-  } = loader
+  } = loader;
 
   const {
     aggregate = [
@@ -27,7 +27,7 @@ export default function queryCollection({
     filter = [],
     filter_operator = 'and',
     sort = [],
-  } = query
+  } = query;
 
   return rpc('queryCollection', {
     collectionId,
@@ -45,5 +45,5 @@ export default function queryCollection({
       filter_operator,
       sort,
     },
-  })
+  });
 }

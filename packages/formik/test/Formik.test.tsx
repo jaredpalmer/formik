@@ -1303,7 +1303,7 @@ describe('<Formik>', () => {
   });
 
   it('should not eat an error thrown by the validationSchema', async () => {
-    const validationSchema = function() {
+    const validationSchema = () => {
       throw new Error('broken validations');
     };
 

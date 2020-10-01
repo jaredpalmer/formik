@@ -81,13 +81,12 @@ const remarkPlugins = [
 module.exports = optimizedImages({
   pageExtensions: ['jsx', 'js', 'ts', 'tsx', 'mdx', 'md'],
   env: {
-    GA_TRACKING_ID: process.env.GA_TRACKING_ID || '',
+    NEXT_PUBLIC_GA_TRACKING_ID: process.env.NEXT_PUBLIC_GA_TRACKING_ID || '',
     SENTRY_DSN: process.env.SENTRY_DSN || '',
     SENTRY_RELEASE: process.env.VERCEL_GITHUB_COMMIT_SHA || '',
   },
   experimental: {
     plugins: true,
-    modern: true,
     rewrites() {
       return [
         {
@@ -120,15 +119,11 @@ module.exports = optimizedImages({
       ],
     });
 
-    // only compile build-rss in production server build
-    if (dev || !isServer) {
-      return config;
-    }
-
     // we're in build mode so enable shared caching for Notion data
     process.env.USE_CACHE = 'true';
 
     const originalEntry = config.entry;
+
     config.entry = async () => {
       const entries = {
         ...(await originalEntry()),

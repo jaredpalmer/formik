@@ -1,16 +1,16 @@
-import React from "react";
-import ReactDOM from "react-dom";
-import { Formik, Field, Form } from "formik";
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { Formik, Field, Form } from 'formik';
 
 const Example = () => (
   <div>
     <h1>Sign Up</h1>
     <Formik
       initialValues={{
-        picked: ""
+        picked: '',
       }}
-      onSubmit={async values => {
-        await new Promise(r => setTimeout(r, 500));
+      onSubmit={async (values) => {
+        await new Promise((r) => setTimeout(r, 500));
         alert(JSON.stringify(values, null, 2));
       }}
     >
@@ -36,4 +36,4 @@ const Example = () => (
   </div>
 );
 
-ReactDOM.render(<Example />, document.getElementById("root"));
+ReactDOM.render(<Example />, document.getElementById('root'));

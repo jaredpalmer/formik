@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { render, fireEvent, wait } from 'react-testing-library';
+import { render, fireEvent, wait } from '@testing-library/react';
 import * as Yup from 'yup';
 
 import {

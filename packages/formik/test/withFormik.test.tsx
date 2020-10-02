@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { render, wait } from 'react-testing-library';
+import { render, wait } from '@testing-library/react';
 import * as Yup from 'yup';
 
 import { withFormik, FormikProps } from '../src';

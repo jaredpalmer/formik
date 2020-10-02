@@ -12,8 +12,7 @@ import {
   FieldMetaProps,
   FieldHelperProps,
   FieldInputProps,
-  FormikHelpers,
-  FormikHandlers,
+  FormikHelpers, FormikHandlers,
 } from './types';
 import {
   isFunction,
@@ -51,6 +50,9 @@ type FormikMessage<Values> =
       type: 'RESET_FORM';
       payload: FormikState<Values>;
     };
+
+const isChangeEvent = (value: any): value is React.ChangeEvent<any> =>
+  typeof value === 'object' && typeof value.persist === 'function';
 
 // State reducer
 function formikReducer<Values>(
@@ -171,9 +173,46 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     };
   }, []);
 
+  /**
+   * This is the true test of spacetime. Every method
+   * Formik uses must carefully consider whether it
+   * needs to use the ref or the render snapshot.
+   *
+   * The general rule is going to be,
+   *       snapshot    ref
+   * const [state, updateState] = useFormikThing();
+   */
+  const stateRef = React.useRef<FormikState<Values>>({
+    values: initialValues.current,
+    errors: initialErrors.current,
+    touched: initialTouched.current,
+    status: initialStatus.current,
+    isSubmitting: false,
+    isValidating: false,
+    submitCount: 0,
+  });
+
+  /**
+   * Breaking all the rules, re: "must be side-effect free"
+   * BUT that's probably OK.
+   *
+   * The only things that should use stateRef are side effects themselves --
+   * those things which need the latest value in order to compute their own latest value.
+   */
+  const refBoundFormikReducer = React.useCallback((
+    state: FormikState<Values>,
+    msg: FormikMessage<Values>
+  ) => {
+      const result = formikReducer(state, msg);
+
+      stateRef.current = result;
+
+      return result;
+  }, []);
+
   const [state, dispatch] = React.useReducer<
     React.Reducer<FormikState<Values>, FormikMessage<Values>>
-  >(formikReducer, {
+  >(refBoundFormikReducer, {
     values: props.initialValues,
     errors: props.initialErrors || emptyErrors,
     touched: props.initialTouched || emptyTouched,
@@ -260,7 +299,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   const runSingleFieldLevelValidation = React.useCallback(
     (field: string, value: void | string): Promise<string> => {
       return new Promise(resolve =>
-        resolve(fieldRegistry.current[field].validate(value) as string)
+        resolve(fieldRegistry.current[field].validate(value))
       );
     },
     []
@@ -365,16 +404,6 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     }
   );
 
-  React.useEffect(() => {
-    if (
-      validateOnMount &&
-      isMounted.current === true &&
-      isEqual(initialValues.current, props.initialValues)
-    ) {
-      validateFormWithLowPriority(initialValues.current);
-    }
-  }, [validateOnMount, validateFormWithLowPriority]);
-
   const resetForm = React.useCallback(
     (nextState?: Partial<FormikState<Values>>) => {
       const values =
@@ -447,8 +476,9 @@ export function useFormik<Values extends FormikValues = FormikValues>({
       isMounted.current === true &&
       !isEqual(initialValues.current, props.initialValues)
     ) {
+      initialValues.current = props.initialValues;
+
       if (enableReinitialize) {
-        initialValues.current = props.initialValues;
         resetForm();
       }
 
@@ -456,13 +486,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
         validateFormWithLowPriority(initialValues.current);
       }
     }
-  }, [
-    enableReinitialize,
-    props.initialValues,
-    resetForm,
-    validateOnMount,
-    validateFormWithLowPriority,
-  ]);
+  }, [enableReinitialize, props.initialValues, resetForm, validateOnMount, validateFormWithLowPriority]);
 
   React.useEffect(() => {
     if (
@@ -511,10 +535,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     // changes if the validation function is synchronous. It's different from
     // what is called when using validateForm.
 
-    if (
-      fieldRegistry.current[name] &&
-      isFunction(fieldRegistry.current[name].validate)
-    ) {
+    if (isFunction(fieldRegistry.current[name].validate)) {
       const value = getIn(state.values, name);
       const maybePromise = fieldRegistry.current[name].validate(value);
       if (isPromise(maybePromise)) {
@@ -631,8 +652,8 @@ export function useFormik<Values extends FormikValues = FormikValues>({
       if (!isString(eventOrTextValue)) {
         // If we can, persist the event
         // @see https://reactjs.org/docs/events.html#event-pooling
-        if ((eventOrTextValue as any).persist) {
-          (eventOrTextValue as React.ChangeEvent<any>).persist();
+        if (isChangeEvent(eventOrTextValue)) {
+          eventOrTextValue.persist();
         }
         const target = eventOrTextValue.target
           ? (eventOrTextValue as React.ChangeEvent<any>).target
@@ -893,18 +914,23 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     resetForm();
   });
 
+  /**
+   * These getters are not related to a render.
+   *
+   * They use refs!
+   */
   const getFieldMeta = React.useCallback(
     (name: string): FieldMetaProps<any> => {
       return {
-        value: getIn(state.values, name),
-        error: getIn(state.errors, name),
-        touched: !!getIn(state.touched, name),
+        value: getIn(stateRef.current.values, name),
+        error: getIn(stateRef.current.errors, name),
+        touched: !!getIn(stateRef.current.touched, name),
         initialValue: getIn(initialValues.current, name),
         initialTouched: !!getIn(initialTouched.current, name),
         initialError: getIn(initialErrors.current, name),
       };
     },
-    [state.errors, state.touched, state.values]
+    []
   );
 
   const getFieldHelpers = React.useCallback(
@@ -924,7 +950,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     (nameOrOptions): FieldInputProps<any> => {
       const isAnObject = isObject(nameOrOptions);
       const name = isAnObject ? nameOrOptions.name : nameOrOptions;
-      const valueState = getIn(state.values, name);
+      const valueState = getIn(stateRef.current.values, name);
 
       const field: FieldInputProps<any> = {
         name,
@@ -959,7 +985,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
       }
       return field;
     },
-    [handleBlur, handleChange, state.values]
+    [handleBlur, handleChange]
   );
 
   const dirty = React.useMemo(
@@ -1012,6 +1038,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     validateOnBlur,
     validateOnChange,
     validateOnMount,
+    stateRef
   };
 
   return ctx;
@@ -1142,7 +1169,7 @@ export function prepareDataForValidation<T extends FormikValues>(
 function arrayMerge(target: any[], source: any[], options: any): any[] {
   const destination = target.slice();
 
-  source.forEach(function merge(e: any, i: number) {
+  source.forEach(function(e: any, i: number) {
     if (typeof destination[i] === 'undefined') {
       const cloneRequested = options.clone !== false;
       const shouldClone = cloneRequested && options.isMergeableObject(e);

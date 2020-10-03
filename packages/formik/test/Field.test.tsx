@@ -1,6 +1,5 @@
 import * as React from 'react';
-// @ts-ignore
-import { act, cleanup, render, screen, waitFor, fireEvent } from '@testing-library/react';
+import { act, cleanup, render, waitFor, fireEvent } from '@testing-library/react';
 import * as Yup from 'yup';
 import {
   Formik,
@@ -362,7 +361,11 @@ describe('Field / FastField', () => {
           component: 'input',
         });
         rerender();
-        getFormProps().validateField('name');
+
+        act(() => {
+          getFormProps().validateField('name');
+        })
+
         rerender();
         await waitFor(() => {
           expect(validate).toHaveBeenCalled();
@@ -381,7 +384,9 @@ describe('Field / FastField', () => {
         // workaround for `useEffect` to run: https://github.com/facebook/react/issues/14050
         rerender();
 
-        getFormProps().validateField('name');
+        act(() => {
+          getFormProps().validateField('name');
+        })
 
         expect(validate).toHaveBeenCalled();
         await waitFor(() => expect(getFormProps().errors.name).toBe('Error!'));
@@ -403,7 +408,9 @@ describe('Field / FastField', () => {
 
         rerender();
 
-        getFormProps().validateField('name');
+        act(() => {
+          getFormProps().validateField('name');
+        })
 
         await waitFor(() =>
           expect(getFormProps().errors).toEqual({

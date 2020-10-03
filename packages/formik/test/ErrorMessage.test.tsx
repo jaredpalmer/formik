@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import { act, render } from '@testing-library/react';
 import { Formik, FormikProps, ErrorMessage } from '../src';
 import { noop } from './testHelpers';
 
@@ -16,16 +16,12 @@ const TestForm: React.FC<any> = p => (
   />
 );
 
-describe('<ErrorMessage />', () => {
-  const node = document.createElement('div');
-  afterEach(() => {
-    ReactDOM.unmountComponentAtNode(node);
-  });
+fdescribe('<ErrorMessage />', () => {
   it('renders with children as a function', async () => {
     let actual: any; /** ErrorMessage ;) */
     let actualFProps: any;
     let message = 'Wrong';
-    ReactDOM.render(
+    render(
       <TestForm
         render={(fProps: FormikProps<TestFormValues>) => {
           actualFProps = fProps;
@@ -37,14 +33,20 @@ describe('<ErrorMessage />', () => {
             </div>
           );
         }}
-      />,
-      node
+      />
     );
 
-    actualFProps.setFieldError('email', message);
+    await act(async () => {
+      await actualFProps.setFieldError('email', message);
+    });
+
     // Only renders if Field has been visited.
     expect(actual).toEqual(undefined);
-    actualFProps.setFieldTouched('email');
+
+    await act(async () => {
+      await actualFProps.setFieldTouched('email');
+    });
+
     // Renders after being visited with an error.
     expect(actual).toEqual(message);
   });

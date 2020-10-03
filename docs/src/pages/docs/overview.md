@@ -231,7 +231,7 @@ Read below for more information...
 As you can see above, validation is left up to you. Feel free to write your own
 validators or use a 3rd party library. Personally, I use
 [Yup](https://github.com/jquense/yup) for object schema validation. It has an
-API that's pretty similar [Joi](https://github.com/hapijs/joi) /
+API that's pretty similar to [Joi](https://github.com/hapijs/joi) /
 [React PropTypes](https://github.com/facebook/prop-types) but is small enough
 for the browser and fast enough for runtime usage. Because I ❤️ Yup sooo
 much, Formik has a special config option / prop for Yup called

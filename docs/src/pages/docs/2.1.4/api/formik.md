@@ -66,7 +66,7 @@ Each render methods will be passed the same props:
 Returns `true` if values are not deeply equal from initial values, `false` otherwise.
 `dirty` is a readonly computed property and should not be mutated directly.
 
-#### `errors: { [field: string]: string }`
+#### `errors: FormikErrors<Values>`
 
 Form validation errors. Should match the shape of your form's `values` defined
 in `initialValues`. If you are using `validationSchema` (which you should be),
@@ -114,7 +114,7 @@ Returns `true` if Formik is running validation during submission, or by calling 
 
 Imperatively reset the form. If `nextInitialState` is specified, Formik will set this state as the new "initial state" and use the related values of `nextInitialState` to update the form's `initialValues` as well as `initialTouched`, `initialStatus`, `initialErrors`. This is useful for altering the initial state (i.e. "base") of the form after changes have been made. If `nextInitialState` is not defined, then Formik will reset state to the original initial state. The latter is useful for calling `resetForm` within `componentDidUpdate` or `useEffect`.
 
-#### `setErrors: (fields: { [field: string]: string }) => void`
+#### `setErrors: (fields: FormikErrors<Values>) => void`
 
 Set `errors` imperatively.
 
@@ -156,7 +156,7 @@ Set `isSubmitting` imperatively. You would call it with `setSubmitting(false)` i
 
 Set `touched` imperatively. Calling this will trigger validation to run if `validateOnBlur` is set to `true` (which it is by default). You can also explicitly prevent/skip validation by passing a second argument as `false`.
 
-#### `setValues: (fields: { [field: string]: any }, shouldValidate?: boolean) => void`
+#### `setValues: (fields: React.SetStateAction<Values>, shouldValidate?: boolean) => void`
 
 Set `values` imperatively. Calling this will trigger validation to run if `validateOnChange` is set to `true` (which it is by default). You can also explicitly prevent/skip validation by passing a second argument as `false`.
 
@@ -169,11 +169,11 @@ and passing through API responses to your inner component.
 `status` should only be modified by calling
 [`setStatus`](#setstatus-status-any-void).
 
-#### `touched: { [field: string]: boolean }`
+#### `touched: FormikTouched<Values>`
 
 Touched fields. Each key corresponds to a field that has been touched/visited.
 
-#### `values: { [field: string]: any }`
+#### `values: Values`
 
 Your form's values. Will have the shape of the result of `mapPropsToValues`
 (if specified) or all props that are not functions passed to your wrapped

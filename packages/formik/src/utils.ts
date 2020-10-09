@@ -80,6 +80,27 @@ export function getIn(
 }
 
 /**
+* Returns true if the given name (key) is the first one to appear in the given obj (object)
+ * @param obj
+ * @param name
+ * @return boolean
+ */
+export function isFirstIn(obj: any, key: string) {
+  const path = toPath(key)
+  let p = 0
+
+  while (obj && p < path.length) {
+    if (path[p] === Object.keys(obj)[0]) {
+      obj = obj[path[p++]]
+    } else {
+      return false
+    }
+  }
+
+  return true
+}
+
+/**
  * Deeply set a value from in object via it's path. If the value at `path`
  * has changed, return a shallow copy of obj with `value` set at `path`.
  * If `value` has not changed, return the original `obj`.

@@ -12,6 +12,8 @@ custom_edit_url: https://github.com/jaredpalmer/formik/edit/master/docs/api/util
 
 #### `getIn(obj: any, key: string | string[], def?: any, p?: number): any`
 
+#### `isFirstIn(obj: any, key: string): boolean`
+
 #### `setIn(obj: any, path: string, value: any): any`
 
 #### `setNestedObjectValues<T>(object: any, value: any, visited?: any, response?: any): T`

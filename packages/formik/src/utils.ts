@@ -80,24 +80,24 @@ export function getIn(
 }
 
 /**
-* Returns true if the given name (key) is the first one to appear in the given obj (object)
+ * Returns true if the given name (key) is the first one to appear in the given obj (object)
  * @param obj
  * @param name
  * @return boolean
  */
 export function isFirstIn(obj: any, key: string) {
-  const path = toPath(key)
-  let p = 0
+  const path = toPath(key);
+  let p = 0;
 
   while (obj && p < path.length) {
     if (path[p] === Object.keys(obj)[0]) {
-      obj = obj[path[p++]]
+      obj = obj[path[p++]];
     } else {
-      return false
+      return false;
     }
   }
 
-  return true
+  return true;
 }
 
 /**

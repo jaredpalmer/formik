@@ -4,7 +4,7 @@ import { useFormikContext } from 'formik';
 import { isFirstIn } from './utils';
 
 /**
- * This hook checks if the give name appears first in the errors object and if it is then scrolls to that element and
+ * This hook checks if the given name appears first in the errors object and if it is then scrolls to that element and
  * optionally brings it in focus if it is an input element.
  * @param name
  * @param scrollRef

@@ -171,28 +171,28 @@ describe('utils', () => {
 
   describe('isFirstIn', () => {
     it('should work on flat error objects ', () => {
-      const errors = { firstName: 'Error', lastName: 'Error' }
+      const errors = { firstName: 'Error', lastName: 'Error' };
 
-      expect(isFirstIn(errors, 'firstName')).toEqual(true)
-      expect(isFirstIn(errors, 'lastName')).toEqual(false)
-    })
+      expect(isFirstIn(errors, 'firstName')).toEqual(true);
+      expect(isFirstIn(errors, 'lastName')).toEqual(false);
+    });
 
     it('should work on nested error objects', () => {
-      const errors = { address: { postalCode: 'Error', houseNumber: 'Error' } }
+      const errors = { address: { postalCode: 'Error', houseNumber: 'Error' } };
 
-      expect(isFirstIn(errors, 'address')).toEqual(true)
-      expect(isFirstIn(errors, 'address.postalCode')).toEqual(true)
-      expect(isFirstIn(errors, 'address.houseNumber')).toEqual(false)
-    })
+      expect(isFirstIn(errors, 'address')).toEqual(true);
+      expect(isFirstIn(errors, 'address.postalCode')).toEqual(true);
+      expect(isFirstIn(errors, 'address.houseNumber')).toEqual(false);
+    });
 
     it('should work on arrays', () => {
-      const errors = { foo: [{ bar: 'Error', baz: 'Error' }] }
+      const errors = { foo: [{ bar: 'Error', baz: 'Error' }] };
 
-      expect(isFirstIn(errors, 'foo[0].bar')).toEqual(true)
-      expect(isFirstIn(errors, 'foo.0.bar')).toEqual(true)
-      expect(isFirstIn(errors, 'foo[0].baz')).toEqual(false)
-      expect(isFirstIn(errors, 'foo.0.baz')).toEqual(false)
-    })
+      expect(isFirstIn(errors, 'foo[0].bar')).toEqual(true);
+      expect(isFirstIn(errors, 'foo.0.bar')).toEqual(true);
+      expect(isFirstIn(errors, 'foo[0].baz')).toEqual(false);
+      expect(isFirstIn(errors, 'foo.0.baz')).toEqual(false);
+    });
 
     it('should work on arrays where the first indexes are valid', () => {
       let errors = {
@@ -200,13 +200,13 @@ describe('utils', () => {
           5: { bar: 'Error', foo: 'Error' },
           6: { bar: 'Error', foo: 'Error' },
         },
-      }
+      };
 
-      expect(isFirstIn(errors, 'foo[5].bar')).toEqual(true)
-      expect(isFirstIn(errors, 'foo[5].foo')).toEqual(false)
-      expect(isFirstIn(errors, 'foo[6].bar')).toEqual(false)
-    })
-  })
+      expect(isFirstIn(errors, 'foo[5].bar')).toEqual(true);
+      expect(isFirstIn(errors, 'foo[5].foo')).toEqual(false);
+      expect(isFirstIn(errors, 'foo[6].bar')).toEqual(false);
+    });
+  });
 
   describe('setIn', () => {
     it('sets flat value', () => {
@@ -330,7 +330,7 @@ describe('utils', () => {
 
     it('should keep class inheritance for the top level object', () => {
       class TestClass {
-        constructor(public key: string, public setObj?: any) { }
+        constructor(public key: string, public setObj?: any) {}
       }
       const obj = new TestClass('value');
       const newObj = setIn(obj, 'setObj.nested', 'setInValue');

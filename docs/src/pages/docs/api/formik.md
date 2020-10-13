@@ -211,7 +211,7 @@ Set `isSubmitting` imperatively. You would call it with `setSubmitting(false)` i
 
 Set `touched` imperatively. Calling this will trigger validation to run if `validateOnBlur` is set to `true` (which it is by default). You can also explicitly prevent/skip validation by passing a second argument as `false`.
 
-#### `setValues: (fields: { [field: string]: any }, shouldValidate?: boolean) => void`
+#### `setValues: (fields: React.SetStateAction<{ [field: string]: any }>, shouldValidate?: boolean) => void`
 
 Set `values` imperatively. Calling this will trigger validation to run if `validateOnChange` is set to `true` (which it is by default). You can also explicitly prevent/skip validation by passing a second argument as `false`.
 

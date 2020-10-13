@@ -1,12 +1,18 @@
 import * as React from 'react';
-import { render, fireEvent, wait } from 'react-testing-library';
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from '@testing-library/react';
 import * as Yup from 'yup';
 
 import {
   Formik,
-  prepareDataForValidation,
-  FormikProps,
   FormikConfig,
+  FormikProps,
+  prepareDataForValidation,
 } from '../src';
 import { noop } from './testHelpers';
 
@@ -172,7 +178,7 @@ describe('<Formik>', () => {
 
     it('updates values when passed a string (overloaded)', () => {
       let injected: any;
-      const { getByTestId } = render(
+      render(
         <Formik initialValues={InitialValues} onSubmit={noop}>
           {formikProps =>
             (injected = formikProps) && (
@@ -184,7 +190,7 @@ describe('<Formik>', () => {
           }
         </Formik>
       );
-      const input = getByTestId('name-input');
+      const input = screen.getByTestId('name-input');
 
       expect(injected.values.name).toEqual('jared');
       fireEvent.change(input, {
@@ -202,12 +208,12 @@ describe('<Formik>', () => {
       const validationSchema = {
         validate,
       };
-      const { getByTestId, rerender } = renderFormik({
+      const { rerender } = renderFormik({
         validate,
         validationSchema,
       });
 
-      fireEvent.change(getByTestId('name-input'), {
+      fireEvent.change(screen.getByTestId('name-input'), {
         persist: noop,
         target: {
           name: 'name',
@@ -215,7 +221,7 @@ describe('<Formik>', () => {
         },
       });
       rerender();
-      await wait(() => {
+      await waitFor(() => {
         expect(validate).toHaveBeenCalledTimes(2);
       });
     });
@@ -225,13 +231,13 @@ describe('<Formik>', () => {
       const validationSchema = {
         validate,
       };
-      const { getByTestId, rerender } = renderFormik({
+      const { rerender } = renderFormik({
         validate,
         validationSchema,
         validateOnChange: false,
       });
 
-      fireEvent.change(getByTestId('name-input'), {
+      fireEvent.change(screen.getByTestId('name-input'), {
         persist: noop,
         target: {
           name: 'name',
@@ -239,7 +245,7 @@ describe('<Formik>', () => {
         },
       });
       rerender();
-      await wait(() => {
+      await waitFor(() => {
         expect(validate).not.toHaveBeenCalled();
       });
     });
@@ -247,10 +253,10 @@ describe('<Formik>', () => {
 
   describe('handleBlur', () => {
     it('sets touched state', () => {
-      const { getProps, getByTestId } = renderFormik<Values>();
+      const { getProps } = renderFormik<Values>();
       expect(getProps().touched.name).toEqual(undefined);
 
-      const input = getByTestId('name-input');
+      const input = screen.getByTestId('name-input');
       fireEvent.blur(input, {
         target: {
           name: 'name',
@@ -260,10 +266,10 @@ describe('<Formik>', () => {
     });
 
     it('updates touched state via `name` instead of `id` attribute when both are present', () => {
-      const { getProps, getByTestId } = renderFormik<Values>();
+      const { getProps } = renderFormik<Values>();
       expect(getProps().touched.name).toEqual(undefined);
 
-      const input = getByTestId('name-input');
+      const input = screen.getByTestId('name-input');
       fireEvent.blur(input, {
         target: {
           id: 'blah',
@@ -275,7 +281,7 @@ describe('<Formik>', () => {
 
     it('updates touched when passed a string (overloaded)', () => {
       let injected: any;
-      const { getByTestId } = render(
+      render(
         <Formik initialValues={InitialValues} onSubmit={noop}>
           {formikProps =>
             (injected = formikProps) && (
@@ -287,7 +293,7 @@ describe('<Formik>', () => {
           }
         </Formik>
       );
-      const input = getByTestId('name-input');
+      const input = screen.getByTestId('name-input');
 
       expect(injected.touched.name).toEqual(undefined);
       fireEvent.blur(input, {
@@ -302,15 +308,15 @@ describe('<Formik>', () => {
 
     it('runs validate by default', async () => {
       const validate = jest.fn(noop);
-      const { getByTestId, rerender } = renderFormik({ validate });
+      const { rerender } = renderFormik({ validate });
 
-      fireEvent.blur(getByTestId('name-input'), {
+      fireEvent.blur(screen.getByTestId('name-input'), {
         target: {
           name: 'name',
         },
       });
       rerender();
-      await wait(() => {
+      await waitFor(() => {
         expect(validate).toHaveBeenCalled();
       });
     });
@@ -320,18 +326,18 @@ describe('<Formik>', () => {
       const validationSchema = {
         validate,
       };
-      const { getByTestId, rerender } = renderFormik({
+      const { rerender } = renderFormik({
         validate,
         validationSchema,
       });
 
-      fireEvent.blur(getByTestId('name-input'), {
+      fireEvent.blur(screen.getByTestId('name-input'), {
         target: {
           name: 'name',
         },
       });
       rerender();
-      await wait(() => {
+      await waitFor(() => {
         expect(validate).toHaveBeenCalledTimes(2);
       });
     });
@@ -341,18 +347,18 @@ describe('<Formik>', () => {
       const validationSchema = {
         validate,
       };
-      const { getByTestId, rerender } = renderFormik({
+      const { rerender } = renderFormik({
         validate,
         validationSchema,
       });
 
-      fireEvent.blur(getByTestId('name-input'), {
+      fireEvent.blur(screen.getByTestId('name-input'), {
         target: {
           name: 'name',
         },
       });
       rerender();
-      await wait(() => {
+      await waitFor(() => {
         expect(validate).toHaveBeenCalledTimes(2);
       });
     });
@@ -368,7 +374,7 @@ describe('<Formik>', () => {
         validateOnBlur: false,
       });
       rerender();
-      await wait(() => expect(validate).not.toHaveBeenCalled());
+      await waitFor(() => expect(validate).not.toHaveBeenCalled());
     });
   });
 
@@ -386,8 +392,8 @@ describe('<Formik>', () => {
         </Formik>
       );
 
-      const { getByTestId } = render(FormPreventDefault);
-      fireEvent.click(getByTestId('submit-button'));
+      render(FormPreventDefault);
+      fireEvent.click(screen.getByTestId('submit-button'));
 
       expect(preventDefault).toHaveBeenCalled();
     });
@@ -405,10 +411,11 @@ describe('<Formik>', () => {
           )}
         </Formik>
       );
-      const { getByTestId } = render(FormNoEvent);
+
+      render(FormNoEvent);
 
       expect(() => {
-        fireEvent.click(getByTestId('submit-button'));
+        fireEvent.click(screen.getByTestId('submit-button'));
       }).not.toThrow();
     });
 
@@ -423,10 +430,11 @@ describe('<Formik>', () => {
           )}
         </Formik>
       );
-      const { getByTestId } = render(FormNoPreventDefault);
+
+      render(FormNoPreventDefault);
 
       expect(() => {
-        fireEvent.click(getByTestId('submit-button'));
+        fireEvent.click(screen.getByTestId('submit-button'));
       }).not.toThrow();
     });
 
@@ -446,18 +454,19 @@ describe('<Formik>', () => {
           )}
         </Formik>
       );
-      const { getByTestId } = render(FormNoPreventDefault);
+
+      render(FormNoPreventDefault);
 
       expect(() => {
-        fireEvent.click(getByTestId('submit-button'));
+        fireEvent.click(screen.getByTestId('submit-button'));
       }).not.toThrow();
     });
 
     it('should touch all fields', () => {
-      const { getProps, getByTestId } = renderFormik();
+      const { getProps } = renderFormik();
       expect(getProps().touched).toEqual({});
 
-      fireEvent.submit(getByTestId('form'));
+      fireEvent.submit(screen.getByTestId('form'));
       expect(getProps().touched).toEqual({ name: true, age: true });
     });
 
@@ -483,7 +492,7 @@ describe('<Formik>', () => {
         const { getByTestId } = renderFormik({ onSubmit, validate });
 
         fireEvent.submit(getByTestId('form'));
-        await wait(() => expect(onSubmit).toBeCalled());
+        await waitFor(() => expect(onSubmit).toBeCalled());
       });
 
       it('should not submit the form if invalid', () => {
@@ -504,9 +513,11 @@ describe('<Formik>', () => {
           validate,
         });
 
-        await expect(getProps().submitForm()).rejects.toThrow('Async Error');
+        await act(async () => {
+          await expect(getProps().submitForm()).rejects.toThrow('Async Error');
+        });
 
-        await wait(() => {
+        await waitFor(() => {
           expect(onSubmit).not.toBeCalled();
           expect(global.console.warn).toHaveBeenCalledWith(
             expect.stringMatching(
@@ -526,7 +537,9 @@ describe('<Formik>', () => {
           const { getProps } = renderFormik({ onSubmit: handleSubmit });
 
           const { submitForm } = getProps();
-          await expect(submitForm()).rejects.toEqual(error);
+          await act(async () => {
+            await expect(submitForm()).rejects.toEqual(error);
+          });
         });
       });
     });
@@ -546,7 +559,7 @@ describe('<Formik>', () => {
         const { getByTestId } = renderFormik({ onSubmit, validate });
 
         fireEvent.submit(getByTestId('form'));
-        await wait(() => expect(onSubmit).toBeCalled());
+        await waitFor(() => expect(onSubmit).toBeCalled());
       });
 
       it('should not submit the form if invalid', () => {
@@ -565,9 +578,11 @@ describe('<Formik>', () => {
 
         const { getProps } = renderFormik({ onSubmit, validate });
 
-        await expect(getProps().submitForm()).rejects.toThrow('Async Error');
+        await act(async () => {
+          await expect(getProps().submitForm()).rejects.toThrow('Async Error');
+        });
 
-        await wait(() => {
+        await waitFor(() => {
           expect(onSubmit).not.toBeCalled();
           expect(global.console.warn).toHaveBeenCalledWith(
             expect.stringMatching(
@@ -585,12 +600,15 @@ describe('<Formik>', () => {
         const validationSchema = {
           validate,
         };
-        const { getByTestId } = renderFormik({
+        renderFormik({
           validate,
           validationSchema,
         });
 
-        fireEvent.submit(getByTestId('form'));
+        await act(async () => {
+          await fireEvent.submit(screen.getByTestId('form'));
+        });
+
         expect(validate).toHaveBeenCalled();
       });
 
@@ -599,12 +617,14 @@ describe('<Formik>', () => {
         const validationSchema = () => ({
           validate,
         });
-        const { getByTestId } = renderFormik({
+        renderFormik({
           validate,
           validationSchema,
         });
 
-        fireEvent.submit(getByTestId('form'));
+        await act(async () => {
+          await fireEvent.submit(screen.getByTestId('form'));
+        });
         expect(validate).toHaveBeenCalled();
       });
     });
@@ -613,7 +633,9 @@ describe('<Formik>', () => {
       it('setValues sets values', () => {
         const { getProps } = renderFormik<Values>();
 
-        getProps().setValues({ name: 'ian', age: 25 });
+        act(() => {
+          getProps().setValues({ name: 'ian', age: 25 });
+        });
         expect(getProps().values.name).toEqual('ian');
         expect(getProps().values.age).toEqual(25);
       });
@@ -621,10 +643,12 @@ describe('<Formik>', () => {
       it('setValues takes a function which can patch values', () => {
         const { getProps } = renderFormik<Values>();
 
-        getProps().setValues((values: Values) => ({
-          ...values,
-          age: 80,
-        }));
+        act(() => {
+          getProps().setValues((values: Values) => ({
+            ...values,
+            age: 80,
+          }));
+        });
         expect(getProps().values.name).toEqual('jared');
         expect(getProps().values.age).toEqual(80);
       });
@@ -632,12 +656,13 @@ describe('<Formik>', () => {
       it('setValues should run validations when validateOnChange is true (default)', async () => {
         const newValue: Values = { name: 'ian' };
         const validate = jest.fn(_values => ({}));
-        // const { getProps, rerender } = renderFormik({ validate });
         const { getProps } = renderFormik({ validate });
 
-        getProps().setValues(newValue);
+        act(() => {
+          getProps().setValues(newValue);
+        });
         // rerender();
-        await wait(() => {
+        await waitFor(() => {
           expect(validate).toHaveBeenCalledWith(newValue, undefined);
         });
       });
@@ -648,9 +673,11 @@ describe('<Formik>', () => {
           validateOnChange: false,
         });
 
-        getProps().setValues({ name: 'ian' });
+        act(() => {
+          getProps().setValues({ name: 'ian' });
+        });
         rerender();
-        await wait(() => {
+        await waitFor(() => {
           expect(validate).not.toHaveBeenCalled();
         });
       });
@@ -658,9 +685,11 @@ describe('<Formik>', () => {
       it('setFieldValue sets value by key', async () => {
         const { getProps, rerender } = renderFormik<Values>();
 
-        getProps().setFieldValue('name', 'ian');
+        act(() => {
+          getProps().setFieldValue('name', 'ian');
+        });
         rerender();
-        await wait(() => {
+        await waitFor(() => {
           expect(getProps().values.name).toEqual('ian');
         });
       });
@@ -669,9 +698,11 @@ describe('<Formik>', () => {
         const validate = jest.fn(() => ({}));
         const { getProps, rerender } = renderFormik({ validate });
 
-        getProps().setFieldValue('name', 'ian');
+        act(() => {
+          getProps().setFieldValue('name', 'ian');
+        });
         rerender();
-        await wait(() => {
+        await waitFor(() => {
           expect(validate).toHaveBeenCalled();
         });
       });
@@ -683,9 +714,11 @@ describe('<Formik>', () => {
           validateOnChange: false,
         });
 
-        getProps().setFieldValue('name', 'ian');
+        act(() => {
+          getProps().setFieldValue('name', 'ian');
+        });
         rerender();
-        await wait(() => {
+        await waitFor(() => {
           expect(validate).not.toHaveBeenCalled();
         });
       });
@@ -693,7 +726,9 @@ describe('<Formik>', () => {
       it('setTouched sets touched', () => {
         const { getProps } = renderFormik();
 
-        getProps().setTouched({ name: true });
+        act(() => {
+          getProps().setTouched({ name: true });
+        });
         expect(getProps().touched).toEqual({ name: true });
       });
 
@@ -701,9 +736,11 @@ describe('<Formik>', () => {
         const validate = jest.fn(() => ({}));
         const { getProps, rerender } = renderFormik({ validate });
 
-        getProps().setTouched({ name: true });
+        act(() => {
+          getProps().setTouched({ name: true });
+        });
         rerender();
-        await wait(() => expect(validate).toHaveBeenCalled());
+        await waitFor(() => expect(validate).toHaveBeenCalled());
       });
 
       it('setTouched should run validations when validateOnBlur is false', async () => {
@@ -713,19 +750,25 @@ describe('<Formik>', () => {
           validateOnBlur: false,
         });
 
-        getProps().setTouched({ name: true });
+        act(() => {
+          getProps().setTouched({ name: true });
+        });
         rerender();
-        await wait(() => expect(validate).not.toHaveBeenCalled());
+        await waitFor(() => expect(validate).not.toHaveBeenCalled());
       });
 
       it('setFieldTouched sets touched by key', () => {
         const { getProps } = renderFormik<Values>();
 
-        getProps().setFieldTouched('name', true);
+        act(() => {
+          getProps().setFieldTouched('name', true);
+        });
         expect(getProps().touched).toEqual({ name: true });
         expect(getProps().dirty).toBe(false);
 
-        getProps().setFieldTouched('name', false);
+        act(() => {
+          getProps().setFieldTouched('name', false);
+        });
         expect(getProps().touched).toEqual({ name: false });
         expect(getProps().dirty).toBe(false);
       });
@@ -734,9 +777,11 @@ describe('<Formik>', () => {
         const validate = jest.fn(() => ({}));
         const { getProps, rerender } = renderFormik({ validate });
 
-        getProps().setFieldTouched('name', true);
+        act(() => {
+          getProps().setFieldTouched('name', true);
+        });
         rerender();
-        await wait(() => expect(validate).toHaveBeenCalled());
+        await waitFor(() => expect(validate).toHaveBeenCalled());
       });
 
       it('setFieldTouched should NOT run validations when validateOnBlur is false', async () => {
@@ -746,22 +791,28 @@ describe('<Formik>', () => {
           validateOnBlur: false,
         });
 
-        getProps().setFieldTouched('name', true);
+        act(() => {
+          getProps().setFieldTouched('name', true);
+        });
         rerender();
-        await wait(() => expect(validate).not.toHaveBeenCalled());
+        await waitFor(() => expect(validate).not.toHaveBeenCalled());
       });
 
       it('setErrors sets error object', () => {
         const { getProps } = renderFormik<Values>();
 
-        getProps().setErrors({ name: 'Required' });
+        act(() => {
+          getProps().setErrors({ name: 'Required' });
+        });
         expect(getProps().errors.name).toEqual('Required');
       });
 
       it('setFieldError sets error by key', () => {
         const { getProps } = renderFormik<Values>();
 
-        getProps().setFieldError('name', 'Required');
+        act(() => {
+          getProps().setFieldError('name', 'Required');
+        });
         expect(getProps().errors.name).toEqual('Required');
       });
 
@@ -769,7 +820,9 @@ describe('<Formik>', () => {
         const { getProps } = renderFormik();
 
         const status = 'status';
-        getProps().setStatus(status);
+        act(() => {
+          getProps().setStatus(status);
+        });
 
         expect(getProps().status).toEqual(status);
       });
@@ -781,7 +834,9 @@ describe('<Formik>', () => {
       const { getProps } = renderFormik();
 
       expect(getProps().dirty).toBeFalsy();
-      getProps().setValues({ name: 'ian', age: 27 });
+      act(() => {
+        getProps().setValues({ name: 'ian', age: 27 });
+      });
       expect(getProps().dirty).toBeTruthy();
     });
 
@@ -816,8 +871,10 @@ describe('<Formik>', () => {
     it('should compute isValid if the form is dirty and there are errors', () => {
       const { getProps } = renderFormik();
 
-      getProps().setValues({ name: 'ian' });
-      getProps().setErrors({ name: 'Required!' });
+      act(() => {
+        getProps().setValues({ name: 'ian' });
+        getProps().setErrors({ name: 'Required!' });
+      });
 
       expect(getProps().dirty).toBeTruthy();
       expect(getProps().isValid).toBeFalsy();
@@ -826,7 +883,9 @@ describe('<Formik>', () => {
     it('should compute isValid if the form is dirty and there are not errors', () => {
       const { getProps } = renderFormik();
 
-      getProps().setValues({ name: 'ian' });
+      act(() => {
+        getProps().setValues({ name: 'ian' });
+      });
 
       expect(getProps().dirty).toBeTruthy();
       expect(getProps().isValid).toBeTruthy();
@@ -851,7 +910,9 @@ describe('<Formik>', () => {
       });
 
       const { handleReset } = getProps();
-      handleReset();
+      act(() => {
+        handleReset();
+      });
 
       expect(onReset).toHaveBeenCalled();
     });
@@ -866,7 +927,9 @@ describe('<Formik>', () => {
         onReset,
       });
 
-      getProps().resetForm();
+      act(() => {
+        getProps().resetForm();
+      });
 
       expect(onReset).toHaveBeenCalledWith(
         InitialValues,
@@ -886,7 +949,9 @@ describe('<Formik>', () => {
 
     it('should not error resetting form if onReset is not a prop', () => {
       const { getProps } = renderFormik();
-      getProps().resetForm();
+      act(() => {
+        getProps().resetForm();
+      });
       expect(true);
     });
 
@@ -905,17 +970,23 @@ describe('<Formik>', () => {
       });
       expect(getProps().dirty).toBeTruthy();
 
-      getProps().resetForm();
+      act(() => {
+        getProps().resetForm();
+      });
       expect(getProps().dirty).toBeFalsy();
     });
 
     it('should reset submitCount', () => {
       const { getProps } = renderFormik();
 
-      getProps().handleSubmit();
+      act(() => {
+        getProps().handleSubmit();
+      });
       expect(getProps().submitCount).toEqual(1);
 
-      getProps().resetForm();
+      act(() => {
+        getProps().resetForm();
+      });
       expect(getProps().submitCount).toEqual(0);
     });
 
@@ -923,10 +994,14 @@ describe('<Formik>', () => {
       const { getProps } = renderFormik();
       expect(getProps().dirty).toBe(false);
 
-      getProps().setFieldValue('name', 'jared-next');
+      act(() => {
+        getProps().setFieldValue('name', 'jared-next');
+      });
       expect(getProps().dirty).toBe(true);
 
-      getProps().resetForm({ values: getProps().values });
+      act(() => {
+        getProps().resetForm({ values: getProps().values });
+      });
       expect(getProps().dirty).toBe(false);
     });
   });
@@ -934,6 +1009,7 @@ describe('<Formik>', () => {
   describe('prepareDataForValidation', () => {
     it('should work correctly with instances', () => {
       class SomeClass {}
+
       const expected = {
         string: 'string',
         date: new Date(),
@@ -946,6 +1022,7 @@ describe('<Formik>', () => {
 
     it('should work correctly with instances in arrays', () => {
       class SomeClass {}
+
       const expected = {
         string: 'string',
         dateArr: [new Date(), new Date()],
@@ -958,6 +1035,7 @@ describe('<Formik>', () => {
 
     it('should work correctly with instances in objects', () => {
       class SomeClass {}
+
       const expected = {
         string: 'string',
         object: {
@@ -1133,7 +1211,7 @@ describe('<Formik>', () => {
   });
 
   it('should not warn when activeElement is not a button', () => {
-    const { getByTestId } = render(
+    render(
       <Formik onSubmit={noop} initialValues={{ opensource: 'yay' }}>
         {({ handleSubmit, handleChange, values }) => (
           <form onSubmit={handleSubmit} data-testid="form">
@@ -1149,10 +1227,10 @@ describe('<Formik>', () => {
         )}
       </Formik>
     );
-    const input = getByTestId('name-input');
+    const input = screen.getByTestId('name-input');
     input.focus(); // sets activeElement
 
-    fireEvent.submit(getByTestId('form'));
+    fireEvent.submit(screen.getByTestId('form'));
 
     expect(global.console.warn).not.toHaveBeenCalledWith(
       expect.stringMatching(
@@ -1172,7 +1250,11 @@ describe('<Formik>', () => {
     });
 
     expect(getProps().submitCount).toEqual(0);
-    await getProps().submitForm();
+
+    await act(async () => {
+      await getProps().submitForm();
+    });
+
     expect(onSubmit).toHaveBeenCalled();
     expect(getProps().submitCount).toEqual(1);
   });
@@ -1191,14 +1273,21 @@ describe('<Formik>', () => {
     expect(getProps().submitCount).toEqual(0);
     expect(getProps().isSubmitting).toBe(false);
     expect(getProps().isValidating).toBe(false);
-    // we call set isValidating synchronously
-    const validatePromise = getProps().submitForm();
+
+    let submitFormPromise: Promise<any>;
+    act(() => {
+      // we call set isValidating synchronously
+      submitFormPromise = getProps().submitForm();
+    });
+
     // so it should change
     expect(getProps().isSubmitting).toBe(true);
     expect(getProps().isValidating).toBe(true);
-    // do it again async
     try {
-      await validatePromise;
+      await act(async () => {
+        // resolve the promise to check final state.
+        await submitFormPromise;
+      });
     } catch (err) {}
     // now both should be false because validation failed
     expect(getProps().isSubmitting).toBe(false);
@@ -1220,13 +1309,22 @@ describe('<Formik>', () => {
     expect(getProps().submitCount).toEqual(0);
     expect(getProps().isSubmitting).toBe(false);
     expect(getProps().isValidating).toBe(false);
-    // we call set isValidating synchronously
-    const validatePromise = getProps().submitForm();
+
+    let submitFormPromise: Promise<any>;
+    act(() => {
+      // we call set isValidating synchronously
+      submitFormPromise = getProps().submitForm();
+    });
+
     // so it should change
     expect(getProps().isSubmitting).toBe(true);
     expect(getProps().isValidating).toBe(true);
-    // do it again async
-    await validatePromise;
+
+    await act(async () => {
+      // resolve the promise to check final state.
+      await submitFormPromise;
+    });
+
     // done validating and submitting
     expect(getProps().isSubmitting).toBe(true);
     expect(getProps().isValidating).toBe(false);
@@ -1247,13 +1345,22 @@ describe('<Formik>', () => {
     expect(getProps().submitCount).toEqual(0);
     expect(getProps().isSubmitting).toBe(false);
     expect(getProps().isValidating).toBe(false);
-    // we call set isValidating synchronously
-    const validatePromise = getProps().submitForm();
+    let submitFormPromise: Promise<any>;
+
+    act(() => {
+      // we call set isValidating synchronously
+      submitFormPromise = getProps().submitForm();
+    });
+
     // so it should change
     expect(getProps().isSubmitting).toBe(true);
     expect(getProps().isValidating).toBe(true);
-    // do it again async
-    await validatePromise;
+
+    await act(async () => {
+      // resolve the promise to check final state.
+      await submitFormPromise;
+    });
+
     // done validating and submitting
     expect(getProps().isSubmitting).toBe(false);
     expect(getProps().isValidating).toBe(false);
@@ -1269,12 +1376,20 @@ describe('<Formik>', () => {
     });
 
     expect(getProps().isValidating).toBe(false);
-    // we call set isValidating synchronously
-    const validatePromise = getProps().validateForm();
+
+    let validatePromise: Promise<any>;
+    act(() => {
+      // we call set isValidating synchronously
+      validatePromise = getProps().validateForm();
+    });
+
     expect(getProps().isValidating).toBe(true);
-    await validatePromise;
+
+    await act(async () => {
+      await validatePromise;
+    });
+
     expect(validate).toHaveBeenCalled();
-    // so it should change
     expect(getProps().isValidating).toBe(false);
   });
 
@@ -1296,9 +1411,12 @@ describe('<Formik>', () => {
       validationSchema,
     });
 
-    await getProps().validateForm();
-    expect(getProps().errors).toEqual({
-      users: [{ firstName: 'required', lastName: 'required' }],
+    await act(async () => {
+      await getProps().validateForm();
+
+      expect(getProps().errors).toEqual({
+        users: [{ firstName: 'required', lastName: 'required' }],
+      });
     });
   });
 
@@ -1312,9 +1430,17 @@ describe('<Formik>', () => {
       validationSchema,
     });
 
-    expect(() => {
-      getProps().validateForm();
-    }).toThrow('broken validations');
+    let caughtError: string = '';
+
+    await act(async () => {
+      try {
+        await getProps().validateForm();
+      } catch ({ message }) {
+        caughtError = message;
+      }
+    });
+
+    expect(caughtError).toEqual('broken validations');
   });
 
   it('exposes formikbag as imperative methods', () => {

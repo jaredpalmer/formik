@@ -8,9 +8,9 @@ export const Footer: React.FC<FooterProps> = props => {
   return (
     <div className="bg-gray-50 border-t border-gray-200">
       <div className="container mx-auto py-12 px-4 sm:px-6 lg:py-16 lg:px-8">
-        <div className="md:grid md:grid-cols-3 md:gap-8">
-          <div className="md:grid md:grid-cols-3 gap-8 md:col-span-2">
-            <div className="mt-12 md:mt-0">
+        <div className="lg:grid lg:grid-cols-3 lg:gap-8">
+          <div className="lg:grid lg:grid-cols-3 gap-8 lg:col-span-2">
+            <div className="mt-12 lg:mt-0">
               <h4 className="text-sm leading-5 font-semibold tracking-wider text-gray-400 uppercase">
                 Resources
               </h4>
@@ -53,7 +53,7 @@ export const Footer: React.FC<FooterProps> = props => {
                 </li>
               </ul>
             </div>
-            <div className="mt-12 md:mt-0">
+            <div className="mt-12 lg:mt-0">
               <h4 className="text-sm leading-5 font-semibold tracking-wider text-gray-400 uppercase">
                 Community
               </h4>
@@ -114,7 +114,7 @@ export const Footer: React.FC<FooterProps> = props => {
                 </li>
               </ul>
             </div>
-            <div className="mt-12 md:mt-0">
+            <div className="mt-12 lg:mt-0">
               <h4 className="text-sm leading-5 font-semibold tracking-wider text-gray-400 uppercase">
                 About Formium
               </h4>
@@ -154,7 +154,7 @@ export const Footer: React.FC<FooterProps> = props => {
               </ul>
             </div>
           </div>
-          <div className="mt-8 md:mt-0">
+          <div className="mt-8 lg:mt-0">
             <h4 className="text-sm leading-5 font-semibold tracking-wider text-gray-400 uppercase">
               Subscribe to our newsletter
             </h4>
@@ -176,7 +176,7 @@ export const Footer: React.FC<FooterProps> = props => {
                 className="appearance-none w-full px-4 py-2 border border-gray-300 text-base leading-6 rounded-md text-gray-900 bg-white placeholder-gray-500 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out lg:max-w-xs"
                 placeholder="Enter your email"
               />
-              <span className="mt-2 md:mt-0 md:ml-3 flex-shrink-0 inline-flex rounded-md shadow-sm">
+              <span className="mt-2 lg:mt-0 lg:ml-3 flex-shrink-0 inline-flex rounded-md shadow-sm">
                 <button
                   type="button"
                   className="inline-flex items-center px-4 py-2 border border-transparent text-base leading-6 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-500 focus:outline-none focus:border-blue-700 focus:shadow-outline-blue active:bg-blue-700 transition ease-in-out duration-150"
@@ -187,8 +187,8 @@ export const Footer: React.FC<FooterProps> = props => {
             </form>
           </div>
         </div>
-        <div className="mt-8 border-t border-gray-200 pt-8 md:flex md:items-center md:justify-between">
-          <div className="flex md:order-2">
+        <div className="mt-8 border-t border-gray-200 pt-8 lg:flex lg:items-center lg:justify-between">
+          <div className="flex lg:order-2">
             <a
               href="https://facebook.com/formikhq"
               className="text-gray-400 hover:text-gray-500"
@@ -238,7 +238,7 @@ export const Footer: React.FC<FooterProps> = props => {
               </svg>
             </a>
           </div>
-          <p className="mt-8 text-base leading-6 text-gray-400 md:mt-0 md:order-1">
+          <p className="mt-8 text-base leading-6 text-gray-400 lg:mt-0 lg:order-1">
             &copy; 2020 Formium, Inc. All rights reserved.
           </p>
         </div>

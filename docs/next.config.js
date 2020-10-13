@@ -53,7 +53,6 @@ const remarkPlugins = [
 
 module.exports = optimizedImages({
   pageExtensions: ['jsx', 'js', 'ts', 'tsx', 'mdx', 'md'],
-
   experimental: {
     plugins: true,
     rewrites() {

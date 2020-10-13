@@ -15,10 +15,6 @@ module.exports = {
     },
   },
   theme: {
-    fontFamily: {
-      sans: ['Inter', ...defaultTheme.fontFamily.sans],
-      serif: ['Inter', ...defaultTheme.fontFamily.serif],
-    },
     screens: {
       sm: '640px',
       md: '768px',

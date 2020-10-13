@@ -25,7 +25,7 @@ try {
 const warnOrError =
   process.env.NODE_ENV !== 'production'
     ? console.warn
-    : msg => {
+    : (msg) => {
         throw new Error(msg);
       };
 
@@ -124,13 +124,13 @@ module.exports = optimizedImages({
 
     const originalEntry = config.entry;
 
-    config.entry = async () => {
-      const entries = {
-        ...(await originalEntry()),
-      };
-      entries['./scripts/build-rss.js'] = './src/lib/build-rss.ts';
-      return entries;
-    };
+    // config.entry = async () => {
+    //   const entries = {
+    //     ...(await originalEntry()),
+    //   };
+    //   entries['./scripts/build-rss.js'] = './src/lib/build-rss.ts';
+    //   return entries;
+    // };
 
     return config;
   },

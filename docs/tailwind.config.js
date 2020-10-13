@@ -20,6 +20,7 @@ module.exports = {
       md: '768px',
       lg: '1024px',
       xl: '1400px',
+      betterhover: { raw: '(hover: hover)' },
     },
     rotate: {
       ...defaultTheme.rotate,

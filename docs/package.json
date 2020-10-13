@@ -37,7 +37,7 @@
     "imagemin-optipng": "^8.0.0",
     "intersection-observer": "^0.10.0",
     "isomorphic-unfetch": "^3.0.0",
-    "next": "^9.5.3",
+    "next": "^9.5.5",
     "next-images": "^1.4.0",
     "next-optimized-images": "^2.6.1",
     "node-fetch": "^2.6.0",
@@ -78,7 +78,7 @@
     "nextjs-sitemap-generator": "^1.1.0",
     "postcss-preset-env": "^6.7.0",
     "remark-parse": "^8.0.2",
-    "tailwindcss": "^1.4.6",
+    "tailwindcss": "^1.9.1",
     "typescript": "^3.8.3",
     "unified": "^9.0.0",
     "webp-loader": "^0.6.0"

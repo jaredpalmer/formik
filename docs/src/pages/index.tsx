@@ -16,11 +16,11 @@ const Home: React.FC<HomeProps> = props => {
   return (
     <>
       <Seo
-        title="Formik"
+        title="Formik by Formium"
         description="Production grade forms in React. The world's leading companies use Formik to build forms and surveys in their websites and applications."
       />
       <Head>
-        <title>Formik - The React forms API</title>
+        <title>Formik by Formium - The React forms API</title>
       </Head>
       <div className="bg-gray-50 h-full min-h-full">
         <Banner />

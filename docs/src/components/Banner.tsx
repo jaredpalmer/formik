@@ -4,7 +4,7 @@ export function Banner() {
   return (
     <div className="bg-gray-900  text-center  py-2 px-4">
       <ExternalLink
-        href="https://formium.io?utm_source=formik&utm_medium=banner"
+        href="https://formium.io?utm_source=formik&utm_medium=announcement"
         className=" p-2 sm:bg-gray-800 items-center text-gray-100 leading-none sm:rounded-full flex sm:inline-flex betterhover:hover:bg-gray-700 transition duration-150 ease-in-out"
         role="alert"
       >

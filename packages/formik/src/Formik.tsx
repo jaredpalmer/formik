@@ -28,7 +28,11 @@ import {
 } from './utils';
 import { FormikProvider } from './FormikContext';
 import invariant from 'tiny-warning';
-import { unstable_LowPriority, unstable_runWithPriority } from 'scheduler';
+import {
+  unstable_LowPriority,
+  unstable_runWithPriority,
+  unstable_scheduleCallback,
+} from 'scheduler';
 
 type FormikMessage<Values> =
   | { type: 'SUBMIT_ATTEMPT' }
@@ -329,22 +333,24 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   const validateFormWithLowPriority = useEventCallback(
     (values: Values = state.values) => {
       return unstable_runWithPriority(unstable_LowPriority, () => {
-        return runAllValidations(values)
-          .then(combinedErrors => {
-            if (!!isMounted.current) {
-              dispatch({ type: 'SET_ERRORS', payload: combinedErrors });
-            }
-            return combinedErrors;
-          })
-          .catch(actualException => {
-            if (process.env.NODE_ENV !== 'production') {
-              // Users can throw during validate, however they have no way of handling their error on touch / blur. In low priority, we need to handle it
-              console.warn(
-                `Warning: An unhandled error was caught during low priority validation in <Formik validate />`,
-                actualException
-              );
-            }
-          });
+        return unstable_scheduleCallback(unstable_LowPriority, () => {
+          return runAllValidations(values)
+            .then(combinedErrors => {
+              if (!!isMounted.current) {
+                dispatch({ type: 'SET_ERRORS', payload: combinedErrors });
+              }
+              return combinedErrors;
+            })
+            .catch(actualException => {
+              if (process.env.NODE_ENV !== 'production') {
+                // Users can throw during validate, however they have no way of handling their error on touch / blur. In low priority, we need to handle it
+                console.warn(
+                  `Warning: An unhandled error was caught during low priority validation in <Formik validate />`,
+                  actualException
+                );
+              }
+            });
+        });
       });
     }
   );

@@ -328,29 +328,27 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   // The thinking is that validation as a result of onChange and onBlur
   // should never block user input. Note: This method should never be called
   // during the submission phase because validation prior to submission
-  // is actaully high-priority since we absolutely need to guarantee the
+  // is actually high-priority since we absolutely need to guarantee the
   // form is valid before executing props.onSubmit.
   const validateFormWithLowPriority = useEventCallback(
     (values: Values = state.values) => {
-      return unstable_runWithPriority(unstable_LowPriority, () => {
-        return unstable_scheduleCallback(unstable_LowPriority, () => {
-          return runAllValidations(values)
-            .then(combinedErrors => {
-              if (!!isMounted.current) {
-                dispatch({ type: 'SET_ERRORS', payload: combinedErrors });
-              }
-              return combinedErrors;
-            })
-            .catch(actualException => {
-              if (process.env.NODE_ENV !== 'production') {
-                // Users can throw during validate, however they have no way of handling their error on touch / blur. In low priority, we need to handle it
-                console.warn(
-                  `Warning: An unhandled error was caught during low priority validation in <Formik validate />`,
-                  actualException
-                );
-              }
-            });
-        });
+      return runWithLowPriority(() => {
+        return runAllValidations(values)
+          .then(combinedErrors => {
+            if (!!isMounted.current) {
+              dispatch({ type: 'SET_ERRORS', payload: combinedErrors });
+            }
+            return combinedErrors;
+          })
+          .catch(actualException => {
+            if (process.env.NODE_ENV !== 'production') {
+              // Users can throw during validate, however they have no way of handling their error on touch / blur. In low priority, we need to handle it
+              console.warn(
+                `Warning: An unhandled error was caught during low priority validation in <Formik validate />`,
+                actualException
+              );
+            }
+          });
       });
     }
   );
@@ -1164,6 +1162,15 @@ function arrayMerge(target: any[], source: any[], options: any): any[] {
     }
   });
   return destination;
+}
+
+/**
+ * Schedule function as low priority by the scheduler API
+ */
+function runWithLowPriority(fn: () => any) {
+  return unstable_runWithPriority(unstable_LowPriority, () =>
+    unstable_scheduleCallback(unstable_LowPriority, fn)
+  );
 }
 
 /** Return multi select values based on an array of options */

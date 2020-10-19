@@ -10,24 +10,24 @@ attribute to match up with Formik state. `<Field />` will default to an HTML
 
 ## Rendering
 
-There are different ways to render things with `<Field>`.
+There are a few different ways to render things with `<Field>`.
 
 - `<Field as>`
 - `<Field children>`
-- ~~`<Field render>`~~ _deprecated in 2.x. Using these will log warning_
 - `<Field component>`
+- ~~`<Field render>`~~ _deprecated in 2.x. Using these will log warning_
 
 `as` can either be a React component or the name of an HTML element to render. Formik will automagically inject `onChange`, `onBlur`, `name`, and `value` props of the field designated by the `name` prop to the (custom) component.
 
 `children` can either be an array of elements (e.g. `<option>` in the case of `<Field as="select">`) or a callback function (a.k.a render prop). The render props are an object containing:
 
-`component` can either be a React component or the name of an HTML element to render. All additional props will be passed through.
-
 - `field`: An object containing `onChange`, `onBlur`, `name`, and `value` of the field (see [`FieldInputProps`](./useField#fieldinputprops))
 - `form`: The Formik bag
 - `meta`: An object containing metadata (i.e. `value`, `touched`, `error`, and `initialValue`) about the field (see [`FieldMetaProps`](./useField#fieldmetaprops))
 
-> In Formik 0.9 to 1.x, `component` and `render` props could also be used for rendering. These have been deprecated since 2.x. While the code still lives within `<Field>`, they will show a warning in the console.
+`component` can either be a React component or the name of an HTML element to render. All additional props will be passed through.
+
+> In Formik 0.9 to 1.x, the `render` prop could also be used for rendering. It has been deprecated since 2.x. While the code still lives within `<Field>`, using `render` will show a warning in the console.
 
 ## Example
 
@@ -134,7 +134,7 @@ Either JSX elements or callback function. Same as `render`.
 
 ```jsx
 // Children can be JSX elements
-<Field name="color" as="select" placeholder="Favorite Color">
+<Field name="color" as="select">
   <option value="red">Red</option>
   <option value="green">Green</option>
   <option value="blue">Blue</option>
@@ -172,7 +172,7 @@ Default is `'input'` (so an `<input>` is rendered by default)
 <Field name="lastName" placeholder="Last Name"/>
 
 // Renders an HTML <select>
-<Field name="color" component="select" placeholder="Favorite Color">
+<Field name="color" component="select">
   <option value="red">Red</option>
   <option value="green">Green</option>
   <option value="blue">Blue</option>
@@ -258,7 +258,7 @@ You can run independent field-level validations by passing a function to the
 - Sync: if invalid, return a `string` containing the error message or
   return `undefined`.
 
-- Async: return a Promise that throws a `string` containing the error message.
+- Async: return a Promise that resolves a `string` containing the error message.
   This works like Formik's `validate`, but instead of returning an `errors`
   object, it's just a `string`.
 
@@ -281,7 +281,7 @@ const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 const validateAsync = value => {
   return sleep(2000).then(() => {
     if (['admin', 'null', 'god'].includes(value)) {
-      throw 'Nice try';
+      return 'Nice try';
     }
   });
 };

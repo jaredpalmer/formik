@@ -76,7 +76,7 @@ Default is `true`. Determines if form validation should or should not be run _af
 
 ## FieldArray Array of Objects
 
-You can also iterate through an array of objects, by following a convention of `object[index]property` or `object.index.property` for the name attributes of `<Field />` or `<input />` elements in `<FieldArray />`.
+You can also iterate through an array of objects, by following a convention of `object[index].property` or `object.index.property` for the name attributes of `<Field />` or `<input />` elements in `<FieldArray />`.
 
 ```jsx
 <Form>
@@ -86,9 +86,10 @@ You can also iterate through an array of objects, by following a convention of `
       <div>
         {values.friends.map((friend, index) => (
           <div key={index}>
+            {/** both these conventions do the same */}
             <Field name={`friends[${index}].name`} />
-            <Field name={`friends.${index}.age`} /> // both these conventions do
-            the same
+            <Field name={`friends.${index}.age`} />
+
             <button type="button" onClick={() => arrayHelpers.remove(index)}>
               -
             </button>
@@ -117,12 +118,8 @@ const schema = Yup.object().shape({
   friends: Yup.array()
     .of(
       Yup.object().shape({
-        name: Yup.string()
-          .min(4, 'too short')
-          .required('Required'), // these constraints take precedence
-        salary: Yup.string()
-          .min(3, 'cmon')
-          .required('Required'), // these constraints take precedence
+        name: Yup.string().min(4, 'too short').required('Required'), // these constraints take precedence
+        salary: Yup.string().min(3, 'cmon').required('Required'), // these constraints take precedence
       })
     )
     .required('Must have friends') // these constraints are shown if and only if inner constraints are satisfied

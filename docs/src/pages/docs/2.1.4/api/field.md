@@ -258,7 +258,7 @@ You can run independent field-level validations by passing a function to the
 - Sync: if invalid, return a `string` containing the error message or
   return `undefined`.
 
-- Async: return a Promise that throws a `string` containing the error message.
+- Async: return a Promise that returns a `string` containing the error message.
   This works like Formik's `validate`, but instead of returning an `errors`
   object, it's just a `string`.
 
@@ -281,7 +281,7 @@ const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 const validateAsync = value => {
   return sleep(2000).then(() => {
     if (['admin', 'null', 'god'].includes(value)) {
-      throw 'Nice try';
+      return 'Nice try';
     }
   });
 };

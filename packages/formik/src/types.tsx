@@ -82,9 +82,15 @@ export interface FormikHelpers<Values> {
   /** Manually set isSubmitting */
   setSubmitting: (isSubmitting: boolean) => void;
   /** Manually set touched object */
-  setTouched: (touched: FormikTouched<Values>, shouldValidate?: boolean) => void;
+  setTouched: (
+    touched: FormikTouched<Values>,
+    shouldValidate?: boolean
+  ) => void;
   /** Manually set values object  */
-  setValues: (values: Values, shouldValidate?: boolean) => void;
+  setValues: (
+    values: React.SetStateAction<Values>,
+    shouldValidate?: boolean
+  ) => void;
   /** Set value of form field directly */
   setFieldValue: (field: string, value: any, shouldValidate?: boolean) => void;
   /** Set error message of a form field directly */

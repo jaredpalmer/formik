@@ -79,7 +79,6 @@ h6:hover .anchor::after {
 
 /* Algolia v3 overrides */
 :root {
-  --docsearch-modal-background: #fff;
   --docsearch-highlight-color: #1965e0;
   --docsearch-primary-color: #0052cc;
   --docsearch-searchbox-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5);

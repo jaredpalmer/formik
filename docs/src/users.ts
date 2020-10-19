@@ -221,4 +221,9 @@ export const users = [
       maxWidth: 100,
     },
   },
+  {
+    caption: 'Benchmark UAE',
+    image: '/img/logos/benchmark-uae.svg',
+    infoLink: 'https://benchmark.ae/',
+  },
 ];

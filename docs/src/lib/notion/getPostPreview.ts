@@ -1,19 +1,19 @@
-import { loadPageChunk } from './getPageData'
-import { values } from './rpc'
+import { loadPageChunk } from './getPageData';
+import { values } from './rpc';
 
-const nonPreviewTypes = new Set(['editor', 'page', 'collection_view'])
+const nonPreviewTypes = new Set(['editor', 'page', 'collection_view']);
 
 export async function getPostPreview(pageId: string) {
-  let blocks
-  let dividerIndex = 0
+  let blocks;
+  let dividerIndex = 0;
 
-  const data = await loadPageChunk({ pageId, limit: 10 })
-  blocks = values(data.recordMap.block)
+  const data = await loadPageChunk({ pageId, limit: 10 });
+  blocks = values(data.recordMap.block);
 
   for (let i = 0; i < blocks.length; i++) {
     if (blocks[i].value.type === 'divider') {
-      dividerIndex = i
-      break
+      dividerIndex = i;
+      break;
     }
   }
 
@@ -23,7 +23,7 @@ export async function getPostPreview(pageId: string) {
       ({ value: { type, properties } }: any) =>
         !nonPreviewTypes.has(type) && properties
     )
-    .map((block: any) => block.value.properties.title)
+    .map((block: any) => block.value.properties.title);
 
-  return blocks
+  return blocks;
 }

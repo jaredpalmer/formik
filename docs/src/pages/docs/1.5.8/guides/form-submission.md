@@ -1,7 +1,6 @@
 ---
 id: form-submission
 title: Form Submission
-custom_edit_url: https://github.com/jaredpalmer/formik/edit/master/docs/guides/form-submission.md
 ---
 
 ## Submission Phases

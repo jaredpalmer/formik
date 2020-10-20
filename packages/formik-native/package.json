@@ -28,7 +28,7 @@
     "prepublish": "npm run build"
   },
   "peerDependencies": {
-    "react": ">=16.3.0"
+    "react": ">=16.8.0"
   },
   "dependencies": {
     "formik": "2.2.0"

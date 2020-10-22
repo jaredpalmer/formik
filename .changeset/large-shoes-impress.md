@@ -2,4 +2,4 @@
 "formik": patch
 ---
 
-Fixes `validateField` type to return a promise
+Fixes `validateField` (and it's TS type) when run with `validationSchema` to return a promise

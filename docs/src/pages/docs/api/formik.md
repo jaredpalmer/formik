@@ -237,9 +237,9 @@ component.
 
 Imperatively call your `validate` or `validateSchema` depending on what was specified. You can optionally pass values to validate against and this modify Formik state accordingly, otherwise this will use the current `values` of the form.
 
-#### `validateField: (field: string) => void`
+#### `validateField: (field: string) => Promise<string | undefined>`
 
-Imperatively call field's `validate` function if specified for given field or run schema validation using [Yup's `schema.validateAt`](https://github.com/jquense/yup#mixedvalidateatpath-string-value-any-options-object-promiseany-validationerror) and the provided top-level `validationSchema` prop. Formik will use the current field value.
+Imperatively call field's `validate` function if specified for given field or run schema validation using [Yup's `schema.validateAt`](https://github.com/jquense/yup#mixedvalidateatpath-string-value-any-options-object-promiseany-validationerror) and the provided top-level `validationSchema` prop. Formik will use the current field value. The promise resolves with the error string if there's an error.
 
 ### `component?: React.ComponentType<FormikProps<Values>>`
 

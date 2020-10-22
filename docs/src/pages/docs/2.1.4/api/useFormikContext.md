@@ -1,7 +1,6 @@
 ---
 id: useFormikContext
 title: useFormikContext()
-custom_edit_url: https://github.com/jaredpalmer/formik/edit/master/docs/api/useFormikContext.md
 ---
 
 `useFormikContext()` is a custom React hook that will return all Formik state and helpers via [React Context](https://reactjs.org/docs/context.html).

@@ -1,16 +1,16 @@
-import fetch from 'node-fetch'
-import { getError } from './rpc'
-import { NextApiResponse } from 'next'
-import { NOTION_TOKEN, API_ENDPOINT } from './server-constants'
+import fetch from 'node-fetch';
+import { getError } from './rpc';
+import { NextApiResponse } from 'next';
+import { NOTION_TOKEN, API_ENDPOINT } from './server-constants';
 
 export default async function getNotionAsset(
   res: NextApiResponse,
   assetUrl: string,
   blockId: string
 ): Promise<{
-  signedUrls: string[]
+  signedUrls: string[];
 }> {
-  const requestURL = `${API_ENDPOINT}/getSignedFileUrls`
+  const requestURL = `${API_ENDPOINT}/getSignedFileUrls`;
   const assetRes = await fetch(requestURL, {
     method: 'POST',
     headers: {
@@ -28,13 +28,13 @@ export default async function getNotionAsset(
         },
       ],
     }),
-  })
+  });
 
   if (assetRes.ok) {
-    return assetRes.json()
+    return assetRes.json();
   } else {
-    console.log('bad request', assetRes.status)
-    res.json({ status: 'error', message: 'failed to load Notion asset' })
-    throw new Error(await getError(assetRes))
+    console.log('bad request', assetRes.status);
+    res.json({ status: 'error', message: 'failed to load Notion asset' });
+    throw new Error(await getError(assetRes));
   }
 }

@@ -26,7 +26,7 @@ class Image extends Component {
     src: !this.props.lazy ? this.props.videoSrc || this.props.src : undefined,
   };
 
-  handleIntersect = (entry) => {
+  handleIntersect = entry => {
     if (entry.isIntersecting) {
       console.log('intersected');
       this.setState({ src: this.props.src });

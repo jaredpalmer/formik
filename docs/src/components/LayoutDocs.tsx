@@ -59,6 +59,7 @@ export const LayoutDocs: React.FC<DocsProps> = props => {
         </Head>
       )}
       <div>
+        <Banner />
         {isMobile ? (
           <Nav />
         ) : (

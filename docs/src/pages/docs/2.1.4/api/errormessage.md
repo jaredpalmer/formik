@@ -1,7 +1,6 @@
 ---
 id: errormessage
 title: <ErrorMessage />
-custom_edit_url: https://github.com/jaredpalmer/formik/edit/master/docs/api/errormessage.md
 ---
 
 `<ErrorMessage />` is a component that renders the error message of a given field if that field has been visited (i.e.`touched[name] === true`) (and there is an `error` message present). It expects that all error messages are stored for a given field as a string. Like `<Field />`, `<FastField />`, and `<FieldArray />`, lodash-like dot path and bracket syntax is supported.
@@ -74,7 +73,7 @@ A function that returns a valid React element. Will only be called when the fiel
 ```jsx
 // the render callback will only be called when the
 // field has been touched and an error exists and subsequent updates.
-<ErrorMessage name="email">{(msg) => <div>{msg}</div>}</ErrorMessage>
+<ErrorMessage name="email">{msg => <div>{msg}</div>}</ErrorMessage>
 ```
 
 ### `component`
@@ -114,5 +113,5 @@ A function that returns a valid React element. Will only be called when the fiel
 ```jsx
 // the render callback will only be called when the
 // field has been touched and an error exists and subsequent updates.
-<ErrorMessage name="email" render={(msg) => <div>{msg}</div>} />
+<ErrorMessage name="email" render={msg => <div>{msg}</div>} />
 ```

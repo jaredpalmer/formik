@@ -1,9 +1,9 @@
 ---
 title: Checkboxes Example
-description: This example demonstrates how to use Formik with a checkbox group. Given that the field's all share the same `name`, Formik will automagically bind them to an single array.
+description: This example demonstrates how to use Formik with a checkbox group. Given that the fields all share the same `name`, Formik will automagically bind them to a single array.
 ---
 
-This example demonstrates how to use Formik with a checkbox group. Given that the field's all share the same `name`, Formik will automagically bind them to an single array.
+This example demonstrates how to use Formik with a checkbox group. Given that the fields all share the same `name`, Formik will automagically bind them to a single array.
 
 <div className="embed-responsive aspect-ratio-square">
   <iframe

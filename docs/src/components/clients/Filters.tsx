@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const Filters: React.SFC<{}> = () => (
+export const Filters: React.FC<{}> = () => (
   <>
     <svg width={0} height={0}>
       <defs>

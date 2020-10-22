@@ -1,7 +1,6 @@
 ---
 id: withFormik
 title: withFormik()
-custom_edit_url: https://github.com/jaredpalmer/formik/edit/master/docs/api/withFormik.md
 ---
 
 Create a higher-order React component class that passes props and form handlers
@@ -95,7 +94,7 @@ Your form submission handler. It is passed your forms `values` and the
 with names that start with `set<Thing>` + `resetForm`) and any props that were
 passed to the the wrapped component.
 
-#### The "FormikBag":
+#### The "FormikBag"
 
 - `props` (props passed to the wrapped component)
 - `resetForm`
@@ -142,7 +141,7 @@ _Note: I suggest using `validationSchema` and Yup for validation. However,
 
 Validate the form's `values` with function. This function can either be:
 
-1.  Synchronous and return an `errors` object.
+1. Synchronous and return an `errors` object.
 
 ```js
 // Synchronous validation

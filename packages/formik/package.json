@@ -4,7 +4,7 @@
   "version": "2.2.0",
   "license": "Apache-2.0",
   "author": "Jared Palmer <jared@palmer.net>",
-  "repository": "formik/formik",
+  "repository": "formium/formik",
   "keywords": [
     "formik",
     "react",

@@ -141,7 +141,7 @@ describe('withFormik()', () => {
     act(() => {
       getProps().submitForm();
     });
-    await waitFor(() => expect(validate).toHaveBeenCalled());
+    await waitFor(() => expect(validationSchema).toHaveBeenCalled());
   });
 
   it(`calls validationSchema on validateField`, async () => {
@@ -155,9 +155,12 @@ describe('withFormik()', () => {
       validationSchema,
     });
 
-    const error = await getProps().validateField('name');
-    expect(error).toEqual(errorMessage);
-    await wait(() => expect(validationSchema).toHaveBeenCalled());
+    await act(async () => {
+      const error = await getProps().validateField('name');
+      expect(error).toEqual(errorMessage);
+    });
+
+    await waitFor(() => expect(validationSchema).toHaveBeenCalled());
   });
 
   it('calls validationSchema function with props', async () => {

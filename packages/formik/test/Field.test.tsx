@@ -1,5 +1,11 @@
 import * as React from 'react';
-import { act, cleanup, render, waitFor, fireEvent } from '@testing-library/react';
+import {
+  act,
+  cleanup,
+  render,
+  waitFor,
+  fireEvent,
+} from '@testing-library/react';
 import * as Yup from 'yup';
 import {
   Formik,
@@ -364,7 +370,7 @@ describe('Field / FastField', () => {
 
         act(() => {
           getFormProps().validateField('name');
-        })
+        });
 
         rerender();
         await waitFor(() => {
@@ -386,7 +392,7 @@ describe('Field / FastField', () => {
 
         act(() => {
           getFormProps().validateField('name');
-        })
+        });
 
         expect(validate).toHaveBeenCalled();
         await waitFor(() => expect(getFormProps().errors.name).toBe('Error!'));
@@ -410,7 +416,7 @@ describe('Field / FastField', () => {
 
         act(() => {
           getFormProps().validateField('name');
-        })
+        });
 
         await waitFor(() =>
           expect(getFormProps().errors).toEqual({

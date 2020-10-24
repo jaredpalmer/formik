@@ -42,6 +42,6 @@ As you can see above, the notable differences between using Formik with React
 DOM and React Native are:
 
 1. Formik's `handleSubmit` is passed to a `<Button onPress={...} />`
-    instead of HTML `<form onSubmit={...} />` component (since there is no
-    `<form />` element in React Native).
+   instead of HTML `<form onSubmit={...} />` component (since there is no
+   `<form />` element in React Native).
 2. `<TextInput />` uses Formik's `handleChange(fieldName)` and `handleBlur(fieldName)` instead of directly assigning the callbacks to props, because we have to get the `fieldName` from somewhere and with React Native we can't get it automatically like in web (using input name attribute). You can also use `setFieldValue(fieldName, value)` and `setFieldTouched(fieldName, bool)` as an alternative.

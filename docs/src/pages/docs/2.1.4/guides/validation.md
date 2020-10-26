@@ -1,7 +1,6 @@
 ---
 id: validation
 title: Validation
-custom_edit_url: https://github.com/jaredpalmer/formik/edit/master/docs/guides/validation.md
 ---
 
 Formik is designed to manage forms with complex validation with ease. Formik supports synchronous and asynchronous
@@ -86,9 +85,7 @@ const SignupSchema = Yup.object().shape({
     .min(2, 'Too Short!')
     .max(50, 'Too Long!')
     .required('Required'),
-  email: Yup.string()
-    .email('Invalid email')
-    .required('Required'),
+  email: Yup.string().email('Invalid email').required('Required'),
 });
 
 export const ValidationSchemaExample = () => (
@@ -258,7 +255,7 @@ export const FieldLevelValidationExample = () => (
 
 You can control when Formik runs validation by changing the values of `<Formik validateOnChange>` and/or `<Formik validateOnBlur>` props depending on your needs. By default, Formik will run validation methods as follows:
 
-**After "change" events/methods** (things that update`values`)
+**After "change" events/methods** (things that update `values`)
 
 - `handleChange`
 - `setFieldValue`
@@ -294,9 +291,7 @@ const DisplayingErrorMessagesSchema = Yup.object().shape({
     .min(2, 'Too Short!')
     .max(50, 'Too Long!')
     .required('Required'),
-  email: Yup.string()
-    .email('Invalid email')
-    .required('Required'),
+  email: Yup.string().email('Invalid email').required('Required'),
 });
 
 export const DisplayingErrorMessagesExample = () => (

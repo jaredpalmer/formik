@@ -76,7 +76,7 @@ export const getStaticProps: GetStaticProps<any, { slug: string[] }> = async ({
       post,
       preview: preview || false,
     },
-    unstable_revalidate: 10,
+    revalidate: 10,
   };
 };
 
@@ -155,7 +155,6 @@ const RenderPost = ({ post, redirect, preview }: any) => {
         <Nav />
       </Sticky>
       <Seo title={post.Page} />
-      {/* <Header titlePre={post.Page} /> */}
       {preview && (
         <div className={blogStyles.previewAlertContainer}>
           <div className={blogStyles.previewAlert}>
@@ -283,9 +282,11 @@ const RenderPost = ({ post, redirect, preview }: any) => {
                     const roundFactor = Math.pow(10, 2);
                     // calculate percentages
                     const width = block_width
-                      ? `${Math.round(
-                          (block_width / baseBlockWidth) * 100 * roundFactor
-                        ) / roundFactor}%`
+                      ? `${
+                          Math.round(
+                            (block_width / baseBlockWidth) * 100 * roundFactor
+                          ) / roundFactor
+                        }%`
                       : block_height || '100%';
 
                     const isImage = type === 'image';

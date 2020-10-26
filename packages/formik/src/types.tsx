@@ -82,9 +82,15 @@ export interface FormikHelpers<Values> {
   /** Manually set isSubmitting */
   setSubmitting: (isSubmitting: boolean) => void;
   /** Manually set touched object */
-  setTouched: (touched: FormikTouched<Values>, shouldValidate?: boolean) => void;
+  setTouched: (
+    touched: FormikTouched<Values>,
+    shouldValidate?: boolean
+  ) => void;
   /** Manually set values object  */
-  setValues: (values: Values, shouldValidate?: boolean) => void;
+  setValues: (
+    values: React.SetStateAction<Values>,
+    shouldValidate?: boolean
+  ) => void;
   /** Set value of form field directly */
   setFieldValue: (field: string, value: any, shouldValidate?: boolean) => void;
   /** Set error message of a form field directly */
@@ -122,20 +128,24 @@ export interface FormikHandlers {
   handleSubmit: (e?: React.FormEvent<HTMLFormElement>) => void;
   /** Reset form event handler  */
   handleReset: (e?: React.SyntheticEvent<any>) => void;
-  /** Classic React blur handler, keyed by input name */
-  handleBlur(e: React.FocusEvent<any>): void;
-  /** Preact-like linkState. Will return a handleBlur function. */
-  handleBlur<T = string | any>(
-    fieldOrEvent: T
-  ): T extends string ? (e: any) => void : void;
-  /** Classic React change handler, keyed by input name */
-  handleChange(e: React.ChangeEvent<any>): void;
-  /** Preact-like linkState. Will return a handleChange function.  */
-  handleChange<T = string | React.ChangeEvent<any>>(
-    field: T
-  ): T extends React.ChangeEvent<any>
-    ? void
-    : (e: string | React.ChangeEvent<any>) => void;
+  handleBlur: {
+    /** Classic React blur handler, keyed by input name */
+    (e: React.FocusEvent<any>): void;
+    /** Preact-like linkState. Will return a handleBlur function. */
+    <T = string | any>(fieldOrEvent: T): T extends string
+      ? (e: any) => void
+      : void;
+  };
+  handleChange: {
+    /** Classic React change handler, keyed by input name */
+    (e: React.ChangeEvent<any>): void;
+    /** Preact-like linkState. Will return a handleChange function.  */
+    <T = string | React.ChangeEvent<any>>(
+      field: T
+    ): T extends React.ChangeEvent<any>
+      ? void
+      : (e: string | React.ChangeEvent<any>) => void;
+  };
 
   getFieldProps: <Value = any>(props: any) => FieldInputProps<Value>;
   getFieldMeta: <Value>(name: string) => FieldMetaProps<Value>;

@@ -80,7 +80,7 @@ We recommend following [these instructions](https://babeljs.io/docs/editors/) to
 
 ### Help, I’m Stuck!
 
-If you get stuck, check out the [community support resources](https://github.com/formik/formik/discussions). In particular, [Reactiflux Chat](https://discord.gg/cU6MCve) is a great way to get help quickly. If you don’t receive an answer, or if you remain stuck, please file an issue, and we’ll help you out.
+If you get stuck, check out the [community support resources](https://github.com/formik/formik/discussions). In particular, the [Formium Community Discord Server](https://discord.gg/pJSg287) is a great way to get help quickly. If you don’t receive an answer, or if you remain stuck, please file an issue, and we’ll help you out.
 
 ## Overview: What is Formik?
 
@@ -506,9 +506,7 @@ const SignupForm = () => {
       lastName: Yup.string()
         .max(20, 'Must be 20 characters or less')
         .required('Required'),
-      email: Yup.string()
-        .email('Invalid email address')
-        .required('Required'),
+      email: Yup.string().email('Invalid email address').required('Required'),
     }),
     onSubmit: values => {
       alert(JSON.stringify(values, null, 2));
@@ -585,9 +583,7 @@ const SignupForm = () => {
       lastName: Yup.string()
         .max(20, 'Must be 20 characters or less')
         .required('Required'),
-      email: Yup.string()
-        .email('Invalid email address')
-        .required('Required'),
+      email: Yup.string().email('Invalid email address').required('Required'),
     }),
     onSubmit: values => {
       alert(JSON.stringify(values, null, 2));
@@ -662,9 +658,7 @@ const SignupForm = () => {
         lastName: Yup.string()
           .max(20, 'Must be 20 characters or less')
           .required('Required'),
-        email: Yup.string()
-          .email('Invalid email address')
-          .required('Required'),
+        email: Yup.string().email('Invalid email address').required('Required'),
       })}
       onSubmit={(values, { setSubmitting }) => {
         setTimeout(() => {
@@ -716,9 +710,7 @@ const SignupForm = () => {
         lastName: Yup.string()
           .max(20, 'Must be 20 characters or less')
           .required('Required'),
-        email: Yup.string()
-          .email('Invalid email address')
-          .required('Required'),
+        email: Yup.string().email('Invalid email address').required('Required'),
       })}
       onSubmit={(values, { setSubmitting }) => {
         setTimeout(() => {

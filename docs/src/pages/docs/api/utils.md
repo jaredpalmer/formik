@@ -1,8 +1,8 @@
 ---
 id: utils
 title: Utils
-custom_edit_url: https://github.com/jaredpalmer/formik/edit/master/docs/api/utils.md
 ---
+
 # Reference
 
 ## Exported Functions
@@ -32,5 +32,3 @@ custom_edit_url: https://github.com/jaredpalmer/formik/edit/master/docs/api/util
 #### `isPromise: (value: any) => value is PromiseLike<any>`
 
 #### `isInputEvent: (value: any) => value is React.SyntheticEvent<any, Event>`
-
-

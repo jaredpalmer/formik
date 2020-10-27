@@ -1,5 +1,11 @@
 # formik
 
+## 3.0.0-next.1
+
+### Patch Changes
+
+- [`1c2175a`](https://github.com/formium/formik/commit/1c2175a24b1d1223b4cdedf424ef62057edf0063) [#2848](https://github.com/formium/formik/pull/2848) Thanks [@jaredpalmer](https://github.com/jaredpalmer)! - Ensure that parse and format aren't passed through in Field components
+
 ## 3.0.0-next.0
 
 ### Major Changes

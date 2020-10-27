@@ -1,5 +1,14 @@
 # formik
 
+## 3.0.0-next.0
+
+### Major Changes
+
+- [`5efd691`](https://github.com/formium/formik/commit/5efd691b8784fda6645d362189f55c618f030758) [#2255](https://github.com/formium/formik/pull/2255) Thanks [@jaredpalmer](https://github.com/jaredpalmer)! - Added `parse`, `format`, and `formatOnBlur` to `getFieldProps` options, `<Field>`, and `useField`. Going forward, there is no reason aside from backwards compatibility to continue using either `formikProps.handleChange` or `formikProps.handleBlur`. These are both inferior to the `onChange` and `onBlur` functions returned by `getFieldProps()` which the ability to utilize `parse`, `format`, and `formatOnBlur`.
+
+  **Breaking Change**
+  Instead of just passing back `formikProps.handleChange` and `formikProps.handleBlur`, the `onChange` and `onBlur` handlers returned by `getFieldProps()` (and thus `useField`/`<Field>`) are now scoped to the field already and now accept either a React Synthetic event or a value. In the past, you could need to curry the handler with the string name of field to get this functionality. This likely doesn't impact many users, but it is technically breaking nonetheless.
+
 ## 2.2.1
 
 ### Patch Changes

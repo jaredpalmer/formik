@@ -130,11 +130,11 @@ describe('Field / FastField', () => {
         </>
       );
 
-      const { handleBlur, handleChange } = getFormProps();
+      const { handleBlur } = getFormProps();
       injected.forEach((props, idx) => {
         expect(props.field.name).toBe('name');
         expect(props.field.value).toBe('jared');
-        expect(props.field.onChange).toBe(handleChange);
+        expect(props.field.onChange).toEqual(expect.any(Function));
         expect(props.field.onBlur).toBe(handleBlur);
         expect(props.form).toEqual(getFormProps());
         if (idx !== 2) {
@@ -151,7 +151,7 @@ describe('Field / FastField', () => {
 
       expect(asInjectedProps.name).toBe('name');
       expect(asInjectedProps.value).toBe('jared');
-      expect(asInjectedProps.onChange).toBe(handleChange);
+      expect(asInjectedProps.onChange).toEqual(expect.any(Function));
       expect(asInjectedProps.onBlur).toBe(handleBlur);
 
       expect(queryAllByText(TEXT)).toHaveLength(4);
@@ -176,11 +176,11 @@ describe('Field / FastField', () => {
         </>
       );
 
-      const { handleBlur, handleChange } = getFormProps();
+      const { handleBlur } = getFormProps();
       injected.forEach((props, idx) => {
         expect(props.field.name).toBe('name');
         expect(props.field.value).toBe('jared');
-        expect(props.field.onChange).toBe(handleChange);
+        expect(props.field.onChange).toEqual(expect.any(Function));
         expect(props.field.onBlur).toBe(handleBlur);
         expect(props.form).toEqual(getFormProps());
         if (idx !== 2) {
@@ -197,7 +197,7 @@ describe('Field / FastField', () => {
 
       expect(asInjectedProps.name).toBe('name');
       expect(asInjectedProps.value).toBe('jared');
-      expect(asInjectedProps.onChange).toBe(handleChange);
+      expect(asInjectedProps.onChange).toEqual(expect.any(Function));
       expect(asInjectedProps.onBlur).toBe(handleBlur);
       expect(queryAllByText(TEXT)).toHaveLength(4);
     });

@@ -53,6 +53,22 @@ export interface FieldConfig<V = any> {
   validate?: FieldValidator;
 
   /**
+   * Function to parse raw input value before setting it to state
+   */
+  parse?: (value: unknown, name: string) => any;
+
+  /**
+   * Function to transform value passed to input
+   */
+  format?: (value: any, name: string) => any;
+
+  /**
+   * Wait until blur event before formatting input value?
+   * @default false
+   */
+  formatOnBlur?: boolean;
+
+  /**
    * Field name
    */
   name: string;
@@ -193,7 +209,7 @@ export function Field({
   if (component) {
     // This behavior is backwards compat with earlier Formik 0.9 to 1.x
     if (typeof component === 'string') {
-      const { innerRef, ...rest } = props;
+      const { innerRef, parse, format, ...rest } = props;
       return React.createElement(
         component,
         { ref: innerRef, ...field, ...rest },
@@ -212,7 +228,7 @@ export function Field({
   const asElement = is || 'input';
 
   if (typeof asElement === 'string') {
-    const { innerRef, ...rest } = props;
+    const { innerRef, parse, format, ...rest } = props;
     return React.createElement(
       asElement,
       { ref: innerRef, ...field, ...rest },

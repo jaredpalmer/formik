@@ -985,10 +985,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     [isInitialValid, dirty, state.errors, props]
   );
 
-  // We want useFormik to always return the same object reference
-  // so that it can be used as a dependency for other hooks.
-  const ctxRef = React.useRef<FormikConfig<Values>>({} as any);
-  Object.assign(ctxRef.current, {
+  const ctx = {
     ...state,
     initialValues: initialValues.current,
     initialErrors: initialErrors.current,
@@ -1021,7 +1018,12 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     validateOnBlur,
     validateOnChange,
     validateOnMount,
-  });
+  };
+
+  // We want useFormik to always return the same object reference
+  // so that it can be used as a dependency for other hooks.
+  const ctxRef = React.useRef<typeof ctx>({} as any);
+  Object.assign(ctxRef.current, ctx);
 
   return ctxRef.current;
 }

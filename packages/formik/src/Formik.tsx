@@ -987,7 +987,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
 
   // We want useFormik to always return the same object reference
   // so that it can be used as a dependency for other hooks.
-  const ctxRef = React.useRef({});
+  const ctxRef = React.useRef<FormikConfig<Values>>({} as any);
   Object.assign(ctxRef.current, {
     ...state,
     initialValues: initialValues.current,

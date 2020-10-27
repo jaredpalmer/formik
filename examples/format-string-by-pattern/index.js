@@ -39,9 +39,7 @@ const Example = () => {
           ))}
 
           <button type="submit">Submit</button>
-          <pre>{JSON.stringify(values, null, 2)}</pre>
         </Form>
-        )}
       </Formik>
     </div>
   );

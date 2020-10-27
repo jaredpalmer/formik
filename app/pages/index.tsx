@@ -16,6 +16,11 @@ function Home() {
             <a>Async Submission</a>
           </Link>
         </li>
+        <li>
+          <Link href="/format">
+            <a>Parse + Format</a>
+          </Link>
+        </li>
       </ul>
       <style jsx>{`
         main {

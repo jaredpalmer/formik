@@ -1032,7 +1032,10 @@ export function Formik<
   Values extends FormikValues = FormikValues,
   ExtraProps = {}
 >(props: FormikConfig<Values> & ExtraProps) {
-  const formikbag = useFormik<Values>(props);
+  // useFormik returns save object every time, that's why
+  // we create new object for provider.
+  // So that a new object comes to the props all the time as before
+  const formikbag = {...useFormik<Values>(props)};
   const { component, children, render, innerRef } = props;
 
   // This allows folks to pass a ref to <Formik />

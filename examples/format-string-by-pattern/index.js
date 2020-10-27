@@ -23,26 +23,26 @@ const Example = () => {
           await sleep(500);
           alert(JSON.stringify(values, null, 2));
         }}
-        render={({ values }) => (
-          <Form>
-            {masks.map((mask) => (
-              <div key={mask.name}>
-                <label>
-                  {mask.name}
-                  <Field
-                    name={mask.name}
-                    parse={formatString(mask.parse)}
-                    placeholder={mask.parse}
-                  />
-                </label>
-              </div>
-            ))}
+      >
+        <Form>
+          {masks.map((mask) => (
+            <div key={mask.name}>
+              <label>
+                {mask.name}
+                <Field
+                  name={mask.name}
+                  parse={formatString(mask.parse)}
+                  placeholder={mask.parse}
+                />
+              </label>
+            </div>
+          ))}
 
-            <button type="submit">Submit</button>
-            <pre>{JSON.stringify(values, null, 2)}</pre>
-          </Form>
+          <button type="submit">Submit</button>
+          <pre>{JSON.stringify(values, null, 2)}</pre>
+        </Form>
         )}
-      />
+      </Formik>
     </div>
   );
 };

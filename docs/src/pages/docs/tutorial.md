@@ -92,7 +92,7 @@ We recommend following [these instructions](https://babeljs.io/docs/editors/) to
 
 ### Help, I’m Stuck!
 
-If you get stuck, check out the [community support resources](https://github.com/formik/formik/discussions). In particular, [Reactiflux Chat](https://discord.gg/cU6MCve) is a great way to get help quickly. If you don’t receive an answer, or if you remain stuck, please file an issue, and we’ll help you out.
+If you get stuck, check out Formik's [GitHub Discussions](https://github.com/formik/formik/discussions). In addition, the [Formium Community Discord Server](https://discord.gg/pJSg287) is a great way to get help quickly too. If you don’t receive an answer, or if you remain stuck, please file an issue, and we’ll help you out.
 
 ## Overview: What is Formik?
 
@@ -767,7 +767,7 @@ The `<Field>` component by default will render an `<input>` component that given
 <Field name="firstName" className="form-input" placeholder="Jane" />
 
 // <textarea className="form-textarea"/></textarea>
-<Field name="message" as="textarea"  className="form-input"/>
+<Field name="message" as="textarea"  className="form-textarea"/>
 
 // <select className="my-select"/>
 <Field name="colors" as="select" className="my-select">

@@ -30,7 +30,11 @@ import {
 } from './utils';
 import { FormikProvider } from './FormikContext';
 import invariant from 'tiny-warning';
-import { unstable_LowPriority, unstable_runWithPriority } from 'scheduler';
+import {
+  unstable_LowPriority,
+  unstable_runWithPriority,
+  unstable_scheduleCallback,
+} from 'scheduler';
 
 type FormikMessage<Values> =
   | { type: 'SUBMIT_ATTEMPT' }
@@ -336,11 +340,11 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   // The thinking is that validation as a result of onChange and onBlur
   // should never block user input. Note: This method should never be called
   // during the submission phase because validation prior to submission
-  // is actaully high-priority since we absolutely need to guarantee the
+  // is actually high-priority since we absolutely need to guarantee the
   // form is valid before executing props.onSubmit.
   const validateFormWithLowPriority = useEventCallback(
     (values: Values = state.values) => {
-      return unstable_runWithPriority(unstable_LowPriority, () => {
+      return runWithLowPriority(() => {
         return runAllValidations(values)
           .then(combinedErrors => {
             if (!!isMounted.current) {
@@ -593,12 +597,14 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   }, []);
 
   const setValues = useEventCallback(
-    (values: Values, shouldValidate?: boolean) => {
-      dispatch({ type: 'SET_VALUES', payload: values });
+    (values: React.SetStateAction<Values>, shouldValidate?: boolean) => {
+      const resolvedValues = isFunction(values) ? values(state.values) : values;
+
+      dispatch({ type: 'SET_VALUES', payload: resolvedValues });
       const willValidate =
         shouldValidate === undefined ? validateOnChange : shouldValidate;
       return willValidate
-        ? validateFormWithLowPriority(values)
+        ? validateFormWithLowPriority(resolvedValues)
         : Promise.resolve();
     }
   );
@@ -1235,6 +1241,15 @@ function arrayMerge(target: any[], source: any[], options: any): any[] {
     }
   });
   return destination;
+}
+
+/**
+ * Schedule function as low priority by the scheduler API
+ */
+function runWithLowPriority(fn: () => any) {
+  return unstable_runWithPriority(unstable_LowPriority, () =>
+    unstable_scheduleCallback(unstable_LowPriority, fn)
+  );
 }
 
 /** Return multi select values based on an array of options */

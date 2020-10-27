@@ -1,7 +1,6 @@
 ---
 id: formik
 title: <Formik />
-custom_edit_url: https://github.com/jaredpalmer/formik/edit/master/docs/api/formik.md
 ---
 
 `<Formik>` is a component that helps you with building forms. It uses a render
@@ -66,7 +65,7 @@ Each render methods will be passed the same props:
 Returns `true` if values are not deeply equal from initial values, `false` otherwise.
 `dirty` is a readonly computed property and should not be mutated directly.
 
-#### `errors: { [field: string]: string }`
+#### `errors: FormikErrors<Values>`
 
 Form validation errors. Should match the shape of your form's `values` defined
 in `initialValues`. If you are using `validationSchema` (which you should be),
@@ -114,7 +113,7 @@ Returns `true` if Formik is running validation during submission, or by calling 
 
 Imperatively reset the form. If `nextInitialState` is specified, Formik will set this state as the new "initial state" and use the related values of `nextInitialState` to update the form's `initialValues` as well as `initialTouched`, `initialStatus`, `initialErrors`. This is useful for altering the initial state (i.e. "base") of the form after changes have been made. If `nextInitialState` is not defined, then Formik will reset state to the original initial state. The latter is useful for calling `resetForm` within `componentDidUpdate` or `useEffect`.
 
-#### `setErrors: (fields: { [field: string]: string }) => void`
+#### `setErrors: (fields: FormikErrors<Values>) => void`
 
 Set `errors` imperatively.
 
@@ -343,7 +342,7 @@ _Note: I suggest using `validationSchema` and Yup for validation. However,
 
 Validate the form's `values` with function. This function can either be:
 
-1.  Synchronous and return an `errors` object.
+1. Synchronous and return an `errors` object.
 
 ```js
 // Synchronous validation

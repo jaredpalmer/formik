@@ -21,7 +21,6 @@
     "@mdx-js/tag": "^0.20.3",
     "@next/mdx": "^9.4.0",
     "@next/plugin-google-analytics": "^9.5.5",
-    "@reactions/component": "^2.0.2",
     "@zeit/fetch": "^6.0.0",
     "@zeit/react-jsx-parser": "^2.0.0",
     "async-sema": "^3.1.0",

@@ -9,7 +9,7 @@ const masks = [
   { name: 'phone-3', parse: '+49 (AAAA) BBBBBB' },
 ];
 
-const sleep = ms => new Promise(r => setTimeout(r, ms));
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 const Example = () => {
   return (
@@ -19,13 +19,13 @@ const Example = () => {
           prev[curr.name] = '';
           return prev;
         }, {})}
-        onSubmit={async values => {
+        onSubmit={async (values) => {
           await sleep(500);
           alert(JSON.stringify(values, null, 2));
         }}
         render={({ values }) => (
           <Form>
-            {masks.map(mask => (
+            {masks.map((mask) => (
               <div key={mask.name}>
                 <label>
                   {mask.name}

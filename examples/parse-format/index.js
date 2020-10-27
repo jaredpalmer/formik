@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Formik, Field, Form } from 'formik';
 
-const sleep = ms => new Promise(r => setTimeout(r, ms));
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 const Example = () => {
   return (
@@ -11,7 +11,7 @@ const Example = () => {
         initialValues={{
           username: '',
         }}
-        onSubmit={async values => {
+        onSubmit={async (values) => {
           await sleep(500);
           alert(JSON.stringify(values, null, 2));
         }}
@@ -22,8 +22,8 @@ const Example = () => {
             <Field
               id="username"
               name="username"
-              parse={value => value && value.toUpperCase()}
-              format={value => (value ? value.toLowerCase() : '')}
+              parse={(value) => value && value.toUpperCase()}
+              format={(value) => (value ? value.toLowerCase() : '')}
             />
 
             <button type="submit">Submit</button>

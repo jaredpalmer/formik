@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import { Formik, Field, Form, useField, useFormikContext } from 'formik';
 import './styles.css';
 
-const MyField = props => {
+const MyField = (props) => {
   const {
     values: { textA, textB },
     touched,
@@ -32,13 +32,13 @@ const MyField = props => {
 };
 
 function App() {
-  // Not that we provide initalValues all 3 fields.
+  // Note that we provide initalValues all 3 fields.
   const initialValues = { textA: '', textB: '', textC: '' };
   return (
     <div className="App">
       <Formik
         initialValues={initialValues}
-        onSubmit={async values => alert(JSON.stringify(values, null, 2))}
+        onSubmit={async (values) => alert(JSON.stringify(values, null, 2))}
       >
         <div className="section">
           <h1>Dependent Formik Field Example</h1>

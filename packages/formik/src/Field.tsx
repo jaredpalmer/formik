@@ -142,8 +142,9 @@ export function Field({
     ...formik
   } = useFormikContext();
 
-  React.useEffect(() => {
-    if (__DEV__) {
+  if (__DEV__) {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    React.useEffect(() => {
       invariant(
         !render,
         `<Field render> has been deprecated and will be removed in future versions of Formik. Please use a child callback function instead. To get rid of this warning, replace <Field name="${name}" render={({field, form}) => ...} /> with <Field name="${name}">{({field, form, meta}) => ...}</Field>`
@@ -163,9 +164,9 @@ export function Field({
         !(render && children && !isEmptyChildren(children)),
         'You should not use <Field render> and <Field children> in the same <Field> component; <Field children> will be ignored'
       );
-    }
-    // eslint-disable-next-line
-  }, []);
+      // eslint-disable-next-line
+    }, []);
+  }
 
   // Register field and field-level validation with parent <Formik>
   const { registerField, unregisterField } = formik;

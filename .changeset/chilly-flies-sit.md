@@ -1,5 +1,5 @@
 ---
-'formik': major
+'formik': patch
 ---
 
 Previously, the `useFormik` hook would return a new object each time. 

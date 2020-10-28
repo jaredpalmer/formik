@@ -1023,7 +1023,9 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   // We want useFormik to always return the same object reference
   // so that it can be used as a dependency for other hooks.
   const ctxRef = React.useRef<typeof ctx>({} as any);
-  Object.assign(ctxRef.current, ctx);
+  if (!isEqual(ctxRef.current, ctx)) {
+    ctxRef.current = ctx;
+  }
 
   return ctxRef.current;
 }
@@ -1032,10 +1034,7 @@ export function Formik<
   Values extends FormikValues = FormikValues,
   ExtraProps = {}
 >(props: FormikConfig<Values> & ExtraProps) {
-  // useFormik returns save object every time, that's why
-  // we create new object for provider.
-  // So that a new object comes to the props all the time as before
-  const formikbag = {...useFormik<Values>(props)};
+  const formikbag = useFormik<Values>(props);
   const { component, children, render, innerRef } = props;
 
   // This allows folks to pass a ref to <Formik />

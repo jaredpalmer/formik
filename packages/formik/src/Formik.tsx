@@ -1,4 +1,3 @@
-import create from 'got/dist/source/create';
 import * as React from 'react';
 import isEqual from 'react-fast-compare';
 import deepmerge from 'deepmerge';
@@ -1025,8 +1024,9 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   // so that it can be used as a dependency for other hooks.
   const stateRef = React.useRef<typeof state>({} as any);
   const ctxRef = React.useRef<ReturnType<typeof createCtx>>({} as any);
-  if (!isEqual(stateRef.current, state)) {
-    stateRef.current = state;
+  const fullState = {...state, isValid, dirty };
+  if (!isEqual(stateRef.current, fullState)) {
+    stateRef.current = fullState;
     ctxRef.current = createCtx();
   }
 

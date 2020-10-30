@@ -1,3 +1,4 @@
+import create from 'got/dist/source/create';
 import * as React from 'react';
 import isEqual from 'react-fast-compare';
 import deepmerge from 'deepmerge';
@@ -985,7 +986,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     [isInitialValid, dirty, state.errors, props]
   );
 
-  const ctx = {
+  const createCtx = () => ({
     ...state,
     initialValues: initialValues.current,
     initialErrors: initialErrors.current,
@@ -1018,13 +1019,15 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     validateOnBlur,
     validateOnChange,
     validateOnMount,
-  };
+  });
 
   // We want useFormik to always return the same object reference
   // so that it can be used as a dependency for other hooks.
-  const ctxRef = React.useRef<typeof ctx>({} as any);
-  if (!isEqual(ctxRef.current, ctx)) {
-    ctxRef.current = ctx;
+  const stateRef = React.useRef<typeof state>({} as any);
+  const ctxRef = React.useRef<ReturnType<typeof createCtx>>({} as any);
+  if (!isEqual(stateRef.current, state)) {
+    stateRef.current = state;
+    ctxRef.current = createCtx();
   }
 
   return ctxRef.current;

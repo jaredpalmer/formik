@@ -1,9 +1,9 @@
 {
   "name": "formik-native",
-  "version": "2.1.8",
+  "version": "2.1.9",
   "license": "Apache-2.0",
   "author": "Jared Palmer <jared@palmer.net>",
-  "repository": "formik/formik",
+  "repository": "formium/formik",
   "keywords": [
     "formik",
     "react",
@@ -28,10 +28,10 @@
     "prepublish": "npm run build"
   },
   "peerDependencies": {
-    "react": ">=16.3.0"
+    "react": ">=16.8.0"
   },
   "dependencies": {
-    "formik": "2.2.0"
+    "formik": "2.2.1"
   },
   "devDependencies": {
     "@react-native-community/eslint-config": "^0.0.5",

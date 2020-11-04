@@ -37,7 +37,7 @@
     "hoist-non-react-statics": "^3.3.0",
     "lodash": "^4.17.14",
     "lodash-es": "^4.17.14",
-    "react-fast-compare": "^2.0.1",
+    "react-fast-compare": "^3.2.0",
     "scheduler": "^0.18.0",
     "tiny-warning": "^1.0.2",
     "tslib": "^1.10.0"

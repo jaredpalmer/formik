@@ -65,7 +65,7 @@ const InitialValues = {
 };
 
 function renderFormik<V = Values, S = Status>(props?: Partial<FormikConfig<V, S>>) {
-  let injected: FormikProps<V>;
+  let injected: FormikProps<V, S>;
   const { rerender, ...rest } = render(
     <Formik
       onSubmit={noop as any}

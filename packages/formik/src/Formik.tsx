@@ -13,6 +13,7 @@ import {
   FieldHelperProps,
   FieldInputProps,
   FormikHelpers,
+  FormikHandlers,
 } from './types';
 import {
   isFunction,
@@ -27,7 +28,11 @@ import {
 } from './utils';
 import { FormikProvider } from './FormikContext';
 import invariant from 'tiny-warning';
-import { LowPriority, unstable_runWithPriority } from 'scheduler';
+import {
+  unstable_LowPriority,
+  unstable_runWithPriority,
+  unstable_scheduleCallback,
+} from 'scheduler';
 
 type FormikMessage<Values, Status> =
   | { type: 'SUBMIT_ATTEMPT' }
@@ -151,15 +156,16 @@ export function useFormik<Values extends FormikValues = FormikValues, Status = a
   const initialStatus = React.useRef(props.initialStatus);
   const isMounted = React.useRef<boolean>(false);
   const fieldRegistry = React.useRef<FieldRegistry>({});
-  React.useEffect(() => {
-    if (__DEV__) {
+  if (__DEV__) {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    React.useEffect(() => {
       invariant(
         typeof isInitialValid === 'undefined',
         'isInitialValid has been deprecated and will be removed in future versions of Formik. Please use initialErrors or validateOnMount instead.'
       );
-    }
-    // eslint-disable-next-line
-  }, []);
+      // eslint-disable-next-line
+    }, []);
+  }
 
   React.useEffect(() => {
     isMounted.current = true;
@@ -258,7 +264,7 @@ export function useFormik<Values extends FormikValues = FormikValues, Status = a
   const runSingleFieldLevelValidation = React.useCallback(
     (field: string, value: void | string): Promise<string> => {
       return new Promise(resolve =>
-        resolve(fieldRegistry.current[field].validate(value))
+        resolve(fieldRegistry.current[field].validate(value) as string)
       );
     },
     []
@@ -322,11 +328,11 @@ export function useFormik<Values extends FormikValues = FormikValues, Status = a
   // The thinking is that validation as a result of onChange and onBlur
   // should never block user input. Note: This method should never be called
   // during the submission phase because validation prior to submission
-  // is actaully high-priority since we absolutely need to guarantee the
+  // is actually high-priority since we absolutely need to guarantee the
   // form is valid before executing props.onSubmit.
   const validateFormWithLowPriority = useEventCallback(
     (values: Values = state.values) => {
-      return unstable_runWithPriority(LowPriority, () => {
+      return runWithLowPriority(() => {
         return runAllValidations(values)
           .then(combinedErrors => {
             if (!!isMounted.current) {
@@ -364,7 +370,11 @@ export function useFormik<Values extends FormikValues = FormikValues, Status = a
   );
 
   React.useEffect(() => {
-    if (validateOnMount && isMounted.current === true) {
+    if (
+      validateOnMount &&
+      isMounted.current === true &&
+      isEqual(initialValues.current, props.initialValues)
+    ) {
       validateFormWithLowPriority(initialValues.current);
     }
   }, [validateOnMount, validateFormWithLowPriority]);
@@ -437,21 +447,26 @@ export function useFormik<Values extends FormikValues = FormikValues, Status = a
   );
 
   React.useEffect(() => {
-    if (!enableReinitialize) {
-      initialValues.current = props.initialValues;
-    }
-  }, [enableReinitialize, props.initialValues]);
-
-  React.useEffect(() => {
     if (
-      enableReinitialize &&
       isMounted.current === true &&
       !isEqual(initialValues.current, props.initialValues)
     ) {
-      initialValues.current = props.initialValues;
-      resetForm();
+      if (enableReinitialize) {
+        initialValues.current = props.initialValues;
+        resetForm();
+      }
+
+      if (validateOnMount) {
+        validateFormWithLowPriority(initialValues.current);
+      }
     }
-  }, [enableReinitialize, props.initialValues, resetForm]);
+  }, [
+    enableReinitialize,
+    props.initialValues,
+    resetForm,
+    validateOnMount,
+    validateFormWithLowPriority,
+  ]);
 
   React.useEffect(() => {
     if (
@@ -500,7 +515,10 @@ export function useFormik<Values extends FormikValues = FormikValues, Status = a
     // changes if the validation function is synchronous. It's different from
     // what is called when using validateForm.
 
-    if (isFunction(fieldRegistry.current[name].validate)) {
+    if (
+      fieldRegistry.current[name] &&
+      isFunction(fieldRegistry.current[name].validate)
+    ) {
       const value = getIn(state.values, name);
       const maybePromise = fieldRegistry.current[name].validate(value);
       if (isPromise(maybePromise)) {
@@ -567,12 +585,14 @@ export function useFormik<Values extends FormikValues = FormikValues, Status = a
   }, []);
 
   const setValues = useEventCallback(
-    (values: Values, shouldValidate?: boolean) => {
-      dispatch({ type: 'SET_VALUES', payload: values });
+    (values: React.SetStateAction<Values>, shouldValidate?: boolean) => {
+      const resolvedValues = isFunction(values) ? values(state.values) : values;
+
+      dispatch({ type: 'SET_VALUES', payload: resolvedValues });
       const willValidate =
         shouldValidate === undefined ? validateOnChange : shouldValidate;
       return willValidate
-        ? validateFormWithLowPriority(values)
+        ? validateFormWithLowPriority(resolvedValues)
         : Promise.resolve();
     }
   );
@@ -617,7 +637,7 @@ export function useFormik<Values extends FormikValues = FormikValues, Status = a
       if (!isString(eventOrTextValue)) {
         // If we can, persist the event
         // @see https://reactjs.org/docs/events.html#event-pooling
-        if ((eventOrTextValue as React.ChangeEvent<any>).persist) {
+        if ((eventOrTextValue as any).persist) {
           (eventOrTextValue as React.ChangeEvent<any>).persist();
         }
         const target = eventOrTextValue.target
@@ -660,7 +680,7 @@ export function useFormik<Values extends FormikValues = FormikValues, Status = a
     [setFieldValue, state.values]
   );
 
-  const handleChange = useEventCallback(
+  const handleChange = useEventCallback<FormikHandlers['handleChange']>(
     (
       eventOrPath: string | React.ChangeEvent<any>
     ): void | ((eventOrTextValue: string | React.ChangeEvent<any>) => void) => {
@@ -710,15 +730,15 @@ export function useFormik<Values extends FormikValues = FormikValues, Status = a
     [setFieldTouched]
   );
 
-  const handleBlur = useEventCallback((eventOrString: any):
-    | void
-    | ((e: any) => void) => {
-    if (isString(eventOrString)) {
-      return event => executeBlur(event, eventOrString);
-    } else {
-      executeBlur(eventOrString);
+  const handleBlur = useEventCallback<FormikHandlers['handleBlur']>(
+    (eventOrString: any): void | ((e: any) => void) => {
+      if (isString(eventOrString)) {
+        return event => executeBlur(event, eventOrString);
+      } else {
+        executeBlur(eventOrString);
+      }
     }
-  });
+  );
 
   const setFormikState = React.useCallback(
     (
@@ -781,10 +801,11 @@ export function useFormik<Values extends FormikValues = FormikValues, Status = a
           }
 
           return Promise.resolve(promiseOrUndefined)
-            .then(() => {
+            .then(result => {
               if (!!isMounted.current) {
                 dispatch({ type: 'SUBMIT_SUCCESS' });
               }
+              return result;
             })
             .catch(_errors => {
               if (!!isMounted.current) {
@@ -895,8 +916,10 @@ export function useFormik<Values extends FormikValues = FormikValues, Status = a
   const getFieldHelpers = React.useCallback(
     (name: string): FieldHelperProps<any> => {
       return {
-        setValue: (value: any) => setFieldValue(name, value),
-        setTouched: (value: boolean) => setFieldTouched(name, value),
+        setValue: (value: any, shouldValidate?: boolean) =>
+          setFieldValue(name, value, shouldValidate),
+        setTouched: (value: boolean, shouldValidate?: boolean) =>
+          setFieldTouched(name, value, shouldValidate),
         setError: (value: any) => setFieldError(name, value),
       };
     },
@@ -1011,15 +1034,16 @@ export function Formik<
   // This allows folks to pass a ref to <Formik />
   React.useImperativeHandle(innerRef, () => formikbag);
 
-  React.useEffect(() => {
-    if (__DEV__) {
+  if (__DEV__) {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    React.useEffect(() => {
       invariant(
         !props.render,
         `<Formik render> has been deprecated and will be removed in future versions of Formik. Please use a child callback function instead. To get rid of this warning, replace <Formik render={(props) => ...} /> with <Formik>{(props) => ...}</Formik>`
       );
-    }
-    // eslint-disable-next-line
-  }, []);
+      // eslint-disable-next-line
+    }, []);
+  }
   return (
     <FormikProvider value={formikbag}>
       {component
@@ -1125,7 +1149,7 @@ export function prepareDataForValidation<T extends FormikValues>(
 function arrayMerge(target: any[], source: any[], options: any): any[] {
   const destination = target.slice();
 
-  source.forEach(function(e: any, i: number) {
+  source.forEach(function merge(e: any, i: number) {
     if (typeof destination[i] === 'undefined') {
       const cloneRequested = options.clone !== false;
       const shouldClone = cloneRequested && options.isMergeableObject(e);
@@ -1139,6 +1163,15 @@ function arrayMerge(target: any[], source: any[], options: any): any[] {
     }
   });
   return destination;
+}
+
+/**
+ * Schedule function as low priority by the scheduler API
+ */
+function runWithLowPriority(fn: () => any) {
+  return unstable_runWithPriority(unstable_LowPriority, () =>
+    unstable_scheduleCallback(unstable_LowPriority, fn)
+  );
 }
 
 /** Return multi select values based on an array of options */

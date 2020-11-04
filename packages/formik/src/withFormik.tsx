@@ -20,7 +20,7 @@ import { isFunction } from './utils';
 export type InjectedFormikProps<Props, Values, Status> = Props & FormikProps<Values, Status>;
 
 /**
- * Formik actions + { props }
+ * Formik helpers + { props }
  */
 export type FormikBag<P, V, S> = { props: P } & FormikHelpers<V, S>;
 
@@ -49,7 +49,7 @@ export interface WithFormikConfig<
   mapPropsToValues?: (props: Props) => Values;
 
   /**
-   * Map props to the form values
+   * Map props to the form status
    */
   mapPropsToStatus?: (props: Props) => any;
 

@@ -86,8 +86,8 @@ function formikReducer<Values>(
         //
         // So we want to skip validation results if values are not the same
         // anymore.
-        state.values !== msg.payload.values ||
-        isEqual(state.errors, msg.payload.errors)
+        isEqual(state.errors, msg.payload.errors) ||
+        !isEqual(state.values, msg.payload.values)
       ) {
         return state;
       }

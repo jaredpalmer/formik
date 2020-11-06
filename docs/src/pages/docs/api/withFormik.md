@@ -217,4 +217,4 @@ component's `errors`. Its keys should match those of `values`.
 
 ## Injected props and methods
 
-These are identical to the props of [`<Formik render={props => ...} />`](./formik.md#formik-render-methods-and-props)
+These are identical to the props of [`<Formik render={props => ...} />`](./formik#formik-render-methods-and-props)

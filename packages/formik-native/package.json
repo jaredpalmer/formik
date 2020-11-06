@@ -1,9 +1,9 @@
 {
   "name": "formik-native",
-  "version": "2.1.8",
+  "version": "2.1.10",
   "license": "Apache-2.0",
   "author": "Jared Palmer <jared@palmer.net>",
-  "repository": "formik/formik",
+  "repository": "formium/formik",
   "keywords": [
     "formik",
     "react",
@@ -28,16 +28,16 @@
     "prepublish": "npm run build"
   },
   "peerDependencies": {
-    "react": ">=16.3.0"
+    "react": ">=16.8.0"
   },
   "dependencies": {
-    "formik": "2.2.0"
+    "formik": "2.2.2"
   },
   "devDependencies": {
     "@react-native-community/eslint-config": "^0.0.5",
-    "@types/react": "^16.8.23",
-    "@types/react-native": "^0.57.65",
-    "react": "^16.8.6",
+    "@types/react": "^16.9.55",
+    "@types/react-native": "^0.63.32",
+    "react": "^17.0.1",
     "react-native": "https://github.com/expo/react-native/archive/sdk-33.0.0.tar.gz"
   }
 }

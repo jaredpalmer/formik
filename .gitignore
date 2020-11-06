@@ -11,6 +11,7 @@ legacy.d.ts
 node_modules
 package-lock.json
 yarn.lock
+!/docs/yarn.lock
 !/yarn.lock
 
 website/translated_docs

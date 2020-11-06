@@ -1,7 +1,6 @@
 ---
 id: typescript
 title: TypeScript
-custom_edit_url: https://github.com/jaredpalmer/formik/edit/master/docs/guides/typescript.md
 ---
 
 [![TypeScript Types](https://img.shields.io/npm/types/formik.svg)](https://npm.im/formik)
@@ -105,7 +104,7 @@ const MyForm = withFormik<MyFormProps, FormValues>({
 
   // Add a custom validation function (this can be async too!)
   validate: (values: FormValues) => {
-    let errors: FormikErrors = {};
+    let errors: FormikErrors<FormValues> = {};
     if (!values.email) {
       errors.email = 'Required';
     } else if (!isValidEmail(values.email)) {

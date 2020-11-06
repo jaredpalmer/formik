@@ -1456,13 +1456,13 @@ describe('<Formik>', () => {
   });
 
   describe('low priority validation', () => {
-    function renderForm(props?: Partial<FormikProps<{ name: string }>>) {
+    function renderForm(props?: Partial<FormikProps<{ name: string }, never>>) {
       const validate = jest.fn(({ name }) =>
         name == 'ian' ? {} : { name: 'no' }
       );
       const renderedErrors: Array<[string, string]> = [];
 
-      function createForm(props?: Partial<FormikProps<{ name: string }>>) {
+      function createForm(props?: Partial<FormikProps<{ name: string }, never>>) {
         return (
           <Formik
             onSubmit={noop}
@@ -1493,7 +1493,7 @@ describe('<Formik>', () => {
 
       const api = render(createForm(props));
 
-      function rerender(overrides?: Partial<FormikProps<{ name: string }>>) {
+      function rerender(overrides?: Partial<FormikProps<{ name: string }, never>>) {
         api.rerender(createForm({ ...props, ...overrides }));
       }
 

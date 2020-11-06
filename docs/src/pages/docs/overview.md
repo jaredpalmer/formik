@@ -145,7 +145,10 @@ const Basic = () => (
         isSubmitting,
         /* and other goodies */
       }) => (
-        <form onSubmit={handleSubmit}>
+        <form
+          onSubmit={handleSubmit}
+          method="post" /* Don't leak password if JS disabled (#2860) */
+        >
           <input
             type="email"
             name="email"

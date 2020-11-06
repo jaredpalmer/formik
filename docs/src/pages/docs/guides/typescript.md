@@ -104,7 +104,7 @@ const MyForm = withFormik<MyFormProps, FormValues>({
 
   // Add a custom validation function (this can be async too!)
   validate: (values: FormValues) => {
-    let errors: FormikErrors = {};
+    let errors: FormikErrors<FormValues> = {};
     if (!values.email) {
       errors.email = 'Required';
     } else if (!isValidEmail(values.email)) {

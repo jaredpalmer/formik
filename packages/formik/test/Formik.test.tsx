@@ -1450,4 +1450,238 @@ describe('<Formik>', () => {
 
     expect(innerRef.current).toEqual(getProps());
   });
+
+  describe('low priority validation', () => {
+    function renderForm(props?: Partial<FormikProps<{ name: string }>>) {
+      const validate = jest.fn(({ name }) =>
+        name == 'ian' ? {} : { name: 'no' }
+      );
+      const renderedErrors: Array<[string, string]> = [];
+
+      function createForm(props?: Partial<FormikProps<{ name: string }>>) {
+        return (
+          <Formik
+            onSubmit={noop}
+            validate={validate}
+            initialValues={{ name: '' }}
+            {...props}
+          >
+            {({ values, errors, handleBlur, handleChange, handleSubmit }) => {
+              if (errors.name) {
+                renderedErrors.push([values.name, errors.name]);
+              }
+
+              return (
+                <form name="form" onSubmit={handleSubmit}>
+                  <input
+                    type="text"
+                    name="name"
+                    value={values.name}
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                  />
+                </form>
+              );
+            }}
+          </Formik>
+        );
+      }
+
+      const api = render(createForm(props));
+
+      function rerender(overrides?: Partial<FormikProps<{ name: string }>>) {
+        api.rerender(createForm({ ...props, ...overrides }));
+      }
+
+      return { ...api, rerender, validate, renderedErrors };
+    }
+
+    it('bails low priority validations on mount', async () => {
+      const { getByRole, validate, renderedErrors } = renderForm({
+        validateOnMount: true,
+      });
+
+      expect(validate).not.toBeCalled();
+
+      act(() => {
+        fireEvent.change(getByRole('textbox'), {
+          persist: noop,
+          target: { name: 'name', value: 'ian' },
+        });
+      });
+
+      expect(validate).not.toBeCalled();
+      expect(renderedErrors).toHaveLength(0);
+
+      act(() => {
+        fireEvent.submit(getByRole('form'));
+      });
+
+      expect(renderedErrors).toHaveLength(0);
+      expect(validate).toBeCalledTimes(1);
+      expect(validate).lastCalledWith({ name: 'ian' }, undefined);
+
+      await waitFor(() => {
+        expect(validate).toBeCalledTimes(3);
+        expect(validate.mock.calls).toEqual([
+          // Triggered by submit
+          [{ name: 'ian' }, undefined],
+          // Scheduled on first mount
+          [{ name: '' }, undefined],
+          // Scheduled on by change
+          [{ name: 'ian' }, undefined],
+        ]);
+      });
+
+      expect(renderedErrors).toHaveLength(0);
+    });
+
+    it('bails low priority validations on reinitialize', async () => {
+      const { getByRole, validate, renderedErrors, rerender } = renderForm({
+        validateOnMount: true,
+        enableReinitialize: true,
+      });
+
+      expect(validate).not.toBeCalled();
+
+      rerender({ initialValues: { name: 'ian' } });
+
+      expect(validate).not.toBeCalled();
+      expect(renderedErrors).toHaveLength(0);
+
+      act(() => {
+        fireEvent.submit(getByRole('form'));
+      });
+
+      expect(validate).toBeCalledTimes(1);
+      expect(renderedErrors).toHaveLength(0);
+
+      await waitFor(() => {
+        expect(validate).toBeCalledTimes(3);
+        expect(validate.mock.calls).toEqual([
+          // Triggered by submit
+          [{ name: 'ian' }, undefined],
+          // Scheduled on first mount
+          [{ name: '' }, undefined],
+          // Scheduled on second mount
+          [{ name: 'ian' }, undefined],
+        ]);
+      });
+
+      expect(renderedErrors).toHaveLength(0);
+    });
+
+    it('bails low priority validations on change', async () => {
+      const { validate, getByRole, renderedErrors } = renderForm({
+        initialValues: { name: '' },
+      });
+
+      expect(validate).not.toBeCalled();
+
+      act(() => {
+        fireEvent.change(getByRole('textbox'), {
+          persist: noop,
+          target: { name: 'name', value: 'i' },
+        });
+      });
+
+      act(() => {
+        fireEvent.change(getByRole('textbox'), {
+          persist: noop,
+          target: { name: 'name', value: 'ia' },
+        });
+      });
+
+      act(() => {
+        fireEvent.change(getByRole('textbox'), {
+          persist: noop,
+          target: { name: 'name', value: 'ian' },
+        });
+      });
+
+      expect(validate).not.toBeCalled();
+      expect(renderedErrors).toHaveLength(0);
+
+      act(() => {
+        fireEvent.submit(getByRole('form'));
+      });
+
+      expect(validate).toBeCalledTimes(1);
+      expect(renderedErrors).toHaveLength(0);
+
+      await waitFor(() => {
+        expect(validate).toBeCalledTimes(4);
+        expect(validate.mock.calls).toEqual([
+          // Triggered by submit
+          [{ name: 'ian' }, undefined],
+          // Scheduled on first change
+          [{ name: 'i' }, undefined],
+          // Scheduled on second change
+          [{ name: 'ia' }, undefined],
+          // Scheduled on third change
+          [{ name: 'ian' }, undefined],
+        ]);
+      });
+
+      expect(renderedErrors).toHaveLength(0);
+    });
+
+    it('bails low priority validations on blur', async () => {
+      const { validate, getByRole, renderedErrors } = renderForm({
+        validateOnChange: false,
+        initialValues: { name: '' },
+      });
+
+      expect(validate).not.toBeCalled();
+
+      act(() => {
+        fireEvent.change(getByRole('textbox'), {
+          persist: noop,
+          target: { name: 'name', value: 'i' },
+        });
+      });
+
+      act(() => {
+        fireEvent.blur(getByRole('textbox'));
+      });
+
+      expect(validate).not.toBeCalled();
+      expect(renderedErrors).toHaveLength(0);
+
+      act(() => {
+        fireEvent.change(getByRole('textbox'), {
+          persist: noop,
+          target: { name: 'name', value: 'ian' },
+        });
+      });
+
+      act(() => {
+        fireEvent.blur(getByRole('textbox'));
+      });
+
+      expect(validate).not.toBeCalled();
+      expect(renderedErrors).toHaveLength(0);
+
+      act(() => {
+        fireEvent.submit(getByRole('form'));
+      });
+
+      expect(validate).toBeCalledTimes(1);
+      expect(renderedErrors).toHaveLength(0);
+
+      await waitFor(() => {
+        expect(validate).toBeCalledTimes(3);
+        expect(validate.mock.calls).toEqual([
+          // Triggered by submit
+          [{ name: 'ian' }, undefined],
+          // Scheduled on first blur
+          [{ name: 'i' }, undefined],
+          // Scheduled on second blur
+          [{ name: 'ian' }, undefined],
+        ]);
+      });
+
+      expect(renderedErrors).toHaveLength(0);
+    });
+  });
 });

@@ -15,6 +15,12 @@
   **Breaking Change**
   Instead of just passing back `formikProps.handleChange` and `formikProps.handleBlur`, the `onChange` and `onBlur` handlers returned by `getFieldProps()` (and thus `useField`/`<Field>`) are now scoped to the field already and now accept either a React Synthetic event or a value. In the past, you could need to curry the handler with the string name of field to get this functionality. This likely doesn't impact many users, but it is technically breaking nonetheless.
 
+## 2.2.2
+
+### Patch Changes
+
+- [`00f95ec`](https://github.com/formium/formik/commit/00f95ec4ec5266eed8ad4e97b76321205c704d51) [#2854](https://github.com/formium/formik/pull/2854) Thanks [@umidbekkarimov](https://github.com/umidbekkarimov)! - Fix low priority validation race condition.
+
 ## 2.2.1
 
 ### Patch Changes

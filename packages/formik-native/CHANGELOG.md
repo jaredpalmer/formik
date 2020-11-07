@@ -1,5 +1,14 @@
 # formik-native
 
+## 2.1.11
+
+### Patch Changes
+
+- [`e0a28e6`](https://github.com/formium/formik/commit/e0a28e6872ebfd06e636aac84829b60d704b0694) [#2867](https://github.com/formium/formik/pull/2867) Thanks [@umidbekkarimov](https://github.com/umidbekkarimov)! - Fix low priority validation for browser password autofill.
+
+- Updated dependencies [[`e0a28e6`](https://github.com/formium/formik/commit/e0a28e6872ebfd06e636aac84829b60d704b0694), [`958d67c`](https://github.com/formium/formik/commit/958d67ca2c3e006031c31150ea0a42248b28ffc7)]:
+  - formik@2.2.3
+
 ## 2.1.10
 
 ### Patch Changes

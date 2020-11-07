@@ -15,6 +15,24 @@ describe('basic validation', () => {
     cy.get('#renderCounter').contains('0');
   });
 
+  it('should validate show errors on blur', () => {
+    cy.visit('http://localhost:3000/sign-in');
+
+    cy.get('input[name="username"]')
+      .type('john')
+      .blur()
+      .siblings('p')
+      .should('have.length', 0);
+
+    cy.get('input[name="password"]')
+      .type('123')
+      .blur()
+      .siblings('p')
+      .should('have.length', 0);
+
+    cy.get('#error-log').should('have.text', '[]');
+  });
+
   it('should validate autofill', () => {
     // React overrides `input.value` setters, so we have to call
     // native input setter

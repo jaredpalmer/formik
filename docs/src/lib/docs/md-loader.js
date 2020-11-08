@@ -10,10 +10,13 @@ module.exports = async function (src) {
   const layout = data.layout || 'Docs';
   const code =
     `import { Layout${layout} } from 'components/Layout${layout}';
-export const meta = ${JSON.stringify(data)};
-export default ({ children, ...props }) => (
-  <Layout${layout} meta={meta} {...props}>{children}</Layout${layout}>
+
+export default function Wrapper ({ children, ...props }) { return (
+  <Layout${layout} meta={${JSON.stringify(
+      data
+    )}} {...props}>{children}</Layout${layout}>
 );
+}
 
 
 ` + content;

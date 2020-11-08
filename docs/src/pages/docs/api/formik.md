@@ -1,7 +1,6 @@
 ---
 id: formik
 title: <Formik />
-custom_edit_url: https://github.com/jaredpalmer/formik/edit/master/docs/api/formik.md
 ---
 
 `<Formik>` is a component that helps you with building forms. It uses a render
@@ -211,7 +210,7 @@ Set `isSubmitting` imperatively. You would call it with `setSubmitting(false)` i
 
 Set `touched` imperatively. Calling this will trigger validation to run if `validateOnBlur` is set to `true` (which it is by default). You can also explicitly prevent/skip validation by passing a second argument as `false`.
 
-#### `setValues: (fields: { [field: string]: any }, shouldValidate?: boolean) => void`
+#### `setValues: (fields: React.SetStateAction<{ [field: string]: any }>, shouldValidate?: boolean) => void`
 
 Set `values` imperatively. Calling this will trigger validation to run if `validateOnChange` is set to `true` (which it is by default). You can also explicitly prevent/skip validation by passing a second argument as `false`.
 
@@ -398,7 +397,7 @@ _Note: I suggest using `validationSchema` and Yup for validation. However,
 
 Validate the form's `values` with function. This function can either be:
 
-1.  Synchronous and return an `errors` object.
+1. Synchronous and return an `errors` object.
 
 ```js
 // Synchronous validation

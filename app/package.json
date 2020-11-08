@@ -8,6 +8,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "format-string-by-pattern": "^1.2.1",
     "formik": "^2.1.5",
     "next": "9.5.3",
     "react": "16.13.1",

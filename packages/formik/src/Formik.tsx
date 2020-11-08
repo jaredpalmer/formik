@@ -25,10 +25,16 @@ import {
   getActiveElement,
   getIn,
   isObject,
+  isInputEvent,
+  isReactNative,
 } from './utils';
 import { FormikProvider } from './FormikContext';
 import invariant from 'tiny-warning';
-import { unstable_LowPriority, unstable_runWithPriority } from 'scheduler';
+import {
+  unstable_LowPriority,
+  unstable_runWithPriority,
+  unstable_scheduleCallback,
+} from 'scheduler';
 
 type FormikMessage<Values> =
   | { type: 'SUBMIT_ATTEMPT' }
@@ -42,6 +48,10 @@ type FormikMessage<Values> =
   | { type: 'SET_FIELD_ERROR'; payload: { field: string; value?: string } }
   | { type: 'SET_TOUCHED'; payload: FormikTouched<Values> }
   | { type: 'SET_ERRORS'; payload: FormikErrors<Values> }
+  | {
+      type: 'SET_LOW_PRIORITY_ERRORS';
+      payload: { values: Values; errors: FormikErrors<Values> };
+    }
   | { type: 'SET_STATUS'; payload: any }
   | {
       type: 'SET_FORMIK_STATE';
@@ -51,6 +61,16 @@ type FormikMessage<Values> =
       type: 'RESET_FORM';
       payload: FormikState<Values>;
     };
+
+const defaultParseFn = (value: unknown, _name: string) => value;
+const numberParseFn = (value: any, _name: string) => {
+  const parsed = parseFloat(value);
+
+  return isNaN(parsed) ? '' : parsed;
+};
+
+const defaultFormatFn = (value: unknown, _name: string) =>
+  value === undefined ? '' : value;
 
 // State reducer
 function formikReducer<Values>(
@@ -68,6 +88,23 @@ function formikReducer<Values>(
       }
 
       return { ...state, errors: msg.payload };
+    case 'SET_LOW_PRIORITY_ERRORS':
+      if (
+        // Low priority validation can occur after high priority validation and
+        // this will create stale validation results, e.g:
+        // SET_FIELD_VALUE-------------------SET_LOW_PRIORITY_ERRORS
+        //   SET_FIELD_VALUE-------------------SET_LOW_PRIORITY_ERRORS
+        //       SET_ISVALIDATING-SET_ERRORS-SET_ISVALIDATING
+        //
+        // So we want to skip validation results if values are not the same
+        // anymore.
+        isEqual(state.errors, msg.payload.errors) ||
+        !isEqual(state.values, msg.payload.values)
+      ) {
+        return state;
+      }
+
+      return { ...state, errors: msg.payload.errors };
     case 'SET_STATUS':
       return { ...state, status: msg.payload };
     case 'SET_ISSUBMITTING':
@@ -324,15 +361,18 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   // The thinking is that validation as a result of onChange and onBlur
   // should never block user input. Note: This method should never be called
   // during the submission phase because validation prior to submission
-  // is actaully high-priority since we absolutely need to guarantee the
+  // is actually high-priority since we absolutely need to guarantee the
   // form is valid before executing props.onSubmit.
   const validateFormWithLowPriority = useEventCallback(
     (values: Values = state.values) => {
-      return unstable_runWithPriority(unstable_LowPriority, () => {
+      return runWithLowPriority(() => {
         return runAllValidations(values)
           .then(combinedErrors => {
             if (!!isMounted.current) {
-              dispatch({ type: 'SET_ERRORS', payload: combinedErrors });
+              dispatch({
+                type: 'SET_LOW_PRIORITY_ERRORS',
+                payload: { values, errors: combinedErrors },
+              });
             }
             return combinedErrors;
           })
@@ -581,12 +621,14 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   }, []);
 
   const setValues = useEventCallback(
-    (values: Values, shouldValidate?: boolean) => {
-      dispatch({ type: 'SET_VALUES', payload: values });
+    (values: React.SetStateAction<Values>, shouldValidate?: boolean) => {
+      const resolvedValues = isFunction(values) ? values(state.values) : values;
+
+      dispatch({ type: 'SET_VALUES', payload: resolvedValues });
       const willValidate =
         shouldValidate === undefined ? validateOnChange : shouldValidate;
       return willValidate
-        ? validateFormWithLowPriority(values)
+        ? validateFormWithLowPriority(resolvedValues)
         : Promise.resolve();
     }
   );
@@ -907,7 +949,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     [state.errors, state.touched, state.values]
   );
 
-  const getFieldHelpers = React.useCallback(
+  const getFieldHelpers = useEventCallback(
     (name: string): FieldHelperProps<any> => {
       return {
         setValue: (value: any, shouldValidate?: boolean) =>
@@ -916,15 +958,46 @@ export function useFormik<Values extends FormikValues = FormikValues>({
           setFieldTouched(name, value, shouldValidate),
         setError: (value: any) => setFieldError(name, value),
       };
-    },
-    [setFieldValue, setFieldTouched, setFieldError]
+    }
+  );
+
+  const getValueFromEvent = useEventCallback(
+    (event: React.SyntheticEvent<any>, fieldName: string) => {
+      // React Native/Expo Web/maybe other render envs
+      if (
+        !isReactNative &&
+        event.nativeEvent &&
+        (event.nativeEvent as any).text !== undefined
+      ) {
+        return (event.nativeEvent as any).text;
+      }
+
+      // React Native
+      if (isReactNative && event.nativeEvent) {
+        return (event.nativeEvent as any).text;
+      }
+
+      const target = event.target ? event.target : event.currentTarget;
+      const { type, value, checked, options, multiple } = target;
+
+      return /checkbox/.test(type) // checkboxes
+        ? getValueForCheckbox(getIn(state.values, fieldName!), checked, value)
+        : !!multiple // <select multiple>
+        ? getSelectedValues(options)
+        : value;
+    }
   );
 
   const getFieldProps = React.useCallback(
     (nameOrOptions): FieldInputProps<any> => {
       const isAnObject = isObject(nameOrOptions);
-      const name = isAnObject ? nameOrOptions.name : nameOrOptions;
+      const name = isAnObject
+        ? nameOrOptions.name
+          ? nameOrOptions.name
+          : nameOrOptions.id
+        : nameOrOptions;
       const valueState = getIn(state.values, name);
+      const touchedState = getIn(state.touched, name);
 
       const field: FieldInputProps<any> = {
         name,
@@ -938,6 +1011,9 @@ export function useFormik<Values extends FormikValues = FormikValues>({
           value: valueProp, // value is special for checkboxes
           as: is,
           multiple,
+          parse = /number|range/.test(type) ? numberParseFn : defaultParseFn,
+          format = defaultFormatFn,
+          formatOnBlur = false,
         } = nameOrOptions;
 
         if (type === 'checkbox') {
@@ -956,10 +1032,43 @@ export function useFormik<Values extends FormikValues = FormikValues>({
           field.value = field.value || [];
           field.multiple = true;
         }
+
+        if (type !== 'radio' && type !== 'checkbox' && !!format) {
+          if (formatOnBlur === true) {
+            if (touchedState === true) {
+              field.value = format(field.value);
+            }
+          } else {
+            field.value = format(field.value);
+          }
+        }
+
+        // We incorporate the fact that we know the `name` prop by scoping `onChange`.
+        // In addition, to support `parse` fn, we can't just re-use the OG `handleChange`, but
+        // instead re-implement it's guts.
+        if (type !== 'radio' && type !== 'checkbox') {
+          field.onChange = (eventOrValue: React.ChangeEvent<any> | any) => {
+            if (isInputEvent(eventOrValue)) {
+              if (eventOrValue.persist) {
+                eventOrValue.persist();
+              }
+              setFieldValue(name, parse(getValueFromEvent(eventOrValue, name)));
+            } else {
+              setFieldValue(name, parse(eventOrValue));
+            }
+          };
+        }
       }
       return field;
     },
-    [handleBlur, handleChange, state.values]
+    [
+      getValueFromEvent,
+      handleBlur,
+      handleChange,
+      setFieldValue,
+      state.touched,
+      state.values,
+    ]
   );
 
   const dirty = React.useMemo(
@@ -1158,11 +1267,27 @@ function arrayMerge(target: any[], source: any[], options: any): any[] {
   return destination;
 }
 
+/**
+ * Schedule function as low priority by the scheduler API
+ */
+function runWithLowPriority(fn: () => any) {
+  return unstable_runWithPriority(unstable_LowPriority, () =>
+    unstable_scheduleCallback(unstable_LowPriority, fn)
+  );
+}
+
 /** Return multi select values based on an array of options */
 function getSelectedValues(options: any[]) {
-  return Array.from(options)
-    .filter(el => el.selected)
-    .map(el => el.value);
+  const result = [];
+  if (options) {
+    for (let index = 0; index < options.length; index++) {
+      const option = options[index];
+      if (option.selected) {
+        result.push(option.value);
+      }
+    }
+  }
+  return result;
 }
 
 /** Return the next value for a checkbox */

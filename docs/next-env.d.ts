@@ -1,6 +1,6 @@
 /// <reference types="next" />
 /// <reference types="next/types/global" />
-/// <reference types="next-images" />
+
 declare module 'remark-html';
 declare module 'remark-toc';
 declare module 'remark-footnotes';

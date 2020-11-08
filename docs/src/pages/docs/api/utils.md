@@ -1,7 +1,6 @@
 ---
 id: utils
 title: Utils
-custom_edit_url: https://github.com/jaredpalmer/formik/edit/master/docs/api/utils.md
 ---
 
 # Reference

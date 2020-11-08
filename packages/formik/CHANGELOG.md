@@ -2,6 +2,8 @@
 
 ## 3.0.0-next.2
 
+## 2.2.3
+
 ### Patch Changes
 
 - [`e0a28e6`](https://github.com/formium/formik/commit/e0a28e6872ebfd06e636aac84829b60d704b0694) [#2867](https://github.com/formium/formik/pull/2867) Thanks [@umidbekkarimov](https://github.com/umidbekkarimov)! - Fix low priority validation for browser password autofill.

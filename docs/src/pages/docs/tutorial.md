@@ -775,20 +775,6 @@ The `<Field>` component by default will render an `<input>` component that given
   <option value="green">Green</option>
   <option value="blue">Blue</option>
 </Field>
-
-// with styled-components/emotion
-const MyStyledInput = styled.input`
-  padding: .5em;
-  border: 1px solid #eee;
-  /* ... */
-`
-const MyStyledTextarea = MyStyledInput.withComponent('textarea');
-
-// <input className="czx_123" placeHolder="google.com"  />
-<Field name="website" as={MyStyledInput} placeHolder="google.com"/>
-
-// <textarea  placeHolder="Post a message..." rows={5}></textarea>
-<Field name="message" as={MyStyledTextArea} placeHolder="Post a message.." rows={5}/>
 ```
 
 React is all about composition, and while we've cut down on a lot of the prop-drilling, we are still repeating ourselves with a `label`, `<Field>`, and `<ErrorMessage>` for each of our inputs. We can do better with an abstraction! With Formik, you can and should build reusable input primitive components that you can share around your application. Turns out our `<Field>` render-prop component has a sister and her name is `useField` that's going to do the same thing, but via React Hooks! Check this out...
@@ -797,12 +783,12 @@ React is all about composition, and while we've cut down on a lot of the prop-dr
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Formik, Form, useField } from 'formik';
-import styled from '@emotion/styled';
 import * as Yup from 'yup';
 
 const MyTextInput = ({ label, ...props }) => {
   // useField() returns [formik.getFieldProps(), formik.getFieldMeta()]
-  // which we can spread on <input> and also replace ErrorMessage entirely.
+  // which we can spread on <input>. We can use field meta to show an error
+  // message if the field is invalid and it has been touched (i.e. visited)
   const [field, meta] = useField(props);
   return (
     <>
@@ -816,12 +802,12 @@ const MyTextInput = ({ label, ...props }) => {
 };
 
 const MyCheckbox = ({ children, ...props }) => {
-  // We need to tell useField what type of input this is
-  // since React treats radios and checkboxes differently
-  // than inputs/select/textarea.
+  // React treats radios and checkbox inputs differently other input types, select, and textarea.
+  // Formik does this too! When you specify `type` to useField(), it will
+  // return the correct bag of props for you
   const [field, meta] = useField({ ...props, type: 'checkbox' });
   return (
-    <>
+    <div>
       <label className="checkbox">
         <input type="checkbox" {...field} {...props} />
         {children}
@@ -829,33 +815,20 @@ const MyCheckbox = ({ children, ...props }) => {
       {meta.touched && meta.error ? (
         <div className="error">{meta.error}</div>
       ) : null}
-    </>
+    </dov>
   );
 };
-
-// Styled components ....
-const StyledSelect = styled.select`
-  /** ... * /
-`;
-
-const StyledErrorMessage = styled.div`
-  /** ... * /
-`;
-
-const StyledLabel = styled.label`
- /** ...* /
-`;
 
 const MySelect = ({ label, ...props }) => {
   const [field, meta] = useField(props);
   return (
-    <>
-      <StyledLabel htmlFor={props.id || props.name}>{label}</StyledLabel>
-      <StyledSelect {...field} {...props} />
+    <div>
+      <label htmlFor={props.id || props.name}>{label}</label>
+      <select {...field} {...props} />
       {meta.touched && meta.error ? (
-        <StyledErrorMessage>{meta.error}</StyledErrorMessage>
+        <div className="error">{meta.error}</div>
       ) : null}
-    </>
+    </div>
   );
 };
 

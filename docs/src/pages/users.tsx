@@ -7,6 +7,7 @@ import { Nav } from 'components/Nav';
 import { Container } from 'components/Container';
 import { Seo } from 'components/Seo';
 import { users } from 'users';
+
 export interface UsersProps {}
 
 const Users: React.FC<UsersProps> = props => {

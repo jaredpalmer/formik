@@ -77,18 +77,18 @@ export const Footer: React.FC<FooterProps> = props => {
                 </li>
                 <li className="mt-4">
                   <ExternalLink
-                    href="https://github.com/formium/formik/discussions"
+                    href="https://discord.com/invite/pJSg287"
                     className="text-base leading-6 text-gray-500 hover:text-gray-900"
                   >
-                    Project Forum
+                    Community Chat
                   </ExternalLink>
                 </li>
                 <li className="mt-4">
                   <ExternalLink
-                    href="http://stackoverflow.com/questions/tagged/formik"
+                    href="https://github.com/formium/formik/discussions"
                     className="text-base leading-6 text-gray-500 hover:text-gray-900"
                   >
-                    Stack Overflow
+                    Project Forum
                   </ExternalLink>
                 </li>
                 <li className="mt-4">

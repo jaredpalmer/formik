@@ -26,12 +26,15 @@ const Users: React.FC<UsersProps> = props => {
     </a>
   ));
   return (
-    <div className="bg-gray-50 h-full min-h-full">
+    <div className=" h-full min-h-full">
       <Banner />
       <Sticky>
         <Nav />
       </Sticky>
-      <Seo title="Showcase" />
+      <Seo
+        title="User Showcase"
+        description="Companies and projects using Formik in production."
+      />
       <Container>
         <div className="my-12 space-y-12">
           <div className="lg:text-center">
@@ -52,15 +55,15 @@ const Users: React.FC<UsersProps> = props => {
           <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-16 items-center ">
             {showcase}
           </div>
-          <div className="text-center space-y-6">
-            <div className="mt-4 max-w-2xl text-2xl leading-7 text-gray-900 lg:mx-auto">
+          <div className="text-center space-y-6 md:space-y-10">
+            <div className="mt-4 max-w-2xl text-2xl md:text-5xl leading-7 text-gray-900 font-bold lg:mx-auto">
               Are you using Formik?
             </div>
             <a
               href={editUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="button-secondary text-xl"
+              className="flex max-w-sm mx-auto items-center justify-center px-8 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-500 focus:outline-none focus:border-blue-700 focus:shadow-outline-blue transition duration-150 ease-in-out md:py-4 md:text-lg md:px-10 text-xl"
             >
               Add your company
             </a>

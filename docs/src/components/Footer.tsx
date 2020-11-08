@@ -2,6 +2,7 @@ import * as React from 'react';
 import Link from 'next/link';
 import { ExternalLink } from './ExternalLink';
 import { FormiumLogo } from './FormiumLogo';
+import { siteConfig } from 'siteConfig';
 export interface FooterProps {}
 
 export const Footer: React.FC<FooterProps> = props => {
@@ -77,7 +78,7 @@ export const Footer: React.FC<FooterProps> = props => {
                 </li>
                 <li className="mt-4">
                   <ExternalLink
-                    href="https://discord.com/invite/pJSg287"
+                    href={siteConfig.discordUrl}
                     className="text-base leading-6 text-gray-500 hover:text-gray-900"
                   >
                     Community Chat
@@ -85,7 +86,7 @@ export const Footer: React.FC<FooterProps> = props => {
                 </li>
                 <li className="mt-4">
                   <ExternalLink
-                    href="https://github.com/formium/formik/discussions"
+                    href={`${siteConfig.repoUrl}/discussions`}
                     className="text-base leading-6 text-gray-500 hover:text-gray-900"
                   >
                     Project Forum
@@ -93,7 +94,7 @@ export const Footer: React.FC<FooterProps> = props => {
                 </li>
                 <li className="mt-4">
                   <ExternalLink
-                    href="https://github.com/formik/formik/releases"
+                    href={`${siteConfig.repoUrl}/releases`}
                     className="text-base leading-6 text-gray-500 hover:text-gray-900"
                   >
                     Releases

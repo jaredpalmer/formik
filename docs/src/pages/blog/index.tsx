@@ -57,7 +57,7 @@ export default function BlogIndex({ posts = [], preview }: any) {
       </Sticky>
       <Seo
         title="Blog"
-        description="Stories, tips, and tools to inspire you to build better software."
+        description="The latest Formik news, announcements, articles, and resources."
       />
       {preview && (
         <div className={blogStyles.previewAlertContainer}>
@@ -70,10 +70,10 @@ export default function BlogIndex({ posts = [], preview }: any) {
           </div>
         </div>
       )}
-      <div className="bg-white pt-16 pb-20 container mx-auto px-4 sm:px-6 lg:px-8 lg:pt-24 lg:pb-28">
+      <div className="bg-white pt-16 pb-20 container mx-auto px-4  lg:pt-24 lg:pb-28">
         <div className="relative ">
           <div>
-            <h1 className="text-3xl leading-9 tracking-tight font-extrabold text-gray-900 sm:text-4xl sm:leading-10 ">
+            <h1 className="text-3xl lg:text-5xl leading-9 tracking-tight font-extrabold text-gray-900 sm:text-4xl sm:leading-10 ">
               Blog
             </h1>
             <div className="mt-3 sm:mt-4 lg:grid lg:grid-cols-2 lg:gap-5 lg:items-center">

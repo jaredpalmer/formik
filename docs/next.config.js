@@ -2,7 +2,6 @@ const webpack = require('webpack');
 const fs = require('fs');
 const path = require('path');
 const visit = require('unist-util-visit');
-const optimizedImages = require('next-optimized-images');
 
 const {
   NOTION_TOKEN,
@@ -51,7 +50,7 @@ const remarkPlugins = [
   ],
 ];
 
-module.exports = optimizedImages({
+module.exports = {
   pageExtensions: ['jsx', 'js', 'ts', 'tsx', 'mdx', 'md'],
   env: {
     NEXT_PUBLIC_GA_TRACKING_ID: process.env.NEXT_PUBLIC_GA_TRACKING_ID || '',
@@ -105,14 +104,4 @@ module.exports = optimizedImages({
 
     return config;
   },
-  optimizeImages: {
-    /* config for next-optimized-images */
-    mozjpeg: {
-      quality: 70,
-    },
-    optipng: {
-      optimizationLevel: 3,
-    },
-    optimizeImagesInDev: true,
-  },
-});
+};

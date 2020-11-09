@@ -1,4 +1,5 @@
 {
+  "extends": "../../tsconfig.json",
   "compilerOptions": {
     "module": "commonjs",
     "sourceMap": true,
@@ -7,6 +8,6 @@
     "downlevelIteration": true,
     "preserveWatchOutput": true
   },
-  "include": ["**/*.ts"],
+  "include": ["transforms", "bin"],
   "exclude": ["node_modules"]
 }

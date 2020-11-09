@@ -1,4 +1,4 @@
-export default function transformer(file, api) {
+export default function transformer(file: any, api: any) {
   // j is just a shorthand for the jscodeshift api
   const j = api.jscodeshift;
   const root = j(file.source);

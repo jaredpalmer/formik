@@ -16,8 +16,9 @@
     "bin/*.js"
   ],
   "scripts": {
-    "prepublish": "yarn tsc -d -p tsconfig.json",
-    "build": "yarn tsc -d -w -p tsconfig.json",
+    "prepublish": "npm run build",
+    "start": "yarn tsc -d -w -p tsconfig.json",
+    "build": "yarn tsc -d -p tsconfig.json",
     "test": "jest"
   },
   "bin": "./bin/formik-codemod.js"

@@ -19,7 +19,7 @@ const isGitClean = require('is-git-clean');
 const transformerDirectory = path.join(__dirname, '../', 'transforms');
 const jscodeshiftExecutable = require.resolve('.bin/jscodeshift');
 
-function checkGitStatus(force) {
+function checkGitStatus(force: boolean) {
   let clean = false;
   let errorMessage = 'Unable to determine if git directory is clean';
   try {
@@ -49,7 +49,7 @@ function checkGitStatus(force) {
   }
 }
 
-function runTransform({ files, flags, transformer }) {
+function runTransform({ files, flags, transformer }: any) {
   const transformerPath = path.join(transformerDirectory, `${transformer}.js`);
 
   let args = [];
@@ -108,8 +108,8 @@ const TRANSFORMER_INQUIRER_CHOICES = [
   },
 ];
 
-function expandFilePathsIfNeeded(filesBeforeExpansion) {
-  const shouldExpandFiles = filesBeforeExpansion.some(file =>
+function expandFilePathsIfNeeded(filesBeforeExpansion: any) {
+  const shouldExpandFiles = filesBeforeExpansion.some((file: any) =>
     file.includes('*')
   );
   return shouldExpandFiles
@@ -166,7 +166,7 @@ function run() {
         when: !cli.input[1],
         default: '.',
         // validate: () =>
-        filter: files => files.trim(),
+        filter: (files: any) => files.trim(),
       },
       {
         type: 'list',
@@ -177,7 +177,7 @@ function run() {
         choices: TRANSFORMER_INQUIRER_CHOICES,
       },
     ])
-    .then(answers => {
+    .then((answers: any) => {
       const { files, transformer } = answers;
 
       const filesBeforeExpansion = cli.input[1] || files;

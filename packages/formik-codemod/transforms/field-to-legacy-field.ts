@@ -10,6 +10,5 @@ export default function transformer(file, api) {
   if (imports.length < 1) {
     return;
   }
-  console.log(imports);
   return done();
 }

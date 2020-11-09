@@ -1,1 +1,1 @@
-import { Formik, LegacyField as Field, Form } from 'formik';
+import { Formik, Field, Form } from 'formik';

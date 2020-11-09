@@ -15,7 +15,7 @@ export function FormikConsumer<Values = any>({
 }) {
   const formik = useContextSelector(
     FormikContext,
-    React.useCallback(c => c, [])
+    React.useCallback((c: FormikContextType<Values>) => c, [])
   ) as FormikContextType<Values>;
   return <>{children(formik)}</>;
 }
@@ -23,7 +23,7 @@ export function FormikConsumer<Values = any>({
 export function useFormikContext<Values>() {
   const formik = useContextSelector(
     FormikContext,
-    React.useCallback(c => c, [])
+    React.useCallback((c: FormikContextType<Values>) => c, [])
   ) as FormikContextType<Values>;
 
   invariant(
@@ -32,4 +32,10 @@ export function useFormikContext<Values>() {
   );
 
   return formik;
+}
+
+export function unstable_useFormikContextSelector<Values = any, Slice = any>(
+  selector: (value: FormikContextType<Values>) => Slice
+): Slice {
+  return useContextSelector(FormikContext, selector);
 }

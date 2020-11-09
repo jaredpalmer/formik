@@ -1,0 +1,32 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "contributors": [
+    {
+      "login": "maddhruv",
+      "name": "Dhruv Jain",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/18121502?v=4",
+      "profile": "http://maddhruv.xyz",
+      "contributions": [
+        "bug",
+        "code",
+        "content",
+        "doc",
+        "example",
+        "ideas",
+        "projectManagement",
+        "question",
+        "review"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "projectName": "formik",
+  "projectOwner": "formium",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "skipCi": true
+}

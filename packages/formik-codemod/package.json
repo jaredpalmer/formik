@@ -19,7 +19,7 @@
     "prepublish": "npm run build",
     "start": "yarn tsc -d -w -p tsconfig.json",
     "build": "yarn tsc -d -p tsconfig.json",
-    "test": "jest"
+    "test": "tsdx test"
   },
   "bin": "./bin/formik-codemod.js"
 }

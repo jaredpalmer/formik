@@ -16,7 +16,6 @@ describe('basic validation', () => {
     cy.get('input[name="phone-2"]').should('have.value', '(999) 999-9999');
     cy.get('input[name="phone-3"]').type('+49AAAABBBBBB');
     cy.get('input[name="phone-3"]').should('have.value', '+49 (AAAA) BBBBBB');
-    console.log(masks.map(m => m.parse).join('').length);
     cy.get('span#render-phone-1').should('have.text', 35);
   });
 });

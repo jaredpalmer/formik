@@ -728,7 +728,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
       const willValidate =
         shouldValidate === undefined ? validateOnBlur : shouldValidate;
       return willValidate
-        ? validateFormWithLowPriority(state.values)
+        ? validateFormWithHighPriority(state.values)
         : Promise.resolve();
     }
   );

@@ -47,6 +47,14 @@ type FormikMessage<Values> =
   | { type: 'SET_TOUCHED'; payload: FormikTouched<Values> }
   | { type: 'SET_ERRORS'; payload: FormikErrors<Values> }
   | {
+      type: 'SCHEDULE_LOW_PRIORITY_VALIDATION';
+      payload: { values?: Values; };
+    }
+  | {
+      type: 'UNSCHEDULE_LOW_PRIORITY_VALIDATION';
+      payload: { values: Values; };
+    }
+  | {
       type: 'SET_LOW_PRIORITY_ERRORS';
       payload: { values: Values; errors: FormikErrors<Values> };
     }
@@ -74,31 +82,45 @@ function formikReducer<Values>(
       if (isEqual(state.errors, msg.payload)) {
         return state;
       }
-
       return { ...state, errors: msg.payload };
+    case 'SCHEDULE_LOW_PRIORITY_VALIDATION':
+      return { ...state, validationScheduledFor: msg.payload.values };
+    case 'UNSCHEDULE_LOW_PRIORITY_VALIDATION':
+
+      if (state.validationScheduledFor !== msg.payload.values) {
+        return state;
+      }
+
+      return { ...state, validationScheduledFor: undefined };
     case 'SET_LOW_PRIORITY_ERRORS':
       if (
-        // Low priority validation can occur after high priority validation and
-        // this will create stale validation results, e.g:
-        // SET_FIELD_VALUE-------------------SET_LOW_PRIORITY_ERRORS
-        //   SET_FIELD_VALUE-------------------SET_LOW_PRIORITY_ERRORS
-        //       SET_ISVALIDATING-SET_ERRORS-SET_ISVALIDATING
-        //
-        // So we want to skip validation results if values are not the same
-        // anymore.
-        isEqual(state.errors, msg.payload.errors) ||
-        !isEqual(state.values, msg.payload.values)
+        // check for the specific values that validation was scheduled for
+        // validationScheduledFor will be reset by high priority validation
+        state.validationScheduledFor !== msg.payload.values
       ) {
         return state;
       }
 
-      return { ...state, errors: msg.payload.errors };
+      return {
+        ...state,
+        errors: msg.payload.errors,
+        validationScheduledFor: undefined,
+      };
     case 'SET_STATUS':
       return { ...state, status: msg.payload };
     case 'SET_ISSUBMITTING':
       return { ...state, isSubmitting: msg.payload };
     case 'SET_ISVALIDATING':
-      return { ...state, isValidating: msg.payload };
+      return { ...state,
+        isValidating: msg.payload,
+        // new high-priority validations unschedule low-priority validations, but
+        // high-priority validation RESULTS do not unschedule future low-pri validations
+        // future `validateField` calls also unschedules low-pri validations, thus
+        // it is assumed that a form validation will always occur after validateField
+        validationScheduledFor: msg.payload
+          ? undefined
+          : state.validationScheduledFor
+      };
     case 'SET_FIELD_VALUE':
       return {
         ...state,
@@ -353,6 +375,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   // form is valid before executing props.onSubmit.
   const validateFormWithLowPriority = useEventCallback(
     (values: Values = state.values) => {
+      dispatch({ type: 'SCHEDULE_LOW_PRIORITY_VALIDATION', payload: { values } });
       return runWithLowPriority(() => {
         return runAllValidations(values)
           .then(combinedErrors => {
@@ -365,6 +388,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
             return combinedErrors;
           })
           .catch(actualException => {
+            dispatch({ type: 'UNSCHEDULE_LOW_PRIORITY_VALIDATION', payload: { values } });
             if (process.env.NODE_ENV !== 'production') {
               // Users can throw during validate, however they have no way of handling their error on touch / blur. In low priority, we need to handle it
               console.warn(
@@ -1009,8 +1033,10 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     [isInitialValid, dirty, state.errors, props]
   );
 
+  const { validationScheduledFor, ...exposedState } = state;
+
   const ctx = {
-    ...state,
+    ...exposedState,
     initialValues: initialValues.current,
     initialErrors: initialErrors.current,
     initialTouched: initialTouched.current,
@@ -1030,6 +1056,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     setTouched,
     setValues,
     submitForm,
+    isValidationScheduled: !!state.validationScheduledFor,
     validateForm: validateFormWithHighPriority,
     validateField,
     isValid,

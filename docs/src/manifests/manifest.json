@@ -102,6 +102,10 @@
               "path": "/docs/examples/instant-feedback.md"
             },
             {
+              "title": "Material UI",
+              "path": "/docs/examples/with-material-ui.md"
+            },
+            {
               "title": "More Examples",
               "path": "/docs/examples/more-examples.md"
             }

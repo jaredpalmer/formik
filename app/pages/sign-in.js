@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { ErrorMessage, Field, Form, FormikProvider, useFormik } from 'formik';
 import * as Yup from 'yup';
+import { useRouter } from 'next/router';
 
 const SignIn = () => {
+  const router = useRouter();
   const [errorLog, setErrorLog] = useState([]);
 
   const formik = useFormik({
-    validateOnMount: true,
+    validateOnMount: router.query.validateOnMount === 'true',
+    validateOnBlur: router.query.validateOnBlur !== 'false',
+    validateOnChange: router.query.validateOnChange !== 'false',
     initialValues: { username: '', password: '' },
     validationSchema: Yup.object().shape({
       username: Yup.string().required('Required'),
@@ -67,6 +71,15 @@ const SignIn = () => {
 
           <button type="submit" disabled={!formik.isValid}>
             Submit
+          </button>
+
+          <button
+            type="reset"
+            onClick={() => {
+              setErrorLog([]);
+            }}
+          >
+            Reset
           </button>
 
           <pre id="error-log">{JSON.stringify(errorLog, null, 2)}</pre>

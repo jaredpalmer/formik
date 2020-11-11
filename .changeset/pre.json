@@ -3,12 +3,12 @@
   "tag": "next",
   "initialVersions": {
     "formik": "2.2.1",
-    "formik-native": "2.1.9"
+    "formik-native": "2.1.9",
+    "@formik/codemod": "3.0.0-next.2"
   },
   "changesets": [
+    "gentle-boxes-turn",
     "little-olives-enjoy",
-    "moody-apples-return",
-    "quiet-beans-attack",
-    "tough-dragons-dream"
+    "quiet-beans-attack"
   ]
 }

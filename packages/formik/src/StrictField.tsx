@@ -21,23 +21,23 @@ import {
   isEmptyChildren,
 } from './utils';
 
-function useFieldValue(name: string) {
+export function unstable_useFieldValue(name: string) {
   return useContextSelector(FormikContext, ctx => getIn(ctx.values, name));
 }
 
-function useFieldError(name: string) {
+export function unstable_useFieldError(name: string) {
   return useContextSelector(FormikContext, ctx => getIn(ctx.errors, name));
 }
 
-function useFieldTouched(name: string) {
+export function unstable_useFieldTouched(name: string) {
   return useContextSelector(FormikContext, ctx => getIn(ctx.touched, name));
 }
 
 function useFieldState(name: string) {
   return {
-    value: useFieldValue(name),
-    touched: useFieldTouched(name),
-    error: useFieldError(name),
+    value: unstable_useFieldValue(name),
+    touched: unstable_useFieldTouched(name),
+    error: unstable_useFieldError(name),
     initialValue: useContextSelector(FormikContext, ctx =>
       getIn(ctx.initialValues.current, name)
     ),
@@ -248,8 +248,6 @@ export function unstable_useField<Value = any>(
 const useField = unstable_useField;
 
 export function unstable_StrictField({
-  validate,
-  name,
   render,
   children,
   as: is, // `as` is reserved in typescript lol
@@ -283,27 +281,26 @@ export function unstable_StrictField({
   }
 
   const [field, meta] = useField(props);
-  const legacyBag = { field };
 
   if (render) {
-    return render({ ...legacyBag, meta });
+    return render({ field, meta });
   }
 
   if (isFunction(children)) {
-    return children({ ...legacyBag, meta });
+    return children({ field, meta });
   }
+
+  const { innerRef, parse, format, formatOnBlur, validate, ...rest } = props;
 
   if (component) {
     // This behavior is backwards compat with earlier Formik 0.9 to 1.x
     if (typeof component === 'string') {
-      const { innerRef, parse, format, formatOnBlur, ...rest } = props;
       return React.createElement(
         component,
         { ref: innerRef, ...field, ...rest },
         children
       );
     }
-    const { parse, format, formatOnBlur, ...rest } = props;
     return React.createElement(component, { field, meta, ...rest }, children);
   }
 
@@ -311,13 +308,11 @@ export function unstable_StrictField({
   const asElement = is || 'input';
 
   if (typeof asElement === 'string') {
-    const { innerRef, parse, format, formatOnBlur, ...rest } = props;
     return React.createElement(
       asElement,
       { ref: innerRef, ...field, ...rest },
       children
     );
   }
-  const { parse, format, formatOnBlur, ...rest } = props;
   return React.createElement(asElement, { ...field, ...rest }, children);
 }

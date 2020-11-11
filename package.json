@@ -37,8 +37,7 @@
   "lint-staged": {
     "**/*.{ts,tsx,md,mdx,js,jsx}": [
       "npm run format",
-      "tsdx lint",
-      "git add"
+      "tsdx lint"
     ]
   }
 }

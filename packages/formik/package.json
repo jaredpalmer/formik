@@ -20,7 +20,9 @@
   "umd:main": "dist/formik.umd.production.js",
   "module": "dist/formik.esm.js",
   "typings": "dist/index.d.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "peerDependencies": {
     "react": ">=16.8.0"
   },
@@ -48,6 +50,7 @@
     "@types/lodash": "^4.14.119",
     "@types/react": "^16.9.55",
     "@types/react-dom": "^16.9.9",
+    "@types/scheduler": "^0.16.1",
     "@types/warning": "^3.0.0",
     "@types/yup": "^0.24.9",
     "just-debounce-it": "^1.1.0",

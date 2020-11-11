@@ -352,8 +352,10 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   // is actually high-priority since we absolutely need to guarantee the
   // form is valid before executing props.onSubmit.
   const validateFormWithLowPriority = useEventCallback(
-    (values: Values = state.values) => {
-      return runWithLowPriority(() => {
+    (
+      values: Values = state.values
+    ): Promise<FormikErrors<Values>> | Promise<void> => {
+      return (runWithLowPriority(() => {
         return runAllValidations(values)
           .then(combinedErrors => {
             if (!!isMounted.current) {
@@ -373,7 +375,12 @@ export function useFormik<Values extends FormikValues = FormikValues>({
               );
             }
           });
-      });
+        // The scheduler package is a transitive dependency installed with React
+        // If we leave this type as is, scheduler types leak and be exported in the build
+        // which would require folks to install @types/scheduler if they had
+        // skipLibCheck: false. Or we'd have to add @types/scheduler as a dep.
+        // Both are unecessary.
+      }) as unknown) as Promise<FormikErrors<Values>> | Promise<void>;
     }
   );
 

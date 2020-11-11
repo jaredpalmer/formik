@@ -40,7 +40,6 @@
     "lodash": "^4.17.14",
     "lodash-es": "^4.17.14",
     "react-fast-compare": "^2.0.1",
-    "scheduler": "^0.20.1",
     "tiny-warning": "^1.0.2",
     "tslib": "^1.10.0"
   },
@@ -50,7 +49,6 @@
     "@types/lodash": "^4.14.119",
     "@types/react": "^16.9.55",
     "@types/react-dom": "^16.9.9",
-    "@types/scheduler": "^0.16.1",
     "@types/warning": "^3.0.0",
     "@types/yup": "^0.24.9",
     "just-debounce-it": "^1.1.0",

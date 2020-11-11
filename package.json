@@ -32,7 +32,8 @@
     "cypress": "cypress run",
     "precommit": "lint-staged",
     "cypress:open": "cypress open",
-    "start:app": "npm run build && yarn --cwd packages/formik link && yarn --cwd node_modules/react link && yarn --cwd ./app link react formik && yarn --cwd ./app && yarn --cwd ./app run dev"
+    "start:app": "npm run build && yarn --cwd packages/formik link && yarn --cwd node_modules/react link && yarn --cwd ./app link react formik && yarn --cwd ./app && yarn --cwd ./app run dev",
+    "benchmark": "npm run build && yarn --cwd packages/formik link && yarn --cwd ./packages/benchmark link formik && yarn --cwd packages/benchmark run start"
   },
   "lint-staged": {
     "**/*.{ts,tsx,md,mdx,js,jsx}": [

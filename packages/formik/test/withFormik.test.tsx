@@ -9,7 +9,11 @@ interface Values {
   name: string;
 }
 
-const Form: React.FC<FormikProps<Values>> = ({
+interface Status {
+  myStatusMessage: string;
+}
+
+const Form: React.FC<FormikProps<Values, Status>> = ({
   values,
   handleSubmit,
   handleChange,
@@ -51,7 +55,7 @@ const InitialValues: Values = { name: 'jared' };
 const renderWithFormik = (options?: any, props?: any) => {
   let injected: any;
 
-  const FormikForm = withFormik<{}, Values>({
+  const FormikForm = withFormik<{}, Values, Status>({
     mapPropsToValues: () => InitialValues,
     handleSubmit: noop,
     ...options,

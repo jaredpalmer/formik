@@ -23,6 +23,10 @@ interface Values {
   age?: number;
 }
 
+interface Status {
+  myStatusMessage?: string;
+}
+
 function Form({
   values,
   touched,
@@ -32,7 +36,7 @@ function Form({
   status,
   errors,
   isSubmitting,
-}: FormikProps<Values>) {
+}: FormikProps<Values, Status>) {
   return (
     <form onSubmit={handleSubmit} data-testid="form">
       <input
@@ -60,8 +64,8 @@ const InitialValues = {
   age: 30,
 };
 
-function renderFormik<V = Values>(props?: Partial<FormikConfig<V>>) {
-  let injected: FormikProps<V>;
+function renderFormik<V = Values, S = Status>(props?: Partial<FormikConfig<V, S>>) {
+  let injected: FormikProps<V, S>;
   const { rerender, ...rest } = render(
     <Formik
       onSubmit={noop as any}
@@ -70,13 +74,13 @@ function renderFormik<V = Values>(props?: Partial<FormikConfig<V>>) {
     >
       {formikProps =>
         (injected = formikProps) && (
-          <Form {...((formikProps as unknown) as FormikProps<Values>)} />
+          <Form {...((formikProps as unknown) as FormikProps<Values, Status>)} />
         )
       }
     </Formik>
   );
   return {
-    getProps(): FormikProps<V> {
+    getProps(): FormikProps<V, S> {
       return injected;
     },
     ...rest,
@@ -89,7 +93,7 @@ function renderFormik<V = Values>(props?: Partial<FormikConfig<V>>) {
         >
           {formikProps =>
             (injected = formikProps) && (
-              <Form {...((formikProps as unknown) as FormikProps<Values>)} />
+              <Form {...((formikProps as unknown) as FormikProps<Values, Status>)} />
             )
           }
         </Formik>
@@ -1452,13 +1456,13 @@ describe('<Formik>', () => {
   });
 
   describe('low priority validation', () => {
-    function renderForm(props?: Partial<FormikProps<{ name: string }>>) {
+    function renderForm(props?: Partial<FormikProps<{ name: string }, never>>) {
       const validate = jest.fn(({ name }) =>
         name == 'ian' ? {} : { name: 'no' }
       );
       const renderedErrors: Array<[string, string]> = [];
 
-      function createForm(props?: Partial<FormikProps<{ name: string }>>) {
+      function createForm(props?: Partial<FormikProps<{ name: string }, never>>) {
         return (
           <Formik
             onSubmit={noop}
@@ -1489,7 +1493,7 @@ describe('<Formik>', () => {
 
       const api = render(createForm(props));
 
-      function rerender(overrides?: Partial<FormikProps<{ name: string }>>) {
+      function rerender(overrides?: Partial<FormikProps<{ name: string }, never>>) {
         api.rerender(createForm({ ...props, ...overrides }));
       }
 

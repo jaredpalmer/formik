@@ -14,10 +14,10 @@ import { connect } from './connect';
 
 type $FixMe = any;
 
-export interface FastFieldProps<V = any> {
+export interface FastFieldProps<V = any, S = any> {
   field: FieldInputProps<V>;
   meta: FieldMetaProps<V>;
-  form: FormikProps<V>; // if ppl want to restrict this for a given form, let them.
+  form: FormikProps<V, S>; // if ppl want to restrict this for a given form, let them.
 }
 
 export type FastFieldConfig<T> = FieldConfig & {
@@ -32,9 +32,9 @@ export type FastFieldAttributes<T> = GenericFieldHTMLAttributes &
   FastFieldConfig<T> &
   T;
 
-type FastFieldInnerProps<Values = {}, Props = {}> = FastFieldAttributes<
+type FastFieldInnerProps<Values = {}, Props = {}, Status = any> = FastFieldAttributes<
   Props
-> & { formik: FormikContextType<Values> };
+> & { formik: FormikContextType<Values, Status> };
 
 /**
  * Custom Field component for quickly hooking into Formik

@@ -23,7 +23,7 @@ fdescribe('<ErrorMessage />', () => {
     let message = 'Wrong';
     render(
       <TestForm
-        render={(fProps: FormikProps<TestFormValues>) => {
+        render={(fProps: FormikProps<TestFormValues, any>) => {
           actualFProps = fProps;
           return (
             <div>

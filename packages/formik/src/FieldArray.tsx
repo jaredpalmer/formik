@@ -17,7 +17,7 @@ import {
 import isEqual from 'react-fast-compare';
 
 export type FieldArrayRenderProps = ArrayHelpers & {
-  form: FormikProps<any>;
+  form: FormikProps<any, any>;
   name: string;
 };
 
@@ -118,15 +118,15 @@ const copyArrayLike = (arrayLike: ArrayLike<any>) => {
   }
 };
 
-class FieldArrayInner<Values = {}> extends React.Component<
-  FieldArrayConfig & { formik: FormikContextType<Values> },
+class FieldArrayInner<Values = {}, Status = any> extends React.Component<
+  FieldArrayConfig & { formik: FormikContextType<Values, Status> },
   {}
 > {
   static defaultProps = {
     validateOnChange: true,
   };
 
-  constructor(props: FieldArrayConfig & { formik: FormikContextType<Values> }) {
+  constructor(props: FieldArrayConfig & { formik: FormikContextType<Values, Status> }) {
     super(props);
     // We need TypeScript generics on these, so we'll bind them in the constructor
     // @todo Fix TS 3.2.1
@@ -135,7 +135,7 @@ class FieldArrayInner<Values = {}> extends React.Component<
   }
 
   componentDidUpdate(
-    prevProps: FieldArrayConfig & { formik: FormikContextType<Values> }
+    prevProps: FieldArrayConfig & { formik: FormikContextType<Values, Status> }
   ) {
     if (
       this.props.validateOnChange &&
@@ -159,7 +159,7 @@ class FieldArrayInner<Values = {}> extends React.Component<
 
       formik: { setFormikState },
     } = this.props;
-    setFormikState((prevState: FormikState<any>) => {
+    setFormikState((prevState: FormikState<any, any>) => {
       let updateErrors = typeof alterErrors === 'function' ? alterErrors : fn;
       let updateTouched =
         typeof alterTouched === 'function' ? alterTouched : fn;

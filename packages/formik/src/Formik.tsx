@@ -34,7 +34,7 @@ import {
   unstable_scheduleCallback,
 } from 'scheduler';
 
-type FormikMessage<Values> =
+type FormikMessage<Values, Status> =
   | { type: 'SUBMIT_ATTEMPT' }
   | { type: 'SUBMIT_FAILURE' }
   | { type: 'SUBMIT_SUCCESS' }
@@ -53,17 +53,17 @@ type FormikMessage<Values> =
   | { type: 'SET_STATUS'; payload: any }
   | {
       type: 'SET_FORMIK_STATE';
-      payload: (s: FormikState<Values>) => FormikState<Values>;
+      payload: (s: FormikState<Values, Status>) => FormikState<Values, Status>;
     }
   | {
       type: 'RESET_FORM';
-      payload: FormikState<Values>;
+      payload: FormikState<Values, Status>;
     };
 
 // State reducer
-function formikReducer<Values>(
-  state: FormikState<Values>,
-  msg: FormikMessage<Values>
+function formikReducer<Values, Status>(
+  state: FormikState<Values, Status>,
+  msg: FormikMessage<Values, Status>
 ) {
   switch (msg.type) {
     case 'SET_VALUES':
@@ -155,7 +155,7 @@ interface FieldRegistry {
   };
 }
 
-export function useFormik<Values extends FormikValues = FormikValues>({
+export function useFormik<Values extends FormikValues = FormikValues, Status = any>({
   validateOnChange = true,
   validateOnBlur = true,
   validateOnMount = false,
@@ -163,7 +163,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   enableReinitialize = false,
   onSubmit,
   ...rest
-}: FormikConfig<Values>) {
+}: FormikConfig<Values, Status>) {
   const props = {
     validateOnChange,
     validateOnBlur,
@@ -197,7 +197,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   }, []);
 
   const [state, dispatch] = React.useReducer<
-    React.Reducer<FormikState<Values>, FormikMessage<Values>>
+    React.Reducer<FormikState<Values, Status>, FormikMessage<Values, Status>>
   >(formikReducer, {
     values: props.initialValues,
     errors: props.initialErrors || emptyErrors,
@@ -404,7 +404,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   }, [validateOnMount, validateFormWithLowPriority]);
 
   const resetForm = React.useCallback(
-    (nextState?: Partial<FormikState<Values>>) => {
+    (nextState?: Partial<FormikState<Values, Status>>) => {
       const values =
         nextState && nextState.values
           ? nextState.values
@@ -767,8 +767,8 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   const setFormikState = React.useCallback(
     (
       stateOrCb:
-        | FormikState<Values>
-        | ((state: FormikState<Values>) => FormikState<Values>)
+        | FormikState<Values, Status>
+        | ((state: FormikState<Values, Status>) => FormikState<Values, Status>)
     ): void => {
       if (isFunction(stateOrCb)) {
         dispatch({ type: 'SET_FORMIK_STATE', payload: stateOrCb });
@@ -779,7 +779,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     []
   );
 
-  const setStatus = React.useCallback((status: any) => {
+  const setStatus = React.useCallback((status: Status) => {
     dispatch({ type: 'SET_STATUS', payload: status });
   }, []);
 
@@ -890,7 +890,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     }
   );
 
-  const imperativeMethods: FormikHelpers<Values> = {
+  const imperativeMethods: FormikHelpers<Values, Status> = {
     resetForm,
 
     validateForm: validateFormWithHighPriority,
@@ -1003,7 +1003,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
         ? dirty
           ? state.errors && Object.keys(state.errors).length === 0
           : isInitialValid !== false && isFunction(isInitialValid)
-          ? (isInitialValid as (props: FormikConfig<Values>) => boolean)(props)
+          ? (isInitialValid as (props: FormikConfig<Values, Status>) => boolean)(props)
           : (isInitialValid as boolean)
         : state.errors && Object.keys(state.errors).length === 0,
     [isInitialValid, dirty, state.errors, props]
@@ -1049,8 +1049,9 @@ export function useFormik<Values extends FormikValues = FormikValues>({
 
 export function Formik<
   Values extends FormikValues = FormikValues,
-  ExtraProps = {}
->(props: FormikConfig<Values> & ExtraProps) {
+  ExtraProps = {},
+  Status = any
+>(props: FormikConfig<Values, Status> & ExtraProps) {
   const formikbag = useFormik<Values>(props);
   const { component, children, render, innerRef } = props;
 
@@ -1075,8 +1076,8 @@ export function Formik<
         ? render(formikbag)
         : children // children come last, always called
         ? isFunction(children)
-          ? (children as (bag: FormikProps<Values>) => React.ReactNode)(
-              formikbag as FormikProps<Values>
+          ? (children as (bag: FormikProps<Values, Status>) => React.ReactNode)(
+              formikbag as FormikProps<Values, Status>
             )
           : !isEmptyChildren(children)
           ? React.Children.only(children)

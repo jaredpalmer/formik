@@ -1,40 +1,38 @@
 import * as React from 'react';
 import { FormikContextType } from './types';
+import {
+  createContext,
+  useContext,
+  useContextSelector,
+} from 'use-context-selector';
 import invariant from 'tiny-warning';
-import { createContext, useContextSelector } from 'use-context-selector';
 
 export const FormikContext = createContext<FormikContextType<any>>(
   undefined as any
 );
+
 export const FormikProvider = FormikContext.Provider;
+
+export function useFormikContext<Values>() {
+  return useContext<FormikContextType<Values>>(FormikContext);
+}
 
 export function FormikConsumer<Values = any>({
   children,
 }: {
   children: (formik: FormikContextType<Values>) => React.ReactNode;
 }) {
-  const formik = useContextSelector(
-    FormikContext,
-    React.useCallback((c: FormikContextType<Values>) => c, [])
-  ) as FormikContextType<Values>;
-  return <>{children(formik)}</>;
-}
-
-export function useFormikContext<Values>() {
-  const formik = useContextSelector(
-    FormikContext,
-    React.useCallback((c: FormikContextType<Values>) => c, [])
-  ) as FormikContextType<Values>;
+  const formik = useFormikContext<Values>();
 
   invariant(
     !!formik,
     `Formik context is undefined, please verify you are calling useFormikContext() as child of a <Formik> component.`
   );
 
-  return formik;
+  return <>{children(formik)}</>;
 }
 
-export function unstable_useFormikContextSelector<Values = any, Slice = any>(
+export function useFormikContextSelector<Values = any, Slice = any>(
   selector: (value: FormikContextType<Values>) => Slice
 ): Slice {
   return useContextSelector(FormikContext, selector);

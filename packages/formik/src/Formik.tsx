@@ -302,7 +302,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
         props.validationSchema ? runValidationSchema(values) : {},
         props.validate ? runValidateHandler(values) : {},
       ]).then(([fieldErrors, schemaErrors, validateErrors]) => {
-        const combinedErrors = deepmerge.all<FormikErrors<Values>>(
+        const combinedErrors = deepmerge.all(
           [fieldErrors, schemaErrors, validateErrors],
           { arrayMerge }
         );
@@ -1107,12 +1107,12 @@ export function prepareDataForValidation<T extends FormikValues>(
 
 /**
  * deepmerge array merging algorithm
- * https://github.com/KyleAMathews/deepmerge#combine-array
+ * https://github.com/TehShrike/deepmerge#arraymerge
  */
 function arrayMerge(target: any[], source: any[], options: any): any[] {
   const destination = target.slice();
 
-  source.forEach(function merge(e: any, i: number) {
+  source.forEach(function merge(e: Array<any> | Object, i: number) {
     if (typeof destination[i] === 'undefined') {
       const cloneRequested = options.clone !== false;
       const shouldClone = cloneRequested && options.isMergeableObject(e);

@@ -51,7 +51,7 @@
     "@types/react-dom": "^16.9.9",
     "@types/warning": "^3.0.0",
     "@types/yup": "^0.24.9",
-    "babel-jest": "^26.6.3",
+    "babel-jest": "25.5.1",
     "just-debounce-it": "^1.1.0",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",

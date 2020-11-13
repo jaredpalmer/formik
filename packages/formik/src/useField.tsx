@@ -11,7 +11,7 @@ import {
   isObject,
   numberParseFn,
 } from './utils';
-import { FieldHelperProps } from '../dist';
+import { FieldHelperProps } from './types';
 
 export type UseFieldProps<V = any> = {
   /**

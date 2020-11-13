@@ -15,8 +15,8 @@ export function ErrorMessage({
   name,
   ...rest
 }: ErrorMessageProps) {
-  const touch = useFieldTouched(name);
-  const error = useFieldError(name);
+  const [touch] = useFieldTouched(name);
+  const [error] = useFieldError(name);
   return !!touch && !!error
     ? render
       ? isFunction(render)

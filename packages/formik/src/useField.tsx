@@ -1,6 +1,11 @@
 import * as React from 'react';
 import invariant from 'tiny-warning';
-import { FieldInputProps, FieldMetaProps, FieldValidator } from './types';
+import {
+  FieldInputProps,
+  FieldMetaProps,
+  FieldValidator,
+  FormikContextType,
+} from './types';
 import { useFormikContextSelector } from './FormikContext';
 import {
   defaultFormatFn,
@@ -175,43 +180,241 @@ export function useField<FieldValues = any>(
   return [field, meta, getFieldHelpers(fieldName)];
 }
 
-export function useFieldValue(name: string) {
-  return useFormikContextSelector(ctx => getIn(ctx.values, name));
+/**
+ * Returns the value and an updater function of a given field
+ * @param name The name of the field
+ * @public
+ */
+export function useFieldValue<Values>(
+  name: string
+): [any | undefined, (error: any) => void] {
+  const state = useFormikContextSelector<Values>(ctx =>
+    getIn(ctx.values, name)
+  );
+
+  const set = useFormikContextSelector<
+    Values,
+    FormikContextType<Values>['setFieldValue']
+  >(ctx => ctx.setFieldValue);
+
+  const setState = React.useCallback(
+    (value: any, shouldValidate?: boolean) => {
+      set(name, value, shouldValidate);
+    },
+    [name]
+  );
+
+  return [state, setState];
 }
 
-export function useFieldError(name: string) {
-  return useFormikContextSelector(ctx => getIn(ctx.errors, name));
+/**
+ * Returns error message state and an updater function of a given field
+ * @param name The name of the field
+ * @public
+ */
+export function useFieldError<Values>(
+  name: string
+): [any | undefined, (error: any) => void] {
+  const state = useFormikContextSelector<Values, any | undefined>(ctx =>
+    getIn(ctx.errors, name)
+  );
+
+  const set = useFormikContextSelector<
+    Values,
+    FormikContextType<Values>['setFieldError']
+  >(ctx => ctx.setFieldError);
+
+  const setState = React.useCallback(
+    (error: any) => {
+      set(name, error);
+    },
+    [name]
+  );
+
+  return [state, setState];
 }
 
-export function useFieldTouched(name: string) {
-  return useFormikContextSelector(ctx => Boolean(getIn(ctx.touched, name)));
+/**
+ * Returns touched state and updater function of a given field
+ * @param name The name of the field
+ * @public
+ */
+export function useFieldTouched<Values>(
+  name: string
+): [boolean, (error: any) => void] {
+  const state = useFormikContextSelector<Values, boolean>(ctx =>
+    Boolean(getIn(ctx.errors, name))
+  );
+
+  const set = useFormikContextSelector<
+    Values,
+    FormikContextType<Values>['setFieldTouched']
+  >(ctx => ctx.setFieldTouched);
+
+  const setState = React.useCallback(
+    (isTouched?: boolean, shouldValidate?: boolean) => {
+      set(name, isTouched, shouldValidate);
+    },
+    [name]
+  );
+
+  return [state, setState];
 }
 
-export function useFieldInitialValue(name: string) {
-  return useFormikContextSelector(ctx =>
-    getIn(ctx.initialValues.current, name)
+/**
+ * Returns initial value of a given field
+ * @param name The name of the field
+ * @public
+ */
+export function useFieldInitialValue<Values>(name: string) {
+  return useFormikContextSelector<Values, any | undefined>(ctx =>
+    getIn(ctx.initialValues, name)
   );
 }
 
-export function useFieldInitialTouched(name: string) {
-  return useFormikContextSelector(
-    ctx => !!getIn(ctx.initialTouched.current, name)
+/**
+ * Returns initial touched state of a given field
+ * @param name The name of the field
+ * @public
+ */
+export function useFieldInitialTouched<Values>(name: string) {
+  return useFormikContextSelector<Values>(ctx =>
+    Boolean(getIn(ctx.initialTouched, name))
   );
 }
 
-export function useFieldInitialError(name: string) {
-  return useFormikContextSelector(ctx =>
-    getIn(ctx.initialErrors.current, name)
+/**
+ * Returns initial error message of a given field
+ * @param name The name of the field
+ * @public
+ */
+export function useFieldInitialError<Values>(name: string) {
+  return useFormikContextSelector<Values>(ctx =>
+    getIn(ctx.initialErrors, name)
   );
 }
 
-function useFieldMeta(name: string) {
+/**
+ * Returns initial Formik values
+ * @public
+ */
+export function useInitialValues<Values>() {
+  return useFormikContextSelector<
+    Values,
+    FormikContextType<Values>['initialValues']
+  >(ctx => ctx.initialValues);
+}
+
+/**
+ * Returns initial Formik touched
+ * @public
+ */
+export function useInitialTouched<Values>() {
+  return useFormikContextSelector<
+    Values,
+    FormikContextType<Values>['initialTouched']
+  >(ctx => ctx.initialTouched);
+}
+
+/**
+ * Returns initial Formik errors
+ * @public
+ */
+export function useInitialErrors<Values>() {
+  return useFormikContextSelector<
+    Values,
+    FormikContextType<Values>['initialErrors']
+  >(ctx => ctx.initialErrors);
+}
+
+/**
+ * Returns initial Formik status
+ * @public
+ */
+export function useInitialStatus<Values>() {
+  return useFormikContextSelector<
+    Values,
+    FormikContextType<Values>['initialStatus']
+  >(ctx => ctx.initialStatus);
+}
+
+/**
+ * Returns Formik errors and updater function
+ * @public
+ */
+export function useErrors<Values>() {
+  const state = useFormikContextSelector<
+    Values,
+    FormikContextType<Values>['errors']
+  >(ctx => ctx.errors);
+  const update = useFormikContextSelector<
+    Values,
+    FormikContextType<Values>['setErrors']
+  >(ctx => ctx.setErrors);
+  return [state, update];
+}
+
+/**
+ * Returns Formik values and updater function
+ * @public
+ */
+export function useValues<Values>() {
+  const state = useFormikContextSelector<
+    Values,
+    FormikContextType<Values>['values']
+  >(ctx => ctx.values);
+  const update = useFormikContextSelector<
+    Values,
+    FormikContextType<Values>['setValues']
+  >(ctx => ctx.setValues);
+  return [state, update];
+}
+
+/**
+ * Returns Formik touched state and updater function
+ * @public
+ */
+export function useTouched<Values>() {
+  const state = useFormikContextSelector<
+    Values,
+    FormikContextType<Values>['touched']
+  >(ctx => ctx.touched);
+  const update = useFormikContextSelector<
+    Values,
+    FormikContextType<Values>['setTouched']
+  >(ctx => ctx.setTouched);
+  return [state, update];
+}
+
+/**
+ * Returns Formik status and updater function
+ * @public
+ */
+export function useStatus<T>() {
+  const state: T = useFormikContextSelector<
+    unknown,
+    FormikContextType<unknown>['status']
+  >(ctx => ctx.status);
+  const update = useFormikContextSelector<
+    unknown,
+    FormikContextType<unknown>['setStatus']
+  >(ctx => ctx.setStatus);
+  return [state, update];
+}
+
+function useFieldMeta<Values>(name: string) {
+  const [value] = useFieldValue<Values>(name);
+  const [touched] = useFieldTouched<Values>(name);
+  const [error] = useFieldError<Values>(name);
+  const initialValue = useFieldInitialValue<Values>(name);
+  const initialTouched = useFieldInitialTouched<Values>(name);
+  const initialError = useFieldInitialError<Values>(name);
   return {
-    value: useFieldValue(name),
-    touched: useFieldTouched(name),
-    error: useFieldError(name),
-    initialValue: useFieldInitialValue(name),
-    initialTouched: useFieldInitialTouched(name),
-    initialError: useFieldInitialError(name),
+    value,
+    touched,
+    error,
+    initialValue,
+    initialTouched,
+    initialError,
   };
 }

@@ -1,10 +1,5 @@
 import React from 'react';
-import {
-  Formik,
-  unstable_StrictField as Field,
-  Form,
-  ErrorMessage,
-} from 'formik';
+import { Formik, FastField as Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 
 let renderCount = 0;

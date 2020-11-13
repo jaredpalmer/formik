@@ -2,8 +2,8 @@ import React from 'react';
 import {
   Formik,
   Form,
-  unstable_useField as useFieldNew,
-  useField as useFieldOld,
+  useFormikContext,
+  useField,
   UseFieldProps,
 } from 'formik';
 import formatString from 'format-string-by-pattern';
@@ -20,7 +20,8 @@ let renderCounterOld = 0;
 function CustomFieldOld(
   props: UseFieldProps<string> & { placeholder: string }
 ) {
-  const [field] = useFieldOld(props as any);
+  const [field] = useField(props as any);
+  useFormikContext();
   return (
     <>
       <input {...(props as any)} {...field} />
@@ -33,7 +34,7 @@ let renderCounterNew = 0;
 function CustomFieldNew(
   props: UseFieldProps<string> & { placeholder: string }
 ) {
-  const [field] = useFieldNew(props as any);
+  const [field] = useField(props as any);
   return (
     <>
       <input {...(props as any)} {...field} />

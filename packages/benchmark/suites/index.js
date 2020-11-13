@@ -1,8 +1,19 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { create } from 'react-test-renderer';
 import { Formik, Field } from 'formik';
 
 export default {
+  '<form />': () => {
+    const Component = () => {
+      return (
+        <form>
+          <input name="name" />
+        </form>
+      );
+    };
+
+    create(<Component />);
+  },
   '<Field />': () => {
     const Component = () => {
       return (
@@ -12,6 +23,6 @@ export default {
       );
     };
 
-    ReactDOM.render(<Component />);
+    create(<Component />);
   },
 };

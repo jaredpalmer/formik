@@ -2,23 +2,27 @@
   "name": "formik-benchmark",
   "version": "0.0.0",
   "description": "Benchmark Formik",
-  "main": "index.js",
+  "main": "lib/runner.js",
   "dependencies": {
-    "babel-core": "^6.26.3",
-    "babel-loader": "^8.2.1",
-    "babel-preset-env": "^1.7.0",
-    "babel-preset-react": "^6.24.1",
+    "benchmark": "^2.1.4",
     "react": "^17.0.1",
-    "react-dom": "^17.0.1",
+    "react-test-renderer": "^17.0.1",
     "webpack": "^5.4.0",
     "webpack-cli": "^4.2.0"
   },
   "scripts": {
-    "benchmark": "node index.js",
+    "benchmark": "node lib/runner.js",
     "compile": "webpack --config ./webpack.config.js",
-    "start": "echo '(1/2) Compiling'; yarn compile;"
+    "clean": "rm -rf dist",
+    "start": "yarn clean && yarn compile && yarn benchmark"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/core": "^7.12.3",
+    "@babel/preset-env": "^7.12.1",
+    "@babel/preset-react": "^7.12.5",
+    "babel-loader": "^8.2.1"
+  }
 }

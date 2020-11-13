@@ -1058,7 +1058,7 @@ describe('<Formik>', () => {
       });
       expect(dataForValidation).toEqual({
         string: 'string',
-        empty: undefined,
+        empty: '',
         arr: [],
         date,
       });

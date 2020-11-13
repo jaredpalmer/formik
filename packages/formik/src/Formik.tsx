@@ -1092,13 +1092,13 @@ export function prepareDataForValidation<T extends FormikValues>(
           if (Array.isArray(value) === true || isPlainObject(value)) {
             return prepareDataForValidation(value);
           } else {
-            return value !== '' ? value : undefined;
+            return value;
           }
         });
       } else if (isPlainObject(values[key])) {
         data[key] = prepareDataForValidation(values[key]);
       } else {
-        data[key] = values[key] !== '' ? values[key] : undefined;
+        data[key] = values[key];
       }
     }
   }

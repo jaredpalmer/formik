@@ -47,31 +47,31 @@ describe('Yup helpers', () => {
       }
     });
 
-    it('should set undefined empty strings', async () => {
+    it('should set empty strings', async () => {
       try {
         const result = await validateYupSchema(
           { name: 'foo', field: '' },
           schema
         );
-        expect(result.field).toBeUndefined();
+        expect(result.field).toEqual('');
       } catch (e) {
         throw e;
       }
     });
 
-    it('should set undefined nested empty strings', async () => {
+    it('should set nested empty strings', async () => {
       try {
         const result = await validateYupSchema(
           { name: 'foo', object: { nestedField: '' } },
           nestedSchema
         );
-        expect(result.object!.nestedField).toBeUndefined();
+        expect(result.object!.nestedField).toEqual('')
       } catch (e) {
         throw e;
       }
     });
 
-    it('should set undefined nested empty strings', async () => {
+    it('should set nested empty strings', async () => {
       try {
         const result = await validateYupSchema(
           {
@@ -80,7 +80,7 @@ describe('Yup helpers', () => {
           },
           nestedSchema
         );
-        expect(result.object!.nestedArray!).toEqual([undefined, 'foo', 'bar']);
+        expect(result.object!.nestedArray!).toEqual(['', 'foo', 'bar']);
       } catch (e) {
         throw e;
       }

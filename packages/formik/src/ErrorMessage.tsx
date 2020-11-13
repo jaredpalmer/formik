@@ -1,8 +1,5 @@
 import * as React from 'react';
-import {
-  unstable_useFieldError as useFieldError,
-  unstable_useFieldTouched as useFieldTouched,
-} from './StrictField';
+import { useFieldError, useFieldTouched } from './StrictField';
 import { isFunction } from './utils';
 export interface ErrorMessageProps {
   name: string;

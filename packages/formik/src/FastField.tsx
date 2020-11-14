@@ -30,7 +30,7 @@ export function FastField<V = any>({
   component,
   shouldUpdate,
   ...props
-}: GenericFieldHTMLAttributes & FastFieldConfig<V>) {
+}: GenericFieldHTMLAttributes & FastFieldConfig<V>): any {
   React.useEffect(() => {
     invariant(
       !render,
@@ -65,10 +65,12 @@ export function FastField<V = any>({
   const [field, meta] = useField<V>(props);
 
   if (render) {
-    return render({ field, meta });
+    // @ts-ignore @todo types
+    return isFunction(render) ? render({ field, meta }) : null;
   }
 
   if (isFunction(children)) {
+    // @ts-ignore @todo types
     return children({ field, meta });
   }
 

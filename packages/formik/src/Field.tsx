@@ -11,13 +11,15 @@ import {
 import { useField, UseFieldProps } from './useField';
 import { isEmptyChildren, isFunction } from './utils';
 
-export interface FieldProps<V, FormValues> {
+export interface FieldProps<V = any, FormValues = any> {
   field: FieldInputProps<V>;
   form: FormikProps<FormValues>; // if ppl want to restrict this for a given form, let them.
   meta: FieldMetaProps<V>;
 }
 
-export type FieldConfig<FieldValue, FormValues> = UseFieldProps<FieldValue> &
+export type FieldConfig<FieldValue = any, FormValues = any> = UseFieldProps<
+  FieldValue
+> &
   SharedFieldProps<FieldProps<FieldValue, FormValues>>;
 
 export function Field<FieldValue = any, FormValues = any>({
@@ -26,7 +28,7 @@ export function Field<FieldValue = any, FormValues = any>({
   as: is, // `as` is reserved in typescript lol
   component,
   ...props
-}: GenericFieldHTMLAttributes & FieldConfig<FieldValue, FormValues>) {
+}: GenericFieldHTMLAttributes & FieldConfig<FieldValue, FormValues>): any {
   React.useEffect(() => {
     invariant(
       !render,
@@ -63,31 +65,13 @@ export function Field<FieldValue = any, FormValues = any>({
   const legacyBag = { field, form: formik };
 
   if (render) {
-    return render({ ...legacyBag, meta });
+    // @ts-ignore @todo types
+    return isFunction(render) ? render({ ...legacyBag, meta }) : null;
   }
 
   if (isFunction(children)) {
+    // @ts-ignore @todo types
     return children({ ...legacyBag, meta });
-  }
-
-  if (component) {
-    // This behavior is backwards compat with earlier Formik 0.9 to 1.x
-    if (typeof component === 'string') {
-      const { innerRef, parse, format, formatOnBlur, ...rest } = props;
-      return React.createElement(
-        component,
-        { ref: innerRef, ...field, ...rest },
-        children
-      );
-    }
-
-    const { parse, format, formatOnBlur, ...rest } = props;
-    return React.createElement(
-      component,
-      // @todo this is wrong type signature
-      { ...legacyBag, meta, ...rest } as FieldProps<FieldValue, FormValues>,
-      children
-    );
   }
 
   // default to input here so we can check for both `as` and `children` above

@@ -14,7 +14,7 @@ export function ErrorMessage({
   children,
   name,
   ...rest
-}: ErrorMessageProps) {
+}: ErrorMessageProps): JSX.Element | null {
   const [touch] = useFieldTouched(name);
   const [error] = useFieldError(name);
   return !!touch && !!error

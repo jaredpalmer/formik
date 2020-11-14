@@ -1,9 +1,7 @@
 import * as React from 'react';
-import {
-  unstable_useFieldError as useFieldError,
-  unstable_useFieldTouched as useFieldTouched,
-} from './StrictField';
+import { useFieldError, useFieldTouched } from './useField';
 import { isFunction } from './utils';
+
 export interface ErrorMessageProps {
   name: string;
   className?: string;
@@ -11,15 +9,16 @@ export interface ErrorMessageProps {
   children?: (errorMessage: string) => React.ReactNode;
   render?: (errorMessage: string) => React.ReactNode;
 }
+
 export function ErrorMessage({
   component,
   render,
   children,
   name,
   ...rest
-}: ErrorMessageProps) {
-  const touch = useFieldTouched(name);
-  const error = useFieldError(name);
+}: ErrorMessageProps): JSX.Element | null {
+  const [touch] = useFieldTouched(name);
+  const [error] = useFieldError(name);
   return !!touch && !!error
     ? render
       ? isFunction(render)

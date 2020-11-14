@@ -1,5 +1,25 @@
 # formik
 
+## 3.0.0-next.4
+
+### Patch Changes
+
+- [`0ad41eb`](https://github.com/formium/formik/commit/0ad41ebc8ddd8d7fa40dc7364b7cdcfcc4b8c298) [#2903](https://github.com/formium/formik/pull/2903) Thanks [@jaredpalmer](https://github.com/jaredpalmer)! - Renames `unstable_StrictField` to `FastField` and thus deprecates `<FastField shouldUpdate>` prop. If you need this functionality, use `useFormikContext()` and `useField()` in a custom component wrapped in `React.memo()` instead. In addition, and this is breaking, `FastField` is no longer passed `form` object in any render prop.
+
+  If you still need to access the `form` object in render use `FormikConsumer` like so:
+
+  ```diff
+  - import { FastField } from 'formik'
+  + import { FastField, FormikConsumer } from 'formik'
+
+  <FastField name="firstName">
+  - {({ field, meta, form }) => ( /* ... */ )}
+  + {({ field, meta }) => (
+  +   <FormikConsumer>{form => /* ... */}</FormikConsumer>
+  + )}
+  </FastField>
+  ```
+
 ## 3.0.0-next.3
 
 ### Patch Changes

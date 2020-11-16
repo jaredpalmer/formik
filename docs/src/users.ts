@@ -223,7 +223,7 @@ export const users = [
   },
   {
     caption: 'Benchmark UAE',
-    image: '/img/logos/benchmark-uae.svg',
+    image: '/images/logos/benchmark-uae.svg',
     infoLink: 'https://benchmark.ae/',
   },
 ];

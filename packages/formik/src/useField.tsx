@@ -246,7 +246,7 @@ export function useFieldTouched<Values>(
   name: string
 ): [boolean, (error: any) => void] {
   const state = useFormikContextSelector<Values, boolean>(ctx =>
-    Boolean(getIn(ctx.errors, name))
+    Boolean(getIn(ctx.touched, name))
   );
 
   const set = useFormikContextSelector<

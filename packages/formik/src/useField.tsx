@@ -109,16 +109,38 @@ export function useField<FieldValues = any>(
   const meta = useFieldMeta(fieldName);
   const { value: valueState, touched: touchedState } = meta;
   const setFieldValue = useFormikContextSelector(ctx => ctx.setFieldValue);
-  const handleChange = useFormikContextSelector(ctx => ctx.handleChange);
-  const handleBlur = useFormikContextSelector(ctx => ctx.handleBlur);
+  const setFieldTouched = useFormikContextSelector(ctx => ctx.setFieldTouched);
   const getFieldHelpers = useFormikContextSelector(ctx => ctx.getFieldHelpers);
 
   const field: FieldInputProps<any> = {
     name: fieldName,
     value: valueState,
-    // @todo extract into factory methods to use between formik and field
-    onChange: handleChange,
-    onBlur: handleBlur,
+    // We incorporate the fact that we know the `name` prop by scoping `onChange` and `onBlur`.
+    // In addition, to support `parse` fn, we can't just re-use the OG `handleChange` and `handleBlur`, but
+    // instead re-implement it's guts.
+    onChange: (eventOrValue: React.ChangeEvent<any> | any) => {
+      if (isInputEvent(eventOrValue)) {
+        if (eventOrValue.persist) {
+          eventOrValue.persist();
+        }
+        setFieldValue(
+          fieldName,
+          parse(getValueFromEvent(eventOrValue, valueState), fieldName)
+        );
+      } else {
+        setFieldValue(fieldName, parse(eventOrValue, fieldName));
+      }
+    },
+    onBlur: (eventOrValue: React.SyntheticEvent<any> | boolean) => {
+      if (isInputEvent(eventOrValue)) {
+        if (eventOrValue.persist) {
+          eventOrValue.persist();
+        }
+        setFieldTouched(fieldName, true);
+      } else {
+        setFieldValue(fieldName, eventOrValue);
+      }
+    },
   };
 
   const {
@@ -156,25 +178,6 @@ export function useField<FieldValues = any>(
     } else {
       field.value = format(field.value, fieldName);
     }
-  }
-
-  // We incorporate the fact that we know the `name` prop by scoping `onChange`.
-  // In addition, to support `parse` fn, we can't just re-use the OG `handleChange`, but
-  // instead re-implement it's guts.
-  if (type !== 'radio' && type !== 'checkbox') {
-    field.onChange = (eventOrValue: React.ChangeEvent<any> | any) => {
-      if (isInputEvent(eventOrValue)) {
-        if (eventOrValue.persist) {
-          eventOrValue.persist();
-        }
-        setFieldValue(
-          fieldName,
-          parse(getValueFromEvent(eventOrValue, valueState), fieldName)
-        );
-      } else {
-        setFieldValue(fieldName, parse(eventOrValue, fieldName));
-      }
-    };
   }
 
   return [field, meta, getFieldHelpers(fieldName)];

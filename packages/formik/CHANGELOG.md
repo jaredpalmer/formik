@@ -1,5 +1,11 @@
 # formik
 
+## 3.0.0-next.6
+
+### Patch Changes
+
+- [`4e515a4`](https://github.com/formium/formik/commit/4e515a4ab336863db69d81611275231e9301b7df) [#2846](https://github.com/formium/formik/pull/2846) Thanks [@jaredpalmer](https://github.com/jaredpalmer)! - Fix useFieldTouched selector
+
 ## 3.0.0-next.5
 
 ### Patch Changes

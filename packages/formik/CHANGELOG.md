@@ -1,5 +1,11 @@
 # formik
 
+## 3.0.0-next.5
+
+### Patch Changes
+
+- [`50433fa`](https://github.com/formium/formik/commit/50433fa3cec2cb1ae11176dc713d5f011fcc758d) [#2846](https://github.com/formium/formik/pull/2846) Thanks [@jaredpalmer](https://github.com/jaredpalmer)! - Implement useField field.onBlur to avoid rerendering entire form on blur events
+
 ## 3.0.0-next.4
 
 ### Patch Changes

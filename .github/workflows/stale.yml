@@ -1,0 +1,19 @@
+name: "Close stale issues/prs"
+on:
+  schedule:
+    - cron: "1 0 * * *"
+
+jobs:
+  stale:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/stale@v3
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          days-before-stale: 30
+          days-before-close: 60
+          stale-issue-label: "stale"
+          stale-pr-label: "stale"
+          skip-stale-pr-message: true
+          skip-stale-issue-message: true
+          exempt-issue-labels: "enhancement,pinned,RFC,in progress,3.0"

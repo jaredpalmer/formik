@@ -1,7 +1,6 @@
 import * as React from 'react';
 import isEqual from 'react-fast-compare';
 import deepmerge from 'deepmerge';
-import isPlainObject from 'lodash/isPlainObject';
 import {
   FormikConfig,
   FormikErrors,
@@ -1070,39 +1069,11 @@ export function validateYupSchema<T extends FormikValues>(
   sync: boolean = false,
   context: any = {}
 ): Promise<Partial<T>> {
-  const validateData: FormikValues = prepareDataForValidation(values);
+  const validateData: FormikValues = values;
   return schema[sync ? 'validateSync' : 'validate'](validateData, {
     abortEarly: false,
     context: context,
   });
-}
-
-/**
- * Recursively prepare values.
- */
-export function prepareDataForValidation<T extends FormikValues>(
-  values: T
-): FormikValues {
-  let data: FormikValues = Array.isArray(values) ? [] : {};
-  for (let k in values) {
-    if (Object.prototype.hasOwnProperty.call(values, k)) {
-      const key = String(k);
-      if (Array.isArray(values[key]) === true) {
-        data[key] = values[key].map((value: any) => {
-          if (Array.isArray(value) === true || isPlainObject(value)) {
-            return prepareDataForValidation(value);
-          } else {
-            return value;
-          }
-        });
-      } else if (isPlainObject(values[key])) {
-        data[key] = prepareDataForValidation(values[key]);
-      } else {
-        data[key] = values[key];
-      }
-    }
-  }
-  return data;
 }
 
 /**

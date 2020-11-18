@@ -30,6 +30,22 @@
 
 ## 2.1.10-next.2
 
+## 2.1.13
+
+### Patch Changes
+
+- Updated dependencies [[`ebad985`](https://github.com/formium/formik/commit/ebad98569e034c5bd8f52a7926480b7d63127cd4), [`0dfa23b`](https://github.com/formium/formik/commit/0dfa23b6b312db1f2c3d22019975212f0f901c00)]:
+  - formik@2.2.5
+
+## 2.1.12
+
+### Patch Changes
+
+- [`199e77a`](https://github.com/formium/formik/commit/199e77a3f69e9886d88fc7114c37769cd365d9c6) [#2882](https://github.com/formium/formik/pull/2882) Thanks [@umidbekkarimov](https://github.com/umidbekkarimov)! - Validate `setFieldTouched` with high priority
+
+- Updated dependencies [[`199e77a`](https://github.com/formium/formik/commit/199e77a3f69e9886d88fc7114c37769cd365d9c6)]:
+  - formik@2.2.4
+
 ## 2.1.11
 
 ### Patch Changes

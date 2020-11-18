@@ -35,11 +35,6 @@ import {
 } from './utils';
 import { FormikProvider } from './FormikContext';
 import invariant from 'tiny-warning';
-import {
-  unstable_LowPriority,
-  unstable_runWithPriority,
-  unstable_scheduleCallback,
-} from 'scheduler';
 
 type FormikMessage<Values> =
   | { type: 'SUBMIT_ATTEMPT' }
@@ -53,10 +48,6 @@ type FormikMessage<Values> =
   | { type: 'SET_FIELD_ERROR'; payload: { field: string; value?: string } }
   | { type: 'SET_TOUCHED'; payload: FormikTouched<Values> }
   | { type: 'SET_ERRORS'; payload: FormikErrors<Values> }
-  | {
-      type: 'SET_LOW_PRIORITY_ERRORS';
-      payload: { values: Values; errors: FormikErrors<Values> };
-    }
   | { type: 'SET_STATUS'; payload: any }
   | {
       type: 'SET_FORMIK_STATE';
@@ -83,23 +74,6 @@ function formikReducer<Values>(
       }
 
       return { ...state, errors: msg.payload };
-    case 'SET_LOW_PRIORITY_ERRORS':
-      if (
-        // Low priority validation can occur after high priority validation and
-        // this will create stale validation results, e.g:
-        // SET_FIELD_VALUE-------------------SET_LOW_PRIORITY_ERRORS
-        //   SET_FIELD_VALUE-------------------SET_LOW_PRIORITY_ERRORS
-        //       SET_ISVALIDATING-SET_ERRORS-SET_ISVALIDATING
-        //
-        // So we want to skip validation results if values are not the same
-        // anymore.
-        isEqual(state.errors, msg.payload.errors) ||
-        !isEqual(state.values, msg.payload.values)
-      ) {
-        return state;
-      }
-
-      return { ...state, errors: msg.payload.errors };
     case 'SET_STATUS':
       return { ...state, status: msg.payload };
     case 'SET_ISSUBMITTING':
@@ -351,39 +325,6 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     ]
   );
 
-  // Run validations and dispatching the result as low-priority via rAF.
-  //
-  // The thinking is that validation as a result of onChange and onBlur
-  // should never block user input. Note: This method should never be called
-  // during the submission phase because validation prior to submission
-  // is actually high-priority since we absolutely need to guarantee the
-  // form is valid before executing props.onSubmit.
-  const validateFormWithLowPriority = useEventCallback(
-    (values: Values = state.values) => {
-      return runWithLowPriority(() => {
-        return runAllValidations(values)
-          .then(combinedErrors => {
-            if (!!isMounted.current) {
-              dispatch({
-                type: 'SET_LOW_PRIORITY_ERRORS',
-                payload: { values, errors: combinedErrors },
-              });
-            }
-            return combinedErrors;
-          })
-          .catch(actualException => {
-            if (process.env.NODE_ENV !== 'production') {
-              // Users can throw during validate, however they have no way of handling their error on touch / blur. In low priority, we need to handle it
-              console.warn(
-                `Warning: An unhandled error was caught during low priority validation in <Formik validate />`,
-                actualException
-              );
-            }
-          });
-      });
-    }
-  );
-
   // Run all validations methods and update state accordingly
   const validateFormWithHighPriority = useEventCallback(
     (values: Values = state.values) => {
@@ -406,9 +347,9 @@ export function useFormik<Values extends FormikValues = FormikValues>({
       isMounted.current === true &&
       isEqual(initialValues.current, props.initialValues)
     ) {
-      validateFormWithLowPriority(initialValues.current);
+      validateFormWithHighPriority(initialValues.current);
     }
-  }, [validateOnMount, validateFormWithLowPriority]);
+  }, [validateOnMount, validateFormWithHighPriority]);
 
   const resetForm = React.useCallback(
     (nextState?: Partial<FormikState<Values>>) => {
@@ -488,7 +429,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
       }
 
       if (validateOnMount) {
-        validateFormWithLowPriority(initialValues.current);
+        validateFormWithHighPriority(initialValues.current);
       }
     }
   }, [
@@ -496,7 +437,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     props.initialValues,
     resetForm,
     validateOnMount,
-    validateFormWithLowPriority,
+    validateFormWithHighPriority,
   ]);
 
   React.useEffect(() => {
@@ -606,7 +547,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
       const willValidate =
         shouldValidate === undefined ? validateOnBlur : shouldValidate;
       return willValidate
-        ? validateFormWithLowPriority(state.values)
+        ? validateFormWithHighPriority(state.values)
         : Promise.resolve();
     }
   );
@@ -623,7 +564,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
       const willValidate =
         shouldValidate === undefined ? validateOnChange : shouldValidate;
       return willValidate
-        ? validateFormWithLowPriority(resolvedValues)
+        ? validateFormWithHighPriority(resolvedValues)
         : Promise.resolve();
     }
   );
@@ -650,7 +591,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
       const willValidate =
         shouldValidate === undefined ? validateOnChange : shouldValidate;
       return willValidate
-        ? validateFormWithLowPriority(setIn(state.values, field, value))
+        ? validateFormWithHighPriority(setIn(state.values, field, value))
         : Promise.resolve();
     }
   );
@@ -735,7 +676,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
       const willValidate =
         shouldValidate === undefined ? validateOnBlur : shouldValidate;
       return willValidate
-        ? validateFormWithLowPriority(state.values)
+        ? validateFormWithHighPriority(state.values)
         : Promise.resolve();
     }
   );
@@ -899,7 +840,6 @@ export function useFormik<Values extends FormikValues = FormikValues>({
 
   const imperativeMethods: FormikHelpers<Values> = {
     resetForm,
-
     validateForm: validateFormWithHighPriority,
     validateField,
     setErrors,
@@ -1260,15 +1200,6 @@ function arrayMerge(target: any[], source: any[], options: any): any[] {
     }
   });
   return destination;
-}
-
-/**
- * Schedule function as low priority by the scheduler API
- */
-function runWithLowPriority(fn: () => any) {
-  return unstable_runWithPriority(unstable_LowPriority, () =>
-    unstable_scheduleCallback(unstable_LowPriority, fn)
-  );
 }
 
 // React currently throws a warning when using useLayoutEffect on the server.

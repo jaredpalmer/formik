@@ -15,7 +15,7 @@ describe('basic validation', () => {
     cy.get('#renderCounter').contains('0');
   });
 
-  it('should validate show errors on blur', () => {
+  it('should validate show errors on change and blur', () => {
     cy.visit('http://localhost:3000/sign-in');
 
     cy.get('input[name="username"]')
@@ -31,6 +31,40 @@ describe('basic validation', () => {
       .should('have.length', 0);
 
     cy.get('#error-log').should('have.text', '[]');
+  });
+
+  it('should validate show errors on blur only', () => {
+    cy.visit('http://localhost:3000/sign-in', {
+      qs: {
+        validateOnMount: false,
+        validateOnChange: false,
+      },
+    });
+
+    cy.get('input[name="username"]')
+      .type('john')
+      .blur()
+      .siblings('p')
+      .should('have.length', 0);
+
+    cy.get('input[name="password"]')
+      .type('123')
+      .blur()
+      .siblings('p')
+      .should('have.length', 0);
+
+    cy.get('#error-log').should(
+      'have.text',
+      JSON.stringify(
+        [
+          // It will quickly flash after `password` blur because `yup` schema
+          // validation is async.
+          { name: 'password', value: '123', error: 'Required' },
+        ],
+        null,
+        2
+      )
+    );
   });
 
   it('should validate autofill', () => {

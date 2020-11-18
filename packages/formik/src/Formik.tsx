@@ -1137,12 +1137,12 @@ function getSelectedValues(options: any[]) {
 
 /** Return the next value for a checkbox */
 function getValueForCheckbox(
-  currentValue: string | any[],
+  currentValue: string | number | any[],
   checked: boolean,
   valueProp: any
 ) {
   // If the current value was a boolean, return a boolean
-  if (typeof currentValue === 'boolean') {
+  if (typeof currentValue === 'boolean' || typeof currentValue === 'number') {
     return Boolean(checked);
   }
 

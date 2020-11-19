@@ -6,19 +6,19 @@
       "routes": [
         {
           "title": "Getting Started",
-          "path": "/docs/react/overview.md"
+          "path": "/docs/overview.md"
         },
         {
           "title": "Tutorial",
-          "path": "/docs/react/tutorial.md"
+          "path": "/docs/tutorial.md"
         },
         {
           "title": "Migrating from v1.x to v2.x",
-          "path": "/docs/react/migrating-v2.md"
+          "path": "/docs/migrating-v2.md"
         },
         {
           "title": "Resources",
-          "path": "/docs/react/resources.md"
+          "path": "/docs/resources.md"
         },
         {
           "title": "Guides",
@@ -26,23 +26,23 @@
           "routes": [
             {
               "title": "Validation",
-              "path": "/docs/react/guides/validation.md"
+              "path": "/docs/guides/validation.md"
             },
             {
               "title": "Arrays",
-              "path": "/docs/react/guides/arrays.md"
+              "path": "/docs/guides/arrays.md"
             },
             {
               "title": "TypeScript",
-              "path": "/docs/react/guides/typescript.md"
+              "path": "/docs/guides/typescript.md"
             },
             {
               "title": "React Native",
-              "path": "/docs/react/guides/react-native.md"
+              "path": "/docs/guides-native.md"
             },
             {
               "title": "Form Submission",
-              "path": "/docs/react/guides/form-submission.md"
+              "path": "/docs/guides/form-submission.md"
             }
           ]
         }
@@ -52,26 +52,26 @@
       "title": "API Reference",
       "heading": true,
       "routes": [
-        { "title": "connect()", "path": "/docs/react/api/connect.md" },
+        { "title": "connect()", "path": "/docs/api/connect.md" },
         {
           "title": "<ErrorMessage />",
-          "path": "/docs/react/api/errormessage.md"
+          "path": "/docs/api/errormessage.md"
         },
-        { "title": "<FastField />", "path": "/docs/react/api/fastfield.md" },
-        { "title": "<Field />", "path": "/docs/react/api/field.md" },
-        { "title": "<FieldArray />", "path": "/docs/react/api/fieldarray.md" },
-        { "title": "<Form />", "path": "/docs/react/api/form.md" },
-        { "title": "<Formik />", "path": "/docs/react/api/formik.md" },
-        { "title": "useField()", "path": "/docs/react/api/useField.md" },
+        { "title": "<FastField />", "path": "/docs/api/fastfield.md" },
+        { "title": "<Field />", "path": "/docs/api/field.md" },
+        { "title": "<FieldArray />", "path": "/docs/api/fieldarray.md" },
+        { "title": "<Form />", "path": "/docs/api/form.md" },
+        { "title": "<Formik />", "path": "/docs/api/formik.md" },
+        { "title": "useField()", "path": "/docs/api/useField.md" },
         {
           "title": "useFormik()",
-          "path": "/docs/react/api/useFormik.md"
+          "path": "/docs/api/useFormik.md"
         },
         {
           "title": "useFormikContext()",
-          "path": "/docs/react/api/useFormikContext.md"
+          "path": "/docs/api/useFormikContext.md"
         },
-        { "title": "withFormik()", "path": "/docs/react/api/withFormik.md" }
+        { "title": "withFormik()", "path": "/docs/api/withFormik.md" }
       ]
     }
   ]

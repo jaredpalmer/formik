@@ -24,9 +24,20 @@
   - `useFieldValue`
   - `useFieldError`
   - `useValues`
+  - `useSetValue`
+  - `useSetErrors`
   - `useErrors`
   - `useTouched`
+  - `useSetTouched`
   - `useStatus`
+  - `useSetStatus`
+  - `useSubmitForm`
+  - `useResetForm`
+  - `useIsSubmitting`
+  - `useIsValid`
+  - `useIsDirty`
+  - `useValidateForm`
+  - `useValidateField`
 
 ## Performance Suggestions
 

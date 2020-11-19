@@ -14,6 +14,6 @@ jobs:
           days-before-close: 60
           stale-issue-label: "stale"
           stale-pr-label: "stale"
-          skip-stale-pr-message: true
-          skip-stale-issue-message: true
+          stale-pr-message: "This pull request is stale because it has been open 30 days with no activity. Remove stale label or comment or this will be closed in 60 days"
+          stale-issue-message: "This issue is stale because it has been open 30 days with no activity. Remove stale label or comment or this will be closed in 60 days"
           exempt-issue-labels: "enhancement,pinned,RFC,in progress,3.0"

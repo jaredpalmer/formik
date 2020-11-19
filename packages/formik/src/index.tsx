@@ -9,4 +9,4 @@ export * from './connect';
 export * from './ErrorMessage';
 export * from './FormikContext';
 export * from './FastField';
-export * from './useField';
+export * from './hooks';

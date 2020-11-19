@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useFieldError, useFieldTouched } from './useField';
+import { useFieldError, useFieldTouched } from './hooks';
 import { isFunction } from './utils';
 
 export interface ErrorMessageProps {

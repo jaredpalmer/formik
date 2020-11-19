@@ -1,5 +1,42 @@
 # formik-native
 
+## 2.1.10-next.7
+
+### Patch Changes
+
+- Updated dependencies [[`90fd693`](https://github.com/formium/formik/commit/90fd693b0900e1b82ff56b39bd1a020327c0bcb6)]:
+  - formik@3.0.0-next.7
+
+## 2.1.10-next.6
+
+### Patch Changes
+
+- Updated dependencies [[`4e515a4`](https://github.com/formium/formik/commit/4e515a4ab336863db69d81611275231e9301b7df)]:
+  - formik@3.0.0-next.6
+
+## 2.1.10-next.5
+
+### Patch Changes
+
+- Updated dependencies [[`50433fa`](https://github.com/formium/formik/commit/50433fa3cec2cb1ae11176dc713d5f011fcc758d)]:
+  - formik@3.0.0-next.5
+
+## 2.1.10-next.4
+
+### Patch Changes
+
+- Updated dependencies [[`0ad41eb`](https://github.com/formium/formik/commit/0ad41ebc8ddd8d7fa40dc7364b7cdcfcc4b8c298)]:
+  - formik@3.0.0-next.4
+
+## 2.1.10-next.3
+
+### Patch Changes
+
+- Updated dependencies [[`6383b86`](https://github.com/formium/formik/commit/6383b86d3123a3348e4fa6abba4fe0c3652cb5a4)]:
+  - formik@3.0.0-next.3
+
+## 2.1.10-next.2
+
 ## 2.1.13
 
 ### Patch Changes
@@ -23,6 +60,21 @@
 - [`e0a28e6`](https://github.com/formium/formik/commit/e0a28e6872ebfd06e636aac84829b60d704b0694) [#2867](https://github.com/formium/formik/pull/2867) Thanks [@umidbekkarimov](https://github.com/umidbekkarimov)! - Fix low priority validation for browser password autofill.
 
 - Updated dependencies [[`e0a28e6`](https://github.com/formium/formik/commit/e0a28e6872ebfd06e636aac84829b60d704b0694), [`958d67c`](https://github.com/formium/formik/commit/958d67ca2c3e006031c31150ea0a42248b28ffc7)]:
+  - formik@3.0.0-next.2
+
+## 2.1.10-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`1c2175a`](https://github.com/formium/formik/commit/1c2175a24b1d1223b4cdedf424ef62057edf0063)]:
+  - formik@3.0.0-next.1
+
+## 2.1.10-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`5efd691`](https://github.com/formium/formik/commit/5efd691b8784fda6645d362189f55c618f030758)]:
+  - formik@3.0.0-next.0
   - formik@2.2.3
 
 ## 2.1.10

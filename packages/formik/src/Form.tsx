@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { useFormikContext } from './FormikContext';
+import { useContextSelector } from 'use-context-selector';
+import { FormikContext } from './FormikContext';
 
 export type FormikFormProps = Pick<
   React.FormHTMLAttributes<HTMLFormElement>,
@@ -12,23 +13,29 @@ export type FormikFormProps = Pick<
 type FormProps = React.ComponentPropsWithoutRef<'form'>;
 
 // @todo tests
-export const Form = React.forwardRef<HTMLFormElement, FormProps>(
-  (props: FormikFormProps, ref) => {
-    // iOS needs an "action" attribute for nice input: https://stackoverflow.com/a/39485162/406725
-    // We default the action to "#" in case the preventDefault fails (just updates the URL hash)
-    const { action, ...rest } = props;
-    const _action = action || '#';
-    const { handleReset, handleSubmit } = useFormikContext();
-    return (
-      <form
-        onSubmit={handleSubmit}
-        ref={ref}
-        onReset={handleReset}
-        action={_action}
-        {...rest}
-      />
-    );
-  }
-);
+export const Form = React.forwardRef<HTMLFormElement, FormProps>(function Form(
+  props: FormikFormProps,
+  ref
+) {
+  // iOS needs an "action" attribute for nice input: https://stackoverflow.com/a/39485162/406725
+  // We default the action to "#" in case the preventDefault fails (just updates the URL hash)
+  const { action, ...rest } = props;
+  const _action = action || '#';
+  const handleReset = useContextSelector(FormikContext, ctx => ctx.handleReset);
+  const handleSubmit = useContextSelector(
+    FormikContext,
+    ctx => ctx.handleSubmit
+  );
+
+  return (
+    <form
+      onSubmit={handleSubmit}
+      ref={ref}
+      onReset={handleReset}
+      action={_action}
+      {...rest}
+    />
+  );
+});
 
 Form.displayName = 'Form';

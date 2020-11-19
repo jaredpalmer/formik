@@ -321,3 +321,24 @@ export interface FieldInputProps<Value> {
 export type FieldValidator = (
   value: any
 ) => string | void | Promise<string | void>;
+
+export type SharedFieldProps<T = any> = {
+  /**
+   * Field component to render. Can either be a string like 'select' or a component.
+   */
+  component?: string | React.ComponentType<T>;
+
+  /**
+   * Render prop (works like React router's <Route render={props =>} />)
+   * @deprecated
+   */
+  render?: (props: T) => React.ReactNode;
+
+  /**
+   * Children render function <Field name>{props => ...}</Field>)
+   */
+  children?: ((props: T) => React.ReactNode) | React.ReactNode;
+
+  /** Inner ref */
+  innerRef?: (instance: any) => void;
+};

@@ -1,7 +1,7 @@
 {
   "name": "formik",
   "description": "Forms in React, without tears",
-  "version": "2.2.5",
+  "version": "3.0.0-next.7",
   "license": "Apache-2.0",
   "author": "Jared Palmer <jared@palmer.net>",
   "repository": "formium/formik",
@@ -39,7 +39,8 @@
     "lodash-es": "^4.17.14",
     "react-fast-compare": "^2.0.1",
     "tiny-warning": "^1.0.2",
-    "tslib": "^1.10.0"
+    "tslib": "^1.10.0",
+    "use-context-selector": "^1.2.10"
   },
   "devDependencies": {
     "@testing-library/react": "^11.1.0",

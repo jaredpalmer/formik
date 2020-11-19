@@ -1,0 +1,13 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "module": "commonjs",
+    "sourceMap": true,
+    "esModuleInterop": true,
+    "target": "es2015",
+    "downlevelIteration": true,
+    "preserveWatchOutput": true
+  },
+  "include": ["transforms", "bin"],
+  "exclude": ["node_modules"]
+}

@@ -25,6 +25,13 @@ import {
   getActiveElement,
   getIn,
   isObject,
+  isInputEvent,
+  isReactNative,
+  getSelectedValues,
+  getValueForCheckbox,
+  defaultParseFn,
+  numberParseFn,
+  defaultFormatFn,
 } from './utils';
 import { FormikProvider } from './FormikContext';
 import invariant from 'tiny-warning';
@@ -877,7 +884,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     [state.errors, state.touched, state.values]
   );
 
-  const getFieldHelpers = React.useCallback(
+  const getFieldHelpers = useEventCallback(
     (name: string): FieldHelperProps<any> => {
       return {
         setValue: (value: any, shouldValidate?: boolean) =>
@@ -886,15 +893,46 @@ export function useFormik<Values extends FormikValues = FormikValues>({
           setFieldTouched(name, value, shouldValidate),
         setError: (value: any) => setFieldError(name, value),
       };
-    },
-    [setFieldValue, setFieldTouched, setFieldError]
+    }
+  );
+
+  const getValueFromEvent = useEventCallback(
+    (event: React.SyntheticEvent<any>, fieldName: string) => {
+      // React Native/Expo Web/maybe other render envs
+      if (
+        !isReactNative &&
+        event.nativeEvent &&
+        (event.nativeEvent as any).text !== undefined
+      ) {
+        return (event.nativeEvent as any).text;
+      }
+
+      // React Native
+      if (isReactNative && event.nativeEvent) {
+        return (event.nativeEvent as any).text;
+      }
+
+      const target = event.target ? event.target : event.currentTarget;
+      const { type, value, checked, options, multiple } = target;
+
+      return /checkbox/.test(type) // checkboxes
+        ? getValueForCheckbox(getIn(state.values, fieldName!), checked, value)
+        : !!multiple // <select multiple>
+        ? getSelectedValues(options)
+        : value;
+    }
   );
 
   const getFieldProps = React.useCallback(
     (nameOrOptions): FieldInputProps<any> => {
       const isAnObject = isObject(nameOrOptions);
-      const name = isAnObject ? nameOrOptions.name : nameOrOptions;
+      const name = isAnObject
+        ? nameOrOptions.name
+          ? nameOrOptions.name
+          : nameOrOptions.id
+        : nameOrOptions;
       const valueState = getIn(state.values, name);
+      const touchedState = getIn(state.touched, name);
 
       const field: FieldInputProps<any> = {
         name,
@@ -908,6 +946,9 @@ export function useFormik<Values extends FormikValues = FormikValues>({
           value: valueProp, // value is special for checkboxes
           as: is,
           multiple,
+          parse = /number|range/.test(type) ? numberParseFn : defaultParseFn,
+          format = defaultFormatFn,
+          formatOnBlur = false,
         } = nameOrOptions;
 
         if (type === 'checkbox') {
@@ -926,10 +967,43 @@ export function useFormik<Values extends FormikValues = FormikValues>({
           field.value = field.value || [];
           field.multiple = true;
         }
+
+        if (type !== 'radio' && type !== 'checkbox' && !!format) {
+          if (formatOnBlur === true) {
+            if (touchedState === true) {
+              field.value = format(field.value);
+            }
+          } else {
+            field.value = format(field.value);
+          }
+        }
+
+        // We incorporate the fact that we know the `name` prop by scoping `onChange`.
+        // In addition, to support `parse` fn, we can't just re-use the OG `handleChange`, but
+        // instead re-implement it's guts.
+        if (type !== 'radio' && type !== 'checkbox') {
+          field.onChange = (eventOrValue: React.ChangeEvent<any> | any) => {
+            if (isInputEvent(eventOrValue)) {
+              if (eventOrValue.persist) {
+                eventOrValue.persist();
+              }
+              setFieldValue(name, parse(getValueFromEvent(eventOrValue, name)));
+            } else {
+              setFieldValue(name, parse(eventOrValue));
+            }
+          };
+        }
       }
       return field;
     },
-    [handleBlur, handleChange, state.values]
+    [
+      getValueFromEvent,
+      handleBlur,
+      handleChange,
+      setFieldValue,
+      state.touched,
+      state.values,
+    ]
   );
 
   const dirty = React.useMemo(
@@ -1126,57 +1200,6 @@ function arrayMerge(target: any[], source: any[], options: any): any[] {
     }
   });
   return destination;
-}
-
-/** Return multi select values based on an array of options */
-function getSelectedValues(options: any[]) {
-  return Array.from(options)
-    .filter(el => el.selected)
-    .map(el => el.value);
-}
-
-/** Return the next value for a checkbox */
-function getValueForCheckbox(
-  currentValue: string | any[],
-  checked: boolean,
-  valueProp: any
-) {
-  // If the current value was a boolean, return a boolean
-  if (typeof currentValue === 'boolean') {
-    return Boolean(checked);
-  }
-
-  // If the currentValue was not a boolean we want to return an array
-  let currentArrayOfValues = [];
-  let isValueInArray = false;
-  let index = -1;
-
-  if (!Array.isArray(currentValue)) {
-    // eslint-disable-next-line eqeqeq
-    if (!valueProp || valueProp == 'true' || valueProp == 'false') {
-      return Boolean(checked);
-    }
-  } else {
-    // If the current value is already an array, use it
-    currentArrayOfValues = currentValue;
-    index = currentValue.indexOf(valueProp);
-    isValueInArray = index >= 0;
-  }
-
-  // If the checkbox was checked and the value is not already present in the aray we want to add the new value to the array of values
-  if (checked && valueProp && !isValueInArray) {
-    return currentArrayOfValues.concat(valueProp);
-  }
-
-  // If the checkbox was unchecked and the value is not in the array, simply return the already existing array of values
-  if (!isValueInArray) {
-    return currentArrayOfValues;
-  }
-
-  // If the checkbox was unchecked and the value is in the array, remove the value and return the array
-  return currentArrayOfValues
-    .slice(0, index)
-    .concat(currentArrayOfValues.slice(index + 1));
 }
 
 // React currently throws a warning when using useLayoutEffect on the server.

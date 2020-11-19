@@ -390,7 +390,43 @@ export function useTouched<Values>() {
 }
 
 /**
- * Returns Formik status and updater function
+ * Returns Formik touched updater function
+ * @public
+ */
+export function useSetTouched<Values>() {
+  const update = useFormikContextSelector<
+    Values,
+    FormikContextType<Values>['setTouched']
+  >(ctx => ctx.setTouched);
+  return update;
+}
+
+/**
+ * Returns Formik values updater function
+ * @public
+ */
+export function useSetValues<Values>() {
+  const update = useFormikContextSelector<
+    Values,
+    FormikContextType<Values>['setValues']
+  >(ctx => ctx.setValues);
+  return update;
+}
+
+/**
+ * Returns Formik errors updater function
+ * @public
+ */
+export function useSetErrors<Values>() {
+  const update = useFormikContextSelector<
+    Values,
+    FormikContextType<Values>['setErrors']
+  >(ctx => ctx.setErrors);
+  return update;
+}
+
+/**
+ * Returns Formik status state and updater function
  * @public
  */
 export function useStatus<T>() {
@@ -403,6 +439,97 @@ export function useStatus<T>() {
     FormikContextType<unknown>['setStatus']
   >(ctx => ctx.setStatus);
   return [state, update];
+}
+
+/**
+ * Returns Formik status updater function
+ * @public
+ */
+export function useSetStatus() {
+  return useFormikContextSelector<
+    unknown,
+    FormikContextType<unknown>['setStatus']
+  >(ctx => ctx.setStatus);
+}
+
+/**
+ * Returns a function to imperatively submit the form
+ * @public
+ */
+export function useSubmitForm() {
+  return useFormikContextSelector<
+    unknown,
+    FormikContextType<unknown>['submitForm']
+  >(ctx => ctx.submitForm);
+}
+
+/**
+ * Returns whether the form submission is currently being attempted
+ * @public
+ */
+export function useIsSubmitting() {
+  return useFormikContextSelector<
+    unknown,
+    FormikContextType<unknown>['isSubmitting']
+  >(ctx => ctx.isSubmitting);
+}
+
+/**
+ * Returns function to reset the form
+ * @public
+ */
+export function useResetForm() {
+  return useFormikContextSelector<
+    unknown,
+    FormikContextType<unknown>['resetForm']
+  >(ctx => ctx.resetForm);
+}
+
+/**
+ *
+ * Returns whether the form submission is currently being attempted
+ * @public
+ */
+export function useIsValid() {
+  return useFormikContextSelector<
+    unknown,
+    FormikContextType<unknown>['isValid']
+  >(ctx => ctx.isValid);
+}
+
+/**
+ * Returns whether the form is dirty
+ * @public
+ */
+export function useIsDirty() {
+  return useFormikContextSelector<unknown, FormikContextType<unknown>['dirty']>(
+    ctx => ctx.dirty
+  );
+}
+
+/**
+ * Returns a function to imperatively validate the entire form
+ * @public
+ */
+export function useValidateForm() {
+  return useFormikContextSelector<
+    unknown,
+    FormikContextType<unknown>['validateForm']
+  >(ctx => ctx.validateForm);
+}
+
+/**
+ * Returns a function to imperatively validate a field
+ * @public
+ */
+export function useValidateField(fieldName?: string) {
+  const validateField = useFormikContextSelector<
+    unknown,
+    FormikContextType<unknown>['validateField']
+  >(ctx => ctx.validateField);
+  return React.useCallback(() => {
+    return fieldName ? validateField(fieldName) : validateField;
+  }, [fieldName]);
 }
 
 function useFieldMeta<Values>(name: string) {

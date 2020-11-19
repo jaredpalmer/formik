@@ -8,7 +8,7 @@ import {
   GenericFieldHTMLAttributes,
   SharedFieldProps,
 } from './types';
-import { useField, UseFieldProps } from './useField';
+import { useField, UseFieldProps } from './hooks';
 import { isEmptyChildren, isFunction } from './utils';
 
 export interface FieldProps<V = any, FormValues = any> {

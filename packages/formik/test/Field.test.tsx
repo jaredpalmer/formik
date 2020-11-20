@@ -1,5 +1,11 @@
 import * as React from 'react';
-import { cleanup, render, wait, fireEvent } from 'react-testing-library';
+import {
+  act,
+  cleanup,
+  render,
+  waitFor,
+  fireEvent,
+} from '@testing-library/react';
 import * as Yup from 'yup';
 import {
   Formik,
@@ -80,8 +86,8 @@ function cases(
   tester: (arg: typeof renderField | typeof renderFastField) => void
 ) {
   describe(title, () => {
-    it('<FastField />', async () => Promise.resolve(tester(renderFastField)));
-    it('<Field />', async () => Promise.resolve(tester(renderField)));
+    it('<FastField />', async () => await tester(renderFastField));
+    it('<Field />', async () => await tester(renderField));
   });
 }
 
@@ -291,7 +297,7 @@ describe('Field / FastField', () => {
       });
 
       rerender();
-      await wait(() => {
+      await waitFor(() => {
         expect(validate).toHaveBeenCalled();
       });
     });
@@ -309,7 +315,7 @@ describe('Field / FastField', () => {
           target: { name: 'name', value: 'hello' },
         });
         rerender();
-        await wait(() => {
+        await waitFor(() => {
           expect(validate).not.toHaveBeenCalled();
         });
       }
@@ -326,7 +332,7 @@ describe('Field / FastField', () => {
         target: { name: 'name' },
       });
       rerender();
-      await wait(() => {
+      await waitFor(() => {
         expect(validate).toHaveBeenCalled();
       });
     });
@@ -346,7 +352,7 @@ describe('Field / FastField', () => {
         });
         rerender();
 
-        await wait(() => expect(validate).not.toHaveBeenCalled());
+        await waitFor(() => expect(validate).not.toHaveBeenCalled());
       }
     );
 
@@ -359,9 +365,13 @@ describe('Field / FastField', () => {
           component: 'input',
         });
         rerender();
-        getFormProps().validateField('name');
+
+        act(() => {
+          getFormProps().validateField('name');
+        });
+
         rerender();
-        await wait(() => {
+        await waitFor(() => {
           expect(validate).toHaveBeenCalled();
           expect(getFormProps().errors.name).toBe('Error!');
         });
@@ -378,10 +388,12 @@ describe('Field / FastField', () => {
         // workaround for `useEffect` to run: https://github.com/facebook/react/issues/14050
         rerender();
 
-        getFormProps().validateField('name');
+        act(() => {
+          getFormProps().validateField('name');
+        });
 
         expect(validate).toHaveBeenCalled();
-        await wait(() => expect(getFormProps().errors.name).toBe('Error!'));
+        await waitFor(() => expect(getFormProps().errors.name).toBe('Error!'));
       }
     );
 
@@ -400,9 +412,11 @@ describe('Field / FastField', () => {
 
         rerender();
 
-        getFormProps().validateField('name');
+        act(() => {
+          getFormProps().validateField('name');
+        });
 
-        await wait(() =>
+        await waitFor(() =>
           expect(getFormProps().errors).toEqual({
             name: errorMessage,
           })

@@ -75,7 +75,7 @@ async function main() {
   const neededAuthors = new Set<string>();
 
   const blogPosts = Object.keys(postsTable)
-    .map((slug) => {
+    .map(slug => {
       const post = postsTable[slug];
       if (!postIsPublished(post)) return;
 
@@ -90,7 +90,7 @@ async function main() {
 
   const { users } = await getNotionUsers([...(neededAuthors as any)]);
 
-  blogPosts.forEach((post) => {
+  blogPosts.forEach(post => {
     post.authors = post.authors.map((id: any) => users[id]);
     post.link = getBlogLink(post.Slug);
     post.title = post.Page;
@@ -102,4 +102,4 @@ async function main() {
   console.log(`Atom feed file generated at \`${outputPath}\``);
 }
 
-main().catch((error) => console.error(error));
+main().catch(error => console.error(error));

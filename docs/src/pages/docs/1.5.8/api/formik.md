@@ -1,7 +1,6 @@
 ---
 id: formik
 title: <Formik />
-custom_edit_url: https://github.com/jaredpalmer/formik/edit/master/docs/api/formik.md
 ---
 
 `<Formik>` is a component that helps you with building forms. It uses a render
@@ -322,7 +321,7 @@ _Note: I suggest using `validationSchema` and Yup for validation. However,
 
 Validate the form's `values` with function. This function can either be:
 
-1.  Synchronous and return an `errors` object.
+1. Synchronous and return an `errors` object.
 
 ```js
 // Synchronous validation

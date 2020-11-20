@@ -1,0 +1,19 @@
+{
+  "name": "formik-example-with-material-ui",
+  "version": "0.1.0",
+  "description": "This example demonstrates how to use Formik with Material UI",
+  "main": "index.js",
+  "dependencies": {
+    "@material-ui/core": "4.11.0",
+    "formik": "latest",
+    "react": "17.0.0",
+    "react-dom": "17.0.0",
+    "react-scripts": "3.4.3",
+    "yup": "0.29.3"
+  },
+  "prettier": {
+    "trailingComma": "es5",
+    "singleQuote": true,
+    "semi": true
+  }
+}

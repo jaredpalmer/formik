@@ -2,15 +2,15 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Formik, Field, Form, ErrorMessage, useFormikContext } from 'formik';
 
-const isRequired = message => value => (!!value ? undefined : message);
+const isRequired = (message) => (value) => (!!value ? undefined : message);
 
 const Example = () => (
   <div>
     <h1>Pick a username</h1>
     <Formik
       initialValues={{ username: '', email: '' }}
-      onSubmit={async values => {
-        await new Promise(r => setTimeout(r, 500));
+      onSubmit={async (values) => {
+        await new Promise((r) => setTimeout(r, 500));
         alert(JSON.stringify(values, null, 2));
       }}
     >

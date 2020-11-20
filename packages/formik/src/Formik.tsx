@@ -1141,7 +1141,7 @@ function getValueForCheckbox(
   checked: boolean,
   valueProp: any
 ) {
-  // If the current value was a boolean, return a boolean
+  // If the current value was a boolean or a number (1, 0), return a boolean
   if (typeof currentValue === 'boolean' || typeof currentValue === 'number') {
     return Boolean(checked);
   }

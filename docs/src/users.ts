@@ -228,7 +228,7 @@ export const users = [
   },
   {
     caption: 'JDLT',
-    image: require('/images/logos/jdlt.svg'),
+    image: '/images/logos/jdlt.svg',
     infoLink: 'https://jdlt.co.uk/',
   },
 ];

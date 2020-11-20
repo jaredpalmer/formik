@@ -28,7 +28,6 @@ import {
 } from './utils';
 import { FormikProvider } from './FormikContext';
 import invariant from 'tiny-warning';
-import { unstable_LowPriority, unstable_runWithPriority } from 'scheduler';
 
 type FormikMessage<Values> =
   | { type: 'SUBMIT_ATTEMPT' }
@@ -319,36 +318,6 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     ]
   );
 
-  // Run validations and dispatching the result as low-priority via rAF.
-  //
-  // The thinking is that validation as a result of onChange and onBlur
-  // should never block user input. Note: This method should never be called
-  // during the submission phase because validation prior to submission
-  // is actaully high-priority since we absolutely need to guarantee the
-  // form is valid before executing props.onSubmit.
-  const validateFormWithLowPriority = useEventCallback(
-    (values: Values = state.values) => {
-      return unstable_runWithPriority(unstable_LowPriority, () => {
-        return runAllValidations(values)
-          .then(combinedErrors => {
-            if (!!isMounted.current) {
-              dispatch({ type: 'SET_ERRORS', payload: combinedErrors });
-            }
-            return combinedErrors;
-          })
-          .catch(actualException => {
-            if (process.env.NODE_ENV !== 'production') {
-              // Users can throw during validate, however they have no way of handling their error on touch / blur. In low priority, we need to handle it
-              console.warn(
-                `Warning: An unhandled error was caught during low priority validation in <Formik validate />`,
-                actualException
-              );
-            }
-          });
-      });
-    }
-  );
-
   // Run all validations methods and update state accordingly
   const validateFormWithHighPriority = useEventCallback(
     (values: Values = state.values) => {
@@ -371,9 +340,9 @@ export function useFormik<Values extends FormikValues = FormikValues>({
       isMounted.current === true &&
       isEqual(initialValues.current, props.initialValues)
     ) {
-      validateFormWithLowPriority(initialValues.current);
+      validateFormWithHighPriority(initialValues.current);
     }
-  }, [validateOnMount, validateFormWithLowPriority]);
+  }, [validateOnMount, validateFormWithHighPriority]);
 
   const resetForm = React.useCallback(
     (nextState?: Partial<FormikState<Values>>) => {
@@ -453,7 +422,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
       }
 
       if (validateOnMount) {
-        validateFormWithLowPriority(initialValues.current);
+        validateFormWithHighPriority(initialValues.current);
       }
     }
   }, [
@@ -461,7 +430,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     props.initialValues,
     resetForm,
     validateOnMount,
-    validateFormWithLowPriority,
+    validateFormWithHighPriority,
   ]);
 
   React.useEffect(() => {
@@ -571,7 +540,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
       const willValidate =
         shouldValidate === undefined ? validateOnBlur : shouldValidate;
       return willValidate
-        ? validateFormWithLowPriority(state.values)
+        ? validateFormWithHighPriority(state.values)
         : Promise.resolve();
     }
   );
@@ -582,15 +551,13 @@ export function useFormik<Values extends FormikValues = FormikValues>({
 
   const setValues = useEventCallback(
     (values: React.SetStateAction<Values>, shouldValidate?: boolean) => {
-      const resolvedValues = isFunction(values)
-        ? values(state.values)
-        : values;
+      const resolvedValues = isFunction(values) ? values(state.values) : values;
 
       dispatch({ type: 'SET_VALUES', payload: resolvedValues });
       const willValidate =
         shouldValidate === undefined ? validateOnChange : shouldValidate;
       return willValidate
-        ? validateFormWithLowPriority(resolvedValues)
+        ? validateFormWithHighPriority(resolvedValues)
         : Promise.resolve();
     }
   );
@@ -617,7 +584,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
       const willValidate =
         shouldValidate === undefined ? validateOnChange : shouldValidate;
       return willValidate
-        ? validateFormWithLowPriority(setIn(state.values, field, value))
+        ? validateFormWithHighPriority(setIn(state.values, field, value))
         : Promise.resolve();
     }
   );
@@ -702,7 +669,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
       const willValidate =
         shouldValidate === undefined ? validateOnBlur : shouldValidate;
       return willValidate
-        ? validateFormWithLowPriority(state.values)
+        ? validateFormWithHighPriority(state.values)
         : Promise.resolve();
     }
   );
@@ -866,7 +833,6 @@ export function useFormik<Values extends FormikValues = FormikValues>({
 
   const imperativeMethods: FormikHelpers<Values> = {
     resetForm,
-
     validateForm: validateFormWithHighPriority,
     validateField,
     setErrors,

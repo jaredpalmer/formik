@@ -51,6 +51,16 @@
           ]
         },
         {
+          "title": "With React UI Frameworks",
+          "open": false,
+          "routes": [
+            {
+              "title": "Material UI",
+              "path": "/docs/with-react-ui-frameworks/with-material-ui.md"
+            }
+          ]
+        },
+        {
           "title": "Examples",
           "open": true,
           "routes": [
@@ -90,6 +100,10 @@
             {
               "title": "Instant Feedback",
               "path": "/docs/examples/instant-feedback.md"
+            },
+            {
+              "title": "Material UI",
+              "path": "/docs/examples/with-material-ui.md"
             },
             {
               "title": "More Examples",

@@ -1,7 +1,6 @@
 ---
 id: fieldarray
 title: <FieldArray />
-custom_edit_url: https://github.com/jaredpalmer/formik/edit/master/docs/api/fieldarray.md
 ---
 
 `<FieldArray />` is a component that helps with common array/list manipulations. You pass it a `name` property with the path to the key within `values` that holds the relevant array. `<FieldArray />` will then give you access to array helper methods via render props. For convenience, calling these methods will trigger validation and also manage `touched` for you.

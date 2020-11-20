@@ -1,7 +1,6 @@
 ---
 id: validation
 title: Validation
-custom_edit_url: https://github.com/jaredpalmer/formik/edit/master/docs/guides/validation.md
 ---
 
 Formik is designed to manage forms with complex validation with ease. Formik supports synchronous and asynchronous

@@ -37,6 +37,10 @@ export type FormikTouched<Values> = {
  * Formik state tree
  */
 export interface FormikState<Values> {
+  initialValues: Values;
+  initialErrors: FormikErrors<Values>;
+  initialTouched: FormikTouched<Values>;
+  initialStatus: any;
   /** Form values */
   values: Values;
   /** map of field names to specific error for that field */
@@ -51,6 +55,7 @@ export interface FormikState<Values> {
   status?: any;
   /** Number of times user tried to submit the form */
   submitCount: number;
+  dirty: boolean;
 }
 
 /**
@@ -200,7 +205,7 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
   /**
    * Reset handler
    */
-  onReset?: (values: Values, formikHelpers: FormikHelpers<Values>) => void;
+  onReset?: (values: Values, formikHelpers: FormikHelpers<Values>) => void | Promise<any>;
 
   /**
    * Submission handler

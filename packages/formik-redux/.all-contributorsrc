@@ -1,0 +1,127 @@
+{
+  "projectName": "formik",
+  "projectOwner": "jaredpalmer",
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": true,
+  "contributors": [
+    {
+      "login": "jaredpalmer",
+      "name": "Jared Palmer",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/4060187?v=4",
+      "profile": "http://jaredpalmer.com",
+      "contributions": [
+        "question",
+        "code",
+        "design",
+        "doc",
+        "example",
+        "ideas",
+        "review",
+        "test"
+      ]
+    },
+    {
+      "login": "eonwhite",
+      "name": "Ian White",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/109324?v=4",
+      "profile": "https://www.stardog.io",
+      "contributions": [
+        "question",
+        "bug",
+        "code",
+        "doc",
+        "ideas",
+        "review"
+      ]
+    },
+    {
+      "login": "Andreyco",
+      "name": "Andrej Badin",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/829963?v=4",
+      "profile": "http://andrejbadin.com",
+      "contributions": [
+        "question",
+        "bug",
+        "doc"
+      ]
+    },
+    {
+      "login": "skattyadz",
+      "name": "Adam Howard",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/91115?v=4",
+      "profile": "http://adz.co.de",
+      "contributions": [
+        "question",
+        "bug",
+        "ideas",
+        "review"
+      ]
+    },
+    {
+      "login": "VladShcherbin",
+      "name": "Vlad Shcherbin",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/6711845?v=4",
+      "profile": "https://github.com/VladShcherbin",
+      "contributions": [
+        "question",
+        "bug",
+        "ideas"
+      ]
+    },
+    {
+      "login": "brikou",
+      "name": "Brikou CARRE",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/383212?v=4",
+      "profile": "https://github.com/brikou",
+      "contributions": [
+        "bug",
+        "doc"
+      ]
+    },
+    {
+      "login": "skvale",
+      "name": "Sam Kvale",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/5314713?v=4",
+      "profile": "http://skvale.github.io",
+      "contributions": [
+        "bug",
+        "code",
+        "test"
+      ]
+    },
+    {
+      "login": "jontansey",
+      "name": "Jon Tansey",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/13765558?v=4",
+      "profile": "http://jon.tansey.info",
+      "contributions": [
+        "bug",
+        "code"
+      ]
+    },
+    {
+      "login": "slightlytyler",
+      "name": "Tyler Martinez",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/6819171?v=4",
+      "profile": "http://slightlytyler.com",
+      "contributions": [
+        "bug",
+        "doc"
+      ]
+    },
+    {
+      "login": "MrLoh",
+      "name": "Tobias Lohse",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/1285032?v=4",
+      "profile": "http://MrLoh.se",
+      "contributions": [
+        "bug",
+        "code"
+      ]
+    }
+  ],
+  "repoType": "github"
+}

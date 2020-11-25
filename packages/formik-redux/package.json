@@ -1,0 +1,77 @@
+{
+  "name": "formik",
+  "description": "Forms in React, without tears",
+  "version": "2.1.5",
+  "license": "Apache-2.0",
+  "author": "Jared Palmer <jared@palmer.net>",
+  "repository": "formik/formik",
+  "keywords": [
+    "formik",
+    "react",
+    "react-dom",
+    "form",
+    "hooks",
+    "validation",
+    "forms",
+    "higher order component",
+    "hoc"
+  ],
+  "main": "dist/index.js",
+  "umd:main": "dist/formik.umd.production.js",
+  "module": "dist/formik.esm.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "peerDependencies": {
+    "react": ">=16.8.0"
+  },
+  "scripts": {
+    "test": "tsdx test --env=jsdom",
+    "test:watch": "npm run test -- --watchAll",
+    "start": "tsdx watch --tsconfig tsconfig.build.json --verbose --noClean",
+    "build": "tsdx build --tsconfig tsconfig.build.json",
+    "lint": "tsdx lint",
+    "prepublish": "npm run build"
+  },
+  "dependencies": {
+    "deepmerge": "^2.1.1",
+    "hoist-non-react-statics": "^3.3.0",
+    "lodash": "^4.17.14",
+    "lodash-es": "^4.17.14",
+    "react-fast-compare": "^2.0.1",
+    "scheduler": "^0.18.0",
+    "tiny-warning": "^1.0.2",
+    "tslib": "^1.10.0",
+    "use-context-selector": "^1.1.2"
+  },
+  "resolutions": {
+    "@types/react": "16.9.17",
+    "@types/react-dom": "16.9.4"
+  },
+  "devDependencies": {
+    "@types/hoist-non-react-statics": "^3.3.1",
+    "@types/lodash": "^4.14.119",
+    "@types/react": "^16.9.17",
+    "@types/react-dom": "^16.9.4",
+    "@types/warning": "^3.0.0",
+    "@types/yup": "^0.24.9",
+    "just-debounce-it": "^1.1.0",
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0",
+    "react-testing-library": "^7.0.0",
+    "yup": "^0.28.1"
+  },
+  "jest": {
+    "globals": {
+      "__DEV__": "boolean"
+    },
+    "collectCoverageFrom": [
+      "src/**/*.{ts,tsx}"
+    ],
+    "setupFilesAfterEnv": [
+      "react-testing-library/cleanup-after-each.js",
+      "<rootDir>/test/setupTests.ts"
+    ]
+  }
+}

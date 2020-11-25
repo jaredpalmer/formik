@@ -8,8 +8,8 @@ import {
   FormikValues,
   FormikTouched,
   FormikErrors,
-} from './types';
-import { isFunction } from './utils';
+  isFunction,
+} from '@formik/core';
 
 /**
  * State, handlers, and helpers injected as props into the wrapped form component.

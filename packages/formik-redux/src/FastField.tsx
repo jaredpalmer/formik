@@ -1,14 +1,15 @@
 import * as React from 'react';
-
 import {
   FormikProps,
   GenericFieldHTMLAttributes,
   FormikContextType,
   FieldMetaProps,
   FieldInputProps,
-} from './types';
+  getIn,
+  isEmptyChildren,
+  isFunction,
+} from '@formik/core';
 import invariant from 'tiny-warning';
-import { getIn, isEmptyChildren, isFunction } from './utils';
 import { FieldConfig } from './Field';
 import { connect } from './connect';
 
@@ -32,9 +33,10 @@ export type FastFieldAttributes<T> = GenericFieldHTMLAttributes &
   FastFieldConfig<T> &
   T;
 
-type FastFieldInnerProps<Values = {}, Props = {}> = FastFieldAttributes<
-  Props
-> & { formik: FormikContextType<Values> };
+type FastFieldInnerProps<
+  Values = {},
+  Props = {}
+> = FastFieldAttributes<Props> & { formik: FormikContextType<Values> };
 
 /**
  * Custom Field component for quickly hooking into Formik

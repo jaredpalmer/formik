@@ -1,14 +1,16 @@
 import * as React from 'react';
+import { useFormikContext } from './FormikContext';
 import {
+  isFunction,
+  isEmptyChildren,
+  isObject,
   FormikProps,
   GenericFieldHTMLAttributes,
   FieldMetaProps,
   FieldHelperProps,
   FieldInputProps,
   FieldValidator,
-} from './types';
-import { useFormikContext } from './FormikContext';
-import { isFunction, isEmptyChildren, isObject } from './utils';
+} from '@formik/core';
 import invariant from 'tiny-warning';
 
 export interface FieldProps<V = any, FormValues = any> {

@@ -6,14 +6,12 @@ import {
   FormikState,
   SharedRenderProps,
   FormikProps,
-} from './types';
-import {
   getIn,
   isEmptyChildren,
   isFunction,
   setIn,
   isEmptyArray,
-} from './utils';
+} from '@formik/core';
 import isEqual from 'react-fast-compare';
 
 export type FieldArrayRenderProps = ArrayHelpers & {

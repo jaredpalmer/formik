@@ -64,15 +64,19 @@ export type FormikMessage<Values> =
   | { type: 'SET_ISVALIDATING'; payload: boolean }
   | { type: 'SET_ISSUBMITTING'; payload: boolean }
   | { type: 'SET_VALUES'; payload: Values }
+  | { type: 'RESET_VALUES'; payload: Values }
   | { type: 'SET_FIELD_VALUE'; payload: { field: string; value?: any } }
   | { type: 'SET_FIELD_TOUCHED'; payload: { field: string; value?: boolean } }
   | { type: 'SET_FIELD_ERROR'; payload: { field: string; value?: string } }
   | { type: 'SET_TOUCHED'; payload: FormikTouched<Values> }
+  | { type: 'RESET_TOUCHED'; payload: FormikTouched<Values> }
   | { type: 'SET_ERRORS'; payload: FormikErrors<Values> }
+  | { type: 'RESET_ERRORS'; payload: FormikErrors<Values> }
   | { type: 'SET_STATUS'; payload: any }
+  | { type: 'RESET_STATUS'; payload: any }
   | {
       type: 'SET_FORMIK_STATE';
-      payload: (s: FormikState<Values>) => FormikState<Values>;
+      payload: FormikState<Values>;
     }
   | {
       type: 'RESET_FORM';
@@ -314,6 +318,12 @@ export interface FieldMetaProps<Value> {
   initialError?: string;
 }
 
+export type SetFieldTouched<Values> = (
+  field: string,
+  touched?: boolean,
+  shouldValidate?: boolean
+) => Promise<FormikErrors<Values> | void>;
+
 /** Imperative handles to change a field's value, error and touched */
 export interface FieldHelperProps<Value> {
   /** Set the field's value */
@@ -343,3 +353,26 @@ export interface FieldInputProps<Value> {
 export type FieldValidator = (
   value: any
 ) => string | void | Promise<string | void>;
+
+// This is an object that contains a map of all registered fields
+// and their validate functions
+export interface FieldRegistry {
+  [field: string]: {
+    validate: (value: any) => string | Promise<string> | undefined;
+  };
+}
+
+export type GetStateFn<Values> = () => FormikState<Values>;
+
+export type ValidationHandler<Values extends FormikValues> = (
+  values: Values,
+  field?: string
+) => Promise<FormikErrors<Values>>;
+
+/**
+ * This is a special case where all validations can return `void` when catch() is called.
+ */
+export type AllValidationsHandler<Values extends FormikValues> = (
+  values: Values,
+  field?: string
+) => Promise<FormikErrors<Values | void>>;

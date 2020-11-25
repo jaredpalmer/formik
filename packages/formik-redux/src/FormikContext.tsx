@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { FormikContextType } from './types';
+import { FormikContextType } from '@formik/core';
 import invariant from 'tiny-warning';
 import { createContext, useContextSelector } from 'use-context-selector';
 

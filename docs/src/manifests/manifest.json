@@ -51,16 +51,6 @@
           ]
         },
         {
-          "title": "With React UI Frameworks",
-          "open": false,
-          "routes": [
-            {
-              "title": "Material UI",
-              "path": "/docs/with-react-ui-frameworks/with-material-ui.md"
-            }
-          ]
-        },
-        {
           "title": "Examples",
           "open": true,
           "routes": [

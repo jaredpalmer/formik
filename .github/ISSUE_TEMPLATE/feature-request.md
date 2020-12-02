@@ -1,13 +1,13 @@
 ---
-name: "\U0001F680Feature request"
-about: Suggest an idea for Formik
+name: Feature request
+about: Request a new feature for Formik
 title: ''
-labels: ''
+labels: 'Type: Feature Request'
 assignees: ''
 
 ---
 
-## 🚀 Feature request
+## Feature request
 
 ### Current Behavior
 

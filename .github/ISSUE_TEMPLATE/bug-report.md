@@ -1,13 +1,13 @@
 ---
-name: "\U0001F41B Bug report"
-about: Create a report to help make Formik better
+name: Bug report
+about: Create a bug report for Formik / examples
 title: ''
-labels: ''
+labels: 'Type: Bug'
 assignees: ''
 
 ---
 
-## 🐛 Bug report
+## Bug report
 
 ### Current Behavior
 

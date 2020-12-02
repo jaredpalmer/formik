@@ -1,8 +1,8 @@
 ---
-name: "\U0001F680Feature request"
+name: "\U0001F680 Feature request"
 about: Suggest an idea for Formik
 title: ''
-labels: ''
+labels: 'Type: Feature Request'
 assignees: ''
 
 ---

@@ -7,6 +7,7 @@
     "@formik/codemod": "3.0.0-next.2"
   },
   "changesets": [
+    "afraid-buses-kiss",
     "gentle-boxes-turn",
     "honest-radios-poke",
     "lazy-olives-agree",

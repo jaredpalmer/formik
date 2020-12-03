@@ -154,7 +154,7 @@ const RenderPost = ({ post, redirect, preview }: any) => {
       <Sticky className="z-20">
         <Nav />
       </Sticky>
-      <Seo title={post.Page} />
+      <Seo title={post.Page + ' | Blog'} />
       {preview && (
         <div className={blogStyles.previewAlertContainer}>
           <div className={blogStyles.previewAlert}>

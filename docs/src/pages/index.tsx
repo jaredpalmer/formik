@@ -21,7 +21,7 @@ const Home: React.FC<HomeProps> = props => {
         description="React hooks and components for hassle-free form validation. The world's leading companies use Formik to build forms and surveys in React and React Native."
       />
       <Head>
-        <title>Formik - Build forms in React, without the tears</title>
+        <title>Formik: Build forms in React, without the tears</title>
       </Head>
       <div className="bg-gray-50 h-full min-h-full">
         <Banner />

@@ -1,6 +1,7 @@
 ---
 id: migrating-v2
 title: Migrating from v1.x to v2.x
+description: How to migrate from Formik v1 to v2
 ---
 
 ## Breaking Changes

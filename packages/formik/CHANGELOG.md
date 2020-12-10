@@ -1,5 +1,11 @@
 # formik
 
+## 2.2.6
+
+### Patch Changes
+
+- [`d4314a1`](https://github.com/formium/formik/commit/d4314a14cac4bfb0b2c2f1e5cf07a4fc3fb2d2d8) [#2955](https://github.com/formium/formik/pull/2955) Thanks [@jkbktl](https://github.com/jkbktl)! - fix(docs): fix link to docs in console warning
+
 ## 2.2.5
 
 ### Patch Changes

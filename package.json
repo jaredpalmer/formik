@@ -33,6 +33,7 @@
     "precommit": "lint-staged",
     "cypress:open": "cypress open",
     "start:app": "npm run build && yarn --cwd packages/formik link && yarn --cwd node_modules/react link && yarn --cwd ./app link react formik && yarn --cwd ./app && yarn --cwd ./app run dev",
+    "start:reducer-refs": "npm run build && yarn --cwd packages/formik-core link && yarn --cwd packages/formik-reducer-refs link @formik/core && yarn --cwd packages/formik-reducer-refs link && yarn --cwd node_modules/react link && yarn --cwd ./app link react @formik/core @formik/reducer-refs && cross-env FORMIK_REDUCER_REFS=1 yarn --cwd ./app && cross-env FORMIK_REDUCER_REFS=1 yarn --cwd ./app run dev",
     "unlink": "yarn --cwd node_modules/react unlink && yarn --cwd packages/formik unlink"
   },
   "lint-staged": {
@@ -40,5 +41,8 @@
       "npm run format",
       "tsdx lint"
     ]
+  },
+  "dependencies": {
+    "cross-env": "^7.0.3"
   }
 }

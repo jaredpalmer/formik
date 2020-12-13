@@ -21,6 +21,11 @@ function Home() {
             <a>Parse + Format</a>
           </Link>
         </li>
+        <li>
+          <Link href="/perf500">
+            <a>Perf 500 (no styles!)</a>
+          </Link>
+        </li>
       </ul>
       <style jsx>{`
         main {

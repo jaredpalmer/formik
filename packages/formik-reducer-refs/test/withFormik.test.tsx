@@ -2,7 +2,8 @@ import * as React from 'react';
 import { render, wait } from 'react-testing-library';
 import * as Yup from 'yup';
 
-import { withFormik, FormikProps } from '../src';
+import { withFormik } from '../src';
+import { FormikProps } from '@formik/core';
 import { noop } from './testHelpers';
 
 interface Values {

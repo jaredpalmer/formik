@@ -10,6 +10,7 @@ import {
   FieldMetaProps,
   FieldHelperProps,
   FieldInputProps,
+  FormikCoreApi,
 } from './types';
 import { useEventCallback, isFunction, isObject, getIn } from './utils';
 import {
@@ -42,7 +43,7 @@ export const useFormikCore = <Values extends FormikValues>(
   dispatch: React.Dispatch<FormikMessage<Values>>,
   props: FormikConfig<Values>,
   isMounted: React.MutableRefObject<boolean>
-) => {
+): FormikCoreApi<Values> => {
   const fieldRegistry = React.useRef<FieldRegistry>({});
 
   const registerField = React.useCallback(

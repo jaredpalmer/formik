@@ -9,16 +9,28 @@ import {
 import { FormikProvider } from './FormikContext';
 import invariant from 'tiny-warning';
 import { useFormik } from './useFormik';
+import { FormikApiContext } from './FormikApiContext';
 
 export function Formik<
   Values extends FormikValues = FormikValues,
   ExtraProps = {}
 >(props: FormikConfig<Values> & ExtraProps) {
-  const formikbag = useFormik<Values>(props);
+  const formikApi = useFormik<Values>(props);
+  const [formikState, setFormikState] = React.useState(formikApi.getState());
+  
+  React.useEffect(() => {
+    return formikApi.addFormEffect(setFormikState);
+  }, []);
+
+  const formikBag: FormikProps<Values> = {
+    ...formikApi,
+    ...formikState,
+  }
+
   const { component, children, render, innerRef } = props;
 
   // This allows folks to pass a ref to <Formik />
-  React.useImperativeHandle(innerRef, () => formikbag);
+  React.useImperativeHandle(innerRef, () => formikBag);
 
   if (__DEV__) {
     // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -31,20 +43,20 @@ export function Formik<
     }, []);
   }
   return (
-    <FormikProvider value={formikbag}>
-      {component
-        ? React.createElement(component as any, formikbag)
-        : render
-        ? render(formikbag)
-        : children // children come last, always called
-        ? isFunction(children)
-          ? (children as (bag: FormikProps<Values>) => React.ReactNode)(
-              formikbag as FormikProps<Values>
-            )
-          : !isEmptyChildren(children)
-          ? React.Children.only(children)
-          : null
-        : null}
-    </FormikProvider>
+    <FormikApiContext.Provider value={formikApi}>
+      <FormikProvider value={formikBag}>
+        {component
+          ? React.createElement(component as any, formikBag)
+          : render
+          ? render(formikBag)
+          : children // children come last, always called
+          ? isFunction(children)
+            ? children(formikBag)
+            : !isEmptyChildren(children)
+            ? React.Children.only(children)
+            : null
+          : null}
+        </FormikProvider>
+    </FormikApiContext.Provider>
   );
 }

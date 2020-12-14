@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useFormikContext } from './FormikContext';
 import {
   isFunction,
   isEmptyChildren,
@@ -12,6 +11,9 @@ import {
   FieldValidator,
 } from '@formik/core';
 import invariant from 'tiny-warning';
+import { useFormikApi } from './FormikApiContext';
+import { FieldEffect } from './types';
+import isEqual from 'react-fast-compare';
 
 export interface FieldProps<V = any, FormValues = any> {
   field: FieldInputProps<V>;
@@ -78,8 +80,9 @@ export type FieldHookConfig<T> = GenericFieldHTMLAttributes & FieldConfig<T>;
 export function useField<Val = any>(
   propsOrFieldName: string | FieldHookConfig<Val>
 ): [FieldInputProps<Val>, FieldMetaProps<Val>, FieldHelperProps<Val>] {
-  const formik = useFormikContext();
+  const formik = useFormikApi();
   const {
+    addFieldEffect,
     getFieldProps,
     getFieldMeta,
     getFieldHelpers,
@@ -96,6 +99,17 @@ export function useField<Val = any>(
 
   const { name: fieldName, validate: validateFn } = props;
 
+  const fieldMetaRef = React.useRef(getFieldMeta<Val>(fieldName));
+  const [fieldMeta, setFieldMeta] = React.useState(fieldMetaRef.current);
+
+  const maybeUpdateFieldMeta = React.useCallback<FieldEffect<Val>>((meta) => {
+    if (!isEqual(meta, fieldMetaRef.current)) {
+      fieldMetaRef.current = meta;
+      setFieldMeta(meta);
+      console.log('not equal, ', meta, fieldMetaRef.current);
+    }
+  }, [setFieldMeta, fieldMetaRef]);
+
   React.useEffect(() => {
     if (fieldName) {
       registerField(fieldName, {
@@ -108,6 +122,10 @@ export function useField<Val = any>(
       }
     };
   }, [registerField, unregisterField, fieldName, validateFn]);
+
+  React.useEffect(() => {
+    return addFieldEffect<Val>(fieldName, maybeUpdateFieldMeta);
+  }, []);
 
   if (__DEV__) {
     invariant(
@@ -122,27 +140,20 @@ export function useField<Val = any>(
   );
 
   return [
+    // this will always update when fieldMeta updates... yeah it's cheating
     getFieldProps(props),
-    getFieldMeta(fieldName),
+    fieldMeta,
     getFieldHelpers(fieldName),
   ];
 }
 
 export function Field({
-  validate,
-  name,
   render,
   children,
   as: is, // `as` is reserved in typescript lol
   component,
   ...props
 }: FieldAttributes<any>) {
-  const {
-    validate: _validate,
-    validationSchema: _validationSchema,
-
-    ...formik
-  } = useFormikContext();
 
   if (__DEV__) {
     // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -170,18 +181,9 @@ export function Field({
     }, []);
   }
 
-  // Register field and field-level validation with parent <Formik>
-  const { registerField, unregisterField } = formik;
-  React.useEffect(() => {
-    registerField(name, {
-      validate: validate,
-    });
-    return () => {
-      unregisterField(name);
-    };
-  }, [registerField, unregisterField, name, validate]);
-  const field = formik.getFieldProps({ name, ...props });
-  const meta = formik.getFieldMeta(name);
+  const [field, meta] = useField(props);
+  const formik = useFormikApi();
+
   const legacyBag = { field, form: formik };
 
   if (render) {

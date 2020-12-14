@@ -9,9 +9,9 @@ import {
   FormikMessage,
   FormikHelpers,
   FormikState,
-  AllValidationsHandler,
   FieldInputProps,
   SetFieldTouched,
+  ValidateFormFn,
 } from './types';
 import { isFunction, isEqual } from 'lodash';
 import deepmerge from 'deepmerge';
@@ -330,7 +330,7 @@ export const selectSetTouched = <Values extends FormikValues>(
   getState: GetStateFn<Values>,
   dispatch: React.Dispatch<FormikMessage<Values>>,
   validateOnBlur: FormikConfig<Values>['validateOnBlur'],
-  validateFormWithLowPriority: AllValidationsHandler<Values>
+  validateFormWithLowPriority: ValidateFormFn<Values>
 ) => (touched: FormikTouched<Values>, shouldValidate?: boolean) => {
   dispatch({ type: 'SET_TOUCHED', payload: touched });
   const willValidate =
@@ -343,7 +343,7 @@ export const selectSetTouched = <Values extends FormikValues>(
 export const selectSetValues = <Values extends FormikValues>(
   dispatch: React.Dispatch<FormikMessage<Values>>,
   validateOnChange: FormikConfig<Values>['validateOnChange'],
-  validateFormWithLowPriority: AllValidationsHandler<Values>
+  validateFormWithLowPriority: ValidateFormFn<Values>
 ) => (values: Values, shouldValidate?: boolean) => {
   dispatch({ type: 'SET_VALUES', payload: values });
   const willValidate =
@@ -364,7 +364,7 @@ export const selectSetFieldValue = <Values extends FormikValues>(
   getState: GetStateFn<Values>,
   dispatch: React.Dispatch<FormikMessage<Values>>,
   validateOnChange: FormikConfig<Values>['validateOnChange'],
-  validateFormWithLowPriority: AllValidationsHandler<Values>
+  validateFormWithLowPriority: ValidateFormFn<Values>
 ) => (field: string, value: any, shouldValidate?: boolean) => {
   dispatch({
     type: 'SET_FIELD_VALUE',
@@ -456,7 +456,7 @@ export const selectHandleChange = (
 export const selectSetFieldTouched = <Values extends FormikValues>(
   getState: GetStateFn<Values>,
   dispatch: React.Dispatch<FormikMessage<Values>>,
-  validateFormWithLowPriority: AllValidationsHandler<Values>,
+  validateFormWithLowPriority: ValidateFormFn<Values>,
   validateOnBlur: FormikConfig<Values>['validateOnBlur']
 ): SetFieldTouched<Values> => (field, touched = true, shouldValidate) => {
   dispatch({

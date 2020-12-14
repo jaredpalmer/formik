@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useFormikContext } from './FormikContext';
+import { useFormikApi } from './FormikApiContext';
 
 export type FormikFormProps = Pick<
   React.FormHTMLAttributes<HTMLFormElement>,
@@ -18,7 +18,7 @@ export const Form = React.forwardRef<HTMLFormElement, FormProps>(
     // We default the action to "#" in case the preventDefault fails (just updates the URL hash)
     const { action, ...rest } = props;
     const _action = action || '#';
-    const { handleReset, handleSubmit } = useFormikContext();
+    const { handleReset, handleSubmit } = useFormikApi();
     return (
       <form
         onSubmit={handleSubmit}

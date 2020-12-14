@@ -551,7 +551,14 @@ export function useFormik<Values extends FormikValues = FormikValues>({
 
   const setValues = useEventCallback(
     (values: React.SetStateAction<Values>, shouldValidate?: boolean) => {
-      const resolvedValues = isFunction(values) ? values(state.values) : values;
+      let resolvedValues = values;
+      if (isFunction(values)) {
+        resolvedValues = values(state.values);
+        // If your update function returns the exact same value as the current state,
+        // the subsequent rerender will be skipped completely.
+        // @see https://reactjs.org/docs/hooks-reference.html#functional-updates
+        if (resolvedValues === state.values) return Promise.resolve();
+      }
 
       dispatch({ type: 'SET_VALUES', payload: resolvedValues });
       const willValidate =

@@ -183,7 +183,7 @@ function SidebarRoutes({
       const pagePath = removeFromLast(path!, '.');
       const pathname = addTagToSlug(pagePath, tag!);
 
-      const selected = slug.startsWith(pagePath);
+      const selected = slug === pagePath;
       const route = { href: pagePath, path, title, pathname, selected };
 
       return (

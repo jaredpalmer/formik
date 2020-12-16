@@ -5,14 +5,13 @@ import {
   FormikState,
   FormikValues,
   FormikMessage,
-  isFunction,
   emptyErrors,
   emptyTouched,
   formikReducer,
   useFormikCore,
 } from '@formik/core';
 import invariant from 'tiny-warning';
-import { FormEffect, FieldEffect, UnsubscribeFn } from './types';
+import { FormEffect, UnsubscribeFn } from '../types';
 
 export function useFormik<Values extends FormikValues = FormikValues>({
   validateOnChange = true,
@@ -30,6 +29,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     onSubmit,
     ...rest,
   };
+
   if (__DEV__) {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     React.useEffect(() => {
@@ -64,9 +64,8 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     submitCount: 0,
     dirty: false,
   });
-  
+
   const formListeners = React.useRef<FormEffect<Values>[]>([]);
-  const fieldListeners = React.useRef<{[name: string]: FieldEffect<any>[]}>({});
 
   /**
    * Breaking all the rules, re: "must be side-effect free"
@@ -83,7 +82,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
 
       return result;
     },
-    []
+    [stateRef]
   );
 
   const getState = React.useCallback(() => stateRef.current, [stateRef]);
@@ -102,20 +101,10 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   // calculated during the useRef, and then recalculated during
   // SET_ISVALIDATING or something.
   //
-  const isValid = React.useMemo(
-    () =>
-      typeof isInitialValid !== 'undefined'
-        ? state.dirty
-          ? state.errors && Object.keys(state.errors).length === 0
-          : isInitialValid !== false && isFunction(isInitialValid)
-          ? isInitialValid(props)
-          : isInitialValid
-        : state.errors && Object.keys(state.errors).length === 0,
-    [isInitialValid, state.dirty, state.errors, props]
-  );
+  const isValid = false;
 
   const formikApi = useFormikCore(getState, dispatch, props, isMounted);
-  const { validateFormWithLowPriority, resetForm, getFieldMeta } = formikApi;
+  const { validateFormWithLowPriority, resetForm } = formikApi;
 
   const addFormEffect = React.useCallback((effect: FormEffect<Values>): UnsubscribeFn => {
     formListeners.current = [
@@ -136,29 +125,6 @@ export function useFormik<Values extends FormikValues = FormikValues>({
       ]
     }
   }, []);
-  
-  const addFieldEffect = React.useCallback(<Value extends any>(name: string, effect: FieldEffect<Value>): UnsubscribeFn => {
-    fieldListeners.current[name] = [
-      ...(fieldListeners.current[name] ?? []),
-      effect
-    ];
-
-    // in case a change occurred
-    // if it didn't, we'll skip the update
-    effect(getFieldMeta(name));
-
-    return () => {
-      const listenerIndex = fieldListeners.current[name].findIndex((listener) => listener === effect);
-
-      fieldListeners.current = {
-        ...fieldListeners.current,
-        [name]: [
-          ...fieldListeners.current[name].slice(0, listenerIndex),
-          ...fieldListeners.current[name].slice(listenerIndex + 1)
-        ]
-      }
-    }
-  }, [getFieldMeta]);
 
   React.useEffect(() => {
     isMounted.current = true;
@@ -171,14 +137,6 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   React.useEffect(() => {
     formListeners.current.forEach((listener) => listener(state));
   }, [state]);
-
-  // todo: should we do diffing here??
-  React.useEffect(() => {
-    for (const name in fieldListeners.current) {
-      const inputProps = getFieldMeta(name);
-      fieldListeners.current[name].forEach((listener) => listener(inputProps));
-    }
-  }, [state.values, state.touched, state.errors, getFieldMeta]);
 
   React.useEffect(() => {
     if (
@@ -245,7 +203,6 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   return {
     getState,
     addFormEffect,
-    addFieldEffect,
     // the api itself
     ...formikApi,
     validateForm: formikApi.validateFormWithHighPriority,

@@ -1,4 +1,6 @@
-export * from './useFormik';
+export * from './hooks/useFormik';
+export * from './hooks/useFormikApi';
+export * from './contexts/FormikContext';
 export * from './Formik';
 export * from './Field';
 export * from './Form';
@@ -6,5 +8,4 @@ export * from './withFormik';
 export * from './FieldArray';
 export * from './connect';
 export * from './ErrorMessage';
-export * from './FormikContext';
 export * from './FastField';

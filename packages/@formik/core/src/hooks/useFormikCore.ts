@@ -7,12 +7,11 @@ import {
   FormikConfig,
   FieldRegistry,
   FormikMessage,
-  FieldMetaProps,
   FieldHelperProps,
   FieldInputProps,
   FormikCoreApi,
-} from './types';
-import { useEventCallback, isFunction, isObject, getIn } from './utils';
+} from '../types';
+import { useEventCallback, isFunction, isObject, getIn } from '../utils';
 import {
   selectRunValidateHandler,
   selectRunValidationSchema,
@@ -35,7 +34,8 @@ import {
   selectExecuteChange,
   selectHandleChange,
   selectHandleBlur,
-} from './selectors';
+  selectGetFieldMeta,
+} from '../selectors';
 import React from 'react';
 
 export const useFormikCore = <Values extends FormikValues>(
@@ -251,19 +251,8 @@ export const useFormikCore = <Values extends FormikValues>(
    * They use refs!
    */
   const getFieldMeta = React.useCallback(
-    (name: string): FieldMetaProps<any> => {
-      const state = getState();
-
-      return {
-        value: getIn(state.values, name),
-        error: getIn(state.errors, name),
-        touched: !!getIn(state.touched, name),
-        initialValue: getIn(state.initialValues, name),
-        initialTouched: !!getIn(state.initialTouched, name),
-        initialError: getIn(state.initialErrors, name),
-      };
-    },
-    []
+    selectGetFieldMeta(getState),
+    [getState]
   );
 
   const getFieldHelpers = React.useCallback(

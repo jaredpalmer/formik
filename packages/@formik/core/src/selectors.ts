@@ -12,6 +12,7 @@ import {
   FieldInputProps,
   SetFieldTouched,
   ValidateFormFn,
+  FieldMetaProps,
 } from './types';
 import { isFunction, isEqual } from 'lodash';
 import deepmerge from 'deepmerge';
@@ -670,3 +671,17 @@ export const selectGetFieldProps = <Values extends FormikValues>(
   }
   return field;
 };
+export const selectGetFieldMeta = <Values extends FormikValues>(
+  getState: GetStateFn<Values>
+) => (name: string): FieldMetaProps<any> => {
+  const state = getState();
+
+  return {
+    value: getIn(state.values, name),
+    error: getIn(state.errors, name),
+    touched: !!getIn(state.touched, name),
+    initialValue: getIn(state.initialValues, name),
+    initialTouched: !!getIn(state.initialTouched, name),
+    initialError: getIn(state.initialErrors, name),
+  };
+}

@@ -1,7 +1,7 @@
 import hoistNonReactStatics from 'hoist-non-react-statics';
 import * as React from 'react';
 import invariant from 'tiny-warning';
-import { FormikConsumer } from './FormikContext';
+import { FormikConsumer } from './contexts/FormikContext';
 import { FormikContextType } from '@formik/core';
 
 /**

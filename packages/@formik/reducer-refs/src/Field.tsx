@@ -9,10 +9,11 @@ import {
   FieldHelperProps,
   FieldInputProps,
   FieldValidator,
+  selectGetFieldMeta
 } from '@formik/core';
 import invariant from 'tiny-warning';
-import { useFormikApi } from './FormikApiContext';
-import { FieldEffect } from './types';
+import { useFormikApi } from './hooks/useFormikApi';
+import { FormEffect } from './types';
 import isEqual from 'react-fast-compare';
 
 export interface FieldProps<V = any, FormValues = any> {
@@ -81,8 +82,9 @@ export function useField<Val = any>(
   propsOrFieldName: string | FieldHookConfig<Val>
 ): [FieldInputProps<Val>, FieldMetaProps<Val>, FieldHelperProps<Val>] {
   const formik = useFormikApi();
+
   const {
-    addFieldEffect,
+    addFormEffect,
     getFieldProps,
     getFieldMeta,
     getFieldHelpers,
@@ -102,13 +104,15 @@ export function useField<Val = any>(
   const fieldMetaRef = React.useRef(getFieldMeta<Val>(fieldName));
   const [fieldMeta, setFieldMeta] = React.useState(fieldMetaRef.current);
 
-  const maybeUpdateFieldMeta = React.useCallback<FieldEffect<Val>>((meta) => {
-    if (!isEqual(meta, fieldMetaRef.current)) {
-      fieldMetaRef.current = meta;
-      setFieldMeta(meta);
-      console.log('not equal, ', meta, fieldMetaRef.current);
+  const maybeUpdateFieldMeta = React.useCallback<FormEffect<any>>((formikState) => {
+    // we could use formikApi.getFieldMeta... but is that cheating?
+    const fieldMeta = selectGetFieldMeta(() => formikState)(fieldName);
+
+    if (!isEqual(fieldMeta, fieldMetaRef.current)) {
+      fieldMetaRef.current = fieldMeta;
+      setFieldMeta(fieldMeta);
     }
-  }, [setFieldMeta, fieldMetaRef]);
+  }, [fieldName, setFieldMeta, fieldMetaRef]);
 
   React.useEffect(() => {
     if (fieldName) {
@@ -124,7 +128,7 @@ export function useField<Val = any>(
   }, [registerField, unregisterField, fieldName, validateFn]);
 
   React.useEffect(() => {
-    return addFieldEffect<Val>(fieldName, maybeUpdateFieldMeta);
+    return addFormEffect(maybeUpdateFieldMeta);
   }, []);
 
   if (__DEV__) {
@@ -140,20 +144,21 @@ export function useField<Val = any>(
   );
 
   return [
-    // this will always update when fieldMeta updates... yeah it's cheating
+    // todo: this could go out of sync with fieldMeta
     getFieldProps(props),
     fieldMeta,
     getFieldHelpers(fieldName),
   ];
 }
 
-export function Field({
-  render,
-  children,
-  as: is, // `as` is reserved in typescript lol
-  component,
-  ...props
-}: FieldAttributes<any>) {
+export function Field(rawProps: FieldAttributes<any>) {
+  const {
+    render,
+    children,
+    as: is, // `as` is reserved in typescript lol
+    component,
+    ...props
+  } = rawProps;
 
   if (__DEV__) {
     // eslint-disable-next-line react-hooks/rules-of-hooks

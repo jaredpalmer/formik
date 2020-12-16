@@ -23,7 +23,12 @@ function Home() {
         </li>
         <li>
           <Link href="/perf500">
-            <a>Perf 500 (no styles!)</a>
+            <a>Performance Test: 500 Inputs (reducer-refs)</a>
+          </Link>
+        </li>
+        <li>
+          <Link href="/perf500v3">
+            <a>Performance Test: 500 Inputs (v3)</a>
           </Link>
         </li>
       </ul>

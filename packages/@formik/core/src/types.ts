@@ -160,7 +160,7 @@ export interface FormikHandlers {
   getFieldMeta: <Value>(name: string) => FieldMetaProps<Value>;
   getFieldHelpers: GetFieldHelpersFn;
 }
-export type FormikCoreApi<Values extends FormikValues> = 
+export type FormikCoreApi<Values extends FormikValues> =
   Omit<FormikHelpers<Values>, 'validateForm'> & FormikHandlers & {
   validateFormWithLowPriority: ValidateFormFn<Values>,
   validateFormWithHighPriority: ValidateFormFn<Values>,
@@ -252,7 +252,7 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
   validate?: (values: Values) => void | object | ValidateFormFn<Values>;
 
   /** Inner ref */
-  innerRef?: React.Ref<FormikProps<Values>>;
+  innerRef?: React.Ref<FormikCoreApi<Values>>;
 }
 
 /**

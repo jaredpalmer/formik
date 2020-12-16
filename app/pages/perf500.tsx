@@ -1,7 +1,7 @@
 import React from "react";
-import { Formik, Form, useField } from "formik";
+import { Formik, Form, useField, FieldHookConfig } from "@formik/reducer-refs";
 
-const Input = (p) => {
+const Input = (p: FieldHookConfig<string>) => {
   const [field, meta] = useField(p);
   const renders = React.useRef(0);
   return (
@@ -10,7 +10,7 @@ const Input = (p) => {
       <input {...field} />
       <div>{renders.current++}</div>
       {meta.touched && meta.error ? (
-        <div>{meta.error}</div>
+        <div>{meta.error.toString()}</div>
       ) : null}
       <small>
         <pre>{JSON.stringify(meta, null, 2)}</pre>
@@ -23,14 +23,14 @@ const isRequired = (v) => {
   return v && v.trim() !== "" ? undefined : "Required";
 };
 
-const array = new Array(500).fill();
+const array = new Array(500).fill(undefined);
 
 const initialValues = array.reduce((prev, curr, idx) => {
   prev[`Input ${idx}`] = "";
   return prev;
 }, {});
 
-const onSubmit = async (values) => {
+const onSubmit = async (values: typeof initialValues) => {
   await new Promise((r) => setTimeout(r, 500));
   alert(JSON.stringify(values, null, 2));
 };
@@ -49,7 +49,7 @@ export default function App() {
         </div>
       </div>
       <Formik onSubmit={onSubmit} initialValues={initialValues}>
-        <Form >
+        <Form>
           {kids}
           <button type="submit" >
             Submit

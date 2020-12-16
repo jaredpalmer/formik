@@ -1,3 +1,4 @@
+import { selectIsFormValid } from './../selectors';
 import {
   GetStateFn,
   FormikValues,
@@ -45,6 +46,11 @@ export const useFormikCore = <Values extends FormikValues>(
   isMounted: React.MutableRefObject<boolean>
 ): FormikCoreApi<Values> => {
   const fieldRegistry = React.useRef<FieldRegistry>({});
+
+  const isFormValid = useEventCallback(
+    selectIsFormValid(props),
+    [props]
+  );
 
   const registerField = React.useCallback(
     (name: string, { validate }: any) => {
@@ -312,6 +318,7 @@ export const useFormikCore = <Values extends FormikValues>(
   );
 
   const imperativeMethods: FormikHelpers<Values> = {
+    isFormValid,
     validateForm: validateFormWithHighPriority,
     validateField,
     setErrors,
@@ -377,6 +384,7 @@ export const useFormikCore = <Values extends FormikValues>(
     setTouched,
     setValues,
     submitForm,
+    isFormValid,
     validateFormWithLowPriority,
     validateFormWithHighPriority,
     validateField,

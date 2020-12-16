@@ -91,6 +91,7 @@ export interface FormikComputedProps {
   readonly isValid: boolean;
 }
 
+export type IsFormValidFn<Values> = (errors: FormikErrors<Values>, dirty: boolean) => boolean;
 export type GetStateFn<Values> = () => FormikState<Values>;
 export type HandleBlurFn =  (eventOrString: any) => void | ((e: any) => void);
 export type HandleChangeFn = (eventOrPath: string | React.ChangeEvent<any>) => void | ((eventOrTextValue: string | React.ChangeEvent<any>) => void);
@@ -135,6 +136,8 @@ export interface FormikHelpers<Values> {
   setFieldError: SetFieldErrorFn;
   /** Set whether field has been touched directly */
   setFieldTouched: SetFieldTouchedFn<Values>;
+  /** Detect whether a form is valid based on isInitialValid, errors and dirty */
+  isFormValid: IsFormValidFn<Values>
   /** Validate form values */
   validateForm: ValidateFormFn<Values>;
   /** Validate field value */

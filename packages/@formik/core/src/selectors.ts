@@ -13,6 +13,8 @@ import {
   SetFieldTouched,
   ValidateFormFn,
   FieldMetaProps,
+  IsFormValidFn,
+  SetFieldTouchedFn,
 } from './types';
 import { isFunction, isEqual } from 'lodash';
 import deepmerge from 'deepmerge';
@@ -34,6 +36,18 @@ import {
 } from './utils';
 import { emptyErrors } from './constants';
 import invariant from 'tiny-warning';
+
+export const selectIsFormValid = <Values extends FormikValues>(
+  props: FormikConfig<Values>
+) => (errors: FormikErrors<Values>, dirty: boolean) => {
+    return typeof props.isInitialValid !== 'undefined'
+        ? dirty
+          ? errors && Object.keys(errors).length === 0
+          : props.isInitialValid !== false && isFunction(props.isInitialValid)
+            ? props.isInitialValid(props)
+            : props.isInitialValid
+        : errors && Object.keys(errors).length === 0
+}
 
 export const selectRunValidateHandler = <Values extends FormikValues>(
   validate: FormikConfig<Values>['validate']
@@ -459,7 +473,7 @@ export const selectSetFieldTouched = <Values extends FormikValues>(
   dispatch: React.Dispatch<FormikMessage<Values>>,
   validateFormWithLowPriority: ValidateFormFn<Values>,
   validateOnBlur: FormikConfig<Values>['validateOnBlur']
-): SetFieldTouched<Values> => (field, touched = true, shouldValidate) => {
+): SetFieldTouchedFn<Values> => (field, touched = true, shouldValidate) => {
   dispatch({
     type: 'SET_FIELD_TOUCHED',
     payload: {
@@ -487,6 +501,7 @@ export const selectSetFormikState = <Values extends FormikValues>(
     dispatch({ type: 'SET_FORMIK_STATE', payload: stateOrCb });
   }
 };
+
 type SubmitForm = () => Promise<any | void>;
 export const selectSubmitForm = <Values extends FormikValues>(
   getState: GetStateFn<Values>,
@@ -561,6 +576,7 @@ export const selectSubmitForm = <Values extends FormikValues>(
     }
   );
 };
+
 export const selectExecuteBlur = <Values extends FormikValues>(
   setFieldTouched: SetFieldTouched<Values>
 ) => (e: any, path?: string) => {
@@ -684,4 +700,4 @@ export const selectGetFieldMeta = <Values extends FormikValues>(
     initialTouched: !!getIn(state.initialTouched, name),
     initialError: getIn(state.initialErrors, name),
   };
-}
+};

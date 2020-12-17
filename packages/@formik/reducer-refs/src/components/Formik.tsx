@@ -7,9 +7,9 @@ import {
   isEmptyChildren,
 } from '@formik/core';
 import invariant from 'tiny-warning';
-import { useFormik } from './hooks/useFormik';
-import { FormikApiContext } from './contexts/FormikApiContext';
-import { useFormikStateInternal } from './hooks/useFormikState';
+import { useFormik } from '../hooks/useFormik';
+import { FormikApiContext } from '../contexts/FormikApiContext';
+import { useFormikStateInternal } from '../hooks/useFormikState';
 
 export function Formik<
   Values extends FormikValues = FormikValues,

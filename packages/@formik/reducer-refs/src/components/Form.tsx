@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useFormikApi } from './hooks/useFormikApi';
+import { useFormikApi } from '../hooks/useFormikApi';
 
 export type FormikFormProps = Pick<
   React.FormHTMLAttributes<HTMLFormElement>,

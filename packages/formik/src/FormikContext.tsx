@@ -5,6 +5,8 @@ import invariant from 'tiny-warning';
 export const FormikContext = React.createContext<FormikContextType<any>>(
   undefined as any
 );
+FormikContext.displayName = 'FormikContext';
+
 export const FormikProvider = FormikContext.Provider;
 export const FormikConsumer = FormikContext.Consumer;
 

@@ -43,7 +43,7 @@ export default function App() {
   return (
     <div>
       <div>
-        <h1>Formik v3 with 500 controlled fields</h1>
+        <h1><code>@formik/reducer-refs</code> with 500 controlled fields</h1>
         <div>
           <span>#</span> = number of renders
         </div>

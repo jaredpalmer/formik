@@ -1,20 +1,30 @@
 {
   "name": "formik",
-  "description": "Forms in React, without tears",
-  "version": "2.2.5",
+  "description": "Build forms in React, without the tears",
+  "version": "2.2.6",
   "license": "Apache-2.0",
-  "author": "Jared Palmer <jared@palmer.net>",
+  "author": "Jared Palmer <jared@palmer.net> (https://jaredpalmer.com)",
   "repository": "formium/formik",
+  "homepage": "https://formik.org",
   "keywords": [
     "formik",
+    "form",
+    "forms",
     "react",
     "react-dom",
-    "form",
     "hooks",
+    "react hooks",
     "validation",
-    "forms",
+    "render props",
+    "validation",
     "higher order component",
     "hoc"
+  ],
+  "funding": [
+    {
+      "type": "individual",
+      "url": "https://opencollective.com/formik"
+    }
   ],
   "main": "dist/index.js",
   "umd:main": "dist/formik.umd.production.js",

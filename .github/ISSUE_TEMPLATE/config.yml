@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Ask a question
+    url: https://github.com/formium/formik/discussions
+    about: Ask questions and discuss with other community members
+  - name: Join the Discord server
+    url: https://discord.gg/pJSg287
+    about: Chat with other community members in real-time

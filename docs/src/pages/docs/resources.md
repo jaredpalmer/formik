@@ -1,6 +1,7 @@
 ---
 id: resources
 title: Resources
+description: Formik conference talks, courses, videos, blog posts, learning resources.
 ---
 
 ## Conference Talks

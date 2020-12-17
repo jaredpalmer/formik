@@ -2,7 +2,7 @@
   "projectName": "formik",
   "projectOwner": "jaredpalmer",
   "files": [
-    "README.md"
+    "packages/formik/README.md"
   ],
   "imageSize": 100,
   "commit": true,

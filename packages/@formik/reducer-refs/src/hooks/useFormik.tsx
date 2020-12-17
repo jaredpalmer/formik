@@ -9,7 +9,6 @@ import {
   emptyTouched,
   formikReducer,
   useFormikCore,
-  isFunction,
 } from '@formik/core';
 import invariant from 'tiny-warning';
 import { FormEffect, UnsubscribeFn } from '../types';
@@ -97,23 +96,6 @@ export function useFormik<Values extends FormikValues = FormikValues>({
    */
   const isMounted = React.useRef<boolean>(false);
 
-  //
-  // TODO: probably need to add this to the reducer so that isValid is initially
-  // calculated during the useRef, and then recalculated during
-  // SET_ISVALIDATING or something.
-  //
-  const isValid = React.useMemo(
-    () =>
-      typeof isInitialValid !== 'undefined'
-        ? state.dirty
-          ? state.errors && Object.keys(state.errors).length === 0
-          : isInitialValid !== false && isFunction(isInitialValid)
-          ? isInitialValid(props)
-          : isInitialValid
-        : state.errors && Object.keys(state.errors).length === 0,
-    [isInitialValid, state.dirty, state.errors, props]
-  );
-
   const formikApi = useFormikCore(getState, dispatch, props, isMounted);
   const { validateFormWithLowPriority, resetForm } = formikApi;
 
@@ -135,7 +117,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
         ...formListeners.current.slice(listenerIndex + 1)
       ]
     }
-  }, []);
+  }, [formListeners, stateRef]);
 
   React.useEffect(() => {
     isMounted.current = true;
@@ -143,7 +125,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     return () => {
       isMounted.current = false;
     };
-  }, []);
+  }, [isMounted]);
 
   React.useEffect(() => {
     formListeners.current.forEach((listener) => listener(state));

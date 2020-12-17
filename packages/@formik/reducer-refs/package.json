@@ -1,7 +1,7 @@
 {
   "name": "@formik/reducer-refs",
   "description": "Forms in React, without tears",
-  "version": "2.1.5",
+  "version": "3.0.0-core1",
   "license": "Apache-2.0",
   "author": "Jared Palmer <jared@palmer.net>",
   "repository": "formik/formik",

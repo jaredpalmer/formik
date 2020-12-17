@@ -2,7 +2,9 @@
   "npmClient": "yarn",
   "useWorkspaces": true,
   "packages": [
-    "packages/*"
+    "packages/@formik/*",
+    "packages/*",
+    "app"
   ],
   "command": {
     "version": {

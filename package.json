@@ -16,12 +16,16 @@
     "typescript": "^4.0.3"
   },
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "packages/@formik/*",
+    "app"
   ],
   "scripts": {
     "lerna": "lerna",
     "dev": "lerna run start --stream --parallel",
     "test": "lerna run test --",
+    "test:watch": "lerna run test --stream -- --watch",
+    "test:vscode": "lerna run test --stream --",
     "build": "lerna run build",
     "prepublish": "lerna run prepublish",
     "format": "prettier --write 'examples/**/*' 'packages/*/src/**/*' 'docs/src/**/*.{ts,tsx,js,jsx,md,mdx}' 'app/pages/**/*'  'packages/*/test/**/*' 'README.md'",

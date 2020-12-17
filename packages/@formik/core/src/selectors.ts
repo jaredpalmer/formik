@@ -10,10 +10,8 @@ import {
   FormikHelpers,
   FormikState,
   FieldInputProps,
-  SetFieldTouched,
   ValidateFormFn,
   FieldMetaProps,
-  IsFormValidFn,
   SetFieldTouchedFn,
 } from './types';
 import { isFunction, isEqual } from 'lodash';
@@ -121,7 +119,7 @@ export const selectRunSingleFieldLevelValidation = (
   fieldRegistry: React.MutableRefObject<FieldRegistry>
 ) => (field: string, value: void | string): Promise<string> => {
   return new Promise(resolve =>
-    resolve(fieldRegistry.current[field].validate(value))
+    resolve(fieldRegistry.current[field].validate(value) ?? "")
   );
 };
 
@@ -578,7 +576,7 @@ export const selectSubmitForm = <Values extends FormikValues>(
 };
 
 export const selectExecuteBlur = <Values extends FormikValues>(
-  setFieldTouched: SetFieldTouched<Values>
+  setFieldTouched: SetFieldTouchedFn<Values>
 ) => (e: any, path?: string) => {
   if (e.persist) {
     e.persist();
@@ -687,6 +685,7 @@ export const selectGetFieldProps = <Values extends FormikValues>(
   }
   return field;
 };
+
 export const selectGetFieldMeta = <Values extends FormikValues>(
   getState: GetStateFn<Values>
 ) => (name: string): FieldMetaProps<any> => {

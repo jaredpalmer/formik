@@ -1,3 +1,4 @@
+import { FormikConfig, FormikProps } from '@formik/core';
 import * as React from 'react';
 import { cleanup, render, wait, fireEvent } from 'react-testing-library';
 import * as Yup from 'yup';
@@ -7,8 +8,6 @@ import {
   FastField,
   FieldProps,
   FieldConfig,
-  FormikProps,
-  FormikConfig,
 } from '../src';
 
 import { noop } from './testHelpers';

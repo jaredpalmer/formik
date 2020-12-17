@@ -1,12 +1,10 @@
+import { FormikConfig, FormikProps, prepareDataForValidation } from '@formik/core';
 import * as React from 'react';
 import { render, fireEvent, wait } from 'react-testing-library';
 import * as Yup from 'yup';
 
 import {
   Formik,
-  prepareDataForValidation,
-  FormikProps,
-  FormikConfig,
 } from '../src';
 import { noop } from './testHelpers';
 

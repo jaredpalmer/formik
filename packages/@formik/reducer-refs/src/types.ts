@@ -6,7 +6,6 @@ import {
   FieldMetaProps,
   ValidateFormFn,
   FormikValidationConfig,
-  FormikComputedProps
 } from '@formik/core';
 
 export type FormEffect<Values extends FormikValues> = (state: FormikState<Values>) => void;
@@ -16,7 +15,6 @@ export type UnsubscribeFn = () => void;
 export type FormikApi<Values extends FormikValues> =
   FormikCoreApi<Values> &
   FormikValidationConfig &
-  FormikComputedProps &
   {
     getState: GetStateFn<Values>,
     addFormEffect: (effect: FormEffect<Values>) => UnsubscribeFn,

@@ -10,9 +10,9 @@ import {
   FormikHelpers,
   FormikState,
   FieldInputProps,
-  SetFieldTouched,
   ValidateFormFn,
   FieldMetaProps,
+  SetFieldTouchedFn,
 } from './types';
 import { isFunction, isEqual } from 'lodash';
 import deepmerge from 'deepmerge';
@@ -34,6 +34,18 @@ import {
 } from './utils';
 import { emptyErrors } from './constants';
 import invariant from 'tiny-warning';
+
+export const selectIsFormValid = <Values extends FormikValues>(
+  props: FormikConfig<Values>
+) => (errors: FormikErrors<Values>, dirty: boolean) => {
+    return typeof props.isInitialValid !== 'undefined'
+        ? dirty
+          ? errors && Object.keys(errors).length === 0
+          : props.isInitialValid !== false && isFunction(props.isInitialValid)
+            ? props.isInitialValid(props)
+            : props.isInitialValid
+        : errors && Object.keys(errors).length === 0
+}
 
 export const selectRunValidateHandler = <Values extends FormikValues>(
   validate: FormikConfig<Values>['validate']
@@ -107,7 +119,7 @@ export const selectRunSingleFieldLevelValidation = (
   fieldRegistry: React.MutableRefObject<FieldRegistry>
 ) => (field: string, value: void | string): Promise<string> => {
   return new Promise(resolve =>
-    resolve(fieldRegistry.current[field].validate(value))
+    resolve(fieldRegistry.current[field].validate(value) ?? "")
   );
 };
 
@@ -459,7 +471,7 @@ export const selectSetFieldTouched = <Values extends FormikValues>(
   dispatch: React.Dispatch<FormikMessage<Values>>,
   validateFormWithLowPriority: ValidateFormFn<Values>,
   validateOnBlur: FormikConfig<Values>['validateOnBlur']
-): SetFieldTouched<Values> => (field, touched = true, shouldValidate) => {
+): SetFieldTouchedFn<Values> => (field, touched = true, shouldValidate) => {
   dispatch({
     type: 'SET_FIELD_TOUCHED',
     payload: {
@@ -487,6 +499,7 @@ export const selectSetFormikState = <Values extends FormikValues>(
     dispatch({ type: 'SET_FORMIK_STATE', payload: stateOrCb });
   }
 };
+
 type SubmitForm = () => Promise<any | void>;
 export const selectSubmitForm = <Values extends FormikValues>(
   getState: GetStateFn<Values>,
@@ -561,8 +574,9 @@ export const selectSubmitForm = <Values extends FormikValues>(
     }
   );
 };
+
 export const selectExecuteBlur = <Values extends FormikValues>(
-  setFieldTouched: SetFieldTouched<Values>
+  setFieldTouched: SetFieldTouchedFn<Values>
 ) => (e: any, path?: string) => {
   if (e.persist) {
     e.persist();
@@ -671,6 +685,7 @@ export const selectGetFieldProps = <Values extends FormikValues>(
   }
   return field;
 };
+
 export const selectGetFieldMeta = <Values extends FormikValues>(
   getState: GetStateFn<Values>
 ) => (name: string): FieldMetaProps<any> => {
@@ -684,4 +699,4 @@ export const selectGetFieldMeta = <Values extends FormikValues>(
     initialTouched: !!getIn(state.initialTouched, name),
     initialError: getIn(state.initialErrors, name),
   };
-}
+};

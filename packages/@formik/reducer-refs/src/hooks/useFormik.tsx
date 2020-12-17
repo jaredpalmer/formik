@@ -96,13 +96,6 @@ export function useFormik<Values extends FormikValues = FormikValues>({
    */
   const isMounted = React.useRef<boolean>(false);
 
-  //
-  // TODO: probably need to add this to the reducer so that isValid is initially
-  // calculated during the useRef, and then recalculated during
-  // SET_ISVALIDATING or something.
-  //
-  const isValid = false;
-
   const formikApi = useFormikCore(getState, dispatch, props, isMounted);
   const { validateFormWithLowPriority, resetForm } = formikApi;
 
@@ -124,7 +117,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
         ...formListeners.current.slice(listenerIndex + 1)
       ]
     }
-  }, []);
+  }, [formListeners, stateRef]);
 
   React.useEffect(() => {
     isMounted.current = true;
@@ -132,7 +125,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     return () => {
       isMounted.current = false;
     };
-  }, []);
+  }, [isMounted]);
 
   React.useEffect(() => {
     formListeners.current.forEach((listener) => listener(state));
@@ -209,6 +202,5 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     validateOnBlur,
     validateOnChange,
     validateOnMount,
-    isValid,
   };
 }

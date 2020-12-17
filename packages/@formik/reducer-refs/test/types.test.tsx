@@ -1,4 +1,4 @@
-import { FormikTouched, FormikErrors } from '../src';
+import { FormikTouched, FormikErrors } from '@formik/core';
 
 describe('Formik Types', () => {
   describe('FormikTouched', () => {

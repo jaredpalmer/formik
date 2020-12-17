@@ -14,22 +14,7 @@
     "noEmit": true,
     "moduleResolution": "node",
     "resolveJsonModule": true,
-    "isolatedModules": true,
-    "baseUrl": "../",
-    "paths": {
-      "formik": [
-        "packages/formik/src"
-      ],
-      "formik-native": [
-        "packages/formik-native/src"
-      ],
-      "@formik/core": [
-        "packages/@formik/core/src"
-      ],
-      "@formik/reducer-refs": [
-        "packages/@formik/reducer-refs/src"
-      ]
-    }
+    "isolatedModules": true
   },
   "exclude": [
     "node_modules"

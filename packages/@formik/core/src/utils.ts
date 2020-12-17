@@ -283,7 +283,7 @@ export function getActiveElement(doc?: Document): Element | null {
 // To get around it, we can conditionally useEffect on the server (no-op) and
 // useLayoutEffect in the browser.
 // @see https://gist.github.com/gaearon/e7d97cdf38a2907924ea12e4ebdf3c85
-const useIsomorphicLayoutEffect =
+export const useIsomorphicLayoutEffect =
   typeof window !== 'undefined' &&
   typeof window.document !== 'undefined' &&
   typeof window.document.createElement !== 'undefined'

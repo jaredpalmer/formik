@@ -1,4 +1,4 @@
-import { validateYupSchema, yupToFormErrors } from '../src';
+import { validateYupSchema, yupToFormErrors } from '@formik/core';
 
 const Yup = require('yup');
 const schema = Yup.object().shape({

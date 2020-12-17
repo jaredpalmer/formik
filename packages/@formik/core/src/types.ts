@@ -84,13 +84,24 @@ export type FormikMessage<Values> =
     };
 
 /**
- * Formik computed properties. These are read-only.
+ * Formik computed state. These are read-only and
+ * result from updates to FormikState but do not live there.
  */
-export interface FormikComputedProps {
-  /** True if state.errors is empty */
+export interface FormikComputedState {
+  /**
+   * True if one of:
+   * `dirty && state.errors is empty` or
+   * `!dirty && isInitialValid`
+   */
   readonly isValid: boolean;
 }
 
+/**
+ * @deprecated use FormikComputedState
+ */
+export type FormikComputedProps = FormikComputedState;
+
+export type IsFormValidFn<Values> = (errors: FormikErrors<Values>, dirty: boolean) => boolean;
 export type GetStateFn<Values> = () => FormikState<Values>;
 export type HandleBlurFn =  (eventOrString: any) => void | ((e: any) => void);
 export type HandleChangeFn = (eventOrPath: string | React.ChangeEvent<any>) => void | ((eventOrTextValue: string | React.ChangeEvent<any>) => void);
@@ -135,6 +146,8 @@ export interface FormikHelpers<Values> {
   setFieldError: SetFieldErrorFn;
   /** Set whether field has been touched directly */
   setFieldTouched: SetFieldTouchedFn<Values>;
+  /** Detect whether a form is valid based on isInitialValid, errors and dirty */
+  isFormValid: IsFormValidFn<Values>
   /** Validate form values */
   validateForm: ValidateFormFn<Values>;
   /** Validate field value */
@@ -263,7 +276,7 @@ export type FormikProps<Values> = FormikSharedConfig &
   FormikState<Values> &
   FormikHelpers<Values> &
   FormikHandlers &
-  FormikComputedProps &
+  FormikComputedState &
   FormikRegistration & { submitForm: () => Promise<any> };
 
 /** Internal Formik registration methods that get passed down as props */

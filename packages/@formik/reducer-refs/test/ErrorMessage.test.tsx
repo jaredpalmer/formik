@@ -1,6 +1,7 @@
+import { FormikProps } from '@formik/core';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Formik, FormikProps, ErrorMessage } from '../src';
+import { Formik, ErrorMessage } from '../src';
 import { noop } from './testHelpers';
 
 interface TestFormValues {

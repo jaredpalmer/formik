@@ -5,6 +5,39 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Run NPM Dev",
+            "request": "launch",
+            "type": "node",
+            "runtimeArgs": [
+                "run",
+                "dev"
+            ],
+            "runtimeExecutable": "npm",
+            "cwd": "${workspaceFolder}",
+            "skipFiles": [
+                "<node_internals>/**"
+            ]
+        },
+        {
+            "type": "node",
+            "name": "vscode-jest-tests",
+            "request": "launch",
+            "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/lerna",
+            "args": [
+                "run",
+                "test",
+                "--",
+                "--runInBand",
+                // when filtering, every package not matching will have no tests
+                "--passWithNoTests"
+            ],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "protocol": "inspector",
+            "internalConsoleOptions": "neverOpen",
+            "disableOptimisticBPs": true
+        },
+        {
             "type": "chrome",
             "request": "launch",
             "name": "Launch Chrome against localhost",

@@ -632,7 +632,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
           ? ((parsed = parseFloat(value)), isNaN(parsed) ? '' : parsed)
           : /checkbox/.test(type) // checkboxes
           ? getValueForCheckbox(getIn(state.values, field!), checked, value)
-          : !!multiple // <select multiple>
+          : options && multiple // <select multiple>
           ? getSelectedValues(options)
           : value;
       }

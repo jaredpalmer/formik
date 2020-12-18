@@ -28,6 +28,3 @@ With tokens and page index in hand, rename `.sample.env` and `.sample.env.build`
 Now it will work. Run `yarn dev` to get going.
 
 If you get stuck or need help, [send a DM to Jared](https://twitter.com/jaredpalmer) on Twitter.
-
-
-

@@ -4,13 +4,14 @@ import ErrorPage from 'next/error';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import * as React from 'react';
-
+import hydrate from 'next-mdx-remote/hydrate';
+import renderToString from 'next-mdx-remote/render-to-string';
 import s from 'components/markdown.module.css';
 import { Banner } from 'components/Banner';
 import { SidebarCategory } from 'components/SidebarCategory';
 import { SidebarPost } from 'components/SidebarPost';
 import { Toc } from 'components/Toc';
-import { markdownToHtml } from 'lib/docs/markdown-to-html';
+import { markdownToHtml, remarkPlugins } from 'lib/docs/markdown-to-html';
 import {
   getCurrentTag,
   fetchRemoteDocsManifest,
@@ -32,14 +33,23 @@ import { useIsMobile } from 'components/useIsMobile';
 import { Footer } from 'components/Footer';
 import { Seo } from 'components/Seo';
 import { DocsPageFooter } from 'components/DocsPageFooter';
-
+import MDXComponents from 'components/MDXComponents';
+import addRouterEvents from 'components/addRouterEvents';
+import remarkHeadings from 'remark-autolink-headings';
+import slug from 'remark-slug';
 interface DocsProps {
   page: Page;
   routes: RouteItem[];
   route: RouteItem;
+  mdxSource: string;
 }
 
-export default function Docs({ page, routes, route: _route }: DocsProps) {
+export default function Docs({
+  mdxSource,
+  page,
+  routes,
+  route: _route,
+}: DocsProps) {
   const router = useRouter();
   const { asPath, isFallback, query } = router;
   const isMobile = useIsMobile();
@@ -48,9 +58,34 @@ export default function Docs({ page, routes, route: _route }: DocsProps) {
   const { route, prevRoute, nextRoute } = getRouteContext(_route, routes);
   const title = route && `${page.title || route.title} | Formik`;
   const { tag } = getSlug(query as { slug: string[] });
+
   if (!route && !isFallback) {
     return <ErrorPage statusCode={404} />;
   }
+
+  const content = hydrate(mdxSource, {
+    components: MDXComponents,
+  });
+  React.useEffect(() => {
+    const listeners: any[] = [];
+    document.querySelectorAll('.docs a').forEach(node => {
+      const href = node.getAttribute('href');
+      // Exclude paths like #setup and hashes that have the same current path
+      if (href && href[0] !== '#' && href.startsWith('/')) {
+        // Handle any relative path
+        router.prefetch(href);
+
+        listeners.push(
+          addRouterEvents(node, router, {
+            href,
+          })
+        );
+      }
+    });
+    return () => {
+      listeners.forEach(cleanUpListener => cleanUpListener());
+    };
+  }, [router]);
   return (
     <>
       {tag && (
@@ -67,57 +102,51 @@ export default function Docs({ page, routes, route: _route }: DocsProps) {
             <Nav />
           </Sticky>
         )}
-        {route ? (
-          <>
-            <Seo title={title || page.title} description={page.description} />
-            <div className="block">
-              <>
-                <Sticky shadow>
-                  <SidebarMobile>
-                    <SidebarRoutes isMobile={true} routes={routes} />
-                  </SidebarMobile>
-                </Sticky>
 
-                <div className="container mx-auto pb-12 pt-6 content">
-                  <div className="flex relative">
-                    <Sidebar fixed>
-                      <SidebarRoutes routes={routes} />
-                    </Sidebar>
+        <>
+          <Seo title={title || page.title} description={page.description} />
+          <div className="block">
+            <>
+              <Sticky shadow>
+                <SidebarMobile>
+                  <SidebarRoutes isMobile={true} routes={routes} />
+                </SidebarMobile>
+              </Sticky>
 
-                    <div className={s['markdown'] + 'w-full docs'}>
-                      <h1>{page.title}</h1>
-                      <div
-                        className={s['markdown']}
-                        dangerouslySetInnerHTML={{ __html: page.html }}
-                      />
-                      <DocsPageFooter
-                        href={route?.path || ''}
-                        route={route!}
-                        prevRoute={prevRoute}
-                        nextRoute={nextRoute}
-                      />
-                    </div>
-                    {!route?.path?.includes('example') ? (
-                      <div
-                        className="hidden xl:block ml-10 flex-shrink-0"
-                        style={{ width: 200 }}
-                      >
-                        <div className="sticky top-24 ">
-                          <h4 className="font-semibold uppercase text-sm mb-2 mt-2 text-gray-500">
-                            On this page
-                          </h4>
-                          <Toc />
-                        </div>
-                      </div>
-                    ) : null}
+              <div className="container mx-auto pb-12 pt-6 content">
+                <div className="flex relative">
+                  <Sidebar fixed>
+                    <SidebarRoutes routes={routes} />
+                  </Sidebar>
+
+                  <div className={s['markdown'] + ' w-full docs'}>
+                    <h1>{page.title}</h1>
+                    {content}
+                    <DocsPageFooter
+                      href={route?.path || ''}
+                      route={route!}
+                      prevRoute={prevRoute}
+                      nextRoute={nextRoute}
+                    />
                   </div>
+                  {!route?.path?.includes('example') ? (
+                    <div
+                      className="hidden xl:block ml-10 flex-shrink-0"
+                      style={{ width: 200 }}
+                    >
+                      <div className="sticky top-24 ">
+                        <h4 className="font-semibold uppercase text-sm mb-2 mt-2 text-gray-500">
+                          On this page
+                        </h4>
+                        <Toc />
+                      </div>
+                    </div>
+                  ) : null}
                 </div>
-              </>
-            </div>
-          </>
-        ) : (
-          <div>loading....</div>
-        )}
+              </div>
+            </>
+          </div>
+        </>
       </div>
       <Footer />
       <style jsx>{`
@@ -239,14 +268,19 @@ export const getStaticProps: GetStaticProps<any, { slug: string[] }> = async ({
   }
 
   const { content, data } = matter(md);
-  const html = await markdownToHtml(content || '', route.path!, tag);
+  const mdxSource = await renderToString(content, {
+    components: MDXComponents,
+    mdxOptions: {
+      remarkPlugins,
+    },
+  });
 
   return {
     props: {
       route,
       routes: manifest.routes,
+      mdxSource,
       page: {
-        html,
         ...data,
       },
     },
@@ -257,6 +291,6 @@ export const getStaticPaths: GetStaticPaths = async () => {
   const manifest = await fetchLocalDocsManifest();
   return {
     paths: getPaths([...manifest.routes]),
-    fallback: true,
+    fallback: 'blocking',
   };
 };

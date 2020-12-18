@@ -65,14 +65,14 @@ export default function Example() {
                   <CustomFieldOld
                     name={mask.name}
                     type="text"
-                    parse={formatString(mask.parse)}
+                    parse={formatString(mask.parse) as any}
                     placeholder={mask.parse}
                   />
                 ) : (
                   <CustomFieldNew
                     name={mask.name}
                     type="text"
-                    parse={formatString(mask.parse)}
+                    parse={formatString(mask.parse) as any}
                     placeholder={mask.parse}
                   />
                 )}

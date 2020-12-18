@@ -1,7 +1,7 @@
 import React from "react";
-import { Formik, Form, useField, FieldHookConfig } from "formik";
+import { Formik, Form, useField, FieldConfig } from "formik";
 
-const Input = (p: FieldHookConfig<string>) => {
+const Input = (p: FieldConfig<string>) => {
   const [field, meta] = useField(p);
   const renders = React.useRef(0);
   return (
@@ -19,13 +19,13 @@ const Input = (p: FieldHookConfig<string>) => {
   );
 };
 
-const isRequired = (v) => {
+const isRequired = (v: string) => {
   return v && v.trim() !== "" ? undefined : "Required";
 };
 
 const array = new Array(500).fill(undefined);
 
-const initialValues = array.reduce((prev, curr, idx) => {
+const initialValues = array.reduce((prev, _curr, idx) => {
   prev[`Input ${idx}`] = "";
   return prev;
 }, {});

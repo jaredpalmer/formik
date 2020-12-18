@@ -1,6 +1,6 @@
 import * as React from 'react';
 import cloneDeep from 'lodash/cloneDeep';
-import { connect } from './connect';
+import { connect } from '../connect';
 import {
   FormikContextType,
   FormikState,

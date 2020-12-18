@@ -31,7 +31,7 @@ export default function Example() {
                 <Field
                   name={mask.name}
                   type="text"
-                  parse={formatString(mask.parse)}
+                  parse={formatString(mask.parse) as any}
                   placeholder={mask.parse}
                 />
               </label>

@@ -8,9 +8,9 @@
     "serve": "next start"
   },
   "dependencies": {
-    "format-string-by-pattern": "^1.2.1",
-    "formik": "^2.1.5",
     "@formik/reducer-refs": "^3.0.0-core1",
+    "format-string-by-pattern": "^1.2.1",
+    "formik": "^3.0.0-next.7",
     "next": "9.5.3",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
@@ -18,7 +18,7 @@
   },
   "devDependencies": {
     "@types/node": "^14.14.6",
-    "@types/react": "^16.9.56",
+    "@types/react": "^16.9.55",
     "@types/react-dom": "^16.9.9"
   }
 }

@@ -19,13 +19,13 @@ const Input = (p: FieldHookConfig<string>) => {
   );
 };
 
-const isRequired = (v) => {
+const isRequired = (v: string) => {
   return v && v.trim() !== "" ? undefined : "Required";
 };
 
 const array = new Array(500).fill(undefined);
 
-const initialValues = array.reduce((prev, curr, idx) => {
+const initialValues = array.reduce((prev, _curr, idx) => {
   prev[`Input ${idx}`] = "";
   return prev;
 }, {});

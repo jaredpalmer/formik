@@ -46,14 +46,14 @@
     "use-context-selector": "^1.1.2"
   },
   "resolutions": {
-    "@types/react": "16.9.17",
-    "@types/react-dom": "16.9.4"
+    "@types/react": "^16.9.55",
+    "@types/react-dom": "^16.9.9"
   },
   "devDependencies": {
     "@types/hoist-non-react-statics": "^3.3.1",
     "@types/lodash": "^4.14.119",
-    "@types/react": "^16.9.17",
-    "@types/react-dom": "^16.9.4",
+    "@types/react": "^16.9.55",
+    "@types/react-dom": "^16.9.9",
     "@types/warning": "^3.0.0",
     "@types/yup": "^0.24.9",
     "just-debounce-it": "^1.1.0",

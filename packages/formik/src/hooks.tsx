@@ -64,6 +64,32 @@ export type UseFieldProps<V = any> = {
   value?: any;
 };
 
+/**
+ * Returns Formik field value updater function
+ * @public
+ */
+export function useSetFieldValue<
+  Values
+>(): FormikContextType<Values>['setFieldValue'] {
+  return useFormikContextSelector<
+    Values,
+    FormikContextType<Values>['setFieldValue']
+  >(ctx => ctx.setFieldValue);
+}
+
+/**
+ * Returns Formik field touched updater function
+ * @public
+ */
+export function useSetFieldTouched<
+  Values
+>(): FormikContextType<Values>['setFieldTouched'] {
+  return useFormikContextSelector<
+    Values,
+    FormikContextType<Values>['setFieldTouched']
+  >(ctx => ctx.setFieldTouched);
+}
+
 export function useField<FieldValues = any>(
   nameOrOptions: string | UseFieldProps<FieldValues>
 ): [
@@ -108,8 +134,8 @@ export function useField<FieldValues = any>(
 
   const meta = useFieldMeta(fieldName);
   const { value: valueState, touched: touchedState } = meta;
-  const setFieldValue = useFormikContextSelector(ctx => ctx.setFieldValue);
-  const setFieldTouched = useFormikContextSelector(ctx => ctx.setFieldTouched);
+  const setFieldValue = useSetFieldValue();
+  const setFieldTouched = useSetFieldTouched();
   const getFieldHelpers = useFormikContextSelector(ctx => ctx.getFieldHelpers);
 
   const field: FieldInputProps<any> = {
@@ -195,10 +221,7 @@ export function useFieldValue<Values>(
     getIn(ctx.values, name)
   );
 
-  const set = useFormikContextSelector<
-    Values,
-    FormikContextType<Values>['setFieldValue']
-  >(ctx => ctx.setFieldValue);
+  const set = useSetFieldValue<Values>();
 
   const setState = React.useCallback(
     (value: any, shouldValidate?: boolean) => {
@@ -249,10 +272,7 @@ export function useFieldTouched<Values>(
     Boolean(getIn(ctx.touched, name))
   );
 
-  const set = useFormikContextSelector<
-    Values,
-    FormikContextType<Values>['setFieldTouched']
-  >(ctx => ctx.setFieldTouched);
+  const set = useSetFieldTouched<Values>();
 
   const setState = React.useCallback(
     (isTouched?: boolean, shouldValidate?: boolean) => {

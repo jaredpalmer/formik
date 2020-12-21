@@ -1,5 +1,12 @@
 # formik-native
 
+## 2.1.10-next.8
+
+### Patch Changes
+
+- Updated dependencies [[`0e57c8d`](https://github.com/formium/formik/commit/0e57c8d12d5610caf07e4ab8963568d530c2c816)]:
+  - formik@3.0.0-next.8
+
 ## 2.1.10-next.7
 
 ### Patch Changes

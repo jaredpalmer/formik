@@ -1,5 +1,11 @@
 # formik
 
+## 3.0.0-next.8
+
+### Patch Changes
+
+- [`0e57c8d`](https://github.com/formium/formik/commit/0e57c8d12d5610caf07e4ab8963568d530c2c816) [#2939](https://github.com/formium/formik/pull/2939) Thanks [@seropaski](https://github.com/seropaski)! - Add `useSetFieldValue` and `useSetFieldTouched` hooks
+
 ## 3.0.0-next.7
 
 ### Patch Changes

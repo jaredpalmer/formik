@@ -39,9 +39,12 @@ import {
 } from '../selectors';
 import React from 'react';
 
-export const useFormikCore = <Values extends FormikValues>(
+export const useFormikCore = <
+  Values extends FormikValues,
+  State extends FormikState<Values> = FormikState<Values>
+>(
   getState: GetStateFn<Values>,
-  dispatch: React.Dispatch<FormikMessage<Values>>,
+  dispatch: React.Dispatch<FormikMessage<Values, State>>,
   props: FormikConfig<Values>,
   isMounted: React.MutableRefObject<boolean>
 ): FormikCoreApi<Values> => {

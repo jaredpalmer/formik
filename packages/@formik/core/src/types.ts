@@ -32,14 +32,21 @@ export type FormikTouched<Values> = {
     : boolean;
 };
 
-/**
- * Formik state tree
- */
-export interface FormikState<Values> {
+export interface FormikRefStateDecorator<Values> {
   initialValues: Values;
   initialErrors: FormikErrors<Values>;
   initialTouched: FormikTouched<Values>;
   initialStatus: any;
+  dirty: boolean;
+}
+
+export type FormikRefState<Values> = FormikState<Values>
+  & FormikRefStateDecorator<Values>;
+
+/**
+ * Formik state tree
+ */
+export interface FormikState<Values> {
   /** Form values */
   values: Values;
   /** map of field names to specific error for that field */
@@ -54,10 +61,9 @@ export interface FormikState<Values> {
   status?: any;
   /** Number of times user tried to submit the form */
   submitCount: number;
-  dirty: boolean;
 }
 
-export type FormikMessage<Values> =
+export type FormikMessage<Values, State extends FormikState<Values> = FormikState<Values>> =
   | { type: 'SUBMIT_ATTEMPT' }
   | { type: 'SUBMIT_FAILURE' }
   | { type: 'SUBMIT_SUCCESS' }
@@ -76,11 +82,11 @@ export type FormikMessage<Values> =
   | { type: 'RESET_STATUS'; payload: any }
   | {
       type: 'SET_FORMIK_STATE';
-      payload: FormikState<Values>;
+      payload: (s: State) => State;
     }
   | {
       type: 'RESET_FORM';
-      payload: FormikState<Values>;
+      payload: State;
     };
 
 /**

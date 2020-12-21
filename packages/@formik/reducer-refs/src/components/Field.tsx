@@ -21,7 +21,7 @@ export function Field(rawProps: FieldAttributes<any>) {
     React.useEffect(() => {
       invariant(
         !render,
-        `<Field render> has been deprecated and will be removed in future versions of Formik. Please use a child callback function instead. To get rid of this warning, replace <Field name="${name}" render={({field, form}) => ...} /> with <Field name="${name}">{({field, form, meta}) => ...}</Field>`
+        `<Field render> has been deprecated and will be removed in future versions of Formik. Please use a child callback function instead. To get rid of this warning, replace <Field name="${rawProps.name}" render={({field, form}) => ...} /> with <Field name="${rawProps.name}">{({field, form, meta}) => ...}</Field>`
       );
 
       invariant(
@@ -46,6 +46,8 @@ export function Field(rawProps: FieldAttributes<any>) {
   const [field, meta] = useField(props);
 
   const legacyBag = { field, form: formik };
+
+
 
   if (render) {
     return render({ ...legacyBag, meta });

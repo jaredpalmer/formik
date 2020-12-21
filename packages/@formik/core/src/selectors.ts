@@ -35,6 +35,8 @@ import {
 import { emptyErrors } from './constants';
 import invariant from 'tiny-warning';
 
+export type AnyDispatch<Values> = React.Dispatch<FormikMessage<Values, any>>;
+
 export const selectIsFormValid = <Values extends FormikValues>(
   props: FormikConfig<Values>
 ) => (errors: FormikErrors<Values>, dirty: boolean) => {
@@ -50,31 +52,31 @@ export const selectIsFormValid = <Values extends FormikValues>(
 export const selectRunValidateHandler = <Values extends FormikValues>(
   validate: FormikConfig<Values>['validate']
 ): ValidationHandler<Values> => (values, field) => {
-  return new Promise((resolve, reject) => {
-    const maybePromisedErrors = (validate as any)(values, field);
-    if (maybePromisedErrors == null) {
-      // use loose null check here on purpose
-      resolve(emptyErrors);
-    } else if (isPromise(maybePromisedErrors)) {
-      (maybePromisedErrors as Promise<any>).then(
-        errors => {
-          resolve(errors || emptyErrors);
-        },
-        actualException => {
-          if (process.env.NODE_ENV !== 'production') {
-            console.warn(
-              `Warning: An unhandled error was caught during validation in <Formik validate />`,
-              actualException
-            );
-          }
+    return new Promise((resolve, reject) => {
+      const maybePromisedErrors = (validate as any)(values, field);
+      if (maybePromisedErrors == null) {
+        // use loose null check here on purpose
+        resolve(emptyErrors);
+      } else if (isPromise(maybePromisedErrors)) {
+        (maybePromisedErrors as Promise<any>).then(
+          errors => {
+            resolve(errors || emptyErrors);
+          },
+          actualException => {
+            if (process.env.NODE_ENV !== 'production') {
+              console.warn(
+                `Warning: An unhandled error was caught during validation in <Formik validate />`,
+                actualException
+              );
+            }
 
-          reject(actualException);
-        }
-      );
-    } else {
-      resolve(maybePromisedErrors);
-    }
-  });
+            reject(actualException);
+          }
+        );
+      } else {
+        resolve(maybePromisedErrors);
+      }
+    });
 };
 
 export const selectRunValidationSchema = <Values extends FormikValues>(
@@ -119,7 +121,7 @@ export const selectRunSingleFieldLevelValidation = (
   fieldRegistry: React.MutableRefObject<FieldRegistry>
 ) => (field: string, value: void | string): Promise<string> => {
   return new Promise(resolve =>
-    resolve(fieldRegistry.current[field].validate(value) ?? "")
+    resolve(fieldRegistry.current[field].validate(value) as string)
   );
 };
 
@@ -155,6 +157,7 @@ export const selectRunFieldLevelValidations = <Values extends FormikValues>(
     }, {})
   );
 };
+
 export const selectRunAllValidations = <Values extends FormikValues>(
   validate: FormikConfig<Values>['validate'],
   validationSchema: FormikConfig<Values>['validationSchema'],
@@ -175,36 +178,9 @@ export const selectRunAllValidations = <Values extends FormikValues>(
   });
 };
 
-export const selectValidateFormWithLowPriorities = <
-  Values extends FormikValues
->(
-  getState: GetStateFn<Values>,
-  dispatch: React.Dispatch<FormikMessage<Values>>,
-  runAllValidations: ValidationHandler<Values>,
-  isMounted: React.MutableRefObject<boolean>
-) => (values?: Values) => {
-  return unstable_runWithPriority(unstable_LowPriority, () => {
-    return runAllValidations(values ?? getState().values)
-      .then(combinedErrors => {
-        if (!!isMounted.current) {
-          dispatch({ type: 'SET_ERRORS', payload: combinedErrors });
-        }
-        return combinedErrors;
-      })
-      .catch(actualException => {
-        if (process.env.NODE_ENV !== 'production') {
-          // Users can throw during validate, however they have no way of handling their error on touch / blur. In low priority, we need to handle it
-          console.warn(
-            `Warning: An unhandled error was caught during low priority validation in <Formik validate />`,
-            actualException
-          );
-        }
-      });
-  });
-};
 export const selectValidateFormWithHighPriority = <Values extends FormikValues>(
   getState: GetStateFn<Values>,
-  dispatch: React.Dispatch<FormikMessage<Values>>,
+  dispatch: AnyDispatch<Values>,
   runAllValidations: ValidationHandler<Values>,
   isMounted: React.MutableRefObject<boolean>
 ) => (values?: Values) => {
@@ -222,7 +198,7 @@ export const selectValidateFormWithHighPriority = <Values extends FormikValues>(
 
 export const selectResetForm = <Values extends FormikValues>(
   getState: GetStateFn<Values>,
-  dispatch: React.Dispatch<FormikMessage<Values>>,
+  dispatch: AnyDispatch<Values>,
   initialErrors: FormikConfig<Values>['initialErrors'],
   initialTouched: FormikConfig<Values>['initialTouched'],
   initialStatus: FormikConfig<Values>['initialStatus'],
@@ -291,7 +267,7 @@ export const selectResetForm = <Values extends FormikValues>(
 export const selectValidateField = <Values extends FormikValues>(
   fieldRegistry: React.MutableRefObject<FieldRegistry>,
   getState: GetStateFn<Values>,
-  dispatch: React.Dispatch<FormikMessage<Values>>,
+  dispatch: AnyDispatch<Values>,
   validationSchema: FormikConfig<Values>['validationSchema'],
   runValidationSchema: ValidationHandler<Values>
 ) => (name: string) => {
@@ -341,7 +317,7 @@ export const selectValidateField = <Values extends FormikValues>(
 
 export const selectSetTouched = <Values extends FormikValues>(
   getState: GetStateFn<Values>,
-  dispatch: React.Dispatch<FormikMessage<Values>>,
+  dispatch: AnyDispatch<Values>,
   validateOnBlur: FormikConfig<Values>['validateOnBlur'],
   validateFormWithLowPriority: ValidateFormFn<Values>
 ) => (touched: FormikTouched<Values>, shouldValidate?: boolean) => {
@@ -354,7 +330,7 @@ export const selectSetTouched = <Values extends FormikValues>(
 };
 
 export const selectSetValues = <Values extends FormikValues>(
-  dispatch: React.Dispatch<FormikMessage<Values>>,
+  dispatch: AnyDispatch<Values>,
   validateOnChange: FormikConfig<Values>['validateOnChange'],
   validateFormWithLowPriority: ValidateFormFn<Values>
 ) => (values: Values, shouldValidate?: boolean) => {
@@ -365,7 +341,7 @@ export const selectSetValues = <Values extends FormikValues>(
 };
 
 export const selectSetFieldError = <Values extends FormikValues>(
-  dispatch: React.Dispatch<FormikMessage<Values>>
+  dispatch: AnyDispatch<Values>
 ) => (field: string, value: string | undefined) => {
   dispatch({
     type: 'SET_FIELD_ERROR',
@@ -375,7 +351,7 @@ export const selectSetFieldError = <Values extends FormikValues>(
 
 export const selectSetFieldValue = <Values extends FormikValues>(
   getState: GetStateFn<Values>,
-  dispatch: React.Dispatch<FormikMessage<Values>>,
+  dispatch: AnyDispatch<Values>,
   validateOnChange: FormikConfig<Values>['validateOnChange'],
   validateFormWithLowPriority: ValidateFormFn<Values>
 ) => (field: string, value: any, shouldValidate?: boolean) => {
@@ -468,7 +444,7 @@ export const selectHandleChange = (
 
 export const selectSetFieldTouched = <Values extends FormikValues>(
   getState: GetStateFn<Values>,
-  dispatch: React.Dispatch<FormikMessage<Values>>,
+  dispatch: AnyDispatch<Values>,
   validateFormWithLowPriority: ValidateFormFn<Values>,
   validateOnBlur: FormikConfig<Values>['validateOnBlur']
 ): SetFieldTouchedFn<Values> => (field, touched = true, shouldValidate) => {
@@ -487,7 +463,7 @@ export const selectSetFieldTouched = <Values extends FormikValues>(
 };
 export const selectSetFormikState = <Values extends FormikValues>(
   getState: GetStateFn<Values>,
-  dispatch: React.Dispatch<FormikMessage<Values>>
+  dispatch: AnyDispatch<Values>
 ) => (
   stateOrCb:
     | FormikState<Values>
@@ -503,7 +479,7 @@ export const selectSetFormikState = <Values extends FormikValues>(
 type SubmitForm = () => Promise<any | void>;
 export const selectSubmitForm = <Values extends FormikValues>(
   getState: GetStateFn<Values>,
-  dispatch: React.Dispatch<FormikMessage<Values>>,
+  dispatch: AnyDispatch<Values>,
   validateFormWithHighPriority: ValidationHandler<Values>,
   executeSubmit: () => void | Promise<any>,
   isMounted: React.MutableRefObject<boolean>

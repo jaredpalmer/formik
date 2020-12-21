@@ -7,11 +7,13 @@ import {
   FormikMessage,
   emptyErrors,
   emptyTouched,
-  formikReducer,
   useFormikCore,
+  useIsomorphicLayoutEffect,
+  FormikRefState,
 } from '@formik/core';
 import invariant from 'tiny-warning';
 import { FormEffect, UnsubscribeFn } from '../types';
+import { formikRefReducer } from '../ref-reducer';
 
 export function useFormik<Values extends FormikValues = FormikValues>({
   validateOnChange = true,
@@ -50,7 +52,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
    *       snapshot    ref
    * const [state, updateState] = useFormikThing();
    */
-  const stateRef = React.useRef<FormikState<Values>>({
+  const stateRef = React.useRef<FormikState<Values> & FormikRefState<Values>>({
     initialValues: props.initialValues,
     initialErrors: props.initialErrors ?? emptyErrors,
     initialTouched: props.initialTouched ?? emptyTouched,
@@ -75,8 +77,11 @@ export function useFormik<Values extends FormikValues = FormikValues>({
    * those things which need the latest value in order to compute their own latest value.
    */
   const refBoundFormikReducer = React.useCallback(
-    (state: FormikState<Values>, msg: FormikMessage<Values>) => {
-      const result = formikReducer(state, msg);
+    (
+      state: FormikState<Values> & FormikRefState<Values>,
+      msg: FormikMessage<Values, FormikRefState<Values>>
+    ) => {
+      const result = formikRefReducer(state, msg);
 
       stateRef.current = result;
 
@@ -87,9 +92,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
 
   const getState = React.useCallback(() => stateRef.current, [stateRef]);
 
-  const [state, dispatch] = React.useReducer<
-    React.Reducer<FormikState<Values>, FormikMessage<Values>>
-  >(refBoundFormikReducer, stateRef.current);
+  const [state, dispatch] = React.useReducer(refBoundFormikReducer, stateRef.current);
 
   /**
    * isMounted and ValidateOnMount effects
@@ -127,7 +130,11 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     };
   }, [isMounted]);
 
-  React.useEffect(() => {
+  /**
+   * Is this too expensive for a Layout effect? Maybe. But really, by moving it to a regular effect,
+   * you're really just delaying the _next_ render, i.e. when a user types the _second_ letter. So does it really matter?
+   */
+  useIsomorphicLayoutEffect(() => {
     formListeners.current.forEach((listener) => listener(state));
   }, [state]);
 

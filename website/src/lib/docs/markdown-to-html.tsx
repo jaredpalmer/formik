@@ -51,7 +51,7 @@ const getProcessor = unified()
   .use(toc)
   .use(footnotes)
   .use(images)
-  .use(github, { repository: 'https://github.com/jaredpalmer/formik' }) // Add custom HTML found in the markdown file to the AST
+  // .use(github, { repository: 'https://github.com/jaredpalmer/formik' }) // Add custom HTML found in the markdown file to the AST
   .use(r2r, { handlers })
   // .use(raw)
   // // Sanitize the HTML
@@ -62,8 +62,8 @@ const getProcessor = unified()
   // .use(sanitize, githubSchema)
   .use(format)
   .use(shiki, {
-    theme: 'Material-Theme-Palenight-High-Contrast',
-    // useBackground: true,
+    theme: 'Material-Theme-Palenight',
+    useBackground: true,
   })
   .use(stringify)
   .freeze();

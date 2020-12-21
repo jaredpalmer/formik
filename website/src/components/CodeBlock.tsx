@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import { LiveProvider, LiveEditor, LiveError, LivePreview } from 'react-live';
 import { mdx } from '@mdx-js/react';
+import Component from '@reactions/component';
+import React, { useState } from 'react';
+import { useButton } from 'react-aria';
+import { LiveEditor, LiveError, LivePreview, LiveProvider } from 'react-live';
 import { TWButton } from './TWButton';
 import { useClipboard } from './useClipboard';
-
-import Component from '@reactions/component';
 
 export const liveEditorStyle: any = {
   fontSize: 14,
@@ -36,6 +36,24 @@ const EditableNotice = (props: any) => {
     <div className="absolute right-0 top-0 p-3 text-gray-400 text-xs font-sans uppercase">
       Editable Example
     </div>
+  );
+};
+
+const CopyButton = (props: {
+  onPress: () => void;
+  children: React.ReactNode;
+}) => {
+  const { children } = props;
+  const ref = React.useRef<HTMLButtonElement | null>(null);
+  const { buttonProps } = useButton(props, ref);
+  return (
+    <button
+      {...buttonProps}
+      className="text-gray-600 py-2 bg-gray-100 font-semibold w-full text-sm hover:bg-gray-200 transition duration-100 ease-in-out"
+      ref={ref}
+    >
+      {children}
+    </button>
   );
 };
 
@@ -83,12 +101,9 @@ const CodeBlock = ({
           <EditableNotice />
           {isCollapsed ? (
             <div className="border-t">
-              <button
-                className="text-gray-600 py-2 bg-gray-100 font-semibold w-full text-sm hover:bg-gray-200 transition duration-100 ease-in-out"
-                onClick={() => setCollapse(false)}
-              >
+              <CopyButton onPress={() => setCollapse(false)}>
                 Show Code
-              </button>
+              </CopyButton>
             </div>
           ) : (
             <>
@@ -102,14 +117,14 @@ const CodeBlock = ({
                   <TWButton
                     size="xs"
                     className="font-sans mr-2"
-                    onClick={onCopy}
+                    onPress={onCopy}
                   >
                     {hasCopied ? 'Copied' : 'Copy'}
                   </TWButton>
                   <TWButton
                     size="xs"
                     className="font-sans"
-                    onClick={() => setEditorCode(initialCode.current)}
+                    onPress={() => setEditorCode(initialCode.current)}
                   >
                     Reset
                   </TWButton>
@@ -147,7 +162,7 @@ const CodeBlock = ({
       <div className="relative">
         <LiveEditor style={liveEditorStyle} className="rounded shadow-sm" />
         <div className="absolute right-0 top-0 p-2">
-          <TWButton size="xs" className="font-sans" onClick={onCopy}>
+          <TWButton size="xs" className="font-sans" onPress={onCopy}>
             {hasCopied ? 'Copied' : 'Copy'}
           </TWButton>
         </div>

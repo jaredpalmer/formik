@@ -5,7 +5,7 @@ import GithubSlugger from 'github-slugger';
 import { GITHUB_URL, REPO_NAME } from '../github/constants';
 
 const ABSOLUTE_URL = /^https?:\/\/|^\/\//i;
-const SITE_URL = /^(https?:\/\/|^\/\/)formik\.com/i;
+const SITE_URL = /^(https?:\/\/|^\/\/)formik\.org/i;
 // The headers will be updated to include a link to their hash
 const HEADINGS = ['h2', 'h3', 'h4', 'h5', 'h6'];
 
@@ -60,7 +60,7 @@ export default function rehypeDocs({ filePath, tag }) {
 
     props.href = href.replace(SITE_URL, '');
 
-    const isDocs = href.startsWith('/docs');
+    const isDocs = href.startsWith('/docs') || href.startsWith('./');
 
     if (props.href === href) {
       const isAbsoluteUrl = ABSOLUTE_URL.test(href);

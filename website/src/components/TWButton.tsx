@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { forwardRefWithAs } from './forwardRefWithAs';
 import cx from 'classnames';
-
+import { useButton } from 'react-aria';
 export interface TWButtonProps {
   /**
    * Intent of the button
@@ -28,7 +28,7 @@ export interface TWButtonProps {
   /** Right icon */
   iconRight?: React.ReactElement;
   /** Click handler */
-  onClick?: () => void;
+  onPress?: () => void;
 }
 
 const mapIntentToColor = {
@@ -42,19 +42,19 @@ export const TWButton = forwardRefWithAs<TWButtonProps, 'button'>(
   (
     {
       as: is = 'button',
-      children,
       color,
       intent = 'none',
       size = 'md',
       className,
       icon,
       minimal,
-      onClick,
+
       iconRight,
       ...props
     },
     ref
   ) => {
+    const { children } = props;
     const tailwindColor = mapIntentToColor[intent] ?? color;
     const iconIsOnlyChild: boolean = !!(
       (icon && !iconRight && !children) ||
@@ -151,10 +151,18 @@ export const TWButton = forwardRefWithAs<TWButtonProps, 'button'>(
       ),
     };
 
+    let { buttonProps } = useButton(
+      {
+        ...props,
+        elementType: is,
+      } as any,
+      ref
+    );
+
     return React.createElement(is, {
       ...propsToPass,
+      ...buttonProps,
       ref,
-      onClick,
       className: propsToPass.className,
     });
   }

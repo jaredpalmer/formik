@@ -32,6 +32,7 @@ import { useIsMobile } from 'components/useIsMobile';
 import { Footer } from 'components/Footer';
 import { Seo } from 'components/Seo';
 import { DocsPageFooter } from 'components/DocsPageFooter';
+import addRouterEvents from 'components/addRouterEvents';
 
 interface DocsProps {
   page: Page;
@@ -48,9 +49,34 @@ export default function Docs({ page, routes, route: _route }: DocsProps) {
   const { route, prevRoute, nextRoute } = getRouteContext(_route, routes);
   const title = route && `${page.title || route.title} | Formik`;
   const { tag } = getSlug(query as { slug: string[] });
+
+  // This effect adds `next/link`-like behavior to any non-hash relative link
+  // @source @timer
+  React.useEffect(() => {
+    const listeners: Array<() => void> = [];
+    document.querySelectorAll('.docs .relative-link').forEach(node => {
+      const href = node.getAttribute('href');
+      // Exclude paths like #setup and hashes that have the same current path
+      if (href && href[0] !== '#') {
+        // Handle any relative path
+        router.prefetch(href);
+
+        listeners.push(
+          addRouterEvents(node, router, {
+            href,
+          })
+        );
+      }
+    });
+    return () => {
+      listeners.forEach(cleanUpListener => cleanUpListener());
+    };
+  }, [router]);
+
   if (!route && !isFallback) {
     return <ErrorPage statusCode={404} />;
   }
+
   return (
     <>
       {tag && (
@@ -84,7 +110,7 @@ export default function Docs({ page, routes, route: _route }: DocsProps) {
                       <SidebarRoutes routes={routes} />
                     </Sidebar>
 
-                    <div className={s['markdown'] + 'w-full docs'}>
+                    <div className={s['markdown'] + ' w-full docs'}>
                       <h1>{page.title}</h1>
                       <div
                         className={s['markdown']}
@@ -257,6 +283,6 @@ export const getStaticPaths: GetStaticPaths = async () => {
   const manifest = await fetchLocalDocsManifest();
   return {
     paths: getPaths([...manifest.routes]),
-    fallback: true,
+    fallback: 'blocking',
   };
 };

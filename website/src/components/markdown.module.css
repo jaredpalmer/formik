@@ -1,6 +1,6 @@
 /* purgecss start ignore */
 .markdown {
-  @apply leading-relaxed text-gray-800 text-base;
+  @apply leading-relaxed text-gray-700 text-base;
 }
 
 /* 
@@ -28,7 +28,7 @@
 
 .markdown > h1,
 .markdown > a > h1 {
-  @apply mb-6 text-4xl font-semibold leading-snug tracking-tighter text-gray-900;
+  @apply mb-6 text-4xl font-semibold leading-snug tracking-tight text-gray-900;
 }
 
 .markdown > h2,
@@ -65,18 +65,18 @@
 .markdown > ul > li > a,
 .markdown > ol > li > a,
 .markdown > table > tbody > tr > td > a {
-  @apply text-blue-600 font-semibold transition-colors duration-150 ease-out;
+  @apply text-blue-600 transition-colors duration-150 ease-out;
 }
 
 .markdown > p > a:hover,
 .markdown > ul > li > a:hover,
 .markdown > ol > li > a:hover,
 .markdown > table > tbody > tr > td > a:hover {
-  @apply text-blue-800 transition-colors duration-150 ease-out;
+  @apply text-blue-700  duration-150 ease-out underline;
 }
 
 .markdown strong {
-  @apply font-bold;
+  @apply font-semibold;
 }
 
 .markdown > p,
@@ -112,7 +112,7 @@
 }
 
 .markdown > table > thead > tr > th {
-  @apply px-3 py-2 text-left text-sm font-bold bg-gray-100 text-gray-700;
+  @apply px-3 py-2 text-left text-sm font-semibold bg-gray-100 text-gray-700;
 }
 
 .markdown > table > tbody > tr {
@@ -132,7 +132,7 @@
 .markdown > ol > li > ol > li > code,
 .markdown > p a > code,
 .markdown > table > tbody > tr > td:not(:first-child) > code {
-  @apply bg-gray-100 rounded-md px-1  border border-gray-300 text-gray-900;
+  @apply bg-gray-100 shadow-xs rounded px-1;
   margin-left: 2px;
   margin-right: 2px;
   padding-top: 2px;
@@ -164,10 +164,13 @@
 
 /* Blockquotes */
 .markdown blockquote {
-  @apply p-3 bg-gray-100 mb-6 border border-gray-300 border-l-4 rounded-sm text-sm leading-5;
+  @apply p-3 bg-blue-50 rounded-lg text-sm leading-5 text-blue-700;
 }
 .markdown blockquote > p {
   @apply mb-0;
 }
 
+.markdown pre {
+  @apply p-4 rounded-lg text-sm;
+}
 /* purgecss end ignore */

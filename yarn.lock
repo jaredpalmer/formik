@@ -3168,15 +3168,7 @@
     "@types/prop-types" "*"
     "@types/react" "*"
 
-"@types/react@*":
-  version "17.0.0"
-  resolved "https://registry.yarnpkg.com/@types/react/-/react-17.0.0.tgz#5af3eb7fad2807092f0046a1302b7823e27919b8"
-  integrity sha512-aj/L7RIMsRlWML3YB6KZiXB3fV2t41+5RBGYF8z+tAKU43Px8C3cYUZsDvf1/+Bm4FK21QWBrDutu8ZJ/70qOw==
-  dependencies:
-    "@types/prop-types" "*"
-    csstype "^3.0.2"
-
-"@types/react@^16", "@types/react@^16.8.23", "@types/react@^16.9.55":
+"@types/react@*", "@types/react@^16", "@types/react@^16.8.23", "@types/react@^16.9.55":
   version "16.14.2"
   resolved "https://registry.yarnpkg.com/@types/react/-/react-16.14.2.tgz#85dcc0947d0645349923c04ccef6018a1ab7538c"
   integrity sha512-BzzcAlyDxXl2nANlabtT4thtvbbnhee8hMmH/CcJrISDBVcJS1iOsP1f0OAgSdGE0MsY9tqcrb9YoZcOFv9dbQ==
@@ -7569,19 +7561,6 @@ format-string-by-pattern@^1.2.1:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/format-string-by-pattern/-/format-string-by-pattern-1.2.1.tgz#ecaf437a0a504e986510dde6ae6438998fd26387"
   integrity sha512-x7JY+q8XvBmHCf4ZSQiiG+8fmC02oiei1JoAsUcdHcy8Kn6LwaE1KUlQ8ph3fNnIcWY65B3aVuKArdbAEQxpLg==
-
-formik@^2.1.5:
-  version "2.2.6"
-  resolved "https://registry.yarnpkg.com/formik/-/formik-2.2.6.tgz#378a4bafe4b95caf6acf6db01f81f3fe5147559d"
-  integrity sha512-Kxk2zQRafy56zhLmrzcbryUpMBvT0tal5IvcifK5+4YNGelKsnrODFJ0sZQRMQboblWNym4lAW3bt+tf2vApSA==
-  dependencies:
-    deepmerge "^2.1.1"
-    hoist-non-react-statics "^3.3.0"
-    lodash "^4.17.14"
-    lodash-es "^4.17.14"
-    react-fast-compare "^2.0.1"
-    tiny-warning "^1.0.2"
-    tslib "^1.10.0"
 
 fragment-cache@^0.2.1:
   version "0.2.1"

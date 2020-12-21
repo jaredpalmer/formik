@@ -1,6 +1,6 @@
 import React from 'react';
 import * as Yup from 'yup';
-import { withFormik } from '../src/formik';
+import { withFormik, ErrorMessage } from '../src/formik';
 import { Debug } from './Debug';
 
 const formikEnhancer = withFormik({

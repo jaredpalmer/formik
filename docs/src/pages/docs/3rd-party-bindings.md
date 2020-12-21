@@ -1,6 +1,7 @@
 ---
 title: 3rd Party Bindings
 original_id: 3rd-party-bindings
+description: Use Formik with popular React component libraries like Material UI, Bootstrap, AntD, Semantic UI, and more.
 ---
 
 If you would like to use Formik with a UI framework, you'll probably want to create a wrapper component that binds Formik's props and callbacks.

@@ -1,4 +1,4 @@
-import { selectIsFormValid } from './../selectors';
+import { selectIsFormValid, selectGetFieldProps, selectGetValueFromEvent } from './../selectors';
 import {
   GetStateFn,
   FormikValues,
@@ -9,17 +9,17 @@ import {
   FieldRegistry,
   FormikMessage,
   FieldHelperProps,
-  FieldInputProps,
   FormikCoreApi,
+  FormikRefs,
+  FieldHelpers,
 } from '../types';
-import { useEventCallback, isFunction, isObject, getIn } from '../utils';
+import { useEventCallback, isFunction } from '../utils';
 import {
   selectRunValidateHandler,
   selectRunValidationSchema,
   selectRunSingleFieldLevelValidation,
   selectRunFieldLevelValidations,
   selectRunAllValidations,
-  selectValidateFormWithLowPriorities,
   selectValidateFormWithHighPriority,
   selectValidateField,
   selectSetTouched,
@@ -46,7 +46,7 @@ export const useFormikCore = <
   getState: GetStateFn<Values>,
   dispatch: React.Dispatch<FormikMessage<Values, State>>,
   props: FormikConfig<Values>,
-  isMounted: React.MutableRefObject<boolean>
+  refs: FormikRefs<Values>
 ): FormikCoreApi<Values> => {
   const fieldRegistry = React.useRef<FieldRegistry>({});
 
@@ -55,14 +55,11 @@ export const useFormikCore = <
     [props]
   );
 
-  const registerField = React.useCallback(
-    (name: string, { validate }: any) => {
-      fieldRegistry.current[name] = {
-        validate,
-      };
-    },
-    [fieldRegistry]
-  );
+  const registerField = React.useCallback((name: string, { validate }: any) => {
+    fieldRegistry.current[name] = {
+      validate,
+    };
+  }, [fieldRegistry]);
 
   const unregisterField = React.useCallback(
     (name: string) => {
@@ -115,32 +112,15 @@ export const useFormikCore = <
     ]
   );
 
-  // Run validations and dispatching the result as low-priority via rAF.
-  //
-  // The thinking is that validation as a result of onChange and onBlur
-  // should never block user input. Note: This method should never be called
-  // during the submission phase because validation prior to submission
-  // is actaully high-priority since we absolutely need to guarantee the
-  // form is valid before executing props.onSubmit.
-  const validateFormWithLowPriority = useEventCallback(
-    selectValidateFormWithLowPriorities(
-      getState,
-      dispatch,
-      runAllValidations,
-      isMounted
-    ),
-    [getState, dispatch, runAllValidations, isMounted]
-  );
-
   // Run all validations methods and update state accordingly
-  const validateFormWithHighPriority = useEventCallback(
+  const validateForm = useEventCallback(
     selectValidateFormWithHighPriority(
       getState,
       dispatch,
       runAllValidations,
-      isMounted
+      refs.isMounted
     ),
-    [getState, dispatch, runAllValidations, isMounted]
+    [getState, dispatch, runAllValidations, refs.isMounted]
   );
 
   const validateField = useEventCallback(
@@ -159,9 +139,9 @@ export const useFormikCore = <
       getState,
       dispatch,
       props.validateOnBlur,
-      validateFormWithLowPriority
+      validateForm
     ),
-    [getState, dispatch, props.validateOnBlur, validateFormWithLowPriority]
+    [getState, dispatch, props.validateOnBlur, validateForm]
   );
 
   const setErrors = React.useCallback((errors: FormikErrors<Values>) => {
@@ -170,11 +150,12 @@ export const useFormikCore = <
 
   const setValues = useEventCallback(
     selectSetValues(
+      getState,
       dispatch,
       props.validateOnChange,
-      validateFormWithLowPriority
+      validateForm
     ),
-    [dispatch, props.validateOnChange, validateFormWithLowPriority]
+    [dispatch, props.validateOnChange, validateForm]
   );
 
   const setFieldError = React.useCallback(selectSetFieldError(dispatch), [
@@ -186,9 +167,9 @@ export const useFormikCore = <
       getState,
       dispatch,
       props.validateOnChange,
-      validateFormWithLowPriority
+      validateForm
     ),
-    [getState, dispatch, props.validateOnChange, validateFormWithLowPriority]
+    [getState, dispatch, props.validateOnChange, validateForm]
   );
   const executeChange = useEventCallback(
     selectExecuteChange(getState, setFieldValue),
@@ -201,10 +182,10 @@ export const useFormikCore = <
     selectSetFieldTouched(
       getState,
       dispatch,
-      validateFormWithLowPriority,
+      validateForm,
       props.validateOnBlur
     ),
-    [getState, dispatch, validateFormWithLowPriority, props.validateOnBlur]
+    [getState, dispatch, validateForm, props.validateOnBlur]
   );
 
   const executeBlur = React.useCallback(selectExecuteBlur(setFieldTouched), [
@@ -216,16 +197,13 @@ export const useFormikCore = <
   ]);
 
   const setFormikState = React.useCallback(
-    selectSetFormikState(getState, dispatch),
+    selectSetFormikState(dispatch),
     [getState, dispatch]
   );
 
-  const setStatus = React.useCallback(
-    (status: any) => {
+  const setStatus = React.useCallback((status: any) => {
       dispatch({ type: 'SET_STATUS', payload: status });
-    },
-    [dispatch]
-  );
+  }, [dispatch]);
 
   const setSubmitting = React.useCallback(
     (isSubmitting: boolean) => {
@@ -234,8 +212,10 @@ export const useFormikCore = <
     [dispatch]
   );
 
+  const { onSubmit } = props;
+
   const executeSubmit = useEventCallback(
-    () => props.onSubmit(getState().values, imperativeMethods),
+    () => onSubmit(getState().values, imperativeMethods),
     [props.onSubmit]
   );
 
@@ -243,24 +223,19 @@ export const useFormikCore = <
     selectSubmitForm(
       getState,
       dispatch,
-      validateFormWithHighPriority,
+      validateForm,
       executeSubmit,
-      isMounted
+      refs.isMounted
     ),
-    [getState, dispatch, validateFormWithHighPriority, executeSubmit, isMounted]
+    [getState, dispatch, validateForm, executeSubmit, refs.isMounted]
   );
 
   const handleSubmit = useEventCallback(selectHandleSubmit(submitForm), [
     submitForm,
   ]);
 
-  /**
-   * These getters are not related to a render.
-   *
-   * They use refs!
-   */
   const getFieldMeta = React.useCallback(
-    selectGetFieldMeta(getState),
+    selectGetFieldMeta(getState, refs),
     [getState]
   );
 
@@ -277,52 +252,25 @@ export const useFormikCore = <
     [setFieldValue, setFieldTouched, setFieldError]
   );
 
+  const getValueFromEvent = React.useCallback(
+    selectGetValueFromEvent(getState),
+    [getState]
+  );
+
   const getFieldProps = React.useCallback(
-    (nameOrOptions: any): FieldInputProps<any> => {
-      const state = getState();
-      const isAnObject = isObject(nameOrOptions);
-      const name = isAnObject ? nameOrOptions.name : nameOrOptions;
-      const valueState = getIn(state.values, name);
-
-      const field: FieldInputProps<any> = {
-        name,
-        value: valueState,
-        onChange: handleChange,
-        onBlur: handleBlur,
-      };
-      if (isAnObject) {
-        const {
-          type,
-          value: valueProp, // value is special for checkboxes
-          as: is,
-          multiple,
-        } = nameOrOptions;
-
-        if (type === 'checkbox') {
-          if (valueProp === undefined) {
-            field.checked = !!valueState;
-          } else {
-            field.checked = !!(
-              Array.isArray(valueState) && ~valueState.indexOf(valueProp)
-            );
-            field.value = valueProp;
-          }
-        } else if (type === 'radio') {
-          field.checked = valueState === valueProp;
-          field.value = valueProp;
-        } else if (is === 'select' && multiple) {
-          field.value = field.value || [];
-          field.multiple = true;
-        }
-      }
-      return field;
-    },
-    [handleBlur, handleChange]
+    selectGetFieldProps(
+      getState,
+      handleChange,
+      handleBlur,
+      setFieldValue,
+      getValueFromEvent
+    ),
+    [getState, handleChange, handleBlur, setFieldValue, getValueFromEvent]
   );
 
   const imperativeMethods: FormikHelpers<Values> = {
     isFormValid,
-    validateForm: validateFormWithHighPriority,
+    validateForm,
     validateField,
     setErrors,
     setFieldError,
@@ -342,10 +290,8 @@ export const useFormikCore = <
     selectResetForm(
       getState,
       dispatch,
-      props.initialErrors,
-      props.initialTouched,
-      props.initialStatus,
-      props.onReset,
+      props,
+      refs,
       imperativeMethods
     ),
     [
@@ -355,6 +301,13 @@ export const useFormikCore = <
       props.onReset,
     ]
   );
+
+  const fieldHelpers: FieldHelpers = {
+    getFieldProps,
+    getFieldMeta,
+    getFieldHelpers,
+    getValueFromEvent,
+  }
 
   const handleReset = useEventCallback(
     e => {
@@ -376,25 +329,9 @@ export const useFormikCore = <
     handleChange,
     handleReset,
     handleSubmit,
-    resetForm,
-    setErrors,
-    setFormikState,
-    setFieldTouched,
-    setFieldValue,
-    setFieldError,
-    setStatus,
-    setSubmitting,
-    setTouched,
-    setValues,
-    submitForm,
-    isFormValid,
-    validateFormWithLowPriority,
-    validateFormWithHighPriority,
-    validateField,
     unregisterField,
     registerField,
-    getFieldProps,
-    getFieldMeta,
-    getFieldHelpers,
+    ...imperativeMethods,
+    ...fieldHelpers
   };
 };

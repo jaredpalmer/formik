@@ -1,5 +1,6 @@
 import isEqual from 'react-fast-compare';
-import { FormikRefState, FormikMessage, formikReducer } from "@formik/core";
+import { FormikMessage, formikReducer } from "@formik/core";
+import { FormikRefState } from './types';
 
 export function formikRefReducer<Values>(
   state: FormikRefState<Values>,

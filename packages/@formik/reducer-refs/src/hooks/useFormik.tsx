@@ -9,10 +9,9 @@ import {
   emptyTouched,
   useFormikCore,
   useIsomorphicLayoutEffect,
-  FormikRefState,
 } from '@formik/core';
 import invariant from 'tiny-warning';
-import { FormEffect, UnsubscribeFn } from '../types';
+import { FormEffect, FormikRefState, UnsubscribeFn } from '../types';
 import { formikRefReducer } from '../ref-reducer';
 
 export function useFormik<Values extends FormikValues = FormikValues>({
@@ -52,11 +51,18 @@ export function useFormik<Values extends FormikValues = FormikValues>({
    *       snapshot    ref
    * const [state, updateState] = useFormikThing();
    */
+  // these are only used for this initialization,
+  // then abandoned because they will be managed in stateRef
+  const initialValues = React.useRef(props.initialValues);
+  const initialErrors = React.useRef(props.initialErrors ?? emptyErrors);
+  const initialTouched = React.useRef(props.initialTouched ?? emptyTouched);
+  const initialStatus = React.useRef(props.initialStatus);
+
   const stateRef = React.useRef<FormikState<Values> & FormikRefState<Values>>({
-    initialValues: props.initialValues,
-    initialErrors: props.initialErrors ?? emptyErrors,
-    initialTouched: props.initialTouched ?? emptyTouched,
-    initialStatus: props.initialStatus,
+    initialValues: initialValues.current,
+    initialErrors: initialErrors.current,
+    initialTouched: initialTouched.current,
+    initialStatus: initialStatus.current,
     values: props.initialValues,
     errors: props.initialErrors ?? emptyErrors,
     touched: props.initialTouched ?? emptyTouched,
@@ -95,12 +101,19 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   const [state, dispatch] = React.useReducer(refBoundFormikReducer, stateRef.current);
 
   /**
-   * isMounted and ValidateOnMount effects
+   * Refs
    */
   const isMounted = React.useRef<boolean>(false);
 
-  const formikApi = useFormikCore(getState, dispatch, props, isMounted);
-  const { validateFormWithLowPriority, resetForm } = formikApi;
+  // we'll override some core apis to manage refs in state
+  const formikApi = useFormikCore(getState, dispatch, props, {
+    initialValues,
+    initialTouched,
+    initialErrors,
+    initialStatus,
+    isMounted
+  });
+  const { validateForm, resetForm } = formikApi;
 
   const addFormEffect = React.useCallback((effect: FormEffect<Values>): UnsubscribeFn => {
     formListeners.current = [
@@ -150,7 +163,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
       }
 
       if (validateOnMount) {
-        validateFormWithLowPriority();
+        validateForm();
       }
     }
   }, [
@@ -158,7 +171,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     props.initialValues,
     resetForm,
     validateOnMount,
-    validateFormWithLowPriority,
+    validateForm,
   ]);
 
   React.useEffect(() => {
@@ -205,7 +218,6 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     addFormEffect,
     // the api itself
     ...formikApi,
-    validateForm: formikApi.validateFormWithHighPriority,
     validateOnBlur,
     validateOnChange,
     validateOnMount,

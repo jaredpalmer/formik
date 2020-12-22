@@ -1,13 +1,14 @@
 import * as React from 'react';
-import invariant from 'tiny-warning';
 import {
   FieldInputProps,
   FieldMetaProps,
   GenericFieldHTMLAttributes,
+  isEmptyChildren,
+  isFunction,
   SharedFieldProps,
-} from './types';
+} from '@formik/core';
+import invariant from 'tiny-warning';
 import { useField, UseFieldProps } from './hooks';
-import { isEmptyChildren, isFunction } from './utils';
 
 export type FastFieldProps<FieldValue = any> = {
   field: FieldInputProps<FieldValue>;
@@ -74,7 +75,15 @@ export function FastField<V = any>({
     return children({ field, meta });
   }
 
-  const { innerRef, parse, format, formatOnBlur, validate, ...rest } = props;
+  const {
+    innerRef,
+    parse,
+    format,
+    formatOnBlur,
+    validate,
+    onChange,
+    ...rest
+  } = props;
 
   if (component) {
     // This behavior is backwards compat with earlier Formik 0.9 to 1.x

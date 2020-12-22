@@ -1,22 +1,19 @@
 import * as React from 'react';
 import invariant from 'tiny-warning';
-import {
-  FieldInputProps,
-  FieldMetaProps,
-  FieldValidator,
-  FormikContextType,
-} from './types';
 import { useFormikContextSelector } from './FormikContext';
 import {
   defaultFormatFn,
   defaultParseFn,
+  FieldHelperProps,
+  FieldInputProps,
+  FieldMetaProps,
+  FieldValidator,
+  FormikContextType,
   getIn,
-  getValueFromEvent,
   isInputEvent,
   isObject,
   numberParseFn,
-} from './utils';
-import { FieldHelperProps } from './types';
+} from '@formik/core';
 
 export type UseFieldProps<V = any> = {
   /**
@@ -106,7 +103,6 @@ export function useField<FieldValues = any>(
   const { name: fieldName, validate: validateFn } = props;
 
   const registerField = useFormikContextSelector(c => c.registerField);
-
   const unregisterField = useFormikContextSelector(c => c.unregisterField);
 
   React.useEffect(() => {
@@ -137,6 +133,9 @@ export function useField<FieldValues = any>(
   const setFieldValue = useSetFieldValue();
   const setFieldTouched = useSetFieldTouched();
   const getFieldHelpers = useFormikContextSelector(ctx => ctx.getFieldHelpers);
+  const getValueFromEvent = useFormikContextSelector(
+    ctx => ctx.getValueFromEvent
+  );
 
   const field: FieldInputProps<any> = {
     name: fieldName,

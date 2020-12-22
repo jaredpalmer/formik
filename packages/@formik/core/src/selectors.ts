@@ -13,10 +13,13 @@ import {
   ValidateFormFn,
   FieldMetaProps,
   SetFieldTouchedFn,
+  SubmitFormFn,
+  SetFieldValueFn,
+  FormikRefs,
+  GetValueFromEventFn,
 } from './types';
 import { isFunction, isEqual } from 'lodash';
 import deepmerge from 'deepmerge';
-import { unstable_runWithPriority, unstable_LowPriority } from 'scheduler';
 import {
   isPromise,
   arrayMerge,
@@ -28,9 +31,13 @@ import {
   getActiveElement,
   isObject,
   isString,
-  isSyntheticEvent,
   getValueForCheckbox,
   getSelectedValues,
+  isInputEvent,
+  defaultFormatFn,
+  defaultParseFn,
+  numberParseFn,
+  isReactNative,
 } from './utils';
 import { emptyErrors } from './constants';
 import invariant from 'tiny-warning';
@@ -199,46 +206,47 @@ export const selectValidateFormWithHighPriority = <Values extends FormikValues>(
 export const selectResetForm = <Values extends FormikValues>(
   getState: GetStateFn<Values>,
   dispatch: AnyDispatch<Values>,
-  initialErrors: FormikConfig<Values>['initialErrors'],
-  initialTouched: FormikConfig<Values>['initialTouched'],
-  initialStatus: FormikConfig<Values>['initialStatus'],
-  onReset: FormikConfig<Values>['onReset'],
+  props: FormikConfig<Values>,
+  refs: FormikRefs<Values>,
   imperativeMethods: FormikHelpers<Values>
 ) => (nextState?: Partial<FormikState<Values>>) => {
   const values =
-    nextState && nextState.values ? nextState.values : getState().initialValues;
+    nextState && nextState.values
+      ? nextState.values
+      : refs.initialValues.current;
   const errors =
     nextState && nextState.errors
       ? nextState.errors
-      : getState().initialErrors
-      ? getState().initialErrors
-      : initialErrors ?? {};
+      : refs.initialErrors.current
+      ? refs.initialErrors.current
+      : props.initialErrors || {};
   const touched =
     nextState && nextState.touched
       ? nextState.touched
-      : getState().initialTouched
-      ? getState().initialTouched
-      : initialTouched || {};
+      : refs.initialTouched.current
+      ? refs.initialTouched.current
+      : props.initialTouched || {};
   const status =
     nextState && nextState.status
       ? nextState.status
-      : getState().initialStatus
-      ? getState().initialStatus
-      : initialStatus;
+      : refs.initialStatus.current
+      ? refs.initialStatus.current
+      : props.initialStatus;
+
+  refs.initialValues.current = values;
+  refs.initialErrors.current = errors;
+  refs.initialTouched.current = touched;
+  refs.initialStatus.current = status;
 
   const dispatchFn = () => {
     dispatch({
       type: 'RESET_FORM',
       payload: {
-        initialValues: values,
-        initialErrors: errors,
-        initialTouched: touched,
-        initialStatus: status,
-        values,
+        isSubmitting: !!nextState && !!nextState.isSubmitting,
         errors,
         touched,
         status,
-        isSubmitting: !!nextState && !!nextState.isSubmitting,
+        values,
         isValidating: !!nextState && !!nextState.isValidating,
         submitCount:
           !!nextState &&
@@ -246,16 +254,18 @@ export const selectResetForm = <Values extends FormikValues>(
           typeof nextState.submitCount === 'number'
             ? nextState.submitCount
             : 0,
-        dirty: false,
       },
     });
   };
 
-  if (onReset) {
-    const maybePromisedOnReset = onReset(getState().values, imperativeMethods);
+  if (props.onReset) {
+    const maybePromisedOnReset = (props.onReset as any)(
+      getState().values,
+      imperativeMethods
+    );
 
     if (isPromise(maybePromisedOnReset)) {
-      maybePromisedOnReset.then(dispatchFn);
+      (maybePromisedOnReset as Promise<any>).then(dispatchFn);
     } else {
       dispatchFn();
     }
@@ -274,7 +284,10 @@ export const selectValidateField = <Values extends FormikValues>(
   // This will efficiently validate a single field by avoiding state
   // changes if the validation function is synchronous. It's different from
   // what is called when using validateForm.
-  if (isFunction(fieldRegistry.current[name].validate)) {
+  if (
+    fieldRegistry.current[name] &&
+    isFunction(fieldRegistry.current[name].validate)
+  ) {
     const value = getIn(getState().values, name);
     const maybePromise = fieldRegistry.current[name].validate(value);
     if (isPromise(maybePromise)) {
@@ -319,25 +332,30 @@ export const selectSetTouched = <Values extends FormikValues>(
   getState: GetStateFn<Values>,
   dispatch: AnyDispatch<Values>,
   validateOnBlur: FormikConfig<Values>['validateOnBlur'],
-  validateFormWithLowPriority: ValidateFormFn<Values>
+  validateForm: ValidateFormFn<Values>
 ) => (touched: FormikTouched<Values>, shouldValidate?: boolean) => {
   dispatch({ type: 'SET_TOUCHED', payload: touched });
   const willValidate =
     shouldValidate === undefined ? validateOnBlur : shouldValidate;
   return willValidate
-    ? validateFormWithLowPriority(getState().values)
+    ? validateForm(getState().values)
     : Promise.resolve();
 };
 
 export const selectSetValues = <Values extends FormikValues>(
+  getState: GetStateFn<Values>,
   dispatch: AnyDispatch<Values>,
   validateOnChange: FormikConfig<Values>['validateOnChange'],
-  validateFormWithLowPriority: ValidateFormFn<Values>
+  validateForm: ValidateFormFn<Values>
 ) => (values: Values, shouldValidate?: boolean) => {
-  dispatch({ type: 'SET_VALUES', payload: values });
+  const resolvedValues = isFunction(values) ? values(getState().values) : values;
+
+  dispatch({ type: 'SET_VALUES', payload: resolvedValues });
   const willValidate =
     shouldValidate === undefined ? validateOnChange : shouldValidate;
-  return willValidate ? validateFormWithLowPriority(values) : Promise.resolve();
+  return willValidate
+    ? validateForm(resolvedValues)
+    : Promise.resolve();
 };
 
 export const selectSetFieldError = <Values extends FormikValues>(
@@ -353,7 +371,7 @@ export const selectSetFieldValue = <Values extends FormikValues>(
   getState: GetStateFn<Values>,
   dispatch: AnyDispatch<Values>,
   validateOnChange: FormikConfig<Values>['validateOnChange'],
-  validateFormWithLowPriority: ValidateFormFn<Values>
+  validateForm: ValidateFormFn<Values>
 ) => (field: string, value: any, shouldValidate?: boolean) => {
   dispatch({
     type: 'SET_FIELD_VALUE',
@@ -365,7 +383,7 @@ export const selectSetFieldValue = <Values extends FormikValues>(
   const willValidate =
     shouldValidate === undefined ? validateOnChange : shouldValidate;
   return willValidate
-    ? validateFormWithLowPriority(setIn(getState().values, field, value))
+    ? validateForm(setIn(getState().values, field, value))
     : Promise.resolve();
 };
 
@@ -384,13 +402,14 @@ export const selectExecuteChange = <Values extends FormikValues>(
   let field = maybePath;
   let val = eventOrTextValue;
   let parsed;
+
   // If the first argument is not a string though, it has to be a synthetic React Event (or a fake one),
   // so we handle like we would a normal HTML change event.
   if (!isString(eventOrTextValue)) {
     // If we can, persist the event
     // @see https://reactjs.org/docs/events.html#event-pooling
-    if (isSyntheticEvent(eventOrTextValue)) {
-      eventOrTextValue.persist();
+    if ((eventOrTextValue as any).persist) {
+      (eventOrTextValue as React.ChangeEvent<any>).persist();
     }
     const target = eventOrTextValue.target
       ? (eventOrTextValue as React.ChangeEvent<any>).target
@@ -445,7 +464,7 @@ export const selectHandleChange = (
 export const selectSetFieldTouched = <Values extends FormikValues>(
   getState: GetStateFn<Values>,
   dispatch: AnyDispatch<Values>,
-  validateFormWithLowPriority: ValidateFormFn<Values>,
+  validateForm: ValidateFormFn<Values>,
   validateOnBlur: FormikConfig<Values>['validateOnBlur']
 ): SetFieldTouchedFn<Values> => (field, touched = true, shouldValidate) => {
   dispatch({
@@ -458,11 +477,11 @@ export const selectSetFieldTouched = <Values extends FormikValues>(
   const willValidate =
     shouldValidate === undefined ? validateOnBlur : shouldValidate;
   return willValidate
-    ? validateFormWithLowPriority(getState().values)
+    ? validateForm(getState().values)
     : Promise.resolve();
 };
+
 export const selectSetFormikState = <Values extends FormikValues>(
-  getState: GetStateFn<Values>,
   dispatch: AnyDispatch<Values>
 ) => (
   stateOrCb:
@@ -470,25 +489,52 @@ export const selectSetFormikState = <Values extends FormikValues>(
     | ((state: FormikState<Values>) => FormikState<Values>)
 ): void => {
   if (isFunction(stateOrCb)) {
-    dispatch({ type: 'SET_FORMIK_STATE', payload: stateOrCb(getState()) });
-  } else {
     dispatch({ type: 'SET_FORMIK_STATE', payload: stateOrCb });
+  } else {
+    dispatch({ type: 'SET_FORMIK_STATE', payload: () => stateOrCb });
   }
 };
 
-type SubmitForm = () => Promise<any | void>;
+export const selectExecuteBlur = <Values extends FormikValues>(
+  setFieldTouched: SetFieldTouchedFn<Values>
+) => (e: any, path?: string) => {
+  if (e.persist) {
+    e.persist();
+  }
+  const { name, id, outerHTML } = e.target;
+  const field = path ? path : name ? name : id;
+
+  if (!field && __DEV__) {
+    warnAboutMissingIdentifier({
+      htmlContent: outerHTML,
+      documentationAnchorLink: 'handleblur-e-any--void',
+      handlerName: 'handleBlur',
+    });
+  }
+
+  setFieldTouched(field, true);
+};
+
+export const selectHandleBlur = (
+  executeBlur: ReturnType<typeof selectExecuteBlur>
+) => (eventOrString: any): void | ((e: any) => void) => {
+  if (isString(eventOrString)) {
+    return event => executeBlur(event, eventOrString);
+  } else {
+    executeBlur(eventOrString);
+  }
+};
+
 export const selectSubmitForm = <Values extends FormikValues>(
   getState: GetStateFn<Values>,
   dispatch: AnyDispatch<Values>,
   validateFormWithHighPriority: ValidationHandler<Values>,
   executeSubmit: () => void | Promise<any>,
   isMounted: React.MutableRefObject<boolean>
-): SubmitForm => () => {
-  const values = getState().values;
-
+): SubmitFormFn => () => {
   dispatch({ type: 'SUBMIT_ATTEMPT' });
 
-  return validateFormWithHighPriority(values).then(
+  return validateFormWithHighPriority(getState().values).then(
     (combinedErrors: FormikErrors<Values>) => {
       // In case an error was thrown and passed to the resolved Promise,
       // `combinedErrors` can be an instance of an Error. We need to check
@@ -551,39 +597,7 @@ export const selectSubmitForm = <Values extends FormikValues>(
   );
 };
 
-export const selectExecuteBlur = <Values extends FormikValues>(
-  setFieldTouched: SetFieldTouchedFn<Values>
-) => (e: any, path?: string) => {
-  if (e.persist) {
-    e.persist();
-  }
-  const { name, id, outerHTML } = e.target;
-  const field = path ? path : name ? name : id;
-
-  if (!field && __DEV__) {
-    warnAboutMissingIdentifier({
-      htmlContent: outerHTML,
-      documentationAnchorLink: 'handleblur-e-any--void',
-      handlerName: 'handleBlur',
-    });
-  }
-
-  setFieldTouched(field, true);
-};
-
-export const selectHandleBlur = (
-  executeBlur: ReturnType<typeof selectExecuteBlur>
-) => (eventOrString: any): void | ((e: any) => void) => {
-  if (isString(eventOrString)) {
-    return event => executeBlur(event, eventOrString);
-  } else {
-    executeBlur(eventOrString);
-  }
-
-  return;
-};
-
-export const selectHandleSubmit = (submitForm: SubmitForm) => (
+export const selectHandleSubmit = (submitForm: SubmitFormFn) => (
   e?: React.FormEvent<HTMLFormElement>
 ) => {
   if (e && e.preventDefault && isFunction(e.preventDefault)) {
@@ -601,7 +615,10 @@ export const selectHandleSubmit = (submitForm: SubmitForm) => (
   if (__DEV__ && typeof document !== 'undefined') {
     // Safely get the active element (works with IE)
     const activeElement = getActiveElement();
-    if (activeElement !== null && activeElement instanceof HTMLButtonElement) {
+    if (
+      activeElement !== null &&
+      activeElement instanceof HTMLButtonElement
+    ) {
       invariant(
         activeElement.attributes &&
           activeElement.attributes.getNamedItem('type'),
@@ -621,12 +638,19 @@ export const selectHandleSubmit = (submitForm: SubmitForm) => (
 export const selectGetFieldProps = <Values extends FormikValues>(
   getState: GetStateFn<Values>,
   handleChange: ReturnType<typeof selectHandleChange>,
-  handleBlur: ReturnType<typeof selectHandleBlur>
-) => (nameOrOptions: any): FieldInputProps<any> => {
+  handleBlur: ReturnType<typeof selectHandleBlur>,
+  setFieldValue: SetFieldValueFn<Values>,
+  getValueFromEvent: ReturnType<typeof selectGetValueFromEvent>,
+) => <V>(nameOrOptions: any): FieldInputProps<V> => {
   const state = getState();
   const isAnObject = isObject(nameOrOptions);
-  const name = isAnObject ? nameOrOptions.name : nameOrOptions;
+  const name = isAnObject
+    ? nameOrOptions.name
+      ? nameOrOptions.name
+      : nameOrOptions.id
+    : nameOrOptions;
   const valueState = getIn(state.values, name);
+  const touchedState = getIn(state.touched, name);
 
   const field: FieldInputProps<any> = {
     name,
@@ -640,6 +664,9 @@ export const selectGetFieldProps = <Values extends FormikValues>(
       value: valueProp, // value is special for checkboxes
       as: is,
       multiple,
+      parse = /number|range/.test(type) ? numberParseFn : defaultParseFn,
+      format = defaultFormatFn,
+      formatOnBlur = false,
     } = nameOrOptions;
 
     if (type === 'checkbox') {
@@ -658,12 +685,39 @@ export const selectGetFieldProps = <Values extends FormikValues>(
       field.value = field.value || [];
       field.multiple = true;
     }
+
+    if (type !== 'radio' && type !== 'checkbox' && !!format) {
+      if (formatOnBlur === true) {
+        if (touchedState === true) {
+          field.value = format(field.value);
+        }
+      } else {
+        field.value = format(field.value);
+      }
+    }
+
+    // We incorporate the fact that we know the `name` prop by scoping `onChange`.
+    // In addition, to support `parse` fn, we can't just re-use the OG `handleChange`, but
+    // instead re-implement it's guts.
+    if (type !== 'radio' && type !== 'checkbox') {
+      field.onChange = (eventOrValue: React.ChangeEvent<any> | any) => {
+        if (isInputEvent(eventOrValue)) {
+          if (eventOrValue.persist) {
+            eventOrValue.persist();
+          }
+          setFieldValue(name, parse(getValueFromEvent(eventOrValue, name)));
+        } else {
+          setFieldValue(name, parse(eventOrValue));
+        }
+      };
+    }
   }
   return field;
 };
 
 export const selectGetFieldMeta = <Values extends FormikValues>(
-  getState: GetStateFn<Values>
+  getState: GetStateFn<Values>,
+  refs: FormikRefs<Values>,
 ) => (name: string): FieldMetaProps<any> => {
   const state = getState();
 
@@ -671,8 +725,40 @@ export const selectGetFieldMeta = <Values extends FormikValues>(
     value: getIn(state.values, name),
     error: getIn(state.errors, name),
     touched: !!getIn(state.touched, name),
-    initialValue: getIn(state.initialValues, name),
-    initialTouched: !!getIn(state.initialTouched, name),
-    initialError: getIn(state.initialErrors, name),
+    initialValue: getIn(refs.initialValues.current, name),
+    initialTouched: !!getIn(refs.initialTouched.current, name),
+    initialError: getIn(refs.initialErrors.current, name),
   };
 };
+
+/**
+ *
+ * @param getState
+ * @param isReactNative we should remove this param, and instead override this function in formik-native
+ */
+export const selectGetValueFromEvent = <Values extends FormikValues>(
+  getState: GetStateFn<Values>
+): GetValueFromEventFn => (event, fieldName) => {
+  // React Native/Expo Web/maybe other render envs
+  if (
+    !isReactNative &&
+    event.nativeEvent &&
+    (event.nativeEvent as any).text !== undefined
+  ) {
+    return (event.nativeEvent as any).text;
+  }
+
+  // React Native
+  if (isReactNative && event.nativeEvent) {
+    return (event.nativeEvent as any).text;
+  }
+
+  const target = event.target ? event.target : event.currentTarget;
+  const { type, value, checked, options, multiple } = target;
+
+  return /checkbox/.test(type) // checkboxes
+    ? getValueForCheckbox(getIn(getState().values, fieldName!), checked, value)
+    : !!multiple // <select multiple>
+    ? getSelectedValues(options)
+    : value;
+}

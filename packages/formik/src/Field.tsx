@@ -88,9 +88,13 @@ export function Field<FieldValue = any, FormValues = any>({
     );
   }
   const { parse, format, formatOnBlur, ...rest } = props;
+
   return React.createElement(
     asElement as React.ComponentType<FieldInputProps<FieldValue>>,
-    { ...field, ...rest },
+    {
+      ...field,
+      ...(rest as any) /* this isn't typed correctly, it should accept any props that AsComponent accepts */,
+    },
     children
   );
 }

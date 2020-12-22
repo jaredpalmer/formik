@@ -1,7 +1,11 @@
-import { FormikState, FormikValues, FormikComputedState, useIsomorphicLayoutEffect } from '@formik/core';
+import {
+  FormikValues,
+  FormikComputedState,
+  useIsomorphicLayoutEffect,
+} from '@formik/core';
 import { useState, useMemo } from 'react';
 import { useFormikApi } from './useFormikApi';
-import { FormikApi } from '../types';
+import { FormikRefApi, FormikRefState } from '../types';
 
 /**
  * `useFormikState`, but accepting `FormikApi` as a parameter.
@@ -9,9 +13,10 @@ import { FormikApi } from '../types';
  * @param api FormikApi instance returned by `useFormik` or `useFormikApi`
  * @param shouldAddFormEffect whether to continue listening for FormikState changes
  */
-export const useFormikStateInternal = <Values extends FormikValues>(
-    api: FormikApi<Values>, shouldAddFormEffect: boolean = true,
-): [FormikState<Values> & FormikComputedState, FormikApi<Values>] => {
+export const useFormikRefStateInternal = <Values extends FormikValues>(
+  api: FormikRefApi<Values>,
+  shouldAddFormEffect: boolean = true
+): [FormikRefState<Values> & FormikComputedState, FormikRefApi<Values>] => {
   const [formikState, setFormikState] = useState(api.getState());
 
   const isValid = useMemo(() => {
@@ -27,17 +32,20 @@ export const useFormikStateInternal = <Values extends FormikValues>(
     return;
   }, [shouldAddFormEffect]);
 
-  return [{
-    ...formikState,
-    isValid
-  }, api];
-}
+  return [
+    {
+      ...formikState,
+      isValid,
+    },
+    api,
+  ];
+};
 
 /**
  * Subscribe to Formik State and Computed State updates.
  */
 export const useFormikState = <Values extends FormikValues>() => {
-    const api = useFormikApi<Values>();
+  const api = useFormikApi<Values>();
 
-    return useFormikStateInternal(api);
-}
+  return useFormikRefStateInternal(api);
+};

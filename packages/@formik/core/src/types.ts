@@ -1,4 +1,26 @@
 import { MutableRefObject } from 'react';
+import {
+  SetStatusFn,
+  SetErrorsFn,
+  SetSubmittingFn,
+  SetTouchedFn,
+  SetValuesFn,
+  SetFieldValueFn,
+  SetFieldErrorFn,
+  SetFieldTouchedFn,
+  IsFormValidFn,
+  ValidateFormFn,
+  ValidateFieldFn,
+  ResetFormFn,
+  SubmitFormFn,
+  SetFormikStateFn,
+  GetFieldHelpersFn,
+  HandleResetFn,
+  HandleBlurFn,
+  HandleChangeFn,
+  HandleSubmitFn,
+  GetValueFromEventFn,
+} from './selectors';
 
 /**
  * Values of fields in the form
@@ -120,81 +142,17 @@ export interface FormikComputedState {
  */
 export type FormikComputedProps = FormikComputedState;
 
-export type IsFormValidFn<Values> = (
-  errors: FormikErrors<Values>,
-  dirty: boolean
-) => boolean;
 export type GetStateFn<Values> = () => FormikState<Values>;
-export type HandleBlurFn = (eventOrString: any) => void | ((e: any) => void);
-export type HandleChangeFn = (
-  eventOrPath: string | React.ChangeEvent<any>
-) => void | ((eventOrTextValue: string | React.ChangeEvent<any>) => void);
-export type HandleResetFn = (e: any) => void;
-export type HandleSubmitFn = (
-  e?: React.FormEvent<HTMLFormElement> | undefined
-) => void;
-export type ResetFormFn<Values extends FormikValues> = (
-  nextState?: Partial<FormikState<Values>> | undefined
-) => void;
-export type SetErrorsFn<Values extends FormikValues> = (
-  errors: FormikErrors<Values>
-) => void;
-export type SetFormikStateFn<Values extends FormikValues> = (
-  stateOrCb:
-    | FormikState<Values>
-    | ((state: FormikState<Values>) => FormikState<Values>)
-) => void;
-export type SetFieldTouchedFn<Values extends FormikValues> = (
-  field: string,
-  touched?: boolean | undefined,
-  shouldValidate?: boolean | undefined
-) => Promise<void | FormikErrors<Values>>;
-export type SetFieldValueFn<Values extends FormikValues> = (
-  field: string,
-  value: any,
-  shouldValidate?: boolean | undefined
-) => Promise<void | FormikErrors<Values>>;
-export type SetFieldErrorFn = (
-  field: string,
-  value: string | undefined
-) => void;
-export type SetStatusFn = (status: any) => void;
-export type SetSubmittingFn = (isSubmitting: boolean) => void;
-export type SetTouchedFn<Values extends FormikValues> = (
-  touched: import('./types').FormikTouched<Values>,
-  shouldValidate?: boolean | undefined
-) => Promise<void | FormikErrors<Values>>;
-export type SetValuesFn<Values extends FormikValues> = (
-  values: Values,
-  shouldValidate?: boolean | undefined
-) => Promise<void | FormikErrors<Values>>;
-export type SubmitFormFn = () => Promise<any>;
-export type ValidateFormFn<Values extends FormikValues> = (
-  values?: Values | undefined
-) => Promise<void | FormikErrors<Values>>;
-export type ValidateFieldFn = (
-  name: string
-) => Promise<void> | Promise<string | undefined>;
 export type UnregisterFieldFn = (name: string) => void;
 export type RegisterFieldFn = (name: string, { validate }: any) => void;
-export type GetFieldPropsFn = <Value extends any>(
-  nameOrOptions: any
-) => FieldInputProps<Value>;
-export type GetFieldMetaFn = <Value extends any>(
-  name: string
-) => FieldMetaProps<Value>;
-export type GetFieldHelpersFn = <Value extends any>(
-  name: string
-) => FieldHelperProps<Value>;
-export type GetValueFromEventFn = (
-  event: React.SyntheticEvent<any>,
-  fieldName: string
-) => any;
 
 /**
  * Formik state helpers
  */
-export interface FormikHelpers<Values> {
+export interface FormikHelpers<
+  Values,
+  State extends FormikState<Values> = FormikState<Values>
+> {
   /** Manually set top level status. */
   setStatus: SetStatusFn;
   /** Manually set errors object */
@@ -218,7 +176,7 @@ export interface FormikHelpers<Values> {
   /** Validate field value */
   validateField: ValidateFieldFn;
   /** Reset form */
-  resetForm: ResetFormFn<Values>;
+  resetForm: ResetFormFn<Values, State>;
   /** Submit the form imperatively */
   submitForm: SubmitFormFn;
   /** Set Formik state, careful! */
@@ -241,7 +199,10 @@ export interface FormikHandlers {
   handleBlur: HandleBlurFn;
   handleChange: HandleChangeFn;
 }
-export type FormikCoreApi<Values extends FormikValues> = FormikHelpers<Values> &
+export type FormikCoreApi<Values extends FormikValues> = FormikHelpers<
+  Values,
+  FormikState<Values>
+> &
   FieldHelpers &
   FormikHandlers & {
     unregisterField: UnregisterFieldFn;
@@ -270,7 +231,10 @@ export type FormikSharedConfig<Props = {}> = FormikValidationConfig & {
 /**
  * <Formik /> props
  */
-export interface FormikConfig<Values> extends FormikSharedConfig {
+export interface FormikConfig<
+  Values,
+  State extends FormikState<Values> = FormikState<Values>
+> extends FormikSharedConfig {
   /**
    * Form component to render
    */
@@ -310,7 +274,7 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
    */
   onReset?: (
     values: Values,
-    formikHelpers: FormikHelpers<Values>
+    formikHelpers: FormikHelpers<Values, State>
   ) => void | Promise<any>;
 
   /**
@@ -318,7 +282,7 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
    */
   onSubmit: (
     values: Values,
-    formikHelpers: FormikHelpers<Values>
+    formikHelpers: FormikHelpers<Values, State>
   ) => void | Promise<any>;
   /**
    * A Yup Schema or a function that returns a Yup schema

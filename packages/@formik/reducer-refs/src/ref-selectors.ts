@@ -1,21 +1,26 @@
 import {
-    AnyDispatch,
-    FormikConfig,
-    FormikHelpers,
-    FormikState,
-    FormikValues,
-    isPromise
-} from "@formik/core";
-import { GetRefStateFn } from "./types";
+  AnyDispatch,
+  FieldMetaProps,
+  FormikConfig,
+  FormikHelpers,
+  FormikState,
+  FormikValues,
+  getIn,
+  isPromise,
+} from '@formik/core';
+import { FormikRefState, GetRefStateFn } from './types';
 
 export const selectRefResetForm = <Values extends FormikValues>(
   getState: GetRefStateFn<Values>,
   dispatch: AnyDispatch<Values>,
-  initialErrors: FormikConfig<Values>['initialErrors'],
-  initialTouched: FormikConfig<Values>['initialTouched'],
-  initialStatus: FormikConfig<Values>['initialStatus'],
-  onReset: FormikConfig<Values>['onReset'],
-  imperativeMethods: FormikHelpers<Values>
+  initialErrors: FormikConfig<Values, FormikRefState<Values>>['initialErrors'],
+  initialTouched: FormikConfig<
+    Values,
+    FormikRefState<Values>
+  >['initialTouched'],
+  initialStatus: FormikConfig<Values, FormikRefState<Values>>['initialStatus'],
+  onReset: FormikConfig<Values, FormikRefState<Values>>['onReset'],
+  imperativeMethods: FormikHelpers<Values, FormikRefState<Values>>
 ) => (nextState?: Partial<FormikState<Values>>) => {
   const values =
     nextState && nextState.values ? nextState.values : getState().initialValues;
@@ -74,4 +79,19 @@ export const selectRefResetForm = <Values extends FormikValues>(
   } else {
     dispatchFn();
   }
+};
+
+export const selectRefGetFieldMeta = <Values extends FormikValues>(
+  getState: GetRefStateFn<Values>
+) => (name: string): FieldMetaProps<any> => {
+  const state = getState();
+
+  return {
+    value: getIn(state.values, name),
+    error: getIn(state.errors, name),
+    touched: !!getIn(state.touched, name),
+    initialValue: getIn(state.initialValues, name),
+    initialTouched: !!getIn(state.initialTouched, name),
+    initialError: getIn(state.initialErrors, name),
+  };
 };

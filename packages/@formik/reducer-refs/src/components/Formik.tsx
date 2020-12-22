@@ -9,12 +9,13 @@ import {
 import invariant from 'tiny-warning';
 import { useFormik } from '../hooks/useFormik';
 import { FormikApiContext } from '../contexts/FormikApiContext';
-import { useFormikStateInternal } from '../hooks/useFormikState';
+import { useFormikRefStateInternal } from '../hooks/useFormikState';
+import { FormikRefState } from '../types';
 
 export function Formik<
   Values extends FormikValues = FormikValues,
   ExtraProps = {}
->(props: FormikConfig<Values> & ExtraProps) {
+>(props: FormikConfig<Values, FormikRefState<Values>> & ExtraProps) {
   const { component, children, render, innerRef } = props;
   // now hear me out. this is wrong, I know.
   // useFormik now returns a bag of stable api methods
@@ -22,7 +23,10 @@ export function Formik<
   // this is a PROTOTYPE
   // todo: memoize better
   const { current: formikApi } = React.useRef(useFormik<Values>(props));
-  const [formikState] = useFormikStateInternal(
+  // get state and add a form effect if component, render, or child function is used
+  // aka, we need to pass FormikState directly
+  // maybe we should just remove FormikState
+  const [formikState] = useFormikRefStateInternal(
     formikApi,
     !!component || !!render || isFunction(children)
   );
@@ -33,7 +37,7 @@ export function Formik<
   const formikBag: FormikProps<Values> = {
     ...formikApi,
     ...formikState,
-  }
+  };
 
   if (__DEV__) {
     // eslint-disable-next-line react-hooks/rules-of-hooks

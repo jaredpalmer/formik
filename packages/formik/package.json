@@ -33,6 +33,7 @@
     "prepublish": "npm run build"
   },
   "dependencies": {
+    "@formik/core": "^3.0.0-core1",
     "deepmerge": "^2.1.1",
     "hoist-non-react-statics": "^3.3.0",
     "lodash": "^4.17.14",

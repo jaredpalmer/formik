@@ -1,8 +1,5 @@
 import * as React from 'react';
-import {
-  isFunction,
-  isEmptyChildren,
-} from '@formik/core';
+import { isFunction, isEmptyChildren } from '@formik/core';
 import invariant from 'tiny-warning';
 import { useFormikApi } from '../hooks/useFormikApi';
 import { FieldAttributes, useField } from '../hooks/useField';
@@ -46,8 +43,6 @@ export function Field(rawProps: FieldAttributes<any>) {
   const [field, meta] = useField(props);
 
   const legacyBag = { field, form: formik };
-
-
 
   if (render) {
     return render({ ...legacyBag, meta });

@@ -9,10 +9,10 @@ import {
   FormikProps,
   GenericFieldHTMLAttributes,
   isObject,
-  selectGetFieldMeta,
 } from '@formik/core';
 import { useFormikApi } from './useFormikApi';
 import invariant from 'tiny-warning';
+import { selectRefGetFieldMeta } from '../ref-selectors';
 
 export interface FieldProps<V = any, FormValues = any> {
   field: FieldInputProps<V>;
@@ -106,7 +106,7 @@ export function useField<Val = any>(
     formikState => {
       // we could use formikApi.getFieldMeta... but is that correct?
       // I think we should use the value passed to this callback
-      const fieldMeta = selectGetFieldMeta(() => formikState, refs)(fieldName);
+      const fieldMeta = selectRefGetFieldMeta(() => formikState)(fieldName);
 
       if (!isEqual(fieldMeta, fieldMetaRef.current)) {
         fieldMetaRef.current = fieldMeta;

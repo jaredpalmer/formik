@@ -66,8 +66,8 @@ const Basic = () => (
 
           {/** Updates for all changes because it's from the
            top-level formikProps which get all updates */}
-          {form.touched.firstName && form.errors.firstName && (
-            <div>{form.errors.firstName}</div>
+          {formikProps.touched.firstName && formikProps.errors.firstName && (
+            <div>{formikProps.errors.firstName}</div>
           )}
 
           <label htmlFor="middleInitial">Middle Initial</label>
@@ -88,12 +88,12 @@ const Basic = () => (
                   : null}
 
                 {/* This doesn't update either */}
-                {form.submitCount}
+                {formikProps.submitCount}
 
                 {/* Imperative methods still work as expected */}
                 <button
                   type="button"
-                  onClick={form.setFieldValue('middleInitial', 'J')}
+                  onClick={formikProps.setFieldValue('middleInitial', 'J')}
                 >
                   J
                 </button>
@@ -105,7 +105,7 @@ const Basic = () => (
            and all changes by all <Field>s and <FastField>s */}
           <label htmlFor="lastName">LastName</label>
           <Field name="lastName" placeholder="Baby">
-            {() => (
+            {({field}) => (
               <div>
                 <input {...field} />
                 {/**  Works because this is inside

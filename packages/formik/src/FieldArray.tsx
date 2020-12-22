@@ -1,20 +1,18 @@
 import * as React from 'react';
 import cloneDeep from 'lodash/cloneDeep';
 import { connect } from './connect';
+import isEqual from 'react-fast-compare';
 import {
   FormikContextType,
-  FormikState,
-  SharedRenderProps,
   FormikProps,
-} from './types';
-import {
+  FormikState,
   getIn,
+  isEmptyArray,
   isEmptyChildren,
   isFunction,
   setIn,
-  isEmptyArray,
-} from './utils';
-import isEqual from 'react-fast-compare';
+  SharedRenderProps,
+} from '@formik/core';
 
 export type FieldArrayRenderProps = ArrayHelpers & {
   form: FormikProps<any>;
@@ -27,6 +25,7 @@ export type FieldArrayConfig = {
   /** Should field array validate the form AFTER array updates/changes? */
   validateOnChange?: boolean;
 } & SharedRenderProps<FieldArrayRenderProps>;
+
 export interface ArrayHelpers {
   /** Imperatively add a value to the end of an array */
   push: (obj: any) => void;

@@ -1,8 +1,5 @@
 import * as React from 'react';
-import {
-  isFunction,
-  isEmptyChildren,
-} from '@formik/core';
+import { isFunction, isEmptyChildren } from '@formik/core';
 import invariant from 'tiny-warning';
 import { useFormikApi } from '../hooks/useFormikApi';
 import { FieldAttributes, useField } from '../hooks/useField';
@@ -21,7 +18,7 @@ export function Field(rawProps: FieldAttributes<any>) {
     React.useEffect(() => {
       invariant(
         !render,
-        `<Field render> has been deprecated and will be removed in future versions of Formik. Please use a child callback function instead. To get rid of this warning, replace <Field name="${name}" render={({field, form}) => ...} /> with <Field name="${name}">{({field, form, meta}) => ...}</Field>`
+        `<Field render> has been deprecated and will be removed in future versions of Formik. Please use a child callback function instead. To get rid of this warning, replace <Field name="${rawProps.name}" render={({field, form}) => ...} /> with <Field name="${rawProps.name}">{({field, form, meta}) => ...}</Field>`
       );
 
       invariant(

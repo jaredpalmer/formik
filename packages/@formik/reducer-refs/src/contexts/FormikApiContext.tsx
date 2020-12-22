@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { FormikApi } from '../types';
+import { FormikRefApi } from '../types';
 
-export const FormikApiContext = React.createContext<FormikApi<any> | undefined>(
-  undefined
-);
+export const FormikApiContext = React.createContext<
+  FormikRefApi<any> | undefined
+>(undefined);

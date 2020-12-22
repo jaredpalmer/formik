@@ -1,7 +1,7 @@
 {
   "name": "formik",
   "description": "Forms in React, without tears",
-  "version": "3.0.0-next.7",
+  "version": "3.0.0-next.8",
   "license": "Apache-2.0",
   "author": "Jared Palmer <jared@palmer.net>",
   "repository": "formium/formik",
@@ -33,6 +33,7 @@
     "prepublish": "npm run build"
   },
   "dependencies": {
+    "@formik/core": "^3.0.0-core1",
     "deepmerge": "^2.1.1",
     "hoist-non-react-statics": "^3.3.0",
     "lodash": "^4.17.14",

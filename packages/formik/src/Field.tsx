@@ -1,15 +1,16 @@
-import * as React from 'react';
-import invariant from 'tiny-warning';
-import { useFormikContext } from './FormikContext';
 import {
   FieldInputProps,
   FieldMetaProps,
   FormikProps,
   GenericFieldHTMLAttributes,
+  isEmptyChildren,
+  isFunction,
   SharedFieldProps,
-} from './types';
+} from '@formik/core';
+import * as React from 'react';
+import invariant from 'tiny-warning';
+import { useFormikContext } from './FormikContext';
 import { useField, UseFieldProps } from './hooks';
-import { isEmptyChildren, isFunction } from './utils';
 
 export interface FieldProps<V = any, FormValues = any> {
   field: FieldInputProps<V>;
@@ -17,9 +18,10 @@ export interface FieldProps<V = any, FormValues = any> {
   meta: FieldMetaProps<V>;
 }
 
-export type FieldConfig<FieldValue = any, FormValues = any> = UseFieldProps<
-  FieldValue
-> &
+export type FieldConfig<
+  FieldValue = any,
+  FormValues = any
+> = UseFieldProps<FieldValue> &
   SharedFieldProps<FieldProps<FieldValue, FormValues>>;
 
 export function Field<FieldValue = any, FormValues = any>({
@@ -86,9 +88,13 @@ export function Field<FieldValue = any, FormValues = any>({
     );
   }
   const { parse, format, formatOnBlur, ...rest } = props;
+
   return React.createElement(
     asElement as React.ComponentType<FieldInputProps<FieldValue>>,
-    { ...field, ...rest },
+    {
+      ...field,
+      ...(rest as any) /* this isn't typed correctly, it should accept any props that AsComponent accepts */,
+    },
     children
   );
 }

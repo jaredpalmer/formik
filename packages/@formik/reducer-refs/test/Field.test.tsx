@@ -1,4 +1,5 @@
 import { FormikConfig, FormikProps } from '@formik/core';
+import { TestFormValues, testProps } from '@formik/core/test/constants';
 import * as React from 'react';
 import { cleanup, render, wait, fireEvent } from 'react-testing-library';
 import * as Yup from 'yup';
@@ -10,36 +11,37 @@ import {
   FieldConfig,
 } from '../src';
 
-import { noop } from './testHelpers';
-
-const initialValues = { name: 'jared', email: 'hello@reason.nyc' };
-type Values = typeof initialValues;
 type FastFieldConfig = FieldConfig;
-
 type $FixMe = any;
 
 function renderForm(
   ui?: React.ReactNode,
-  props?: Partial<FormikConfig<Values>>
+  props?: Partial<FormikConfig<TestFormValues>>
 ) {
-  let injected: FormikProps<Values>;
+  let injected: FormikProps<TestFormValues>;
   const { rerender, ...rest } = render(
-    <Formik onSubmit={noop} initialValues={initialValues} {...props}>
-      {(formikProps: FormikProps<Values>) =>
+    <Formik
+      {...testProps}
+      {...props}
+    >
+      {(formikProps) =>
         (injected = formikProps) && ui ? ui : null
       }
     </Formik>
   );
 
   return {
-    getFormProps(): FormikProps<Values> {
+    getFormProps(): FormikProps<TestFormValues> {
       return injected;
     },
     ...rest,
     rerender: () =>
       rerender(
-        <Formik onSubmit={noop} initialValues={initialValues} {...props}>
-          {(formikProps: FormikProps<Values>) =>
+        <Formik
+          {...testProps}
+          {...props}
+        >
+          {(formikProps: FormikProps<TestFormValues>) =>
             (injected = formikProps) && ui ? ui : null
           }
         </Formik>
@@ -51,7 +53,7 @@ const createRenderField = (
   FieldComponent: React.ComponentType<FieldConfig>
 ) => (
   props: Partial<FieldConfig> | Partial<FastFieldConfig> = {},
-  formProps?: Partial<FormikConfig<Values>>
+  formProps?: Partial<FormikConfig<TestFormValues>>
 ) => {
   let injected: FieldProps;
 

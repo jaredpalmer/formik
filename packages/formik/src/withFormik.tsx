@@ -1,15 +1,15 @@
-import hoistNonReactStatics from 'hoist-non-react-statics';
-import * as React from 'react';
-import { Formik } from './Formik';
 import {
+  FormikErrors,
   FormikHelpers,
   FormikProps,
   FormikSharedConfig,
-  FormikValues,
   FormikTouched,
-  FormikErrors,
-} from './types';
-import { isFunction } from './utils';
+  FormikValues,
+  isFunction,
+} from '@formik/core';
+import hoistNonReactStatics from 'hoist-non-react-statics';
+import * as React from 'react';
+import { Formik } from './Formik';
 
 /**
  * State, handlers, and helpers injected as props into the wrapped form component.

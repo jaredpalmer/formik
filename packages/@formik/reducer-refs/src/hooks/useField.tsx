@@ -1,9 +1,18 @@
 import * as React from 'react';
 import { FormEffect } from '../types';
 import isEqual from 'react-fast-compare';
-import { FieldHelperProps, FieldInputProps, FieldMetaProps, FieldValidator, FormikProps, GenericFieldHTMLAttributes, isObject, selectGetFieldMeta } from '@formik/core';
+import {
+  FieldHelperProps,
+  FieldInputProps,
+  FieldMetaProps,
+  FieldValidator,
+  FormikProps,
+  GenericFieldHTMLAttributes,
+  isObject,
+} from '@formik/core';
 import { useFormikApi } from './useFormikApi';
 import invariant from 'tiny-warning';
+import { selectRefGetFieldMeta } from '../ref-selectors';
 
 export interface FieldProps<V = any, FormValues = any> {
   field: FieldInputProps<V>;
@@ -93,16 +102,19 @@ export function useField<Val = any>(
   const fieldMetaRef = React.useRef(getFieldMeta<Val>(fieldName));
   const [fieldMeta, setFieldMeta] = React.useState(fieldMetaRef.current);
 
-  const maybeUpdateFieldMeta = React.useCallback<FormEffect<any>>((formikState) => {
-    // we could use formikApi.getFieldMeta... but is that correct?
-    // I think we should use the value passed to this callback
-    const fieldMeta = selectGetFieldMeta(() => formikState)(fieldName);
+  const maybeUpdateFieldMeta = React.useCallback<FormEffect<any>>(
+    formikState => {
+      // we could use formikApi.getFieldMeta... but is that correct?
+      // I think we should use the value passed to this callback
+      const fieldMeta = selectRefGetFieldMeta(() => formikState)(fieldName);
 
-    if (!isEqual(fieldMeta, fieldMetaRef.current)) {
-      fieldMetaRef.current = fieldMeta;
-      setFieldMeta(fieldMeta);
-    }
-  }, [fieldName, setFieldMeta, fieldMetaRef]);
+      if (!isEqual(fieldMeta, fieldMetaRef.current)) {
+        fieldMetaRef.current = fieldMeta;
+        setFieldMeta(fieldMeta);
+      }
+    },
+    [fieldName, setFieldMeta, fieldMetaRef]
+  );
 
   React.useEffect(() => {
     if (fieldName) {

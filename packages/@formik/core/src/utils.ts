@@ -317,8 +317,16 @@ export const isEmptyChildren = (children: any): boolean =>
 export const isChangeEvent = (value: any): value is React.SyntheticEvent<any> =>
   value && isObject(value) && isObject(value.target);
 
-export const isSyntheticEvent = (value: any): value is React.ChangeEvent<any> =>
-  typeof value === 'object' && typeof value.persist === 'function';
+/** @private is the given object/value a type of synthetic event? */
+export const isInputEvent = (value: any): value is React.SyntheticEvent<any> =>
+  value && isObject(value) && isObject(value.target);
+
+/** @private Are we in RN? */
+export const isReactNative =
+  typeof window !== 'undefined' &&
+  window.navigator &&
+  window.navigator.product &&
+  window.navigator.product === 'ReactNative';
 
 /** Return multi select values based on an array of options */
 export function getSelectedValues(options: any[]) {
@@ -370,3 +378,13 @@ export function getValueForCheckbox(
     .slice(0, index)
     .concat(currentArrayOfValues.slice(index + 1));
 }
+
+export const defaultParseFn = (value: unknown, _name: string) => value;
+
+export const numberParseFn = (value: any, _name: string) => {
+  const parsed = parseFloat(value);
+  return isNaN(parsed) ? '' : parsed;
+};
+
+export const defaultFormatFn = (value: unknown, _name: string) =>
+  value === undefined ? '' : value;

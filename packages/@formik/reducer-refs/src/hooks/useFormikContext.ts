@@ -1,8 +1,7 @@
 import invariant from 'tiny-warning';
 import { FormikContextType } from '@formik/core';
 import { useFormikApi } from './useFormikApi';
-import { useFormikStateInternal } from './useFormikState';
-
+import { useFormikRefStateInternal } from './useFormikState';
 
 export function useFormikContext<Values>(): FormikContextType<Values> {
   const formikApi = useFormikApi<Values>();
@@ -12,7 +11,7 @@ export function useFormikContext<Values>(): FormikContextType<Values> {
     `Formik API context is undefined, please verify you are calling useFormikContext() as child of a <Formik> component.`
   );
 
-  const [formikState] = useFormikStateInternal(formikApi);
+  const [formikState] = useFormikRefStateInternal(formikApi);
 
   return {
     ...formikApi,

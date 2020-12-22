@@ -1,22 +1,19 @@
 import * as React from 'react';
 import invariant from 'tiny-warning';
-import {
-  FieldInputProps,
-  FieldMetaProps,
-  FieldValidator,
-  FormikContextType,
-} from './types';
 import { useFormikContextSelector } from './FormikContext';
 import {
   defaultFormatFn,
   defaultParseFn,
+  FieldHelperProps,
+  FieldInputProps,
+  FieldMetaProps,
+  FieldValidator,
+  FormikContextType,
   getIn,
-  getValueFromEvent,
   isInputEvent,
   isObject,
   numberParseFn,
-} from './utils';
-import { FieldHelperProps } from './types';
+} from '@formik/core';
 
 export type UseFieldProps<V = any> = {
   /**
@@ -64,6 +61,32 @@ export type UseFieldProps<V = any> = {
   value?: any;
 };
 
+/**
+ * Returns Formik field value updater function
+ * @public
+ */
+export function useSetFieldValue<
+  Values
+>(): FormikContextType<Values>['setFieldValue'] {
+  return useFormikContextSelector<
+    Values,
+    FormikContextType<Values>['setFieldValue']
+  >(ctx => ctx.setFieldValue);
+}
+
+/**
+ * Returns Formik field touched updater function
+ * @public
+ */
+export function useSetFieldTouched<
+  Values
+>(): FormikContextType<Values>['setFieldTouched'] {
+  return useFormikContextSelector<
+    Values,
+    FormikContextType<Values>['setFieldTouched']
+  >(ctx => ctx.setFieldTouched);
+}
+
 export function useField<FieldValues = any>(
   nameOrOptions: string | UseFieldProps<FieldValues>
 ): [
@@ -80,7 +103,6 @@ export function useField<FieldValues = any>(
   const { name: fieldName, validate: validateFn } = props;
 
   const registerField = useFormikContextSelector(c => c.registerField);
-
   const unregisterField = useFormikContextSelector(c => c.unregisterField);
 
   React.useEffect(() => {
@@ -108,9 +130,12 @@ export function useField<FieldValues = any>(
 
   const meta = useFieldMeta(fieldName);
   const { value: valueState, touched: touchedState } = meta;
-  const setFieldValue = useFormikContextSelector(ctx => ctx.setFieldValue);
-  const setFieldTouched = useFormikContextSelector(ctx => ctx.setFieldTouched);
+  const setFieldValue = useSetFieldValue();
+  const setFieldTouched = useSetFieldTouched();
   const getFieldHelpers = useFormikContextSelector(ctx => ctx.getFieldHelpers);
+  const getValueFromEvent = useFormikContextSelector(
+    ctx => ctx.getValueFromEvent
+  );
 
   const field: FieldInputProps<any> = {
     name: fieldName,
@@ -195,10 +220,7 @@ export function useFieldValue<Values>(
     getIn(ctx.values, name)
   );
 
-  const set = useFormikContextSelector<
-    Values,
-    FormikContextType<Values>['setFieldValue']
-  >(ctx => ctx.setFieldValue);
+  const set = useSetFieldValue<Values>();
 
   const setState = React.useCallback(
     (value: any, shouldValidate?: boolean) => {
@@ -249,10 +271,7 @@ export function useFieldTouched<Values>(
     Boolean(getIn(ctx.touched, name))
   );
 
-  const set = useFormikContextSelector<
-    Values,
-    FormikContextType<Values>['setFieldTouched']
-  >(ctx => ctx.setFieldTouched);
+  const set = useSetFieldTouched<Values>();
 
   const setState = React.useCallback(
     (isTouched?: boolean, shouldValidate?: boolean) => {

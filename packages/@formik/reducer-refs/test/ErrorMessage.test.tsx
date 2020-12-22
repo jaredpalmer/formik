@@ -1,18 +1,12 @@
-import { FormikProps } from '@formik/core';
+import { FormikConfig, FormikProps } from '@formik/core';
+import { TestFormValues, testProps } from '@formik/core/test/constants';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Formik, ErrorMessage } from '../src';
-import { noop } from './testHelpers';
 
-interface TestFormValues {
-  name: string;
-  email: string;
-}
-
-const TestForm: React.SFC<any> = p => (
+const TestForm: React.FC<Partial<FormikConfig<TestFormValues>>> = p => (
   <Formik
-    onSubmit={noop}
-    initialValues={{ name: 'jared', email: 'hello@reason.nyc' }}
+    {...testProps}
     {...p}
   />
 );

@@ -8,8 +8,8 @@ export interface TestFormValues {
 
 export const testProps: FormikConfig<TestFormValues> = {
   initialValues: {
-    name: "johnrom",
-    email: "test@johnrom.com",
+    name: 'jared',
+    email: 'hello@reason.nyc',
   },
   onSubmit: noop
 }

@@ -9,7 +9,6 @@ import {
   SetFieldErrorFn,
   SetFieldTouchedFn,
   IsFormValidFn,
-  ValidateFormFn,
   ValidateFieldFn,
   ResetFormFn,
   SubmitFormFn,
@@ -20,6 +19,7 @@ import {
   HandleChangeFn,
   HandleSubmitFn,
   GetValueFromEventFn,
+  ValidateFormFn,
 } from './selectors';
 
 /**
@@ -228,6 +228,10 @@ export type FormikSharedConfig<Props = {}> = FormikValidationConfig & {
   enableReinitialize?: boolean;
 };
 
+export type ValidateFn<Values extends FormikValues> = (
+  values?: Values | undefined
+) => Promise<void | FormikErrors<Values>>;
+
 /**
  * <Formik /> props
  */
@@ -293,7 +297,7 @@ export interface FormikConfig<
    * Validation function. Must return an error object or promise that
    * throws an error object where that object keys map to corresponding value.
    */
-  validate?: (values: Values) => void | object | ValidateFormFn<Values>;
+  validate?: (values: Values) => void | object | ValidateFn<Values>;
 
   /** Inner ref */
   innerRef?: React.Ref<FormikCoreApi<Values>>;
@@ -310,7 +314,7 @@ export type FormikProps<Values> = FormikSharedConfig &
   FieldHelpers &
   FormikHandlers &
   FormikComputedState &
-  FormikRegistration & { submitForm: () => Promise<any> };
+  FormikRegistration;
 
 /** Internal Formik registration methods that get passed down as props */
 export interface FormikRegistration {

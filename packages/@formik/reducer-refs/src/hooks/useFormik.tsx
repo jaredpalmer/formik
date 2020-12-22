@@ -21,8 +21,7 @@ import {
   UnsubscribeFn,
 } from '../types';
 import { formikRefReducer } from '../ref-reducer';
-import { selectRefResetForm } from '../ref-selectors';
-import { selectGetFieldMeta } from 'packages/@formik/core/dist';
+import { selectRefGetFieldMeta, selectRefResetForm } from '../ref-selectors';
 
 export const useFormik = <Values extends FormikValues = FormikValues>({
   validateOnChange = true,
@@ -134,7 +133,7 @@ export const useFormik = <Values extends FormikValues = FormikValues>({
     isMounted,
   });
 
-  const getFieldMeta = useEventCallback(selectGetFieldMeta(getState), [
+  const getFieldMeta = useEventCallback(selectRefGetFieldMeta(getState), [
     getState,
   ]);
 

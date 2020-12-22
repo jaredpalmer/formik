@@ -186,8 +186,8 @@ export const selectRunAllValidations = <Values extends FormikValues>(
 };
 
 export type ValidateFormFn<Values extends FormikValues> = (
-  values?: Values | undefined
-) => Promise<void | FormikErrors<Values>>;
+  values?: Values
+) => Promise<FormikErrors<Values>>;
 
 export const selectValidateForm = <Values extends FormikValues>(
   getState: GetStateFn<Values>,
@@ -618,13 +618,13 @@ export type SubmitFormFn = () => Promise<any>;
 export const selectSubmitForm = <Values extends FormikValues>(
   getState: GetStateFn<Values>,
   dispatch: AnyDispatch<Values>,
-  validateFormWithHighPriority: ValidationHandler<Values>,
+  validateForm: ValidateFormFn<Values>,
   executeSubmit: () => void | Promise<any>,
   isMounted: React.MutableRefObject<boolean>
 ): SubmitFormFn => () => {
   dispatch({ type: 'SUBMIT_ATTEMPT' });
 
-  return validateFormWithHighPriority(getState().values).then(
+  return validateForm(getState().values).then(
     (combinedErrors: FormikErrors<Values>) => {
       // In case an error was thrown and passed to the resolved Promise,
       // `combinedErrors` can be an instance of an Error. We need to check

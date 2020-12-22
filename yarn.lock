@@ -15541,11 +15541,6 @@ url@^0.11.0:
     punycode "1.3.2"
     querystring "0.2.0"
 
-use-context-selector@^1.1.2:
-  version "1.3.4"
-  resolved "https://registry.yarnpkg.com/use-context-selector/-/use-context-selector-1.3.4.tgz#918dde11a8303485e9046c95713936424f04da8e"
-  integrity sha512-grPPE71izEavAv39WF1r1QPZ6Ya41rnjTeLQGMP5yz3VShGQKMDThKXMRUdrDE71pOoaD4pvhFTsDbTjBqxdWg==
-
 use-context-selector@^1.2.10:
   version "1.2.11"
   resolved "https://registry.yarnpkg.com/use-context-selector/-/use-context-selector-1.2.11.tgz#2b7dd6ed045e4594c1936134f1465d46d01267e7"

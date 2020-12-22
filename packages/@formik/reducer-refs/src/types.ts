@@ -3,7 +3,7 @@ import {
   FormikCoreApi,
   FormikState,
   FieldMetaProps,
-  ValidateFormFn,
+  ValidationHandler,
   FormikValidationConfig,
   FormikErrors,
   FormikTouched,
@@ -32,5 +32,5 @@ export type FormikRefApi<Values extends FormikValues> = FormikCoreApi<Values> &
   FormikValidationConfig & {
     getState: GetRefStateFn<Values>;
     addFormEffect: (effect: FormEffect<Values>) => UnsubscribeFn;
-    validateForm: ValidateFormFn<Values>;
+    validateForm: ValidationHandler<Values>;
   };

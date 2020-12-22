@@ -5,6 +5,7 @@ import {
   selectSetErrors,
   selectSetStatus,
   selectSetSubmitting,
+  selectGetFieldHelpers,
 } from './../selectors';
 import {
   GetStateFn,
@@ -14,7 +15,6 @@ import {
   FormikConfig,
   FieldRegistry,
   FormikMessage,
-  FieldHelperProps,
   FormikCoreApi,
   FormikRefs,
   FieldHelpers,

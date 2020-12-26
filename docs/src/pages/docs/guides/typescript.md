@@ -26,7 +26,7 @@ interface MyFormValues {
   firstName: string;
 }
 
-export const MyApp: React.ReactElement = () => {
+export const MyApp = (): React.ReactElement => {
   const initialValues: MyFormValues = { firstName: '' };
   return (
     <div>

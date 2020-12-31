@@ -1,5 +1,6 @@
 import * as React from 'react';
 import cloneDeep from 'lodash/cloneDeep';
+
 import { connect } from './connect';
 import {
   FormikContextType,
@@ -15,6 +16,7 @@ import {
   isEmptyArray,
 } from './utils';
 import isEqual from 'react-fast-compare';
+import { isObject } from './utils';
 
 export type FieldArrayRenderProps = ArrayHelpers & {
   form: FormikProps<any>;
@@ -118,6 +120,24 @@ const copyArrayLike = (arrayLike: ArrayLike<any>) => {
   }
 };
 
+const createAlterationHandler = (
+  alteration: boolean | Function,
+  defaultFunction: Function
+) => {
+  const fn = typeof alteration === 'function' ? alteration : defaultFunction;
+
+  return (data: any | any[]) => {
+    if (Array.isArray(data) || isObject(data)) {
+      const clone = copyArrayLike(data);
+      return fn(clone);
+    }
+
+    // This can be assumed to be a primitive, which
+    // is a case for top level validation errors
+    return data;
+  };
+};
+
 class FieldArrayInner<Values = {}> extends React.Component<
   FieldArrayConfig & { formik: FormikContextType<Values> },
   {}
@@ -160,9 +180,8 @@ class FieldArrayInner<Values = {}> extends React.Component<
       formik: { setFormikState },
     } = this.props;
     setFormikState((prevState: FormikState<any>) => {
-      let updateErrors = typeof alterErrors === 'function' ? alterErrors : fn;
-      let updateTouched =
-        typeof alterTouched === 'function' ? alterTouched : fn;
+      let updateErrors = createAlterationHandler(alterErrors, fn);
+      let updateTouched = createAlterationHandler(alterTouched, fn);
 
       // values fn should be executed before updateErrors and updateTouched,
       // otherwise it causes an error with unshift.
@@ -305,7 +324,7 @@ class FieldArrayInner<Values = {}> extends React.Component<
     this.updateArrayField(
       // so this gets call 3 times
       (array: any[]) => {
-        const tmp = array;
+        const tmp = array.slice();
         if (!result) {
           result = tmp && tmp.pop && tmp.pop();
         }

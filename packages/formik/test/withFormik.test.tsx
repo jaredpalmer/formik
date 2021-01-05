@@ -133,16 +133,34 @@ describe('withFormik()', () => {
     );
   });
 
-  it('calls validationSchema', async () => {
-    const validate = jest.fn(() => Promise.resolve());
+  it('calls validationSchema on submitForm', async () => {
+    const validationSchema = jest.fn(() => Yup.object());
     const { getProps } = renderWithFormik({
-      validationSchema: { validate },
+      validationSchema,
     });
-
     act(() => {
       getProps().submitForm();
     });
-    await waitFor(() => expect(validate).toHaveBeenCalled());
+    await waitFor(() => expect(validationSchema).toHaveBeenCalled());
+  });
+
+  it(`calls validationSchema on validateField`, async () => {
+    const errorMessage = 'Name must be 100 characters in length';
+    const validationSchema = jest.fn(() =>
+      Yup.object({
+        name: Yup.string().min(100, errorMessage),
+      })
+    );
+    const { getProps } = renderWithFormik({
+      validationSchema,
+    });
+
+    await act(async () => {
+      const error = await getProps().validateField('name');
+      expect(error).toEqual(errorMessage);
+    });
+
+    await waitFor(() => expect(validationSchema).toHaveBeenCalled());
   });
 
   it('calls validationSchema function with props', async () => {

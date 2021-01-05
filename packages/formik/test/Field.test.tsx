@@ -414,8 +414,9 @@ describe('Field / FastField', () => {
 
         rerender();
 
-        act(() => {
-          getFormProps().validateField('name');
+        await act(async () => {
+          const error = await getFormProps().validateField('name');
+          expect(error).toEqual(errorMessage);
         });
 
         await waitFor(() =>

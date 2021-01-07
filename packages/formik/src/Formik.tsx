@@ -14,6 +14,7 @@ import {
   FieldInputProps,
   FormikHelpers,
   FormikHandlers,
+  FormikContextType,
 } from './types';
 import {
   isFunction,
@@ -137,7 +138,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   enableReinitialize = false,
   onSubmit,
   ...rest
-}: FormikConfig<Values>) {
+}: FormikConfig<Values>): FormikContextType<Values> {
   const props = {
     validateOnChange,
     validateOnBlur,
@@ -949,7 +950,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     [isInitialValid, dirty, state.errors, props]
   );
 
-  const ctx = {
+  const ctx: FormikContextType<Values> = {
     ...state,
     initialValues: initialValues.current,
     initialErrors: initialErrors.current,
@@ -982,6 +983,8 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     validateOnBlur,
     validateOnChange,
     validateOnMount,
+    validate: props.validate,
+    validationSchema: props.validationSchema,
   };
 
   return ctx;

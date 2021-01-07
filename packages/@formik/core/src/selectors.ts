@@ -283,7 +283,7 @@ export const selectResetForm = <Values extends FormikValues>(
   }
 };
 
-export type HandleResetFn = (e: any) => void;
+export type HandleResetFn = (e?: any) => void;
 
 export const selectHandleReset = <
   Values extends FormikValues,
@@ -526,19 +526,40 @@ export const selectExecuteChange = <Values extends FormikValues>(
   }
 };
 
-export type HandleChangeFn = (
-  eventOrPath: string | React.ChangeEvent<any>
-) => void | ((eventOrTextValue: string | React.ChangeEvent<any>) => void);
+/**
+ * Event callback returned by `formik.handleChange`.
+ */
+export type HandleChangeEventFn = (event: React.ChangeEvent<any>) => void;
 
+/**
+ * Type of `formik.handleChange`.
+ * May be an event callback, or accept a field name and return an event callback.
+ */
+export type HandleChangeFn = {
+  (eventOrPath: React.ChangeEvent<any>): void;
+  // Must remain the same as HandleChangeEventFn
+  (event: string): HandleChangeEventFn;
+};
+
+/**
+ * Note: TypeScript doesn't currently allow you to infer overloads from a Type.
+ *
+ * Instead, we make sure this function returns any possibility of HandleChangeFn,
+ * and then cast it.
+ */
 export const selectHandleChange = (
   executeChange: ReturnType<typeof selectExecuteChange>
-): HandleChangeFn => eventOrPath => {
-  if (isString(eventOrPath)) {
-    return event => executeChange(event, eventOrPath);
-  } else {
-    return executeChange(eventOrPath);
-  }
-};
+) =>
+  ((
+    eventOrPath: string | React.ChangeEvent<any>
+  ): HandleChangeEventFn | void => {
+    if (isString(eventOrPath)) {
+      return (event: string | React.ChangeEvent<any>) =>
+        executeChange(event, eventOrPath);
+    } else {
+      return executeChange(eventOrPath);
+    }
+  }) as HandleChangeFn;
 
 export type SetFieldTouchedFn<Values extends FormikValues> = (
   field: string,
@@ -600,18 +621,39 @@ export const selectExecuteBlur = <Values extends FormikValues>(
   setFieldTouched(field, true);
 };
 
-export type HandleBlurFn = (eventOrString: any) => void | ((e: any) => void);
+/**
+ * Event callback returned by `formik.handleBlur`.
+ */
+export type HandleBlurEventFn = (event: React.FocusEvent<any>) => void;
+
+/**
+ * Type of `formik.handleBlur`.
+ * May be an event callback, or accept a field name and return an event callback.
+ */
+export type HandleBlurFn = {
+  (eventOrString: string): HandleBlurEventFn;
+  // Must remain the same as HandleBlurEventFn
+  (event: React.FocusEvent<any>): void;
+};
+
+/**
+ * Note: TypeScript doesn't currently allow you to infer overloads from a Type.
+ *
+ * Instead, we make sure this function returns any possibility of HandleBlurFn,
+ * and then cast it.
+ */
 export const selectHandleBlur = (
   executeBlur: ReturnType<typeof selectExecuteBlur>
-): HandleBlurFn => eventOrString => {
-  if (isString(eventOrString)) {
-    return event => executeBlur(event, eventOrString);
-  } else {
-    executeBlur(eventOrString);
-  }
+) =>
+  ((eventOrPath: string | React.FocusEvent<any>): HandleBlurEventFn | void => {
+    if (isString(eventOrPath)) {
+      return (event: React.FocusEvent<any>) => executeBlur(event, eventOrPath);
+    } else {
+      executeBlur(eventOrPath);
+    }
 
-  return;
-};
+    return;
+  }) as HandleBlurFn;
 
 export type SubmitFormFn = () => Promise<any>;
 

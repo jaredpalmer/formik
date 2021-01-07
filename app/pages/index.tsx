@@ -17,6 +17,11 @@ function Home() {
           </Link>
         </li>
         <li>
+          <Link href="/components">
+            <a>Components</a>
+          </Link>
+        </li>
+        <li>
           <Link href="/format">
             <a>Parse + Format</a>
           </Link>

@@ -5,7 +5,6 @@ import {
   GenericFieldHTMLAttributes,
   isEmptyChildren,
   isFunction,
-  SharedFieldProps,
 } from '@formik/core';
 import invariant from 'tiny-warning';
 import { useField, UseFieldProps } from './hooks';
@@ -15,8 +14,31 @@ export type FastFieldProps<FieldValue = any> = {
   meta: FieldMetaProps<FieldValue>;
 };
 
+export interface FastFieldRenderProps<Value = any> {
+  /**
+   * Field component to render. Can either be a string like 'select' or a component.
+   */
+  component?: string | React.ComponentType<FastFieldProps<Value>>;
+
+  /**
+   * Render prop (works like React router's <Route render={props =>} />)
+   * @deprecated
+   */
+  render?: (props: FastFieldProps<Value>) => React.ReactNode;
+
+  /**
+   * Children render function <Field name>{props => ...}</Field>)
+   */
+  children?:
+    | ((props: FastFieldProps<Value>) => React.ReactNode)
+    | React.ReactNode;
+
+  /** Inner ref */
+  innerRef?: (instance: any) => void;
+}
+
 export type FastFieldConfig<V = any> = UseFieldProps<V> &
-  SharedFieldProps<FastFieldProps<V>> & {
+  FastFieldRenderProps<V> & {
     /**
      * Override FastField's default shouldComponentUpdate
      * @deprecated

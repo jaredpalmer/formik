@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 
-import { FieldArray, Formik, isFunction } from '../src';
+import { FieldArray, Formik } from '../src';
+import { isFunction } from '@formik/core';
 
 const noop = () => {};
 

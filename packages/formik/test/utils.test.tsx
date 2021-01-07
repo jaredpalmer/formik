@@ -6,7 +6,7 @@ import {
   isPromise,
   getActiveElement,
   isNaN,
-} from '../src/utils';
+} from '@formik/core';
 
 describe('utils', () => {
   describe('isEmptyArray', () => {

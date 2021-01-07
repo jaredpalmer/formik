@@ -2,8 +2,9 @@ import * as React from 'react';
 import { act, render, waitFor } from '@testing-library/react';
 import * as Yup from 'yup';
 
-import { withFormik, FormikProps } from '../src';
+import { withFormik } from '../src';
 import { noop } from './testHelpers';
+import { FormikProps } from '@formik/core';
 
 interface Values {
   name: string;
@@ -77,6 +78,7 @@ describe('withFormik()', () => {
       },
       initialErrors: {},
       initialTouched: {},
+      initialStatus: undefined,
       values: {
         name: InitialValues.name,
       },
@@ -87,6 +89,7 @@ describe('withFormik()', () => {
       handleReset: expect.any(Function),
       handleSubmit: expect.any(Function),
       isSubmitting: false,
+      isFormValid: expect.any(Function),
       isValid: true,
       isValidating: false,
       getFieldProps: expect.any(Function),
@@ -98,6 +101,7 @@ describe('withFormik()', () => {
       setFieldError: expect.any(Function),
       setFieldTouched: expect.any(Function),
       setFieldValue: expect.any(Function),
+      getValueFromEvent: expect.any(Function),
       setFormikState: expect.any(Function),
       setStatus: expect.any(Function),
       setSubmitting: expect.any(Function),
@@ -106,6 +110,7 @@ describe('withFormik()', () => {
       submitCount: 0,
       submitForm: expect.any(Function),
       touched: {},
+      status: undefined,
       unregisterField: expect.any(Function),
       validateField: expect.any(Function),
       validateForm: expect.any(Function),
@@ -180,6 +185,7 @@ describe('withFormik()', () => {
         { name: 'jared' },
         {
           props: myProps,
+          isFormValid: expect.any(Function),
           resetForm: expect.any(Function),
           setErrors: expect.any(Function),
           setFieldError: expect.any(Function),

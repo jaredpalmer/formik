@@ -23,20 +23,20 @@ import {
 import { formikRefReducer } from '../ref-reducer';
 import { selectRefGetFieldMeta, selectRefResetForm } from '../ref-selectors';
 
-export const useFormik = <Values extends FormikValues = FormikValues>({
-  validateOnChange = true,
-  validateOnBlur = true,
-  validateOnMount = false,
-  isInitialValid,
-  enableReinitialize = false,
-  onSubmit,
-  ...rest
-}: FormikConfig<Values, FormikRefState<Values>>): FormikRefApi<Values> => {
+export const useFormik = <Values extends FormikValues = FormikValues>(
+  rawProps: FormikConfig<Values, FormikRefState<Values>>
+): FormikRefApi<Values> => {
+  const {
+    validateOnChange = true,
+    validateOnBlur = true,
+    validateOnMount = false,
+    enableReinitialize = false,
+    ...rest
+  } = rawProps;
   const props = {
     validateOnChange,
     validateOnBlur,
     validateOnMount,
-    onSubmit,
     ...rest,
   };
 
@@ -44,7 +44,7 @@ export const useFormik = <Values extends FormikValues = FormikValues>({
     // eslint-disable-next-line react-hooks/rules-of-hooks
     React.useEffect(() => {
       invariant(
-        typeof isInitialValid === 'undefined',
+        typeof props.isInitialValid === 'undefined',
         'isInitialValid has been deprecated and will be removed in future versions of Formik. Please use initialErrors or validateOnMount instead.'
       );
       // eslint-disable-next-line

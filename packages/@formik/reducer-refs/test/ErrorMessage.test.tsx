@@ -1,26 +1,28 @@
-import { FormikConfig, FormikProps } from '@formik/core';
-import { TestFormValues, testProps } from '@formik/core/test/constants';
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import { act, render } from '@testing-library/react';
 import { Formik, ErrorMessage } from '../src';
+import { noop } from './testHelpers';
+import { FormikProps } from '@formik/core';
 
-const TestForm: React.FC<Partial<FormikConfig<TestFormValues>>> = p => (
+interface TestFormValues {
+  name: string;
+  email: string;
+}
+
+const TestForm: React.FC<any> = p => (
   <Formik
-    {...testProps}
+    onSubmit={noop}
+    initialValues={{ name: 'jared', email: 'hello@reason.nyc' }}
     {...p}
   />
 );
 
-describe('<ErrorMessage />', () => {
-  const node = document.createElement('div');
-  afterEach(() => {
-    ReactDOM.unmountComponentAtNode(node);
-  });
+fdescribe('<ErrorMessage />', () => {
   it('renders with children as a function', async () => {
     let actual: any; /** ErrorMessage ;) */
     let actualFProps: any;
     let message = 'Wrong';
-    ReactDOM.render(
+    render(
       <TestForm
         render={(fProps: FormikProps<TestFormValues>) => {
           actualFProps = fProps;
@@ -32,14 +34,20 @@ describe('<ErrorMessage />', () => {
             </div>
           );
         }}
-      />,
-      node
+      />
     );
 
-    actualFProps.setFieldError('email', message);
+    await act(async () => {
+      await actualFProps.setFieldError('email', message);
+    });
+
     // Only renders if Field has been visited.
     expect(actual).toEqual(undefined);
-    actualFProps.setFieldTouched('email');
+
+    await act(async () => {
+      await actualFProps.setFieldTouched('email');
+    });
+
     // Renders after being visited with an error.
     expect(actual).toEqual(message);
   });

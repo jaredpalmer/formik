@@ -29,7 +29,8 @@
                 "--",
                 "--runInBand",
                 // when filtering, every package not matching will have no tests
-                "--passWithNoTests"
+                "--passWithNoTests",
+                "--testTimeout=9999"
             ],
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",

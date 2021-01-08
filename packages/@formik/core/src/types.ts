@@ -381,6 +381,13 @@ export interface FieldHelperProps<Value> {
   setError: (value: Value) => void;
 }
 
+export type FieldOnChangeProp = (
+  eventOrValue: React.ChangeEvent<any> | any
+) => void;
+export type FieldOnBlurProp = (
+  eventOrValue: React.ChangeEvent<any> | any
+) => void;
+
 /** Field input value, name, and event handlers */
 export interface FieldInputProps<Value> {
   /** Value of the field */
@@ -392,9 +399,9 @@ export interface FieldInputProps<Value> {
   /** Is the field checked? */
   checked?: boolean;
   /** Change event handler */
-  onChange: FormikHandlers['handleChange'];
+  onChange: FieldOnChangeProp;
   /** Blur event handler */
-  onBlur: FormikHandlers['handleBlur'];
+  onBlur: FieldOnBlurProp;
 }
 
 export type FieldValidator = (
@@ -408,27 +415,6 @@ export interface FieldRegistry {
     validate: (value: any) => string | Promise<string> | undefined;
   };
 }
-
-export type SharedFieldProps<T = any> = {
-  /**
-   * Field component to render. Can either be a string like 'select' or a component.
-   */
-  component?: string | React.ComponentType<T>;
-
-  /**
-   * Render prop (works like React router's <Route render={props =>} />)
-   * @deprecated
-   */
-  render?: (props: T) => React.ReactNode;
-
-  /**
-   * Children render function <Field name>{props => ...}</Field>)
-   */
-  children?: ((props: T) => React.ReactNode) | React.ReactNode;
-
-  /** Inner ref */
-  innerRef?: (instance: any) => void;
-};
 
 export type ValidationHandler<Values extends FormikValues> = (
   values: Values,

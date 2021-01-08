@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { act, render } from '@testing-library/react';
-import { Formik, FormikProps, ErrorMessage } from '../src';
+import { Formik, ErrorMessage } from '../src';
 import { noop } from './testHelpers';
+import { FormikProps } from '@formik/core';
 
 interface TestFormValues {
   name: string;

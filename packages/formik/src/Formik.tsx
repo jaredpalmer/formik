@@ -23,8 +23,6 @@ export function useFormik<Values extends FormikValues = FormikValues>(
   rawProps: FormikConfig<Values>
 ): FormikProps<Values> {
   const {
-    onSubmit,
-    isInitialValid,
     validateOnChange = true,
     validateOnBlur = true,
     validateOnMount = false,
@@ -35,7 +33,6 @@ export function useFormik<Values extends FormikValues = FormikValues>(
     validateOnChange,
     validateOnBlur,
     validateOnMount,
-    onSubmit,
     ...rest,
   };
 
@@ -53,7 +50,7 @@ export function useFormik<Values extends FormikValues = FormikValues>(
     // eslint-disable-next-line react-hooks/rules-of-hooks
     React.useEffect(() => {
       invariant(
-        typeof isInitialValid === 'undefined',
+        typeof props.isInitialValid === 'undefined',
         'isInitialValid has been deprecated and will be removed in future versions of Formik. Please use initialErrors or validateOnMount instead.'
       );
       // eslint-disable-next-line
@@ -84,7 +81,7 @@ export function useFormik<Values extends FormikValues = FormikValues>(
   const formikApi = useFormikCore<Values, FormikState<Values>>(
     getState,
     dispatch,
-    rawProps,
+    props,
     {
       initialValues,
       initialErrors,

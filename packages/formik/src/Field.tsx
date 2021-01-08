@@ -5,24 +5,52 @@ import {
   GenericFieldHTMLAttributes,
   isEmptyChildren,
   isFunction,
-  SharedFieldProps,
 } from '@formik/core';
 import * as React from 'react';
 import invariant from 'tiny-warning';
 import { useFormikContext } from './FormikContext';
 import { useField, UseFieldProps } from './hooks';
 
-export interface FieldProps<V = any, FormValues = any> {
-  field: FieldInputProps<V>;
+export interface FieldProps<Value = any, FormValues = any> {
+  field: FieldInputProps<Value>;
   form: FormikProps<FormValues>; // if ppl want to restrict this for a given form, let them.
-  meta: FieldMetaProps<V>;
+  meta: FieldMetaProps<Value>;
+}
+
+export type FieldComponentProps<Value = any, FormValues = any> = Omit<
+  FieldProps<Value, FormValues>,
+  'meta'
+>;
+
+export interface FieldRenderProps<Value = any, FormValues = any> {
+  /**
+   * Field component to render. Can either be a string like 'select' or a component.
+   */
+  component?:
+    | string
+    | React.ComponentType<FieldComponentProps<Value, FormValues>>;
+
+  /**
+   * Render prop (works like React router's <Route render={props =>} />)
+   * @deprecated
+   */
+  render?: (props: FieldProps<Value, FormValues>) => React.ReactNode;
+
+  /**
+   * Children render function <Field name>{props => ...}</Field>)
+   */
+  children?:
+    | ((props: FieldProps<Value, FormValues>) => React.ReactNode)
+    | React.ReactNode;
+
+  /** Inner ref */
+  innerRef?: (instance: any) => void;
 }
 
 export type FieldConfig<
   FieldValue = any,
   FormValues = any
-> = UseFieldProps<FieldValue> &
-  SharedFieldProps<FieldProps<FieldValue, FormValues>>;
+> = UseFieldProps<FieldValue> & FieldRenderProps<FieldValue, FormValues>;
 
 export function Field<FieldValue = any, FormValues = any>({
   render,
@@ -64,6 +92,7 @@ export function Field<FieldValue = any, FormValues = any>({
     validationSchema: _validationSchema,
     ...formik
   } = useFormikContext<FormValues>();
+
   const legacyBag = { field, form: formik };
 
   if (render) {
@@ -74,6 +103,25 @@ export function Field<FieldValue = any, FormValues = any>({
   if (isFunction(children)) {
     // @ts-ignore @todo types
     return children({ ...legacyBag, meta });
+  }
+
+  if (component) {
+    // This behavior is backwards compat with earlier Formik 0.9 to 1.x
+    if (typeof component === 'string') {
+      const { innerRef, ...rest } = props;
+      return React.createElement(
+        component,
+        { ref: innerRef, ...field, ...rest },
+        children
+      );
+    }
+
+    // We don't pass `meta` for backwards compat
+    return React.createElement(
+      component,
+      { field, form: formik as any, ...props },
+      children
+    );
   }
 
   // default to input here so we can check for both `as` and `children` above

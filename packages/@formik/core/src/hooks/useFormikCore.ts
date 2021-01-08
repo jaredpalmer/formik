@@ -164,9 +164,12 @@ export const useFormikCore = <
     selectExecuteChange(getState, setFieldValue),
     [getState, setFieldValue]
   );
+
+  // We have to help this cast.
   const handleChange = useEventCallback(selectHandleChange(executeChange), [
     executeChange,
-  ]);
+  ]) as ReturnType<typeof selectHandleChange>;
+
   const setFieldTouched = useEventCallback(
     selectSetFieldTouched(
       getState,
@@ -181,9 +184,10 @@ export const useFormikCore = <
     setFieldTouched,
   ]);
 
+  // We have to help this cast.
   const handleBlur = useEventCallback(selectHandleBlur(executeBlur), [
     executeBlur,
-  ]);
+  ]) as ReturnType<typeof selectHandleBlur>;
 
   const setFormikState = React.useCallback(selectSetFormikState(dispatch), [
     getState,

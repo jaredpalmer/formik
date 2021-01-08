@@ -8,13 +8,13 @@ import {
 } from '@testing-library/react';
 import * as Yup from 'yup';
 
-import {
-  Formik,
-  FormikConfig,
-  FormikProps,
-  prepareDataForValidation,
-} from '../src';
+import { Formik } from '../src';
 import { noop } from './testHelpers';
+import {
+  FormikProps,
+  FormikConfig,
+  prepareDataForValidation,
+} from '@formik/core';
 
 jest.spyOn(global.console, 'warn');
 

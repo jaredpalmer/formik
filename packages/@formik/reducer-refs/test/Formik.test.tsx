@@ -1,11 +1,13 @@
-import { FormikConfig, FormikProps, prepareDataForValidation } from '@formik/core';
+import {
+  FormikConfig,
+  FormikProps,
+  prepareDataForValidation,
+} from '@formik/core';
 import * as React from 'react';
 import { render, fireEvent, wait } from 'react-testing-library';
 import * as Yup from 'yup';
 
-import {
-  Formik,
-} from '../src';
+import { Formik } from '../src';
 import { noop } from './testHelpers';
 
 jest.spyOn(global.console, 'warn');
@@ -240,7 +242,7 @@ describe('<Formik>', () => {
   });
 
   describe('handleBlur', () => {
-    it('sets touched state', () => {
+    it('sets touched state', async () => {
       const { getProps, getByTestId } = renderFormik<Values>();
       expect(getProps().touched.name).toEqual(undefined);
 
@@ -250,10 +252,13 @@ describe('<Formik>', () => {
           name: 'name',
         },
       });
-      expect(getProps().touched.name).toEqual(true);
+
+      await wait(() => {
+        expect(getProps().touched.name).toEqual(true);
+      });
     });
 
-    it('updates touched state via `name` instead of `id` attribute when both are present', () => {
+    it('updates touched state via `name` instead of `id` attribute when both are present', async () => {
       const { getProps, getByTestId } = renderFormik<Values>();
       expect(getProps().touched.name).toEqual(undefined);
 
@@ -264,7 +269,10 @@ describe('<Formik>', () => {
           name: 'name',
         },
       });
-      expect(getProps().touched.name).toEqual(true);
+
+      await wait(() => {
+        expect(getProps().touched.name).toEqual(true);
+      });
     });
 
     it('updates touched when passed a string (overloaded)', () => {

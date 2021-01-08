@@ -97,22 +97,15 @@ export function FastField<V = any>({
     return children({ field, meta });
   }
 
-  const {
-    innerRef,
-    parse,
-    format,
-    formatOnBlur,
-    validate,
-    onChange,
-    ...rest
-  } = props;
+  const { parse, format, formatOnBlur, validate, onChange, ...rest } = props;
 
   if (component) {
     // This behavior is backwards compat with earlier Formik 0.9 to 1.x
     if (typeof component === 'string') {
+      const { innerRef, ...stringRest } = rest;
       return React.createElement(
         component,
-        { ref: innerRef, ...field, ...rest },
+        { ref: innerRef, ...field, ...stringRest },
         children
       );
     }
@@ -123,9 +116,10 @@ export function FastField<V = any>({
   const asElement = is || 'input';
 
   if (typeof asElement === 'string') {
+    const { innerRef, ...stringRest } = rest;
     return React.createElement(
       asElement,
-      { ref: innerRef, ...field, ...rest },
+      { ref: innerRef, ...field, ...stringRest },
       children
     );
   }

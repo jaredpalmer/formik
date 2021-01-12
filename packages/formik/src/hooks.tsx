@@ -15,13 +15,13 @@ import {
   numberParseFn,
 } from '@formik/core';
 
-export type UseFieldProps<V = any> = {
+export type UseFieldProps<Value = any> = {
   /**
    * Component to render. Can either be a string e.g. 'select', 'input', or 'textarea', or a component.
    */
   as?:
     | string
-    | React.ComponentType<FieldInputProps<V>>
+    | React.ComponentType<FieldInputProps<Value>>
     | React.ComponentType
     | React.ForwardRefExoticComponent<any>;
   /**
@@ -32,12 +32,12 @@ export type UseFieldProps<V = any> = {
   /**
    * Function to parse raw input value before setting it to state
    */
-  parse?: (value: unknown, name: string) => V;
+  parse?: (value: unknown, name: string) => Value;
 
   /**
    * Function to transform value passed to input
    */
-  format?: (value: V, name: string) => any;
+  format?: (value: Value, name: string) => any;
 
   /**
    * Wait until blur event before formatting input value?
@@ -58,7 +58,7 @@ export type UseFieldProps<V = any> = {
   type?: string;
 
   /** Field value */
-  value?: any;
+  value?: Value;
 };
 
 /**
@@ -87,18 +87,18 @@ export function useSetFieldTouched<
   >(ctx => ctx.setFieldTouched);
 }
 
-export function useField<FieldValues = any>(
-  nameOrOptions: string | UseFieldProps<FieldValues>
+export function useField<Value = any, FieldValues = any>(
+  nameOrOptions: string | UseFieldProps<Value>
 ): [
-  FieldInputProps<FieldValues>,
+  FieldInputProps<Value>,
   FieldMetaProps<FieldValues>,
-  FieldHelperProps<FieldValues>
+  FieldHelperProps<Value>
 ] {
   const isAnObject = isObject(nameOrOptions);
   // Normalize propsOrFieldName to FieldConfig<Value>
-  const props: UseFieldProps<FieldValues> = isAnObject
-    ? (nameOrOptions as UseFieldProps<FieldValues>)
-    : ({ name: nameOrOptions as string } as UseFieldProps<FieldValues>);
+  const props: UseFieldProps<Value> = isAnObject
+    ? (nameOrOptions as UseFieldProps<Value>)
+    : ({ name: nameOrOptions as string } as UseFieldProps<Value>);
 
   const { name: fieldName, validate: validateFn } = props;
 
@@ -176,7 +176,7 @@ export function useField<FieldValues = any>(
     parse = /number|range/.test(type ?? '') ? numberParseFn : defaultParseFn,
     format = defaultFormatFn,
     formatOnBlur = false,
-  } = nameOrOptions as UseFieldProps<FieldValues>; // @todo why is this type failing?
+  } = nameOrOptions as UseFieldProps<Value>; // @todo why is this type failing?
 
   if (type === 'checkbox') {
     if (valueProp === undefined) {

@@ -378,7 +378,7 @@ export interface FieldHelperProps<Value> {
   /** Set the field's touched value */
   setTouched: (value: boolean, shouldValidate?: boolean) => void;
   /** Set the field's error value */
-  setError: (value: Value) => void;
+  setError: (error: string) => void;
 }
 
 export type FieldOnChangeProp = (

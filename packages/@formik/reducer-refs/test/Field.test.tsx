@@ -15,13 +15,15 @@ import {
   FastFieldProps,
   FieldConfig,
   FieldComponentProps,
+  FastFieldConfig,
+  useFormikState,
 } from '../src';
 import { noop } from './testHelpers';
 import { FormikConfig, FormikProps } from '@formik/core';
+import { FormikRefApi, FormikRefState } from '../src/types';
 
 const initialValues = { name: 'jared', email: 'hello@reason.nyc' };
 type Values = typeof initialValues;
-type FastFieldConfig = FieldConfig;
 
 type $FixMe = any;
 
@@ -115,6 +117,8 @@ describe('Field / FastField', () => {
       let fullInjectedProps: FieldProps[] = [];
       let componentInjectedProps: FieldComponentProps[] = [];
       let asInjectedProps: Partial<FieldProps['field']> = {};
+      let formikApi: FormikRefApi<any> | undefined;
+      let formikState: FormikRefState<any> | undefined;
 
       const RenderComponent = (props: FieldProps) => {
         fullInjectedProps.push(props);
@@ -128,10 +132,14 @@ describe('Field / FastField', () => {
         return <div data-testid="child">{TEXT}</div>;
       };
 
-      const AsComponent = (props: FieldProps['field']) =>
-        (asInjectedProps = props) && <div data-testid="child">{TEXT}</div>;
+      const AsComponent = (props: FieldProps['field']) => {
+        [formikState, formikApi] = useFormikState();
+        asInjectedProps = props;
 
-      const { getFormProps, queryAllByText } = renderForm(
+        return <div data-testid="child">{TEXT}</div>;
+      };
+
+      const { queryAllByText } = renderForm(
         <>
           <Field name="name" children={RenderComponent} />
           <Field name="name" render={RenderComponent} />
@@ -145,7 +153,6 @@ describe('Field / FastField', () => {
         expect(props.field.value).toBe('jared');
         expect(props.field.onChange).toEqual(expect.any(Function));
         expect(props.field.onBlur).toEqual(expect.any(Function));
-        expect(props.form).toEqual(getFormProps());
       });
 
       fullInjectedProps.forEach(props => {
@@ -153,12 +160,14 @@ describe('Field / FastField', () => {
         expect(props.meta.error).toBeUndefined();
         expect(props.meta.touched).toBe(false);
         expect(props.meta.initialValue).toEqual('jared');
+        expect(props.form).toEqual({ ...formikApi, ...formikState });
       });
 
       componentInjectedProps.forEach((props: any) => {
         // Ensure that we do not pass through `meta` to
         // <Field component> or <Field render>
         expect(props.meta).toBeUndefined();
+        expect(props.form).toEqual(formikApi);
       });
 
       expect(asInjectedProps.name).toBe('name');
@@ -258,7 +267,7 @@ describe('Field / FastField', () => {
 
     cases('forwards innerRef to React component', async renderField => {
       let injected: any; /** FieldProps ;) */
-      const Component = (props: Omit<FieldProps, 'meta'>) =>
+      const Component = (props: FieldComponentProps) =>
         (injected = props) && null;
 
       const innerRef = jest.fn();

@@ -5,6 +5,7 @@ import {
   FieldInputProps,
   FieldMetaProps,
   GenericFieldHTMLAttributes,
+  FormikProps,
 } from '@formik/core';
 import invariant from 'tiny-warning';
 import { useFormikApi } from '../hooks/useFormikApi';
@@ -15,12 +16,19 @@ import { FormikRefApi } from '../types';
 export interface FieldProps<Value = any, FormValues = any> {
   field: FieldInputProps<Value>;
   // if ppl want to restrict this for a given form, let them.
+  form: FormikProps<FormValues>;
+  meta: FieldMetaProps<Value>;
+}
+
+export interface FieldPropsWithoutState<Value = any, FormValues = any> {
+  field: FieldInputProps<Value>;
+  // if ppl want to restrict this for a given form, let them.
   form: FormikRefApi<FormValues>;
   meta: FieldMetaProps<Value>;
 }
 
 export type FieldComponentProps<Value = any, FormValues = any> = Omit<
-  FieldProps<Value, FormValues>,
+  FieldPropsWithoutState<Value, FormValues>,
   'meta'
 >;
 
@@ -43,7 +51,7 @@ export interface FieldRenderProps<Value = any, FormValues = any> {
    */
   children?:
     | ((props: FieldProps<Value, FormValues>) => React.ReactElement | null)
-    | React.ReactElement
+    | React.ReactNode
     | null;
 
   /** Inner ref */

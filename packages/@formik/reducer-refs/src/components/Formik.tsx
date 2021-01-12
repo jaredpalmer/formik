@@ -17,12 +17,8 @@ export function Formik<
   ExtraProps = {}
 >(props: FormikConfig<Values, FormikRefState<Values>> & ExtraProps) {
   const { component, children, render, innerRef } = props;
-  // now hear me out. this is wrong, I know.
-  // useFormik now returns a bag of stable api methods
-  // so lets never update it again
-  // this is a PROTOTYPE
-  // todo: memoize better
-  const { current: formikApi } = React.useRef(useFormik<Values>(props));
+  const formikApi = useFormik<Values>(props);
+
   // get state and add a form effect if component, render, or child function is used
   // aka, we need to pass FormikState directly
   // maybe we should just remove FormikState

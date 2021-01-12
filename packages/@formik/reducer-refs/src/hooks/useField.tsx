@@ -6,17 +6,12 @@ import {
   FieldInputProps,
   FieldMetaProps,
   FieldValidator,
-  isObject,
 } from '@formik/core';
 import { useFormikApi } from './useFormikApi';
 import invariant from 'tiny-warning';
 import { selectRefGetFieldMeta } from '../ref-selectors';
 
-
-export type UseFieldProps<
-  Value = any,
-  FormValues = any,
-> = {
+export type UseFieldProps<Value = any> = {
   /**
    * Component to render. Can either be a string e.g. 'select', 'input', or 'textarea', or a component.
    */
@@ -59,18 +54,17 @@ export type UseFieldProps<
   type?: string;
 
   /** Field value */
-  value?: any;
-
+  value?: Value;
 };
 
-export function useField<FieldValues = any>(
-  nameOrOptions: string | UseFieldProps<FieldValues>
+export function useField<Value = any, FormValues = any>(
+  nameOrOptions: string | UseFieldProps<Value>
 ): [
-  FieldInputProps<FieldValues>,
-  FieldMetaProps<FieldValues>,
-  FieldHelperProps<FieldValues>
+  FieldInputProps<Value>,
+  FieldMetaProps<FormValues>,
+  FieldHelperProps<Value>
 ] {
-  const formik = useFormikApi();
+  const formik = useFormikApi<FormValues>();
 
   const {
     addFormEffect,
@@ -81,22 +75,16 @@ export function useField<FieldValues = any>(
     unregisterField,
   } = formik;
 
-  const isAnObject = isObject(nameOrOptions);
-
-  // Normalize propsOrFieldName to FieldConfig<Value>
-  const props: UseFieldProps<FieldValues> = isAnObject
-    ? (nameOrOptions as UseFieldProps<FieldValues>)
-    : ({ name: nameOrOptions as string } as UseFieldProps<FieldValues>);
+  const props =
+    typeof nameOrOptions === 'string' ? { name: nameOrOptions } : nameOrOptions;
 
   const { name: fieldName, validate: validateFn } = props;
 
-  const fieldMetaRef = React.useRef(getFieldMeta<FieldValues>(fieldName));
+  const fieldMetaRef = React.useRef(getFieldMeta<FormValues>(fieldName));
   const [fieldMeta, setFieldMeta] = React.useState(fieldMetaRef.current);
 
   const maybeUpdateFieldMeta = React.useCallback<FormEffect<any>>(
     formikState => {
-      // we could use formikApi.getFieldMeta... but is that correct?
-      // I think we should use the value passed to this callback
       const fieldMeta = selectRefGetFieldMeta(() => formikState)(fieldName);
 
       if (!isEqual(fieldMeta, fieldMetaRef.current)) {

@@ -242,7 +242,7 @@ export interface FormikConfig<
   /**
    * Form component to render
    */
-  component?: React.ComponentType<FormikProps<Values>> | React.ReactNode;
+  component?: React.ComponentType<FormikProps<Values>>;
 
   /**
    * Render prop (works like React router's <Route render={props =>} />)

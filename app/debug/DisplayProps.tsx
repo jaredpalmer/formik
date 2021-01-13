@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const DisplayProps = (props: any) => (
+export const DisplayProps = (props?: any) => (
   <div style={{ margin: '1rem 0' }}>
     <h3 style={{ fontFamily: 'monospace' }} />
     <pre
@@ -14,3 +14,5 @@ export const DisplayProps = (props: any) => (
     </pre>
   </div>
 );
+
+export default DisplayProps;

@@ -173,26 +173,28 @@ describe('withFormik()', () => {
 
     getProps().submitForm();
 
-    await wait(() =>
-      expect(handleSubmit).toHaveBeenCalledWith(
-        { name: 'jared' },
-        {
-          props: myProps,
-          resetForm: expect.any(Function),
-          setErrors: expect.any(Function),
-          setFieldError: expect.any(Function),
-          setFieldTouched: expect.any(Function),
-          setFieldValue: expect.any(Function),
-          setFormikState: expect.any(Function),
-          setStatus: expect.any(Function),
-          setSubmitting: expect.any(Function),
-          setTouched: expect.any(Function),
-          setValues: expect.any(Function),
-          validateField: expect.any(Function),
-          validateForm: expect.any(Function),
-          submitForm: expect.any(Function),
-        }
-      )
+    // wait for submit, then expect separately to get proper error messages
+    await wait(() => getProps().submitCount > 0);
+
+    expect(handleSubmit).toHaveBeenCalledWith(
+      { name: 'jared' },
+      {
+        props: myProps,
+        isFormValid: expect.any(Function),
+        resetForm: expect.any(Function),
+        setErrors: expect.any(Function),
+        setFieldError: expect.any(Function),
+        setFieldTouched: expect.any(Function),
+        setFieldValue: expect.any(Function),
+        setFormikState: expect.any(Function),
+        setStatus: expect.any(Function),
+        setSubmitting: expect.any(Function),
+        setTouched: expect.any(Function),
+        setValues: expect.any(Function),
+        validateField: expect.any(Function),
+        validateForm: expect.any(Function),
+        submitForm: expect.any(Function),
+      }
     );
   });
 

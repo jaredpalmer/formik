@@ -26,7 +26,8 @@ const Form = <Values extends TestValues = TestValues>({
   status,
   errors,
   isSubmitting,
-}: FormikProps<Values>) => {
+  children,
+}: React.PropsWithChildren<FormikProps<Values>>) => {
   return (
     <form onSubmit={handleSubmit} data-testid="form">
       <input
@@ -45,6 +46,7 @@ const Form = <Values extends TestValues = TestValues>({
       <button type="submit" data-testid="submit-button">
         Submit
       </button>
+      {children}
     </form>
   );
 };
@@ -64,40 +66,31 @@ function renderFormik<Values extends TestValues = TestValues>(
     return null;
   };
 
-  const { rerender, ...rest } = render(
+  const formikRoot = (
     <Formik onSubmit={noop} initialValues={initialValuesProp} {...props}>
       {formikProps =>
         (injected = formikProps) && (
-          <Form {...((formikProps as unknown) as FormikProps<Values>)}>
+          <Form {...formikProps}>
             <ContextRenderer />
           </Form>
         )
       }
     </Formik>
   );
+
+  const { rerender, ...rest } = render(formikRoot);
   return {
+    ...rest,
     getProps(): FormikProps<Values> {
       return injected;
     },
-    formikApi,
-    formikState,
-    ...rest,
-    rerender: () =>
-      rerender(
-        <Formik<Values>
-          onSubmit={noop as any}
-          initialValues={initialValues as any}
-          {...props}
-        >
-          {formikProps =>
-            (injected = formikProps) && (
-              <Form {...formikProps}>
-                <ContextRenderer />
-              </Form>
-            )
-          }
-        </Formik>
-      ),
+    getFormikState(): [
+      FormikRefState<Values> | undefined,
+      FormikRefApi<Values> | undefined
+    ] {
+      return [formikState, formikApi];
+    },
+    rerender: () => rerender(formikRoot),
   };
 }
 
@@ -197,6 +190,7 @@ describe('<Formik>', () => {
       const input = getByTestId('name-input');
 
       expect(injected.values.name).toEqual('jared');
+
       fireEvent.change(input, {
         target: {
           name: 'name',
@@ -212,10 +206,11 @@ describe('<Formik>', () => {
       const validationSchema = {
         validate,
       };
-      const { getByTestId, rerender } = renderFormik({
+      const { getByTestId, getFormikState } = renderFormik({
         validate,
         validationSchema,
       });
+      const [, formikApi] = getFormikState();
 
       fireEvent.change(getByTestId('name-input'), {
         persist: noop,
@@ -224,8 +219,8 @@ describe('<Formik>', () => {
           value: 'ian',
         },
       });
-      rerender();
       await wait(() => {
+        formikApi?.getState();
         expect(validate).toHaveBeenCalledTimes(2);
       });
     });
@@ -256,18 +251,29 @@ describe('<Formik>', () => {
   });
 
   describe('handleBlur', () => {
-    it('sets touched state', async () => {
-      const { getProps, getByTestId } = renderFormik();
+    it('refs: sets touched state', async () => {
+      const {
+        getProps,
+        getFormikState,
+        getByTestId,
+        rerender,
+      } = renderFormik();
+
+      rerender();
+      rerender();
+      rerender();
+
+      const [, formikApi] = getFormikState();
+
+      await wait(() => !!formikApi);
+
       expect(getProps().touched.name).toEqual(undefined);
 
       const input = getByTestId('name-input');
-      fireEvent.blur(input, {
-        target: {
-          name: 'name',
-        },
-      });
+      fireEvent.focusOut(input);
 
       await wait(() => {
+        expect(formikApi?.getState().touched.name).toEqual(true);
         expect(getProps().touched.name).toEqual(true);
       });
     });
@@ -277,7 +283,7 @@ describe('<Formik>', () => {
       expect(getProps().touched.name).toEqual(undefined);
 
       const input = getByTestId('name-input');
-      fireEvent.blur(input, {
+      fireEvent.focusOut(input, {
         target: {
           id: 'blah',
           name: 'name',
@@ -306,7 +312,7 @@ describe('<Formik>', () => {
       const input = getByTestId('name-input');
 
       expect(injected.touched.name).toEqual(undefined);
-      fireEvent.blur(input, {
+      fireEvent.focusOut(input, {
         target: {
           name: 'name',
           value: 'ian',
@@ -320,11 +326,8 @@ describe('<Formik>', () => {
       const validate = jest.fn(noop);
       const { getByTestId, rerender } = renderFormik({ validate });
 
-      fireEvent.blur(getByTestId('name-input'), {
-        target: {
-          name: 'name',
-        },
-      });
+      fireEvent.focusOut(getByTestId('name-input'));
+
       rerender();
       await wait(() => {
         expect(validate).toHaveBeenCalled();
@@ -341,11 +344,8 @@ describe('<Formik>', () => {
         validationSchema,
       });
 
-      fireEvent.blur(getByTestId('name-input'), {
-        target: {
-          name: 'name',
-        },
-      });
+      fireEvent.focusOut(getByTestId('name-input'));
+
       rerender();
       await wait(() => {
         expect(validate).toHaveBeenCalledTimes(2);
@@ -362,12 +362,10 @@ describe('<Formik>', () => {
         validationSchema,
       });
 
-      fireEvent.blur(getByTestId('name-input'), {
-        target: {
-          name: 'name',
-        },
-      });
+      fireEvent.focusOut(getByTestId('name-input'));
+
       rerender();
+
       await wait(() => {
         expect(validate).toHaveBeenCalledTimes(2);
       });
@@ -1330,10 +1328,11 @@ describe('<Formik>', () => {
     }).toThrow('broken validations');
   });
 
-  it('exposes formikbag as imperative methods', async () => {
+  it('exposes formik API via innerRef', async () => {
     const innerRef: any = React.createRef();
 
-    const { formikApi } = renderFormik({ innerRef });
+    const { getFormikState } = renderFormik({ innerRef });
+    const [, formikApi] = getFormikState();
 
     await wait(() => expect(innerRef.current).toEqual(formikApi));
   });

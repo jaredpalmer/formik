@@ -5,6 +5,7 @@ function Home() {
   return (
     <main>
       <h1>Formik Examples and Fixtures</h1>
+      <h2>Formik</h2>
       <ul>
         <li>
           <Link href="/basic">
@@ -28,12 +29,20 @@ function Home() {
         </li>
         <li>
           <Link href="/perf500">
-            <a>Performance Test: 500 Inputs (reducer-refs)</a>
+            <a>Performance Test: 500 Inputs</a>
+          </Link>
+        </li>
+      </ul>
+      <h2>Reducer Refs</h2>
+      <ul>
+        <li>
+          <Link href="/basic-refs">
+            <a>Basic</a>
           </Link>
         </li>
         <li>
-          <Link href="/perf500v3">
-            <a>Performance Test: 500 Inputs (v3)</a>
+          <Link href="/perf500-refs">
+            <a>Performance Test: 500 Inputs</a>
           </Link>
         </li>
       </ul>

@@ -1,7 +1,7 @@
 import React from "react";
-import { Formik, Form, useField, FieldHookConfig } from "@formik/reducer-refs";
+import { Formik, Form, useField, FieldConfig } from "formik";
 
-const Input = (p: FieldHookConfig<string>) => {
+const Input = (p: FieldConfig<string>) => {
   const [field, meta] = useField(p);
   const renders = React.useRef(0);
   return (
@@ -43,7 +43,7 @@ export default function App() {
   return (
     <div>
       <div>
-        <h1><code>@formik/reducer-refs</code> with 500 controlled fields</h1>
+        <h1>Formik v3 with 500 controlled fields</h1>
         <div>
           <span>#</span> = number of renders
         </div>

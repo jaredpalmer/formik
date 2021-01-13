@@ -100,7 +100,6 @@ export function Field<FieldValue = any, FormValues = any>(
     }, []);
   }
 
-  const formikApi = useFormikApi<FormValues>();
   const [field, meta] = useField(props);
 
   /**
@@ -109,8 +108,8 @@ export function Field<FieldValue = any, FormValues = any>(
    *
    * Otherwise, we will pointlessly get the initial values but never subscribe to updates.
    */
-  const [formikState] = useFormikRefStateInternal(
-    formikApi,
+  const [formikState, formikApi] = useFormikRefStateInternal(
+    useFormikApi<FormValues>(),
     !!render || isFunction(children)
   );
 

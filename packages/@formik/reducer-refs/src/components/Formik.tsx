@@ -17,13 +17,12 @@ export function Formik<
   ExtraProps = {}
 >(props: FormikConfig<Values, FormikRefState<Values>> & ExtraProps) {
   const { component, children, render, innerRef } = props;
-  const formikApi = useFormik<Values>(props);
 
-  // get state and add a form effect if component, render, or child function is used
+  // get state and add a form effect if render or child function is used
   // aka, we need to pass FormikState directly
-  // maybe we should just remove FormikState
-  const [formikState] = useFormikRefStateInternal(
-    formikApi,
+  // also component, because it is documented that way
+  const [formikState, formikApi] = useFormikRefStateInternal(
+    useFormik<Values>(props),
     !!component || !!render || isFunction(children)
   );
 
@@ -48,7 +47,7 @@ export function Formik<
   return (
     <FormikApiContext.Provider value={formikApi}>
       {component
-        ? React.createElement(component as any, formikBag)
+        ? React.createElement(component, formikBag)
         : render
         ? render(formikBag)
         : children // children come last, always called

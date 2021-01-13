@@ -649,10 +649,8 @@ export const selectHandleBlur = (
     if (isString(eventOrPath)) {
       return (event: React.FocusEvent<any>) => executeBlur(event, eventOrPath);
     } else {
-      executeBlur(eventOrPath);
+      return executeBlur(eventOrPath);
     }
-
-    return;
   }) as HandleBlurFn;
 
 export type SubmitFormFn = () => Promise<any>;

@@ -174,7 +174,7 @@ export function withFormik<
             initialTouched={
               config.mapPropsToTouched && config.mapPropsToTouched(this.props)
             }
-            onSubmit={this.handleSubmit as any}
+            onSubmit={this.handleSubmit}
             children={this.renderFormComponent}
           />
         );

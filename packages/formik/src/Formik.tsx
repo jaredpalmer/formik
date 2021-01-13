@@ -217,14 +217,12 @@ export function Formik<
   return (
     <FormikProvider value={formikbag}>
       {component
-        ? React.createElement(component as any, formikbag)
+        ? React.createElement(component, formikbag)
         : render
         ? render(formikbag)
         : children // children come last, always called
         ? isFunction(children)
-          ? (children as (bag: FormikProps<Values>) => React.ReactNode)(
-              formikbag as FormikProps<Values>
-            )
+          ? children(formikbag)
           : !isEmptyChildren(children)
           ? React.Children.only(children)
           : null

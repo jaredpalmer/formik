@@ -108,7 +108,7 @@ export function Field<FieldValue = any, FormValues = any>({
   if (component) {
     // This behavior is backwards compat with earlier Formik 0.9 to 1.x
     if (typeof component === 'string') {
-      const { innerRef, ...rest } = props;
+      const { innerRef, validate, ...rest } = props;
       return React.createElement(
         component,
         { ref: innerRef, ...field, ...rest },

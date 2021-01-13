@@ -6,55 +6,45 @@ import {
   FieldInputProps,
   FieldMetaProps,
   FieldValidator,
-  FormikProps,
-  GenericFieldHTMLAttributes,
-  isObject,
 } from '@formik/core';
 import { useFormikApi } from './useFormikApi';
 import invariant from 'tiny-warning';
 import { selectRefGetFieldMeta } from '../ref-selectors';
 
-export interface FieldProps<V = any, FormValues = any> {
-  field: FieldInputProps<V>;
-  form: FormikProps<FormValues>; // if ppl want to restrict this for a given form, let them.
-  meta: FieldMetaProps<V>;
-}
-
-export interface FieldConfig<V = any> {
-  /**
-   * Field component to render. Can either be a string like 'select' or a component.
-   */
-  component?:
-    | string
-    | React.ComponentType<FieldProps<V>>
-    | React.ComponentType
-    | React.ForwardRefExoticComponent<any>;
-
+export type UseFieldProps<Value = any> = {
   /**
    * Component to render. Can either be a string e.g. 'select', 'input', or 'textarea', or a component.
    */
   as?:
-    | React.ComponentType<FieldProps<V>['field']>
     | string
-    | React.ComponentType
-    | React.ForwardRefExoticComponent<any>;
-
-  /**
-   * Render prop (works like React router's <Route render={props =>} />)
-   * @deprecated
-   */
-  render?: (props: FieldProps<V>) => React.ReactNode;
-
-  /**
-   * Children render function <Field name>{props => ...}</Field>)
-   */
-  children?: ((props: FieldProps<V>) => React.ReactNode) | React.ReactNode;
+    | React.ComponentType<FieldInputProps<Value>>
+    | React.ForwardRefExoticComponent<FieldInputProps<Value>>;
 
   /**
    * Validate a single field value independently
    */
   validate?: FieldValidator;
 
+  /**
+   * Function to parse raw input value before setting it to state
+   */
+  parse?: (value: unknown, name: string) => Value;
+
+  /**
+   * Function to transform value passed to input
+   */
+  format?: (value: Value, name: string) => any;
+
+  /**
+   * Wait until blur event before formatting input value?
+   * @default false
+   */
+  formatOnBlur?: boolean;
+
+  /**
+   * HTML multiple attribute
+   */
+  multiple?: boolean;
   /**
    * Field name
    */
@@ -64,22 +54,17 @@ export interface FieldConfig<V = any> {
   type?: string;
 
   /** Field value */
-  value?: any;
+  value?: Value;
+};
 
-  /** Inner ref */
-  innerRef?: (instance: any) => void;
-}
-
-export type FieldAttributes<T> = GenericFieldHTMLAttributes &
-  FieldConfig<T> &
-  T & { name: string };
-
-export type FieldHookConfig<T> = GenericFieldHTMLAttributes & FieldConfig<T>;
-
-export function useField<Val = any>(
-  propsOrFieldName: string | FieldHookConfig<Val>
-): [FieldInputProps<Val>, FieldMetaProps<Val>, FieldHelperProps<Val>] {
-  const formik = useFormikApi();
+export function useField<Value = any, FormValues = any>(
+  nameOrOptions: string | UseFieldProps<Value>
+): [
+  FieldInputProps<Value>,
+  FieldMetaProps<FormValues>,
+  FieldHelperProps<Value>
+] {
+  const formik = useFormikApi<FormValues>();
 
   const {
     addFormEffect,
@@ -90,22 +75,16 @@ export function useField<Val = any>(
     unregisterField,
   } = formik;
 
-  const isAnObject = isObject(propsOrFieldName);
-
-  // Normalize propsOrFieldName to FieldHookConfig<Val>
-  const props: FieldHookConfig<Val> = isAnObject
-    ? (propsOrFieldName as FieldHookConfig<Val>)
-    : { name: propsOrFieldName as string };
+  const props =
+    typeof nameOrOptions === 'string' ? { name: nameOrOptions } : nameOrOptions;
 
   const { name: fieldName, validate: validateFn } = props;
 
-  const fieldMetaRef = React.useRef(getFieldMeta<Val>(fieldName));
+  const fieldMetaRef = React.useRef(getFieldMeta<FormValues>(fieldName));
   const [fieldMeta, setFieldMeta] = React.useState(fieldMetaRef.current);
 
   const maybeUpdateFieldMeta = React.useCallback<FormEffect<any>>(
     formikState => {
-      // we could use formikApi.getFieldMeta... but is that correct?
-      // I think we should use the value passed to this callback
       const fieldMeta = selectRefGetFieldMeta(() => formikState)(fieldName);
 
       if (!isEqual(fieldMeta, fieldMetaRef.current)) {

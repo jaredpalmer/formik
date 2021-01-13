@@ -242,7 +242,7 @@ export interface FormikConfig<
   /**
    * Form component to render
    */
-  component?: React.ComponentType<FormikProps<Values>> | React.ReactNode;
+  component?: React.ComponentType<FormikProps<Values>>;
 
   /**
    * Render prop (works like React router's <Route render={props =>} />)
@@ -378,7 +378,7 @@ export interface FieldHelperProps<Value> {
   /** Set the field's touched value */
   setTouched: (value: boolean, shouldValidate?: boolean) => void;
   /** Set the field's error value */
-  setError: (value: Value) => void;
+  setError: (error: string) => void;
 }
 
 export type FieldOnChangeProp = (

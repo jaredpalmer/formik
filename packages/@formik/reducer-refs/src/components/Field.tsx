@@ -1,11 +1,72 @@
 import * as React from 'react';
-import { isFunction, isEmptyChildren } from '@formik/core';
+import {
+  isFunction,
+  isEmptyChildren,
+  FieldInputProps,
+  FieldMetaProps,
+  GenericFieldHTMLAttributes,
+  FormikProps,
+} from '@formik/core';
 import invariant from 'tiny-warning';
 import { useFormikApi } from '../hooks/useFormikApi';
-import { FieldAttributes, useField } from '../hooks/useField';
+import { useField, UseFieldProps } from '../hooks/useField';
+import { useFormikRefStateInternal } from '../hooks/useFormikState';
+import { FormikRefApi } from '../types';
 
-export function Field(rawProps: FieldAttributes<any>) {
-  const {
+export interface FieldProps<Value = any, FormValues = any> {
+  field: FieldInputProps<Value>;
+  // if ppl want to restrict this for a given form, let them.
+  form: FormikProps<FormValues>;
+  meta: FieldMetaProps<Value>;
+}
+
+export interface FieldPropsWithoutState<Value = any, FormValues = any> {
+  field: FieldInputProps<Value>;
+  // if ppl want to restrict this for a given form, let them.
+  form: FormikRefApi<FormValues>;
+  meta: FieldMetaProps<Value>;
+}
+
+export type FieldComponentProps<Value = any, FormValues = any> = Omit<
+  FieldPropsWithoutState<Value, FormValues>,
+  'meta'
+>;
+
+export interface FieldRenderProps<Value = any, FormValues = any> {
+  /**
+   * Field component to render. Can either be a string like 'select' or a component.
+   */
+  component?:
+    | string
+    | React.ComponentType<FieldComponentProps<Value, FormValues>>;
+
+  /**
+   * Render prop (works like React router's <Route render={props =>} />)
+   * @deprecated
+   */
+  render?: (props: FieldProps<Value, FormValues>) => React.ReactElement | null;
+
+  /**
+   * Children render function <Field name>{props => ...}</Field>)
+   */
+  children?:
+    | ((props: FieldProps<Value, FormValues>) => React.ReactElement | null)
+    | React.ReactNode
+    | null;
+
+  /** Inner ref */
+  innerRef?: (instance: any) => void;
+}
+
+export type FieldConfig<
+  FieldValue = any,
+  FormValues = any
+> = UseFieldProps<FieldValue> & FieldRenderProps<FieldValue, FormValues>;
+
+export function Field<FieldValue = any, FormValues = any>(
+  rawProps: GenericFieldHTMLAttributes & FieldConfig<FieldValue, FormValues>
+) {
+  let {
     render,
     children,
     as: is, // `as` is reserved in typescript lol
@@ -39,13 +100,23 @@ export function Field(rawProps: FieldAttributes<any>) {
     }, []);
   }
 
-  const formik = useFormikApi();
   const [field, meta] = useField(props);
 
-  const legacyBag = { field, form: formik };
+  /**
+   * If we use render function or use functional children, we continue to
+   * subscribe to the full FormikState because these do not have access to hooks.
+   *
+   * Otherwise, we will pointlessly get the initial values but never subscribe to updates.
+   */
+  const [formikState, formikApi] = useFormikRefStateInternal(
+    useFormikApi<FormValues>(),
+    !!render || isFunction(children)
+  );
+
+  const legacyBag = { field, form: { ...formikState, ...formikApi } };
 
   if (render) {
-    return render({ ...legacyBag, meta });
+    return isFunction(render) ? render({ ...legacyBag, meta }) : null;
   }
 
   if (isFunction(children)) {
@@ -65,7 +136,7 @@ export function Field(rawProps: FieldAttributes<any>) {
     // We don't pass `meta` for backwards compat
     return React.createElement(
       component,
-      { field, form: formik, ...props },
+      { ...props, field, form: formikApi },
       children
     );
   }

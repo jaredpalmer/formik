@@ -45,7 +45,5 @@ export const useFormikRefStateInternal = <Values extends FormikValues>(
  * Subscribe to Formik State and Computed State updates.
  */
 export const useFormikState = <Values extends FormikValues>() => {
-  const api = useFormikApi<Values>();
-
-  return useFormikRefStateInternal(api);
+  return useFormikRefStateInternal(useFormikApi<Values>());
 };

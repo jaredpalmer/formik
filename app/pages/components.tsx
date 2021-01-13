@@ -1,6 +1,6 @@
 import React from 'react';
 import { Formik, Field, Form, FieldProps, FieldComponentProps } from 'formik';
-import { DisplayProps } from './debug/DisplayProps';
+import { DisplayProps } from '../debug/DisplayProps';
 
 const initialValues = {
   name: '',

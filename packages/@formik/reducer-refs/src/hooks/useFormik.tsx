@@ -1,4 +1,3 @@
-import * as React from 'react';
 import isEqual from 'react-fast-compare';
 import {
   FormikConfig,
@@ -22,29 +21,30 @@ import {
 } from '../types';
 import { formikRefReducer } from '../ref-reducer';
 import { selectRefGetFieldMeta, selectRefResetForm } from '../ref-selectors';
+import { useEffect, useRef, useCallback, useReducer, useState } from 'react';
 
-export const useFormik = <Values extends FormikValues = FormikValues>({
-  validateOnChange = true,
-  validateOnBlur = true,
-  validateOnMount = false,
-  isInitialValid,
-  enableReinitialize = false,
-  onSubmit,
-  ...rest
-}: FormikConfig<Values, FormikRefState<Values>>): FormikRefApi<Values> => {
+export const useFormik = <Values extends FormikValues = FormikValues>(
+  rawProps: FormikConfig<Values, FormikRefState<Values>>
+): FormikRefApi<Values> => {
+  const {
+    validateOnChange = true,
+    validateOnBlur = true,
+    validateOnMount = false,
+    enableReinitialize = false,
+    ...rest
+  } = rawProps;
   const props = {
     validateOnChange,
     validateOnBlur,
     validateOnMount,
-    onSubmit,
     ...rest,
   };
 
   if (__DEV__) {
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    React.useEffect(() => {
+    useEffect(() => {
       invariant(
-        typeof isInitialValid === 'undefined',
+        typeof props.isInitialValid === 'undefined',
         'isInitialValid has been deprecated and will be removed in future versions of Formik. Please use initialErrors or validateOnMount instead.'
       );
       // eslint-disable-next-line
@@ -53,10 +53,10 @@ export const useFormik = <Values extends FormikValues = FormikValues>({
 
   // these are only used for initialization,
   // then abandoned because they will be managed in stateRef
-  const initialValues = React.useRef(props.initialValues);
-  const initialErrors = React.useRef(props.initialErrors ?? emptyErrors);
-  const initialTouched = React.useRef(props.initialTouched ?? emptyTouched);
-  const initialStatus = React.useRef(props.initialStatus);
+  const initialValues = useRef(props.initialValues);
+  const initialErrors = useRef(props.initialErrors ?? emptyErrors);
+  const initialTouched = useRef(props.initialTouched ?? emptyTouched);
+  const initialStatus = useRef(props.initialStatus);
 
   /**
    * This is the true test of spacetime. Every method
@@ -67,7 +67,7 @@ export const useFormik = <Values extends FormikValues = FormikValues>({
    *       snapshot    ref
    * const [state, updateState] = useFormikThing();
    */
-  const stateRef = React.useRef<FormikRefState<Values>>({
+  const stateRef = useRef<FormikRefState<Values>>({
     initialValues: initialValues.current,
     initialErrors: initialErrors.current,
     initialTouched: initialTouched.current,
@@ -82,7 +82,7 @@ export const useFormik = <Values extends FormikValues = FormikValues>({
     dirty: false,
   });
 
-  const formListeners = React.useRef<FormEffect<Values>[]>([]);
+  const formListeners = useRef<FormEffect<Values>[]>([]);
 
   /**
    * Breaking all the rules, re: "must be side-effect free"
@@ -91,7 +91,7 @@ export const useFormik = <Values extends FormikValues = FormikValues>({
    * The only things that should use stateRef are side effects / event callbacks --
    * those things which need the latest value in order to compute their own latest value.
    */
-  const refBoundFormikReducer = React.useCallback(
+  const refBoundFormikReducer = useCallback(
     (
       state: FormikState<Values> & FormikRefState<Values>,
       msg: FormikMessage<Values, FormikRefState<Values>>
@@ -106,16 +106,13 @@ export const useFormik = <Values extends FormikValues = FormikValues>({
     [stateRef]
   );
 
-  const getState = React.useCallback(() => stateRef.current, [stateRef]);
-  const [state, dispatch] = React.useReducer(
-    refBoundFormikReducer,
-    stateRef.current
-  );
+  const getState = useCallback(() => stateRef.current, [stateRef]);
+  const [state, dispatch] = useReducer(refBoundFormikReducer, stateRef.current);
 
   /**
    * Refs
    */
-  const isMounted = React.useRef<boolean>(false);
+  const isMounted = useRef<boolean>(false);
 
   // override some APIs to dispatch additional information
   // isMounted is the only ref we actually use, as we
@@ -162,7 +159,7 @@ export const useFormik = <Values extends FormikValues = FormikValues>({
 
   const { validateForm } = imperativeMethods;
 
-  const addFormEffect = React.useCallback(
+  const addFormEffect = useCallback(
     (effect: FormEffect<Values>): UnsubscribeFn => {
       formListeners.current = [...formListeners.current, effect];
 
@@ -184,7 +181,7 @@ export const useFormik = <Values extends FormikValues = FormikValues>({
     [formListeners, stateRef]
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     isMounted.current = true;
 
     return () => {
@@ -200,7 +197,7 @@ export const useFormik = <Values extends FormikValues = FormikValues>({
     formListeners.current.forEach(listener => listener(state));
   }, [state]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (
       isMounted.current === true &&
       !isEqual(stateRef.current.initialValues, props.initialValues)
@@ -223,7 +220,7 @@ export const useFormik = <Values extends FormikValues = FormikValues>({
     validateForm,
   ]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (
       enableReinitialize &&
       isMounted.current === true &&
@@ -236,7 +233,7 @@ export const useFormik = <Values extends FormikValues = FormikValues>({
     }
   }, [enableReinitialize, props.initialErrors]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (
       enableReinitialize &&
       isMounted.current === true &&
@@ -249,7 +246,7 @@ export const useFormik = <Values extends FormikValues = FormikValues>({
     }
   }, [enableReinitialize, props.initialTouched]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (
       enableReinitialize &&
       isMounted.current === true &&
@@ -262,19 +259,37 @@ export const useFormik = <Values extends FormikValues = FormikValues>({
     }
   }, [enableReinitialize, props.initialStatus]);
 
-  return {
+  /**
+   * Here, we memoize the API so that
+   * React's Context doesn't update on every render.
+   *
+   * We'd don't useMemo because we're purposely
+   * only updating when the config updates
+   */
+  const [memoizedApi, updateMemoizedApi] = useState({
     // the core api
     ...formikCoreApi,
     // the overrides
     resetForm,
     handleReset,
     getFieldMeta,
-    // extra ref goodies
+    // extra goodies
     getState,
     addFormEffect,
-    // validation config
+    // config
     validateOnBlur,
     validateOnChange,
     validateOnMount,
-  };
+  });
+
+  useIsomorphicLayoutEffect(() => {
+    updateMemoizedApi({
+      ...memoizedApi,
+      validateOnBlur,
+      validateOnChange,
+      validateOnMount,
+    });
+  }, [validateOnBlur, validateOnChange, validateOnMount]);
+
+  return memoizedApi;
 };

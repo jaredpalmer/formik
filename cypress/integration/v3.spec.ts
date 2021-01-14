@@ -16,6 +16,8 @@ describe('basic validation', () => {
     cy.get('input[name="phone-2"]').should('have.value', '(999) 999-9999');
     cy.get('input[name="phone-3"]').type('+49AAAABBBBBB');
     cy.get('input[name="phone-3"]').should('have.value', '+49 (AAAA) BBBBBB');
-    cy.get('span#render-phone-1').should('have.text', 35);
+
+    // using useFormikContext and useField in the same component will cause 2 updates
+    cy.get('span#render-phone-1').should('have.text', 70);
   });
 });

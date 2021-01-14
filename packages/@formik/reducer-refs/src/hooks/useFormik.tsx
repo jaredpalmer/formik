@@ -22,6 +22,7 @@ import {
 import { formikRefReducer } from '../ref-reducer';
 import { selectRefGetFieldMeta, selectRefResetForm } from '../ref-selectors';
 import { useEffect, useRef, useCallback, useReducer, useState } from 'react';
+import { unstable_batchedUpdates } from 'react-dom';
 
 export const useFormik = <Values extends FormikValues = FormikValues>(
   rawProps: FormikConfig<Values, FormikRefState<Values>>
@@ -91,7 +92,7 @@ export const useFormik = <Values extends FormikValues = FormikValues>(
 
   /**
    * Breaking all the rules, re: "must be side-effect free"
-   * BUT that's probably OK??
+   * BUT that's probably OK
    *
    * The only things that should use stateRef are side effects / event callbacks
    *
@@ -105,7 +106,10 @@ export const useFormik = <Values extends FormikValues = FormikValues>(
       const result = formikRefReducer(state, msg);
 
       stateRef.current = result;
-      formListenersRef.current.forEach(listener => listener(state));
+
+      unstable_batchedUpdates(() => {
+        formListenersRef.current.forEach(listener => listener(state));
+      });
 
       return result;
     },
@@ -113,7 +117,6 @@ export const useFormik = <Values extends FormikValues = FormikValues>(
   );
 
   const getState = useCallback(() => stateRef.current, [stateRef]);
-  // reducer without state? OK...
   const [, dispatch] = useReducer(refBoundFormikReducer, stateRef.current);
 
   // override some APIs to dispatch additional information

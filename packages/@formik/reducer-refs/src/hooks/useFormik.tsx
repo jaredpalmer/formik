@@ -51,6 +51,11 @@ export const useFormik = <Values extends FormikValues = FormikValues>(
     }, []);
   }
 
+  /**
+   * Refs
+   */
+  const isMounted = useRef<boolean>(false);
+
   // these are only used for initialization,
   // then abandoned because they will be managed in stateRef
   const initialValues = useRef(props.initialValues);
@@ -82,14 +87,14 @@ export const useFormik = <Values extends FormikValues = FormikValues>(
     dirty: false,
   });
 
-  const formListeners = useRef<FormEffect<Values>[]>([]);
+  const formListenersRef = useRef<FormEffect<Values>[]>([]);
 
   /**
    * Breaking all the rules, re: "must be side-effect free"
    * BUT that's probably OK??
    *
-   * The only things that should use stateRef are side effects / event callbacks --
-   * those things which need the latest value in order to compute their own latest value.
+   * The only things that should use stateRef are side effects / event callbacks
+   *
    */
   const refBoundFormikReducer = useCallback(
     (
@@ -100,19 +105,16 @@ export const useFormik = <Values extends FormikValues = FormikValues>(
       const result = formikRefReducer(state, msg);
 
       stateRef.current = result;
+      formListenersRef.current.forEach(listener => listener(state));
 
       return result;
     },
-    [stateRef]
+    [stateRef, formListenersRef]
   );
 
   const getState = useCallback(() => stateRef.current, [stateRef]);
-  const [state, dispatch] = useReducer(refBoundFormikReducer, stateRef.current);
-
-  /**
-   * Refs
-   */
-  const isMounted = useRef<boolean>(false);
+  // reducer without state? OK...
+  const [, dispatch] = useReducer(refBoundFormikReducer, stateRef.current);
 
   // override some APIs to dispatch additional information
   // isMounted is the only ref we actually use, as we
@@ -161,24 +163,24 @@ export const useFormik = <Values extends FormikValues = FormikValues>(
 
   const addFormEffect = useCallback(
     (effect: FormEffect<Values>): UnsubscribeFn => {
-      formListeners.current = [...formListeners.current, effect];
+      formListenersRef.current = [...formListenersRef.current, effect];
 
       // in case a change occurred
       // if it didn't, react's state will not update anyway
       effect(stateRef.current);
 
       return () => {
-        const listenerIndex = formListeners.current.findIndex(
+        const listenerIndex = formListenersRef.current.findIndex(
           listener => listener === effect
         );
 
-        formListeners.current = [
-          ...formListeners.current.slice(0, listenerIndex),
-          ...formListeners.current.slice(listenerIndex + 1),
+        formListenersRef.current = [
+          ...formListenersRef.current.slice(0, listenerIndex),
+          ...formListenersRef.current.slice(listenerIndex + 1),
         ];
       };
     },
-    [formListeners, stateRef]
+    [formListenersRef, stateRef]
   );
 
   useEffect(() => {
@@ -188,14 +190,6 @@ export const useFormik = <Values extends FormikValues = FormikValues>(
       isMounted.current = false;
     };
   }, [isMounted]);
-
-  /**
-   * Is this too expensive for a Layout effect? Maybe. But really, by moving it to a regular effect,
-   * aren't you just delaying the _next_ render? i.e. when a user types the _second_ letter? So does it really matter?
-   */
-  useIsomorphicLayoutEffect(() => {
-    formListeners.current.forEach(listener => listener(state));
-  }, [state]);
 
   useEffect(() => {
     if (
@@ -263,7 +257,7 @@ export const useFormik = <Values extends FormikValues = FormikValues>(
    * Here, we memoize the API so that
    * React's Context doesn't update on every render.
    *
-   * We'd don't useMemo because we're purposely
+   * We don't useMemo because we're purposely
    * only updating when the config updates
    */
   const [memoizedApi, updateMemoizedApi] = useState({

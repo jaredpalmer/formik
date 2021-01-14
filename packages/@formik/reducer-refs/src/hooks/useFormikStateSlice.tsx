@@ -8,6 +8,9 @@ export type FormSliceFn<Values, Result> = (
   formState: FormikRefState<Values>
 ) => Result;
 
+/**
+ * Important! Use a stable or memoized function for optimum performance.
+ */
 export const useFormikStateSlice = <Values, Result>(
   sliceFn: FormSliceFn<Values, Result>
 ) => {

@@ -1,9 +1,8 @@
 import React from 'react';
 import { Formik, Field, Form, ErrorMessage } from '@formik/reducer-refs';
 import * as Yup from 'yup';
-import { FormikState } from '../debug/FormikState';
-
-let renderCount = 0;
+import { DebugFieldState } from '../debug/DebugFieldState';
+import { DebugFormikState } from '../debug/DebugFormikState';
 
 const Basic = () => (
   <div>
@@ -29,11 +28,12 @@ const Basic = () => (
         await new Promise(r => setTimeout(r, 500));
         alert(JSON.stringify(values, null, 2));
       }}
+      validateOnChange={false}
     >
-      {({ submitForm }) => (
-        <Form>
+        <Form autoComplete="off">
           <Field name="firstName" placeholder="Jane" />
           <ErrorMessage name="firstName" component="p" />
+          <DebugFieldState name="firstName" />
 
           <Field name="lastName" placeholder="Doe" />
           <ErrorMessage name="lastName" component="p" />
@@ -78,13 +78,8 @@ const Basic = () => (
             </label>
           </div>
           <button type="submit">Submit via submit button</button>
-          <button type="button" onClick={() => submitForm()}>
-            Submit via submitForm()
-          </button>
-          <div id="renderCounter">{renderCount++}</div>
-          <FormikState />
+          <DebugFormikState />
         </Form>
-      )}
     </Formik>
   </div>
 );

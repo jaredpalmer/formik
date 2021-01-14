@@ -81,9 +81,9 @@ export const selectRefResetForm = <Values extends FormikValues>(
   }
 };
 
-export const selectRefGetFieldMeta = <Values extends FormikValues>(
+export const selectRefGetFieldMeta = <Values extends FormikValues, Value = any>(
   getState: GetRefStateFn<Values>
-) => (name: string): FieldMetaProps<any> => {
+) => (name: string): FieldMetaProps<Value> => {
   const state = getState();
 
   return {

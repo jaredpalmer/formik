@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { FormEffect } from '../types';
-import isEqual from 'react-fast-compare';
+import { FormikRefState } from '../types';
 import {
   FieldHelperProps,
   FieldInputProps,
@@ -10,6 +9,7 @@ import {
 import { useFormikApi } from './useFormikApi';
 import invariant from 'tiny-warning';
 import { selectRefGetFieldMeta } from '../ref-selectors';
+import { useFormikStateSlice } from './useFormikStateSlice';
 
 export type UseFieldProps<Value = any> = {
   /**
@@ -59,17 +59,11 @@ export type UseFieldProps<Value = any> = {
 
 export function useField<Value = any, FormValues = any>(
   nameOrOptions: string | UseFieldProps<Value>
-): [
-  FieldInputProps<Value>,
-  FieldMetaProps<FormValues>,
-  FieldHelperProps<Value>
-] {
+): [FieldInputProps<Value>, FieldMetaProps<Value>, FieldHelperProps<Value>] {
   const formik = useFormikApi<FormValues>();
 
   const {
-    addFormEffect,
     getFieldProps,
-    getFieldMeta,
     getFieldHelpers,
     registerField,
     unregisterField,
@@ -80,20 +74,17 @@ export function useField<Value = any, FormValues = any>(
 
   const { name: fieldName, validate: validateFn } = props;
 
-  const fieldMetaRef = React.useRef(getFieldMeta<FormValues>(fieldName));
-  const [fieldMeta, setFieldMeta] = React.useState(fieldMetaRef.current);
-
-  const maybeUpdateFieldMeta = React.useCallback<FormEffect<any>>(
-    formikState => {
-      const fieldMeta = selectRefGetFieldMeta(() => formikState)(fieldName);
-
-      if (!isEqual(fieldMeta, fieldMetaRef.current)) {
-        fieldMetaRef.current = fieldMeta;
-        setFieldMeta(fieldMeta);
-      }
-    },
-    [fieldName, setFieldMeta, fieldMetaRef]
+  /**
+   * Recreate @formik/core's selector with the state passed from addFormEffect,
+   * Instead of possibly getting a value scheduled for the _next_ render.
+   */
+  const sliceFieldMeta = React.useCallback(
+    (formikState: FormikRefState<FormValues>) =>
+      selectRefGetFieldMeta<FormValues, Value>(() => formikState)(fieldName),
+    [fieldName]
   );
+
+  const fieldMeta = useFormikStateSlice(sliceFieldMeta);
 
   React.useEffect(() => {
     if (fieldName) {
@@ -107,10 +98,6 @@ export function useField<Value = any, FormValues = any>(
       }
     };
   }, [registerField, unregisterField, fieldName, validateFn]);
-
-  React.useEffect(() => {
-    return addFormEffect(maybeUpdateFieldMeta);
-  }, []);
 
   if (__DEV__) {
     invariant(

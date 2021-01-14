@@ -2,7 +2,6 @@ import {
   FormikValues,
   FormikCoreApi,
   FormikState,
-  FieldMetaProps,
   ValidationHandler,
   FormikValidationConfig,
   FormikErrors,
@@ -25,7 +24,6 @@ export type GetRefStateFn<Values> = () => FormikRefState<Values>;
 export type FormEffect<Values extends FormikValues> = (
   state: FormikRefState<Values>
 ) => void;
-export type FieldEffect<Value> = (state: FieldMetaProps<Value>) => void;
 export type UnsubscribeFn = () => void;
 
 export type FormikRefApi<Values extends FormikValues> = FormikCoreApi<Values> &

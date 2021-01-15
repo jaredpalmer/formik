@@ -10,6 +10,7 @@
     "cypress": "^5.2.0",
     "eslint-config-react-app": "^6.0.0",
     "eslint-plugin-prettier": "^3.3.1",
+    "eslint-plugin-react-hooks": "^4.2.0",
     "got": "10.0.4",
     "husky": "^4.3.0",
     "lerna": "^3.19.0",

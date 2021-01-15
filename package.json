@@ -25,7 +25,7 @@
   ],
   "scripts": {
     "lerna": "lerna",
-    "dev": "lerna run start --stream --parallel",
+    "dev": "yarn --cwd ./app run start",
     "test": "lerna run test --",
     "test:watch": "lerna run test --stream --no-sort -- --watch",
     "test:watchAll": "lerna run test --stream --no-sort -- --watchAll",
@@ -40,7 +40,7 @@
     "cypress": "cypress run",
     "precommit": "lint-staged",
     "cypress:open": "cypress open",
-    "start:app": "yarn run lerna bootstrap && yarn --cwd ./app run start",
+    "start:app": "yarn --cwd ./app run start",
     "unlink": "yarn --cwd node_modules/react unlink && yarn --cwd packages/formik unlink"
   },
   "lint-staged": {

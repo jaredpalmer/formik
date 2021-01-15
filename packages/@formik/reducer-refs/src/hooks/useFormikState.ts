@@ -1,9 +1,10 @@
+import { useFormikComputedStateInternal } from './useFormikComputedState';
 import {
   FormikValues,
   FormikComputedState,
   useIsomorphicLayoutEffect,
 } from '@formik/core';
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { useFormikApi } from './useFormikApi';
 import { FormikRefApi, FormikRefState } from '../types';
 
@@ -17,12 +18,9 @@ export const useFormikRefStateInternal = <Values extends FormikValues>(
   api: FormikRefApi<Values>,
   shouldAddFormEffect = true
 ): [FormikRefState<Values> & FormikComputedState, FormikRefApi<Values>] => {
-  const { getState, isFormValid } = api;
+  const { getState } = api;
   const [formikState, setFormikState] = useState(getState());
-
-  const isValid = useMemo(() => {
-    return isFormValid(formikState.errors, formikState.dirty);
-  }, [isFormValid, formikState.errors, formikState.dirty]);
+  const computedState = useFormikComputedStateInternal(api, formikState);
 
   useIsomorphicLayoutEffect(() => {
     // in case someone accidentally passes `undefined`
@@ -36,7 +34,7 @@ export const useFormikRefStateInternal = <Values extends FormikValues>(
   return [
     {
       ...formikState,
-      isValid,
+      ...computedState,
     },
     api,
   ];

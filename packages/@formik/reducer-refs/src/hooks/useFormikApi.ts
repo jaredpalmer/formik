@@ -2,8 +2,9 @@ import invariant from 'tiny-warning';
 import React from 'react';
 import { FormikApiContext } from '../contexts/FormikApiContext';
 import { FormikRefApi } from '../types';
+import { FormikValues } from '@formik/core';
 
-export function useFormikApi<Values>() {
+export function useFormikApi<Values extends FormikValues>() {
   const formikApi = React.useContext(FormikApiContext);
 
   invariant(

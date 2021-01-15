@@ -1,5 +1,5 @@
 import isEqual from 'react-fast-compare';
-import { FormikMessage, formikReducer } from "@formik/core";
+import { FormikMessage, formikReducer } from '@formik/core';
 import { FormikRefState } from './types';
 
 export function formikRefReducer<Values>(
@@ -21,7 +21,7 @@ export function formikRefReducer<Values>(
       return {
         ...state,
         initialValues: msg.payload,
-        dirty: !isEqual(state.initialValues, state.values)
+        dirty: !isEqual(state.initialValues, state.values),
       };
     case 'RESET_TOUCHED':
       return {

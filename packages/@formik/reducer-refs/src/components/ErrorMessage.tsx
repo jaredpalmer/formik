@@ -30,7 +30,7 @@ class ErrorMessageImpl extends React.Component<
   }
 
   render() {
-    let { component, formik, render, children, name, ...rest } = this.props;
+    const { component, formik, render, children, name, ...rest } = this.props;
 
     const touch = getIn(formik.touched, name);
     const error = getIn(formik.errors, name);

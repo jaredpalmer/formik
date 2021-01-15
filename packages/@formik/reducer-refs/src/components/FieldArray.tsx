@@ -158,13 +158,13 @@ class FieldArrayInner<Values = {}> extends React.Component<
       formik: { setFormikState },
     } = this.props;
     setFormikState((prevState: FormikState<any>) => {
-      let updateErrors = typeof alterErrors === 'function' ? alterErrors : fn;
-      let updateTouched =
+      const updateErrors = typeof alterErrors === 'function' ? alterErrors : fn;
+      const updateTouched =
         typeof alterTouched === 'function' ? alterTouched : fn;
 
       // values fn should be executed before updateErrors and updateTouched,
       // otherwise it causes an error with unshift.
-      let values = setIn(
+      const values = setIn(
         prevState.values,
         name,
         fn(getIn(prevState.values, name))

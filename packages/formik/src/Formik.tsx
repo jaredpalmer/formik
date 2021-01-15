@@ -100,6 +100,7 @@ export function useFormik<Values extends FormikValues = FormikValues>(
 
   const isValid = React.useMemo(() => isFormValid(state.errors, dirty), [
     dirty,
+    isFormValid,
     state.errors,
   ]);
 

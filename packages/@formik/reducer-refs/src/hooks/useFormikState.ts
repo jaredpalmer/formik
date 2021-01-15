@@ -15,13 +15,14 @@ import { FormikRefApi, FormikRefState } from '../types';
  */
 export const useFormikRefStateInternal = <Values extends FormikValues>(
   api: FormikRefApi<Values>,
-  shouldAddFormEffect: boolean = true
+  shouldAddFormEffect = true
 ): [FormikRefState<Values> & FormikComputedState, FormikRefApi<Values>] => {
-  const [formikState, setFormikState] = useState(api.getState());
+  const { getState, isFormValid } = api;
+  const [formikState, setFormikState] = useState(getState());
 
   const isValid = useMemo(() => {
-    return api.isFormValid(formikState.errors, formikState.dirty);
-  }, [formikState.errors, formikState.dirty]);
+    return isFormValid(formikState.errors, formikState.dirty);
+  }, [isFormValid, formikState.errors, formikState.dirty]);
 
   useIsomorphicLayoutEffect(() => {
     // in case someone accidentally passes `undefined`

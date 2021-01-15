@@ -109,7 +109,7 @@ export const useFormik = <Values extends FormikValues = FormikValues>(
 
       return result;
     },
-    [stateRef, formListenersRef]
+    [stateRef]
   );
 
   const getState = useCallback(() => stateRef.current, [stateRef]);

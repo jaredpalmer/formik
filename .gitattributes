@@ -1,0 +1,3 @@
+# JS/TS files should be LF on Windows.
+*.jsx? text eol=lf
+*.tsx? text eol=lf

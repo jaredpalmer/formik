@@ -107,17 +107,13 @@ export const useFormik = <Values extends FormikValues = FormikValues>(
 
       stateRef.current = result;
 
-      unstable_batchedUpdates(() => {
-        formListenersRef.current.forEach(listener => listener(state));
-      });
-
       return result;
     },
     [stateRef, formListenersRef]
   );
 
   const getState = useCallback(() => stateRef.current, [stateRef]);
-  const [, dispatch] = useReducer(refBoundFormikReducer, stateRef.current);
+  const [state, dispatch] = useReducer(refBoundFormikReducer, stateRef.current);
 
   // override some APIs to dispatch additional information
   // isMounted is the only ref we actually use, as we
@@ -193,6 +189,12 @@ export const useFormik = <Values extends FormikValues = FormikValues>(
       isMounted.current = false;
     };
   }, [isMounted]);
+
+  useIsomorphicLayoutEffect(() => {
+    unstable_batchedUpdates(() => {
+      formListenersRef.current.forEach(listener => listener(state));
+    });
+  }, [state]);
 
   useEffect(() => {
     if (

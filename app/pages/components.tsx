@@ -1,6 +1,6 @@
 import React from 'react';
 import { Formik, Field, Form, FieldProps, FieldComponentProps } from 'formik';
-import { DisplayProps } from '../debug/DisplayProps';
+import { DebugProps } from '../debug/DebugProps';
 
 const initialValues = {
   name: '',
@@ -9,7 +9,7 @@ const initialValues = {
 const RenderComponent = (props: FieldProps<string, typeof initialValues>) => (
   <>
     <input data-testid="child" {...props.field} />
-    <DisplayProps {...props} />
+    <DebugProps {...props} />
   </>
 );
 const ComponentComponent = (
@@ -17,7 +17,7 @@ const ComponentComponent = (
 ) => (
   <>
     <input data-testid="child" {...props.field} />
-    <DisplayProps {...props} />
+    <DebugProps {...props} />
   </>
 );
 const AsComponent = (
@@ -25,7 +25,7 @@ const AsComponent = (
 ) => (
   <>
     <input data-testid="child" {...props} />
-    <DisplayProps {...props} />
+    <DebugProps {...props} />
   </>
 );
 

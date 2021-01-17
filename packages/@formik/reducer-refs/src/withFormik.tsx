@@ -100,8 +100,8 @@ export function withFormik<
   Payload = Values
 >({
   mapPropsToValues = (vanillaProps: OuterProps): Values => {
-    let val: Values = {} as Values;
-    for (let k in vanillaProps) {
+    const val: Values = {} as Values;
+    for (const k in vanillaProps) {
       if (
         vanillaProps.hasOwnProperty(k) &&
         typeof vanillaProps[k] !== 'function'

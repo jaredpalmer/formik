@@ -1,3 +1,4 @@
+import { useCheckableEventCallback } from './../utils';
 import {
   selectIsFormValid,
   selectGetFieldProps,
@@ -6,6 +7,7 @@ import {
   selectSetStatus,
   selectSetSubmitting,
   selectGetFieldHelpers,
+  SetFieldTouchedFn,
 } from './../selectors';
 import {
   GetStateFn,
@@ -19,7 +21,6 @@ import {
   FormikRefs,
   FieldHelpers,
 } from '../types';
-import { useEventCallback, isFunction } from '../utils';
 import {
   selectRunValidateHandler,
   selectRunValidationSchema,
@@ -56,7 +57,10 @@ export const useFormikCore = <
 ): FormikCoreApi<Values> => {
   const fieldRegistry = React.useRef<FieldRegistry>({});
 
-  const isFormValid = useEventCallback(selectIsFormValid(props), [props]);
+  const isFormValid = useCheckableEventCallback(
+    () => selectIsFormValid(props),
+    [props]
+  );
 
   const registerField = React.useCallback(
     (name: string, { validate }: any) => {
@@ -74,41 +78,43 @@ export const useFormikCore = <
     [fieldRegistry]
   );
 
-  const runValidateHandler = useEventCallback(
-    selectRunValidateHandler(props.validate),
+  const runValidateHandler = useCheckableEventCallback(
+    () => selectRunValidateHandler(props.validate),
     [props.validate]
   );
 
   /**
    * Run validation against a Yup schema and optionally run a function if successful
    */
-  const runValidationSchema = useEventCallback(
-    selectRunValidationSchema<Values>(props.validationSchema),
+  const runValidationSchema = useCheckableEventCallback(
+    () => selectRunValidationSchema<Values>(props.validationSchema),
     [props.validationSchema]
   );
 
-  const runSingleFieldLevelValidation = React.useCallback(
-    selectRunSingleFieldLevelValidation(fieldRegistry),
+  const runSingleFieldLevelValidation = useCheckableEventCallback(
+    () => selectRunSingleFieldLevelValidation(fieldRegistry),
     [fieldRegistry]
   );
 
-  const runFieldLevelValidations = useEventCallback(
-    selectRunFieldLevelValidations<Values>(
-      runSingleFieldLevelValidation,
-      fieldRegistry
-    ),
+  const runFieldLevelValidations = useCheckableEventCallback(
+    () =>
+      selectRunFieldLevelValidations<Values>(
+        runSingleFieldLevelValidation,
+        fieldRegistry
+      ),
     [runSingleFieldLevelValidation, fieldRegistry]
   );
 
   // Run all validations and return the result
-  const runAllValidations = useEventCallback(
-    selectRunAllValidations(
-      props.validate,
-      props.validationSchema,
-      runFieldLevelValidations,
-      runValidationSchema,
-      runValidateHandler
-    ),
+  const runAllValidations = useCheckableEventCallback(
+    () =>
+      selectRunAllValidations(
+        props.validate,
+        props.validationSchema,
+        runFieldLevelValidations,
+        runValidationSchema,
+        runValidateHandler
+      ),
     [
       props.validate,
       props.validationSchema,
@@ -119,133 +125,102 @@ export const useFormikCore = <
   );
 
   // Run all validations methods and update state accordingly
-  const validateForm = useEventCallback(
-    selectValidateForm(getState, dispatch, runAllValidations, refs.isMounted),
+  const validateForm = useCheckableEventCallback(
+    () =>
+      selectValidateForm(getState, dispatch, runAllValidations, refs.isMounted),
     [getState, dispatch, runAllValidations, refs.isMounted]
   );
 
-  const validateField = useEventCallback(
-    selectValidateField(
-      fieldRegistry,
-      getState,
-      dispatch,
-      props.validationSchema,
-      runValidationSchema
-    ),
-    [fieldRegistry, getState, props.validationSchema, runValidationSchema]
+  const validateField = useCheckableEventCallback(
+    () =>
+      selectValidateField(
+        fieldRegistry,
+        getState,
+        dispatch,
+        props.validationSchema,
+        runValidationSchema
+      ),
+    [dispatch, getState, props.validationSchema, runValidationSchema]
   );
 
-  const setTouched = useEventCallback(
-    selectSetTouched(getState, dispatch, props.validateOnBlur, validateForm),
+  const setTouched = useCheckableEventCallback(
+    () =>
+      selectSetTouched(getState, dispatch, props.validateOnBlur, validateForm),
     [getState, dispatch, props.validateOnBlur, validateForm]
   );
 
-  const setErrors = React.useCallback(selectSetErrors(dispatch), [dispatch]);
-
-  const setValues = useEventCallback(
-    selectSetValues(getState, dispatch, props.validateOnChange, validateForm),
-    [dispatch, props.validateOnChange, validateForm]
-  );
-
-  const setFieldError = React.useCallback(selectSetFieldError(dispatch), [
+  const setErrors = useCheckableEventCallback(() => selectSetErrors(dispatch), [
     dispatch,
   ]);
 
-  const setFieldValue = useEventCallback(
-    selectSetFieldValue(
-      getState,
-      dispatch,
-      props.validateOnChange,
-      validateForm
-    ),
+  const setValues = useCheckableEventCallback(
+    () =>
+      selectSetValues(getState, dispatch, props.validateOnChange, validateForm),
+    [dispatch, getState, props.validateOnChange, validateForm]
+  );
+
+  const setFieldError = useCheckableEventCallback(
+    () => selectSetFieldError(dispatch),
+    [dispatch]
+  );
+
+  const setFieldValue = useCheckableEventCallback(
+    () =>
+      selectSetFieldValue(
+        getState,
+        dispatch,
+        props.validateOnChange,
+        validateForm
+      ),
     [getState, dispatch, props.validateOnChange, validateForm]
   );
-  const executeChange = useEventCallback(
-    selectExecuteChange(getState, setFieldValue),
+  const executeChange = useCheckableEventCallback(
+    () => selectExecuteChange(getState, setFieldValue),
     [getState, setFieldValue]
   );
 
   // We have to help this cast.
-  const handleChange = useEventCallback(selectHandleChange(executeChange), [
-    executeChange,
-  ]) as ReturnType<typeof selectHandleChange>;
+  const handleChange = useCheckableEventCallback(
+    () => selectHandleChange(executeChange),
+    [executeChange]
+  ) as ReturnType<typeof selectHandleChange>;
 
-  const setFieldTouched = useEventCallback(
-    selectSetFieldTouched(
-      getState,
-      dispatch,
-      validateForm,
-      props.validateOnBlur
-    ),
+  const setFieldTouched = useCheckableEventCallback(
+    () =>
+      selectSetFieldTouched(
+        getState,
+        dispatch,
+        validateForm,
+        props.validateOnBlur
+      ),
     [getState, dispatch, validateForm, props.validateOnBlur]
   );
 
-  const executeBlur = React.useCallback(selectExecuteBlur(setFieldTouched), [
-    setFieldTouched,
-  ]);
+  const executeBlur = useCheckableEventCallback(
+    () => selectExecuteBlur(setFieldTouched),
+    [setFieldTouched]
+  );
 
   // We have to help this cast.
-  const handleBlur = useEventCallback(selectHandleBlur(executeBlur), [
-    executeBlur,
-  ]) as ReturnType<typeof selectHandleBlur>;
+  const handleBlur = useCheckableEventCallback(
+    () => selectHandleBlur(executeBlur),
+    [executeBlur]
+  ) as ReturnType<typeof selectHandleBlur>;
 
-  const setFormikState = React.useCallback(selectSetFormikState(dispatch), [
-    getState,
+  const setFormikState = React.useMemo(() => selectSetFormikState(dispatch), [
     dispatch,
   ]);
 
-  const setStatus = React.useCallback(selectSetStatus(dispatch), [dispatch]);
-
-  const setSubmitting = React.useCallback(selectSetSubmitting(dispatch), [
+  const setStatus = useCheckableEventCallback(() => selectSetStatus(dispatch), [
     dispatch,
   ]);
+
+  const setSubmitting = useCheckableEventCallback(
+    () => selectSetSubmitting(dispatch),
+    [dispatch]
+  );
 
   const { onSubmit } = props;
-
-  const executeSubmit = useEventCallback(
-    () => onSubmit(getState().values, imperativeMethods),
-    [props.onSubmit]
-  );
-
-  const submitForm = useEventCallback(
-    selectSubmitForm(
-      getState,
-      dispatch,
-      validateForm,
-      executeSubmit,
-      refs.isMounted
-    ),
-    [getState, dispatch, validateForm, executeSubmit, refs.isMounted]
-  );
-
-  const handleSubmit = useEventCallback(selectHandleSubmit(submitForm), [
-    submitForm,
-  ]);
-
-  const getFieldMeta = React.useCallback(selectGetFieldMeta(getState, refs), [
-    getState,
-  ]);
-
-  const getFieldHelpers = React.useCallback(
-    selectGetFieldHelpers(setFieldValue, setFieldTouched, setFieldError),
-    [setFieldValue, setFieldTouched, setFieldError]
-  );
-
-  const getValueFromEvent = React.useCallback(
-    selectGetValueFromEvent(getState),
-    [getState]
-  );
-
-  const getFieldProps = React.useCallback(
-    selectGetFieldProps(
-      getState,
-      handleChange,
-      handleBlur,
-      setFieldValue,
-      getValueFromEvent
-    ),
-    [getState, handleChange, handleBlur, setFieldValue, getValueFromEvent]
-  );
 
   const imperativeMethods: FormikHelpers<Values> = {
     isFormValid,
@@ -265,8 +240,55 @@ export const useFormikCore = <
       resetForm(nextState),
   };
 
-  const resetForm = useEventCallback(
-    selectResetForm(getState, dispatch, props, refs, imperativeMethods),
+  const executeSubmit = useCheckableEventCallback(
+    () => () => onSubmit(getState().values, imperativeMethods),
+    [getState, imperativeMethods, onSubmit]
+  );
+
+  const submitForm = useCheckableEventCallback(
+    () =>
+      selectSubmitForm(
+        getState,
+        dispatch,
+        validateForm,
+        executeSubmit,
+        refs.isMounted
+      ),
+    [getState, dispatch, validateForm, executeSubmit, refs.isMounted]
+  );
+
+  const handleSubmit = useCheckableEventCallback(
+    () => selectHandleSubmit(submitForm),
+    [submitForm]
+  );
+
+  const getFieldMeta = React.useCallback(selectGetFieldMeta(getState, refs), [
+    getState,
+  ]);
+
+  const getFieldHelpers = React.useCallback(
+    selectGetFieldHelpers(setFieldValue, setFieldTouched, setFieldError),
+    [setFieldValue, setFieldTouched, setFieldError]
+  );
+
+  const getValueFromEvent = React.useCallback(
+    selectGetValueFromEvent(getState),
+    []
+  );
+
+  const getFieldProps = React.useCallback(
+    selectGetFieldProps(
+      getState,
+      handleChange,
+      handleBlur,
+      setFieldValue,
+      getValueFromEvent
+    ),
+    [getState, handleChange, handleBlur, setFieldValue, getValueFromEvent]
+  );
+
+  const resetForm = useCheckableEventCallback(
+    () => selectResetForm(getState, dispatch, props, refs, imperativeMethods),
     [
       props.initialErrors,
       props.initialStatus,
@@ -282,8 +304,8 @@ export const useFormikCore = <
     getValueFromEvent,
   };
 
-  const handleReset = useEventCallback(
-    e => {
+  const handleReset = useCheckableEventCallback(
+    () => e => {
       if (e && e.preventDefault && isFunction(e.preventDefault)) {
         e.preventDefault();
       }

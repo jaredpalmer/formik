@@ -3,6 +3,9 @@ import { FormikContextType } from '@formik/core';
 import { useFormikApi } from './useFormikApi';
 import { useFormikRefStateInternal } from './useFormikState';
 
+/**
+ * @deprecated Formik is no longer exposing its state as Context. Please use `useFormikStateSlice(state => { errors: state.errors })` for a slice of state, or `useFormikState()` for the whole thing (at the expense of performance)
+ */
 export function useFormikContext<Values>(): FormikContextType<Values> {
   const formikApi = useFormikApi<Values>();
 

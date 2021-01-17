@@ -1,5 +1,5 @@
 import { isEqual } from 'lodash';
-import { useIsomorphicLayoutEffect } from '@formik/core';
+import { FormikValues, useIsomorphicLayoutEffect } from '@formik/core';
 import React from 'react';
 import { FormEffect, FormikRefState } from '../types';
 import { useFormikApi } from './useFormikApi';
@@ -8,7 +8,10 @@ export type FormSliceFn<Values, Result> = (
   formState: FormikRefState<Values>
 ) => Result;
 
-export const useFormikStateSlice = <Values, Result>(
+/**
+ * Important! Use a stable or memoized function for optimum performance.
+ */
+export const useFormikStateSlice = <Values extends FormikValues, Result>(
   sliceFn: FormSliceFn<Values, Result>
 ) => {
   const { addFormEffect, getState } = useFormikApi<Values>();

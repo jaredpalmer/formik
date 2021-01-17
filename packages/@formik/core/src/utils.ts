@@ -18,10 +18,12 @@ export const isEmptyArray = (value?: any) =>
   Array.isArray(value) && value.length === 0;
 
 /** @private is the given object a Function? */
+// eslint-disable-next-line @typescript-eslint/ban-types
 export const isFunction = (obj: any): obj is Function =>
   typeof obj === 'function';
 
 /** @private is the given object an Object? */
+// eslint-disable-next-line @typescript-eslint/ban-types
 export const isObject = (obj: any): obj is Object =>
   obj !== null && typeof obj === 'object';
 
@@ -46,12 +48,7 @@ export const isPromise = (value: any): value is PromiseLike<any> =>
 /**
  * Deeply get a value from an object via its path.
  */
-export function getIn(
-  obj: any,
-  key: string | string[],
-  def?: any,
-  p: number = 0
-) {
+export function getIn(obj: any, key: string | string[], def?: any, p = 0) {
   const path = toPath(key);
   while (obj && p < path.length) {
     obj = obj[path[p++]];
@@ -84,14 +81,14 @@ export function getIn(
  * @see https://github.com/jaredpalmer/formik/pull/123
  */
 export function setIn(obj: any, path: string, value: any): any {
-  let res: any = clone(obj); // this keeps inheritance when obj is a class
+  const res: any = clone(obj); // this keeps inheritance when obj is a class
   let resVal: any = res;
   let i = 0;
-  let pathArray = toPath(path);
+  const pathArray = toPath(path);
 
   for (; i < pathArray.length - 1; i++) {
     const currentPath: string = pathArray[i];
-    let currentObj: any = getIn(obj, pathArray.slice(0, i + 1));
+    const currentObj: any = getIn(obj, pathArray.slice(0, i + 1));
 
     if (currentObj && (isObject(currentObj) || Array.isArray(currentObj))) {
       resVal = resVal[currentPath] = clone(currentObj);
@@ -135,7 +132,7 @@ export function setNestedObjectValues<T>(
   visited: any = new WeakMap(),
   response: any = {}
 ): T {
-  for (let k of Object.keys(object)) {
+  for (const k of Object.keys(object)) {
     const val = object[k];
     if (isObject(val)) {
       if (!visited.get(val)) {
@@ -183,8 +180,8 @@ export function arrayMerge(target: any[], source: any[], options: any): any[] {
 export function prepareDataForValidation<T extends FormikValues>(
   values: T
 ): FormikValues {
-  let data: FormikValues = Array.isArray(values) ? [] : {};
-  for (let k in values) {
+  const data: FormikValues = Array.isArray(values) ? [] : {};
+  for (const k in values) {
     if (Object.prototype.hasOwnProperty.call(values, k)) {
       const key = String(k);
       if (Array.isArray(values[key]) === true) {
@@ -214,7 +211,7 @@ export function yupToFormErrors<Values>(yupError: any): FormikErrors<Values> {
     if (yupError.inner.length === 0) {
       return setIn(errors, yupError.path, yupError.message);
     }
-    for (let err of yupError.inner) {
+    for (const err of yupError.inner) {
       if (!getIn(errors, err.path)) {
         errors = setIn(errors, err.path, err.message);
       }
@@ -229,7 +226,7 @@ export function yupToFormErrors<Values>(yupError: any): FormikErrors<Values> {
 export function validateYupSchema<T extends FormikValues>(
   values: T,
   schema: any,
-  sync: boolean = false,
+  sync = false,
   context: any = {}
 ): Promise<Partial<T>> {
   const validateData: FormikValues = prepareDataForValidation(values);
@@ -290,15 +287,19 @@ export const useIsomorphicLayoutEffect =
     ? useLayoutEffect
     : useEffect;
 
-export function useEventCallback<Args extends any[], Return>(
-  fn: (...args: Args) => Return,
+/**
+ * A memoized event callback that can satisfy rules-of-hooks
+ */
+export const useCheckableEventCallback = <Args extends any[], Return>(
+  getFn: () => (...args: Args) => Return,
   dependencies: any[]
-) {
-  const ref = useRef(fn);
+) => {
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const ref = useRef(getFn());
 
   useIsomorphicLayoutEffect(() => {
-    ref.current = fn;
-  }, [fn, ...dependencies]);
+    ref.current = getFn();
+  }, [getFn, ...dependencies]);
 
   return useCallback(
     (...args: Args) => {
@@ -308,7 +309,13 @@ export function useEventCallback<Args extends any[], Return>(
     },
     [ref]
   );
-}
+};
+
+export const useEventCallback = <Args extends any[], Return>(
+  fn: (...args: Args) => Return,
+  dependencies: any[]
+) => useCheckableEventCallback(() => fn, [dependencies]);
+
 /** @private Does a React component have exactly 0 children? */
 export const isEmptyChildren = (children: any): boolean =>
   Children.count(children) === 0;

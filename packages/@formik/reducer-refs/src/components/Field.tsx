@@ -66,7 +66,7 @@ export type FieldConfig<
 export function Field<FieldValue = any, FormValues = any>(
   rawProps: GenericFieldHTMLAttributes & FieldConfig<FieldValue, FormValues>
 ) {
-  let {
+  const {
     render,
     children,
     as: is, // `as` is reserved in typescript lol

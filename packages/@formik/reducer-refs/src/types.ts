@@ -29,6 +29,10 @@ export type UnsubscribeFn = () => void;
 export type FormikRefApi<Values extends FormikValues> = FormikCoreApi<Values> &
   FormikValidationConfig & {
     getState: GetRefStateFn<Values>;
+    /**
+     * Note: Effects added here should be optimized so they don't
+     * update state unnecessarily. @see useFormikStateSlice
+     */
     addFormEffect: (effect: FormEffect<Values>) => UnsubscribeFn;
     validateForm: ValidationHandler<Values>;
   };

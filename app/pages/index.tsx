@@ -45,6 +45,11 @@ function Home() {
             <a>Performance Test: 500 Inputs</a>
           </Link>
         </li>
+        <li>
+          <Link href="/perf500-same-refs">
+            <a>Performance Test: 500 Inputs of the Same Input</a>
+          </Link>
+        </li>
       </ul>
       <style jsx>{`
         main {

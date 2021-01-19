@@ -7,30 +7,32 @@ const path = require('path');
 
 module.exports = {
   webpack: (config, { defaultLoaders, webpack }) => {
-    config.module.rules = [
-      ...config.module.rules,
-      {
-        test: /\.(tsx|ts|js|mjs|jsx)$/,
-        include: [path.resolve(config.context, '../')],
-        use: defaultLoaders.babel,
-        exclude: excludePath => {
-          return /node_modules/.test(excludePath);
+    if (config.mode === 'development') {
+      config.module.rules = [
+        ...config.module.rules,
+        {
+          test: /\.(tsx|ts|js|mjs|jsx)$/,
+          include: [path.resolve(config.context, '../')],
+          use: defaultLoaders.babel,
+          exclude: excludePath => {
+            return /node_modules/.test(excludePath);
+          },
         },
-      },
-    ];
+      ];
 
-    // tsdx uses __DEV__
-    config.plugins.push(
-      new webpack.DefinePlugin({
-        __DEV__: process.env.NODE_ENV === 'development',
-      })
-    );
+      // tsdx uses __DEV__
+      config.plugins.push(
+        new webpack.DefinePlugin({
+          __DEV__: process.env.NODE_ENV === 'development',
+        })
+      );
 
-    // there can only be one
-    config.resolve.alias['react'] = path.resolve(
-      config.context,
-      '../node_modules/react'
-    );
+      // there can only be one
+      config.resolve.alias['react'] = path.resolve(
+        config.context,
+        '../node_modules/react'
+      );
+    }
 
     return config;
   },

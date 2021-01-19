@@ -17,7 +17,6 @@ import { formikRefReducer } from '../ref-reducer';
 import { selectRefGetFieldMeta, selectRefResetForm } from '../ref-selectors';
 import { useEffect, useRef, useCallback, useReducer, useMemo } from 'react';
 import { useSubscriptions } from './useSubscriptions';
-import { usePropChangeLogger } from 'packages/@formik/core/src/hooks/usePropChangeLogger';
 
 export const useFormik = <Values extends FormikValues = FormikValues>(
   rawProps: FormikConfig<Values, FormikRefState<Values>>
@@ -225,9 +224,6 @@ export const useFormik = <Values extends FormikValues = FormikValues>(
     }
   }, [enableReinitialize, props.initialStatus]);
 
-  usePropChangeLogger({
-    formikCoreApi,
-  });
   /**
    * Here, we memoize the API so that
    * React's Context doesn't update on every render.
@@ -236,7 +232,6 @@ export const useFormik = <Values extends FormikValues = FormikValues>(
    * only updating when the config updates
    */
   return useMemo(() => {
-    console.log('rememoizing useFormik');
     return {
       // the core api
       ...formikCoreApi,

@@ -1,5 +1,6 @@
 import { validateYupSchema, yupToFormErrors } from '@formik/core';
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const Yup = require('yup');
 const schema = Yup.object().shape({
   name: Yup.string('Name must be a string').required('required'),
@@ -65,7 +66,7 @@ describe('Yup helpers', () => {
           { name: 'foo', object: { nestedField: '' } },
           nestedSchema
         );
-        expect(result.object!.nestedField).toBeUndefined();
+        expect(result.object?.nestedField).toBeUndefined();
       } catch (e) {
         throw e;
       }
@@ -80,7 +81,7 @@ describe('Yup helpers', () => {
           },
           nestedSchema
         );
-        expect(result.object!.nestedArray!).toEqual([undefined, 'foo', 'bar']);
+        expect(result.object?.nestedArray).toEqual([undefined, 'foo', 'bar']);
       } catch (e) {
         throw e;
       }

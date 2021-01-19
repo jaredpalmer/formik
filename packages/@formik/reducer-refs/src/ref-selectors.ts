@@ -81,17 +81,24 @@ export const selectRefResetForm = <Values extends FormikValues>(
   }
 };
 
+export const selectFieldMetaByName = (name: string) => <
+  Values,
+  State extends FormikRefState<Values>
+>(
+  state: State
+) => ({
+  value: getIn(state.values, name),
+  error: getIn(state.errors, name),
+  touched: !!getIn(state.touched, name),
+  initialValue: getIn(state.initialValues, name),
+  initialTouched: !!getIn(state.initialTouched, name),
+  initialError: getIn(state.initialErrors, name),
+});
+
 export const selectRefGetFieldMeta = <Values extends FormikValues, Value = any>(
   getState: GetRefStateFn<Values>
 ) => (name: string): FieldMetaProps<Value> => {
   const state = getState();
 
-  return {
-    value: getIn(state.values, name),
-    error: getIn(state.errors, name),
-    touched: !!getIn(state.touched, name),
-    initialValue: getIn(state.initialValues, name),
-    initialTouched: !!getIn(state.initialTouched, name),
-    initialError: getIn(state.initialErrors, name),
-  };
+  return selectFieldMetaByName(name)(state);
 };

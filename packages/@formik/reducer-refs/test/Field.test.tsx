@@ -114,8 +114,8 @@ describe('Field / FastField', () => {
 
   describe('receives { field, form, meta } props and renders element', () => {
     it('receives props and renders <Field />', () => {
-      let fullInjectedProps: FieldProps[] = [];
-      let componentInjectedProps: FieldComponentProps[] = [];
+      const fullInjectedProps: FieldProps[] = [];
+      const componentInjectedProps: FieldComponentProps[] = [];
       let asInjectedProps: Partial<FieldProps['field']> = {};
       let formikApi: FormikRefApi<any> | undefined;
       let formikState: FormikRefState<any> | undefined;
@@ -179,8 +179,8 @@ describe('Field / FastField', () => {
     });
 
     it('receives props and renders <FastField />', () => {
-      let fullInjectedProps: FastFieldProps[] = [];
-      let componentInjectedProps: FieldComponentProps[] = [];
+      const fullInjectedProps: FastFieldProps[] = [];
+      const componentInjectedProps: FieldComponentProps[] = [];
       let asInjectedProps: Partial<FastFieldProps['field']> = {};
 
       const RenderComponent = (props: FastFieldProps) => {

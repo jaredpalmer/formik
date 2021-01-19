@@ -142,7 +142,10 @@ export interface FormikComputedState {
  */
 export type FormikComputedProps = FormikComputedState;
 
-export type GetStateFn<Values> = () => FormikState<Values>;
+export type GetStateFn<
+  Values,
+  State extends FormikState<Values> = FormikState<Values>
+> = () => State;
 export type UnregisterFieldFn = (name: string) => void;
 export type RegisterFieldFn = (name: string, { validate }: any) => void;
 

@@ -7,13 +7,14 @@ export function usePropChangeLogger<Shape extends object>(props: Shape) {
   const prev = useRef<Record<string, any>>(props);
 
   useEffect(() => {
-    const changedProps = Object.entries(props)
-      .reduce<Record<string, [any, any]>>((ps, [k, v]) => {
-        if (prev.current[k] !== v) {
-          ps[k] = [prev.current[k], v];
-        }
-        return ps;
-      }, {});
+    const changedProps = Object.entries(props).reduce<
+      Record<string, [any, any]>
+    >((ps, [k, v]) => {
+      if (prev.current[k] !== v) {
+        ps[k] = [prev.current[k], v];
+      }
+      return ps;
+    }, {});
 
     if (Object.keys(changedProps).length > 0) {
       console.log('Changed props:', changedProps);

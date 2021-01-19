@@ -1,4 +1,4 @@
-import { useCheckableEventCallback } from './../utils';
+import { isFunction, useCheckableEventCallback } from './../utils';
 import {
   selectIsFormValid,
   selectGetFieldProps,
@@ -7,7 +7,6 @@ import {
   selectSetStatus,
   selectSetSubmitting,
   selectGetFieldHelpers,
-  SetFieldTouchedFn,
 } from './../selectors';
 import {
   GetStateFn,
@@ -19,7 +18,6 @@ import {
   FormikMessage,
   FormikCoreApi,
   FormikRefs,
-  FieldHelpers,
 } from '../types';
 import {
   selectRunValidateHandler,
@@ -44,7 +42,7 @@ import {
   selectHandleBlur,
   selectGetFieldMeta,
 } from '../selectors';
-import React from 'react';
+import React, { useMemo } from 'react';
 
 export const useFormikCore = <
   Values extends FormikValues,
@@ -56,11 +54,6 @@ export const useFormikCore = <
   refs: FormikRefs<Values>
 ): FormikCoreApi<Values> => {
   const fieldRegistry = React.useRef<FieldRegistry>({});
-
-  const isFormValid = useCheckableEventCallback(
-    () => selectIsFormValid(props),
-    [props]
-  );
 
   const registerField = React.useCallback(
     (name: string, { validate }: any) => {
@@ -76,6 +69,11 @@ export const useFormikCore = <
       delete fieldRegistry.current[name];
     },
     [fieldRegistry]
+  );
+
+  const isFormValid = useCheckableEventCallback(
+    () => selectIsFormValid(props),
+    [props]
   );
 
   const runValidateHandler = useCheckableEventCallback(
@@ -222,23 +220,29 @@ export const useFormikCore = <
 
   const { onSubmit } = props;
 
-  const imperativeMethods: FormikHelpers<Values> = {
-    isFormValid,
-    validateForm,
-    validateField,
-    setErrors,
-    setFieldError,
-    setFieldTouched,
-    setFieldValue,
-    setStatus,
-    setSubmitting,
-    setTouched,
-    setValues,
-    setFormikState,
-    submitForm,
-    resetForm: (nextState?: Partial<FormikState<Values>> | undefined) =>
-      resetForm(nextState),
-  };
+  // This is a bag of stable, imperative methods.
+  // These should all be constant functions or the result of useCheckableEventCallback.
+  // We do it this way because the callbacks that follow are dependent on this bag.
+  const imperativeMethods: FormikHelpers<Values> = useMemo(
+    () => ({
+      isFormValid,
+      validateForm,
+      validateField,
+      setErrors,
+      setFieldError,
+      setFieldTouched,
+      setFieldValue,
+      setStatus,
+      setSubmitting,
+      setTouched,
+      setValues,
+      setFormikState,
+      submitForm,
+      resetForm,
+    }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
 
   const executeSubmit = useCheckableEventCallback(
     () => () => onSubmit(getState().values, imperativeMethods),
@@ -262,47 +266,10 @@ export const useFormikCore = <
     [submitForm]
   );
 
-  const getFieldMeta = React.useCallback(selectGetFieldMeta(getState, refs), [
-    getState,
-  ]);
-
-  const getFieldHelpers = React.useCallback(
-    selectGetFieldHelpers(setFieldValue, setFieldTouched, setFieldError),
-    [setFieldValue, setFieldTouched, setFieldError]
-  );
-
-  const getValueFromEvent = React.useCallback(
-    selectGetValueFromEvent(getState),
-    []
-  );
-
-  const getFieldProps = React.useCallback(
-    selectGetFieldProps(
-      getState,
-      handleChange,
-      handleBlur,
-      setFieldValue,
-      getValueFromEvent
-    ),
-    [getState, handleChange, handleBlur, setFieldValue, getValueFromEvent]
-  );
-
   const resetForm = useCheckableEventCallback(
     () => selectResetForm(getState, dispatch, props, refs, imperativeMethods),
-    [
-      props.initialErrors,
-      props.initialStatus,
-      props.initialTouched,
-      props.onReset,
-    ]
+    [dispatch, getState, imperativeMethods, props, refs]
   );
-
-  const fieldHelpers: FieldHelpers = {
-    getFieldProps,
-    getFieldMeta,
-    getFieldHelpers,
-    getValueFromEvent,
-  };
 
   const handleReset = useCheckableEventCallback(
     () => e => {
@@ -319,14 +286,62 @@ export const useFormikCore = <
     [resetForm]
   );
 
-  return {
-    handleBlur,
-    handleChange,
-    handleReset,
-    handleSubmit,
-    unregisterField,
-    registerField,
-    ...imperativeMethods,
-    ...fieldHelpers,
-  };
+  /**
+   * Field Helpers
+   */
+  const getFieldMeta = useCheckableEventCallback(
+    () => selectGetFieldMeta(getState, refs),
+    [getState, refs]
+  );
+
+  const getFieldHelpers = useCheckableEventCallback(
+    () => selectGetFieldHelpers(setFieldValue, setFieldTouched, setFieldError),
+    [setFieldValue, setFieldTouched, setFieldError]
+  );
+
+  const getValueFromEvent = useCheckableEventCallback(
+    () => selectGetValueFromEvent(getState),
+    [getState]
+  );
+
+  const getFieldProps = useCheckableEventCallback(
+    () =>
+      selectGetFieldProps(
+        getState,
+        handleChange,
+        handleBlur,
+        setFieldValue,
+        getValueFromEvent
+      ),
+    [getState, handleChange, handleBlur, setFieldValue, getValueFromEvent]
+  );
+
+  return useMemo(
+    () => ({
+      handleBlur,
+      handleChange,
+      handleReset,
+      handleSubmit,
+      unregisterField,
+      registerField,
+      ...imperativeMethods,
+      getFieldMeta,
+      getFieldHelpers,
+      getFieldProps,
+      getValueFromEvent,
+    }),
+    [
+      getFieldHelpers,
+      getFieldMeta,
+      getFieldProps,
+      getValueFromEvent,
+      handleBlur,
+      handleChange,
+      handleReset,
+      handleSubmit,
+      imperativeMethods,
+      registerField,
+      unregisterField,
+    ]
+  );
 };

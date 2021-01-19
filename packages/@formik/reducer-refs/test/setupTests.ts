@@ -1,5 +1,5 @@
-beforeEach(() => {
-});
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+beforeEach(() => {});
 
-afterEach(() => {
-});
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+afterEach(() => {});

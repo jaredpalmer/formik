@@ -854,20 +854,23 @@ export type GetFieldMetaFn = <Value extends any>(
   name: string
 ) => FieldMetaProps<Value>;
 
+export const selectFieldMeta = <Values extends FormikValues>(
+  name: string,
+  refs: FormikRefs<Values>
+) => (state: FormikState<Values>) => ({
+  value: getIn(state.values, name),
+  error: getIn(state.errors, name),
+  touched: !!getIn(state.touched, name),
+  initialValue: getIn(refs.initialValues.current, name),
+  initialTouched: !!getIn(refs.initialTouched.current, name),
+  initialError: getIn(refs.initialErrors.current, name),
+});
+
 export const selectGetFieldMeta = <Values extends FormikValues>(
   getState: GetStateFn<Values>,
   refs: FormikRefs<Values>
 ): GetFieldMetaFn => name => {
-  const state = getState();
-
-  return {
-    value: getIn(state.values, name),
-    error: getIn(state.errors, name),
-    touched: !!getIn(state.touched, name),
-    initialValue: getIn(refs.initialValues.current, name),
-    initialTouched: !!getIn(refs.initialTouched.current, name),
-    initialError: getIn(refs.initialErrors.current, name),
-  };
+  return selectFieldMeta(name, refs)(getState());
 };
 
 export type GetFieldHelpersFn = <Value extends any>(

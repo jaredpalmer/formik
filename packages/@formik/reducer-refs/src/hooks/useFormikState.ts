@@ -4,9 +4,11 @@ import {
   FormikComputedState,
   useIsomorphicLayoutEffect,
 } from '@formik/core';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useFormikApi } from './useFormikApi';
 import { FormikRefApi, FormikRefState } from '../types';
+
+export const selectFullState = (state: any) => state;
 
 /**
  * `useFormikState`, but accepting `FormikApi` as a parameter.
@@ -18,24 +20,32 @@ export const useFormikRefStateInternal = <Values extends FormikValues>(
   api: FormikRefApi<Values>,
   shouldAddFormEffect = true
 ): [FormikRefState<Values> & FormikComputedState, FormikRefApi<Values>] => {
-  const { getState } = api;
+  const { getState, createSubscriber } = api;
   const [formikState, setFormikState] = useState(getState());
   const computedState = useFormikComputedStateInternal(api, formikState);
 
   useIsomorphicLayoutEffect(() => {
     // in case someone accidentally passes `undefined`
     if (shouldAddFormEffect !== false) {
-      return api.addFormEffect(setFormikState);
+      // not deep equals, because those are expensive checks.
+      // instead, subscribing to full useFormikState should be discouraged
+      return api.subscribe(
+        createSubscriber(selectFullState, Object.is),
+        setFormikState
+      );
     }
 
     return;
   }, [shouldAddFormEffect]);
 
   return [
-    {
-      ...formikState,
-      ...computedState,
-    },
+    useMemo(
+      () => ({
+        ...formikState,
+        ...computedState,
+      }),
+      [formikState, computedState]
+    ),
     api,
   ];
 };

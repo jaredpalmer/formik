@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { FormikRefState } from '../types';
+import { isEqual } from 'lodash';
 import {
   FieldHelperProps,
   FieldInputProps,
@@ -8,8 +8,8 @@ import {
 } from '@formik/core';
 import { useFormikApi } from './useFormikApi';
 import invariant from 'tiny-warning';
-import { selectRefGetFieldMeta } from '../ref-selectors';
-import { useFormikStateSlice } from './useFormikStateSlice';
+import { selectFieldMetaByName } from '../ref-selectors';
+import { useFormikStateSubscription } from './useFormikStateSubscription';
 
 export type UseFieldProps<Value = any> = {
   /**
@@ -67,6 +67,8 @@ export function useField<Value = any, FormValues = any>(
     getFieldHelpers,
     registerField,
     unregisterField,
+    createSelector,
+    createSubscriber,
   } = formik;
 
   const props =
@@ -78,13 +80,16 @@ export function useField<Value = any, FormValues = any>(
    * Recreate @formik/core's selector with the state passed from addFormEffect,
    * Instead of possibly getting a value scheduled for the _next_ render.
    */
-  const sliceFieldMeta = React.useCallback(
-    (formikState: FormikRefState<FormValues>) =>
-      selectRefGetFieldMeta<FormValues, Value>(() => formikState)(fieldName),
-    [fieldName]
+  const subscriber = React.useMemo(
+    () =>
+      createSubscriber(
+        createSelector(selectFieldMetaByName, [fieldName]),
+        isEqual
+      ),
+    [createSelector, createSubscriber, fieldName]
   );
 
-  const fieldMeta = useFormikStateSlice(sliceFieldMeta);
+  const fieldMeta = useFormikStateSubscription(subscriber);
 
   React.useEffect(() => {
     if (fieldName) {

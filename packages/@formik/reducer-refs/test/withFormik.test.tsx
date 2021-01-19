@@ -52,6 +52,7 @@ const InitialValues: Values = { name: 'jared' };
 const renderWithFormik = (options?: any, props?: any) => {
   let injected: any;
 
+  // eslint-disable-next-line @typescript-eslint/ban-types
   const FormikForm = withFormik<{}, Values>({
     mapPropsToValues: () => InitialValues,
     handleSubmit: noop,

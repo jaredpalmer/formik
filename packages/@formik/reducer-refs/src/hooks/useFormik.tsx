@@ -7,22 +7,17 @@ import {
   emptyErrors,
   emptyTouched,
   useFormikCore,
-  useIsomorphicLayoutEffect,
   FormikHelpers,
   useEventCallback,
   selectHandleReset,
 } from '@formik/core';
 import invariant from 'tiny-warning';
-import {
-  FormEffect,
-  FormikRefApi,
-  FormikRefState,
-  UnsubscribeFn,
-} from '../types';
+import { FormikRefApi, FormikRefState } from '../types';
 import { formikRefReducer } from '../ref-reducer';
 import { selectRefGetFieldMeta, selectRefResetForm } from '../ref-selectors';
-import { useEffect, useRef, useCallback, useReducer, useState } from 'react';
-import { unstable_batchedUpdates } from 'react-dom';
+import { useEffect, useRef, useCallback, useReducer, useMemo } from 'react';
+import { useSubscriptions } from './useSubscriptions';
+import { usePropChangeLogger } from 'packages/@formik/core/src/hooks/usePropChangeLogger';
 
 export const useFormik = <Values extends FormikValues = FormikValues>(
   rawProps: FormikConfig<Values, FormikRefState<Values>>
@@ -88,8 +83,6 @@ export const useFormik = <Values extends FormikValues = FormikValues>(
     dirty: false,
   });
 
-  const formListenersRef = useRef<FormEffect<Values>[]>([]);
-
   /**
    * Breaking all the rules, re: "must be side-effect free"
    * BUT that's probably OK
@@ -118,18 +111,20 @@ export const useFormik = <Values extends FormikValues = FormikValues>(
   // override some APIs to dispatch additional information
   // isMounted is the only ref we actually use, as we
   // override initialX.current with state.initialX
-  const {
-    resetForm: unusedResetForm,
-    handleReset: unusedHandleReset,
-    getFieldMeta: unusedGetFieldMeta,
-    ...formikCoreApi
-  } = useFormikCore(getState, dispatch, props, {
+  const formikCoreApi = useFormikCore(getState, dispatch, props, {
     initialValues,
     initialTouched,
     initialErrors,
     initialStatus,
     isMounted,
   });
+
+  const {
+    subscribe,
+    createSelector,
+    createSubscriber,
+    getSelector,
+  } = useSubscriptions<Values, FormikRefState<Values>>(state);
 
   const getFieldMeta = useEventCallback(selectRefGetFieldMeta(getState), [
     getState,
@@ -160,28 +155,6 @@ export const useFormik = <Values extends FormikValues = FormikValues>(
 
   const { validateForm } = imperativeMethods;
 
-  const addFormEffect = useCallback(
-    (effect: FormEffect<Values>): UnsubscribeFn => {
-      formListenersRef.current = [...formListenersRef.current, effect];
-
-      // in case a change occurred
-      // if it didn't, react's state will not update anyway
-      effect(stateRef.current);
-
-      return () => {
-        const listenerIndex = formListenersRef.current.findIndex(
-          listener => listener === effect
-        );
-
-        formListenersRef.current = [
-          ...formListenersRef.current.slice(0, listenerIndex),
-          ...formListenersRef.current.slice(listenerIndex + 1),
-        ];
-      };
-    },
-    [formListenersRef, stateRef]
-  );
-
   useEffect(() => {
     isMounted.current = true;
 
@@ -189,12 +162,6 @@ export const useFormik = <Values extends FormikValues = FormikValues>(
       isMounted.current = false;
     };
   }, [isMounted]);
-
-  useIsomorphicLayoutEffect(() => {
-    unstable_batchedUpdates(() => {
-      formListenersRef.current.forEach(listener => listener(state));
-    });
-  }, [state]);
 
   useEffect(() => {
     if (
@@ -258,6 +225,9 @@ export const useFormik = <Values extends FormikValues = FormikValues>(
     }
   }, [enableReinitialize, props.initialStatus]);
 
+  usePropChangeLogger({
+    formikCoreApi,
+  });
   /**
    * Here, we memoize the API so that
    * React's Context doesn't update on every render.
@@ -265,30 +235,38 @@ export const useFormik = <Values extends FormikValues = FormikValues>(
    * We don't useMemo because we're purposely
    * only updating when the config updates
    */
-  const [memoizedApi, updateMemoizedApi] = useState({
-    // the core api
-    ...formikCoreApi,
-    // the overrides
-    resetForm,
-    handleReset,
-    getFieldMeta,
-    // extra goodies
-    getState,
-    addFormEffect,
-    // config
-    validateOnBlur,
-    validateOnChange,
-    validateOnMount,
-  });
-
-  useIsomorphicLayoutEffect(() => {
-    updateMemoizedApi({
-      ...memoizedApi,
+  return useMemo(() => {
+    console.log('rememoizing useFormik');
+    return {
+      // the core api
+      ...formikCoreApi,
+      // the overrides
+      resetForm,
+      handleReset,
+      getFieldMeta,
+      // extra goodies
+      getState,
+      createSelector,
+      getSelector,
+      createSubscriber,
+      subscribe,
+      // config
       validateOnBlur,
       validateOnChange,
       validateOnMount,
-    });
-  }, [validateOnBlur, validateOnChange, validateOnMount]);
-
-  return memoizedApi;
+    };
+  }, [
+    formikCoreApi,
+    resetForm,
+    handleReset,
+    getFieldMeta,
+    getState,
+    createSelector,
+    getSelector,
+    createSubscriber,
+    subscribe,
+    validateOnBlur,
+    validateOnChange,
+    validateOnMount,
+  ]);
 };

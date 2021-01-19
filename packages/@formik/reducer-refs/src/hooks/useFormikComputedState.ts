@@ -2,7 +2,8 @@ import { FormikValues, FormikComputedState } from '@formik/core';
 import { useMemo } from 'react';
 import { useFormikApi } from './useFormikApi';
 import { FormikRefApi, FormikRefState } from '../types';
-import { useFormikStateSlice } from './useFormikStateSlice';
+import { useFormikStateSubscription } from './useFormikStateSubscription';
+import { isEqual } from 'lodash';
 
 /**
  * `useFormikState`, but accepting `FormikApi` as a parameter.
@@ -26,15 +27,24 @@ export const useFormikComputedStateInternal = <Values extends FormikValues>(
   };
 };
 
+const selectComputedState = <Values extends FormikValues>(
+  state: FormikRefState<Values>
+) => ({
+  errors: state.errors,
+  dirty: state.dirty,
+});
+
 /**
  * Subscribe to Formik State and Computed State updates.
  */
 export const useFormikComputedState = () => {
+  const api = useFormikApi();
+  const subscriber = useMemo(
+    () => api.createSubscriber(selectComputedState, isEqual),
+    [api]
+  );
   return useFormikComputedStateInternal(
-    useFormikApi(),
-    useFormikStateSlice(state => ({
-      errors: state.errors,
-      dirty: state.dirty,
-    }))
+    api,
+    useFormikStateSubscription(subscriber)
   );
 };

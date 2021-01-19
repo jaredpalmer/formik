@@ -77,8 +77,7 @@ export function useField<Value = any, FormValues = any>(
   const { name: fieldName, validate: validateFn } = props;
 
   /**
-   * Recreate @formik/core's selector with the state passed from addFormEffect,
-   * Instead of possibly getting a value scheduled for the _next_ render.
+   * Create a subscriber.
    */
   const subscriber = React.useMemo(
     () =>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Formik, Field, Form, FieldProps, FieldComponentProps } from 'formik';
-import { DebugProps } from '../debug/DebugProps';
+import { DebugProps } from '../components/debug/DebugProps';
 
 const initialValues = {
   name: '',

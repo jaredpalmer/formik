@@ -7,78 +7,17 @@ import {
   emptyErrors,
   emptyTouched,
   useFormikCore,
-  useIsomorphicLayoutEffect,
   FormikHelpers,
   useEventCallback,
   selectHandleReset,
-  selectFieldMeta,
-  isFunction,
-  useCheckableEventCallback,
 } from '@formik/core';
 import invariant from 'tiny-warning';
 import { FormikRefApi, FormikRefState } from '../types';
 import { formikRefReducer } from '../ref-reducer';
 import { selectRefGetFieldMeta, selectRefResetForm } from '../ref-selectors';
-import {
-  useEffect,
-  useRef,
-  useCallback,
-  useReducer,
-  MutableRefObject,
-} from 'react';
-import { unstable_batchedUpdates } from 'react-dom';
-import {
-  FormikComparer,
-  FormikSubscriber,
-  UnsubscribeFn,
-} from './createSubscriber';
-import { FormikSelectorFn, FormikSliceFn } from './createSelector';
-import {
-  getOrCreateSubscription,
-  getSubscription,
-  selectGetOrCreateSubscription,
-  selectInitSubscription,
-} from '../helpers/subscription-helpers';
-
-export type FormikSubscriptionUpdater<Return> = (value: Return) => void;
-
-export interface FormikSubscriptionState<
-  Values,
-  Return,
-  State = FormikState<Values>
-> {
-  selector: FormikSliceFn<Values, Return, State>;
-  listeners: FormikSubscriptionUpdater<Return>[];
-  prevStateRef: MutableRefObject<Return>;
-}
-
-export type FormikSubscriptionArgs<
-  Values,
-  Return,
-  State = FormikState<Values>
-> = {
-  args: Map<any, FormikSubscriptionSet<Values, Return, State>>;
-};
-
-export type FormikSubscriptionSet<
-  Values,
-  Return,
-  State = FormikState<Values>
-> = Partial<FormikSubscriptionState<Values, Return, State>> &
-  FormikSubscriptionArgs<Values, Return, State>;
-
-export type FormikSelectorSubscriptionMap<
-  Values,
-  State = FormikState<Values>
-> = Map<
-  FormikSliceFn<Values, any, State> | FormikSelectorFn<Values, any, any, State>,
-  FormikSubscriptionSet<Values, any, State>
->;
-
-export type FormikSubscriptionMap<
-  Values extends FormikValues,
-  State extends FormikState<Values> = FormikState<Values>
-> = Map<FormikComparer<any>, FormikSelectorSubscriptionMap<Values, State>>;
+import { useEffect, useRef, useCallback, useReducer, useMemo } from 'react';
+import { useSubscriptions } from './useSubscriptions';
+import { usePropChangeLogger } from 'packages/@formik/core/src/hooks/usePropChangeLogger';
 
 export const useFormik = <Values extends FormikValues = FormikValues>(
   rawProps: FormikConfig<Values, FormikRefState<Values>>
@@ -172,12 +111,7 @@ export const useFormik = <Values extends FormikValues = FormikValues>(
   // override some APIs to dispatch additional information
   // isMounted is the only ref we actually use, as we
   // override initialX.current with state.initialX
-  const {
-    resetForm: unusedResetForm,
-    handleReset: unusedHandleReset,
-    getFieldMeta: unusedGetFieldMeta,
-    ...formikCoreApi
-  } = useFormikCore(getState, dispatch, props, {
+  const formikCoreApi = useFormikCore(getState, dispatch, props, {
     initialValues,
     initialTouched,
     initialErrors,
@@ -185,9 +119,12 @@ export const useFormik = <Values extends FormikValues = FormikValues>(
     isMounted,
   });
 
-  const subscribersRef = useRef<
-    FormikSubscriptionMap<Values, FormikRefState<Values>>
-  >(new Map());
+  const {
+    subscribe,
+    createSelector,
+    createSubscriber,
+    getSelector,
+  } = useSubscriptions<Values, FormikRefState<Values>>(state);
 
   const getFieldMeta = useEventCallback(selectRefGetFieldMeta(getState), [
     getState,
@@ -218,60 +155,6 @@ export const useFormik = <Values extends FormikValues = FormikValues>(
 
   const { validateForm } = imperativeMethods;
 
-  const subscribers = {
-    'Object.is': {
-      selectFieldMeta: [
-        {
-          args: ['MyField', refs],
-          listeners: [],
-        },
-        {
-          args: ['MyOtherField', refs],
-          listeners: [],
-        },
-      ],
-    },
-  };
-
-  const initSubscription = useCheckableEventCallback(
-    () => selectInitSubscription(getState),
-    [getState]
-  );
-
-  const addFormEffect = useEventCallback(
-    <Args extends any[], Return>(
-      newSubscriber: FormikSubscriber<
-        Values,
-        Args,
-        Return,
-        FormikRefState<Values>
-      >,
-      updater: FormikSubscriptionUpdater<Return>
-    ): UnsubscribeFn => {
-      const subscription = getOrCreateSubscription(
-        subscribersRef.current,
-        newSubscriber,
-        initSubscription
-      );
-
-      subscription?.listeners.push(updater);
-
-      return () => {
-        const subscription = getSubscription(
-          subscribersRef.current,
-          newSubscriber
-        );
-
-        if (subscription?.listeners) {
-          subscription.listeners = subscription?.listeners.filter(
-            listener => listener !== updater
-          );
-        }
-      };
-    },
-    [subscribersRef, stateRef]
-  );
-
   useEffect(() => {
     isMounted.current = true;
 
@@ -279,14 +162,6 @@ export const useFormik = <Values extends FormikValues = FormikValues>(
       isMounted.current = false;
     };
   }, [isMounted]);
-
-  useIsomorphicLayoutEffect(() => {
-    unstable_batchedUpdates(() => {
-      subscribersRef.current.forEach((selectors, comparer) =>
-        selectors.forEach((subscription, selector))
-      );
-    });
-  }, [state]);
 
   useEffect(() => {
     if (
@@ -350,6 +225,9 @@ export const useFormik = <Values extends FormikValues = FormikValues>(
     }
   }, [enableReinitialize, props.initialStatus]);
 
+  usePropChangeLogger({
+    formikCoreApi,
+  });
   /**
    * Here, we memoize the API so that
    * React's Context doesn't update on every render.
@@ -357,8 +235,9 @@ export const useFormik = <Values extends FormikValues = FormikValues>(
    * We don't useMemo because we're purposely
    * only updating when the config updates
    */
-  return useMemo(
-    () => ({
+  return useMemo(() => {
+    console.log('rememoizing useFormik');
+    return {
       // the core api
       ...formikCoreApi,
       // the overrides
@@ -368,23 +247,26 @@ export const useFormik = <Values extends FormikValues = FormikValues>(
       // extra goodies
       getState,
       createSelector,
-      addFormEffect,
+      getSelector,
+      createSubscriber,
+      subscribe,
       // config
       validateOnBlur,
       validateOnChange,
       validateOnMount,
-    }),
-    [
-      addFormEffect,
-      createSelector,
-      formikCoreApi,
-      getFieldMeta,
-      getState,
-      handleReset,
-      resetForm,
-      validateOnBlur,
-      validateOnChange,
-      validateOnMount,
-    ]
-  );
+    };
+  }, [
+    formikCoreApi,
+    resetForm,
+    handleReset,
+    getFieldMeta,
+    getState,
+    createSelector,
+    getSelector,
+    createSubscriber,
+    subscribe,
+    validateOnBlur,
+    validateOnChange,
+    validateOnMount,
+  ]);
 };

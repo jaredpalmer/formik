@@ -1,8 +1,8 @@
-import React from 'react';
+import * as React from 'react';
 import { Formik, Field, Form, ErrorMessage } from '@formik/reducer-refs';
 import * as Yup from 'yup';
-import { DebugFieldState } from '../debug/DebugFieldState';
-import { DebugFormikState } from '../debug/DebugFormikState';
+import { DebugFieldState } from '../components/debug/DebugFieldState';
+import { DebugFormikState } from '../components/debug/DebugFormikState';
 
 const Basic = () => (
   <div>
@@ -30,56 +30,56 @@ const Basic = () => (
       }}
       validateOnChange={false}
     >
-        <Form autoComplete="off">
-          <Field name="firstName" placeholder="Jane" />
-          <ErrorMessage name="firstName" component="p" />
-          <DebugFieldState name="firstName" />
+      <Form autoComplete="off">
+        <Field name="firstName" placeholder="Jane" />
+        <ErrorMessage name="firstName" component="p" />
+        <DebugFieldState name="firstName" />
 
-          <Field name="lastName" placeholder="Doe" />
-          <ErrorMessage name="lastName" component="p" />
+        <Field name="lastName" placeholder="Doe" />
+        <ErrorMessage name="lastName" component="p" />
 
-          <Field
-            id="email"
-            name="email"
-            placeholder="jane@acme.com"
-            type="email"
-          />
-          <ErrorMessage name="email" component="p" />
+        <Field
+          id="email"
+          name="email"
+          placeholder="jane@acme.com"
+          type="email"
+        />
+        <ErrorMessage name="email" component="p" />
 
+        <label>
+          <Field type="checkbox" name="toggle" />
+          <span style={{ marginLeft: 3 }}>Toggle</span>
+        </label>
+
+        <div id="checkbox-group">Checkbox Group </div>
+        <div role="group" aria-labelledby="checkbox-group">
           <label>
-            <Field type="checkbox" name="toggle" />
-            <span style={{ marginLeft: 3 }}>Toggle</span>
+            <Field type="checkbox" name="checked" value="One" />
+            One
           </label>
-
-          <div id="checkbox-group">Checkbox Group </div>
-          <div role="group" aria-labelledby="checkbox-group">
-            <label>
-              <Field type="checkbox" name="checked" value="One" />
-              One
-            </label>
-            <label>
-              <Field type="checkbox" name="checked" value="Two" />
-              Two
-            </label>
-            <label>
-              <Field type="checkbox" name="checked" value="Three" />
-              Three
-            </label>
-          </div>
-          <div id="my-radio-group">Picked</div>
-          <div role="group" aria-labelledby="my-radio-group">
-            <label>
-              <Field type="radio" name="picked" value="One" />
-              One
-            </label>
-            <label>
-              <Field type="radio" name="picked" value="Two" />
-              Two
-            </label>
-          </div>
-          <button type="submit">Submit via submit button</button>
-          <DebugFormikState />
-        </Form>
+          <label>
+            <Field type="checkbox" name="checked" value="Two" />
+            Two
+          </label>
+          <label>
+            <Field type="checkbox" name="checked" value="Three" />
+            Three
+          </label>
+        </div>
+        <div id="my-radio-group">Picked</div>
+        <div role="group" aria-labelledby="my-radio-group">
+          <label>
+            <Field type="radio" name="picked" value="One" />
+            One
+          </label>
+          <label>
+            <Field type="radio" name="picked" value="Two" />
+            Two
+          </label>
+        </div>
+        <button type="submit">Submit via submit button</button>
+        <DebugFormikState />
+      </Form>
     </Formik>
   </div>
 );

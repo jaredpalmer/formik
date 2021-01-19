@@ -4,7 +4,6 @@ export const DebugProps = (props?: any) => {
   const renderCount = React.useRef(0);
   return (
     <div style={{ margin: '1rem 0' }}>
-      <h3 style={{ fontFamily: 'monospace' }} />
       <pre
         style={{
           background: '#f6f8fa',

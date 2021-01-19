@@ -1,52 +1,106 @@
-import {
-  FormikSubscriptionArgs,
-  FormikSubscriptionState,
-} from './../hooks/useFormik';
-import { FormikState, GetStateFn, isFunction } from '@formik/core';
-import { FormikSubscriptionMap, FormikSubscriptionSet } from '..';
-import { FormikSelector } from '../hooks/createSelector';
+import { FormikState, FormikValues, isFunction } from '@formik/core';
+import { FormikSelector, FormikSliceFn } from '../hooks/createSelector';
 import { FormikSubscriber } from '../hooks/createSubscriber';
+import { FormikSubscription } from '../hooks/useSubscriptions';
 
-export type InitSubscriptionFn<
+export type GetSelectorFn<Values, State extends FormikState<Values>> = <
+  Args extends any[],
+  Return
+>(
+  selector:
+    | FormikSliceFn<Values, Return, State>
+    | FormikSelector<Values, Args, Return, State>
+) => FormikSliceFn<Values, Return, State>;
+
+export const selectGetSelector = <
+  Values extends FormikValues,
+  State extends FormikState<Values>
+>(): GetSelectorFn<Values, State> => <Args extends any[], Return>(
+  selector:
+    | FormikSliceFn<Values, Return, State>
+    | FormikSelector<Values, Args, Return, State>
+) => (isFunction(selector) ? selector : selector.selector(...selector.args));
+
+export type CreateSubscriptionFn<
   Values,
   Args extends any[],
   Return,
   State extends FormikState<Values> = FormikState<Values>
 > = (
-  selector: FormikSelector<Values, Args, Return, State>
-) => FormikSubscriptionState<Values, Return, State> &
-  FormikSubscriptionArgs<Values, Return, State>;
+  subscriber: FormikSubscriber<Values, Args, Return, State>
+) => FormikSubscription<Values, Args, Return, State>;
 
 /**
  * Create a new Subscription
  */
-export const selectInitSubscription = <
+export const selectCreateSubscription = <
   Values,
   State extends FormikState<Values>
 >(
-  getState: GetStateFn<Values, State>
+  state: State,
+  getSelector: GetSelectorFn<Values, State>
 ) => <Return extends any, Args extends any[] = []>(
-  selector: FormikSelector<Values, Args, Return, State>
-): ReturnType<InitSubscriptionFn<Values, Args, Return, State>> => {
-  const selectorFn = isFunction(selector)
-    ? selector
-    : selector.selector(...selector.args);
+  subscriber: FormikSubscriber<Values, Args, Return, State>
+): ReturnType<CreateSubscriptionFn<Values, Args, Return, State>> => {
+  const selector = getSelector(subscriber.selector);
   return {
-    selector: selectorFn,
+    subscriber,
+    selector,
     prevStateRef: {
-      current: selectorFn(getState()),
+      current: selector(state),
     },
     listeners: [],
-    args: new Map(),
   };
 };
 
-const isFullSubscription = <Values, Return, State>(
-  value: Partial<FormikSubscriptionSet<Values, Return, State>>
-): value is Required<FormikSubscriptionSet<Values, Return, State>> => {
-  return !!value.selector;
+const selectorMatches = <
+  Values,
+  Args extends any[],
+  Return extends any,
+  State extends FormikState<Values>
+>(
+  selector: FormikSelector<Values, any, any, State>,
+  newSelector: FormikSelector<Values, Args, Return, State>
+) => {
+  return (
+    selector.selector === newSelector.selector &&
+    selector.args.length === newSelector.args.length &&
+    (newSelector.args.length === 0 ||
+      newSelector.args.every((arg, index) => arg === selector.args[index]))
+  );
 };
 
+const subscriptionMatches = <
+  Values,
+  Args extends any[],
+  Return extends any,
+  State extends FormikState<Values>
+>(
+  subscription: FormikSubscription<Values, any, any, State>,
+  newSubscriber: FormikSubscriber<Values, Args, Return, State>
+) =>
+  subscription.subscriber.comparer === newSubscriber.comparer &&
+  isFunction(subscription.subscriber.selector) &&
+  isFunction(newSubscriber.selector)
+    ? subscription.subscriber.selector === newSubscriber.selector
+    : !isFunction(subscription.subscriber.selector) &&
+      !isFunction(newSubscriber.selector)
+    ? selectorMatches(subscription.subscriber.selector, newSubscriber.selector)
+    : false;
+
+export const getSubscription = <
+  Values,
+  Args extends any[],
+  Return extends any,
+  State extends FormikState<Values>
+>(
+  subscriptions: FormikSubscription<Values, any, any, State>[],
+  subscriber: FormikSubscriber<Values, Args, Return, State>
+) => {
+  return subscriptions.find(subscription =>
+    subscriptionMatches(subscription, subscriber)
+  );
+};
 /**
  * Walk through existing subscriptions and get or create them.
  */
@@ -56,146 +110,15 @@ export const getOrCreateSubscription = <
   Return extends any,
   State extends FormikState<Values>
 >(
-  subscribers: FormikSubscriptionMap<Values, State>,
+  subscriptions: FormikSubscription<Values, any, any, State>[],
   newSubscriber: FormikSubscriber<Values, Args, Return, State>,
-  initSubscription: InitSubscriptionFn<Values, Args, Return, State>
-): Required<FormikSubscriptionSet<Values, Return, State>> | undefined => {
-  let selectors = subscribers.get(newSubscriber.comparer);
+  createSubscription: CreateSubscriptionFn<Values, Args, Return, State>
+): FormikSubscription<Values, any, any, State> => {
+  let subscription = getSubscription(subscriptions, newSubscriber);
 
-  if (!selectors) {
-    selectors = new Map();
-    subscribers.set(newSubscriber.comparer, selectors);
-  }
-
-  let finalSelector:
-    | Required<FormikSubscriptionSet<Values, Return, State>>
-    | undefined;
-
-  if (isFunction(newSubscriber.selector)) {
-    const currentSelector: Partial<
-      FormikSubscriptionSet<Values, Return, State>
-    > = selectors.get(newSubscriber.selector) ?? {};
-
-    if (!currentSelector.selector) {
-      finalSelector = {
-        ...currentSelector,
-        ...initSubscription(newSubscriber.selector),
-      };
-
-      selectors.set(newSubscriber.selector, finalSelector);
-    }
-  } else {
-    let currentSelector: Partial<FormikSubscriptionSet<Values, Return, State>> =
-      selectors.get(newSubscriber.selector.selector) ?? {};
-    const args = newSubscriber.selector.args;
-
-    if (args.length === 0) {
-      // if we're targeting this subscription, initialize it,
-      // else we'll keep walking args
-      if (!isFullSubscription(currentSelector)) {
-        finalSelector = {
-          ...currentSelector,
-          ...initSubscription(newSubscriber.selector),
-        };
-
-        selectors.set(newSubscriber.selector.selector, finalSelector);
-      } else {
-        finalSelector = currentSelector;
-      }
-    } else if (!currentSelector) {
-      const newSelector = {
-        args: new Map(),
-      };
-      currentSelector = newSelector;
-      selectors.set(newSubscriber.selector.selector, newSelector);
-    }
-
-    for (let argIndex = 0; argIndex < args.length; argIndex++) {
-      const arg = args[argIndex];
-      let nextSelector: Partial<FormikSubscriptionSet<Values, Return, State>> =
-        currentSelector?.args?.get(arg) ?? {};
-
-      if (argIndex === args.length - 1) {
-        // if we're targeting this subscription, initialize it,
-        // else we'll keep walking args
-        if (!isFullSubscription(nextSelector)) {
-          finalSelector = {
-            ...nextSelector,
-            ...initSubscription(newSubscriber.selector),
-          };
-
-          currentSelector.args?.set(arg, finalSelector);
-        } else {
-          finalSelector = nextSelector;
-        }
-      } else if (!nextSelector) {
-        const newSelector = {
-          args: new Map(),
-        };
-        nextSelector = newSelector;
-
-        currentSelector.args?.set(arg, newSelector);
-      }
-
-      currentSelector = nextSelector;
-    }
-  }
-
-  return finalSelector;
-};
-
-export const getSubscription = <
-  Values,
-  Args extends any[],
-  Return extends any,
-  State extends FormikState<Values>
->(
-  subscribers: FormikSubscriptionMap<Values, State>,
-  subscriber: FormikSubscriber<Values, Args, Return, State>
-) => {
-  const selectors = subscribers.get(subscriber.comparer);
-
-  let subscription:
-    | Required<FormikSubscriptionSet<Values, Return, State>>
-    | undefined;
-
-  if (selectors) {
-    if (isFunction(subscriber.selector)) {
-      const maybeSubscription = selectors.get(subscriber.selector);
-
-      if (maybeSubscription && isFullSubscription(maybeSubscription)) {
-        subscription = maybeSubscription;
-      }
-    } else {
-      let maybeSubscription = selectors.get(subscriber.selector.selector);
-      const args = subscriber.selector.args;
-
-      if (args.length === 0) {
-        subscription =
-          maybeSubscription && isFullSubscription(maybeSubscription)
-            ? maybeSubscription
-            : undefined;
-      } else if (maybeSubscription) {
-        for (let argIndex = 0; argIndex < args.length; argIndex++) {
-          const arg = args[argIndex];
-          const nextSelector:
-            | FormikSubscriptionSet<Values, Return, State>
-            | undefined = maybeSubscription?.args?.get(arg);
-
-          if (!nextSelector) {
-            break;
-          }
-
-          if (argIndex === args.length - 1) {
-            subscription = isFullSubscription(nextSelector)
-              ? nextSelector
-              : undefined;
-          } else {
-            maybeSubscription = nextSelector;
-          }
-        }
-      }
-    }
+  if (!subscription) {
+    subscription = createSubscription(newSubscriber);
+    subscriptions.push(subscription);
   }
 
   return subscription;

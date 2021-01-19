@@ -1,6 +1,6 @@
 import { FormikValues, FormikState } from '@formik/core';
 
-export type FormikSliceFn<Values, Return, State = FormikState<Values>> = (
+export type FormikSliceFn<Values, Return, State extends FormikState<Values>> = (
   state: State
 ) => Return;
 
@@ -8,39 +8,30 @@ export type FormikSelectorFn<
   Values extends FormikValues,
   Args extends any[],
   Return,
-  State = FormikState<Values>
+  State extends FormikState<Values>
 > = (...args: Args) => FormikSliceFn<Values, Return, State>;
-
-export type FormikMemoizedSelector<
-  Values extends FormikValues,
-  Args extends any[],
-  Return,
-  State = FormikState<Values>
-> = {
-  selector: FormikSelectorFn<Values, Args, Return, State>;
-  args: Args;
-};
 
 export type FormikSelector<
   Values extends FormikValues,
   Args extends any[],
   Return,
-  State = FormikState<Values>
-> =
-  | FormikSliceFn<Values, Return, State>
-  | FormikMemoizedSelector<Values, Args, Return, State>;
+  State extends FormikState<Values>
+> = {
+  selector: FormikSelectorFn<Values, Args, Return, State>;
+  args: Args;
+};
 
-export const createFormikSelector = <
+export type CreateSelectorFn<
   Values extends FormikValues,
-  Args extends any[],
-  Return,
-  State = FormikState<Values>
->(
-  selector: FormikSelector<Values, Args, Return, State>,
+  State extends FormikState<Values>
+> = <Args extends any[], Return>(
+  selector: FormikSelectorFn<Values, Args, Return, State>,
   args: Args
-) => {
-  return {
-    selector,
-    args,
-  };
+) => FormikSelector<Values, Args, Return, State>;
+
+export const selectCreateFormikSelector = <
+  Values extends FormikValues,
+  State extends FormikState<Values>
+>(): CreateSelectorFn<Values, State> => (selector, args) => {
+  return { selector, args };
 };

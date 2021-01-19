@@ -5,6 +5,7 @@ import * as ReactDOM from 'react-dom';
 import { FieldArray, Formik } from '../src';
 
 // tslint:disable-next-line:no-empty
+// eslint-disable-next-line @typescript-eslint/no-empty-function
 const noop = () => {};
 
 const TestForm: React.SFC<any> = p => (
@@ -155,7 +156,7 @@ describe('<FieldArray />', () => {
     });
 
     it('should push clone not actual referance', () => {
-      let personTemplate = { firstName: '', lastName: '' };
+      const personTemplate = { firstName: '', lastName: '' };
       let formikBag: any;
       let arrayHelpers: any;
       ReactDOM.render(

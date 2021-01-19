@@ -1,8 +1,8 @@
 import React from 'react';
-import { Formik, Form, useField, UseFieldProps } from '@formik/reducer-refs';
+import { Formik, Form, useField, FieldConfig } from 'formik';
 import { Collapse } from 'app/components/debug/Collapse';
 
-const Input = (p: UseFieldProps<string>) => {
+const Input = (p: FieldConfig<string>) => {
   const [field, meta] = useField(p);
   const renders = React.useRef(0);
   return (
@@ -22,7 +22,7 @@ const isRequired = (v: string) => {
   return v && v.trim() !== '' ? undefined : 'Required';
 };
 
-const fieldsArray = new Array(498).fill(undefined);
+const fieldsArray = new Array(500).fill(undefined);
 const initialValues = fieldsArray.reduce((prev, _curr, idx) => {
   prev[`Input ${idx}`] = '';
   return prev;
@@ -37,9 +37,7 @@ export default function App() {
   return (
     <div>
       <div>
-        <h1>
-          <code>@formik/reducer-refs</code> with 500 of the same field
-        </h1>
+        <h1>Formik v3 with 500 controlled fields</h1>
         <div>
           <span>#</span> = number of renders
         </div>
@@ -53,7 +51,6 @@ export default function App() {
             ))}
           </Collapse>
           <Input name={'Input'} validate={isRequired} />
-
           <button type="submit">Submit</button>
         </Form>
       </Formik>

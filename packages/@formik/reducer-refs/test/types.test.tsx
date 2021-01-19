@@ -22,7 +22,7 @@ describe('Formik Types', () => {
       // }
       const id: boolean | undefined = touched.id;
       expect(id).toBe(true);
-      const facebook: boolean | undefined = touched.social!.facebook;
+      const facebook: boolean | undefined = touched.social?.facebook;
       expect(facebook).toBe(true);
     });
 
@@ -39,7 +39,8 @@ describe('Formik Types', () => {
       // }
       const id: {} | undefined = errors.id;
       expect(id).toBe('error');
-      const facebook: {} | undefined = errors.social!.facebook;
+      // eslint-disable-next-line @typescript-eslint/ban-types
+      const facebook: {} | undefined = errors.social?.facebook;
       expect(facebook).toBe('error');
     });
   });

@@ -11,18 +11,74 @@ import {
   FormikHelpers,
   useEventCallback,
   selectHandleReset,
+  selectFieldMeta,
+  isFunction,
+  useCheckableEventCallback,
 } from '@formik/core';
 import invariant from 'tiny-warning';
-import {
-  FormEffect,
-  FormikRefApi,
-  FormikRefState,
-  UnsubscribeFn,
-} from '../types';
+import { FormikRefApi, FormikRefState } from '../types';
 import { formikRefReducer } from '../ref-reducer';
 import { selectRefGetFieldMeta, selectRefResetForm } from '../ref-selectors';
-import { useEffect, useRef, useCallback, useReducer, useState } from 'react';
+import {
+  useEffect,
+  useRef,
+  useCallback,
+  useReducer,
+  MutableRefObject,
+} from 'react';
 import { unstable_batchedUpdates } from 'react-dom';
+import {
+  FormikComparer,
+  FormikSubscriber,
+  UnsubscribeFn,
+} from './createSubscriber';
+import { FormikSelectorFn, FormikSliceFn } from './createSelector';
+import {
+  getOrCreateSubscription,
+  getSubscription,
+  selectGetOrCreateSubscription,
+  selectInitSubscription,
+} from '../helpers/subscription-helpers';
+
+export type FormikSubscriptionUpdater<Return> = (value: Return) => void;
+
+export interface FormikSubscriptionState<
+  Values,
+  Return,
+  State = FormikState<Values>
+> {
+  selector: FormikSliceFn<Values, Return, State>;
+  listeners: FormikSubscriptionUpdater<Return>[];
+  prevStateRef: MutableRefObject<Return>;
+}
+
+export type FormikSubscriptionArgs<
+  Values,
+  Return,
+  State = FormikState<Values>
+> = {
+  args: Map<any, FormikSubscriptionSet<Values, Return, State>>;
+};
+
+export type FormikSubscriptionSet<
+  Values,
+  Return,
+  State = FormikState<Values>
+> = Partial<FormikSubscriptionState<Values, Return, State>> &
+  FormikSubscriptionArgs<Values, Return, State>;
+
+export type FormikSelectorSubscriptionMap<
+  Values,
+  State = FormikState<Values>
+> = Map<
+  FormikSliceFn<Values, any, State> | FormikSelectorFn<Values, any, any, State>,
+  FormikSubscriptionSet<Values, any, State>
+>;
+
+export type FormikSubscriptionMap<
+  Values extends FormikValues,
+  State extends FormikState<Values> = FormikState<Values>
+> = Map<FormikComparer<any>, FormikSelectorSubscriptionMap<Values, State>>;
 
 export const useFormik = <Values extends FormikValues = FormikValues>(
   rawProps: FormikConfig<Values, FormikRefState<Values>>
@@ -88,8 +144,6 @@ export const useFormik = <Values extends FormikValues = FormikValues>(
     dirty: false,
   });
 
-  const formListenersRef = useRef<FormEffect<Values>[]>([]);
-
   /**
    * Breaking all the rules, re: "must be side-effect free"
    * BUT that's probably OK
@@ -131,6 +185,10 @@ export const useFormik = <Values extends FormikValues = FormikValues>(
     isMounted,
   });
 
+  const subscribersRef = useRef<
+    FormikSubscriptionMap<Values, FormikRefState<Values>>
+  >(new Map());
+
   const getFieldMeta = useEventCallback(selectRefGetFieldMeta(getState), [
     getState,
   ]);
@@ -160,26 +218,58 @@ export const useFormik = <Values extends FormikValues = FormikValues>(
 
   const { validateForm } = imperativeMethods;
 
-  const addFormEffect = useCallback(
-    (effect: FormEffect<Values>): UnsubscribeFn => {
-      formListenersRef.current = [...formListenersRef.current, effect];
+  const subscribers = {
+    'Object.is': {
+      selectFieldMeta: [
+        {
+          args: ['MyField', refs],
+          listeners: [],
+        },
+        {
+          args: ['MyOtherField', refs],
+          listeners: [],
+        },
+      ],
+    },
+  };
 
-      // in case a change occurred
-      // if it didn't, react's state will not update anyway
-      effect(stateRef.current);
+  const initSubscription = useCheckableEventCallback(
+    () => selectInitSubscription(getState),
+    [getState]
+  );
+
+  const addFormEffect = useEventCallback(
+    <Args extends any[], Return>(
+      newSubscriber: FormikSubscriber<
+        Values,
+        Args,
+        Return,
+        FormikRefState<Values>
+      >,
+      updater: FormikSubscriptionUpdater<Return>
+    ): UnsubscribeFn => {
+      const subscription = getOrCreateSubscription(
+        subscribersRef.current,
+        newSubscriber,
+        initSubscription
+      );
+
+      subscription?.listeners.push(updater);
 
       return () => {
-        const listenerIndex = formListenersRef.current.findIndex(
-          listener => listener === effect
+        const subscription = getSubscription(
+          subscribersRef.current,
+          newSubscriber
         );
 
-        formListenersRef.current = [
-          ...formListenersRef.current.slice(0, listenerIndex),
-          ...formListenersRef.current.slice(listenerIndex + 1),
-        ];
+        if (subscription?.listeners) {
+          subscription.listeners = subscription?.listeners.filter(
+            listener => listener !== updater
+          );
+        }
       };
     },
-    [formListenersRef, stateRef]
+    [subscribersRef, stateRef]
   );
 
   useEffect(() => {
@@ -192,7 +282,9 @@ export const useFormik = <Values extends FormikValues = FormikValues>(
 
   useIsomorphicLayoutEffect(() => {
     unstable_batchedUpdates(() => {
-      formListenersRef.current.forEach(listener => listener(state));
+      subscribersRef.current.forEach((selectors, comparer) =>
+        selectors.forEach((subscription, selector))
+      );
     });
   }, [state]);
 
@@ -265,30 +357,34 @@ export const useFormik = <Values extends FormikValues = FormikValues>(
    * We don't useMemo because we're purposely
    * only updating when the config updates
    */
-  const [memoizedApi, updateMemoizedApi] = useState({
-    // the core api
-    ...formikCoreApi,
-    // the overrides
-    resetForm,
-    handleReset,
-    getFieldMeta,
-    // extra goodies
-    getState,
-    addFormEffect,
-    // config
-    validateOnBlur,
-    validateOnChange,
-    validateOnMount,
-  });
-
-  useIsomorphicLayoutEffect(() => {
-    updateMemoizedApi({
-      ...memoizedApi,
+  return useMemo(
+    () => ({
+      // the core api
+      ...formikCoreApi,
+      // the overrides
+      resetForm,
+      handleReset,
+      getFieldMeta,
+      // extra goodies
+      getState,
+      createSelector,
+      addFormEffect,
+      // config
       validateOnBlur,
       validateOnChange,
       validateOnMount,
-    });
-  }, [validateOnBlur, validateOnChange, validateOnMount]);
-
-  return memoizedApi;
+    }),
+    [
+      addFormEffect,
+      createSelector,
+      formikCoreApi,
+      getFieldMeta,
+      getState,
+      handleReset,
+      resetForm,
+      validateOnBlur,
+      validateOnChange,
+      validateOnMount,
+    ]
+  );
 };

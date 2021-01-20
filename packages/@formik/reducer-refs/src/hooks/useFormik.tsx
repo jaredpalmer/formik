@@ -12,11 +12,12 @@ import {
   useCheckableEventCallback,
 } from '@formik/core';
 import invariant from 'tiny-warning';
-import { FormikRefApi, FormikRefState } from '../types';
+import { FormikRefState } from '../types';
 import { formikRefReducer } from '../ref-reducer';
 import { selectRefGetFieldMeta, selectRefResetForm } from '../ref-selectors';
 import { useEffect, useRef, useCallback, useReducer, useMemo } from 'react';
 import { useSubscriptions } from './useSubscriptions';
+import { FormikRefApi } from './useFormikApi';
 
 export const useFormik = <Values extends FormikValues = FormikValues>(
   rawProps: FormikConfig<Values, FormikRefState<Values>>
@@ -123,7 +124,7 @@ export const useFormik = <Values extends FormikValues = FormikValues>(
     createSelector,
     createSubscriber,
     getSelector,
-  } = useSubscriptions<Values, FormikRefState<Values>>(state);
+  } = useSubscriptions(state);
 
   const getFieldMeta = useCheckableEventCallback(
     () => selectRefGetFieldMeta(getState),

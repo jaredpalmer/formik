@@ -139,6 +139,7 @@ const SignupForm = () => {
         onChange={formik.handleChange}
         value={formik.values.email}
       />
+
       <button type="submit">Submit</button>
     </form>
   );
@@ -184,6 +185,7 @@ const SignupForm = () => {
         onChange={formik.handleChange}
         value={formik.values.firstName}
       />
+
       <label htmlFor="lastName">Last Name</label>
       <input
         id="lastName"
@@ -192,6 +194,7 @@ const SignupForm = () => {
         onChange={formik.handleChange}
         value={formik.values.lastName}
       />
+
       <label htmlFor="email">Email Address</label>
       <input
         id="email"
@@ -200,6 +203,7 @@ const SignupForm = () => {
         onChange={formik.handleChange}
         value={formik.values.email}
       />
+
       <button type="submit">Submit</button>
     </form>
   );
@@ -228,11 +232,11 @@ const handleChange = event => {
 
 ## Validation
 
-While our contact form works, it’s not quite feature-complete. While users can submit it, it doesn’t tell them which (if any) fields are required.
+While our contact form works, it’s not quite feature-complete; users can submit it, but it doesn’t tell them which (if any) fields are required.
 
 If we’re okay with using the browser’s built-in HTML input validation, we could add a `required` prop to each of our inputs, specify minimum/maximum lengths (`maxlength` and `minlength`), and/or add a `pattern` prop for regex validation for each of these inputs. These are great if we can get away with them. However, HTML validation has its limitations. First, it only works in the browser! So this clearly is not viable for React Native. Second, it’s hard/impossible to show custom error messages to our user. Third, it’s very janky.
 
-As mentioned earlier, Formik keeps track of not only your form's `values`, but also its error messages and validation. To add validation with JS, let's specify a custom validation function and pass it as `validate` to the `useFormik()` hook. If an error exists, this custom validation function should produce an `error` object with a matching shape to our `values`/`initialValues`. Again..._symmetry_...yes...
+As mentioned earlier, Formik keeps track of not only your form’s `values`, but also its validation and error messages. To add validation with JS, let’s specify a custom validation function and pass it as `validate` to the `useFormik()` hook. If an error exists, this custom validation function should produce an `error` object with a matching shape to our `values`/`initialValues`. Again..._symmetry_...yes...
 
 ```jsx
 import React from 'react';
@@ -264,7 +268,8 @@ const validate = values => {
 };
 
 const SignupForm = () => {
-  // Pass the useFormik() hook initial form values and a submit function that will
+  // Pass the useFormik() hook initial form values, a validate function that will be called when
+  // form values change or fields are blurred, and a submit function that will
   // be called when the form is submitted
   const formik = useFormik({
     initialValues: {
@@ -288,6 +293,7 @@ const SignupForm = () => {
         value={formik.values.firstName}
       />
       {formik.errors.firstName ? <div>{formik.errors.firstName}</div> : null}
+
       <label htmlFor="lastName">Last Name</label>
       <input
         id="lastName"
@@ -297,6 +303,7 @@ const SignupForm = () => {
         value={formik.values.lastName}
       />
       {formik.errors.lastName ? <div>{formik.errors.lastName}</div> : null}
+
       <label htmlFor="email">Email Address</label>
       <input
         id="email"
@@ -306,21 +313,22 @@ const SignupForm = () => {
         value={formik.values.email}
       />
       {formik.errors.email ? <div>{formik.errors.email}</div> : null}
+
       <button type="submit">Submit</button>
     </form>
   );
 };
 ```
 
-`formik.errors` is populated via the custom validation function. By default, Formik will validate after each keystroke (change event), each input's blur event, as well as prior to submission. It will only proceed with executing the `onSubmit` function we passed to `useFormik()` if there are no errors (i.e. if our validation function returned `{}`).
+`formik.errors` is populated via the custom validation function. By default, Formik will validate after each keystroke (change event), each input’s [blur event](https://developer.mozilla.org/en-US/docs/Web/API/Element/blur_event), as well as prior to submission. The `onSubmit` function we passed to `useFormik()` will be executed only if there are no errors (i.e. if our `validate` function returns `{}`).
 
 ## Visited fields
 
-While our form works, and our users see each error, it's not a great user experience for them. Since our validation function runs on each keystroke against the _entire_ form's `values`, our `errors` object contains _all_ validation errors at any given moment. In our component, we are just checking if an error exists and then immediately showing it to the user. This is awkward since we're going to show error messages for fields that the user hasn't even visited yet. Most of the time, we only want to show a field's error message _after_ our user is done typing in that field.
+While our form works, and our users see each error, it’s not a great user experience for them. Since our validation function runs on each keystroke against the _entire_ form’s `values`, our `errors` object contains _all_ validation errors at any given moment. In our component, we’re just checking if an error exists and then immediately showing it to the user. This is awkward since we’re going to show error messages for fields that the user hasn’t even visited yet. Most of the time, we only want to show a field’s error message _after_ our user is done typing in that field.
 
-Like `errors` and `values`, Formik can keep track of which fields have been visited. It stores this information in an object called `touched` that also mirrors the shape of `values`/`initialValues`, but each key can only be a boolean `true`/`false`.
+Like `errors` and `values`, Formik keeps track of which fields have been visited. It stores this information in an object called `touched` that also mirrors the shape of `values`/`initialValues`. The keys of `touched` are the field names, and the values of `touched` are booleans `true`/`false`.
 
-To take advantage of `touched`, we can pass `formik.handleBlur` to each input's `onBlur` prop. This function works similarly to `formik.handleChange` in that it uses the `name` attribute to figure out which field to update.
+To take advantage of `touched`, we pass `formik.handleBlur` to each input’s `onBlur` prop. This function works similarly to `formik.handleChange` in that it uses the `name` attribute to figure out which field to update.
 
 ```jsx
 import React from 'react';
@@ -373,6 +381,7 @@ const SignupForm = () => {
         value={formik.values.firstName}
       />
       {formik.errors.firstName ? <div>{formik.errors.firstName}</div> : null}
+
       <label htmlFor="lastName">Last Name</label>
       <input
         id="lastName"
@@ -383,6 +392,7 @@ const SignupForm = () => {
         value={formik.values.lastName}
       />
       {formik.errors.lastName ? <div>{formik.errors.lastName}</div> : null}
+
       <label htmlFor="email">Email Address</label>
       <input
         id="email"
@@ -393,13 +403,14 @@ const SignupForm = () => {
         value={formik.values.email}
       />
       {formik.errors.email ? <div>{formik.errors.email}</div> : null}
+
       <button type="submit">Submit</button>
     </form>
   );
 };
 ```
 
-Almost there! Now that we're tracking `touched`, we can now change our error message render logic to _only_ show a field's error message if it exists _and_ if our user has visited a given field.
+Almost there! Now that we’re tracking `touched`, we can now change our error message render logic to _only_ show a given field’s error message if it exists _and_ if our user has visited that field.
 
 ```jsx
 import React from 'react';
@@ -454,6 +465,7 @@ const SignupForm = () => {
       {formik.touched.firstName && formik.errors.firstName ? (
         <div>{formik.errors.firstName}</div>
       ) : null}
+
       <label htmlFor="lastName">Last Name</label>
       <input
         id="lastName"
@@ -466,6 +478,7 @@ const SignupForm = () => {
       {formik.touched.lastName && formik.errors.lastName ? (
         <div>{formik.errors.lastName}</div>
       ) : null}
+
       <label htmlFor="email">Email Address</label>
       <input
         id="email"
@@ -478,6 +491,7 @@ const SignupForm = () => {
       {formik.touched.email && formik.errors.email ? (
         <div>{formik.errors.email}</div>
       ) : null}
+
       <button type="submit">Submit</button>
     </form>
   );
@@ -486,9 +500,9 @@ const SignupForm = () => {
 
 ### Schema Validation with Yup
 
-As you can see above, validation is left up to you. Feel free to write your own validators or use a 3rd-party helper library. Formik's authors/a large portion of its users use [Jason Quense](https://github.com/jquense)'s library [Yup](https://github.com/jquense/yup) for object schema validation. Yup has an API that's similar to [Joi](https://github.com/hapijs/joi) / [React PropTypes](https://github.com/facebook/prop-types) but is also small enough for the browser and fast enough for runtime usage. You can try it out here with this [REPL](https://runkit.com/jquense/yup).
+As you can see above, validation is left up to you. Feel free to write your own validators or use a 3rd-party helper library. Formik’s authors/a large portion of its users use [Jason Quense](https://github.com/jquense)’s library [Yup](https://github.com/jquense/yup) for object schema validation. Yup has an API that’s similar to [Joi](https://github.com/hapijs/joi) and [React PropTypes](https://github.com/facebook/prop-types), but is also small enough for the browser and fast enough for runtime usage. You can try it out here with this [REPL](https://runkit.com/jquense/yup).
 
-Since Formik authors/users _love_ Yup so much, Formik has a special configuration option / prop for Yup called `validationSchema` which will automatically transform Yup's validation errors messages into a pretty object whose keys match `values`/`initialValues`/`touched` (just like any custom validation function would have to). Anyways, you can install Yup from NPM/yarn like so...
+Since Formik authors/users _love_ Yup so much, Formik has a special configuration prop for Yup called `validationSchema` which will automatically transform Yup’s validation errors messages into a pretty object whose keys match `values`/`initialValues`/`touched` (just like any custom validation function would have to). Anyways, you can install Yup from NPM/yarn like so...
 
 ```bash
 npm install yup --save
@@ -498,7 +512,7 @@ npm install yup --save
 yarn add yup
 ```
 
-To see how Yup works, let's get rid of our custom validation function `validate` and re-write our validation with Yup and `validationSchema`:
+To see how Yup works, let’s get rid of our custom validation function `validate` and re-write our validation with Yup and `validationSchema`:
 
 ```jsx
 import React from 'react';
@@ -539,6 +553,7 @@ const SignupForm = () => {
       {formik.touched.firstName && formik.errors.firstName ? (
         <div>{formik.errors.firstName}</div>
       ) : null}
+
       <label htmlFor="lastName">Last Name</label>
       <input
         id="lastName"
@@ -551,6 +566,7 @@ const SignupForm = () => {
       {formik.touched.lastName && formik.errors.lastName ? (
         <div>{formik.errors.lastName}</div>
       ) : null}
+
       <label htmlFor="email">Email Address</label>
       <input
         id="email"
@@ -563,19 +579,20 @@ const SignupForm = () => {
       {formik.touched.email && formik.errors.email ? (
         <div>{formik.errors.email}</div>
       ) : null}
+
       <button type="submit">Submit</button>
     </form>
   );
 };
 ```
 
-Again, Yup is 100% optional. However, we suggest giving it a try. As you can see above, we expressed the exact same validation function with just 10 lines of code instead of 30. One of Formik's core design principles is to help you stay organized. Yup definitely helps a lot with this--schemas are extremely expressive, intuitive (since they mirror your values), and reusable. Whether or not you use Yup, it is highly recommended that you share commonly used validation methods across your application. This will ensure that common fields (e.g. email, street addresses, usernames, phone numbers, etc.) are validated consistently and result in a better user experience.
+Again, Yup is 100% optional. However, we suggest giving it a try. As you can see above, we expressed the exact same validation function with just 10 lines of code instead of 30. One of Formik’s core design principles is to help you stay organized. Yup definitely helps a lot with this--schemas are extremely expressive, intuitive (since they mirror your values), and reusable. Whether or not you use Yup, we highly recommended you share commonly used validation methods across your application. This will ensure that common fields (e.g. email, street addresses, usernames, phone numbers, etc.) are validated consistently and result in a better user experience.
 
 ## Reducing Boilerplate
 
 ### `getFieldProps()`
 
-The code above is very explicit about exactly what Formik is doing. `onChange` -> `handleChange`, `onBlur` -> `handleBlur`, and so on. However, to save you time, `useFormik()` returns a helper method called `formik.getFieldProps()` to make it faster to wire up inputs. Given some field-level info, it returns to you the exact group of `onChange`, `onBlur`, `value`, `checked` for a given field. You can then spread that on an input, select, or textarea.
+The code above is very explicit about exactly what Formik is doing. `onChange` -> `handleChange`, `onBlur` -> `handleBlur`, and so on. However, to save you time, `useFormik()` returns a helper method called `formik.getFieldProps()` to make it faster to wire up inputs. Given some field-level info, it returns to you the exact group of `onChange`, `onBlur`, `value`, `checked` for a given field. You can then spread that on an `input`, `select`, or `textarea`.
 
 ```jsx
 import React from 'react';
@@ -613,16 +630,19 @@ const SignupForm = () => {
       {formik.touched.firstName && formik.errors.firstName ? (
         <div>{formik.errors.firstName}</div>
       ) : null}
+
       <label htmlFor="lastName">Last Name</label>
       <input id="lastName" type="text" {...formik.getFieldProps('lastName')} />
       {formik.touched.lastName && formik.errors.lastName ? (
         <div>{formik.errors.lastName}</div>
       ) : null}
+
       <label htmlFor="email">Email Address</label>
       <input id="email" type="email" {...formik.getFieldProps('email')} />
       {formik.touched.email && formik.errors.email ? (
         <div>{formik.errors.email}</div>
       ) : null}
+
       <button type="submit">Submit</button>
     </form>
   );
@@ -631,7 +651,7 @@ const SignupForm = () => {
 
 ### Leveraging React Context
 
-Our code above is again very explicit about exactly what Formik is doing. `onChange` -> `handleChange`, `onBlur` -> `handleBlur`, and so on. However, we still have to manually pass each input this "prop getter" `getFieldProps()`. To save you even more time, Formik comes with [React Context](https://reactjs.org/docs/context.html)-powered API/component make life easier and less verbose: `<Formik />`, `<Form />`, `<Field />`, and `<ErrorMessage />`. More explicitly, they use React Context implicitly to connect to the parent `<Formik />` state/methods.
+Our code above is again very explicit about exactly what Formik is doing. `onChange` -> `handleChange`, `onBlur` -> `handleBlur`, and so on. However, we still have to manually pass each input this "prop getter" `getFieldProps()`. To save you even more time, Formik comes with [React Context](https://reactjs.org/docs/context.html)-powered API/components to make life easier and code less verbose: `<Formik />`, `<Form />`, `<Field />`, and `<ErrorMessage />`. More explicitly, they use React Context implicitly to connect with the parent `<Formik />` state/methods.
 
 Since these components use React Context, we need to render a [React Context Provider](https://reactjs.org/docs/context.html#contextprovider) that holds our form state and helpers in our tree. If you did this yourself, it would look like:
 
@@ -655,9 +675,9 @@ export const Formik = ({ children, ...props }) => {
 };
 ```
 
-Luckily, we've done this for you and a `<Formik>` component that works just like this one comes with the package.
+Luckily, we’ve done this for you in a `<Formik>` component that works just like this.
 
-Let's now swap out the `useFormik()` hook for the Formik's `<Formik>` component/render-prop. Since it's a component, we'll convert the object passed to `useFormik()` to JSX, with each key becoming a prop.
+Let’s now swap out the `useFormik()` hook for Formik’s `<Formik>` component/render-prop. Since it’s a component, we’ll convert the object passed to `useFormik()` to JSX, with each key becoming a prop.
 
 ```jsx
 import React from 'react';
@@ -695,6 +715,7 @@ const SignupForm = () => {
           {formik.touched.firstName && formik.errors.firstName ? (
             <div>{formik.errors.firstName}</div>
           ) : null}
+
           <label htmlFor="lastName">Last Name</label>
           <input
             id="lastName"
@@ -704,11 +725,13 @@ const SignupForm = () => {
           {formik.touched.lastName && formik.errors.lastName ? (
             <div>{formik.errors.lastName}</div>
           ) : null}
+
           <label htmlFor="email">Email Address</label>
           <input id="email" type="email" {...formik.getFieldProps('email')} />
           {formik.touched.email && formik.errors.email ? (
             <div>{formik.errors.email}</div>
           ) : null}
+
           <button type="submit">Submit</button>
         </form>
       )}
@@ -717,7 +740,7 @@ const SignupForm = () => {
 };
 ```
 
-As you can see above, we swapped out `useFormik()` hook and replaced it with the `<Formik>` component. The `<Formik>` accepts a function as its children (a.k.a. a render prop). Its argument is the _exact_ same object returned by `useFormik()` (in fact, `<Formik>` calls `useFormik()` internally!!). Thus, our form works the same as before, except now we can use new components to express ourselves in a more concise manner.
+As you can see above, we swapped out `useFormik()` hook and replaced it with the `<Formik>` component. The `<Formik>` component accepts a function as its children (a.k.a. a [render prop](https://reactjs.org/docs/render-props.html)). Its argument is the _exact_ same object returned by `useFormik()` (in fact, `<Formik>` calls `useFormik()` internally!). Thus, our form works the same as before, except now we can use new components to express ourselves in a more concise manner.
 
 ```jsx
 import React from 'react';
@@ -748,12 +771,15 @@ const SignupForm = () => {
         <label htmlFor="firstName">First Name</label>
         <Field name="firstName" type="text" />
         <ErrorMessage name="firstName" />
+
         <label htmlFor="lastName">Last Name</label>
         <Field name="lastName" type="text" />
         <ErrorMessage name="lastName" />
+
         <label htmlFor="email">Email Address</label>
         <Field name="email" type="email" />
         <ErrorMessage name="email" />
+
         <button type="submit">Submit</button>
       </Form>
     </Formik>
@@ -761,14 +787,14 @@ const SignupForm = () => {
 };
 ```
 
-The `<Field>` component by default will render an `<input>` component that given a `name` prop will implicitly grab the respective `onChange`, `onBlur`, `value` props and pass them to the element as well as any props you pass to it. However, since not everything is an input, `<Field>` also accepts a few other props to let you render whatever you want. Some examples..
+The `<Field>` component by default will render an `<input>` component that, given a `name` prop, will implicitly grab the respective `onChange`, `onBlur`, `value` props and pass them to the element as well as any props you pass to it. However, since not everything is an input, `<Field>` also accepts a few other props to let you render whatever you want. Some examples..
 
 ```jsx
 // <input className="form-input" placeHolder="Jane"  />
 <Field name="firstName" className="form-input" placeholder="Jane" />
 
 // <textarea className="form-textarea"/></textarea>
-<Field name="message" as="textarea"  className="form-textarea"/>
+<Field name="message" as="textarea" className="form-textarea" />
 
 // <select className="my-select"/>
 <Field name="colors" as="select" className="my-select">
@@ -778,7 +804,7 @@ The `<Field>` component by default will render an `<input>` component that given
 </Field>
 ```
 
-React is all about composition, and while we've cut down on a lot of the prop-drilling, we are still repeating ourselves with a `label`, `<Field>`, and `<ErrorMessage>` for each of our inputs. We can do better with an abstraction! With Formik, you can and should build reusable input primitive components that you can share around your application. Turns out our `<Field>` render-prop component has a sister and her name is `useField` that's going to do the same thing, but via React Hooks! Check this out...
+React is all about composition, and while we’ve cut down on a lot of the [prop-drilling](https://kentcdodds.com/blog/prop-drilling), we’re still repeating ourselves with a `label`, `<Field>`, and `<ErrorMessage>` for each of our inputs. We can do better with an abstraction! With Formik, you can and should build reusable input primitive components that you can share around your application. Turns out our `<Field>` render-prop component has a sister and her name is `useField` that’s going to do the same thing, but via React Hooks! Check this out...
 
 ```jsx
 import React from 'react';
@@ -805,11 +831,12 @@ const MyTextInput = ({ label, ...props }) => {
 const MyCheckbox = ({ children, ...props }) => {
   // React treats radios and checkbox inputs differently other input types, select, and textarea.
   // Formik does this too! When you specify `type` to useField(), it will
-  // return the correct bag of props for you
+  // return the correct bag of props for you -- a `checked` prop will be included
+  // in `field` alongside `name`, `value`, `onChange`, and `onBlur`
   const [field, meta] = useField({ ...props, type: 'checkbox' });
   return (
     <div>
-      <label className="checkbox">
+      <label className="checkbox-input">
         <input type="checkbox" {...field} {...props} />
         {children}
       </label>
@@ -880,18 +907,21 @@ const SignupForm = () => {
             type="text"
             placeholder="Jane"
           />
+
           <MyTextInput
             label="Last Name"
             name="lastName"
             type="text"
             placeholder="Doe"
           />
+
           <MyTextInput
             label="Email Address"
             name="email"
             type="email"
             placeholder="jane@formik.com"
           />
+
           <MySelect label="Job Type" name="jobType">
             <option value="">Select a job type</option>
             <option value="designer">Designer</option>
@@ -899,6 +929,7 @@ const SignupForm = () => {
             <option value="product">Product Manager</option>
             <option value="other">Other</option>
           </MySelect>
+
           <MyCheckbox name="acceptedTerms">
             I accept the terms and conditions
           </MyCheckbox>
@@ -915,7 +946,7 @@ As you can see above, `useField()` gives us the ability to connect any kind inpu
 
 ## Wrapping Up
 
-Congratulations! You've created a signup form with Formik that:
+Congratulations! You’ve created a signup form with Formik that:
 
 - Has complex validation logic and rich error messages
 - Properly displays errors messages to the user at the correct time (after they have blurred a field)
@@ -929,9 +960,9 @@ If you have extra time or want to practice your new Formik skills, here are some
 
 - Disable the submit button while the user has attempted to submit (hint: `formik.isSubmitting`)
 - Add a reset button with `formik.handleReset` or `<button type="reset">`.
-- Prepopulate `initialValues` based on URL query string or props passed to `<SignupForm>`.
-- Change input border color to red when a field has an error and isn't focused
+- Pre-populate `initialValues` based on URL query string or props passed to `<SignupForm>`.
+- Change the input border color to red when a field has an error and isn’t focused
 - Add a shake animation to each field when it displays an error and has been visited
-- Persist form state to the browser's sessionStorage so that form progress is kept inbetween page refreshes
+- Persist form state to the browser’s [sessionStorage](https://developer.mozilla.org/en-US/docs/Web/API/Window/sessionStorage) so that form progress is kept in between page refreshes
 
 Throughout this tutorial, we touched on Formik concepts including form state, fields, validation, hooks, render props, and React context. For a more detailed explanation of each of these topics, check out the rest of the [documentation](./overview). To learn more about defining the components and hooks in the tutorial, check out the [API reference](./api/formik).

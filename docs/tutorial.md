@@ -664,7 +664,7 @@ import { useFormik } from 'formik';
 // Create empty context
 const FormikContext = React.createContext({});
 
-// Place all of what’s returned by useFormik onto context
+// Place all of what’s returned by useFormik into context
 export const Formik = ({ children, ...props }) => {
   const formikStateAndHelpers = useFormik(props);
   return (

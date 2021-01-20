@@ -336,6 +336,7 @@ import { useFormik } from 'formik';
 
 const validate = values => {
   const errors = {};
+
   if (!values.firstName) {
     errors.firstName = 'Required';
   } else if (values.firstName.length > 15) {
@@ -418,6 +419,7 @@ import { useFormik } from 'formik';
 
 const validate = values => {
   const errors = {};
+
   if (!values.firstName) {
     errors.firstName = 'Required';
   } else if (values.firstName.length > 15) {

@@ -8,8 +8,8 @@ import {
   emptyTouched,
   useFormikCore,
   FormikHelpers,
-  useEventCallback,
   selectHandleReset,
+  useCheckableEventCallback,
 } from '@formik/core';
 import invariant from 'tiny-warning';
 import { FormikRefApi, FormikRefState } from '../types';
@@ -125,17 +125,12 @@ export const useFormik = <Values extends FormikValues = FormikValues>(
     getSelector,
   } = useSubscriptions<Values, FormikRefState<Values>>(state);
 
-  const getFieldMeta = useEventCallback(selectRefGetFieldMeta(getState), [
-    getState,
-  ]);
+  const getFieldMeta = useCheckableEventCallback(
+    () => selectRefGetFieldMeta(getState),
+    [getState]
+  );
 
-  const imperativeMethods: FormikHelpers<Values, FormikRefState<Values>> = {
-    ...formikCoreApi,
-    resetForm: (nextState?: Partial<FormikRefState<Values>> | undefined) =>
-      resetForm(nextState),
-  };
-
-  const resetForm = useEventCallback(
+  const resetForm = useCheckableEventCallback(() =>
     selectRefResetForm(
       getState,
       dispatch,
@@ -144,13 +139,18 @@ export const useFormik = <Values extends FormikValues = FormikValues>(
       props.initialStatus,
       props.onReset,
       imperativeMethods
-    ),
-    [getState, dispatch]
+    )
   );
 
-  const handleReset = useEventCallback(selectHandleReset(resetForm), [
+  const handleReset = useCheckableEventCallback(
+    () => selectHandleReset(resetForm),
+    [resetForm]
+  );
+
+  const imperativeMethods: FormikHelpers<Values, FormikRefState<Values>> = {
+    ...formikCoreApi,
     resetForm,
-  ]);
+  };
 
   const { validateForm } = imperativeMethods;
 

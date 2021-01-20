@@ -292,14 +292,17 @@ export const useIsomorphicLayoutEffect =
  */
 export const useCheckableEventCallback = <Args extends any[], Return>(
   getFn: () => (...args: Args) => Return,
-  dependencies: any[]
+  dependencies?: any[]
 ) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const ref = useRef(getFn());
 
-  useIsomorphicLayoutEffect(() => {
-    ref.current = getFn();
-  }, [getFn, ...dependencies]);
+  useIsomorphicLayoutEffect(
+    () => {
+      ref.current = getFn();
+    },
+    dependencies ? [...dependencies] : undefined
+  );
 
   return useCallback(
     (...args: Args) => {
@@ -314,7 +317,9 @@ export const useCheckableEventCallback = <Args extends any[], Return>(
 export const useEventCallback = <Args extends any[], Return>(
   fn: (...args: Args) => Return,
   dependencies: any[]
-) => useCheckableEventCallback(() => fn, [dependencies]);
+  // deps should already be checked here!
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+) => useCheckableEventCallback(() => fn, dependencies);
 
 /** @private Does a React component have exactly 0 children? */
 export const isEmptyChildren = (children: any): boolean =>

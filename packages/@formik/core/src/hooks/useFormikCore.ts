@@ -220,9 +220,28 @@ export const useFormikCore = <
 
   const { onSubmit } = props;
 
+  const executeSubmit = useCheckableEventCallback(() => () =>
+    onSubmit(getState().values, imperativeMethods)
+  );
+
+  const submitForm = useCheckableEventCallback(
+    () =>
+      selectSubmitForm(
+        getState,
+        dispatch,
+        validateForm,
+        executeSubmit,
+        refs.isMounted
+      ),
+    [dispatch, executeSubmit, getState, refs.isMounted, validateForm]
+  );
+
+  const resetForm = useCheckableEventCallback(() =>
+    selectResetForm(getState, dispatch, props, refs, imperativeMethods)
+  );
+
   // This is a bag of stable, imperative methods.
   // These should all be constant functions or the result of useCheckableEventCallback.
-  // We do it this way because the callbacks that follow are dependent on this bag.
   const imperativeMethods: FormikHelpers<Values> = useMemo(
     () => ({
       isFormValid,
@@ -240,35 +259,27 @@ export const useFormikCore = <
       submitForm,
       resetForm,
     }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
-  );
-
-  const executeSubmit = useCheckableEventCallback(
-    () => () => onSubmit(getState().values, imperativeMethods),
-    [getState, imperativeMethods, onSubmit]
-  );
-
-  const submitForm = useCheckableEventCallback(
-    () =>
-      selectSubmitForm(
-        getState,
-        dispatch,
-        validateForm,
-        executeSubmit,
-        refs.isMounted
-      ),
-    [getState, dispatch, validateForm, executeSubmit, refs.isMounted]
+    [
+      isFormValid,
+      validateForm,
+      validateField,
+      setErrors,
+      setFieldError,
+      setFieldTouched,
+      setFieldValue,
+      setStatus,
+      setSubmitting,
+      setTouched,
+      setValues,
+      setFormikState,
+      submitForm,
+      resetForm,
+    ]
   );
 
   const handleSubmit = useCheckableEventCallback(
     () => selectHandleSubmit(submitForm),
     [submitForm]
-  );
-
-  const resetForm = useCheckableEventCallback(
-    () => selectResetForm(getState, dispatch, props, refs, imperativeMethods),
-    [dispatch, getState, imperativeMethods, props, refs]
   );
 
   const handleReset = useCheckableEventCallback(

@@ -79,6 +79,7 @@ function renderFormik<Values extends TestValues = TestValues>(
   );
 
   const { rerender, ...rest } = render(formikRoot);
+
   return {
     ...rest,
     getProps(): FormikProps<Values> {

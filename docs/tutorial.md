@@ -8,17 +8,17 @@ description: Learn how to build forms in React with Formik.
 
 Welcome to the Formik tutorial. This will teach you everything you need to know to build simple and complex forms in React.
 
-If you're impatient and just want to start hacking on your machine locally, checkout [the 60-second quickstart](./overview#installation).
+If you’re impatient and just want to start hacking on your machine locally, check out [the 60-second quickstart](./overview#installation).
 
 ### What are we building?
 
-In this tutorial, we'll show how to build a complex newsletter signup form with React and Formik.
+In this tutorial, we’ll build a complex newsletter signup form with React and Formik.
 
-You can see what we'll be building here: [Final Result](https://codesandbox.io/s/formik-v2-tutorial-final-ge1pt). If the code doesn't make sense to you, don't worry! The goal of this tutorial is to help you understand Formik.
+You can see what we’ll be building here: [Final Result](https://codesandbox.io/s/formik-v2-tutorial-final-ge1pt). If the code doesn't make sense to you, don’t worry! The goal of this tutorial is to help you understand Formik.
 
 ### Prerequisites
 
-You'll need to have familiarity with HTML, CSS, [modern JavaScript](https://developer.mozilla.org/en-US/docs/Web/JavaScript/A_re-introduction_to_JavaScript), and [React](https://reactjs.org) (and [React Hooks](https://reactjs.org/docs/hooks-intro.html)) to fully understand Formik and how it works. In this tutorial, we're using [arrow functions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions), [let](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/let), [const](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/const), [spread syntax](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_syntax), [destructuring](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment), [computed property names](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Object_initializer#Computed_property_names), and [async/await](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function) . You can use the [Babel REPL](https://babeljs.io/repl/#?presets=react&code_lz=MYewdgzgLgBApgGzgWzmWBeGAeAFgRgD4AJRBEAGhgHcQAnBAEwEJsB6AwgbgChRJY_KAEMAlmDh0YWRiGABXVOgB0AczhQAokiVQAQgE8AkowAUAcjogQUcwEpeAJTjDgUACIB5ALLK6aRklTRBQ0KCohMQk6Bx4gA) to check what ES6 code compiles to.
+You’ll need to have familiarity with HTML, CSS, [modern JavaScript](https://developer.mozilla.org/en-US/docs/Web/JavaScript/A_re-introduction_to_JavaScript), and [React](https://reactjs.org) (and [React Hooks](https://reactjs.org/docs/hooks-intro.html)) to fully understand Formik and how it works. In this tutorial, we’re using [arrow functions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions), [let](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/let), [const](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/const), [spread syntax](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_syntax), [destructuring](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment), [computed property names](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Object_initializer#Computed_property_names), and [async/await](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function) . You can use the [Babel REPL](https://babeljs.io/repl/#?presets=react&code_lz=MYewdgzgLgBApgGzgWzmWBeGAeAFgRgD4AJRBEAGhgHcQAnBAEwEJsB6AwgbgChRJY_KAEMAlmDh0YWRiGABXVOgB0AczhQAokiVQAQgE8AkowAUAcjogQUcwEpeAJTjDgUACIB5ALLK6aRklTRBQ0KCohMQk6Bx4gA) to check what ES6 code compiles to.
 
 ## Setup for the Tutorial
 
@@ -28,9 +28,9 @@ There are two ways to complete this tutorial: you can either write the code in y
 
 This is the quickest way to get started!
 
-First, open this [Starter Code](https://codesandbox.io/s/formik-v2-tutorial-start-s04yr) in a new tab. The new tab should display an email address input and submit button and some React code. We will be editing the React code in this tutorial.
+First, open this [Starter Code](https://codesandbox.io/s/formik-v2-tutorial-start-s04yr) in a new tab. The new tab should display an email address input, a submit button, and some React code. We’ll be editing the React code in this tutorial.
 
-You can now skip the second setup option, and go to the [Overview](#overview-what-is-formik) section to get an overview of Formik.
+Skip the second setup option, and go to the [Overview](#overview-what-is-formik) section to get an overview of Formik.
 
 ### Setup Option 2: Local Development Environment
 
@@ -40,16 +40,16 @@ This is completely optional and not required for this tutorial!
 
 <summary><b>Optional: Instructions for following along locally using your preferred text editor</b></summary>
 
-This setup requires more work but allows you to complete the tutorial using an editor of your choice. Here are the steps to follow:
+This setup requires more work, but allows you to complete the tutorial using an editor of your choice. Here are the steps to follow:
 
 1. Make sure you have a recent version of [Node.js](https://nodejs.org/en/) installed.
-2. Follow the [installation instructions for Create React App](https://create-react-app.dev) to make a new project.
+1. Follow the [installation instructions for Create React App](https://create-react-app.dev) to make a new project.
 
 ```bash
 npx create-react-app my-app
 ```
 
-3. Install Formik
+1. Install Formik
 
 ```bash
 npm i formik
@@ -61,20 +61,20 @@ Or
 yarn add formik
 ```
 
-4. Delete all files in the `src/` folder of the new project
+1. Delete all files in the `src/` folder of the new project
 
 > Note:
 >
-> **Don't delete the entire `src` folder, just the original source files inside it.** We'll replace the default source files with examples for this project in the next step.
+> **Don’t delete the entire `src` folder, just the original source files inside it.** We’ll replace the default source files with examples for this project in the next step.
 
 ```bash
 cd my-app
 cd src
 
-# If you're using a Mac or Linux:
+# If you’re using a Mac or Linux:
 rm -f *
 
-# Or, if you're on Windows:
+# Or, if you’re on Windows:
 del *
 
 # Then, switch back to the project folder
@@ -85,7 +85,7 @@ cd ..
 
 6. Add a file named `index.js` in the `src/` folder with [this JS code](https://codesandbox.io/s/formik-v2-tutorial-start-s04yr?file=/src/index.js:0-759).
 
-Now if you run `npm start` in the project folder and open `http://localhost:3000` in the browser. You should see an email input and a submit button.
+Now run `npm start` in the project folder and open `http://localhost:3000` in the browser. You should see an email input and a submit button.
 
 We recommend following [these instructions](https://babeljs.io/docs/editors/) to configure syntax highlighting for your editor.
 
@@ -93,7 +93,7 @@ We recommend following [these instructions](https://babeljs.io/docs/editors/) to
 
 ### Help, I’m Stuck!
 
-If you get stuck, check out Formik's [GitHub Discussions](https://github.com/formik/formik/discussions). In addition, the [Formium Community Discord Server](https://discord.gg/pJSg287) is a great way to get help quickly too. If you don’t receive an answer, or if you remain stuck, please file an issue, and we’ll help you out.
+If you get stuck, check out Formik’s [GitHub Discussions](https://github.com/formik/formik/discussions). In addition, the [Formium Community Discord Server](https://discord.gg/pJSg287) is a great way to get help quickly too. If you don’t receive an answer, or if you remain stuck, please file an issue, and we’ll help you out.
 
 ## Overview: What is Formik?
 
@@ -108,11 +108,11 @@ organized--making testing, refactoring, and reasoning about your forms a breeze.
 
 ## The Basics
 
-We're going to start with the _most verbose_ way of using Formik. While this may seem a bit long-winded, it's important for you to see how Formik builds on itself so you have a full grasp of what's possible and a complete mental model of how it works.
+We’re going to start with the _most verbose_ way of using Formik. While this may seem a bit long-winded, it’s important to see how Formik builds on itself so you have a full grasp of what’s possible and a complete mental model of how it works.
 
 ### A simple newsletter signup form
 
-Imagine we want to add a newsletter signup form for a hypothetical blog. To start, our form will have just one field named `email`. With Formik, this is just a few lines of code.
+Imagine we want to add a newsletter signup form for a blog. To start, our form will have just one field named `email`. With Formik, this is just a few lines of code.
 
 ```jsx
 import React from 'react';
@@ -145,25 +145,25 @@ const SignupForm = () => {
 };
 ```
 
-We pass our form's `initialValues` and a submission function (`onSubmit`) to the `useFormik()` hook. The hook then returns to us a goodie bag of form state and helpers in a variable we are calling `formik`. In the goodie bag, there are a bunch of helper methods, but for now, the ones we care about are as follows:
+We pass our form’s `initialValues` and a submission function (`onSubmit`) to the `useFormik()` hook. The hook then returns to us a goodie bag of form state and helper methods in a variable we call `formik`. For now, the only helper methods we care about are as follows:
 
 - `handleSubmit`: A submission handler
 - `handleChange`: A change handler to pass to each `<input>`, `<select>`, or `<textarea>`
-- `values`: Our form's current values
+- `values`: Our form’s current values
 
-As you can see above, we pass each of these up to their respective props...and that's it! You can now have a working form powered by Formik--instead of managing your form's values on your own and writing your own custom event handlers for every single input, you can just use `useFormik()`.
+As you can see above, we pass each of these to their respective props...and that’s it! We can now have a working form powered by Formik. Instead of managing our form’s values on our own and writing our own custom event handlers for every single input, we can just use `useFormik()`.
 
-This is pretty neat, but with just one single input, the benefits of using `useFormik()` are unclear. So let's add two more inputs: one for the user's first and last name, which we'll store as `firstName` and `lastName` in the form.
+This is pretty neat, but with just one single input, the benefits of using `useFormik()` are unclear. So let’s add two more inputs: one for the user’s first and last name, which we’ll store as `firstName` and `lastName` in the form.
 
 ```jsx
 import React from 'react';
 import { useFormik } from 'formik';
 
 const SignupForm = () => {
-  // Notice that we have to initialize ALL of fields with values. These
-  // could come from props, but since we don't want to prefill this form,
-  // we just use an empty string. If you don't do this, React will yell
-  // at you.
+  // Note that we have to initialize ALL of fields with values. These
+  // could come from props, but since we don’t want to prefill this form,
+  // we just use an empty string. If we don’t do this, React will yell
+  // at us.
   const formik = useFormik({
     initialValues: {
       firstName: '',
@@ -206,13 +206,13 @@ const SignupForm = () => {
 };
 ```
 
-If you look carefully at our new code, you'll notice some patterns and symmetry _forming_.
+If you look carefully at our new code, you’ll notice some patterns and symmetry _forming_.
 
-1. We reuse the same exact change handler function `handleChange` for each HTML input.
+1. We reuse the same exact change handler function `handleChange` for each HTML input
 2. We pass an `id` and `name` HTML attribute that _matches_ the property we defined in `initialValues`
-3. We access the field's value using the same name (`email` -> `formik.values.email`).
+3. We access the field’s value using the same name (`email` -> `formik.values.email`)
 
-If you're familiar with building forms with plain React, you can think of Formik's `handleChange` as working like this:
+If you’re familiar with building forms with plain React, you can think of Formik’s `handleChange` as working like this:
 
 ```jsx
 const [values, setValues] = React.useState({});
@@ -220,7 +220,7 @@ const [values, setValues] = React.useState({});
 const handleChange = event => {
   setValues(prevValues => ({
     ...prevValues,
-    // we use the name to tell formik which key of `values` to update.
+    // we use the name to tell Formik which key of `values` to update
     [event.target.name]: event.target.value
   });
 }
@@ -228,9 +228,9 @@ const handleChange = event => {
 
 ## Validation
 
-While our contact form works, it's not quite feature-complete. While users can submit it, it doesn't tell them which (if any) fields are required.
+While our contact form works, it’s not quite feature-complete. While users can submit it, it doesn’t tell them which (if any) fields are required.
 
-If we are okay with using the browser's built-in HTML input validation, you could add a `required` prop to each of our inputs, specify minimum/maximum lengths (`maxlength` and `minlength`), and/or add a `pattern` prop for regex validation for each of these inputs. These are great if you can get away with them. However, HTML validation has its limitations. First, it only works in the browser! So this clearly is not viable for React Native. Second, it's hard/impossible to show custom error messages to our user. Third, it's very janky.
+If we’re okay with using the browser’s built-in HTML input validation, we could add a `required` prop to each of our inputs, specify minimum/maximum lengths (`maxlength` and `minlength`), and/or add a `pattern` prop for regex validation for each of these inputs. These are great if we can get away with them. However, HTML validation has its limitations. First, it only works in the browser! So this clearly is not viable for React Native. Second, it’s hard/impossible to show custom error messages to our user. Third, it’s very janky.
 
 As mentioned earlier, Formik keeps track of not only your form's `values`, but also its error messages and validation. To add validation with JS, let's specify a custom validation function and pass it as `validate` to the `useFormik()` hook. If an error exists, this custom validation function should produce an `error` object with a matching shape to our `values`/`initialValues`. Again..._symmetry_...yes...
 

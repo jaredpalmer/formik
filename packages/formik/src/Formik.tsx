@@ -632,7 +632,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
           ? ((parsed = parseFloat(value)), isNaN(parsed) ? '' : parsed)
           : /checkbox/.test(type) // checkboxes
           ? getValueForCheckbox(getIn(state.values, field!), checked, value)
-          : !!multiple // <select multiple>
+          : options && multiple // <select multiple>
           ? getSelectedValues(options)
           : value;
       }
@@ -1038,7 +1038,7 @@ function warnAboutMissingIdentifier({
   console.warn(
     `Warning: Formik called \`${handlerName}\`, but you forgot to pass an \`id\` or \`name\` attribute to your input:
     ${htmlContent}
-    Formik cannot determine which value to update. For more info see https://github.com/jaredpalmer/formik#${documentationAnchorLink}
+    Formik cannot determine which value to update. For more info see https://formik.org/docs/api/formik#${documentationAnchorLink}
   `
   );
 }

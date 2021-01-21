@@ -5,11 +5,11 @@ title: <FastField />
 
 ## Before we start
 
-`<FastField />` is meant for performance _optimization_. However, you really do not need to use it until you do. Only proceed if you are familiar with how React's [`shouldComponentUpdate()`](https://reactjs.org/docs-component.html#shouldcomponentupdate) works. You have been warned.
+`<FastField />` is meant for performance _optimization_. However, you really do not need to use it until you do. Only proceed if you are familiar with how React's [`shouldComponentUpdate()`](https://reactjs.org/docs/react-component.html#shouldcomponentupdate) works. You have been warned.
 
 **No. Seriously. Please review the following parts of the official React documentation before continuing**
 
-- [React `shouldComponentUpdate()` Reference](https://reactjs.org/docs-component.html#shouldcomponentupdate)
+- [React `shouldComponentUpdate()` Reference](https://reactjs.org/docs/react-component.html#shouldcomponentupdate)
 - [`shouldComponentUpdate` in Action](https://reactjs.org/docs/optimizing-performance.html#shouldcomponentupdate-in-action)
 
 ## Overview

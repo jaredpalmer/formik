@@ -39,7 +39,7 @@ export function getRouteContext(
         parent && i === 0
           ? {
               ...route,
-              title: `${parent.title}: ${route.title}`,
+              title: `${_route.title} | ${parent.title}`,
             }
           : route;
 
@@ -51,7 +51,7 @@ export function getRouteContext(
         ..._route,
         title:
           parent && !parent.heading
-            ? `${parent.title}: ${_route.title}`
+            ? `${_route.title} | ${parent.title}`
             : _route.title,
       };
       // Continue the loop until we know the next route
@@ -62,7 +62,7 @@ export function getRouteContext(
       parent && !parent.heading && !routes[i + 1]?.path
         ? {
             ...route,
-            title: `${parent.title}: ${route.title}`,
+            title: `${route.title} | ${parent.title}`,
           }
         : route;
   }

@@ -1,73 +1,60 @@
 import {
-  GetSelectorFn,
-  selectGetSelector,
-} from './../helpers/subscription-helpers';
-import {
-  FormikState,
-  FormikValues,
   useCheckableEventCallback,
   useIsomorphicLayoutEffect,
 } from '@formik/core';
 import { MutableRefObject, useMemo, useRef } from 'react';
 import { unstable_batchedUpdates } from 'react-dom';
 import {
+  selectCreateSelector,
+  selectGetSelector,
   getOrCreateSubscription,
   getSubscription,
   selectCreateSubscription,
-} from '../helpers/subscription-helpers';
-import {
   CreateSelectorFn,
-  FormikSliceFn,
-  selectCreateFormikSelector,
-} from './createSelector';
-import {
   CreateSubscriberFn,
-  FormikSubscriber,
-  selectCreateFormikSubscriber,
-} from './createSubscriber';
+  GetSelectorFn,
+  SliceFn,
+  Subscriber,
+  selectCreateSubscriber,
+} from '../helpers/subscription-helpers';
 
-export type FormikSubscriptionCallback<Return> = (value: Return) => void;
-export type SubscribeFn<
-  Values extends FormikValues,
-  State extends FormikState<Values>
-> = <Args extends any[], Return>(
-  newSubscriber: FormikSubscriber<Values, Args, Return, State>,
-  callback: FormikSubscriptionCallback<Return>
+export type SubscriptionApi<State> = {
+  subscribe: SubscribeFn<State>;
+  getSelector: GetSelectorFn<State>;
+  createSelector: CreateSelectorFn<State>;
+  createSubscriber: CreateSubscriberFn<State>;
+};
+
+export type SubscriptionCallback<Return> = (value: Return) => void;
+export type SubscribeFn<State> = <Args extends any[], Return>(
+  newSubscriber: Subscriber<State, Args, Return>,
+  callback: SubscriptionCallback<Return>
 ) => UnsubscribeFn;
 export type UnsubscribeFn = () => void;
 
-export interface FormikSubscription<
-  Values,
-  Args extends any[],
-  Return,
-  State extends FormikState<Values>
-> {
-  subscriber: FormikSubscriber<Values, Args, Return, State>;
-  selector: FormikSliceFn<Values, Return, State>;
-  listeners: FormikSubscriptionCallback<Return>[];
+export interface Subscription<State, Args extends any[], Return> {
+  subscriber: Subscriber<State, Args, Return>;
+  selector: SliceFn<State, Return>;
+  listeners: SubscriptionCallback<Return>[];
   prevStateRef: MutableRefObject<Return>;
 }
 
-export const useSubscriptions = <Values, State extends FormikState<Values>>(
-  state: State
-) => {
-  const subscriptionsRef = useRef<
-    FormikSubscription<Values, any, any, State>[]
-  >([]);
+export const useSubscriptions = <State>(state: State) => {
+  const subscriptionsRef = useRef<Subscription<State, any, any>[]>([]);
 
-  const getSelector: GetSelectorFn<Values, State> = useMemo(
+  const getSelector: GetSelectorFn<State> = useMemo(
     () => selectGetSelector(),
     []
   );
 
   // these selectors need some help inferring
-  const createSelector: CreateSelectorFn<Values, State> = useMemo(
-    () => selectCreateFormikSelector<Values, State>(),
+  const createSelector: CreateSelectorFn<State> = useMemo(
+    () => selectCreateSelector<State>(),
     []
   );
 
-  const createSubscriber: CreateSubscriberFn<Values, State> = useMemo(
-    () => selectCreateFormikSubscriber<Values, State>(),
+  const createSubscriber: CreateSubscriberFn<State> = useMemo(
+    () => selectCreateSubscriber<State>(),
     []
   );
 
@@ -79,12 +66,12 @@ export const useSubscriptions = <Values, State extends FormikState<Values>>(
 
   // TypeScript needs help inferring these generics.
   const subscribe: <Args extends any[], Return>(
-    newSubscriber: FormikSubscriber<Values, Args, Return, State>,
-    callback: FormikSubscriptionCallback<Return>
+    newSubscriber: Subscriber<State, Args, Return>,
+    callback: SubscriptionCallback<Return>
   ) => UnsubscribeFn = useCheckableEventCallback(
     () => <Args extends any[], Return>(
-      newSubscriber: FormikSubscriber<Values, Args, Return, State>,
-      callback: FormikSubscriptionCallback<Return>
+      newSubscriber: Subscriber<State, Args, Return>,
+      callback: SubscriptionCallback<Return>
     ): UnsubscribeFn => {
       const subscription = getOrCreateSubscription(
         subscriptionsRef.current,

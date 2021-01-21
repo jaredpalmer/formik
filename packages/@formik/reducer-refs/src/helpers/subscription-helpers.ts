@@ -1,47 +1,72 @@
-import { FormikState, FormikValues, isFunction } from '@formik/core';
-import { FormikSelector, FormikSliceFn } from '../hooks/createSelector';
-import { FormikSubscriber } from '../hooks/createSubscriber';
-import { FormikSubscription } from '../hooks/useSubscriptions';
+import { isFunction } from '@formik/core';
+import { Subscription } from '../hooks/useSubscriptions';
 
-export type GetSelectorFn<Values, State extends FormikState<Values>> = <
+export type SliceFn<State, Return> = (state: State) => Return;
+
+export type SelectorFn<State, Args extends any[], Return> = (
+  ...args: Args
+) => SliceFn<State, Return>;
+
+export type Selector<State, Args extends any[], Return> = {
+  selector: SelectorFn<State, Args, Return>;
+  args: Args;
+};
+
+export type CreateSelectorFn<State> = <Args extends any[], Return>(
+  selector: SelectorFn<State, Args, Return>,
+  args: Args
+) => Selector<State, Args, Return>;
+
+export const selectCreateSelector = <State>(): CreateSelectorFn<State> => (
+  selector,
+  args
+) => {
+  return { selector, args };
+};
+
+export type GetSelectorFn<State> = <Args extends any[], Return>(
+  selector: SliceFn<State, Return> | Selector<State, Args, Return>
+) => SliceFn<State, Return>;
+
+export const selectGetSelector = <State>(): GetSelectorFn<State> => <
   Args extends any[],
   Return
 >(
-  selector:
-    | FormikSliceFn<Values, Return, State>
-    | FormikSelector<Values, Args, Return, State>
-) => FormikSliceFn<Values, Return, State>;
-
-export const selectGetSelector = <
-  Values extends FormikValues,
-  State extends FormikState<Values>
->(): GetSelectorFn<Values, State> => <Args extends any[], Return>(
-  selector:
-    | FormikSliceFn<Values, Return, State>
-    | FormikSelector<Values, Args, Return, State>
+  selector: SliceFn<State, Return> | Selector<State, Args, Return>
 ) => (isFunction(selector) ? selector : selector.selector(...selector.args));
 
-export type CreateSubscriptionFn<
-  Values,
-  Args extends any[],
-  Return,
-  State extends FormikState<Values> = FormikState<Values>
-> = (
-  subscriber: FormikSubscriber<Values, Args, Return, State>
-) => FormikSubscription<Values, Args, Return, State>;
+export type Comparer<Return> = (prev: Return, next: Return) => boolean;
+
+export type Subscriber<State, Args extends any[], Return> = {
+  selector: SliceFn<State, Return> | Selector<State, Args, Return>;
+  comparer: Comparer<Return>;
+};
+
+export type CreateSubscriberFn<State> = <Args extends any[], Return>(
+  selector: SliceFn<State, Return> | Selector<State, Args, Return>,
+  comparer: Comparer<Return>
+) => Subscriber<State, Args, Return>;
+
+export const selectCreateSubscriber = <State>(): CreateSubscriberFn<State> => (
+  selector,
+  comparer
+) => {
+  return { selector, comparer };
+};
+
+export type CreateSubscriptionFn<State, Args extends any[], Return> = (
+  subscriber: Subscriber<State, Args, Return>
+) => Subscription<State, Args, Return>;
 
 /**
  * Create a new Subscription
  */
-export const selectCreateSubscription = <
-  Values,
-  State extends FormikState<Values>
->(
+export const selectCreateSubscription = <State>(
   state: State,
-  getSelector: GetSelectorFn<Values, State>
+  getSelector: GetSelectorFn<State>
 ) => <Return extends any, Args extends any[] = []>(
-  subscriber: FormikSubscriber<Values, Args, Return, State>
-): ReturnType<CreateSubscriptionFn<Values, Args, Return, State>> => {
+  subscriber: Subscriber<State, Args, Return>
+): ReturnType<CreateSubscriptionFn<State, Args, Return>> => {
   const selector = getSelector(subscriber.selector);
   return {
     subscriber,
@@ -53,14 +78,9 @@ export const selectCreateSubscription = <
   };
 };
 
-const selectorMatches = <
-  Values,
-  Args extends any[],
-  Return extends any,
-  State extends FormikState<Values>
->(
-  selector: FormikSelector<Values, any, any, State>,
-  newSelector: FormikSelector<Values, Args, Return, State>
+const selectorMatches = <State, Args extends any[], Return extends any>(
+  selector: Selector<State, any, any>,
+  newSelector: Selector<State, Args, Return>
 ) => {
   return (
     selector.selector === newSelector.selector &&
@@ -70,14 +90,9 @@ const selectorMatches = <
   );
 };
 
-const subscriptionMatches = <
-  Values,
-  Args extends any[],
-  Return extends any,
-  State extends FormikState<Values>
->(
-  subscription: FormikSubscription<Values, any, any, State>,
-  newSubscriber: FormikSubscriber<Values, Args, Return, State>
+const subscriptionMatches = <State, Args extends any[], Return>(
+  subscription: Subscription<State, any, any>,
+  newSubscriber: Subscriber<State, Args, Return>
 ) =>
   subscription.subscriber.comparer === newSubscriber.comparer &&
   isFunction(subscription.subscriber.selector) &&
@@ -88,14 +103,9 @@ const subscriptionMatches = <
     ? selectorMatches(subscription.subscriber.selector, newSubscriber.selector)
     : false;
 
-export const getSubscription = <
-  Values,
-  Args extends any[],
-  Return extends any,
-  State extends FormikState<Values>
->(
-  subscriptions: FormikSubscription<Values, any, any, State>[],
-  subscriber: FormikSubscriber<Values, Args, Return, State>
+export const getSubscription = <State, Args extends any[], Return extends any>(
+  subscriptions: Subscription<State, any, any>[],
+  subscriber: Subscriber<State, Args, Return>
 ) => {
   return subscriptions.find(subscription =>
     subscriptionMatches(subscription, subscriber)
@@ -105,15 +115,14 @@ export const getSubscription = <
  * Walk through existing subscriptions and get or create them.
  */
 export const getOrCreateSubscription = <
-  Values,
+  State,
   Args extends any[],
-  Return extends any,
-  State extends FormikState<Values>
+  Return extends any
 >(
-  subscriptions: FormikSubscription<Values, any, any, State>[],
-  newSubscriber: FormikSubscriber<Values, Args, Return, State>,
-  createSubscription: CreateSubscriptionFn<Values, Args, Return, State>
-): FormikSubscription<Values, any, any, State> => {
+  subscriptions: Subscription<State, any, any>[],
+  newSubscriber: Subscriber<State, Args, Return>,
+  createSubscription: CreateSubscriptionFn<State, Args, Return>
+): Subscription<State, Args, Return> => {
   let subscription = getSubscription(subscriptions, newSubscriber);
 
   if (!subscription) {

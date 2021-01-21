@@ -8,15 +8,16 @@ import {
   emptyTouched,
   useFormikCore,
   FormikHelpers,
-  useEventCallback,
   selectHandleReset,
+  useCheckableEventCallback,
 } from '@formik/core';
 import invariant from 'tiny-warning';
-import { FormikRefApi, FormikRefState } from '../types';
+import { FormikRefState } from '../types';
 import { formikRefReducer } from '../ref-reducer';
 import { selectRefGetFieldMeta, selectRefResetForm } from '../ref-selectors';
 import { useEffect, useRef, useCallback, useReducer, useMemo } from 'react';
 import { useSubscriptions } from './useSubscriptions';
+import { FormikRefApi } from './useFormikApi';
 
 export const useFormik = <Values extends FormikValues = FormikValues>(
   rawProps: FormikConfig<Values, FormikRefState<Values>>
@@ -123,19 +124,14 @@ export const useFormik = <Values extends FormikValues = FormikValues>(
     createSelector,
     createSubscriber,
     getSelector,
-  } = useSubscriptions<Values, FormikRefState<Values>>(state);
+  } = useSubscriptions(state);
 
-  const getFieldMeta = useEventCallback(selectRefGetFieldMeta(getState), [
-    getState,
-  ]);
+  const getFieldMeta = useCheckableEventCallback(
+    () => selectRefGetFieldMeta(getState),
+    [getState]
+  );
 
-  const imperativeMethods: FormikHelpers<Values, FormikRefState<Values>> = {
-    ...formikCoreApi,
-    resetForm: (nextState?: Partial<FormikRefState<Values>> | undefined) =>
-      resetForm(nextState),
-  };
-
-  const resetForm = useEventCallback(
+  const resetForm = useCheckableEventCallback(() =>
     selectRefResetForm(
       getState,
       dispatch,
@@ -144,13 +140,18 @@ export const useFormik = <Values extends FormikValues = FormikValues>(
       props.initialStatus,
       props.onReset,
       imperativeMethods
-    ),
-    [getState, dispatch]
+    )
   );
 
-  const handleReset = useEventCallback(selectHandleReset(resetForm), [
+  const handleReset = useCheckableEventCallback(
+    () => selectHandleReset(resetForm),
+    [resetForm]
+  );
+
+  const imperativeMethods: FormikHelpers<Values, FormikRefState<Values>> = {
+    ...formikCoreApi,
     resetForm,
-  ]);
+  };
 
   const { validateForm } = imperativeMethods;
 

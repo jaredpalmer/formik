@@ -1,8 +1,8 @@
 import { FormikValues, useIsomorphicLayoutEffect } from '@formik/core';
 import React from 'react';
+import { Subscriber } from '../helpers/subscription-helpers';
 import { FormikRefState } from '../types';
 import { useFormikApi } from './useFormikApi';
-import { FormikSubscriber } from './createSubscriber';
 
 export type FormSliceFn<Values, Result> = (
   formState: FormikRefState<Values>
@@ -16,7 +16,7 @@ export const useFormikStateSubscription = <
   Args extends any[],
   Return
 >(
-  subscriber: FormikSubscriber<Values, Args, Return, FormikRefState<Values>>
+  subscriber: Subscriber<FormikRefState<Values>, Args, Return>
 ) => {
   const { subscribe, getState, getSelector } = useFormikApi<Values>();
   const [sliceState, setSliceState] = React.useState(() =>

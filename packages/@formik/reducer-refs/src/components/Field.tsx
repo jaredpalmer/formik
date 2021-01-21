@@ -8,10 +8,9 @@ import {
   FormikProps,
 } from '@formik/core';
 import invariant from 'tiny-warning';
-import { useFormikApi } from '../hooks/useFormikApi';
+import { FormikRefApi, useFormikApi } from '../hooks/useFormikApi';
 import { useField, UseFieldProps } from '../hooks/useField';
 import { useFormikRefStateInternal } from '../hooks/useFormikState';
-import { FormikRefApi } from '../types';
 
 export interface FieldProps<Value = any, FormValues = any> {
   field: FieldInputProps<Value>;

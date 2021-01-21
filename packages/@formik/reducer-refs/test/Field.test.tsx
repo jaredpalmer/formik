@@ -17,10 +17,11 @@ import {
   FieldComponentProps,
   FastFieldConfig,
   useFormikState,
+  FormikRefApi,
+  FormikRefState,
 } from '../src';
 import { noop } from './testHelpers';
 import { FormikConfig, FormikProps } from '@formik/core';
-import { FormikRefApi, FormikRefState } from '../src/types';
 
 const initialValues = { name: 'jared', email: 'hello@reason.nyc' };
 type Values = typeof initialValues;

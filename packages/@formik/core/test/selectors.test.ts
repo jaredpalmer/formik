@@ -1,5 +1,5 @@
 import { testProps } from './constants';
-import { selectIsFormValid } from './../src/selectors';
+import { selectIsFormValid } from './../src';
 
 const initialValueIsValidFn = selectIsFormValid({
   ...testProps,

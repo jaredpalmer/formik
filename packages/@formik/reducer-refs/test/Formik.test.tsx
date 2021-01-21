@@ -6,9 +6,7 @@ import {
 import * as React from 'react';
 import { render, fireEvent, wait } from 'react-testing-library';
 import * as Yup from 'yup';
-import { FormikRefApi, FormikRefState } from '../dist/types';
-
-import { Formik, useFormikState } from '../src';
+import { Formik, FormikRefApi, FormikRefState, useFormikState } from '../src';
 import { noop } from './testHelpers';
 
 jest.spyOn(global.console, 'warn');

@@ -221,7 +221,8 @@ export const selectResetForm = <Values extends FormikValues>(
 ) => (nextState?: Partial<FormikState<Values>>) => {
   const values =
     nextState && nextState.values
-      ? nextState.values
+      ? // create a new copy of `values` to test against initialValues
+        { ...nextState.values }
       : refs.initialValues.current;
   const errors =
     nextState && nextState.errors
@@ -920,7 +921,7 @@ export const selectGetValueFromEvent = <Values extends FormikValues>(
   const { type, value, checked, options, multiple } = target;
 
   return /checkbox/.test(type) // checkboxes
-    ? getValueForCheckbox(getIn(getState().values, fieldName!), checked, value)
+    ? getValueForCheckbox(getIn(getState().values, fieldName), checked, value)
     : !!multiple // <select multiple>
     ? getSelectedValues(options)
     : value;

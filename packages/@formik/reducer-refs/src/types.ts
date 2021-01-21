@@ -1,12 +1,4 @@
-import {
-  FormikValues,
-  FormikCoreApi,
-  FormikState,
-  ValidationHandler,
-  FormikValidationConfig,
-  FormikErrors,
-  FormikTouched,
-} from '@formik/core';
+import { FormikState, FormikErrors, FormikTouched } from '@formik/core';
 
 export interface FormikRefStateDecorator<Values> {
   initialValues: Values;

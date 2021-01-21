@@ -1,7 +1,7 @@
 import { FormikValues, FormikComputedState } from '@formik/core';
 import { useMemo } from 'react';
-import { useFormikApi } from './useFormikApi';
-import { FormikRefApi, FormikRefState } from '../types';
+import { FormikRefApi, useFormikApi } from './useFormikApi';
+import { FormikRefState } from '../types';
 import { useFormikStateSubscription } from './useFormikStateSubscription';
 import { isEqual } from 'lodash';
 

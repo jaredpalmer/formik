@@ -13,3 +13,4 @@ export * from './hooks/useFormikApi';
 export * from './hooks/useFormikContext';
 export * from './hooks/useFormikState';
 export * from './withFormik';
+export * from './types';

@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { isEqual } from 'lodash';
 import {
   FieldHelperProps,
   FieldInputProps,
@@ -9,7 +8,7 @@ import {
 import { useFormikApi } from './useFormikApi';
 import invariant from 'tiny-warning';
 import { selectFieldMetaByName } from '../ref-selectors';
-import { useFormikStateSubscription } from './useFormikStateSubscription';
+import { useFormikStateInternal } from './useFormikState';
 
 export type UseFieldProps<Value = any> = {
   /**
@@ -57,6 +56,20 @@ export type UseFieldProps<Value = any> = {
   value?: Value;
 };
 
+/**
+ * Example of an optimized comparer.
+ */
+export const fieldMetaIsEqual = <Value,>(
+  prev: FieldMetaProps<Value>,
+  next: FieldMetaProps<Value>
+) =>
+  prev.value === next.value &&
+  prev.touched === next.touched &&
+  prev.error === next.error &&
+  prev.initialValue === next.initialValue &&
+  prev.initialTouched === next.initialTouched &&
+  prev.initialError === next.initialError;
+
 export function useField<Value = any, FormValues = any>(
   nameOrOptions: string | UseFieldProps<Value>
 ): [FieldInputProps<Value>, FieldMetaProps<Value>, FieldHelperProps<Value>] {
@@ -67,8 +80,6 @@ export function useField<Value = any, FormValues = any>(
     getFieldHelpers,
     registerField,
     unregisterField,
-    createSelector,
-    createSubscriber,
   } = formik;
 
   const props =
@@ -76,19 +87,11 @@ export function useField<Value = any, FormValues = any>(
 
   const { name: fieldName, validate: validateFn } = props;
 
-  /**
-   * Create a subscriber.
-   */
-  const subscriber = React.useMemo(
-    () =>
-      createSubscriber(
-        createSelector(selectFieldMetaByName, [fieldName]),
-        isEqual
-      ),
-    [createSelector, createSubscriber, fieldName]
+  const fieldMeta = useFormikStateInternal(
+    formik,
+    [selectFieldMetaByName, fieldName],
+    fieldMetaIsEqual
   );
-
-  const fieldMeta = useFormikStateSubscription(subscriber);
 
   React.useEffect(() => {
     if (fieldName) {

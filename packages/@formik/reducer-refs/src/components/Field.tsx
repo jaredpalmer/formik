@@ -10,7 +10,7 @@ import {
 import invariant from 'tiny-warning';
 import { FormikRefApi, useFormikApi } from '../hooks/useFormikApi';
 import { useField, UseFieldProps } from '../hooks/useField';
-import { useFormikRefStateInternal } from '../hooks/useFormikState';
+import { useFullFormikState } from '../hooks/useFullFormikState';
 
 export interface FieldProps<Value = any, FormValues = any> {
   field: FieldInputProps<Value>;
@@ -107,8 +107,9 @@ export function Field<FieldValue = any, FormValues = any>(
    *
    * Otherwise, we will pointlessly get the initial values but never subscribe to updates.
    */
-  const [formikState, formikApi] = useFormikRefStateInternal(
-    useFormikApi<FormValues>(),
+  const formikApi = useFormikApi<FormValues>();
+  const formikState = useFullFormikState(
+    formikApi,
     !!render || isFunction(children)
   );
 

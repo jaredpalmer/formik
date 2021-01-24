@@ -16,9 +16,10 @@ import {
   FieldConfig,
   FieldComponentProps,
   FastFieldConfig,
-  useFormikState,
   FormikRefApi,
   FormikRefState,
+  useFullFormikState,
+  useFormikApi,
 } from '../src';
 import { noop } from './testHelpers';
 import { FormikConfig, FormikProps } from '@formik/core';
@@ -134,7 +135,9 @@ describe('Field / FastField', () => {
       };
 
       const AsComponent = (props: FieldProps['field']) => {
-        [formikState, formikApi] = useFormikState();
+        formikApi = useFormikApi();
+        formikState = useFullFormikState(formikApi);
+
         asInjectedProps = props;
 
         return <div data-testid="child">{TEXT}</div>;

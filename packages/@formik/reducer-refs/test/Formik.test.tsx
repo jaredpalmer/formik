@@ -6,7 +6,13 @@ import {
 import * as React from 'react';
 import { render, fireEvent, wait } from 'react-testing-library';
 import * as Yup from 'yup';
-import { Formik, FormikRefApi, FormikRefState, useFormikState } from '../src';
+import {
+  Formik,
+  FormikRefApi,
+  FormikRefState,
+  useFormikApi,
+  useFullFormikState,
+} from '../src';
 import { noop } from './testHelpers';
 
 jest.spyOn(global.console, 'warn');
@@ -60,7 +66,8 @@ function renderFormik<Values extends TestValues = TestValues>(
   let formikState: FormikRefState<Values> | undefined;
 
   const ContextRenderer = () => {
-    [formikState, formikApi] = useFormikState<Values>();
+    formikApi = useFormikApi();
+    formikState = useFullFormikState<Values>(formikApi);
     return null;
   };
 

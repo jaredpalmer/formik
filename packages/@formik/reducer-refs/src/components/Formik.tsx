@@ -9,8 +9,8 @@ import {
 import invariant from 'tiny-warning';
 import { useFormik } from '../hooks/useFormik';
 import { FormikApiContext } from '../contexts/FormikApiContext';
-import { useFormikRefStateInternal } from '../hooks/useFormikState';
 import { FormikRefState } from '../types';
+import { useFullFormikState } from '../hooks/useFullFormikState';
 
 export function Formik<
   Values extends FormikValues = FormikValues,
@@ -21,8 +21,9 @@ export function Formik<
   // get state and add a form effect if render or child function is used
   // aka, we need to pass FormikState directly
   // also component, because it is documented that way
-  const [formikState, formikApi] = useFormikRefStateInternal(
-    useFormik<Values>(props),
+  const formikApi = useFormik<Values>(props);
+  const formikState = useFullFormikState(
+    formikApi,
     !!component || !!render || isFunction(children)
   );
 

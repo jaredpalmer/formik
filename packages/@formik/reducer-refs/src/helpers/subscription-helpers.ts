@@ -38,12 +38,12 @@ export const selectGetSelector = <State>(): GetSelectorFn<State> => <
 export type Comparer<Return> = (prev: Return, next: Return) => boolean;
 
 export type Subscriber<State, Args extends any[], Return> = {
-  selector: SliceFn<State, Return> | Selector<State, Args, Return>;
+  selector: Selector<State, Args, Return> | SliceFn<State, Return>;
   comparer: Comparer<Return>;
 };
 
 export type CreateSubscriberFn<State> = <Args extends any[], Return>(
-  selector: SliceFn<State, Return> | Selector<State, Args, Return>,
+  selector: Selector<State, Args, Return> | SliceFn<State, Return>,
   comparer: Comparer<Return>
 ) => Subscriber<State, Args, Return>;
 

@@ -2,7 +2,7 @@ import { FormikValues, useIsomorphicLayoutEffect } from '@formik/core';
 import React from 'react';
 import { Subscriber } from '../helpers/subscription-helpers';
 import { FormikRefState } from '../types';
-import { useFormikApi } from './useFormikApi';
+import { FormikRefApi } from './useFormikApi';
 
 export type FormSliceFn<Values, Result> = (
   formState: FormikRefState<Values>
@@ -11,21 +11,27 @@ export type FormSliceFn<Values, Result> = (
 /**
  * Important! Use a stable or memoized subscriber.
  */
-export const useFormikStateSubscription = <
+export const useFormikStateSubscriptionInternal = <
   Values extends FormikValues,
   Args extends any[],
   Return
 >(
-  subscriber: Subscriber<FormikRefState<Values>, Args, Return>
+  api: FormikRefApi<Values>,
+  subscriber: Subscriber<FormikRefState<Values>, Args, Return>,
+  shouldSubscribe = true
 ) => {
-  const { subscribe, getState, getSelector } = useFormikApi<Values>();
+  const { subscribe, getState, getSelector } = api;
   const [sliceState, setSliceState] = React.useState(() =>
     getSelector(subscriber.selector)(getState())
   );
 
   useIsomorphicLayoutEffect(() => {
-    return subscribe(subscriber, setSliceState);
-  }, [subscribe, subscriber]);
+    if (shouldSubscribe) {
+      return subscribe(subscriber, setSliceState);
+    }
+
+    return;
+  }, [subscribe, subscriber, shouldSubscribe]);
 
   return sliceState;
 };

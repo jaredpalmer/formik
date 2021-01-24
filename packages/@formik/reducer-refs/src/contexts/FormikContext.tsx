@@ -7,6 +7,9 @@ export const FormikContext = React.createContext<FormikContextType<any>>(
 );
 export const FormikProvider = FormikContext.Provider;
 
+/**
+ * @deprecated Using a full Formik Context is deprecated. Please access bits of Formik state via useFormikState() or micro-hooks.
+ */
 export function FormikConsumer<Values = any>({
   children,
 }: {

@@ -60,7 +60,7 @@ export default function rehypeDocs({ filePath, tag }) {
 
     props.href = href.replace(SITE_URL, '');
 
-    const isDocs = href.startsWith('/docs') || href.startsWith('./');
+    const isDocs = href.startsWith('/docs') || href.startsWith('.');
 
     if (props.href === href) {
       const isAbsoluteUrl = ABSOLUTE_URL.test(href);

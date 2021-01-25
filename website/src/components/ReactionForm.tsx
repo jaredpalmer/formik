@@ -3,6 +3,7 @@ import { mergeProps, useButton, useHover } from 'react-aria';
 import Image from 'next/image';
 import cn from 'classnames';
 import { trackCustomEvent } from 'utils/analytics';
+import { useRouter } from 'next/router';
 
 export interface FeedbackButtonProps {
   intent: 'tears' | 'meh' | 'happy' | 'awesome';
@@ -49,10 +50,14 @@ export function FeedbackButton({ intent, ...props }: FeedbackButtonProps) {
 
 FeedbackButton.displayName = 'FeedbackButton';
 
-export interface ReactionFormProps {}
-
-export function ReactionForm(props: ReactionFormProps) {
+export function ReactionForm() {
   const [feedbackGiven, setFeedbackGiven] = React.useState(false);
+
+  const { asPath } = useRouter();
+  React.useEffect(() => {
+    setFeedbackGiven(false);
+  }, [asPath, setFeedbackGiven]);
+
   const makeTrackedHandler = (value: number) => () => {
     trackCustomEvent({
       category: 'Feedback Button',
@@ -62,6 +67,7 @@ export function ReactionForm(props: ReactionFormProps) {
     });
     setFeedbackGiven(true);
   };
+
   if (feedbackGiven) {
     return (
       <div className="font-semibold text-lg text-center mb-4  ">

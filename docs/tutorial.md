@@ -1,19 +1,20 @@
 ---
 id: tutorial
 title: Tutorial
+description: Learn how to build forms in React with Formik.
 ---
 
 ## Before we start
 
 Welcome to the Formik tutorial. This will teach you everything you need to know to build simple and complex forms in React.
 
-If you're impatient and just want to start hacking on your machine locally, checkout [the 60-second quickstart](overview.md#installation).
+If you're impatient and just want to start hacking on your machine locally, checkout [the 60-second quickstart](./overview#installation).
 
 ### What are we building?
 
 In this tutorial, we'll show how to build a complex newsletter signup form with React and Formik.
 
-You can see what we'll be building here: [Final Result](https://codesandbox.io/s/formik-v2-tutorial-final-bq0li). If the code doesn't make sense to you, don't worry! The goal of this tutorial is to help you understand Formik.
+You can see what we'll be building here: [Final Result](https://codesandbox.io/s/formik-v2-tutorial-final-ge1pt). If the code doesn't make sense to you, don't worry! The goal of this tutorial is to help you understand Formik.
 
 ### Prerequisites
 
@@ -29,7 +30,7 @@ This is the quickest way to get started!
 
 First, open this [Starter Code](https://codesandbox.io/s/formik-v2-tutorial-start-s04yr) in a new tab. The new tab should display an email address input and submit button and some React code. We will be editing the React code in this tutorial.
 
-You can now skip the second setup option, and go to the [Overview](#what-is-formik) section to get an overview of Formik.
+You can now skip the second setup option, and go to the [Overview](#overview-what-is-formik) section to get an overview of Formik.
 
 ### Setup Option 2: Local Development Environment
 
@@ -42,13 +43,25 @@ This is completely optional and not required for this tutorial!
 This setup requires more work but allows you to complete the tutorial using an editor of your choice. Here are the steps to follow:
 
 1. Make sure you have a recent version of [Node.js](https://nodejs.org/en/) installed.
-2. Follow the [installation instructions for Create React App](/docs/create-a-new-react-app.html#create-react-app) to make a new project.
+2. Follow the [installation instructions for Create React App](https://create-react-app.dev) to make a new project.
 
 ```bash
 npx create-react-app my-app
 ```
 
-3. Delete all files in the `src/` folder of the new project
+3. Install Formik
+
+```bash
+npm i formik
+```
+
+Or
+
+```bash
+yarn add formik
+```
+
+4. Delete all files in the `src/` folder of the new project
 
 > Note:
 >
@@ -68,19 +81,11 @@ del *
 cd ..
 ```
 
-4. Add a file named `index.css` in the `src/` folder with [this CSS code](https://codepen.io/gaearon/pen/oWWQNa?editors=0100).
+5. Add a file named `styles.css` in the `src/` folder with [this CSS code](https://codesandbox.io/s/formik-v2-tutorial-start-s04yr?file=/src/styles.css).
 
-5. Add a file named `index.js` in the `src/` folder with [this JS code](https://codepen.io/gaearon/pen/oWWQNa?editors=0010).
+6. Add a file named `index.js` in the `src/` folder with [this JS code](https://codesandbox.io/s/formik-v2-tutorial-start-s04yr?file=/src/index.js:0-759).
 
-6. Add these three lines to the top of `index.js` in the `src/` folder:
-
-```js
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-```
-
-Now if you run `npm start` in the project folder and open `http://localhost:3000` in the browser, you should see an empty tic-tac-toe field.
+Now if you run `npm start` in the project folder and open `http://localhost:3000` in the browser. You should see an email input and a submit button.
 
 We recommend following [these instructions](https://babeljs.io/docs/editors/) to configure syntax highlighting for your editor.
 
@@ -88,7 +93,7 @@ We recommend following [these instructions](https://babeljs.io/docs/editors/) to
 
 ### Help, I’m Stuck!
 
-If you get stuck, check out the [community support resources](https://jaredpalmer.com/formik/help). In particular, [Reactiflux Chat](https://discord.gg/cU6MCve) is a great way to get help quickly. If you don’t receive an answer, or if you remain stuck, please file an issue, and we’ll help you out.
+If you get stuck, check out Formik's [GitHub Discussions](https://github.com/formik/formik/discussions). In addition, the [Formium Community Discord Server](https://discord.gg/pJSg287) is a great way to get help quickly too. If you don’t receive an answer, or if you remain stuck, please file an issue, and we’ll help you out.
 
 ## Overview: What is Formik?
 
@@ -514,9 +519,7 @@ const SignupForm = () => {
       lastName: Yup.string()
         .max(20, 'Must be 20 characters or less')
         .required('Required'),
-      email: Yup.string()
-        .email('Invalid email address')
-        .required('Required'),
+      email: Yup.string().email('Invalid email address').required('Required'),
     }),
     onSubmit: values => {
       alert(JSON.stringify(values, null, 2));
@@ -593,9 +596,7 @@ const SignupForm = () => {
       lastName: Yup.string()
         .max(20, 'Must be 20 characters or less')
         .required('Required'),
-      email: Yup.string()
-        .email('Invalid email address')
-        .required('Required'),
+      email: Yup.string().email('Invalid email address').required('Required'),
     }),
     onSubmit: values => {
       alert(JSON.stringify(values, null, 2));
@@ -604,17 +605,21 @@ const SignupForm = () => {
   return (
     <form onSubmit={formik.handleSubmit}>
       <label htmlFor="firstName">First Name</label>
-      <input name="firstName" {...formik.getFieldProps('firstName')} />
+      <input
+        id="firstName"
+        type="text"
+        {...formik.getFieldProps('firstName')}
+      />
       {formik.touched.firstName && formik.errors.firstName ? (
         <div>{formik.errors.firstName}</div>
       ) : null}
       <label htmlFor="lastName">Last Name</label>
-      <input name="lastName" {...formik.getFieldProps('lastName')} />
+      <input id="lastName" type="text" {...formik.getFieldProps('lastName')} />
       {formik.touched.lastName && formik.errors.lastName ? (
         <div>{formik.errors.lastName}</div>
       ) : null}
       <label htmlFor="email">Email Address</label>
-      <input name="email" {...formik.getFieldProps('email')} />
+      <input id="email" type="email" {...formik.getFieldProps('email')} />
       {formik.touched.email && formik.errors.email ? (
         <div>{formik.errors.email}</div>
       ) : null}
@@ -670,9 +675,7 @@ const SignupForm = () => {
         lastName: Yup.string()
           .max(20, 'Must be 20 characters or less')
           .required('Required'),
-        email: Yup.string()
-          .email('Invalid email address')
-          .required('Required'),
+        email: Yup.string().email('Invalid email address').required('Required'),
       })}
       onSubmit={(values, { setSubmitting }) => {
         setTimeout(() => {
@@ -684,17 +687,25 @@ const SignupForm = () => {
       {formik => (
         <form onSubmit={formik.handleSubmit}>
           <label htmlFor="firstName">First Name</label>
-          <input id="firstName" {...formik.getFieldProps('firstName')} />
+          <input
+            id="firstName"
+            type="text"
+            {...formik.getFieldProps('firstName')}
+          />
           {formik.touched.firstName && formik.errors.firstName ? (
             <div>{formik.errors.firstName}</div>
           ) : null}
           <label htmlFor="lastName">Last Name</label>
-          <input id="lastName" {...formik.getFieldProps('lastName')} />
+          <input
+            id="lastName"
+            type="text"
+            {...formik.getFieldProps('lastName')}
+          />
           {formik.touched.lastName && formik.errors.lastName ? (
             <div>{formik.errors.lastName}</div>
           ) : null}
           <label htmlFor="email">Email Address</label>
-          <input id="email" {...formik.getFieldProps('email')} />
+          <input id="email" type="email" {...formik.getFieldProps('email')} />
           {formik.touched.email && formik.errors.email ? (
             <div>{formik.errors.email}</div>
           ) : null}
@@ -724,9 +735,7 @@ const SignupForm = () => {
         lastName: Yup.string()
           .max(20, 'Must be 20 characters or less')
           .required('Required'),
-        email: Yup.string()
-          .email('Invalid email address')
-          .required('Required'),
+        email: Yup.string().email('Invalid email address').required('Required'),
       })}
       onSubmit={(values, { setSubmitting }) => {
         setTimeout(() => {
@@ -759,7 +768,7 @@ The `<Field>` component by default will render an `<input>` component that given
 <Field name="firstName" className="form-input" placeholder="Jane" />
 
 // <textarea className="form-textarea"/></textarea>
-<Field name="message" as="textarea"  className="form-input"/>
+<Field name="message" as="textarea"  className="form-textarea"/>
 
 // <select className="my-select"/>
 <Field name="colors" as="select" className="my-select">
@@ -767,20 +776,6 @@ The `<Field>` component by default will render an `<input>` component that given
   <option value="green">Green</option>
   <option value="blue">Blue</option>
 </Field>
-
-// with styled-components/emotion
-const MyStyledInput = styled.input`
-  padding: .5em;
-  border: 1px solid #eee;
-  /* ... */
-`
-const MyStyledTextarea = MyStyledInput.withComponent('textarea');
-
-// <input className="czx_123" placeHolder="google.com"  />
-<Field name="website" as={MyStyledInput} placeHolder="google.com"/>
-
-// <textarea  placeHolder="Post a message..." rows={5}></textarea>
-<Field name="message" as={MyStyledTextArea} placeHolder="Post a message.." rows={5}/>
 ```
 
 React is all about composition, and while we've cut down on a lot of the prop-drilling, we are still repeating ourselves with a `label`, `<Field>`, and `<ErrorMessage>` for each of our inputs. We can do better with an abstraction! With Formik, you can and should build reusable input primitive components that you can share around your application. Turns out our `<Field>` render-prop component has a sister and her name is `useField` that's going to do the same thing, but via React Hooks! Check this out...
@@ -789,12 +784,12 @@ React is all about composition, and while we've cut down on a lot of the prop-dr
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Formik, Form, useField } from 'formik';
-import styled from '@emotion/styled';
 import * as Yup from 'yup';
 
 const MyTextInput = ({ label, ...props }) => {
   // useField() returns [formik.getFieldProps(), formik.getFieldMeta()]
-  // which we can spread on <input> and also replace ErrorMessage entirely.
+  // which we can spread on <input>. We can use field meta to show an error
+  // message if the field is invalid and it has been touched (i.e. visited)
   const [field, meta] = useField(props);
   return (
     <>
@@ -808,12 +803,12 @@ const MyTextInput = ({ label, ...props }) => {
 };
 
 const MyCheckbox = ({ children, ...props }) => {
-  // We need to tell useField what type of input this is
-  // since React treats radios and checkboxes differently
-  // than inputs/select/textarea.
+  // React treats radios and checkbox inputs differently other input types, select, and textarea.
+  // Formik does this too! When you specify `type` to useField(), it will
+  // return the correct bag of props for you
   const [field, meta] = useField({ ...props, type: 'checkbox' });
   return (
-    <>
+    <div>
       <label className="checkbox">
         <input type="checkbox" {...field} {...props} />
         {children}
@@ -821,33 +816,20 @@ const MyCheckbox = ({ children, ...props }) => {
       {meta.touched && meta.error ? (
         <div className="error">{meta.error}</div>
       ) : null}
-    </>
+    </div>
   );
 };
-
-// Styled components ....
-const StyledSelect = styled.select`
-  /** ... * /
-`;
-
-const StyledErrorMessage = styled.div`
-  /** ... * /
-`;
-
-const StyledLabel = styled.label`
- /** ...* /
-`;
 
 const MySelect = ({ label, ...props }) => {
   const [field, meta] = useField(props);
   return (
-    <>
-      <StyledLabel htmlFor={props.id || props.name}>{label}</StyledLabel>
-      <StyledSelect {...field} {...props} />
+    <div>
+      <label htmlFor={props.id || props.name}>{label}</label>
+      <select {...field} {...props} />
       {meta.touched && meta.error ? (
-        <StyledErrorMessage>{meta.error}</StyledErrorMessage>
+        <div className="error">{meta.error}</div>
       ) : null}
-    </>
+    </div>
   );
 };
 
@@ -941,15 +923,15 @@ Congratulations! You've created a signup form with Formik that:
 
 Nice work! We hope you now feel like you have a decent grasp on how Formik works.
 
-Check out the final result here: [Final Result](https://codesandbox.io/s/formik-v2-tutorial-final-bq0li).
+Check out the final result here: [Final Result](https://codesandbox.io/s/formik-v2-tutorial-final-ge1pt).
 
 If you have extra time or want to practice your new Formik skills, here are some ideas for improvements that you could make to the signup form which are listed in order of increasing difficulty:
 
-- Disable the submit button while the user is attempted a submit (hint: `formik.isSubmitting`)
+- Disable the submit button while the user has attempted to submit (hint: `formik.isSubmitting`)
 - Add a reset button with `formik.handleReset` or `<button type="reset">`.
 - Prepopulate `initialValues` based on URL query string or props passed to `<SignupForm>`.
 - Change input border color to red when a field has an error and isn't focused
 - Add a shake animation to each field when it displays an error and has been visited
 - Persist form state to the browser's sessionStorage so that form progress is kept inbetween page refreshes
 
-Throughout this tutorial, we touched on Formik concepts including form state, fields, validation, hooks, render props, and React context. For a more detailed explanation of each of these topics, check out the rest of the [documentation](https://jaredpalmer.com/formik/docs/next/overview). To learn more about defining the components and hooks in the tutorial, check out the [API reference](https://jaredpalmer.com/formik/docs/next/api/formik).
+Throughout this tutorial, we touched on Formik concepts including form state, fields, validation, hooks, render props, and React context. For a more detailed explanation of each of these topics, check out the rest of the [documentation](./overview). To learn more about defining the components and hooks in the tutorial, check out the [API reference](./api/formik).

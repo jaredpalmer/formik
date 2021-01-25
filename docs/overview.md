@@ -1,6 +1,7 @@
 ---
 id: overview
 title: Overview
+description: Formik documentation, tutorial, guides, and examples
 ---
 
 Let's face it, forms are really verbose in
@@ -43,7 +44,9 @@ to you.**
 
 My talk at React Alicante goes much deeper into Formik's motivation and philosophy, introduces the library (by watching me build a mini version of it), and demos how to build a non-trivial form (with arrays, custom inputs, etc.) using the real thing.
 
-<iframe width="600" height="315" src="https://www.youtube.com/embed/oiNtnehlaTo" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen title="Taming Forms in React - Jared Palmer"></iframe>
+<div className="embed-responsive aspect-ratio-16-9">
+  <iframe className="embed-responsive-item" width="600" height="315" src="https://www.youtube.com/embed/oiNtnehlaTo" frameBorder="0" allow="autoplay; encrypted-media" allowFullscreen title="Taming Forms in React - Jared Palmer"></iframe>
+</div>
 
 ## Influences
 
@@ -70,7 +73,7 @@ npm install formik --save
 
 or
 
-```
+```sh
 yarn add formik
 ```
 
@@ -84,7 +87,7 @@ You can also try before you buy with this
 If you're not using a module bundler or package manager we also have a global ("UMD") build hosted on the [unpkg.com](https://unpkg.com) CDN. Simply add the following `<script>` tag to the bottom of your HTML file:
 
 ```html
-<script src="https://unpkg.com/formik/dist/formik.umd.production.js"></script>
+<script src="https://unpkg.com/formik/dist/formik.umd.production.min.js"></script>
 ```
 
 Once you've added this you will have access to the `window.Formik.<Insert_Component_Name_Here>` variables.
@@ -222,19 +225,21 @@ const Basic = () => (
 export default Basic;
 ```
 
+Read below for more information...
+
 ### Complementary Packages
 
 As you can see above, validation is left up to you. Feel free to write your own
 validators or use a 3rd party library. Personally, I use
 [Yup](https://github.com/jquense/yup) for object schema validation. It has an
-API that's pretty similar [Joi](https://github.com/hapijs/joi) /
+API that's pretty similar to [Joi](https://github.com/hapijs/joi) /
 [React PropTypes](https://github.com/facebook/prop-types) but is small enough
 for the browser and fast enough for runtime usage. Because I ❤️ Yup sooo
 much, Formik has a special config option / prop for Yup called
-[`validationSchema`](api/formik.md#validationschema-schema-schema) which will
+[`validationSchema`](./api/formik.md#validationschema-schema----schema) which will
 automatically transform Yup's validation errors into a pretty object whose keys
-match [`values`](api/formik.md#values-field-string-any) and
-[`touched`](api/formik.md#touched-field-string-boolean). Anyways, you can
+match [`values`](./api/formik.md#values-field-string-any) and
+[`touched`](./api/formik.md#touched-field-string-boolean). Anyways, you can
 install Yup from npm...
 
 ```

@@ -1,7 +1,6 @@
 ---
 id: useFormik
 title: useFormik()
-custom_edit_url: https://github.com/jaredpalmer/formik/edit/master/docs/api/useFormik.md
 ---
 
 `useFormik()` is a custom React hook that will return all Formik state and helpers directly. Despite its name, it is not meant for the majority of use cases. Internally, Formik uses `useFormik` to create the `<Formik>` component (which renders a [React Context](https://reactjs.org/docs/context.html) Provider). If you are trying to access Formik state via context, use [useFormikContext](useFormikContext). Only use this hook if you are NOT using `<Formik>` or `withFormik`.
@@ -15,8 +14,6 @@ custom_edit_url: https://github.com/jaredpalmer/formik/edit/master/docs/api/useF
 - You want to avoid using React Context (possibly for perf reasons)
 
 ## Example
-
-Here's an example of a form that works similarly to Stripe's 2-factor verification form. As soon as you type a 6 digit number, the form will automatically submit (i.e. no enter keypress is needed).
 
 ```jsx
 import React from 'react';

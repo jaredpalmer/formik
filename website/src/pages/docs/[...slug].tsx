@@ -231,8 +231,7 @@ function SidebarRoutes({
 export const getStaticProps: GetStaticProps<any, { slug: string[] }> = async ({
   params,
 }) => {
-  // console.log('params', params);
-  let { tag, slug } = getSlug(params || { slug: [] });
+  const { tag, slug } = getSlug(params ?? { slug: [] });
   const currentTag = await getCurrentTag(tag);
   // console.log('tag', tag);
   // console.log('slug', slug);
@@ -240,21 +239,21 @@ export const getStaticProps: GetStaticProps<any, { slug: string[] }> = async ({
 
   let manifest;
   if (tag) {
-    console.log('remote');
+    // console.log('remote');
     manifest = await fetchRemoteDocsManifest(tag);
   } else {
-    console.log('local');
+    // console.log('local');
     manifest = await fetchLocalDocsManifest();
   }
 
   if (!manifest) {
-    return { props: {} };
+    return { props: {}, notFound: true };
   }
 
   const route = manifest && findRouteByPath(slug, manifest.routes);
 
   if (!route) {
-    return { props: {} };
+    return { props: {}, notFound: true };
   }
 
   let md;
@@ -265,7 +264,7 @@ export const getStaticProps: GetStaticProps<any, { slug: string[] }> = async ({
   }
 
   const { content, data } = matter(md);
-  const html = await markdownToHtml(content || '', route.path!, tag);
+  const html = await markdownToHtml(content ?? '', route.path!, tag);
 
   return {
     props: {

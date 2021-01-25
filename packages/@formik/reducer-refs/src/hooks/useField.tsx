@@ -7,8 +7,7 @@ import {
 } from '@formik/core';
 import { useFormikApi } from './useFormikApi';
 import invariant from 'tiny-warning';
-import { selectFieldMetaByName } from '../ref-selectors';
-import { useFormikStateInternal } from './useFormikState';
+import { useFieldMeta } from './hooks';
 
 export type UseFieldProps<Value = any> = {
   /**
@@ -87,11 +86,7 @@ export function useField<Value = any, FormValues = any>(
 
   const { name: fieldName, validate: validateFn } = props;
 
-  const fieldMeta = useFormikStateInternal(
-    formik,
-    [selectFieldMetaByName, fieldName],
-    fieldMetaIsEqual
-  );
+  const fieldMeta = useFieldMeta<Value>(fieldName);
 
   React.useEffect(() => {
     if (fieldName) {

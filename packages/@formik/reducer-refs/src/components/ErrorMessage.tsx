@@ -1,6 +1,6 @@
+import { isFunction } from '@formik/core';
 import * as React from 'react';
-import { FormikContextType, getIn, isFunction } from '@formik/core';
-import { connect } from '../connect';
+import { useFieldMeta } from '../hooks/hooks';
 
 export interface ErrorMessageProps {
   name: string;
@@ -10,48 +10,26 @@ export interface ErrorMessageProps {
   render?: (errorMessage: string) => React.ReactNode;
 }
 
-class ErrorMessageImpl extends React.Component<
-  ErrorMessageProps & { formik: FormikContextType<any> }
-> {
-  shouldComponentUpdate(
-    props: ErrorMessageProps & { formik: FormikContextType<any> }
-  ) {
-    if (
-      getIn(this.props.formik.errors, this.props.name) !==
-        getIn(props.formik.errors, this.props.name) ||
-      getIn(this.props.formik.touched, this.props.name) !==
-        getIn(props.formik.touched, this.props.name) ||
-      Object.keys(this.props).length !== Object.keys(props).length
-    ) {
-      return true;
-    } else {
-      return false;
-    }
-  }
+export function ErrorMessage({
+  component,
+  render,
+  children,
+  name,
+  ...rest
+}: ErrorMessageProps): JSX.Element | null {
+  const { touched, error } = useFieldMeta(name);
 
-  render() {
-    const { component, formik, render, children, name, ...rest } = this.props;
-
-    const touch = getIn(formik.touched, name);
-    const error = getIn(formik.errors, name);
-
-    return !!touch && !!error
-      ? render
-        ? isFunction(render)
-          ? render(error)
-          : null
-        : children
-        ? isFunction(children)
-          ? children(error)
-          : null
-        : component
-        ? React.createElement(component, rest as any, error)
-        : error
-      : null;
-  }
+  return !!touched && !!error
+    ? render
+      ? isFunction(render)
+        ? render(error)
+        : null
+      : children
+      ? isFunction(children)
+        ? children(error)
+        : null
+      : component
+      ? React.createElement(component, rest as any, error)
+      : (error as any)
+    : null;
 }
-
-export const ErrorMessage = connect<
-  ErrorMessageProps,
-  ErrorMessageProps & { formik: FormikContextType<any> }
->(ErrorMessageImpl);

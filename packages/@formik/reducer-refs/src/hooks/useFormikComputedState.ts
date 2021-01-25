@@ -36,5 +36,7 @@ const selectComputedState = (state: FormikRefState<any>) => ({
  * Subscribe to Formik State and Computed State updates.
  */
 export const useFormikComputedState = () => {
-  return useFormikState(selectComputedState, isEqual);
+  const [computedState, api] = useFormikState(selectComputedState, isEqual);
+
+  return useFormikComputedStateInternal(api, computedState);
 };

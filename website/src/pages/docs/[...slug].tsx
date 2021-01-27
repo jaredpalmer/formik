@@ -57,7 +57,7 @@ export default function Docs({ page, routes, route: _route }: DocsProps) {
   // This effect adds `next/link`-like behavior to any non-hash relative link
   // @source @timer
   React.useEffect(() => {
-    const listeners: Array<() => void> = [];
+    const listeners: any[] = [];
     document.querySelectorAll('.docs .relative-link').forEach(node => {
       const href = node.getAttribute('href');
       // Exclude paths like #setup and hashes that have the same current path

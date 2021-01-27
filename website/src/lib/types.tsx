@@ -12,7 +12,7 @@ export interface Routes {
 
 export interface Page {
   id: string;
-  html: string;
+  mdxSource: any;
   title: string;
   toc: any;
   description?: string;

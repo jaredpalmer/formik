@@ -26,11 +26,7 @@ module.exports = function paragraphCustomAlertsPlugin() {
                     data: {
                       hName: 'div',
                       hProperties: {
-                        className: [
-                          'alert',
-                          `alert-${sigils[symbol]}`,
-                          'g-type-body',
-                        ],
+                        className: ['alert', `alert-${sigils[symbol]}`],
                         role: 'alert',
                       },
                     },

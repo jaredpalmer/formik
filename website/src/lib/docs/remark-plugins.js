@@ -11,7 +11,6 @@ module.exports = [
       },
     },
   ],
-  require('./remark-alerts'),
   [
     require('remark-toc'),
     {

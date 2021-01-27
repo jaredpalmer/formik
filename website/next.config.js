@@ -2,7 +2,7 @@ const webpack = require('webpack');
 const fs = require('fs');
 const path = require('path');
 const visit = require('unist-util-visit');
-
+const remarkPlugins = require('./src/lib/docs/remark-plugins');
 const {
   NOTION_TOKEN,
   BLOG_INDEX_ID,
@@ -18,37 +18,6 @@ try {
 } catch (_) {
   /* non fatal */
 }
-
-const remarkPlugins = [
-  require('remark-slug'),
-  require('./src/lib/docs/remark-paragraph-alerts'),
-  [
-    require('remark-autolink-headings'),
-    {
-      behavior: 'append',
-      linkProperties: {
-        class: ['anchor'],
-        title: 'Direct link to heading',
-      },
-    },
-  ],
-
-  require('remark-emoji'),
-  require('remark-footnotes'),
-  require('remark-images'),
-  [
-    require('remark-github'),
-    { repository: 'https://github.com/jaredpalmer/formik' },
-  ],
-  require('remark-unwrap-images'),
-  [
-    require('remark-toc'),
-    {
-      skip: 'Reference',
-      maxDepth: 6,
-    },
-  ],
-];
 
 module.exports = {
   pageExtensions: ['jsx', 'js', 'ts', 'tsx', 'mdx', 'md'],

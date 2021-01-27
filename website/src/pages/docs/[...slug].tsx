@@ -10,7 +10,7 @@ import { Banner } from 'components/Banner';
 import { SidebarCategory } from 'components/SidebarCategory';
 import { SidebarPost } from 'components/SidebarPost';
 import { Toc } from 'components/Toc';
-import { markdownToHtml } from 'lib/docs/markdown-to-html';
+import remarkPlugins from 'lib/docs/remark-plugins';
 import {
   getCurrentTag,
   fetchRemoteDocsManifest,
@@ -33,6 +33,10 @@ import { Footer } from 'components/Footer';
 import { Seo } from 'components/Seo';
 import { DocsPageFooter } from 'components/DocsPageFooter';
 import addRouterEvents from 'components/addRouterEvents';
+import MDXComponents from 'components/MDXComponents';
+import hydrate from 'next-mdx-remote/hydrate';
+import renderToString from 'next-mdx-remote/render-to-string';
+import rehypeDocs from 'lib/docs/rehype-docs';
 
 interface DocsProps {
   page: Page;
@@ -53,7 +57,7 @@ export default function Docs({ page, routes, route: _route }: DocsProps) {
   // This effect adds `next/link`-like behavior to any non-hash relative link
   // @source @timer
   React.useEffect(() => {
-    const listeners: Array<() => void> = [];
+    const listeners: any[] = [];
     document.querySelectorAll('.docs .relative-link').forEach(node => {
       const href = node.getAttribute('href');
       // Exclude paths like #setup and hashes that have the same current path
@@ -76,6 +80,10 @@ export default function Docs({ page, routes, route: _route }: DocsProps) {
   if (!route && !isFallback) {
     return <ErrorPage statusCode={404} />;
   }
+
+  const content = hydrate(page.mdxSource as any, {
+    components: MDXComponents,
+  });
 
   return (
     <>
@@ -112,10 +120,7 @@ export default function Docs({ page, routes, route: _route }: DocsProps) {
 
                     <div className={s['markdown'] + ' w-full docs'}>
                       <h1>{page.title}</h1>
-                      <div
-                        className={s['markdown']}
-                        dangerouslySetInnerHTML={{ __html: page.html }}
-                      />
+                      <div className={s['markdown']}>{content}</div>
                       <DocsPageFooter
                         href={route?.path || ''}
                         route={route!}
@@ -264,14 +269,20 @@ export const getStaticProps: GetStaticProps<any, { slug: string[] }> = async ({
   }
 
   const { content, data } = matter(md);
-  const html = await markdownToHtml(content ?? '', route.path!, tag);
 
+  const mdxSource = await renderToString(content ?? '', {
+    components: MDXComponents,
+    mdxOptions: {
+      remarkPlugins,
+      rehypePlugins: [[rehypeDocs as any, { filePath: route.path!, tag }]],
+    },
+  });
   return {
     props: {
       route,
       routes: manifest.routes,
       page: {
-        html,
+        mdxSource,
         ...data,
       },
     },

@@ -247,7 +247,7 @@ export const getStaticProps: GetStaticProps<any, { slug: string[] }> = async ({
     // console.log('remote');
     manifest = await fetchRemoteDocsManifest(tag);
   } else {
-    console.log('local');
+    // console.log('local');
     manifest = await fetchLocalDocsManifest();
   }
 

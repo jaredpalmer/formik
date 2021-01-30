@@ -787,6 +787,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
           if (isInstanceOfError) {
             throw combinedErrors;
           }
+          return Promise.reject(combinedErrors);
         }
         return;
       }

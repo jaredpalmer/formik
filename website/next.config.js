@@ -1,12 +1,6 @@
-const webpack = require('webpack');
 const fs = require('fs');
 const path = require('path');
-const visit = require('unist-util-visit');
 const remarkPlugins = require('./src/lib/docs/remark-plugins');
-const {
-  NOTION_TOKEN,
-  BLOG_INDEX_ID,
-} = require('./src/lib/notion/server-constants');
 
 try {
   fs.unlinkSync(path.resolve('.blog_index_data'));

@@ -77,6 +77,8 @@ Default is `true`. Determines if form validation should or should not be run _af
 
 You can also iterate through an array of objects, by following a convention of `object[index].property` or `object.index.property` for the name attributes of `<Field />` or `<input />` elements in `<FieldArray />`.
 
+On rendering a dynamic list of items (removeable, sortable, etc), the best practice is to use a persistent `key` that is unique to each item, such as `object[index].id`. Using `index` as `key` can lead to an unexpected behavior. [Click here for more info](https://reactjs.org/docs/lists-and-keys.html#keys)
+
 ```jsx
 <Form>
   <FieldArray
@@ -84,7 +86,7 @@ You can also iterate through an array of objects, by following a convention of `
     render={arrayHelpers => (
       <div>
         {values.friends.map((friend, index) => (
-          <div key={index}>
+          <div key={friend.id}>
             {/** both these conventions do the same */}
             <Field name={`friends[${index}].name`} />
             <Field name={`friends.${index}.age`} />
@@ -96,7 +98,7 @@ You can also iterate through an array of objects, by following a convention of `
         ))}
         <button
           type="button"
-          onClick={() => arrayHelpers.push({ name: '', age: '' })}
+          onClick={() => arrayHelpers.push({ id: generateUniqueID(), name: '', age: '' })}
         >
           +
         </button>

@@ -161,6 +161,7 @@ export interface FormikSharedConfig<Props = {}> {
   /** Tells Formik to validate upon mount */
   validateOnMount?: boolean;
   /** Tell Formik if initial form values are valid or not on first render */
+  /** @deprecated in 2.x, use initialErrors instead */
   isInitialValid?: boolean | ((props: Props) => boolean);
   /** Should Formik reset the form when new initialValues change */
   enableReinitialize?: boolean;

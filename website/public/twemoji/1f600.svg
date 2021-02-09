@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="43px" height="43px" viewBox="0 0 43 43" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 53.2 (72643) - https://sketchapp.com -->
+    <title>g14</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="1f600" transform="translate(-2.000000, -3.000000)" fill-rule="nonzero">
+            <g id="g10" transform="translate(24.000000, 24.500000) scale(-1, 1) rotate(-180.000000) translate(-24.000000, -24.500000) translate(0.000000, 0.500000)">
+                <g id="g12">
+                    <g id="g14-Clipped">
+                        <g id="g14" transform="translate(2.500000, 2.500000)">
+                            <g id="g20" fill="#FFCC4D">
+                                <path d="M42.5,21.25 C42.5,9.51375 32.98625,0 21.25,0 C9.51375,0 0,9.51375 0,21.25 C0,32.98625 9.51375,42.5 21.25,42.5 C32.98625,42.5 42.5,32.98625 42.5,21.25" id="path22"></path>
+                            </g>
+                            <g id="g24" transform="translate(7.500000, 5.000000)" fill="#664500">
+                                <path d="M13.75,12.5 C9.22125,12.5 6.21625,13.0275 2.5,13.75 C1.65125,13.91375 0,13.75 0,11.25 C0,6.25 5.74375,0 13.75,0 C21.755,0 27.5,6.25 27.5,11.25 C27.5,13.75 25.84875,13.915 25,13.75 C21.28375,13.0275 18.27875,12.5 13.75,12.5" id="path26"></path>
+                            </g>
+                            <g id="g28" transform="translate(11.250000, 22.500000)" fill="#664500">
+                                <path d="M0,5 C0,5 0,7.5 2.5,7.5 C5,7.5 5,5 5,5 L5,2.5 C5,2.5 5,0 2.5,0 C0,0 0,2.5 0,2.5 L0,5 Z" id="path30"></path>
+                            </g>
+                            <g id="g32" transform="translate(26.250000, 22.500000)" fill="#664500">
+                                <path d="M0,5 C0,5 0,7.5 2.5,7.5 C5,7.5 5,5 5,5 L5,2.5 C5,2.5 5,0 2.5,0 C0,0 0,2.5 0,2.5 L0,5 Z" id="path34"></path>
+                            </g>
+                            <g id="g36" transform="translate(10.000000, 11.250000)" fill="#FFFFFF">
+                                <path d="M0,5 C0,5 3.75,3.75 11.25,3.75 C18.75,3.75 22.5,5 22.5,5 C22.5,5 20,0 11.25,0 C2.5,0 0,5 0,5" id="path38"></path>
+                            </g>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

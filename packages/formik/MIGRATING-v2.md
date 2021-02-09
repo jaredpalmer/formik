@@ -37,6 +37,8 @@ resetForm({ values: nextValues /* errors, touched, etc ... */ });
 
 ### Typescript changes
 
+#### `FormikActions`
+
 **`FormikActions` has been renamed to `FormikHelpers`** It should be a straightforward change to import or alias the type
 
 **v1**
@@ -49,6 +51,22 @@ import { FormikActions } from 'formik';
 
 ```tsx
 import { FormikHelpers as FormikActions } from 'formik';
+```
+
+#### `FieldProps`
+
+**`FieldProps` now accepts two generic type parameters.** Both parameters are optional, but `FormValues` has been moved from the first to the second parameter.
+
+**v1**
+
+```tsx
+type Props = FieldProps<FormValues>;
+```
+
+**v2**
+
+```tsx
+type Props = FieldProps<FieldValue, FormValues>;
 ```
 
 ## What's New?

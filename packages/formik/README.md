@@ -2,10 +2,6 @@
   <img src="https://user-images.githubusercontent.com/4060187/61057426-4e5a4600-a3c3-11e9-9114-630743e05814.png" width="211" height="182" alt="Formik.js" />
 </p>
 
-<h3 align="center">
-  Build forms in React, without the tears.
-</h3>
-
 <br>
 
 [![Stable Release](https://img.shields.io/npm/v/formik.svg)](https://npm.im/formik)

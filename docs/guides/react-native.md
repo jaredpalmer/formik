@@ -45,3 +45,45 @@ DOM and React Native are:
    instead of HTML `<form onSubmit={...} />` component (since there is no
    `<form />` element in React Native).
 2. `<TextInput />` uses Formik's `handleChange(fieldName)` and `handleBlur(fieldName)` instead of directly assigning the callbacks to props, because we have to get the `fieldName` from somewhere and with React Native we can't get it automatically like in web (using input name attribute). You can also use `setFieldValue(fieldName, value)` and `setFieldTouched(fieldName, bool)` as an alternative.
+
+
+
+### Usage with useFormik hook and Yup validations
+
+Here's a minimal gist of useFormik hook in React Native along with Yup validations.
+
+```jsx
+// useFormik x React Native 
+import React from 'react';
+import { Button, TextInput, View } from 'react-native';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+
+const MySchema = Yup.object().shape({
+    email: Yup.string().email('Invalid email').required('Email is required')
+})
+
+export const MyReactNativeForm = props => {
+    const formik = {
+        initialValues: {
+            email: ''
+        },
+        validationSchema: MySchema,
+        onSubmit: (values) => console.log(values)
+    }
+    
+    const {values, handleChange, handleBlur, handleSubmit} = formik;
+    
+    return (
+      <View>
+        <TextInput
+          onChangeText={handleChange('email')}
+          onBlur={handleBlur('email')}
+          value={values.email}
+        />
+        <Button onPress={handleSubmit} title="Submit" />
+      </View>
+	);
+}
+```
+

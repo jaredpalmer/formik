@@ -322,11 +322,17 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   const validateFormWithHighPriority = useEventCallback(
     (values: Values = state.values) => {
       dispatch({ type: 'SET_ISVALIDATING', payload: true });
+
       return runAllValidations(values).then(combinedErrors => {
         if (!!isMounted.current) {
           dispatch({ type: 'SET_ISVALIDATING', payload: false });
+
           if (!isEqual(state.errors, combinedErrors)) {
             dispatch({ type: 'SET_ERRORS', payload: combinedErrors });
+
+            if (props.onValidationError && typeof props.validate != 'function') {
+              props.onValidationError(combinedErrors, imperativeMethods)
+            }
           }
         }
         return combinedErrors;

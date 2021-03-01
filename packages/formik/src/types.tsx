@@ -231,6 +231,12 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
    * throws an error object where that object keys map to corresponding value.
    */
   validate?: (values: Values) => void | object | Promise<FormikErrors<Values>>;
+  
+  /**
+   * Called when validation throws error
+   * Note: will not called if `validate` is function
+   */
+  onValidationError?: (error: FormikErrors<Values>, formikHelpers: FormikHelpers<Values>) => void
 
   /** Inner ref */
   innerRef?: React.Ref<FormikProps<Values>>;

@@ -60,6 +60,18 @@ const InitialValues = {
   age: 30,
 };
 
+const fakeHelpers = expect.objectContaining({
+  resetForm: expect.any(Function),
+  setErrors: expect.any(Function),
+  setFieldError: expect.any(Function),
+  setFieldTouched: expect.any(Function),
+  setFieldValue: expect.any(Function),
+  setStatus: expect.any(Function),
+  setSubmitting: expect.any(Function),
+  setTouched: expect.any(Function),
+  setValues: expect.any(Function),
+})
+
 function renderFormik<V = Values>(props?: Partial<FormikConfig<V>>) {
   let injected: FormikProps<V>;
   const { rerender, ...rest } = render(
@@ -1450,4 +1462,146 @@ describe('<Formik>', () => {
 
     expect(innerRef.current).toEqual(getProps());
   });
+
+  describe('onChange', () => {
+    it('onChange is fired when some value change', () => {
+      const onChange = jest.fn();
+      const FormWithOnChange = (
+        <Formik initialValues={{ name: 'ardyfeb' }} onChange={onChange} onSubmit={noop}>
+         {
+            ({ handleChange }) => (
+              <input
+                name="name"
+                onChange={handleChange}
+                data-testid="input-name"
+              />
+            )
+         }
+        </Formik>
+      )
+
+      render(FormWithOnChange)
+
+      fireEvent.change(screen.getByTestId('input-name'), {
+        target: {
+          name: 'name',
+          value: 'ardyfeb-change'
+        }
+      })
+
+      expect(onChange).toHaveBeenCalledTimes(1)
+    })
+
+    it('should fire onChange with new values and helpers', () => {
+      const onChange = jest.fn();
+      const FormWithOnChange = (
+        <Formik initialValues={{ name: 'ardyfeb' }} onChange={onChange} onSubmit={noop}>
+         {
+            ({ handleChange }) => (
+              <input
+                name="name"
+                onChange={handleChange}
+                data-testid="input-name"
+              />
+            )
+         }
+        </Formik>
+      )
+
+      render(FormWithOnChange)
+
+      fireEvent.change(screen.getByTestId('input-name'), {
+        target: {
+          name: 'name',
+          value: 'ardyfeb-change'
+        }
+      })
+
+
+      expect(onChange).toHaveBeenCalledWith({ name: 'ardyfeb-change' }, fakeHelpers)
+    })
+  })
+
+  describe('onValidationError', () => {
+    it('should call onValidationError when validation fails', async () => {
+      const onValidationError = jest.fn()
+      const validationSchema = Yup.object(
+        {
+          name: Yup.string().required('required')
+        }
+      )
+  
+      const { getProps } = renderFormik(
+        {
+          onValidationError,
+          validationSchema,
+          initialValues: {
+            name: ''
+          }
+        }
+      )
+  
+      await act(
+        async () => {
+          await getProps().validateForm()
+        }
+      )
+      
+      expect(onValidationError).toHaveBeenCalled()
+    })
+
+
+    it('should call onValidationError with message and helper', async () => {
+      const onValidationError = jest.fn()
+      const validationSchema = Yup.object(
+        {
+          name: Yup.string().required('required')
+        }
+      )
+      const { getProps } = renderFormik(
+        {
+          onValidationError,
+          validationSchema,
+          initialValues: {
+            name: ''
+          }
+        }
+      )
+
+      await act(
+        async () => {
+          await getProps().validateForm()
+        }
+      )
+
+      expect(onValidationError).toHaveBeenCalledWith(
+        { name: 'required' }, fakeHelpers
+      )
+    })
+
+    it('should not call onValidationError when validate props is present', async () => {
+      const onValidationError = jest.fn()
+      const validate = (): void => {
+        throw new Error('validation error')
+      }
+
+      const { getProps } = renderFormik(
+        {
+          onValidationError,
+          validate,
+          initialValues: {
+            name: ''
+          }
+        }
+      )
+
+      await act(
+        async () => {
+          try { await getProps().validateForm() } catch {}
+        }
+      )
+
+      expect(onValidationError).toBeCalledTimes(0)
+    })
+  })
 });

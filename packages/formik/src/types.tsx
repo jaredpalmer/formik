@@ -210,6 +210,11 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
   onReset?: (values: Values, formikHelpers: FormikHelpers<Values>) => void;
 
   /**
+   * Called every values change
+   */
+  onChange?: (values: Values, formikHelpers: FormikHelpers<Values>) => void
+
+  /**
    * Submission handler
    */
   onSubmit: (

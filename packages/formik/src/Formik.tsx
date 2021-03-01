@@ -581,6 +581,13 @@ export function useFormik<Values extends FormikValues = FormikValues>({
           value,
         },
       });
+
+      if (props.onChange) {
+        props.onChange(
+          { ...state.values, [field]: value }, imperativeMethods
+        )
+      }
+      
       const willValidate =
         shouldValidate === undefined ? validateOnChange : shouldValidate;
       return willValidate

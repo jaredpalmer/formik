@@ -25,8 +25,8 @@ export const Seo = withRouter(
       {description != undefined && (
         <meta name="description" key="description" content={description} />
       )}
-      <link rel="icon" type="image/x-icon" href="images/favicon.png" />
-      <link rel="apple-touch-icon" href="images/favicon.png" />
+      <link rel="icon" type="image/x-icon" href="/images/favicon.png" />
+      <link rel="apple-touch-icon" href="/images/favicon.png" />
 
       {/* OPEN GRAPH */}
       <meta property="og:type" key="og:type" content="website" />

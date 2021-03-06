@@ -15,7 +15,7 @@ description: Formik conference talks, courses, videos, blog posts, learning reso
 
 - [Build and Validate Forms in React Native with Formik & Yup](https://www.reactnativeschool.com/build-and-validate-forms-with-formik-and-yup) (Series) by [Spencer Carli](https://twitter.com/spencer_carli) - December 14, 2018
 - [Form handling in React-Native with Formik and Yup](https://www.youtube.com/watch?v=EO08ydCCsOQ) by [Emanuel Quimper](https://twitter.com/QuimperEmanuel) - May 23, 2018
-- Building an Airbnb Clone Series by [Ben Awad](https://twitter.com/benawad97)
+- Building an Airbnb Clone Series by [Ben Awad](https://twitter.com/benawad)
   - [Coding React Form with Formik and Ant Design - Part 3](https://www.youtube.com/watch?v=pbCrDBQFU_A&index=5&list=PLN3n1USn4xlnfJIQBa6bBjjiECnk6zL6s)
   - [Form Validation in Formik with Yup - Part 4](https://www.youtube.com/watch?v=2CBnRDJ--aM&index=6&list=PLN3n1USn4xlnfJIQBa6bBjjiECnk6zL6s)
   - [Simplifying a React form with the Formik Field Component - Part 6](https://www.youtube.com/watch?v=eMjju1nQ1F8)
@@ -24,8 +24,8 @@ description: Formik conference talks, courses, videos, blog posts, learning reso
   - [Custom Formik Fields and Fix Typescript Imports - Part 37](https://www.youtube.com/watch?v=Xwjg8meOglI)
   - [Update Listing Form - Part 67](https://www.youtube.com/watch?v=PWgGkWwwHiE&index=69&list=PLN3n1USn4xlnfJIQBa6bBjjiECnk6zL6s)
 - [Better React Forms with Formik](https://www.youtube.com/watch?v=yNiJkjEwmpw) by [Andrew Mead](https://twitter.com/andrew_j_mead) - Nov 28, 2017
-- [Simple React Form with Formik](https://youtu.be/MuwQdUoNKzg) by [Ben Awad](https://twitter.com/benawad97) - Nov 3, 2017
-- [Building an Add Channel Form with Formik](https://www.youtube.com/watch?v=anwo_i0wgNo) by [Ben Awad](https://twitter.com/benawad97) - Oct 27, 2017
+- [Simple React Form with Formik](https://youtu.be/MuwQdUoNKzg) by [Ben Awad](https://twitter.com/benawad) - Nov 3, 2017
+- [Building an Add Channel Form with Formik](https://www.youtube.com/watch?v=anwo_i0wgNo) by [Ben Awad](https://twitter.com/benawad) - Oct 27, 2017
 
 ## Community Articles / Tutorials
 

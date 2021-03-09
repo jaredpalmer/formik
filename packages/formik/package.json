@@ -30,7 +30,9 @@
   "umd:main": "dist/formik.umd.production.js",
   "module": "dist/formik.esm.js",
   "typings": "dist/index.d.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "peerDependencies": {
     "react": ">=16.8.0"
   },
@@ -49,7 +51,8 @@
     "lodash-es": "^4.17.14",
     "react-fast-compare": "^2.0.1",
     "tiny-warning": "^1.0.2",
-    "tslib": "^1.10.0"
+    "tslib": "^1.10.0",
+    "use-subscription": "^1.5.1"
   },
   "devDependencies": {
     "@testing-library/react": "^11.1.0",

@@ -1,28 +1,15 @@
-import { useFormikComputedStateInternal } from './useFormikComputedState';
 import { useMemo } from 'react';
-import { FormikApi } from './useFormikApi';
-import { FormikState } from '../types';
-import { useFormikApiState } from './useFormikState';
+import { FormikApi, FormikComputedState, FormikState } from '../types';
+import { useFormikComputedState } from './useFormikComputedState';
 
-export type FullFormikState<Values> = FormikState<Values> & FormikComputedState;
-
-export type SelectFullStateFn<Values> = (
-  state: FormikState<Values>
-) => FormikState<Values>;
-
-export const selectFullState: SelectFullStateFn<unknown> = state => state;
+export const selectFullState = <T>(value: T) => value;
 
 export const useFullFormikState = <Values>(
   api: FormikApi<Values>,
   shouldSubscribe = true
-) => {
-  const state = useFormikApiState(
-    api,
-    selectFullState,
-    Object.is,
-    shouldSubscribe
-  );
-  const computedState = useFormikComputedStateInternal(api, state);
+): FormikState<Values> & FormikComputedState => {
+  const state = api.useState(selectFullState, Object.is, shouldSubscribe);
+  const computedState = useFormikComputedState(api);
 
   return useMemo(
     () => ({

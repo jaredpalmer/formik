@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
 
 export type Selector<Value, Return> = (value: Value) => Return;
 export type Comparer<Return> = (prev: Return, next: Return) => boolean;
@@ -15,9 +15,14 @@ export const useOptimizedSelector = <Value, Return>(
     return (value: Value) => {
       const newValue = selector(value);
 
-      return cachedValue !== UNINITIALIZED_VALUE && comparer(cachedValue, newValue)
-        ? cachedValue
-        : (cachedValue = newValue);
-    }
+      if (
+        cachedValue === UNINITIALIZED_VALUE ||
+        !comparer(cachedValue, newValue)
+      ) {
+        cachedValue = newValue;
+      }
+
+      return cachedValue;
+    };
   }, [selector, comparer]);
-}
+};

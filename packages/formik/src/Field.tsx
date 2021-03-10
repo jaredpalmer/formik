@@ -7,9 +7,27 @@ import {
   FieldInputProps,
   FieldValidator,
 } from './types';
-import { useFormikContext } from './FormikContext';
 import { isFunction, isEmptyChildren, isObject } from './utils';
 import invariant from 'tiny-warning';
+import { useFormikState } from './hooks/useFormikState';
+import {
+  fieldMetaIsEqual,
+  selectFieldMetaByName,
+} from './helpers/field-helpers';
+import { useFormikApi } from './hooks/useFormikApi';
+import { useFullFormikState } from './hooks/useFullFormikState';
+
+/**
+ * Returns @see FieldMetaProps<Value>
+ */
+export const useFieldMeta = <Value,>(name: string): FieldMetaProps<Value> => {
+  const [fieldMeta] = useFormikState(
+    React.useMemo(() => selectFieldMetaByName(name), [name]),
+    fieldMetaIsEqual
+  );
+
+  return fieldMeta;
+};
 
 export interface FieldProps<V = any, FormValues = any> {
   field: FieldInputProps<V>;
@@ -73,13 +91,12 @@ export type FieldAttributes<T> = GenericFieldHTMLAttributes &
 
 export type FieldHookConfig<T> = GenericFieldHTMLAttributes & FieldConfig<T>;
 
-export function useField<Val = any>(
+export function useField<Val = any, FormValues = any>(
   propsOrFieldName: string | FieldHookConfig<Val>
 ): [FieldInputProps<Val>, FieldMetaProps<Val>, FieldHelperProps<Val>] {
-  const formik = useFormikContext();
+  const formik = useFormikApi<FormValues>();
   const {
     getFieldProps,
-    getFieldMeta,
     getFieldHelpers,
     registerField,
     unregisterField,
@@ -93,6 +110,8 @@ export function useField<Val = any>(
     : { name: propsOrFieldName as string };
 
   const { name: fieldName, validate: validateFn } = props;
+
+  const fieldMeta = useFieldMeta<Val>(fieldName);
 
   React.useEffect(() => {
     if (fieldName) {
@@ -120,34 +139,26 @@ export function useField<Val = any>(
   );
 
   return [
-    getFieldProps(props),
-    getFieldMeta(fieldName),
+    // use fieldProps based on current render meta
+    getFieldProps(props, fieldMeta),
+    fieldMeta,
     getFieldHelpers(fieldName),
   ];
 }
 
-export function Field({
-  validate,
-  name,
+export function Field<FieldValue = any, FormValues = any>({
   render,
   children,
   as: is, // `as` is reserved in typescript lol
   component,
   ...props
 }: FieldAttributes<any>) {
-  const {
-    validate: _validate,
-    validationSchema: _validationSchema,
-
-    ...formik
-  } = useFormikContext();
-
   if (__DEV__) {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     React.useEffect(() => {
       invariant(
         !render,
-        `<Field render> has been deprecated and will be removed in future versions of Formik. Please use a child callback function instead. To get rid of this warning, replace <Field name="${name}" render={({field, form}) => ...} /> with <Field name="${name}">{({field, form, meta}) => ...}</Field>`
+        `<Field render> has been deprecated and will be removed in future versions of Formik. Please use a child callback function instead. To get rid of this warning, replace <Field name="${props.name}" render={({field, form}) => ...} /> with <Field name="${props.name}">{({field, form, meta}) => ...}</Field>`
       );
 
       invariant(
@@ -168,19 +179,21 @@ export function Field({
     }, []);
   }
 
-  // Register field and field-level validation with parent <Formik>
-  const { registerField, unregisterField } = formik;
-  React.useEffect(() => {
-    registerField(name, {
-      validate: validate,
-    });
-    return () => {
-      unregisterField(name);
-    };
-  }, [registerField, unregisterField, name, validate]);
-  const field = formik.getFieldProps({ name, ...props });
-  const meta = formik.getFieldMeta(name);
-  const legacyBag = { field, form: formik };
+  const [field, meta] = useField(props);
+
+  /**
+   * If we use render function or use functional children, we continue to
+   * subscribe to the full FormikState because these do not have access to hooks.
+   *
+   * Otherwise, we will pointlessly get the initial values but never subscribe to updates.
+   */
+  const formikApi = useFormikApi<FormValues>();
+  const formikState = useFullFormikState(
+    formikApi,
+    !!render || isFunction(children)
+  );
+
+  const legacyBag = { field, form: { ...formikState, ...formikApi } };
 
   if (render) {
     return render({ ...legacyBag, meta });
@@ -203,7 +216,7 @@ export function Field({
     // We don't pass `meta` for backwards compat
     return React.createElement(
       component,
-      { field, form: formik, ...props },
+      { field, form: formikApi, ...props },
       children
     );
   }

@@ -1,0 +1,49 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Run NPM Dev",
+            "request": "launch",
+            "type": "node",
+            "runtimeArgs": [
+                "run",
+                "start:app"
+            ],
+            "runtimeExecutable": "npm",
+            "cwd": "${workspaceFolder}",
+            "skipFiles": [
+                "<node_internals>/**"
+            ]
+        },
+        {
+            "type": "node",
+            "name": "vscode-jest-tests",
+            "request": "launch",
+            "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/lerna",
+            "args": [
+                "run",
+                "test",
+                "--",
+                "--runInBand",
+                // when filtering, every package not matching will have no tests
+                "--passWithNoTests",
+                "--testTimeout=9999"
+            ],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "protocol": "inspector",
+            "internalConsoleOptions": "neverOpen",
+            "disableOptimisticBPs": true
+        },
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "Launch Chrome against localhost",
+            "url": "http://localhost:3000",
+            "webRoot": "${workspaceFolder}/app"
+        }
+    ]
+}

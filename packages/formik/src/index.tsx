@@ -2,7 +2,6 @@ export * from './hooks/useFormikApi';
 export * from './hooks/useFormikState';
 export * from './hooks/useFormikComputedState';
 export * from './hooks/useFullFormikState';
-export * from './hooks/useOptimizedSelector';
 export * from './hooks/hooks';
 export * from './Formik';
 export * from './Field';

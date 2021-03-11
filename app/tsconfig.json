@@ -26,7 +26,7 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx"
-  ],
+, "pages/sign-in.js"  ],
   "exclude": [
     "node_modules"
   ]

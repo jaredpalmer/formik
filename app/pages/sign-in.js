@@ -1,7 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { ErrorMessage, Field, Form, FormikProvider, useFormik } from 'formik';
+import { ErrorMessage, Field, Form, FormikProvider, FormikState, useFormik, useFormikApiComputedState } from 'formik';
 import * as Yup from 'yup';
 import { useRouter } from 'next/router';
+
+const selectSignInState = (formikState) => ({
+  values: formikState.values,
+  errors: formikState.errors,
+  touched: formikState.touched,
+});
 
 const SignIn = () => {
   const router = useRouter();
@@ -22,35 +28,40 @@ const SignIn = () => {
     },
   });
 
+  const signInState = {
+    ...formik.useState(selectSignInState),
+    ...useFormikApiComputedState(formik),
+  };
+
   useEffect(() => {
-    if (formik.errors.username && formik.touched.username) {
+    if (signInState.errors.username && signInState.touched.username) {
       setErrorLog(logs => [
         ...logs,
         {
           name: 'username',
-          value: formik.values.username,
-          error: formik.errors.username,
+          value: signInState.values.username,
+          error: signInState.errors.username,
         },
       ]);
     }
 
-    if (formik.errors.password && formik.touched.password) {
+    if (signInState.errors.password && signInState.touched.password) {
       setErrorLog(logs => [
         ...logs,
         {
           name: 'password',
-          value: formik.values.password,
-          error: formik.errors.password,
+          value: signInState.values.password,
+          error: signInState.errors.password,
         },
       ]);
     }
   }, [
-    formik.values.username,
-    formik.errors.username,
-    formik.touched.username,
-    formik.values.password,
-    formik.errors.password,
-    formik.touched.password,
+    signInState.values.username,
+    signInState.errors.username,
+    signInState.touched.username,
+    signInState.values.password,
+    signInState.errors.password,
+    signInState.touched.password,
   ]);
 
   return (
@@ -69,7 +80,7 @@ const SignIn = () => {
             <ErrorMessage name="password" component="p" />
           </div>
 
-          <button type="submit" disabled={!formik.isValid}>
+          <button type="submit" disabled={!signInState.isValid}>
             Submit
           </button>
 

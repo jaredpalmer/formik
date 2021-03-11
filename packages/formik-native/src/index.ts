@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { NativeSyntheticEvent, NativeTouchEvent } from 'react-native';
-import { useFormikContext } from 'formik';
+import { useFormikApi } from 'formik';
 
 export function useSubmitButton() {
-  const { submitForm } = useFormikContext();
+  const { submitForm } = useFormikApi();
   const handlePress = React.useCallback(
     (_ev: NativeSyntheticEvent<NativeTouchEvent>) => {
       submitForm();

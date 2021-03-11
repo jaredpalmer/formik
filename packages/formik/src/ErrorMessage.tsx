@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { isFunction } from './utils';
-import { useFieldMeta } from './Field';
+import { useFieldMeta } from './hooks/hooks';
 
 export interface ErrorMessageProps {
   name: string;
@@ -10,14 +10,16 @@ export interface ErrorMessageProps {
   render?: (errorMessage: string) => React.ReactNode;
 }
 
-export const ErrorMessage = (props: ErrorMessageProps) => {
-  const { component, render, children, name, ...rest } = props;
-  const fieldMeta = useFieldMeta(props.name);
+export function ErrorMessage({
+  component,
+  render,
+  children,
+  name,
+  ...rest
+}: ErrorMessageProps): JSX.Element | null {
+  const { touched, error } = useFieldMeta(name);
 
-  const touch = fieldMeta.touched;
-  const error = fieldMeta.error;
-
-  return !!touch && !!error
+  return !!touched && !!error
     ? render
       ? isFunction(render)
         ? render(error)
@@ -28,6 +30,6 @@ export const ErrorMessage = (props: ErrorMessageProps) => {
         : null
       : component
       ? React.createElement(component, rest as any, error)
-      : error
+      : (error as any)
     : null;
 };

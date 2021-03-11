@@ -1,5 +1,5 @@
-import { FieldMetaProps, FormikState } from '../types';
-import { getIn } from '../utils';
+import { FieldMetaProps, FormikState } from "../types";
+import { getIn } from "../utils";
 
 export const selectFieldMetaByName = (name: string) => <
   Values,

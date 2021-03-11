@@ -182,6 +182,11 @@ export type SetFormikStateFn<Values extends FormikValues> = (
 
 export type SubmitFormFn = () => Promise<any>;
 
+export type IsFormValidFn<Values> = (
+  errors: FormikErrors<Values>,
+  dirty: boolean
+) => boolean;
+
 export interface FormikHelpers<Values> {
   /** Manually set top level status. */
   setStatus: SetStatusFn;
@@ -308,9 +313,9 @@ export type FormikApi<Values extends FormikValues> = FormikHelpers<Values> &
   FormikStateHelpers<Values> &
   FieldHelpers &
   FormikHandlers &
-  FormikValidationConfig<Values> &
-  FormikInitialState<Values> &
-  FormikComputedState & {
+  FormikValidationConfig<Values> & {
+    /** Check form validity based on config */
+    isFormValid: IsFormValidFn<Values>;
     unregisterField: UnregisterFieldFn;
     registerField: RegisterFieldFn;
   };
@@ -387,7 +392,7 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
   ) => void | Promise<any>;
 
   /** Inner ref */
-  innerRef?: React.Ref<FormikApi<Values>>;
+  innerRef?: React.Ref<FormikProps<Values>>;
 }
 
 /**

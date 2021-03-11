@@ -9,25 +9,9 @@ import {
 } from './types';
 import { isFunction, isEmptyChildren, isObject } from './utils';
 import invariant from 'tiny-warning';
-import { useFormikState } from './hooks/useFormikState';
-import {
-  fieldMetaIsEqual,
-  selectFieldMetaByName,
-} from './helpers/field-helpers';
 import { useFormikApi } from './hooks/useFormikApi';
 import { useFullFormikState } from './hooks/useFullFormikState';
-
-/**
- * Returns @see FieldMetaProps<Value>
- */
-export const useFieldMeta = <Value,>(name: string): FieldMetaProps<Value> => {
-  const [fieldMeta] = useFormikState(
-    React.useMemo(() => selectFieldMetaByName(name), [name]),
-    fieldMetaIsEqual
-  );
-
-  return fieldMeta;
-};
+import { useFieldMeta } from './hooks/hooks';
 
 export interface FieldProps<V = any, FormValues = any> {
   field: FieldInputProps<V>;
@@ -146,7 +130,7 @@ export function useField<Val = any, FormValues = any>(
   ];
 }
 
-export function Field<FieldValue = any, FormValues = any>({
+export function Field<_FieldValue = any, FormValues = any>({
   render,
   children,
   as: is, // `as` is reserved in typescript lol
@@ -184,13 +168,14 @@ export function Field<FieldValue = any, FormValues = any>({
   /**
    * If we use render function or use functional children, we continue to
    * subscribe to the full FormikState because these do not have access to hooks.
+   * We also do this for Component for backwards compatibility.
    *
    * Otherwise, we will pointlessly get the initial values but never subscribe to updates.
    */
   const formikApi = useFormikApi<FormValues>();
   const formikState = useFullFormikState(
     formikApi,
-    !!render || isFunction(children)
+    !!render || isFunction(children) || (component && typeof component !== 'string')
   );
 
   const legacyBag = { field, form: { ...formikState, ...formikApi } };
@@ -206,7 +191,7 @@ export function Field<FieldValue = any, FormValues = any>({
   if (component) {
     // This behavior is backwards compat with earlier Formik 0.9 to 1.x
     if (typeof component === 'string') {
-      const { innerRef, ...rest } = props;
+      const { innerRef, validate, ...rest } = props;
       return React.createElement(
         component,
         { ref: innerRef, ...field, ...rest },
@@ -216,7 +201,7 @@ export function Field<FieldValue = any, FormValues = any>({
     // We don't pass `meta` for backwards compat
     return React.createElement(
       component,
-      { field, form: formikApi, ...props },
+      { field, form: legacyBag.form, ...props },
       children
     );
   }

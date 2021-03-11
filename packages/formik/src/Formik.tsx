@@ -18,6 +18,7 @@ import {
   HandleBlurEventFn,
   HandleChangeEventFn,
   HandleChangeFn,
+  IsFormValidFn,
 } from './types';
 import {
   isFunction,
@@ -993,7 +994,7 @@ export function useFormik<Values extends FormikValues = FormikValues>(
     resetForm();
   });
 
-  const getFieldMeta = React.useCallback(
+  const getFieldMeta = useEventCallback(
     (name: string): FieldMetaProps<any> => {
       return selectFieldMetaByName(name)({
         errors: state.errors,
@@ -1003,15 +1004,7 @@ export function useFormik<Values extends FormikValues = FormikValues>(
         touched: state.touched,
         values: state.values,
       });
-    },
-    [
-      state.errors,
-      state.initialErrors,
-      state.initialTouched,
-      state.initialValues,
-      state.touched,
-      state.values,
-    ]
+    }
   );
 
   const getFieldHelpers = React.useCallback(
@@ -1073,32 +1066,25 @@ export function useFormik<Values extends FormikValues = FormikValues>(
     [getFieldMeta, handleBlur, handleChange]
   );
 
-  const dirty = React.useMemo(
-    () => !isEqual(state.initialValues, state.values),
-    [state.initialValues, state.values]
-  );
-
-  const isValid = React.useMemo(
-    () =>
-      typeof props.isInitialValid !== 'undefined'
-        ? dirty
-          ? state.errors && Object.keys(state.errors).length === 0
-          : props.isInitialValid !== false && isFunction(props.isInitialValid)
-          ? props.isInitialValid(props)
-          : props.isInitialValid
-        : state.errors && Object.keys(state.errors).length === 0,
-    [dirty, state.errors, props]
-  );
+  const isFormValid = useEventCallback<IsFormValidFn<Values>>((errors, dirty) => {
+    return typeof props.isInitialValid !== 'undefined'
+      ? dirty
+        ? errors && Object.keys(errors).length === 0
+        : props.isInitialValid !== false && isFunction(props.isInitialValid)
+        ? props.isInitialValid(props)
+        : props.isInitialValid
+      : errors && Object.keys(errors).length === 0;
+  });
 
   const subscriptionsRef = React.useRef<Function[]>([]);
 
+  // this is a hook used by other components
   const useState = React.useCallback(
     <Return,>(
       selector: Selector<FormikState<Values>, Return>,
       comparer: Comparer<Return> = Object.is,
-      shouldSubscribe = true
+      shouldSubscribe: boolean = true
     ) => {
-      // this is a hook, but meant to be used by other components
       // eslint-disable-next-line react-hooks/rules-of-hooks
       selector = useOptimizedSelector(selector, comparer);
 
@@ -1132,20 +1118,15 @@ export function useFormik<Values extends FormikValues = FormikValues>(
     });
   }, [state]);
 
-  const ctx: FormikApi<Values> = {
+  // mostly optimized renders.
+  // dirty and isValid should move to useComputedState()
+  const ctx = React.useMemo<FormikApi<Values>>(() => ({
     // config
-    initialValues: props.initialValues,
-    initialTouched: props.initialTouched,
-    initialErrors: props.initialErrors,
-    initialStatus: props.initialStatus,
     validateOnBlur,
     validateOnChange,
     validateOnMount,
     validationSchema: props.validationSchema,
     validate: props.validate,
-    // computed props
-    dirty,
-    isValid,
     // handlers
     handleBlur,
     handleChange,
@@ -1167,13 +1148,45 @@ export function useFormik<Values extends FormikValues = FormikValues>(
     validateField,
     unregisterField,
     registerField,
+    isFormValid,
     getFieldProps,
     getFieldMeta,
     getFieldHelpers,
     // state helpers
     getState,
     useState,
-  };
+  }), [
+    validateOnBlur,
+    validateOnChange,
+    validateOnMount,
+    props.validationSchema,
+    props.validate,
+    handleBlur,
+    handleChange,
+    handleReset,
+    handleSubmit,
+    resetForm,
+    setErrors,
+    setFormikState,
+    setFieldTouched,
+    setFieldValue,
+    setFieldError,
+    setStatus,
+    setSubmitting,
+    setTouched,
+    setValues,
+    submitForm,
+    validateFormWithHighPriority,
+    validateField,
+    unregisterField,
+    registerField,
+    isFormValid,
+    getFieldProps,
+    getFieldMeta,
+    getFieldHelpers,
+    getState,
+    useState,
+  ]);
 
   return ctx;
 }
@@ -1185,9 +1198,10 @@ export function Formik<
   const formikApi = useFormik<Values>(props);
   const { component, children, render, innerRef } = props;
 
+  // Get initial Full State, but if we don't need it, we won't subscribe to updates
   const formikState = useFullFormikState<Values>(
     formikApi,
-    !!component || !!render || isFunction(children)
+    !!component || !!render || isFunction(children) || !!innerRef
   );
 
   const formikbag: FormikProps<Values> = {
@@ -1196,7 +1210,7 @@ export function Formik<
   };
 
   // This allows folks to pass a ref to <Formik />
-  React.useImperativeHandle(innerRef, () => formikApi);
+  React.useImperativeHandle(innerRef, () => formikbag);
 
   if (__DEV__) {
     // eslint-disable-next-line react-hooks/rules-of-hooks

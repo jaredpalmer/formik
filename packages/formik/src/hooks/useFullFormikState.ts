@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { FormikApi, FormikComputedState, FormikState } from '../types';
-import { useFormikComputedState } from './useFormikComputedState';
+import { selectComputedState } from './useFormikComputedState';
 
 export const selectFullState = <T>(value: T) => value;
 
@@ -9,7 +9,7 @@ export const useFullFormikState = <Values>(
   shouldSubscribe = true
 ): FormikState<Values> & FormikComputedState => {
   const state = api.useState(selectFullState, Object.is, shouldSubscribe);
-  const computedState = useFormikComputedState(api);
+  const computedState = selectComputedState(api, state);
 
   return useMemo(
     () => ({

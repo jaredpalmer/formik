@@ -8,7 +8,7 @@ export function useFormikApi<Values extends FormikValues>(): FormikApi<Values> {
 
   invariant(
     !!formikApi,
-    `Formik context is undefined, please verify you are calling useFormikContext() as child of a <Formik> component.`
+    `Formik context is undefined, please verify you are calling useFormikApi() as child of a <Formik> component.`
   );
 
   return formikApi;

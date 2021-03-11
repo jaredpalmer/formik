@@ -15,14 +15,13 @@ import {
   FieldConfig,
   FormikProps,
   FormikConfig,
+  FastFieldConfig,
 } from '../src';
 
 import { noop } from './testHelpers';
 
 const initialValues = { name: 'jared', email: 'hello@reason.nyc' };
 type Values = typeof initialValues;
-type FastFieldConfig = FieldConfig;
-
 type $FixMe = any;
 
 function renderForm(

@@ -1,5 +1,7 @@
 {
-  // Hack to fix https://github.com/formium/tsdx/issues/84#issuecomment-489690504
-  "extends": "../tsconfig.build.json",
-  "include": ["."]
+  "extends": "../../../tsconfig.base.json",
+  "include": ["../src", "../types"],
+  "compilerOptions": {
+    "rootDir": ".."
+  }
 }

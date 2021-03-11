@@ -13,7 +13,7 @@ FormikContext.displayName = 'FormikContext';
 export const FormikProvider = FormikContext.Provider;
 
 /**
- * @deprecated Please use useFormikApi() and access state from api.useState().
+ * @deprecated Please access state directly via the Formik API.
  */
  export function useFormikContext<Values>() {
   const formik = useFormikApi<Values>();
@@ -32,7 +32,7 @@ export const FormikProvider = FormikContext.Provider;
 }
 
 /**
- * @deprecated Please use useFormikApi() and access state from api.useState().
+ * @deprecated Please access state directly via the Formik API.
  */
 export function FormikConsumer<Values = any>({
   children,

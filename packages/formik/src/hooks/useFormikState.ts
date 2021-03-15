@@ -1,4 +1,4 @@
-import { Selector, Comparer } from './useOptimizedSelector';
+import { Selector, Comparer } from 'use-optimized-selector';
 import { useFormikApi } from './useFormikApi';
 import { FormikApi, FormikState } from '../types';
 

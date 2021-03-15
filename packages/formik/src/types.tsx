@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Comparer, Selector } from './hooks/useOptimizedSelector';
+import { Comparer, Selector } from 'use-optimized-selector';
 
 /**
  * Values of fields in the form

@@ -39,7 +39,7 @@ import {
   Comparer,
   Selector,
   useOptimizedSelector,
-} from './hooks/useOptimizedSelector';
+} from 'use-optimized-selector';
 import { unstable_batchedUpdates } from 'react-dom';
 import { useSubscription } from 'use-subscription';
 import { selectFieldMetaByName } from './helpers/field-helpers';

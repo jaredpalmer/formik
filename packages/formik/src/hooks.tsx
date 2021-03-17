@@ -68,9 +68,9 @@ export type UseFieldProps<V = any> = {
  * Returns Formik field value updater function
  * @public
  */
-export function useSetFieldValue<
+export function useSetFieldValue<Values>(): FormikContextType<
   Values
->(): FormikContextType<Values>['setFieldValue'] {
+>['setFieldValue'] {
   return useFormikContextSelector<
     Values,
     FormikContextType<Values>['setFieldValue']
@@ -81,9 +81,9 @@ export function useSetFieldValue<
  * Returns Formik field touched updater function
  * @public
  */
-export function useSetFieldTouched<
+export function useSetFieldTouched<Values>(): FormikContextType<
   Values
->(): FormikContextType<Values>['setFieldTouched'] {
+>['setFieldTouched'] {
   return useFormikContextSelector<
     Values,
     FormikContextType<Values>['setFieldTouched']
@@ -495,6 +495,17 @@ export function useIsSubmitting() {
 }
 
 /**
+ * Returns whether the form submission is currently validating
+ * @public
+ */
+export function useIsValidating() {
+  return useFormikContextSelector<
+    unknown,
+    FormikContextType<unknown>['isValidating']
+  >(ctx => ctx.isValidating);
+}
+
+/**
  * Returns function to reset the form
  * @public
  */
@@ -507,7 +518,7 @@ export function useResetForm() {
 
 /**
  *
- * Returns whether the form submission is currently being attempted
+ * Returns whether the form is valid
  * @public
  */
 export function useIsValid() {

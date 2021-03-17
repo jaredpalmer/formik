@@ -34,6 +34,7 @@
   - `useSubmitForm`
   - `useResetForm`
   - `useIsSubmitting`
+  - `useIsValidating`
   - `useIsValid`
   - `useIsDirty`
   - `useValidateForm`

@@ -2,8 +2,8 @@ import hoistNonReactStatics from 'hoist-non-react-statics';
 import * as React from 'react';
 import invariant from 'tiny-warning';
 import { FormikComputedState, FormikContextType, FormikState } from './types';
-import { useFormikApi } from './hooks/useFormikApi';
 import { useFullFormikState } from './hooks/useFullFormikState';
+import { useFormikContext } from './FormikContext';
 
 export type FormikConnectedType<Values> = FormikContextType<Values> & FormikState<Values> & FormikComputedState;
 
@@ -15,7 +15,7 @@ export function connect<OuterProps, Values = {}>(
   Comp: React.ComponentType<OuterProps & { formik: FormikConnectedType<Values> }>
 ) {
   const C: React.FC<OuterProps> = (props: OuterProps) => {
-    const formik = useFormikApi<Values>();
+    const formik = useFormikContext<Values>();
     const state = useFullFormikState(formik);
 
     invariant(

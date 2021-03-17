@@ -9,9 +9,9 @@ import {
 } from './types';
 import { isFunction, isEmptyChildren, isObject } from './utils';
 import invariant from 'tiny-warning';
-import { useFormikApi } from './hooks/useFormikApi';
 import { useFullFormikState } from './hooks/useFullFormikState';
 import { useFieldMeta } from './hooks/hooks';
+import { useFormikContext } from './FormikContext';
 
 export interface FieldProps<V = any, FormValues = any> {
   field: FieldInputProps<V>;
@@ -78,7 +78,7 @@ export type FieldHookConfig<T> = GenericFieldHTMLAttributes & FieldConfig<T>;
 export function useField<Val = any, FormValues = any>(
   propsOrFieldName: string | FieldHookConfig<Val>
 ): [FieldInputProps<Val>, FieldMetaProps<Val>, FieldHelperProps<Val>] {
-  const formik = useFormikApi<FormValues>();
+  const formik = useFormikContext<FormValues>();
   const {
     getFieldProps,
     getFieldHelpers,
@@ -172,10 +172,10 @@ export function Field<_FieldValue = any, FormValues = any>({
    *
    * Otherwise, we will pointlessly get the initial values but never subscribe to updates.
    */
-  const formikApi = useFormikApi<FormValues>();
+  const formikApi = useFormikContext<FormValues>();
   const formikState = useFullFormikState(
     formikApi,
-    !!render || isFunction(children) || (component && typeof component !== 'string')
+    !!render || isFunction(children) || (!!component && typeof component !== 'string')
   );
 
   const legacyBag = { field, form: { ...formikState, ...formikApi } };

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ErrorMessage, Field, Form, FormikProvider, FormikState, useFormik, useFormikApiComputedState } from 'formik';
+import { ErrorMessage, Field, Form, FormikProvider, useFormik } from 'formik';
 import * as Yup from 'yup';
 import { useRouter } from 'next/router';
 
@@ -30,7 +30,7 @@ const SignIn = () => {
 
   const signInState = {
     ...formik.useState(selectSignInState),
-    ...useFormikApiComputedState(formik),
+    ...formik.useComputedState(),
   };
 
   useEffect(() => {

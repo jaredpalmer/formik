@@ -182,11 +182,6 @@ export type SetFormikStateFn<Values extends FormikValues> = (
 
 export type SubmitFormFn = () => Promise<any>;
 
-export type IsFormValidFn<Values> = (
-  errors: FormikErrors<Values>,
-  dirty: boolean
-) => boolean;
-
 export interface FormikHelpers<Values> {
   /** Manually set top level status. */
   setStatus: SetStatusFn;
@@ -225,6 +220,8 @@ export interface FormikStateHelpers<Values> {
     comparer?: Comparer<Return>,
     shouldSubscribe?: boolean
   ) => Return;
+  /** Use Computed State from within Render. */
+  useComputedState: (shouldSubscribe?: boolean) => FormikComputedState;
 }
 
 export type GetValueFromEventFn = (
@@ -314,8 +311,6 @@ export type FormikApi<Values extends FormikValues> = FormikHelpers<Values> &
   FieldHelpers &
   FormikHandlers &
   FormikValidationConfig<Values> & {
-    /** Check form validity based on config */
-    isFormValid: IsFormValidFn<Values>;
     unregisterField: UnregisterFieldFn;
     registerField: RegisterFieldFn;
   };

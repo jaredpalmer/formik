@@ -18,7 +18,6 @@ import {
   HandleBlurEventFn,
   HandleChangeEventFn,
   HandleChangeFn,
-  IsFormValidFn,
 } from './types';
 import {
   isFunction,
@@ -43,6 +42,11 @@ import {
 import { unstable_batchedUpdates } from 'react-dom';
 import { useSubscription } from 'use-subscription';
 import { selectFieldMetaByName } from './helpers/field-helpers';
+import {
+  IsFormValidFn,
+  selectComputedState,
+  selectStateToCompute,
+} from './helpers/form-helpers';
 
 type FormikMessage<Values> =
   | { type: 'SUBMIT_ATTEMPT' }
@@ -1066,15 +1070,17 @@ export function useFormik<Values extends FormikValues = FormikValues>(
     [getFieldMeta, handleBlur, handleChange]
   );
 
-  const isFormValid = useEventCallback<IsFormValidFn<Values>>((errors, dirty) => {
-    return typeof props.isInitialValid !== 'undefined'
-      ? dirty
-        ? errors && Object.keys(errors).length === 0
-        : props.isInitialValid !== false && isFunction(props.isInitialValid)
-        ? props.isInitialValid(props)
-        : props.isInitialValid
-      : errors && Object.keys(errors).length === 0;
-  });
+  const isFormValid = useEventCallback<IsFormValidFn<Values>>(
+    (errors, dirty) => {
+      return typeof props.isInitialValid !== 'undefined'
+        ? dirty
+          ? errors && Object.keys(errors).length === 0
+          : props.isInitialValid !== false && isFunction(props.isInitialValid)
+          ? props.isInitialValid(props)
+          : props.isInitialValid
+        : errors && Object.keys(errors).length === 0;
+    }
+  );
 
   const subscriptionsRef = React.useRef<Function[]>([]);
 
@@ -1112,81 +1118,91 @@ export function useFormik<Values extends FormikValues = FormikValues>(
     [getState]
   );
 
+  /**
+   * Get Computed State within Render Context (like useState)
+   */
+  const useComputedState = React.useCallback(
+    (shouldSubscribe = true) => selectComputedState(isFormValid, useState(selectStateToCompute, Object.is, shouldSubscribe)),
+    [isFormValid, useState]
+  );
+
   useIsomorphicLayoutEffect(() => {
     unstable_batchedUpdates(() => {
       subscriptionsRef.current.forEach(callback => callback());
     });
   }, [state]);
 
-  // mostly optimized renders.
-  // dirty and isValid should move to useComputedState()
-  const ctx = React.useMemo<FormikApi<Values>>(() => ({
-    // config
-    validateOnBlur,
-    validateOnChange,
-    validateOnMount,
-    validationSchema: props.validationSchema,
-    validate: props.validate,
-    // handlers
-    handleBlur,
-    handleChange,
-    handleReset,
-    handleSubmit,
-    // helpers
-    resetForm,
-    setErrors,
-    setFormikState,
-    setFieldTouched,
-    setFieldValue,
-    setFieldError,
-    setStatus,
-    setSubmitting,
-    setTouched,
-    setValues,
-    submitForm,
-    validateForm: validateFormWithHighPriority,
-    validateField,
-    unregisterField,
-    registerField,
-    isFormValid,
-    getFieldProps,
-    getFieldMeta,
-    getFieldHelpers,
-    // state helpers
-    getState,
-    useState,
-  }), [
-    validateOnBlur,
-    validateOnChange,
-    validateOnMount,
-    props.validationSchema,
-    props.validate,
-    handleBlur,
-    handleChange,
-    handleReset,
-    handleSubmit,
-    resetForm,
-    setErrors,
-    setFormikState,
-    setFieldTouched,
-    setFieldValue,
-    setFieldError,
-    setStatus,
-    setSubmitting,
-    setTouched,
-    setValues,
-    submitForm,
-    validateFormWithHighPriority,
-    validateField,
-    unregisterField,
-    registerField,
-    isFormValid,
-    getFieldProps,
-    getFieldMeta,
-    getFieldHelpers,
-    getState,
-    useState,
-  ]);
+  // mostly optimized renders
+  const ctx = React.useMemo<FormikApi<Values>>(
+    () => ({
+      // config
+      validateOnBlur,
+      validateOnChange,
+      validateOnMount,
+      validationSchema: props.validationSchema,
+      validate: props.validate,
+      // handlers
+      handleBlur,
+      handleChange,
+      handleReset,
+      handleSubmit,
+      // helpers
+      resetForm,
+      setErrors,
+      setFormikState,
+      setFieldTouched,
+      setFieldValue,
+      setFieldError,
+      setStatus,
+      setSubmitting,
+      setTouched,
+      setValues,
+      submitForm,
+      validateForm: validateFormWithHighPriority,
+      validateField,
+      unregisterField,
+      registerField,
+      getFieldProps,
+      getFieldMeta,
+      getFieldHelpers,
+      // state helpers
+      getState,
+      useState,
+      useComputedState,
+    }),
+    [
+      validateOnBlur,
+      validateOnChange,
+      validateOnMount,
+      props.validationSchema,
+      props.validate,
+      handleBlur,
+      handleChange,
+      handleReset,
+      handleSubmit,
+      resetForm,
+      setErrors,
+      setFormikState,
+      setFieldTouched,
+      setFieldValue,
+      setFieldError,
+      setStatus,
+      setSubmitting,
+      setTouched,
+      setValues,
+      submitForm,
+      validateFormWithHighPriority,
+      validateField,
+      unregisterField,
+      registerField,
+      getFieldProps,
+      getFieldMeta,
+      getFieldHelpers,
+      getState,
+      useState,
+      useComputedState,
+    ]
+  );
 
   return ctx;
 }

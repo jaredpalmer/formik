@@ -1,12 +1,16 @@
 import { FieldMetaProps, FormikState } from "../types";
 import { getIn } from "../utils";
 
-export const selectFieldMetaByName = (name: string) => <
-  Values,
-  State extends FormikState<Values>
->(
+/**
+ * @internal
+ *
+ * Get FieldMetaProps from state.
+ */
+export const selectFieldMetaByName = <
+Values
+>(name: string) => (
   state: Pick<
-    State,
+    FormikState<Values>,
     | 'values'
     | 'errors'
     | 'touched'
@@ -24,7 +28,9 @@ export const selectFieldMetaByName = (name: string) => <
 });
 
 /**
- * Example of an optimized comparer.
+ * @internal
+ *
+ * Optimize the comparer for fieldMeta.
  */
 export const fieldMetaIsEqual = <Value>(
   prev: FieldMetaProps<Value>,

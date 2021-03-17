@@ -111,11 +111,12 @@ describe('Field / FastField', () => {
 
   describe('receives { field, form, meta } props and renders element', () => {
     it('<Field />', () => {
+      let i = 0;
       let injected: FieldProps[] = [];
       let asInjectedProps: FieldProps['field'] = {} as any;
 
       const Component = (props: FieldProps) =>
-        injected.push(props) && <div data-testid="child">{TEXT}</div>;
+        (injected[i++ % 3] = props) && <div data-testid="child">{TEXT}</div>;
 
       const AsComponent = (props: FieldProps['field']) =>
         (asInjectedProps = props) && <div data-testid="child">{TEXT}</div>;
@@ -157,11 +158,13 @@ describe('Field / FastField', () => {
     });
 
     it('<FastField />', () => {
+      let i = 0;
       let injected: FieldProps[] = [];
       let asInjectedProps: FieldProps['field'] = {} as any;
 
       const Component = (props: FieldProps) =>
-        injected.push(props) && <div>{TEXT}</div>;
+        (injected[i++ % 3] = props) && <div data-testid="child">{TEXT}</div>;
+
       const AsComponent = (props: FieldProps['field']) =>
         (asInjectedProps = props) && <div data-testid="child">{TEXT}</div>;
 

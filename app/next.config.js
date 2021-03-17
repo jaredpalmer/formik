@@ -26,6 +26,12 @@ module.exports = {
           __DEV__: process.env.NODE_ENV === 'development',
         })
       );
+    } else {
+      // Remove TSConfigPath aliases.
+      // We should use a tool which supports tsconfig.build.json
+      config.resolve.plugins = config.resolve.plugins.filter(
+        plugin => plugin.constructor.name !== 'JsConfigPathsPlugin'
+      );
     }
 
     return config;

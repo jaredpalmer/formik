@@ -28,7 +28,7 @@ const SignUp = () => (
         firstName: '',
         lastName: '',
       }}
-      validationSchema={SignUpSchema}
+      validationSchema=SignUpSchema
       onSubmit={values => {
         setTimeout(() => {
           alert(JSON.stringify(values, null, 2));

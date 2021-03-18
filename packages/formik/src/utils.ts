@@ -40,6 +40,21 @@ export const isPromise = (value: any): value is PromiseLike<any> =>
 export const isInputEvent = (value: any): value is React.SyntheticEvent<any> =>
   value && isObject(value) && isObject(value.target);
 
+/** @private Shallow equality comparer for objects, for optimizing selectors */
+export const isShallowEqual = (
+  prev: Record<string, any>,
+  next: Record<string, any>
+) => {
+  if (Object.is(prev, next)) {
+    return true;
+  }
+
+  const prevKeys = Object.keys(prev);
+
+  return prevKeys.length === Object.keys(next).length &&
+    prevKeys.every(key => Object.is(prev[key], next[key]));
+}
+
 /**
  * Same as document.activeElement but wraps in a try-catch block. In IE it is
  * not safe to call document.activeElement if there is nothing focused.

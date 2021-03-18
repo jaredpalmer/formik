@@ -1,11 +1,11 @@
 import { useFormikContext } from '../FormikContext';
 import { useMemo } from 'react';
 import {
-  fieldMetaIsEqual,
   selectFieldMetaByName,
 } from '../helpers/field-helpers';
 import { FieldMetaProps } from '../types';
 import { useFormikState } from './useFormikState';
+import { isShallowEqual } from '../utils';
 
 /**
  * Returns @see FieldMetaProps<Value>
@@ -13,7 +13,7 @@ import { useFormikState } from './useFormikState';
 export const useFieldMeta = <Value>(name: string): FieldMetaProps<Value> => {
   const [fieldMeta] = useFormikState(
     useMemo(() => selectFieldMetaByName(name), [name]),
-    fieldMetaIsEqual
+    isShallowEqual
   );
 
   return fieldMeta;

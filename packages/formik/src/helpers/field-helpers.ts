@@ -1,4 +1,4 @@
-import { FieldMetaProps, FormikState } from "../types";
+import { FormikState } from "../types";
 import { getIn } from "../utils";
 
 /**
@@ -26,19 +26,3 @@ Values
   initialTouched: !!getIn(state.initialTouched, name),
   initialError: getIn(state.initialErrors, name),
 });
-
-/**
- * @internal
- *
- * Optimize the comparer for fieldMeta.
- */
-export const fieldMetaIsEqual = <Value>(
-  prev: FieldMetaProps<Value>,
-  next: FieldMetaProps<Value>
-) =>
-  prev.value === next.value &&
-  prev.touched === next.touched &&
-  prev.error === next.error &&
-  prev.initialValue === next.initialValue &&
-  prev.initialTouched === next.initialTouched &&
-  prev.initialError === next.initialError;

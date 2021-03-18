@@ -29,6 +29,7 @@ import {
   getIn,
   isObject,
   setNestedObjectValues,
+  isShallowEqual,
 } from './utils';
 import { FormikProvider } from './FormikContext';
 import invariant from 'tiny-warning';
@@ -1120,7 +1121,7 @@ export function useFormik<Values extends FormikValues = FormikValues>(
    * Get Computed State within Render Context (like useState)
    */
   const useComputedState = React.useCallback(
-    (shouldSubscribe = true) => selectComputedState(isFormValid, useState(selectStateToCompute, Object.is, shouldSubscribe)),
+    (shouldSubscribe = true) => selectComputedState(isFormValid, useState(selectStateToCompute, isShallowEqual, shouldSubscribe)),
     [isFormValid, useState]
   );
 

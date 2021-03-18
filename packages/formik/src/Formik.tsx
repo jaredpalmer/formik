@@ -225,18 +225,16 @@ export function useFormik<Values extends FormikValues = FormikValues>(
   });
 
   const getState = React.useCallback(() => stateRef.current, [stateRef]);
-  const [state, internalDispatch] = React.useReducer<
-    React.Reducer<FormikState<Values>, FormikMessage<Values>>
-  >(formikReducer, stateRef.current);
+  const [state, setState] = React.useState(stateRef.current);
 
   /**
-   * Each call to dispatch _immediately_ updates the ref. It also dispatches to React's internal dispatcher.
+   * Each call to dispatch _immediately_ updates the ref.
+   * It also dispatches to React's internal dispatcher.
    */
   const dispatch = React.useCallback(
     (msg: FormikMessage<Values>) => {
-      // double reducer
-      stateRef.current = formikReducer(stateRef.current, msg);
-      internalDispatch(msg);
+      // manually update state via reducer and dispatch resolved value via setState
+      setState((stateRef.current = formikReducer(stateRef.current, msg)));
     },
     [stateRef]
   );

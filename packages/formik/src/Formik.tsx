@@ -5,7 +5,7 @@ import isPlainObject from 'lodash/isPlainObject';
 import {
   FormikConfig,
   FormikErrors,
-  FormikState,
+  FormikReducerState,
   FormikTouched,
   FormikValues,
   FormikProps,
@@ -18,6 +18,7 @@ import {
   HandleBlurEventFn,
   HandleChangeEventFn,
   HandleChangeFn,
+  FormikState,
 } from './types';
 import {
   isFunction,
@@ -29,11 +30,9 @@ import {
   getIn,
   isObject,
   setNestedObjectValues,
-  isShallowEqual,
 } from './utils';
 import { FormikProvider } from './FormikContext';
 import invariant from 'tiny-warning';
-import { useFullFormikState } from './hooks/useFullFormikState';
 import { useIsomorphicLayoutEffect } from './hooks/useIsomorphicLayoutEffect';
 import {
   Comparer,
@@ -45,8 +44,8 @@ import { useSubscription } from 'use-subscription';
 import { selectFieldMetaByName } from './helpers/field-helpers';
 import {
   IsFormValidFn,
-  selectComputedState,
-  selectStateToCompute,
+  populateComputedState,
+  selectFullState,
 } from './helpers/form-helpers';
 
 type FormikMessage<Values> =
@@ -64,16 +63,16 @@ type FormikMessage<Values> =
   | { type: 'SET_STATUS'; payload: any }
   | {
       type: 'SET_FORMIK_STATE';
-      payload: (s: FormikState<Values>) => FormikState<Values>;
+      payload: (s: FormikReducerState<Values>) => FormikReducerState<Values>;
     }
   | {
       type: 'RESET_FORM';
-      payload: Partial<FormikState<Values>>;
+      payload: Partial<FormikReducerState<Values>>;
     };
 
 // State reducer
 function formikReducer<Values>(
-  state: FormikState<Values>,
+  state: FormikReducerState<Values>,
   msg: FormikMessage<Values>
 ) {
   switch (msg.type) {
@@ -211,7 +210,7 @@ export function useFormik<Values extends FormikValues = FormikValues>(
    *       snapshot    ref
    * const [state, updateState] = useFormikThing();
    */
-  const stateRef = React.useRef<FormikState<Values>>({
+  const stateRef = React.useRef<FormikReducerState<Values>>({
     initialValues: props.initialValues,
     initialErrors: props.initialErrors ?? emptyErrors,
     initialTouched: props.initialTouched ?? emptyTouched,
@@ -225,7 +224,6 @@ export function useFormik<Values extends FormikValues = FormikValues>(
     submitCount: 0,
   });
 
-  const getState = React.useCallback(() => stateRef.current, [stateRef]);
   const [state, setState] = React.useState(stateRef.current);
 
   /**
@@ -415,7 +413,7 @@ export function useFormik<Values extends FormikValues = FormikValues>(
   }, [performValidationOnMount]);
 
   const resetForm = useEventCallback(
-    (nextState?: Partial<FormikState<Values>>) => {
+    (nextState?: Partial<FormikReducerState<Values>>) => {
       const values =
         nextState?.values ?? nextState?.initialValues ?? state.initialValues;
       const errors =
@@ -836,8 +834,8 @@ export function useFormik<Values extends FormikValues = FormikValues>(
   const setFormikState = React.useCallback(
     (
       stateOrCb:
-        | FormikState<Values>
-        | ((state: FormikState<Values>) => FormikState<Values>)
+        | FormikReducerState<Values>
+        | ((state: FormikReducerState<Values>) => FormikReducerState<Values>)
     ): void => {
       if (isFunction(stateOrCb)) {
         dispatch({ type: 'SET_FORMIK_STATE', payload: stateOrCb });
@@ -1069,7 +1067,10 @@ export function useFormik<Values extends FormikValues = FormikValues>(
     [getFieldMeta, handleBlur, handleChange]
   );
 
-  const isFormValid = useEventCallback<IsFormValidFn<Values>>(
+  /**
+   * Validate both outside of render and inside of render.
+   */
+  const isFormValidInRender = React.useCallback<IsFormValidFn<Values>>(
     (errors, dirty) => {
       return typeof props.isInitialValid !== 'undefined'
         ? dirty
@@ -1078,7 +1079,19 @@ export function useFormik<Values extends FormikValues = FormikValues>(
           ? props.isInitialValid(props)
           : props.isInitialValid
         : errors && Object.keys(errors).length === 0;
-    }
+    },
+    []
+  );
+
+  const isFormValidOutsideOfRender = useEventCallback(isFormValidInRender);
+  
+  const getState = React.useCallback(() => 
+    populateComputedState(isFormValidOutsideOfRender, stateRef.current),
+    [isFormValidOutsideOfRender, stateRef]
+  );
+
+  const getStateInRender = useEventCallback(
+    () => populateComputedState(isFormValidInRender, state)
   );
 
   const subscriptionsRef = React.useRef<Function[]>([]);
@@ -1096,7 +1109,7 @@ export function useFormik<Values extends FormikValues = FormikValues>(
       // eslint-disable-next-line react-hooks/rules-of-hooks
       const subscription = React.useMemo(
         () => ({
-          getCurrentValue: () => selector(getState()),
+          getCurrentValue: () => selector(getStateInRender()),
           subscribe: shouldSubscribe
             ? (callback: Function) => {
                 subscriptionsRef.current.push(callback);
@@ -1115,14 +1128,6 @@ export function useFormik<Values extends FormikValues = FormikValues>(
       return useSubscription(subscription);
     },
     [getState]
-  );
-
-  /**
-   * Get Computed State within Render Context (like useState)
-   */
-  const useComputedState = React.useCallback(
-    (shouldSubscribe = true) => selectComputedState(isFormValid, useState(selectStateToCompute, isShallowEqual, shouldSubscribe)),
-    [isFormValid, useState]
   );
 
   useIsomorphicLayoutEffect(() => {
@@ -1167,7 +1172,6 @@ export function useFormik<Values extends FormikValues = FormikValues>(
       // state helpers
       getState,
       useState,
-      useComputedState,
     }),
     [
       validateOnBlur,
@@ -1199,7 +1203,6 @@ export function useFormik<Values extends FormikValues = FormikValues>(
       getFieldHelpers,
       getState,
       useState,
-      useComputedState,
     ]
   );
 
@@ -1214,8 +1217,9 @@ export function Formik<
   const { component, children, render, innerRef } = props;
 
   // Get initial Full State, but if we don't need it, we won't subscribe to updates
-  const formikState = useFullFormikState<Values>(
-    formikApi,
+  const formikState = formikApi.useState(
+    selectFullState,
+    Object.is,
     !!component || !!render || isFunction(children) || !!innerRef
   );
 

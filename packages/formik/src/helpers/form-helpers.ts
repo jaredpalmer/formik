@@ -1,13 +1,13 @@
 import { FormikErrors } from './../types';
 import isEqual from 'react-fast-compare';
-import { FormikState } from "../types";
+import { FormikReducerState } from "../types";
 
 /**
  * Select State needed to calculate FormikComputedState
  *
  * @internal
  */
-export const selectStateToCompute = (state: FormikState<any>) => ({
+export const selectStateToCompute = (state: FormikReducerState<any>) => ({
   errors: state.errors,
   values: state.values,
   initialValues: state.initialValues,
@@ -28,16 +28,19 @@ export type IsFormValidFn<Values> = (
  *
  * @internal
  */
-export const selectComputedState = (
+export const populateComputedState = (
   isFormValid: IsFormValidFn<any>,
-  state: Pick<FormikState<any>, 'initialValues' | 'values' | 'errors'>
+  state: FormikReducerState<any>
 ) => {
   // we do not want to run a deep equals on every render
   const dirty = !isEqual(state.initialValues, state.values);
   const isValid = isFormValid(state.errors, dirty);
 
   return {
+    ...state,
     dirty,
     isValid,
   };
 };
+
+export const selectFullState = <T,>(state: T) => state;

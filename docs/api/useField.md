@@ -3,7 +3,7 @@ id: useField
 title: useField()
 ---
 
-`useField` is a custom React hook that will automagically help you hook up inputs to Formik. You can and should use it to build your own custom input primitives. There are 2 ways to use it.
+`useField` is a custom React hook that will automatically help you hook up inputs to Formik. You can and should use it to build your own custom input primitives. There are 2 ways to use it.
 
 ## Example
 

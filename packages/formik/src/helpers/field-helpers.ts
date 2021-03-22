@@ -1,4 +1,4 @@
-import { FormikState } from "../types";
+import { FormikReducerState } from "../types";
 import { getIn } from "../utils";
 
 /**
@@ -10,7 +10,7 @@ export const selectFieldMetaByName = <
 Values
 >(name: string) => (
   state: Pick<
-    FormikState<Values>,
+    FormikReducerState<Values>,
     | 'values'
     | 'errors'
     | 'touched'

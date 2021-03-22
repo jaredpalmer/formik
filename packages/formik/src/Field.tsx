@@ -9,9 +9,9 @@ import {
 } from './types';
 import { isFunction, isEmptyChildren, isObject } from './utils';
 import invariant from 'tiny-warning';
-import { useFullFormikState } from './hooks/useFullFormikState';
 import { useFieldMeta } from './hooks/hooks';
 import { useFormikContext } from './FormikContext';
+import { selectFullState } from './helpers/form-helpers';
 
 export interface FieldProps<V = any, FormValues = any> {
   field: FieldInputProps<V>;
@@ -173,8 +173,9 @@ export function Field<_FieldValue = any, FormValues = any>({
    * Otherwise, we will pointlessly get the initial values but never subscribe to updates.
    */
   const formikApi = useFormikContext<FormValues>();
-  const formikState = useFullFormikState(
-    formikApi,
+  const formikState = formikApi.useState(
+    selectFullState,
+    Object.is,
     !!render || isFunction(children) || (!!component && typeof component !== 'string')
   );
 

@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import {
   selectFieldMetaByName,
 } from '../helpers/field-helpers';
-import { FieldMetaProps } from '../types';
+import { FieldMetaProps, FormikState } from '../types';
 import { useFormikState } from './useFormikState';
 import { isShallowEqual } from '../utils';
 
@@ -19,6 +19,8 @@ export const useFieldMeta = <Value>(name: string): FieldMetaProps<Value> => {
   return fieldMeta;
 };
 
-export const useIsDirty = () => useFormikContext().useComputedState().dirty;
+const selectIsDirty = (state: FormikState<any>) => state.dirty;
+export const useIsDirty = () => useFormikContext().useState(selectIsDirty);
 
-export const useIsValid = () => useFormikContext().useComputedState().isValid;
+const selectIsValid = (state: FormikState<any>) => state.isValid;
+export const useIsValid = () => useFormikContext().useState(selectIsValid);

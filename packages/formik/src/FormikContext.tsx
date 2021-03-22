@@ -2,7 +2,7 @@ import * as React from 'react';
 import { FormikApi, FormikContextType, FormikValues } from './types';
 import invariant from 'tiny-warning';
 import { FormikConnectedType } from './connect';
-import { useFullFormikState } from './hooks/useFullFormikState';
+import { selectFullState } from './helpers/form-helpers';
 
 export const FormikContext = React.createContext<FormikContextType<any>>(
   undefined as any
@@ -33,7 +33,7 @@ export function FormikConsumer<Values = any>({
   children: (formik: FormikConnectedType<Values>) => React.ReactNode;
 }) {
   const formik = useFormikContext<Values>();
-  const state = useFullFormikState(formik);
+  const state = formik.useState(selectFullState);
 
   invariant(
     !!formik,

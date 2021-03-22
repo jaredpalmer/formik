@@ -1,19 +1,32 @@
-import React, { useEffect, useState } from 'react';
-import { ErrorMessage, Field, Form, FormikProvider, useFormik } from 'formik';
+import * as React from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Form,
+  FormikProvider,
+  FormikState,
+  useFormik,
+} from 'formik';
 import * as Yup from 'yup';
 import { useRouter } from 'next/router';
 
-const selectSignInState = (formikState) => ({
+type SignInValues = {
+  username: string;
+  password: string;
+};
+
+const selectSignInState = (formikState: FormikState<SignInValues>) => ({
   values: formikState.values,
   errors: formikState.errors,
   touched: formikState.touched,
+  isValid: formikState.isValid,
 });
 
-const SignIn = () => {
+const SignInPage = () => {
   const router = useRouter();
-  const [errorLog, setErrorLog] = useState([]);
+  const [errorLog, setErrorLog] = React.useState<any[]>([]);
 
-  const formik = useFormik({
+  const formik = useFormik<SignInValues>({
     validateOnMount: router.query.validateOnMount === 'true',
     validateOnBlur: router.query.validateOnBlur !== 'false',
     validateOnChange: router.query.validateOnChange !== 'false',
@@ -28,46 +41,42 @@ const SignIn = () => {
     },
   });
 
-  const signInState = {
-    ...formik.useState(selectSignInState),
-    ...formik.useComputedState(),
-  };
+  const state = formik.useState(selectSignInState);
 
-  useEffect(() => {
-    if (signInState.errors.username && signInState.touched.username) {
+  React.useEffect(() => {
+    if (state.errors.username && state.touched.username) {
       setErrorLog(logs => [
         ...logs,
         {
           name: 'username',
-          value: signInState.values.username,
-          error: signInState.errors.username,
+          value: state.values.username,
+          error: state.errors.username,
         },
       ]);
     }
 
-    if (signInState.errors.password && signInState.touched.password) {
+    if (state.errors.password && state.touched.password) {
       setErrorLog(logs => [
         ...logs,
         {
           name: 'password',
-          value: signInState.values.password,
-          error: signInState.errors.password,
+          value: state.values.password,
+          error: state.errors.password,
         },
       ]);
     }
   }, [
-    signInState.values.username,
-    signInState.errors.username,
-    signInState.touched.username,
-    signInState.values.password,
-    signInState.errors.password,
-    signInState.touched.password,
+    state.values.username,
+    state.errors.username,
+    state.touched.username,
+    state.values.password,
+    state.errors.password,
+    state.touched.password,
   ]);
 
   return (
     <div>
       <h1>Sign In</h1>
-
       <FormikProvider value={formik}>
         <Form>
           <div>
@@ -80,7 +89,7 @@ const SignIn = () => {
             <ErrorMessage name="password" component="p" />
           </div>
 
-          <button type="submit" disabled={!signInState.isValid}>
+          <button type="submit" disabled={!state.isValid}>
             Submit
           </button>
 
@@ -100,4 +109,4 @@ const SignIn = () => {
   );
 };
 
-export default SignIn;
+export default SignInPage;

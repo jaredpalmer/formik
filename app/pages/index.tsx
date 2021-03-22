@@ -9,7 +9,7 @@ function Home() {
         <h2>Tutorial</h2>
         <ul>
           <li>
-            <Link href="/fixtures/basic">
+            <Link href="/tutorial/basic">
               <a>Basic Form</a>
             </Link>
           </li>

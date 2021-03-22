@@ -1068,9 +1068,19 @@ export function useFormik<Values extends FormikValues = FormikValues>(
   );
 
   /**
-   * Validate both outside of render and inside of render.
+   * RenderState vs GetState():
+   *
+   * All subscribers need access to the latest computed state, updated
+   * using memoization and useEventCallback.
+   *
+   * Using GetState() will calculate computed state on the fly based
+   * on latest ref.
    */
-  const isFormValidInRender = React.useCallback<IsFormValidFn<Values>>(
+
+   /**
+    * RenderState
+    */
+   const isFormValidInRender = React.useCallback<IsFormValidFn<Values>>(
     (errors, dirty) => {
       return typeof props.isInitialValid !== 'undefined'
         ? dirty
@@ -1080,23 +1090,29 @@ export function useFormik<Values extends FormikValues = FormikValues>(
           : props.isInitialValid
         : errors && Object.keys(errors).length === 0;
     },
-    []
+    [props]
   );
+  const computedState = React.useMemo(() =>
+    populateComputedState(isFormValidInRender, state),
+    [isFormValidInRender, state]
+  );
+  const getStateInRender = useEventCallback(() => computedState);
 
+   /**
+    * GetState
+    */
   const isFormValidOutsideOfRender = useEventCallback(isFormValidInRender);
-  
-  const getState = React.useCallback(() => 
+
+  const getState = React.useCallback(() =>
     populateComputedState(isFormValidOutsideOfRender, stateRef.current),
     [isFormValidOutsideOfRender, stateRef]
   );
 
-  const getStateInRender = useEventCallback(
-    () => populateComputedState(isFormValidInRender, state)
-  );
-
   const subscriptionsRef = React.useRef<Function[]>([]);
 
-  // this is a hook used by other components
+  /**
+   * Update Subscriptions using RenderState.
+   */
   const useState = React.useCallback(
     <Return,>(
       selector: Selector<FormikState<Values>, Return>,
@@ -1127,7 +1143,7 @@ export function useFormik<Values extends FormikValues = FormikValues>(
       // eslint-disable-next-line react-hooks/rules-of-hooks
       return useSubscription(subscription);
     },
-    [getState]
+    [getStateInRender]
   );
 
   useIsomorphicLayoutEffect(() => {

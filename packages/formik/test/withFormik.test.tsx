@@ -114,7 +114,6 @@ describe('withFormik()', () => {
       validateOnChange: true,
       getState: expect.any(Function),
       useState: expect.any(Function),
-      useComputedState: expect.any(Function),
     });
   });
 

@@ -18,6 +18,11 @@ function Home() {
               <a>Sign In</a>
             </Link>
           </li>
+          <li>
+            <Link href="/tutorial/field-array">
+              <a>Field Array</a>
+            </Link>
+          </li>
         </ul>
       </nav>
       <nav>

@@ -414,23 +414,6 @@ export interface FormikRegistration {
 export type FormikContextType<Values> = FormikApi<Values> &
   Pick<FormikConfig<Values>, 'validate' | 'validationSchema'>;
 
-export interface SharedRenderProps<T> {
-  /**
-   * Field component to render. Can either be a string like 'select' or a component.
-   */
-  component?: string | React.ComponentType<T | void>;
-
-  /**
-   * Render prop (works like React router's <Route render={props =>} />)
-   */
-  render?: (props: T) => React.ReactNode;
-
-  /**
-   * Children render function <Field name>{props => ...}</Field>)
-   */
-  children?: (props: T) => React.ReactNode;
-}
-
 export type GenericFieldHTMLAttributes =
   | JSX.IntrinsicElements['input']
   | JSX.IntrinsicElements['select']

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 
-import { FieldArray, Formik, isFunction } from '../src';
+import { FieldArray, FieldArrayRenderProps, Formik, FormikConfig, FormikProps, isFunction } from '../src';
 
 const noop = () => {};
 
@@ -338,7 +338,7 @@ describe('<FieldArray />', () => {
     beforeEach(() => {
       render(
         <TestForm>
-          {(props: any) => {
+          {(props) => {
             formikBag = props;
             return (
               <FieldArray
@@ -353,16 +353,16 @@ describe('<FieldArray />', () => {
         </TestForm>
       );
     });
-    it('should remove a value at given index of field array', () => {
-      act(() => {
+    it('should remove a value at given index of field array', async () => {
+      await act(async () => {
         arrayHelpers.remove(1);
       });
       const expected = ['jared', 'brent'];
       expect(formikBag.values.friends).toEqual(expected);
     });
 
-    it('should be an empty array when removing all values', () => {
-      act(() => {
+    it('should be an empty array when removing all values', async () => {
+      await act(async () => {
         arrayHelpers.remove(0);
         arrayHelpers.remove(0);
         arrayHelpers.remove(0);
@@ -371,8 +371,8 @@ describe('<FieldArray />', () => {
 
       expect(formikBag.values.friends).toEqual(expected);
     });
-    it('should clean field from errors and touched', () => {
-      act(() => {
+    it('should clean field from errors and touched', async () => {
+      await act(async () => {
         // seems weird calling 0 multiple times, but every time we call remove, the indexes get updated.
         arrayHelpers.remove(0);
         arrayHelpers.remove(0);

@@ -47,6 +47,7 @@ import {
   populateComputedState,
   selectFullState,
 } from './helpers/form-helpers';
+import { useEventCallback } from './hooks/useEventCallback';
 
 type FormikMessage<Values> =
   | { type: 'SUBMIT_ATTEMPT' }
@@ -1427,18 +1428,4 @@ function getValueForCheckbox(
   return currentArrayOfValues
     .slice(0, index)
     .concat(currentArrayOfValues.slice(index + 1));
-}
-
-function useEventCallback<T extends (...args: any[]) => any>(fn: T): T {
-  const ref: any = React.useRef(fn);
-
-  // we copy a ref to the callback scoped to the current state/props on each render
-  useIsomorphicLayoutEffect(() => {
-    ref.current = fn;
-  });
-
-  return React.useCallback(
-    (...args: any[]) => ref.current.apply(void 0, args),
-    []
-  ) as T;
 }

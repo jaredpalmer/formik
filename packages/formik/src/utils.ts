@@ -40,6 +40,13 @@ export const isPromise = (value: any): value is PromiseLike<any> =>
 export const isInputEvent = (value: any): value is React.SyntheticEvent<any> =>
   value && isObject(value) && isObject(value.target);
 
+/** @private Are we in RN? */
+export const isReactNative =
+  typeof window !== 'undefined' &&
+  window.navigator &&
+  window.navigator.product &&
+  window.navigator.product === 'ReactNative';
+
 /** @private Shallow equality comparer for objects, for optimizing selectors */
 export const isShallowEqual = (
   prev: Record<string, any>,

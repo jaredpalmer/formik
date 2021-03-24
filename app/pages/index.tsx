@@ -18,6 +18,11 @@ function Home() {
               <a>Sign In</a>
             </Link>
           </li>
+          <li>
+            <Link href="/tutorial/parse-format">
+              <a>Parse / Format</a>
+            </Link>
+          </li>
         </ul>
       </nav>
       <nav>

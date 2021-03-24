@@ -26,3 +26,14 @@ Values
   initialTouched: !!getIn(state.initialTouched, name),
   initialError: getIn(state.initialErrors, name),
 });
+
+export const defaultParseFn = (value: unknown, _name: string) => value;
+
+export const numberParseFn = (value: any, _name: string) => {
+  const parsed = parseFloat(value);
+
+  return isNaN(parsed) ? '' : parsed;
+};
+
+export const defaultFormatFn = (value: unknown, _name: string) =>
+  value === undefined ? '' : value;

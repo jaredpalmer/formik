@@ -30,6 +30,8 @@ import {
   getIn,
   isObject,
   setNestedObjectValues,
+  isInputEvent,
+  isReactNative,
 } from './utils';
 import { FormikProvider } from './FormikContext';
 import invariant from 'tiny-warning';
@@ -41,7 +43,7 @@ import {
 } from './hooks/useOptimizedSelector';
 import { unstable_batchedUpdates } from 'react-dom';
 import { useSubscription } from 'use-subscription';
-import { selectFieldMetaByName } from './helpers/field-helpers';
+import { defaultFormatFn, defaultParseFn, numberParseFn, selectFieldMetaByName } from './helpers/field-helpers';
 import {
   IsFormValidFn,
   populateComputedState,
@@ -1021,15 +1023,47 @@ export function useFormik<Values extends FormikValues = FormikValues>(
     [setFieldValue, setFieldTouched, setFieldError]
   );
 
+  const getValueFromEvent = useEventCallback(
+    (event: React.SyntheticEvent<any>, fieldName: string) => {
+      // React Native/Expo Web/maybe other render envs
+      if (
+        !isReactNative &&
+        event.nativeEvent &&
+        (event.nativeEvent as any).text !== undefined
+      ) {
+        return (event.nativeEvent as any).text;
+      }
+
+      // React Native
+      if (isReactNative && event.nativeEvent) {
+        return (event.nativeEvent as any).text;
+      }
+
+      const target = event.target ? event.target : event.currentTarget;
+      const { type, value, checked, options, multiple } = target;
+
+      return /checkbox/.test(type) // checkboxes
+        ? getValueForCheckbox(getIn(state.values, fieldName!), checked, value)
+        : !!multiple // <select multiple>
+        ? getSelectedValues(options)
+        : value;
+    }
+  );
+
   const getFieldProps = React.useCallback(
     (
       nameOrOptions,
       forFieldMeta?: FieldMetaProps<any>
     ): FieldInputProps<any> => {
       const isAnObject = isObject(nameOrOptions);
-      const name = isAnObject ? nameOrOptions.name : nameOrOptions;
+      const name = isAnObject
+        ? nameOrOptions.name
+          ? nameOrOptions.name
+          : nameOrOptions.id
+        : nameOrOptions;
       const fieldMeta = forFieldMeta ?? getFieldMeta(name);
       const valueState = fieldMeta.value;
+      const touchedState = fieldMeta.touched;
 
       const field: FieldInputProps<any> = {
         name,
@@ -1037,12 +1071,16 @@ export function useFormik<Values extends FormikValues = FormikValues>(
         onChange: handleChange,
         onBlur: handleBlur,
       };
+
       if (isAnObject) {
         const {
           type,
           value: valueProp, // value is special for checkboxes
           as: is,
           multiple,
+          parse = /number|range/.test(type) ? numberParseFn : defaultParseFn,
+          format = defaultFormatFn,
+          formatOnBlur = false,
         } = nameOrOptions;
 
         if (type === 'checkbox') {
@@ -1061,10 +1099,42 @@ export function useFormik<Values extends FormikValues = FormikValues>(
           field.value = field.value || [];
           field.multiple = true;
         }
+
+        if (type !== 'radio' && type !== 'checkbox' && !!format) {
+          if (formatOnBlur === true) {
+            if (touchedState === true) {
+              field.value = format(field.value);
+            }
+          } else {
+            field.value = format(field.value);
+          }
+        }
+
+        // We incorporate the fact that we know the `name` prop by scoping `onChange`.
+        // In addition, to support `parse` fn, we can't just re-use the OG `handleChange`, but
+        // instead re-implement it's guts.
+        if (type !== 'radio' && type !== 'checkbox') {
+          field.onChange = (eventOrValue: React.ChangeEvent<any> | any) => {
+            if (isInputEvent(eventOrValue)) {
+              if (eventOrValue.persist) {
+                eventOrValue.persist();
+              }
+              setFieldValue(name, parse(getValueFromEvent(eventOrValue, name)));
+            } else {
+              setFieldValue(name, parse(eventOrValue));
+            }
+          };
+        }
       }
+
       return field;
     },
-    [getFieldMeta, handleBlur, handleChange]
+    [
+      getValueFromEvent,
+      handleBlur,
+      handleChange,
+      setFieldValue
+    ]
   );
 
   /**
@@ -1380,9 +1450,16 @@ function arrayMerge(target: any[], source: any[], options: any): any[] {
 
 /** Return multi select values based on an array of options */
 function getSelectedValues(options: any[]) {
-  return Array.from(options)
-    .filter(el => el.selected)
-    .map(el => el.value);
+  const result = [];
+  if (options) {
+    for (let index = 0; index < options.length; index++) {
+      const option = options[index];
+      if (option.selected) {
+        result.push(option.value);
+      }
+    }
+  }
+  return result;
 }
 
 /** Return the next value for a checkbox */

@@ -391,7 +391,7 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
  * State, handlers, and helpers made available to form component or render prop
  * of <Formik/>.
  */
-export type FormikProps<Values> = FormikSharedConfig &
+export type FormikProps<Values> = FormikSharedConfig<Values> &
   FormikReducerState<Values> &
   FormikInitialState<Values> &
   FormikHelpers<Values> &

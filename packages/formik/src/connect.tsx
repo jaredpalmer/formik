@@ -1,11 +1,14 @@
 import hoistNonReactStatics from 'hoist-non-react-statics';
 import * as React from 'react';
 import invariant from 'tiny-warning';
-import { FormikComputedState, FormikContextType, FormikReducerState } from './types';
-import { useFormikContext } from './FormikContext';
+import { FormikSharedConfig, FormikContextType, FormikState } from './types';
+import { useFormikConfig, useFormikContext } from './FormikContext';
 import { selectFullState } from './helpers/form-helpers';
 
-export type FormikConnectedType<Values> = FormikContextType<Values> & FormikReducerState<Values> & FormikComputedState;
+export type FormikConnectedType<Values> =
+  FormikContextType<Values> &
+  FormikSharedConfig<Values> &
+  FormikState<Values>;
 
 /**
  * Connect any component to Formik context, and inject as a prop called `formik`;
@@ -16,6 +19,7 @@ export function connect<OuterProps, Values = {}>(
 ) {
   const C: React.FC<OuterProps> = (props: OuterProps) => {
     const formik = useFormikContext<Values>();
+    const config = useFormikConfig<Values>();
     const state = formik.useState(selectFullState);
 
     invariant(
@@ -25,6 +29,7 @@ export function connect<OuterProps, Values = {}>(
 
     const legacyBag = {
       ...formik,
+      ...config,
       ...state,
     }
 

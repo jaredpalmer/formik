@@ -19,36 +19,7 @@ export interface FieldProps<V = any, FormValues = any> {
   meta: FieldMetaProps<V>;
 }
 
-export interface FieldConfig<V = any> {
-  /**
-   * Field component to render. Can either be a string like 'select' or a component.
-   */
-  component?:
-    | string
-    | React.ComponentType<FieldProps<V>>
-    | React.ComponentType
-    | React.ForwardRefExoticComponent<any>;
-
-  /**
-   * Component to render. Can either be a string e.g. 'select', 'input', or 'textarea', or a component.
-   */
-  as?:
-    | React.ComponentType<FieldProps<V>['field']>
-    | string
-    | React.ComponentType
-    | React.ForwardRefExoticComponent<any>;
-
-  /**
-   * Render prop (works like React router's <Route render={props =>} />)
-   * @deprecated
-   */
-  render?: (props: FieldProps<V>) => React.ReactNode;
-
-  /**
-   * Children render function <Field name>{props => ...}</Field>)
-   */
-  children?: ((props: FieldProps<V>) => React.ReactNode) | React.ReactNode;
-
+export type UseFieldProps<V = any> = {
   /**
    * Validate a single field value independently
    */
@@ -57,12 +28,12 @@ export interface FieldConfig<V = any> {
   /**
    * Function to parse raw input value before setting it to state
    */
-  parse?: (value: unknown, name: string) => any;
+  parse?: (value: unknown, name: string) => V;
 
   /**
    * Function to transform value passed to input
    */
-  format?: (value: any, name: string) => any;
+  format?: (value: V, name: string) => any;
 
   /**
    * Wait until blur event before formatting input value?
@@ -70,6 +41,10 @@ export interface FieldConfig<V = any> {
    */
   formatOnBlur?: boolean;
 
+  /**
+   * HTML multiple attribute
+   */
+  multiple?: boolean;
   /**
    * Field name
    */
@@ -80,19 +55,10 @@ export interface FieldConfig<V = any> {
 
   /** Field value */
   value?: any;
-
-  /** Inner ref */
-  innerRef?: (instance: any) => void;
-}
-
-export type FieldAttributes<T> = GenericFieldHTMLAttributes &
-  FieldConfig<T> &
-  T & { name: string };
-
-export type FieldHookConfig<T> = GenericFieldHTMLAttributes & FieldConfig<T>;
+};
 
 export function useField<Val = any, FormValues = any>(
-  propsOrFieldName: string | FieldHookConfig<Val>
+  propsOrFieldName: string | UseFieldProps<Val>
 ): [FieldInputProps<Val>, FieldMetaProps<Val>, FieldHelperProps<Val>] {
   const formik = useFormikContext<FormValues>();
   const {
@@ -102,12 +68,9 @@ export function useField<Val = any, FormValues = any>(
     unregisterField,
   } = formik;
 
-  const isAnObject = isObject(propsOrFieldName);
-
-  // Normalize propsOrFieldName to FieldHookConfig<Val>
-  const props: FieldHookConfig<Val> = isAnObject
-    ? (propsOrFieldName as FieldHookConfig<Val>)
-    : { name: propsOrFieldName as string };
+  const props = isObject(propsOrFieldName)
+    ? propsOrFieldName
+    : { name: propsOrFieldName };
 
   const { name: fieldName, validate: validateFn } = props;
 
@@ -146,7 +109,46 @@ export function useField<Val = any, FormValues = any>(
   ];
 }
 
-export function Field<_FieldValue = any, FormValues = any>({
+export interface FieldConfig<V = any> {
+  /**
+   * Field component to render. Can either be a string like 'select' or a component.
+   */
+  component?:
+    | string
+    | React.ComponentType<FieldProps<V>>
+    | React.ComponentType
+    | React.ForwardRefExoticComponent<any>;
+
+  /**
+   * Component to render. Can either be a string e.g. 'select', 'input', or 'textarea', or a component.
+   */
+  as?:
+    | string
+    | React.ComponentType<FieldInputProps<V>>
+    | React.ComponentType
+    | React.ForwardRefExoticComponent<any>;
+
+  /**
+   * Render prop (works like React router's <Route render={props =>} />)
+   * @deprecated
+   */
+  render?: (props: FieldProps<V>) => React.ReactNode;
+
+  /**
+   * Children render function <Field name>{props => ...}</Field>)
+   */
+  children?: ((props: FieldProps<V>) => React.ReactNode) | React.ReactNode;
+
+  /** Inner ref */
+  innerRef?: (instance: any) => void;
+}
+
+export type FieldAttributes<T> = GenericFieldHTMLAttributes &
+  UseFieldProps<T> &
+  FieldConfig<T> &
+  T & { name: string };
+
+export function Field<FormValues = any>({
   render,
   children,
   as: is, // `as` is reserved in typescript lol

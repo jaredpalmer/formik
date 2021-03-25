@@ -48,6 +48,11 @@ function Home() {
               <a>Tearing Tests</a>
             </Link>
           </li>
+          <li>
+            <Link href="/fixtures/updating-config">
+              <a>Updating Config</a>
+            </Link>
+          </li>
         </ul>
       </nav>
       <style jsx>{`

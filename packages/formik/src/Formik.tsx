@@ -19,6 +19,8 @@ import {
   HandleChangeEventFn,
   HandleChangeFn,
   FormikState,
+  NotOptional,
+  FormikSharedConfig,
 } from './types';
 import {
   isFunction,
@@ -150,7 +152,7 @@ interface FieldRegistry {
 
 export function useFormik<Values extends FormikValues = FormikValues>(
   rawProps: FormikConfig<Values>
-): FormikApi<Values> {
+): [FormikApi<Values>, FormikSharedConfig<Values>] {
   const {
     validateOnChange = true,
     validateOnBlur = true,
@@ -1077,10 +1079,10 @@ export function useFormik<Values extends FormikValues = FormikValues>(
    * on latest ref.
    */
 
-   /**
-    * RenderState
-    */
-   const isFormValidInRender = React.useCallback<IsFormValidFn<Values>>(
+  /**
+   * RenderState
+   */
+  const isFormValidInRender = React.useCallback<IsFormValidFn<Values>>(
     (errors, dirty) => {
       return typeof props.isInitialValid !== 'undefined'
         ? dirty
@@ -1092,19 +1094,19 @@ export function useFormik<Values extends FormikValues = FormikValues>(
     },
     [props]
   );
-  const computedState = React.useMemo(() =>
-    populateComputedState(isFormValidInRender, state),
+  const computedState = React.useMemo(
+    () => populateComputedState(isFormValidInRender, state),
     [isFormValidInRender, state]
   );
   const getStateInRender = useEventCallback(() => computedState);
 
-   /**
-    * GetState
-    */
+  /**
+   * GetState
+   */
   const isFormValidOutsideOfRender = useEventCallback(isFormValidInRender);
 
-  const getState = React.useCallback(() =>
-    populateComputedState(isFormValidOutsideOfRender, stateRef.current),
+  const getState = React.useCallback(
+    () => populateComputedState(isFormValidOutsideOfRender, stateRef.current),
     [isFormValidOutsideOfRender, stateRef]
   );
 
@@ -1152,15 +1154,9 @@ export function useFormik<Values extends FormikValues = FormikValues>(
     });
   }, [state]);
 
-  // mostly optimized renders
-  const ctx = React.useMemo<FormikApi<Values>>(
+  // The API is completely stable.
+  const formikApi = React.useMemo<FormikApi<Values>>(
     () => ({
-      // config
-      validateOnBlur,
-      validateOnChange,
-      validateOnMount,
-      validationSchema: props.validationSchema,
-      validate: props.validate,
       // handlers
       handleBlur,
       handleChange,
@@ -1190,11 +1186,6 @@ export function useFormik<Values extends FormikValues = FormikValues>(
       useState,
     }),
     [
-      validateOnBlur,
-      validateOnChange,
-      validateOnMount,
-      props.validationSchema,
-      props.validate,
       handleBlur,
       handleChange,
       handleReset,
@@ -1222,14 +1213,35 @@ export function useFormik<Values extends FormikValues = FormikValues>(
     ]
   );
 
-  return ctx;
+  const formikConfig = React.useMemo<NotOptional<FormikSharedConfig<Values>>>(
+    () => ({
+      validateOnChange,
+      validateOnBlur,
+      validateOnMount,
+      enableReinitialize,
+      validationSchema: props.validationSchema,
+      validate: props.validate,
+      isInitialValid: props.isInitialValid,
+    }),
+    [
+      validateOnChange,
+      validateOnBlur,
+      validateOnMount,
+      enableReinitialize,
+      props.validationSchema,
+      props.validate,
+      props.isInitialValid,
+    ]
+  );
+
+  return [formikApi, formikConfig];
 }
 
 export function Formik<
   Values extends FormikValues = FormikValues,
   ExtraProps = {}
 >(props: FormikConfig<Values> & ExtraProps) {
-  const formikApi = useFormik<Values>(props);
+  const [formikApi, formikConfig] = useFormik<Values>(props);
   const { component, children, render, innerRef } = props;
 
   // Get initial Full State, but if we don't need it, we won't subscribe to updates
@@ -1258,7 +1270,7 @@ export function Formik<
     }, []);
   }
   return (
-    <FormikProvider value={formikApi}>
+    <FormikProvider value={formikApi} config={formikConfig}>
       {component
         ? React.createElement(component as any, formikbag)
         : render

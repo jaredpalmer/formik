@@ -116,11 +116,10 @@ export interface FormikComputedState {
  */
 export type FormikComputedProps = FormikComputedState;
 
-export type FormikState<Values> = FormikReducerState<Values> & FormikComputedState;
+export type FormikState<Values> = FormikReducerState<Values> &
+  FormikComputedState;
 
-export type GetStateFn<
-  Values
-> = () => FormikState<Values>;
+export type GetStateFn<Values> = () => FormikState<Values>;
 export type UnregisterFieldFn = (name: string) => void;
 export type RegisterFieldFn = (name: string, { validate }: any) => void;
 
@@ -308,8 +307,7 @@ export interface FormikValidationConfig<Values> {
 export type FormikApi<Values extends FormikValues> = FormikHelpers<Values> &
   FormikStateHelpers<Values> &
   FieldHelpers &
-  FormikHandlers &
-  FormikValidationConfig<Values> & {
+  FormikHandlers & {
     unregisterField: UnregisterFieldFn;
     registerField: RegisterFieldFn;
   };
@@ -506,3 +504,13 @@ export type ValidationHandler<Values extends FormikValues> = (
   values: Values,
   field?: string
 ) => Promise<FormikErrors<Values>>;
+
+/**
+ * If an object has optional properties, force passing undefined
+ * This helps us make sure we are passing back all possible props.
+ */
+export type NotOptional<T> = {
+  [Key in keyof Required<T>]: T[Key] extends Required<T[Key]>
+    ? T[Key]
+    : T[Key] | undefined;
+};

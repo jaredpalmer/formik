@@ -1,15 +1,31 @@
 import * as React from 'react';
-import { FormikApi, FormikContextType, FormikValues } from './types';
+import { FormikApi, FormikContextType, FormikSharedConfig, FormikValues } from './types';
 import invariant from 'tiny-warning';
 import { FormikConnectedType } from './connect';
 import { selectFullState } from './helpers/form-helpers';
 
+/**
+ * This Context provides the completely stable Formik API
+ *
+ * @private
+ */
 export const FormikContext = React.createContext<FormikContextType<any>>(
   undefined as any
 );
 FormikContext.displayName = 'FormikContext';
 
-export const FormikProvider = FormikContext.Provider;
+export type FormikProviderProps<Values> = {
+  value: FormikContextType<Values>;
+  config: FormikSharedConfig<Values>;
+}
+
+export const FormikProvider = <Values,>(props: React.PropsWithChildren<FormikProviderProps<Values>>) => {
+  return <FormikContext.Provider value={props.value}>
+    <FormikConfigContext.Provider value={props.config}>
+      {props.children}
+    </FormikConfigContext.Provider>
+  </FormikContext.Provider>
+}
 
 export function useFormikContext<Values extends FormikValues>(): FormikApi<
   Values
@@ -22,6 +38,29 @@ export function useFormikContext<Values extends FormikValues>(): FormikApi<
   );
 
   return formikApi;
+}
+
+/**
+ * This Context provides Formik's configuration, which could change if a developer does not memoize.
+ *
+ * @private
+ */
+const FormikConfigContext = React.createContext<FormikSharedConfig<any>>(
+  undefined as any
+);
+FormikConfigContext.displayName = 'FormikConfigContext';
+
+export function useFormikConfig<Values extends FormikValues>(): FormikSharedConfig<
+  Values
+> {
+  const formikConfig = React.useContext(FormikConfigContext);
+
+  invariant(
+    !!formikConfig,
+    `FormikConfigContext is undefined, please verify you are calling useFormikConfigContext() as child of a <FormikProvider> component.`
+  );
+
+  return formikConfig;
 }
 
 /**

@@ -1,9 +1,8 @@
 import * as React from 'react';
-import { FormikContextType } from './types';
+import { FormikApi, FormikContextType, FormikValues } from './types';
 import invariant from 'tiny-warning';
-import { useFormikApi } from './hooks/useFormikApi';
-import { useFullFormikState } from './hooks/useFullFormikState';
 import { FormikConnectedType } from './connect';
+import { selectFullState } from './helpers/form-helpers';
 
 export const FormikContext = React.createContext<FormikContextType<any>>(
   undefined as any
@@ -12,23 +11,17 @@ FormikContext.displayName = 'FormikContext';
 
 export const FormikProvider = FormikContext.Provider;
 
-/**
- * @deprecated Please access state directly via the Formik API.
- */
- export function useFormikContext<Values>() {
-  const formik = useFormikApi<Values>();
+export function useFormikContext<Values extends FormikValues>(): FormikApi<
+  Values
+> {
+  const formikApi = React.useContext(FormikContext);
 
   invariant(
-    !!formik,
+    !!formikApi,
     `Formik context is undefined, please verify you are calling useFormikContext() as child of a <Formik> component.`
   );
 
-  const state = useFullFormikState(formik);
-
-  return {
-    ...formik,
-    ...state,
-  };
+  return formikApi;
 }
 
 /**
@@ -40,11 +33,19 @@ export function FormikConsumer<Values = any>({
   children: (formik: FormikConnectedType<Values>) => React.ReactNode;
 }) {
   const formik = useFormikContext<Values>();
+  const state = formik.useState(selectFullState);
 
   invariant(
     !!formik,
     `Formik context is undefined, please verify you are calling useFormikContext() as child of a <Formik> component.`
   );
 
-  return <>{children(formik)}</>;
-};
+  return (
+    <>
+      {children({
+        ...formik,
+        ...state,
+      })}
+    </>
+  );
+}

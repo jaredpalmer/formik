@@ -26,6 +26,12 @@ module.exports = {
           __DEV__: process.env.NODE_ENV === 'development',
         })
       );
+    } else {
+      // Remove TSConfigPath aliases.
+      // We should use a tool which supports tsconfig.build.json
+      config.resolve.plugins = config.resolve.plugins.filter(
+        plugin => plugin.constructor.name !== 'JsConfigPathsPlugin'
+      );
     }
 
     return config;
@@ -35,4 +41,10 @@ module.exports = {
     // Make sure entries are not getting disposed.
     maxInactiveAge: 1000 * 60 * 60,
   },
+
+  // we don't need to break on TS errors since app/ is not production code.
+  // in development we alias /app -> /packages/formik/src via TSConfig.paths
+  // then during build we remove the JsConfigPathsPlugin to remove that alias
+  // but there is no way to remove the link with Next + TypeScript, like using tsconfig.build.json
+  typescript: { ignoreBuildErrors: true }
 };

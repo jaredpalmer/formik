@@ -103,7 +103,6 @@ describe('withFormik()', () => {
       setSubmitting: expect.any(Function),
       setTouched: expect.any(Function),
       setValues: expect.any(Function),
-      isFormValid: expect.any(Function),
       submitCount: 0,
       submitForm: expect.any(Function),
       touched: {},

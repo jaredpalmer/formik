@@ -62,12 +62,12 @@ export interface FormikInitialState<Values> {
   initialStatus: FormikConfig<Values>['initialStatus'];
 }
 
-export type FormikState<Values> = FormikInitialState<Values> &
+export type FormikReducerState<Values> = FormikInitialState<Values> &
   FormikCurrentState<Values>;
 
 export type FormikMessage<
   Values,
-  State extends FormikState<Values> = FormikState<Values>
+  State extends FormikReducerState<Values> = FormikReducerState<Values>
 > =
   | { type: 'SUBMIT_ATTEMPT' }
   | { type: 'SUBMIT_FAILURE' }
@@ -116,10 +116,11 @@ export interface FormikComputedState {
  */
 export type FormikComputedProps = FormikComputedState;
 
+export type FormikState<Values> = FormikReducerState<Values> & FormikComputedState;
+
 export type GetStateFn<
-  Values,
-  State extends FormikState<Values> = FormikState<Values>
-> = () => State;
+  Values
+> = () => FormikState<Values>;
 export type UnregisterFieldFn = (name: string) => void;
 export type RegisterFieldFn = (name: string, { validate }: any) => void;
 
@@ -171,21 +172,16 @@ export type ValidateFieldFn = (
 ) => Promise<void | string | undefined>;
 
 export type ResetFormFn<Values extends FormikValues> = (
-  nextState?: Partial<FormikState<Values>> | undefined
+  nextState?: Partial<FormikReducerState<Values>> | undefined
 ) => void;
 
 export type SetFormikStateFn<Values extends FormikValues> = (
   stateOrCb:
-    | FormikState<Values>
-    | ((state: FormikState<Values>) => FormikState<Values>)
+    | FormikReducerState<Values>
+    | ((state: FormikReducerState<Values>) => FormikReducerState<Values>)
 ) => void;
 
 export type SubmitFormFn = () => Promise<any>;
-
-export type IsFormValidFn<Values> = (
-  errors: FormikErrors<Values>,
-  dirty: boolean
-) => boolean;
 
 export interface FormikHelpers<Values> {
   /** Manually set top level status. */
@@ -314,8 +310,6 @@ export type FormikApi<Values extends FormikValues> = FormikHelpers<Values> &
   FieldHelpers &
   FormikHandlers &
   FormikValidationConfig<Values> & {
-    /** Check form validity based on config */
-    isFormValid: IsFormValidFn<Values>;
     unregisterField: UnregisterFieldFn;
     registerField: RegisterFieldFn;
   };
@@ -400,7 +394,7 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
  * of <Formik/>.
  */
 export type FormikProps<Values> = FormikSharedConfig &
-  FormikState<Values> &
+  FormikReducerState<Values> &
   FormikInitialState<Values> &
   FormikHelpers<Values> &
   FieldHelpers &

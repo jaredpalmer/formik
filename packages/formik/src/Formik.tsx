@@ -5,7 +5,7 @@ import isPlainObject from 'lodash/isPlainObject';
 import {
   FormikConfig,
   FormikErrors,
-  FormikState,
+  FormikReducerState,
   FormikTouched,
   FormikValues,
   FormikProps,
@@ -18,7 +18,7 @@ import {
   HandleBlurEventFn,
   HandleChangeEventFn,
   HandleChangeFn,
-  IsFormValidFn,
+  FormikState,
 } from './types';
 import {
   isFunction,
@@ -33,7 +33,6 @@ import {
 } from './utils';
 import { FormikProvider } from './FormikContext';
 import invariant from 'tiny-warning';
-import { useFullFormikState } from './hooks/useFullFormikState';
 import { useIsomorphicLayoutEffect } from './hooks/useIsomorphicLayoutEffect';
 import {
   Comparer,
@@ -43,6 +42,11 @@ import {
 import { unstable_batchedUpdates } from 'react-dom';
 import { useSubscription } from 'use-subscription';
 import { selectFieldMetaByName } from './helpers/field-helpers';
+import {
+  IsFormValidFn,
+  populateComputedState,
+  selectFullState,
+} from './helpers/form-helpers';
 
 type FormikMessage<Values> =
   | { type: 'SUBMIT_ATTEMPT' }
@@ -59,16 +63,16 @@ type FormikMessage<Values> =
   | { type: 'SET_STATUS'; payload: any }
   | {
       type: 'SET_FORMIK_STATE';
-      payload: (s: FormikState<Values>) => FormikState<Values>;
+      payload: (s: FormikReducerState<Values>) => FormikReducerState<Values>;
     }
   | {
       type: 'RESET_FORM';
-      payload: Partial<FormikState<Values>>;
+      payload: Partial<FormikReducerState<Values>>;
     };
 
 // State reducer
 function formikReducer<Values>(
-  state: FormikState<Values>,
+  state: FormikReducerState<Values>,
   msg: FormikMessage<Values>
 ) {
   switch (msg.type) {
@@ -206,7 +210,7 @@ export function useFormik<Values extends FormikValues = FormikValues>(
    *       snapshot    ref
    * const [state, updateState] = useFormikThing();
    */
-  const stateRef = React.useRef<FormikState<Values>>({
+  const stateRef = React.useRef<FormikReducerState<Values>>({
     initialValues: props.initialValues,
     initialErrors: props.initialErrors ?? emptyErrors,
     initialTouched: props.initialTouched ?? emptyTouched,
@@ -220,19 +224,16 @@ export function useFormik<Values extends FormikValues = FormikValues>(
     submitCount: 0,
   });
 
-  const getState = React.useCallback(() => stateRef.current, [stateRef]);
-  const [state, internalDispatch] = React.useReducer<
-    React.Reducer<FormikState<Values>, FormikMessage<Values>>
-  >(formikReducer, stateRef.current);
+  const [state, setState] = React.useState(stateRef.current);
 
   /**
-   * Each call to dispatch _immediately_ updates the ref. It also dispatches to React's internal dispatcher.
+   * Each call to dispatch _immediately_ updates the ref.
+   * It also dispatches to React's internal dispatcher.
    */
   const dispatch = React.useCallback(
     (msg: FormikMessage<Values>) => {
-      // double reducer
-      stateRef.current = formikReducer(stateRef.current, msg);
-      internalDispatch(msg);
+      // manually update state via reducer and dispatch resolved value via setState
+      setState((stateRef.current = formikReducer(stateRef.current, msg)));
     },
     [stateRef]
   );
@@ -412,7 +413,7 @@ export function useFormik<Values extends FormikValues = FormikValues>(
   }, [performValidationOnMount]);
 
   const resetForm = useEventCallback(
-    (nextState?: Partial<FormikState<Values>>) => {
+    (nextState?: Partial<FormikReducerState<Values>>) => {
       const values =
         nextState?.values ?? nextState?.initialValues ?? state.initialValues;
       const errors =
@@ -833,8 +834,8 @@ export function useFormik<Values extends FormikValues = FormikValues>(
   const setFormikState = React.useCallback(
     (
       stateOrCb:
-        | FormikState<Values>
-        | ((state: FormikState<Values>) => FormikState<Values>)
+        | FormikReducerState<Values>
+        | ((state: FormikReducerState<Values>) => FormikReducerState<Values>)
     ): void => {
       if (isFunction(stateOrCb)) {
         dispatch({ type: 'SET_FORMIK_STATE', payload: stateOrCb });
@@ -1066,19 +1067,52 @@ export function useFormik<Values extends FormikValues = FormikValues>(
     [getFieldMeta, handleBlur, handleChange]
   );
 
-  const isFormValid = useEventCallback<IsFormValidFn<Values>>((errors, dirty) => {
-    return typeof props.isInitialValid !== 'undefined'
-      ? dirty
-        ? errors && Object.keys(errors).length === 0
-        : props.isInitialValid !== false && isFunction(props.isInitialValid)
-        ? props.isInitialValid(props)
-        : props.isInitialValid
-      : errors && Object.keys(errors).length === 0;
-  });
+  /**
+   * RenderState vs GetState():
+   *
+   * All subscribers need access to the latest computed state, updated
+   * using memoization and useEventCallback.
+   *
+   * Using GetState() will calculate computed state on the fly based
+   * on latest ref.
+   */
+
+   /**
+    * RenderState
+    */
+   const isFormValidInRender = React.useCallback<IsFormValidFn<Values>>(
+    (errors, dirty) => {
+      return typeof props.isInitialValid !== 'undefined'
+        ? dirty
+          ? errors && Object.keys(errors).length === 0
+          : props.isInitialValid !== false && isFunction(props.isInitialValid)
+          ? props.isInitialValid(props)
+          : props.isInitialValid
+        : errors && Object.keys(errors).length === 0;
+    },
+    [props]
+  );
+  const computedState = React.useMemo(() =>
+    populateComputedState(isFormValidInRender, state),
+    [isFormValidInRender, state]
+  );
+  const getStateInRender = useEventCallback(() => computedState);
+
+   /**
+    * GetState
+    */
+  const isFormValidOutsideOfRender = useEventCallback(isFormValidInRender);
+
+  const getState = React.useCallback(() =>
+    populateComputedState(isFormValidOutsideOfRender, stateRef.current),
+    [isFormValidOutsideOfRender, stateRef]
+  );
 
   const subscriptionsRef = React.useRef<Function[]>([]);
 
-  // this is a hook used by other components
+  /**
+   * Update Subscriptions using RenderState.
+   */
   const useState = React.useCallback(
     <Return,>(
       selector: Selector<FormikState<Values>, Return>,
@@ -1091,7 +1125,7 @@ export function useFormik<Values extends FormikValues = FormikValues>(
       // eslint-disable-next-line react-hooks/rules-of-hooks
       const subscription = React.useMemo(
         () => ({
-          getCurrentValue: () => selector(getState()),
+          getCurrentValue: () => selector(getStateInRender()),
           subscribe: shouldSubscribe
             ? (callback: Function) => {
                 subscriptionsRef.current.push(callback);
@@ -1109,7 +1143,7 @@ export function useFormik<Values extends FormikValues = FormikValues>(
       // eslint-disable-next-line react-hooks/rules-of-hooks
       return useSubscription(subscription);
     },
-    [getState]
+    [getStateInRender]
   );
 
   useIsomorphicLayoutEffect(() => {
@@ -1118,75 +1152,75 @@ export function useFormik<Values extends FormikValues = FormikValues>(
     });
   }, [state]);
 
-  // mostly optimized renders.
-  // dirty and isValid should move to useComputedState()
-  const ctx = React.useMemo<FormikApi<Values>>(() => ({
-    // config
-    validateOnBlur,
-    validateOnChange,
-    validateOnMount,
-    validationSchema: props.validationSchema,
-    validate: props.validate,
-    // handlers
-    handleBlur,
-    handleChange,
-    handleReset,
-    handleSubmit,
-    // helpers
-    resetForm,
-    setErrors,
-    setFormikState,
-    setFieldTouched,
-    setFieldValue,
-    setFieldError,
-    setStatus,
-    setSubmitting,
-    setTouched,
-    setValues,
-    submitForm,
-    validateForm: validateFormWithHighPriority,
-    validateField,
-    unregisterField,
-    registerField,
-    isFormValid,
-    getFieldProps,
-    getFieldMeta,
-    getFieldHelpers,
-    // state helpers
-    getState,
-    useState,
-  }), [
-    validateOnBlur,
-    validateOnChange,
-    validateOnMount,
-    props.validationSchema,
-    props.validate,
-    handleBlur,
-    handleChange,
-    handleReset,
-    handleSubmit,
-    resetForm,
-    setErrors,
-    setFormikState,
-    setFieldTouched,
-    setFieldValue,
-    setFieldError,
-    setStatus,
-    setSubmitting,
-    setTouched,
-    setValues,
-    submitForm,
-    validateFormWithHighPriority,
-    validateField,
-    unregisterField,
-    registerField,
-    isFormValid,
-    getFieldProps,
-    getFieldMeta,
-    getFieldHelpers,
-    getState,
-    useState,
-  ]);
+  // mostly optimized renders
+  const ctx = React.useMemo<FormikApi<Values>>(
+    () => ({
+      // config
+      validateOnBlur,
+      validateOnChange,
+      validateOnMount,
+      validationSchema: props.validationSchema,
+      validate: props.validate,
+      // handlers
+      handleBlur,
+      handleChange,
+      handleReset,
+      handleSubmit,
+      // helpers
+      resetForm,
+      setErrors,
+      setFormikState,
+      setFieldTouched,
+      setFieldValue,
+      setFieldError,
+      setStatus,
+      setSubmitting,
+      setTouched,
+      setValues,
+      submitForm,
+      validateForm: validateFormWithHighPriority,
+      validateField,
+      unregisterField,
+      registerField,
+      getFieldProps,
+      getFieldMeta,
+      getFieldHelpers,
+      // state helpers
+      getState,
+      useState,
+    }),
+    [
+      validateOnBlur,
+      validateOnChange,
+      validateOnMount,
+      props.validationSchema,
+      props.validate,
+      handleBlur,
+      handleChange,
+      handleReset,
+      handleSubmit,
+      resetForm,
+      setErrors,
+      setFormikState,
+      setFieldTouched,
+      setFieldValue,
+      setFieldError,
+      setStatus,
+      setSubmitting,
+      setTouched,
+      setValues,
+      submitForm,
+      validateFormWithHighPriority,
+      validateField,
+      unregisterField,
+      registerField,
+      getFieldProps,
+      getFieldMeta,
+      getFieldHelpers,
+      getState,
+      useState,
+    ]
+  );
 
   return ctx;
 }
@@ -1199,8 +1233,9 @@ export function Formik<
   const { component, children, render, innerRef } = props;
 
   // Get initial Full State, but if we don't need it, we won't subscribe to updates
-  const formikState = useFullFormikState<Values>(
-    formikApi,
+  const formikState = formikApi.useState(
+    selectFullState,
+    Object.is,
     !!component || !!render || isFunction(children) || !!innerRef
   );
 

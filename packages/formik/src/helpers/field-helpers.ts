@@ -1,12 +1,16 @@
-import { FieldMetaProps, FormikState } from "../types";
+import { FormikReducerState } from "../types";
 import { getIn } from "../utils";
 
-export const selectFieldMetaByName = (name: string) => <
-  Values,
-  State extends FormikState<Values>
->(
+/**
+ * @internal
+ *
+ * Get FieldMetaProps from state.
+ */
+export const selectFieldMetaByName = <
+Values
+>(name: string) => (
   state: Pick<
-    State,
+    FormikReducerState<Values>,
     | 'values'
     | 'errors'
     | 'touched'
@@ -22,17 +26,3 @@ export const selectFieldMetaByName = (name: string) => <
   initialTouched: !!getIn(state.initialTouched, name),
   initialError: getIn(state.initialErrors, name),
 });
-
-/**
- * Example of an optimized comparer.
- */
-export const fieldMetaIsEqual = <Value>(
-  prev: FieldMetaProps<Value>,
-  next: FieldMetaProps<Value>
-) =>
-  prev.value === next.value &&
-  prev.touched === next.touched &&
-  prev.error === next.error &&
-  prev.initialValue === next.initialValue &&
-  prev.initialTouched === next.initialTouched &&
-  prev.initialError === next.initialError;

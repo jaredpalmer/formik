@@ -2,7 +2,7 @@ import * as React from 'react';
 import cloneDeep from 'lodash/cloneDeep';
 import { connect, FormikConnectedType } from './connect';
 import {
-  FormikState,
+  FormikReducerState,
   SharedRenderProps,
   FormikProps,
 } from './types';
@@ -160,7 +160,7 @@ class FieldArrayInner<Values = {}> extends React.Component<
 
       formik: { setFormikState },
     } = this.props;
-    setFormikState((prevState: FormikState<any>) => {
+    setFormikState((prevState: FormikReducerState<any>) => {
       let updateErrors = typeof alterErrors === 'function' ? alterErrors : fn;
       let updateTouched =
         typeof alterTouched === 'function' ? alterTouched : fn;

@@ -326,7 +326,7 @@ export const DisplayingErrorMessagesExample = () => (
 );
 ```
 
-> The [ErrorMessage](../api/errormessage) component can also be used to display error messages.
+> The [ErrorMessage](../api/errormessage.md) component can also be used to display error messages.
 
 ## Frequently Asked Questions
 

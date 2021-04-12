@@ -108,7 +108,7 @@ export type SetErrorsFn<Values extends FormikValues> = (
 export type SetSubmittingFn = (isSubmitting: boolean) => void;
 
 export type SetTouchedFn<Values extends FormikValues> = (
-  touched: import('./types').FormikTouched<Values>,
+  touched: FormikTouched<Values>,
   shouldValidate?: boolean | undefined
 ) => Promise<void | FormikErrors<Values>>;
 

@@ -9,16 +9,12 @@ import {
   FormikTouched,
   FormikValues,
   FormikProps,
-  FieldMetaProps,
-  FieldHelperProps,
-  FieldInputProps,
   FormikHelpers,
   FormikApi,
   HandleBlurFn,
   HandleBlurEventFn,
   HandleChangeEventFn,
   HandleChangeFn,
-  FormikState,
 } from './types';
 import {
   isFunction,
@@ -28,27 +24,18 @@ import {
   isPromise,
   getActiveElement,
   getIn,
-  isObject,
   setNestedObjectValues,
 } from './utils';
 import { FormikProvider } from './FormikContext';
 import invariant from 'tiny-warning';
-import { useIsomorphicLayoutEffect } from './hooks/useIsomorphicLayoutEffect';
-import {
-  Comparer,
-  Selector,
-  useOptimizedSelector,
-} from './hooks/useOptimizedSelector';
-import { unstable_batchedUpdates } from 'react-dom';
-import { useSubscription } from 'use-subscription';
-import { selectFieldMetaByName } from './helpers/field-helpers';
 import {
   IsFormValidFn,
-  populateComputedState,
   selectFullState,
 } from './helpers/form-helpers';
+import { useFormikSubscriptions } from './hooks/useFormikSubscriptions';
+import { useEventCallback } from './hooks/useEventCallback';
 
-type FormikMessage<Values> =
+export type FormikMessage<Values> =
   | { type: 'SUBMIT_ATTEMPT' }
   | { type: 'SUBMIT_FAILURE' }
   | { type: 'SUBMIT_SUCCESS' }
@@ -136,10 +123,6 @@ function formikReducer<Values>(
   }
 }
 
-// Initial empty states // objects
-const emptyErrors: FormikErrors<unknown> = {};
-const emptyTouched: FormikTouched<unknown> = {};
-
 // This is an object that contains a map of all registered fields
 // and their validate functions
 interface FieldRegistry {
@@ -201,41 +184,47 @@ export function useFormik<Values extends FormikValues = FormikValues>(
     };
   }, []);
 
-  /**
-   * This is the true test of spacetime. Every method
-   * Formik uses must carefully consider whether it
-   * needs to use the ref or the render snapshot.
-   *
-   * The general rule is going to be,
-   *       snapshot    ref
-   * const [state, updateState] = useFormikThing();
-   */
-  const stateRef = React.useRef<FormikReducerState<Values>>({
-    initialValues: props.initialValues,
-    initialErrors: props.initialErrors ?? emptyErrors,
-    initialTouched: props.initialTouched ?? emptyTouched,
-    initialStatus: props.initialStatus,
-    values: props.initialValues,
-    errors: props.initialErrors ?? emptyErrors,
-    touched: props.initialTouched ?? emptyTouched,
-    status: props.initialStatus,
-    isSubmitting: false,
-    isValidating: false,
-    submitCount: 0,
-  });
+  const emptyErrors: FormikErrors<unknown> = {};
+  const emptyTouched: FormikTouched<unknown> = {};
 
-  const [state, setState] = React.useState(stateRef.current);
+  const isFormValid = React.useCallback<IsFormValidFn<Values>>(
+   (errors, dirty) => {
+     return typeof props.isInitialValid !== 'undefined'
+       ? dirty
+         ? errors && Object.keys(errors).length === 0
+         : props.isInitialValid !== false && isFunction(props.isInitialValid)
+         ? props.isInitialValid(props)
+         : props.isInitialValid
+       : errors && Object.keys(errors).length === 0;
+   },
+   [props]
+ );
 
   /**
-   * Each call to dispatch _immediately_ updates the ref.
-   * It also dispatches to React's internal dispatcher.
+   * `useState` is a special hook intended for other components and hooks.
+   * `getState` is used to get state imperatively.
+   * `dispatch` is used to update Formik's state.
    */
-  const dispatch = React.useCallback(
-    (msg: FormikMessage<Values>) => {
-      // manually update state via reducer and dispatch resolved value via setState
-      setState((stateRef.current = formikReducer(stateRef.current, msg)));
+  const {
+    useState,
+    getState,
+    dispatch
+  } = useFormikSubscriptions(
+    {
+      initialValues: props.initialValues,
+      initialErrors: props.initialErrors ?? emptyErrors,
+      initialTouched: props.initialTouched ?? emptyTouched,
+      initialStatus: props.initialStatus,
+      values: props.initialValues,
+      errors: props.initialErrors ?? emptyErrors,
+      touched: props.initialTouched ?? emptyTouched,
+      status: props.initialStatus,
+      isSubmitting: false,
+      isValidating: false,
+      submitCount: 0,
     },
-    [stateRef]
+    formikReducer,
+    isFormValid,
   );
 
   React.useEffect(() => {
@@ -384,12 +373,12 @@ export function useFormik<Values extends FormikValues = FormikValues>(
 
   // Run all validations methods and update state accordingly
   const validateFormWithHighPriority = useEventCallback(
-    (values: Values = state.values) => {
+    (values: Values = getState().values) => {
       dispatch({ type: 'SET_ISVALIDATING', payload: true });
       return runAllValidations(values).then(combinedErrors => {
         if (!!isMounted.current) {
           dispatch({ type: 'SET_ISVALIDATING', payload: false });
-          if (!isEqual(state.errors, combinedErrors)) {
+          if (!isEqual(getState().errors, combinedErrors)) {
             dispatch({ type: 'SET_ERRORS', payload: combinedErrors });
           }
         }
@@ -402,9 +391,9 @@ export function useFormik<Values extends FormikValues = FormikValues>(
     if (
       validateOnMount &&
       isMounted.current === true &&
-      isEqual(state.initialValues, props.initialValues)
+      isEqual(getState().initialValues, props.initialValues)
     ) {
-      validateFormWithHighPriority(state.initialValues);
+      validateFormWithHighPriority(getState().initialValues);
     }
   });
 
@@ -415,23 +404,23 @@ export function useFormik<Values extends FormikValues = FormikValues>(
   const resetForm = useEventCallback(
     (nextState?: Partial<FormikReducerState<Values>>) => {
       const values =
-        nextState?.values ?? nextState?.initialValues ?? state.initialValues;
+        nextState?.values ?? nextState?.initialValues ?? getState().initialValues;
       const errors =
         nextState?.errors ??
         nextState?.initialErrors ??
-        state?.initialErrors ??
+        getState()?.initialErrors ??
         props.initialErrors ??
         {};
       const touched =
         nextState?.touched ??
         nextState?.initialTouched ??
-        state.initialTouched ??
+        getState().initialTouched ??
         props.initialTouched ??
         {};
       const status =
         nextState?.status ??
         nextState?.initialStatus ??
-        state.initialStatus ??
+        getState().initialStatus ??
         props.initialStatus;
 
       const dispatchFn = () => {
@@ -460,7 +449,7 @@ export function useFormik<Values extends FormikValues = FormikValues>(
 
       if (props.onReset) {
         const maybePromisedOnReset = (props.onReset as any)(
-          state.values,
+          getState().values,
           imperativeMethods
         );
 
@@ -483,14 +472,14 @@ export function useFormik<Values extends FormikValues = FormikValues>(
     ) => {
       if (
         isMounted.current === true &&
-        !isEqual(state.initialValues, nextInitialValuesProp)
+        !isEqual(getState().initialValues, nextInitialValuesProp)
       ) {
         if (nextEnableReinitialize) {
           resetForm({ initialValues: nextInitialValuesProp });
         }
 
         if (nextValidateOnMount) {
-          validateFormWithHighPriority(state.initialValues);
+          validateFormWithHighPriority(getState().initialValues);
         }
       }
     }
@@ -517,7 +506,7 @@ export function useFormik<Values extends FormikValues = FormikValues>(
       if (
         nextEnableReinitialize &&
         isMounted.current === true &&
-        !isEqual(state.initialErrors, nextInitialErrorsProp)
+        !isEqual(getState().initialErrors, nextInitialErrorsProp)
       ) {
         const errors = nextInitialErrorsProp || emptyErrors;
 
@@ -544,7 +533,7 @@ export function useFormik<Values extends FormikValues = FormikValues>(
       if (
         nextEnableReinitialize &&
         isMounted.current === true &&
-        !isEqual(state.initialTouched, nextInitialTouchedProp)
+        !isEqual(getState().initialTouched, nextInitialTouchedProp)
       ) {
         const touched = nextInitialTouchedProp || emptyTouched;
 
@@ -571,7 +560,7 @@ export function useFormik<Values extends FormikValues = FormikValues>(
       if (
         nextEnableReinitialize &&
         isMounted.current === true &&
-        !isEqual(state.initialStatus, nextInitialStatusProp)
+        !isEqual(getState().initialStatus, nextInitialStatusProp)
       ) {
         const status = nextInitialStatusProp;
 
@@ -599,7 +588,7 @@ export function useFormik<Values extends FormikValues = FormikValues>(
       fieldRegistry.current[name] &&
       isFunction(fieldRegistry.current[name].validate)
     ) {
-      const value = getIn(state.values, name);
+      const value = getIn(getState().values, name);
       const maybePromise = fieldRegistry.current[name].validate(value);
       if (isPromise(maybePromise)) {
         // Only flip isValidating if the function is async.
@@ -625,7 +614,7 @@ export function useFormik<Values extends FormikValues = FormikValues>(
       }
     } else if (props.validationSchema) {
       dispatch({ type: 'SET_ISVALIDATING', payload: true });
-      return runValidationSchema(state.values, name)
+      return runValidationSchema(getState().values, name)
         .then((x: any) => x)
         .then((error: any) => {
           dispatch({
@@ -655,7 +644,7 @@ export function useFormik<Values extends FormikValues = FormikValues>(
       const willValidate =
         shouldValidate === undefined ? validateOnBlur : shouldValidate;
       return willValidate
-        ? validateFormWithHighPriority(state.values)
+        ? validateFormWithHighPriority(getState().values)
         : Promise.resolve();
     }
   );
@@ -669,7 +658,7 @@ export function useFormik<Values extends FormikValues = FormikValues>(
 
   const setValues = useEventCallback(
     (values: React.SetStateAction<Values>, shouldValidate?: boolean) => {
-      const resolvedValues = isFunction(values) ? values(state.values) : values;
+      const resolvedValues = isFunction(values) ? values(getState().values) : values;
 
       dispatch({ type: 'SET_VALUES', payload: resolvedValues });
       const willValidate =
@@ -702,7 +691,7 @@ export function useFormik<Values extends FormikValues = FormikValues>(
       const willValidate =
         shouldValidate === undefined ? validateOnChange : shouldValidate;
       return willValidate
-        ? validateFormWithHighPriority(setIn(state.values, field, value))
+        ? validateFormWithHighPriority(setIn(getState().values, field, value))
         : Promise.resolve();
     }
   );
@@ -749,7 +738,7 @@ export function useFormik<Values extends FormikValues = FormikValues>(
         val = /number|range/.test(type)
           ? ((parsed = parseFloat(value)), isNaN(parsed) ? '' : parsed)
           : /checkbox/.test(type) // checkboxes
-          ? getValueForCheckbox(getIn(state.values, field!), checked, value)
+          ? getValueForCheckbox(getIn(getState().values, field!), checked, value)
           : options && multiple // <select multiple>
           ? getSelectedValues(options)
           : value;
@@ -760,7 +749,7 @@ export function useFormik<Values extends FormikValues = FormikValues>(
         setFieldValue(field, val);
       }
     },
-    [setFieldValue, state.values]
+    [setFieldValue, getState().values]
   );
 
   const handleChange = useEventCallback(
@@ -788,7 +777,7 @@ export function useFormik<Values extends FormikValues = FormikValues>(
       const willValidate =
         shouldValidate === undefined ? validateOnBlur : shouldValidate;
       return willValidate
-        ? validateFormWithHighPriority(state.values)
+        ? validateFormWithHighPriority(getState().values)
         : Promise.resolve();
     }
   );
@@ -980,7 +969,7 @@ export function useFormik<Values extends FormikValues = FormikValues>(
   };
 
   const executeSubmit = useEventCallback(() => {
-    return props.onSubmit(state.values, imperativeMethods);
+    return props.onSubmit(getState().values, imperativeMethods);
   });
 
   const handleReset = useEventCallback(e => {
@@ -994,163 +983,6 @@ export function useFormik<Values extends FormikValues = FormikValues>(
 
     resetForm();
   });
-
-  const getFieldMeta = useEventCallback(
-    (name: string): FieldMetaProps<any> => {
-      return selectFieldMetaByName(name)({
-        errors: state.errors,
-        initialErrors: state.initialErrors,
-        initialTouched: state.initialTouched,
-        initialValues: state.initialValues,
-        touched: state.touched,
-        values: state.values,
-      });
-    }
-  );
-
-  const getFieldHelpers = React.useCallback(
-    (name: string): FieldHelperProps<any> => {
-      return {
-        setValue: (value: any, shouldValidate?: boolean) =>
-          setFieldValue(name, value, shouldValidate),
-        setTouched: (value: boolean, shouldValidate?: boolean) =>
-          setFieldTouched(name, value, shouldValidate),
-        setError: (value: any) => setFieldError(name, value),
-      };
-    },
-    [setFieldValue, setFieldTouched, setFieldError]
-  );
-
-  const getFieldProps = React.useCallback(
-    (
-      nameOrOptions,
-      forFieldMeta?: FieldMetaProps<any>
-    ): FieldInputProps<any> => {
-      const isAnObject = isObject(nameOrOptions);
-      const name = isAnObject ? nameOrOptions.name : nameOrOptions;
-      const fieldMeta = forFieldMeta ?? getFieldMeta(name);
-      const valueState = fieldMeta.value;
-
-      const field: FieldInputProps<any> = {
-        name,
-        value: valueState,
-        onChange: handleChange,
-        onBlur: handleBlur,
-      };
-      if (isAnObject) {
-        const {
-          type,
-          value: valueProp, // value is special for checkboxes
-          as: is,
-          multiple,
-        } = nameOrOptions;
-
-        if (type === 'checkbox') {
-          if (valueProp === undefined) {
-            field.checked = !!valueState;
-          } else {
-            field.checked = !!(
-              Array.isArray(valueState) && ~valueState.indexOf(valueProp)
-            );
-            field.value = valueProp;
-          }
-        } else if (type === 'radio') {
-          field.checked = valueState === valueProp;
-          field.value = valueProp;
-        } else if (is === 'select' && multiple) {
-          field.value = field.value || [];
-          field.multiple = true;
-        }
-      }
-      return field;
-    },
-    [getFieldMeta, handleBlur, handleChange]
-  );
-
-  /**
-   * RenderState vs GetState():
-   *
-   * All subscribers need access to the latest computed state, updated
-   * using memoization and useEventCallback.
-   *
-   * Using GetState() will calculate computed state on the fly based
-   * on latest ref.
-   */
-
-   /**
-    * RenderState
-    */
-   const isFormValidInRender = React.useCallback<IsFormValidFn<Values>>(
-    (errors, dirty) => {
-      return typeof props.isInitialValid !== 'undefined'
-        ? dirty
-          ? errors && Object.keys(errors).length === 0
-          : props.isInitialValid !== false && isFunction(props.isInitialValid)
-          ? props.isInitialValid(props)
-          : props.isInitialValid
-        : errors && Object.keys(errors).length === 0;
-    },
-    [props]
-  );
-  const computedState = React.useMemo(() =>
-    populateComputedState(isFormValidInRender, state),
-    [isFormValidInRender, state]
-  );
-  const getStateInRender = useEventCallback(() => computedState);
-
-   /**
-    * GetState
-    */
-  const isFormValidOutsideOfRender = useEventCallback(isFormValidInRender);
-
-  const getState = React.useCallback(() =>
-    populateComputedState(isFormValidOutsideOfRender, stateRef.current),
-    [isFormValidOutsideOfRender, stateRef]
-  );
-
-  const subscriptionsRef = React.useRef<Function[]>([]);
-
-  /**
-   * Update Subscriptions using RenderState.
-   */
-  const useState = React.useCallback(
-    <Return,>(
-      selector: Selector<FormikState<Values>, Return>,
-      comparer: Comparer<Return> = Object.is,
-      shouldSubscribe: boolean = true
-    ) => {
-      // eslint-disable-next-line react-hooks/rules-of-hooks
-      selector = useOptimizedSelector(selector, comparer);
-
-      // eslint-disable-next-line react-hooks/rules-of-hooks
-      const subscription = React.useMemo(
-        () => ({
-          getCurrentValue: () => selector(getStateInRender()),
-          subscribe: shouldSubscribe
-            ? (callback: Function) => {
-                subscriptionsRef.current.push(callback);
-
-                return () =>
-                  subscriptionsRef.current.filter(
-                    (cb: Function) => cb !== callback
-                  );
-              }
-            : () => () => {},
-        }),
-        [selector, shouldSubscribe]
-      );
-
-      // eslint-disable-next-line react-hooks/rules-of-hooks
-      return useSubscription(subscription);
-    },
-    [getStateInRender]
-  );
-
-  useIsomorphicLayoutEffect(() => {
-    unstable_batchedUpdates(() => {
-      subscriptionsRef.current.forEach(callback => callback());
-    });
-  }, [state]);
 
   // mostly optimized renders
   const ctx = React.useMemo<FormikApi<Values>>(
@@ -1182,9 +1014,6 @@ export function useFormik<Values extends FormikValues = FormikValues>(
       validateField,
       unregisterField,
       registerField,
-      getFieldProps,
-      getFieldMeta,
-      getFieldHelpers,
       // state helpers
       getState,
       useState,
@@ -1214,9 +1043,6 @@ export function useFormik<Values extends FormikValues = FormikValues>(
       validateField,
       unregisterField,
       registerField,
-      getFieldProps,
-      getFieldMeta,
-      getFieldHelpers,
       getState,
       useState,
     ]
@@ -1427,18 +1253,4 @@ function getValueForCheckbox(
   return currentArrayOfValues
     .slice(0, index)
     .concat(currentArrayOfValues.slice(index + 1));
-}
-
-function useEventCallback<T extends (...args: any[]) => any>(fn: T): T {
-  const ref: any = React.useRef(fn);
-
-  // we copy a ref to the callback scoped to the current state/props on each render
-  useIsomorphicLayoutEffect(() => {
-    ref.current = fn;
-  });
-
-  return React.useCallback(
-    (...args: any[]) => ref.current.apply(void 0, args),
-    []
-  ) as T;
 }

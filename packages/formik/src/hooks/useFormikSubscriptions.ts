@@ -80,9 +80,8 @@ export const useFormikSubscriptions = <Values>(
     subscriptionsRef.current.forEach(callback => callback());
   }, [stateInRender]);
 
-  const getState = React.useCallback(
+  const getState = useEventCallback(
     () => populateComputedState(isFormValid, stateRef.current),
-    [isFormValid, stateRef]
   );
 
   /**

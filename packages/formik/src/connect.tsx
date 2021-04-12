@@ -39,7 +39,7 @@ export function connect<OuterProps, Values = {}>(
 
   // Assign Comp to C.WrappedComponent so we can access the inner component in tests
   // For example, <Field.WrappedComponent /> gets us <FieldInner/>
-  (C as React.SFC<OuterProps> & {
+  (C as React.FC<OuterProps> & {
     WrappedComponent: React.ReactNode;
   }).WrappedComponent = Comp;
 

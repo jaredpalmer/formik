@@ -508,7 +508,7 @@ export function useFormik<Values extends FormikValues = FormikValues>(
         isMounted.current === true &&
         !isEqual(getState().initialErrors, nextInitialErrorsProp)
       ) {
-        const errors = nextInitialErrorsProp || emptyErrors;
+        const errors = nextInitialErrorsProp ?? emptyErrors;
 
         dispatch({
           type: 'RESET_FORM',
@@ -535,7 +535,7 @@ export function useFormik<Values extends FormikValues = FormikValues>(
         isMounted.current === true &&
         !isEqual(getState().initialTouched, nextInitialTouchedProp)
       ) {
-        const touched = nextInitialTouchedProp || emptyTouched;
+        const touched = nextInitialTouchedProp ?? emptyTouched;
 
         dispatch({
           type: 'RESET_FORM',

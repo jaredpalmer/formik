@@ -13,7 +13,7 @@ export const isFunction = (obj: any): obj is Function =>
   typeof obj === 'function';
 
 /** @private is the given object an Object? */
-export const isObject = (obj: any): obj is Object =>
+export const isObject = (obj: any): obj is object =>
   obj !== null && typeof obj === 'object';
 
 /** @private is the given object an integer? */
@@ -34,11 +34,11 @@ export const isEmptyChildren = (children: any): boolean =>
 
 /** @private is the given object/value a promise? */
 export const isPromise = (value: any): value is PromiseLike<any> =>
-  isObject(value) && isFunction(value.then);
+  isObject(value) && isFunction((value as PromiseLike<any>).then);
 
 /** @private is the given object/value a type of synthetic event? */
 export const isInputEvent = (value: any): value is React.SyntheticEvent<any> =>
-  value && isObject(value) && isObject(value.target);
+  value && isObject(value) && isObject((value as React.SyntheticEvent<any>).target);
 
 /** @private Are we in RN? */
 export const isReactNative =

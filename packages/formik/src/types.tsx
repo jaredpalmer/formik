@@ -65,35 +65,6 @@ export interface FormikInitialState<Values> {
 export type FormikReducerState<Values> = FormikInitialState<Values> &
   FormikCurrentState<Values>;
 
-export type FormikMessage<
-  Values,
-  State extends FormikReducerState<Values> = FormikReducerState<Values>
-> =
-  | { type: 'SUBMIT_ATTEMPT' }
-  | { type: 'SUBMIT_FAILURE' }
-  | { type: 'SUBMIT_SUCCESS' }
-  | { type: 'SET_ISVALIDATING'; payload: boolean }
-  | { type: 'SET_ISSUBMITTING'; payload: boolean }
-  | { type: 'SET_VALUES'; payload: Values }
-  | { type: 'RESET_VALUES'; payload: Values }
-  | { type: 'SET_FIELD_VALUE'; payload: { field: string; value?: any } }
-  | { type: 'SET_FIELD_TOUCHED'; payload: { field: string; value?: boolean } }
-  | { type: 'SET_FIELD_ERROR'; payload: { field: string; value?: string } }
-  | { type: 'SET_TOUCHED'; payload: FormikTouched<Values> }
-  | { type: 'RESET_TOUCHED'; payload: FormikTouched<Values> }
-  | { type: 'SET_ERRORS'; payload: FormikErrors<Values> }
-  | { type: 'RESET_ERRORS'; payload: FormikErrors<Values> }
-  | { type: 'SET_STATUS'; payload: any }
-  | { type: 'RESET_STATUS'; payload: any }
-  | {
-      type: 'SET_FORMIK_STATE';
-      payload: (s: State) => State;
-    }
-  | {
-      type: 'RESET_FORM';
-      payload: State;
-    };
-
 /**
  * Formik computed state. These are read-only and
  * result from updates to FormikState but do not live there.
@@ -136,7 +107,7 @@ export type SetErrorsFn<Values extends FormikValues> = (
 export type SetSubmittingFn = (isSubmitting: boolean) => void;
 
 export type SetTouchedFn<Values extends FormikValues> = (
-  touched: import('./types').FormikTouched<Values>,
+  touched: FormikTouched<Values>,
   shouldValidate?: boolean | undefined
 ) => Promise<void | FormikErrors<Values>>;
 
@@ -227,19 +198,6 @@ export type GetValueFromEventFn = (
   fieldName: string
 ) => any;
 
-export type GetFieldHelpersFn = <Value extends any>(
-  name: string
-) => FieldHelperProps<Value>;
-
-export interface FieldHelpers {
-  getFieldProps: <Value = any>(
-    props: any,
-    forFieldMeta?: FieldMetaProps<Value>
-  ) => FieldInputProps<Value>;
-  getFieldMeta: <Value>(name: string) => FieldMetaProps<Value>;
-  getFieldHelpers: GetFieldHelpersFn;
-}
-
 export type HandleSubmitFn = (
   e?: React.FormEvent<HTMLFormElement> | undefined
 ) => void;
@@ -306,7 +264,6 @@ export interface FormikValidationConfig<Values> {
 
 export type FormikApi<Values extends FormikValues> = FormikHelpers<Values> &
   FormikStateHelpers<Values> &
-  FieldHelpers &
   FormikHandlers & {
     unregisterField: UnregisterFieldFn;
     registerField: RegisterFieldFn;
@@ -395,7 +352,6 @@ export type FormikProps<Values> = FormikSharedConfig<Values> &
   FormikReducerState<Values> &
   FormikInitialState<Values> &
   FormikHelpers<Values> &
-  FieldHelpers &
   FormikHandlers &
   FormikComputedState &
   FormikRegistration;

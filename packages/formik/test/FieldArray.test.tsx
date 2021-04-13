@@ -1,11 +1,10 @@
 import * as React from 'react';
 import { act, fireEvent, render, screen } from '@testing-library/react';
-
-import { FieldArray, FieldArrayRenderProps, Formik, FormikConfig, FormikProps, isFunction } from '../src';
+import { FieldArray, Formik, FormikConfig, isFunction } from '../src';
 
 const noop = () => {};
 
-const TestForm: React.FC<any> = p => (
+const TestForm: React.FC<Partial<FormikConfig<any>>> = p => (
   <Formik
     onSubmit={noop}
     initialValues={{ friends: ['jared', 'andrea', 'brent'] }}

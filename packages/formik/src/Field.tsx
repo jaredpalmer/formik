@@ -9,7 +9,7 @@ import {
 } from './types';
 import { isFunction, isEmptyChildren, isObject } from './utils';
 import invariant from 'tiny-warning';
-import { useFieldMeta } from './hooks/hooks';
+import { useFieldHelpers, useFieldMeta, useFieldProps } from './hooks/hooks';
 import { useFormikContext } from './FormikContext';
 import { selectFullState } from './helpers/form-helpers';
 
@@ -67,6 +67,9 @@ export interface FieldConfig<V = any> {
 
   /** Inner ref */
   innerRef?: (instance: any) => void;
+
+  /** Used for multi-select dropdowns */
+  multiple?: boolean;
 }
 
 export type FieldAttributes<T> = GenericFieldHTMLAttributes &
@@ -80,8 +83,6 @@ export function useField<Val = any, FormValues = any>(
 ): [FieldInputProps<Val>, FieldMetaProps<Val>, FieldHelperProps<Val>] {
   const formik = useFormikContext<FormValues>();
   const {
-    getFieldProps,
-    getFieldHelpers,
     registerField,
     unregisterField,
   } = formik;
@@ -123,10 +124,9 @@ export function useField<Val = any, FormValues = any>(
   );
 
   return [
-    // use fieldProps based on current render meta
-    getFieldProps(props, fieldMeta),
+    useFieldProps(props, fieldMeta),
     fieldMeta,
-    getFieldHelpers(fieldName),
+    useFieldHelpers(fieldName),
   ];
 }
 

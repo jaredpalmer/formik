@@ -3,17 +3,6 @@ import isEqual from 'react-fast-compare';
 import { FormikReducerState } from "../types";
 
 /**
- * Select State needed to calculate FormikComputedState
- *
- * @internal
- */
-export const selectStateToCompute = (state: FormikReducerState<any>) => ({
-  errors: state.errors,
-  values: state.values,
-  initialValues: state.initialValues,
-});
-
-/**
  * Validity function where Formik combines its props with these bits of state
  *
  * @internal

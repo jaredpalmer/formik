@@ -34,11 +34,11 @@ export const isEmptyChildren = (children: any): boolean =>
 
 /** @private is the given object/value a promise? */
 export const isPromise = (value: any): value is PromiseLike<any> =>
-  isObject(value) && isFunction((value as any).then);
+  isObject(value) && isFunction((value as PromiseLike<any>).then);
 
 /** @private is the given object/value a type of synthetic event? */
 export const isInputEvent = (value: any): value is React.SyntheticEvent<any> =>
-  value && isObject(value) && isObject((value as any).target);
+  value && isObject(value) && isObject((value as React.SyntheticEvent<any>).target);
 
 /** @private Are we in RN? */
 export const isReactNative =

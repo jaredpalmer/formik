@@ -9,7 +9,7 @@ import {
 } from './types';
 import { isFunction, isEmptyChildren, isObject } from './utils';
 import invariant from 'tiny-warning';
-import { useFieldMeta } from './hooks/hooks';
+import { useFieldHelpers, useFieldMeta, useFieldProps } from './hooks/hooks';
 import { useFormikContext } from './FormikContext';
 import { selectFullState } from './helpers/form-helpers';
 
@@ -19,7 +19,20 @@ export interface FieldProps<V = any, FormValues = any> {
   meta: FieldMetaProps<V>;
 }
 
-export type UseFieldProps<V = any> = {
+export type ParseFn<Value> = (value: unknown, name: string) => Value;
+export type FormatFn<Value> = (value: Value, name: string) => any;
+
+export type FieldHookConfig<V = any> = {
+
+  /**
+   * Component to render. Can either be a string e.g. 'select', 'input', or 'textarea', or a component.
+   */
+  as?:
+    | string
+    | React.ComponentType<FieldInputProps<V>>
+    | React.ComponentType
+    | React.ForwardRefExoticComponent<any>;
+
   /**
    * Validate a single field value independently
    */
@@ -28,12 +41,12 @@ export type UseFieldProps<V = any> = {
   /**
    * Function to parse raw input value before setting it to state
    */
-  parse?: (value: unknown, name: string) => V;
+  parse?: ParseFn<V>;
 
   /**
    * Function to transform value passed to input
    */
-  format?: (value: V, name: string) => any;
+  format?: FormatFn<V>;
 
   /**
    * Wait until blur event before formatting input value?
@@ -45,6 +58,7 @@ export type UseFieldProps<V = any> = {
    * HTML multiple attribute
    */
   multiple?: boolean;
+
   /**
    * Field name
    */
@@ -55,15 +69,16 @@ export type UseFieldProps<V = any> = {
 
   /** Field value */
   value?: any;
-};
+
+  /** Inner ref */
+  innerRef?: (instance: any) => void;
+}
 
 export function useField<Val = any, FormValues = any>(
-  propsOrFieldName: string | UseFieldProps<Val>
+  propsOrFieldName: string | FieldHookConfig<Val>
 ): [FieldInputProps<Val>, FieldMetaProps<Val>, FieldHelperProps<Val>] {
   const formik = useFormikContext<FormValues>();
   const {
-    getFieldProps,
-    getFieldHelpers,
     registerField,
     unregisterField,
   } = formik;
@@ -102,10 +117,9 @@ export function useField<Val = any, FormValues = any>(
   );
 
   return [
-    // use fieldProps based on current render meta
-    getFieldProps(props, fieldMeta),
+    useFieldProps(props, fieldMeta),
     fieldMeta,
-    getFieldHelpers(fieldName),
+    useFieldHelpers(fieldName),
   ];
 }
 
@@ -116,15 +130,6 @@ export interface FieldConfig<V = any> {
   component?:
     | string
     | React.ComponentType<FieldProps<V>>
-    | React.ComponentType
-    | React.ForwardRefExoticComponent<any>;
-
-  /**
-   * Component to render. Can either be a string e.g. 'select', 'input', or 'textarea', or a component.
-   */
-  as?:
-    | string
-    | React.ComponentType<FieldInputProps<V>>
     | React.ComponentType
     | React.ForwardRefExoticComponent<any>;
 
@@ -144,7 +149,7 @@ export interface FieldConfig<V = any> {
 }
 
 export type FieldAttributes<T> = GenericFieldHTMLAttributes &
-  UseFieldProps<T> &
+  FieldHookConfig<T> &
   FieldConfig<T> &
   T & { name: string };
 

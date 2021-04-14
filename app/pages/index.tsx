@@ -23,6 +23,11 @@ function Home() {
               <a>Parse / Format</a>
             </Link>
           </li>
+          <li>
+            <Link href="/tutorial/field-array">
+              <a>Field Array</a>
+            </Link>
+          </li>
         </ul>
       </nav>
       <nav>

@@ -10,7 +10,7 @@ import {
   Selector,
   Comparer,
   useOptimizedSelector,
-} from './useOptimizedSelector';
+} from 'use-optimized-selector';
 import { useIsomorphicLayoutEffect } from './useIsomorphicLayoutEffect';
 import { useEventCallback } from './useEventCallback';
 import { FormikMessage } from '../Formik';

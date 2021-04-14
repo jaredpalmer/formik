@@ -15665,6 +15665,11 @@ url@^0.11.0:
     punycode "1.3.2"
     querystring "0.2.0"
 
+use-optimized-selector@^1.0.0-beta3:
+  version "1.0.0-beta3"
+  resolved "https://registry.yarnpkg.com/use-optimized-selector/-/use-optimized-selector-1.0.0-beta3.tgz#d83d0f0359fa2fd330d68cf3f109cd38ee9b5b13"
+  integrity sha512-cPkq04eHjRdVrSSKUrqz2JuZ6j9YED2JMe3VrrlF5fBfvCITnr2j6P1zDXNbA3ANHfPXECbLzjvrwOCjt0L06g==
+
 use-subscription@1.4.1:
   version "1.4.1"
   resolved "https://registry.yarnpkg.com/use-subscription/-/use-subscription-1.4.1.tgz#edcbcc220f1adb2dd4fa0b2f61b6cc308e620069"

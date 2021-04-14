@@ -99,7 +99,7 @@ export const useFieldProps = <Val>(
  * Get field state from `FormikState`.
  */
 export const useFieldMeta = <Value>(name: string): FieldMetaProps<Value> => {
-  const [fieldMeta] = useFormikState(
+  const [fieldMeta] = useFormikState<any, FieldMetaProps<Value>>(
     useMemo(() => selectFieldMetaByName(name), [name]),
     isShallowEqual
   );

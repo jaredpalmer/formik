@@ -77,6 +77,7 @@ describe('withFormik()', () => {
       },
       initialErrors: {},
       initialTouched: {},
+      enableReinitialize: false,
       values: {
         name: InitialValues.name,
       },
@@ -106,6 +107,9 @@ describe('withFormik()', () => {
       unregisterField: expect.any(Function),
       validateField: expect.any(Function),
       validateForm: expect.any(Function),
+      validateOnBlur: true,
+      validateOnChange: true,
+      validateOnMount: false,
       getState: expect.any(Function),
       useState: expect.any(Function),
     });

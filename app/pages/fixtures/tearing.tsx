@@ -52,7 +52,7 @@ const kids = inputIDs.map(id => (
 ));
 
 const TearingPage = () => {
-  const [formik, config] = useFormik({ onSubmit, initialValues });
+  const formik = useFormik({ onSubmit, initialValues });
   const parentState = formik.useState(selectFullState);
 
   const chaosHelpers = useChaosHelpers(formik, array);
@@ -108,7 +108,7 @@ const TearingPage = () => {
           Update Formik with Random Dispatch
         </button>
       </div>
-      <FormikProvider value={formik} config={config}>
+      <FormikProvider value={formik}>
         <Form>
           <div className="state-container">
             <div className="state" id={`input-${parentId.toString()}`}>

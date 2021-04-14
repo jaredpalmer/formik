@@ -26,7 +26,7 @@ const SignInPage = () => {
   const router = useRouter();
   const [errorLog, setErrorLog] = React.useState<any[]>([]);
 
-  const [formik, config] = useFormik<SignInValues>({
+  const formik = useFormik<SignInValues>({
     validateOnMount: router.query.validateOnMount === 'true',
     validateOnBlur: router.query.validateOnBlur !== 'false',
     validateOnChange: router.query.validateOnChange !== 'false',
@@ -77,7 +77,7 @@ const SignInPage = () => {
   return (
     <div>
       <h1>Sign In</h1>
-      <FormikProvider value={formik} config={config}>
+      <FormikProvider value={formik}>
         <Form>
           <div>
             <Field name="username" placeholder="Username" />

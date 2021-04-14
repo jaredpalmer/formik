@@ -462,7 +462,7 @@ export type ValidationHandler<Values extends FormikValues> = (
 ) => Promise<FormikErrors<Values>>;
 
 /**
- * If an object has optional properties, force passing undefined
+ * If an object has optional properties, force passing undefined.
  * This helps us make sure we are passing back all possible props.
  */
 export type NotOptional<T> = {

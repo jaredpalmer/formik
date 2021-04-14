@@ -15,7 +15,6 @@ import {
   HandleBlurEventFn,
   HandleChangeEventFn,
   HandleChangeFn,
-  NotOptional,
   FormikSharedConfig,
 } from './types';
 import {
@@ -135,7 +134,7 @@ interface FieldRegistry {
 
 export function useFormik<Values extends FormikValues = FormikValues>(
   rawProps: FormikConfig<Values>
-): [FormikApi<Values>, FormikSharedConfig<Values>] {
+): FormikApi<Values> & FormikSharedConfig<Values> {
   const {
     validateOnChange = true,
     validateOnBlur = true,
@@ -986,11 +985,7 @@ export function useFormik<Values extends FormikValues = FormikValues>(
     resetForm();
   });
 
-  /**
-   * Optimize Renders for ContextProviders.
-   */
-  const formikApi = React.useMemo<FormikApi<Values>>(
-    () => ({
+  return {
       // handlers
       handleBlur,
       handleChange,
@@ -1015,72 +1010,32 @@ export function useFormik<Values extends FormikValues = FormikValues>(
       // state helpers
       getState,
       useState,
-    }),
-    [
-      handleBlur,
-      handleChange,
-      handleReset,
-      handleSubmit,
-      resetForm,
-      setErrors,
-      setFormikState,
-      setFieldTouched,
-      setFieldValue,
-      setFieldError,
-      setStatus,
-      setSubmitting,
-      setTouched,
-      setValues,
-      submitForm,
-      validateFormWithHighPriority,
-      validateField,
-      unregisterField,
-      registerField,
-      getState,
-      useState,
-    ]
-  );
-
-  const formikConfig = React.useMemo<NotOptional<FormikSharedConfig<Values>>>(
-    () => ({
       validateOnChange,
       validateOnBlur,
       validateOnMount,
       enableReinitialize,
       validationSchema: props.validationSchema,
       validate: props.validate,
-      isInitialValid: props.isInitialValid,
-    }),
-    [
-      validateOnChange,
-      validateOnBlur,
-      validateOnMount,
-      enableReinitialize,
-      props.validationSchema,
-      props.validate,
-      props.isInitialValid,
-    ]
-  );
-
-  return [formikApi, formikConfig];
+      isInitialValid: props.isInitialValid
+  };
 }
 
 export function Formik<
   Values extends FormikValues = FormikValues,
   ExtraProps = {}
 >(props: FormikConfig<Values> & ExtraProps) {
-  const [formikApi, formikConfig] = useFormik<Values>(props);
+  const formik = useFormik<Values>(props);
   const { component, children, render, innerRef } = props;
 
   // Get initial Full State, but if we don't need it, we won't subscribe to updates
-  const formikState = formikApi.useState(
+  const formikState = formik.useState(
     selectFullState,
     Object.is,
     !!component || !!render || isFunction(children) || !!innerRef
   );
 
   const formikbag: FormikProps<Values> = {
-    ...formikApi,
+    ...formik,
     ...formikState,
   };
 
@@ -1098,7 +1053,7 @@ export function Formik<
     }, []);
   }
   return (
-    <FormikProvider value={formikApi} config={formikConfig}>
+    <FormikProvider value={formik}>
       {component
         ? React.createElement(component as any, formikbag)
         : render

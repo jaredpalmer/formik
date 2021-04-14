@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { FormikApi, FormikContextType, FormikSharedConfig, FormikValues } from './types';
+import { FormikApi, FormikContextType, FormikSharedConfig, FormikValues, NotOptional } from './types';
 import invariant from 'tiny-warning';
 import { FormikConnectedType } from './connect';
 import { selectFullState } from './helpers/form-helpers';
@@ -15,13 +15,121 @@ export const FormikContext = React.createContext<FormikContextType<any>>(
 FormikContext.displayName = 'FormikContext';
 
 export type FormikProviderProps<Values> = {
-  value: FormikContextType<Values>;
-  config: FormikSharedConfig<Values>;
+  value: FormikContextType<Values> & FormikSharedConfig<Values>;
 }
 
 export const FormikProvider = <Values,>(props: React.PropsWithChildren<FormikProviderProps<Values>>) => {
-  return <FormikContext.Provider value={props.value}>
-    <FormikConfigContext.Provider value={props.config}>
+  /**
+   * Optimize Renders for ContextProviders.
+   *
+   * NotOptional allows us to enforce that even
+   * possibly undefined properties are passed here.
+   */
+  const {
+    // handlers
+    handleBlur,
+    handleChange,
+    handleReset,
+    handleSubmit,
+    // helpers
+    resetForm,
+    setErrors,
+    setFormikState,
+    setFieldTouched,
+    setFieldValue,
+    setFieldError,
+    setStatus,
+    setSubmitting,
+    setTouched,
+    setValues,
+    submitForm,
+    validateForm,
+    validateField,
+    unregisterField,
+    registerField,
+    // state helpers
+    getState,
+    useState,
+    validateOnChange,
+    validateOnBlur,
+    validateOnMount,
+    enableReinitialize,
+    validationSchema,
+    validate,
+    isInitialValid,
+  } = props.value;
+
+   const formikApi = React.useMemo<NotOptional<FormikApi<Values>>>(
+    () => ({
+      handleBlur,
+      handleChange,
+      handleReset,
+      handleSubmit,
+      resetForm,
+      setErrors,
+      setFormikState,
+      setFieldTouched,
+      setFieldValue,
+      setFieldError,
+      setStatus,
+      setSubmitting,
+      setTouched,
+      setValues,
+      submitForm,
+      validateForm,
+      validateField,
+      unregisterField,
+      registerField,
+      getState,
+      useState,
+    }),
+    [
+      handleBlur,
+      handleChange,
+      handleReset,
+      handleSubmit,
+      resetForm,
+      setErrors,
+      setFormikState,
+      setFieldTouched,
+      setFieldValue,
+      setFieldError,
+      setStatus,
+      setSubmitting,
+      setTouched,
+      setValues,
+      submitForm,
+      validateForm,
+      validateField,
+      unregisterField,
+      registerField,
+      getState,
+      useState,
+    ]
+  );
+
+  const formikConfig = React.useMemo<NotOptional<FormikSharedConfig<Values>>>(
+    () => ({
+      validateOnChange,
+      validateOnBlur,
+      validateOnMount,
+      enableReinitialize,
+      validationSchema,
+      validate,
+      isInitialValid,
+    }),
+    [
+      validateOnChange,
+      validateOnBlur,
+      validateOnMount,
+      enableReinitialize,
+      validationSchema,
+      validate,
+      isInitialValid,
+    ]
+  );
+  return <FormikContext.Provider value={formikApi}>
+    <FormikConfigContext.Provider value={formikConfig}>
       {props.children}
     </FormikConfigContext.Provider>
   </FormikContext.Provider>

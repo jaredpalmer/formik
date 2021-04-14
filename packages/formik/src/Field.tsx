@@ -10,7 +10,7 @@ import {
 import { isFunction, isEmptyChildren, isObject } from './utils';
 import invariant from 'tiny-warning';
 import { useFieldHelpers, useFieldMeta, useFieldProps } from './hooks/hooks';
-import { useFormikContext } from './FormikContext';
+import { useFormikConfig, useFormikContext } from './FormikContext';
 import { selectFullState } from './helpers/form-helpers';
 
 export interface FieldProps<V = any, FormValues = any> {
@@ -196,13 +196,18 @@ export function Field<FormValues = any>({
    * Otherwise, we will pointlessly get the initial values but never subscribe to updates.
    */
   const formikApi = useFormikContext<FormValues>();
+  const formikConfig = useFormikConfig();
   const formikState = formikApi.useState(
     selectFullState,
     Object.is,
     !!render || isFunction(children) || (!!component && typeof component !== 'string')
   );
 
-  const legacyBag = { field, form: { ...formikState, ...formikApi } };
+  const legacyBag = { field, form: {
+    ...formikApi,
+    ...formikConfig,
+    ...formikState,
+  } };
 
   if (render) {
     return render({ ...legacyBag, meta });

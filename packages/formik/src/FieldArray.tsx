@@ -2,7 +2,7 @@ import * as React from 'react';
 import cloneDeep from 'lodash/cloneDeep';
 import { useField } from './Field';
 import { arraySwap, arrayMove, arrayInsert, arrayReplace, copyArrayLike } from './helpers/array-helpers';
-import { useFormikContext } from './FormikContext';
+import { useFormikConfig, useFormikContext } from './FormikContext';
 import { FieldMetaProps, FormikApi, FormikReducerState } from './types';
 import { useEventCallback } from './hooks/useEventCallback';
 import { getIn, isEmptyArray, isEmptyChildren, isFunction, setIn } from './utils';
@@ -350,7 +350,8 @@ export const FieldArray = <Values, Value>(
   };
 
   const [field, arrayHelpers, formikApi] = useFieldArray<Values, Value>(props);
-  const { validateOnChange: apiValidateOnChange, validateForm } = formikApi;
+  const { validateForm } = formikApi;
+  const { validateOnChange: apiValidateOnChange } = useFormikConfig();
 
   /**
    * Should this go here?! Probably not. We should accept a validate fn and push it all the way to useField.

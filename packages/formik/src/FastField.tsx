@@ -1,13 +1,13 @@
 import * as React from 'react';
-import { FormikValues, GenericFieldHTMLAttributes } from './types';
-import { Field, FieldConfig, FieldProps } from './Field';
+import { FormikValues } from './types';
+import { Field, FieldAttributes, FieldProps } from './Field';
 
 export type FastFieldProps<Value = any, FormValues = any> = FieldProps<
   Value,
   FormValues
 >;
 
-export type FastFieldConfig<V = any> = FieldConfig<V> & {
+export type FastFieldConfig<V = any> = FieldAttributes<V> & {
   /**
    * Override FastField's default shouldComponentUpdate
    * @deprecated
@@ -21,6 +21,6 @@ export type FastFieldConfig<V = any> = FieldConfig<V> & {
 export const FastField = <Values extends FormikValues>({
   shouldUpdate,
   ...fieldProps
-}: GenericFieldHTMLAttributes & FastFieldConfig<Values>) => (
+}: FastFieldConfig<Values>) => (
   <Field {...fieldProps} />
 );

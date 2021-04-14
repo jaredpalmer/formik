@@ -12,10 +12,9 @@ import {
   Field,
   FastField,
   FieldProps,
-  FieldConfig,
   FormikProps,
   FormikConfig,
-  FastFieldConfig,
+  FieldAttributes,
 } from '../src';
 
 import { noop } from './testHelpers';
@@ -54,9 +53,9 @@ function renderForm(
 }
 
 const createRenderField = (
-  FieldComponent: React.ComponentType<FieldConfig>
+  FieldComponent: React.ComponentType<FieldAttributes<any>>
 ) => (
-  props: Partial<FieldConfig> | Partial<FastFieldConfig> = {},
+  props: Partial<FieldAttributes<any>> = {},
   formProps?: Partial<FormikConfig<Values>>
 ) => {
   let injected: FieldProps;

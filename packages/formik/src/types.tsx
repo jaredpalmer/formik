@@ -112,7 +112,7 @@ export type SetTouchedFn<Values extends FormikValues> = (
 ) => Promise<void | FormikErrors<Values>>;
 
 export type SetValuesFn<Values extends FormikValues> = (
-  values: Values,
+  values: React.SetStateAction<Values>,
   shouldValidate?: boolean | undefined
 ) => Promise<void | FormikErrors<Values>>;
 

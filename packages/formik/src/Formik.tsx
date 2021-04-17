@@ -16,6 +16,9 @@ import {
   HandleChangeEventFn,
   HandleChangeFn,
   FormikSharedConfig,
+  RegisterFieldFn,
+  UnregisterFieldFn,
+  FieldValidator,
 } from './types';
 import {
   isFunction,
@@ -129,7 +132,7 @@ function formikReducer<Values>(
 // and their validate functions
 interface FieldRegistry {
   [field: string]: {
-    validate: (value: any) => string | Promise<string> | undefined;
+    validate?: FieldValidator;
   };
 }
 
@@ -314,7 +317,7 @@ export function useFormik<Values extends FormikValues = FormikValues>(
   const runSingleFieldLevelValidation = React.useCallback(
     (field: string, value: void | string): Promise<string> => {
       return new Promise(resolve =>
-        resolve(fieldRegistry.current[field].validate(value) as string)
+        resolve(fieldRegistry.current[field].validate?.(value) as string)
       );
     },
     []
@@ -591,7 +594,7 @@ export function useFormik<Values extends FormikValues = FormikValues>(
       isFunction(fieldRegistry.current[name].validate)
     ) {
       const value = getIn(getState().values, name);
-      const maybePromise = fieldRegistry.current[name].validate(value);
+      const maybePromise = fieldRegistry.current[name].validate?.(value);
       if (isPromise(maybePromise)) {
         // Only flip isValidating if the function is async.
         dispatch({ type: 'SET_ISVALIDATING', payload: true });
@@ -630,13 +633,13 @@ export function useFormik<Values extends FormikValues = FormikValues>(
     return Promise.resolve();
   });
 
-  const registerField = React.useCallback((name: string, { validate }: any) => {
+  const registerField = React.useCallback<RegisterFieldFn<Values>>((name, { validate }) => {
     fieldRegistry.current[name] = {
       validate,
     };
   }, []);
 
-  const unregisterField = React.useCallback((name: string) => {
+  const unregisterField = React.useCallback<UnregisterFieldFn<Values>>((name) => {
     delete fieldRegistry.current[name];
   }, []);
 

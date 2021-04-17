@@ -6,7 +6,7 @@
     "baseUrl": ".",
     "typeRoots": ["./node_modules/@types", "./types"],
     "paths": {
-      "formik": ["./packages/react/src"],
+      "formik": ["./packages/formik/src"],
       "formik-native": ["./packages/react-native/src"],
       "$test/*": ["test/*"]
     }

@@ -5,6 +5,7 @@
     "@changesets/changelog-github": "^0.2.7",
     "@changesets/cli": "^2.10.3",
     "@types/jest": "^26.0.14",
+    "@types/react": "^16.9.55",
     "cypress": "^5.2.0",
     "got": "10.0.4",
     "husky": "^4.3.0",
@@ -13,7 +14,7 @@
     "prettier": "^2.1.2",
     "release": "6.0.1",
     "tsdx": "^0.14.1",
-    "typescript": "^4.0.3"
+    "typescript": "^4.2.4"
   },
   "workspaces": [
     "packages/*",

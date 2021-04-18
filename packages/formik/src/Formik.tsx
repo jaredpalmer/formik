@@ -19,6 +19,8 @@ import {
   RegisterFieldFn,
   UnregisterFieldFn,
   FieldValidator,
+  FormikMessage,
+  ValidateFieldFn,
 } from './types';
 import {
   isFunction,
@@ -39,28 +41,7 @@ import {
 } from './helpers/form-helpers';
 import { useFormikSubscriptions } from './hooks/useFormikSubscriptions';
 import { useEventCallback } from './hooks/useEventCallback';
-
-export type FormikMessage<Values> =
-  | { type: 'SUBMIT_ATTEMPT' }
-  | { type: 'SUBMIT_FAILURE' }
-  | { type: 'SUBMIT_SUCCESS' }
-  | { type: 'SET_ISVALIDATING'; payload: boolean }
-  | { type: 'SET_ISSUBMITTING'; payload: boolean }
-  | { type: 'SET_VALUES'; payload: Values }
-  | { type: 'SET_FIELD_VALUE'; payload: { field: string; value?: any } }
-  | { type: 'SET_FIELD_TOUCHED'; payload: { field: string; value?: boolean } }
-  | { type: 'SET_FIELD_ERROR'; payload: { field: string; value?: string } }
-  | { type: 'SET_TOUCHED'; payload: FormikTouched<Values> }
-  | { type: 'SET_ERRORS'; payload: FormikErrors<Values> }
-  | { type: 'SET_STATUS'; payload: any }
-  | {
-      type: 'SET_FORMIK_STATE';
-      payload: (s: FormikReducerState<Values>) => FormikReducerState<Values>;
-    }
-  | {
-      type: 'RESET_FORM';
-      payload: Partial<FormikReducerState<Values>>;
-    };
+import { useTypedField } from './hooks/useTypedField';
 
 // State reducer
 function formikReducer<Values>(
@@ -132,7 +113,7 @@ function formikReducer<Values>(
 // and their validate functions
 interface FieldRegistry {
   [field: string]: {
-    validate?: FieldValidator;
+    validate?: FieldValidator<any>;
   };
 }
 
@@ -584,7 +565,7 @@ export function useFormik<Values extends FormikValues = FormikValues>(
     maybeUpdateInitialStatus(props.initialStatus, enableReinitialize);
   }, [maybeUpdateInitialStatus, enableReinitialize, props.initialStatus]);
 
-  const validateField = useEventCallback((name: string) => {
+  const validateField = useEventCallback<ValidateFieldFn<Values>>((name) => {
     // This will efficiently validate a single field by avoiding state
     // changes if the validation function is synchronous. It's different from
     // what is called when using validateForm.
@@ -1016,7 +997,8 @@ export function useFormik<Values extends FormikValues = FormikValues>(
     }
   );
 
-  // mostly optimized renders
+  const TypedField = useTypedField<Values>();
+
   return {
       // config
       enableReinitialize,
@@ -1051,6 +1033,7 @@ export function useFormik<Values extends FormikValues = FormikValues>(
       // state helpers
       getState,
       useState,
+      TypedField
   };
 }
 

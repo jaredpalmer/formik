@@ -2,6 +2,7 @@ import * as React from 'react';
 import {
   ErrorMessage,
   Field,
+  FieldName,
   Form,
   FormikProvider,
   FormikState,
@@ -13,7 +14,21 @@ import { useRouter } from 'next/router';
 type SignInValues = {
   username: string;
   password: string;
+  name: {
+    first: string,
+    last: string,
+  }
+  birthdate: {
+    year: number | "",
+  }
 };
+
+interface MyProps {
+  // how do we turn this into:
+  // 'username' | 'password' | 'name' | 'name.first' | 'name.last' | 'birthdate.year'
+  // ???????????
+  name: FieldName<SignInValues, any>; 
+}
 
 const selectSignInState = (formikState: FormikState<SignInValues>) => ({
   values: formikState.values,
@@ -30,7 +45,17 @@ const SignInPage = () => {
     validateOnMount: router.query.validateOnMount === 'true',
     validateOnBlur: router.query.validateOnBlur !== 'false',
     validateOnChange: router.query.validateOnChange !== 'false',
-    initialValues: { username: '', password: '' },
+    initialValues: { 
+      username: '', 
+      password: '',
+      name: {
+        first: "",
+        last: ""
+      },
+      birthdate: {
+        year: ""
+      }
+    },
     validationSchema: Yup.object().shape({
       username: Yup.string().required('Required'),
       password: Yup.string().required('Required'),
@@ -80,7 +105,14 @@ const SignInPage = () => {
       <FormikProvider value={formik}>
         <Form>
           <div>
-            <Field name="username" placeholder="Username" />
+            <formik.TypedField 
+              name="birthdate.year"
+              validate={value => 
+                value === 0 
+                  ? "Oh no"
+                  : ""
+              }
+            />
             <ErrorMessage name="username" component="p" />
           </div>
 

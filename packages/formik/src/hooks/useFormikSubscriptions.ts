@@ -3,6 +3,7 @@ import React, { Reducer } from 'react';
 import { useSubscription } from 'use-subscription';
 import { populateComputedState } from '../helpers/form-helpers';
 import {
+  FormikMessage,
   FormikReducerState,
   FormikState,
 } from '../types';
@@ -13,7 +14,6 @@ import {
 } from 'use-optimized-selector';
 import { useIsomorphicLayoutEffect } from './useIsomorphicLayoutEffect';
 import { useEventCallback } from './useEventCallback';
-import { FormikMessage } from '../Formik';
 
 export const useFormikSubscriptions = <Values>(
   initialState: FormikReducerState<Values>,

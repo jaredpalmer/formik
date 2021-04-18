@@ -1,11 +1,12 @@
 import * as React from 'react';
 import {
-  FormikProps,
-  GenericFieldHTMLAttributes,
   FieldMetaProps,
   FieldHelperProps,
   FieldInputProps,
-  FieldValidator,
+  FieldHookConfig,
+  FieldValue,
+  FieldName,
+  FieldAttributes,
 } from './types';
 import { isFunction, isEmptyChildren, isObject } from './utils';
 import invariant from 'tiny-warning';
@@ -13,70 +14,9 @@ import { useFieldHelpers, useFieldMeta, useFieldProps } from './hooks/hooks';
 import { useFormikConfig, useFormikContext } from './FormikContext';
 import { selectFullState } from './helpers/form-helpers';
 
-export interface FieldProps<V = any, FormValues = any> {
-  field: FieldInputProps<V>;
-  form: FormikProps<FormValues>; // if ppl want to restrict this for a given form, let them.
-  meta: FieldMetaProps<V>;
-}
-
-export type ParseFn<Value> = (value: unknown, name: string) => Value;
-export type FormatFn<Value> = (value: Value, name: string) => any;
-
-export type FieldHookConfig<V = any> = {
-
-  /**
-   * Component to render. Can either be a string e.g. 'select', 'input', or 'textarea', or a component.
-   */
-  as?:
-    | string
-    | React.ComponentType<FieldInputProps<V>>
-    | React.ComponentType
-    | React.ForwardRefExoticComponent<any>;
-
-  /**
-   * Validate a single field value independently
-   */
-  validate?: FieldValidator;
-
-  /**
-   * Function to parse raw input value before setting it to state
-   */
-  parse?: ParseFn<V>;
-
-  /**
-   * Function to transform value passed to input
-   */
-  format?: FormatFn<V>;
-
-  /**
-   * Wait until blur event before formatting input value?
-   * @default false
-   */
-  formatOnBlur?: boolean;
-
-  /**
-   * HTML multiple attribute
-   */
-  multiple?: boolean;
-
-  /**
-   * Field name
-   */
-  name: string;
-
-  /** HTML input type */
-  type?: string;
-
-  /** Field value */
-  value?: any;
-
-  /** Inner ref */
-  innerRef?: (instance: any) => void;
-}
-
-export function useField<Val = any, FormValues = any>(
-  propsOrFieldName: string | FieldHookConfig<Val>
-): [FieldInputProps<Val>, FieldMetaProps<Val>, FieldHelperProps<Val>] {
+export function useField<FormValues = any, Path extends string = any>(
+  propsOrFieldName: FieldName<FormValues, Path> | FieldHookConfig<FormValues, Path>
+): [FieldInputProps<FormValues, Path>, FieldMetaProps<FieldValue<FormValues, Path>>, FieldHelperProps<FieldValue<FormValues, Path>>] {
   const formik = useFormikContext<FormValues>();
   const {
     registerField,
@@ -89,7 +29,7 @@ export function useField<Val = any, FormValues = any>(
 
   const { name: fieldName, validate: validateFn } = props;
 
-  const fieldMeta = useFieldMeta<Val>(fieldName);
+  const fieldMeta = useFieldMeta<FieldValue<FormValues, Path>>(fieldName);
 
   React.useEffect(() => {
     if (fieldName) {
@@ -123,43 +63,13 @@ export function useField<Val = any, FormValues = any>(
   ];
 }
 
-export interface FieldConfig<V = any> {
-  /**
-   * Field component to render. Can either be a string like 'select' or a component.
-   */
-  component?:
-    | string
-    | React.ComponentType<FieldProps<V>>
-    | React.ComponentType
-    | React.ForwardRefExoticComponent<any>;
-
-  /**
-   * Render prop (works like React router's <Route render={props =>} />)
-   * @deprecated
-   */
-  render?: (props: FieldProps<V>) => React.ReactNode;
-
-  /**
-   * Children render function <Field name>{props => ...}</Field>)
-   */
-  children?: ((props: FieldProps<V>) => React.ReactNode) | React.ReactNode;
-
-  /** Inner ref */
-  innerRef?: (instance: any) => void;
-}
-
-export type FieldAttributes<T> = GenericFieldHTMLAttributes &
-  FieldHookConfig<T> &
-  FieldConfig<T> &
-  T & { name: string };
-
-export function Field<FormValues = any>({
+export function Field<FormValues = any, Path extends string = any, ExtraProps = any>({
   render,
   children,
   as: is, // `as` is reserved in typescript lol
   component,
   ...props
-}: FieldAttributes<any>) {
+}: FieldAttributes<FormValues, Path, ExtraProps>) {
   if (__DEV__) {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     React.useEffect(() => {
@@ -208,29 +118,41 @@ export function Field<FormValues = any>({
     ...formikConfig,
     ...formikState,
   } };
+  
+  const { 
+    innerRef, 
+    validate, 
+    parse, 
+    format, 
+    formatOnBlur, 
+    name, 
+    value, 
+    ...rest
+  } = props;
+  const extraProps = rest as ExtraProps;
+
 
   if (render) {
-    return render({ ...legacyBag, meta });
+    return render({ ...legacyBag, meta, ...extraProps });
   }
 
   if (isFunction(children)) {
-    return children({ ...legacyBag, meta });
+    return children({ ...legacyBag, meta, ...extraProps });
   }
 
   if (component) {
     // This behavior is backwards compat with earlier Formik 0.9 to 1.x
     if (typeof component === 'string') {
-      const { innerRef, validate, parse, format, ...rest } = props;
       return React.createElement(
         component,
-        { ref: innerRef, ...field, ...rest },
+        { ref: innerRef, ...extraProps, ...field },
         children
       );
     }
     // We don't pass `meta` for backwards compat
     return React.createElement(
       component,
-      { field, form: legacyBag.form, ...props },
+      { field, form: legacyBag.form, meta, ...extraProps },
       children
     );
   }
@@ -239,13 +161,12 @@ export function Field<FormValues = any>({
   const asElement = is || 'input';
 
   if (typeof asElement === 'string') {
-    const { innerRef, parse, format, ...rest } = props;
     return React.createElement(
       asElement,
-      { ref: innerRef, ...field, ...rest },
+      { ref: innerRef, ...field, ...extraProps },
       children
     );
   }
 
-  return React.createElement(asElement, { ...field, ...props }, children);
+  return React.createElement(asElement, { ...field, ...extraProps }, children);
 }

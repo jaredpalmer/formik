@@ -8,34 +8,38 @@ import {
 } from '../helpers/field-helpers';
 import {
   FieldHelperProps,
+  FieldHookConfig,
   FieldInputProps,
   FieldMetaProps,
-  FormikState
+  FieldName,
+  FieldValue,
+  FormatFn,
+  FormikState,
+  ParseFn
 } from '../types';
 import { useFormikState } from './useFormikState';
 import { isInputEvent, isObject, isShallowEqual } from '../utils';
-import { FieldHookConfig } from '../Field';
 
 /**
  * Get props to spread to input elements, like `<input {...fieldProps} />`.
  *
  * Pass `FieldMetaProps` from useFieldMeta, so we don't subscribe twice.
  */
-export const useFieldProps = <Val>(
-    nameOrOptions: string | FieldHookConfig<Val>,
-    fieldMeta: FieldMetaProps<Val>
-  ): FieldInputProps<any> => {
+export const useFieldProps = <FormValues, Path extends string>(
+    nameOrOptions: FieldName<FormValues, Path> | FieldHookConfig<FormValues, Path>,
+    fieldMeta: FieldMetaProps<FieldValue<FormValues, Path>>
+  ): FieldInputProps<FormValues, Path> => {
     const {
       handleChange,
       handleBlur,
       setFieldValue,
       getValueFromEvent
-    } = useFormikContext();
+    } = useFormikContext<FormValues>();
     const name = isObject(nameOrOptions) ? nameOrOptions.name : nameOrOptions;
     const valueState = fieldMeta.value;
     const touchedState = fieldMeta.touched;
 
-    const field: FieldInputProps<any> = {
+    const field: FieldInputProps<FormValues, Path> = {
       name,
       value: valueState,
       onChange: handleChange,
@@ -48,8 +52,8 @@ export const useFieldProps = <Val>(
         value: valueProp, // value is special for checkboxes
         as: is,
         multiple,
-        parse = /number|range/.test(type) ? numberParseFn : defaultParseFn,
-        format = defaultFormatFn,
+        parse = (/number|range/.test(type) ? numberParseFn : defaultParseFn) as ParseFn<FieldValue<FormValues, Path>>,
+        format = defaultFormatFn as FormatFn<FieldValue<FormValues, Path>>,
         formatOnBlur = false,
       } = nameOrOptions;
 
@@ -64,9 +68,9 @@ export const useFieldProps = <Val>(
         }
       } else if (type === 'radio') {
         field.checked = valueState === valueProp;
-        field.value = valueProp;
+        field.value = valueProp as any;
       } else if (is === 'select' && multiple) {
-        field.value = field.value || [];
+        field.value = (field.value || []) as any;
         field.multiple = true;
       }
 

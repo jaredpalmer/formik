@@ -20,6 +20,9 @@
     "packages/*",
     "./app"
   ],
+  "resolutions": {
+    "**/typescript": "^4.2.4"
+  },
   "scripts": {
     "lerna": "lerna",
     "dev": "lerna run start --stream --parallel",

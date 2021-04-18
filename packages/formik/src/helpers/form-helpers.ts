@@ -1,6 +1,5 @@
-import { FormikErrors } from './../types';
 import isEqual from 'react-fast-compare';
-import { FormikReducerState } from "../types";
+import { FormikReducerState, FormikErrors } from "../types";
 
 /**
  * Validity function where Formik combines its props with these bits of state

@@ -1,7 +1,7 @@
 {
   "name": "@johnrom/formik-v3",
   "description": "Build forms in React, without the tears",
-  "version": "3.0.0-refs1",
+  "version": "3.0.0-refs2",
   "license": "Apache-2.0",
   "author": "Jared Palmer <jared@palmer.net> (https://jaredpalmer.com)",
   "repository": "formium/formik",

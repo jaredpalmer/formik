@@ -2234,21 +2234,6 @@
     "@types/yargs" "^15.0.0"
     chalk "^4.0.0"
 
-"@johnrom/formik-v3@^3.0.0-refs2":
-  version "3.0.0-refs2"
-  resolved "https://registry.yarnpkg.com/@johnrom/formik-v3/-/formik-v3-3.0.0-refs2.tgz#deb6806a657093be74df82fa8f04db224223dd28"
-  integrity sha512-aK4/pmVdKkgQBMO9SOHpKWuDT2Wn6qozwT9SCLCFsg2jZEBiBEz+u/TRNZhkQYSIRAtSIF363Up9e+X06o5yCw==
-  dependencies:
-    deepmerge "^2.1.1"
-    hoist-non-react-statics "^3.3.0"
-    lodash "^4.17.14"
-    lodash-es "^4.17.14"
-    react-fast-compare "^2.0.1"
-    tiny-warning "^1.0.2"
-    tslib "^1.10.0"
-    use-optimized-selector "^1.0.0-beta3"
-    use-subscription "^1.5.1"
-
 "@lerna/add@3.19.0":
   version "3.19.0"
   resolved "https://registry.yarnpkg.com/@lerna/add/-/add-3.19.0.tgz#33b6251c669895f842c14f05961432d464166249"
@@ -15485,12 +15470,7 @@ typedarray@^0.0.6:
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
   integrity sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c=
 
-typescript@^3.7.3:
-  version "3.7.3"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.7.3.tgz#b36840668a16458a7025b9eabfad11b66ab85c69"
-  integrity sha512-Mcr/Qk7hXqFBXMN7p7Lusj1ktCBydylfQM/FZCk5glCNQJrCUKPkMHdo9R0MTFWsC/4kPFvDS0fDPvukfCkFsw==
-
-typescript@^4.2.4:
+typescript@^3.7.3, typescript@^4.2.4:
   version "4.2.4"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.2.4.tgz#8610b59747de028fda898a8aef0e103f156d0961"
   integrity sha512-V+evlYHZnQkaz8TRBuxTA92yZBPotr5H+WhQ7bD3hZUndx5tGOa1fuCgeSjxAzM1RiN5IzvadIXTVefuuwZCRg==

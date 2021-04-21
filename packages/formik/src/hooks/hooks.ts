@@ -16,7 +16,7 @@ import {
 } from '../types';
 import { useFormikState } from './useFormikState';
 import { isInputEvent, isObject, isShallowEqual } from '../utils';
-import { FieldHookConfig, FormatFn, ParseFn } from '../Field';
+import { FieldHookConfig, FormatFn, ParseFn, SingleValue } from '../Field';
 
 /**
  * Get props to spread to input elements, like `<input {...fieldProps} />`.
@@ -24,7 +24,7 @@ import { FieldHookConfig, FormatFn, ParseFn } from '../Field';
  * Pass `FieldMetaProps` from useFieldMeta, so we don't subscribe twice.
  */
 export const useFieldProps = <FormValues, Path extends string>(
-    nameOrOptions: FieldName<FormValues, Path> | FieldHookConfig<FormValues, Path>,
+    nameOrOptions: FieldName<FormValues, Path> | FieldHookConfig<FormValues, Path, any>,
     fieldMeta: FieldMetaProps<FieldValue<FormValues, Path>>
   ): FieldInputProps<FormValues, Path> => {
     const {
@@ -39,7 +39,9 @@ export const useFieldProps = <FormValues, Path extends string>(
 
     const field: FieldInputProps<FormValues, Path> = {
       name,
-      value: valueState,
+      // if this isn't a singular value, it should be parsed!
+      // however, this is a fallback
+      value: valueState as SingleValue<FormValues, Path>,
       onChange: handleChange,
       onBlur: handleBlur,
     };
@@ -50,8 +52,8 @@ export const useFieldProps = <FormValues, Path extends string>(
         value: valueProp, // value is special for checkboxes
         as: is,
         multiple,
-        parse = (/number|range/.test(type) ? numberParseFn : defaultParseFn) as ParseFn<FieldValue<FormValues, Path>>,
-        format = defaultFormatFn as FormatFn<FieldValue<FormValues, Path>>,
+        parse = (/number|range/.test(type) ? numberParseFn : defaultParseFn) as ParseFn<SingleValue<FormValues, Path>>,
+        format = defaultFormatFn as FormatFn<SingleValue<FormValues, Path>>,
         formatOnBlur = false,
       } = nameOrOptions;
 
@@ -66,7 +68,8 @@ export const useFieldProps = <FormValues, Path extends string>(
         }
       } else if (type === 'radio') {
         field.checked = valueState === valueProp;
-        field.value = valueProp as any;
+        // we need to force value on radio and multi-checkbox
+        field.value = valueProp!;
       } else if (is === 'select' && multiple) {
         field.value = (field.value || []) as any;
         field.multiple = true;
@@ -91,9 +94,17 @@ export const useFieldProps = <FormValues, Path extends string>(
             if (eventOrValue.persist) {
               eventOrValue.persist();
             }
-            setFieldValue(name, parse(getValueFromEvent(eventOrValue, name), field.name));
+            setFieldValue(
+              name,
+              // we don't currently support arrays here
+              parse(getValueFromEvent(eventOrValue, name), field.name) as FieldValue<FormValues, Path>
+            );
           } else {
-            setFieldValue(name, parse(eventOrValue, field.name));
+            setFieldValue(
+              name,
+              // we don't currently support arrays here
+              parse(eventOrValue, field.name) as FieldValue<FormValues, Path>
+            );
           }
         };
       }

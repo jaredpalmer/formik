@@ -16,7 +16,7 @@ export type FastFieldConfig<Values, Path extends string, ExtraProps> =
 export const FastField = <
   Values extends FormikValues = any,
   Path extends string = any,
-  ExtraProps = any
+  ExtraProps = {}
 >({ shouldUpdate, ...props}: FastFieldConfig<Values, Path, ExtraProps>) => (
   <Field {...(props as FieldAttributes<Values, Path, ExtraProps>)} />
 );

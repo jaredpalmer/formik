@@ -1,20 +1,32 @@
 import React from 'react';
-import { Formik, Form, ErrorMessage, createTypedField } from 'formik';
+import { Formik, Form, ErrorMessage, createTypedField, Field } from 'formik';
 import * as Yup from 'yup';
 
 let renderCount = 0;
 
-const initialValues = {
+type FormValues = {
+  firstName: string,
+  lastName: string,
+  email: string,
+  age: number,
+  favorite: string,
+  toggle: boolean,
+  checked: number[],
+  picked: string,
+}
+
+const initialValues: FormValues = {
   firstName: '',
   lastName: '',
   email: '',
+  age: 21,
   favorite: '',
   toggle: false,
   checked: [],
   picked: '',
 };
 
-const TypedField = createTypedField<typeof initialValues>();
+const TypedField = createTypedField<FormValues>();
 
 const Basic = () => (
   <div>
@@ -35,7 +47,10 @@ const Basic = () => (
       }}
     >
       <Form>
-        <TypedField name="firstName" placeholder="Jane" />
+        <TypedField
+          name="firstName"
+          placeholder="Jane"
+        />
         <ErrorMessage name="firstName" component="p" />
 
         <TypedField name="lastName" placeholder="Doe" />
@@ -49,6 +64,14 @@ const Basic = () => (
         />
         <ErrorMessage name="email" component="p" />
 
+        <TypedField
+          id="age"
+          name="age"
+          placeholder="jane@acme.com"
+          type="number"
+          value=""
+        />
+
         <label>
           <TypedField type="checkbox" name="toggle" />
           <span style={{ marginLeft: 3 }}>Toggle</span>
@@ -57,7 +80,25 @@ const Basic = () => (
         <div id="checkbox-group">Checkbox Group </div>
         <div role="group" aria-labelledby="checkbox-group">
           <label>
-            <TypedField type="checkbox" name="checked" value="One" />
+            <TypedField
+              type="checkbox"
+              name="checked"
+              // @ts-expect-error why isn't this typed as `number` like the below are??
+              value=""
+            />
+            <TypedField<'checked', {}>
+              type="checkbox"
+              name="checked"
+              // @ts-expect-error
+              value=""
+            />
+            <Field<FormValues, 'checked'>
+              type="checkbox"
+              name="checked"
+              // @ts-expect-error
+              value=""
+              potato=""
+            />
             One
           </label>
           <label>
@@ -84,6 +125,7 @@ const Basic = () => (
           <label>
             Textarea
             <TypedField as="textarea" name="picked" value="Two" />
+            <TypedField as="select" name="picked" />
           </label>
         </div>
         <button type="submit">Submit</button>

@@ -100,49 +100,71 @@ import {
  const renderFunction: FieldRenderFunction<any, any> = (props) => props.meta.value ? null : null;
 
  const formTests = (props: FieldConfig<any, any, {what: true}>) =>
-   <>
-     <input onInput={event => {}} />
-     {/* FieldAsString */}
-     <Field name="test" as="select" onInput={event => {}} />
-     {/* FieldAsComponent */}
-     <Field name="test" as={proplessComponent} />
-     <Field name="test" as={propsAnyComponent} />
-     <Field name="test" as={propsAnyComponent} what={true} />
-     {/* @ts-expect-error */}
-     <Field name="test" as={proplessComponent} what={true} />
-     <Field name="test" as={asComponent} />
-     <Field name="test" as={asComponentWithExtra} what={true} />
-     {/* @ts-expect-error */}
-     <Field name="test" as={asComponentWithExtra} what={false} />
-     <Field name="test" as={asComponentWithOnlyExtra} what={true} />
-     {/* @ts-expect-error */}
-     <Field name="test" as={asComponentWithOnlyExtra} what={false} />
-     {/* FieldStringComponent */}
-     <Field name="test" component="select" what={true} onInput={event => {}} />
-     {/* FieldComponent */}
-     <Field name="test" component={proplessComponent} />
-     <Field name="test" component={propsAnyComponent} />
-     <Field name="test" component={propsAnyComponent} what={true} />
-     {/* @ts-expect-error */}
-     <Field name="test" component={proplessComponent} what={true} />
-     <Field name="test" component={componentComponent} />
-     <Field name="test" component={componentWithExtra} what={true} />
-     {/* @ts-expect-error */}
-     <Field name="test" component={componentWithExtra} what={false} />
-     <Field name="test" component={componentWithOnlyExtra} what={true} />
-     {/* @ts-expect-error */}
-     <Field name="test" component={componentWithOnlyExtra} what={false} />
-     {/* FieldRender */}
-     <Field name="test" render={renderFunction} />
-     {/* FieldChildren */}
-     <Field name="test" children={renderFunction} />
-     <Field name="test">{renderFunction}</Field>
-     {/* Default */}
-     <Field name="test" onInput={event => {}} />
+  <>
+    {/*
+      * all the events below should be inferred,
+      * but can't because of GenericInputHTMLAttributes
+      */}
+    <input onInput={event => {}} />
 
-     {/* Pass-Through Props */}
-     <Field<any, any, {what: true}> {...props} />
-     <Field {...props} />
-     {/* @ts-expect-error */}
-     <Field<any, any, {what: false}> {...props} />
-   </>
+    {/* Default */}
+    <Field name="test" onInput={event => {}} />
+    {/* @ts-expect-error elements don't have extraProps */}
+    <Field name="test" what={true} />
+
+    {/* FieldAsString */}
+    <Field name="test" as="select" onInput={event => {}} />
+    {/* @ts-expect-error elements don't have extraProps */}
+    <Field name="test" as="select" what={true} />
+
+    {/* FieldStringComponent */}
+    <Field name="test" component="select" onInput={event => {}} />
+    {/* @ts-expect-error elements don't have extraProps */}
+    <Field name="test" component="select" what={true} />
+
+    {/* FieldAsComponent */}
+    <Field name="test" as={proplessComponent} />
+    <Field name="test" as={propsAnyComponent} />
+    <Field name="test" as={propsAnyComponent} what={true} />
+    <Field name="test" as={asComponent} />
+    <Field name="test" as={asComponent}><div /></Field>
+    <Field name="test" as={asComponentWithExtra} what={true} />
+    <Field name="test" as={asComponentWithOnlyExtra} what={true} />
+
+    {/* @ts-expect-error propless components don't have extraProps */}
+    <Field name="test" as={proplessComponent} what={true} />
+    {/* @ts-expect-error extraProps should match */}
+    <Field name="test" as={asComponentWithExtra} what={false} />
+    {/* @ts-expect-error extraProps should match */}
+    <Field name="test" as={asComponentWithOnlyExtra} what={false} />
+
+    {/* FieldComponent */}
+    <Field name="test" component={proplessComponent} />
+    <Field name="test" component={propsAnyComponent} />
+    <Field name="test" component={propsAnyComponent} what={true} />
+    <Field name="test" component={componentComponent} />
+    <Field name="test" component={componentWithExtra} what={true} />
+    <Field name="test" component={componentWithOnlyExtra} what={true} />
+
+    {/* @ts-expect-error propless components don't have extraProps */}
+    <Field name="test" component={proplessComponent} what={true} />
+    {/* @ts-expect-error extraProps should match */}
+    <Field name="test" component={componentWithExtra} what={false} />
+    {/* @ts-expect-error extraProps should match */}
+    <Field name="test" component={componentWithOnlyExtra} what={false} />
+
+    {/* FieldRender */}
+    <Field name="test" render={renderFunction} />
+    {/* @ts-expect-error render function doesn't have child component */}
+    <Field name="test" render={renderFunction}><div /></Field>
+
+    {/* FieldChildren */}
+    <Field name="test" children={renderFunction} />
+    <Field name="test">{renderFunction}</Field>
+
+    {/* Pass-Through Props */}
+    <Field<any, any, {what: true}> {...props} />
+    <Field {...props} />
+    {/* @ts-expect-error extraProps should match */}
+    <Field<any, any, {what: false}> {...props} />
+  </>

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Comparer, Selector } from 'use-optimized-selector';
-import { FieldHookConfig } from './Field';
+import { FieldHookConfig, SingleValue } from './Field';
 import { TypedField } from './hooks/useTypedField';
 import { TypedFieldArray } from './hooks/useTypedFieldArray';
 
@@ -478,7 +478,7 @@ export type FieldOnBlurProp = (
 /** Field input value, name, and event handlers */
 export type FieldInputProps<FormValues, Path extends string> = {
   /** Value of the field */
-  value: FieldValue<FormValues, Path>;
+  value: SingleValue<FormValues, Path>;
   /** Name of the field */
   name: FieldName<FormValues, Path>;
   /** Multiple select? */

@@ -8,17 +8,15 @@ import {
 } from '../helpers/field-helpers';
 import {
   FieldHelperProps,
-  FieldHookConfig,
   FieldInputProps,
   FieldMetaProps,
   FieldName,
   FieldValue,
-  FormatFn,
   FormikState,
-  ParseFn
 } from '../types';
 import { useFormikState } from './useFormikState';
 import { isInputEvent, isObject, isShallowEqual } from '../utils';
+import { FieldHookConfig, FormatFn, ParseFn } from '../Field';
 
 /**
  * Get props to spread to input elements, like `<input {...fieldProps} />`.

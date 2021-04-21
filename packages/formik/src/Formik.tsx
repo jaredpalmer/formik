@@ -42,6 +42,7 @@ import {
 import { useFormikSubscriptions } from './hooks/useFormikSubscriptions';
 import { useEventCallback } from './hooks/useEventCallback';
 import { useTypedField } from './hooks/useTypedField';
+import { useTypedFieldArray } from './hooks/useTypedFieldArray';
 
 // State reducer
 function formikReducer<Values>(
@@ -998,6 +999,7 @@ export function useFormik<Values extends FormikValues = FormikValues>(
   );
 
   const TypedField = useTypedField<Values>();
+  const TypedFieldArray = useTypedFieldArray<Values>();
 
   return {
       // config
@@ -1033,7 +1035,8 @@ export function useFormik<Values extends FormikValues = FormikValues>(
       // state helpers
       getState,
       useState,
-      TypedField
+      TypedField,
+      TypedFieldArray
   };
 }
 

@@ -1,10 +1,10 @@
 import * as React from 'react';
 import {
-  FormikApi, 
-  FormikConnectedType, 
-  FormikContextType, 
-  FormikSharedConfig, 
-  FormikValues, 
+  FormikApi,
+  FormikConnectedType,
+  FormikContextType,
+  FormikSharedConfig,
+  FormikValues,
   NotOptional
 } from './types';
 import invariant from 'tiny-warning';
@@ -66,6 +66,7 @@ export const FormikProvider = <Values,>(props: React.PropsWithChildren<FormikPro
     validate,
     isInitialValid,
     TypedField,
+    TypedFieldArray,
   } = props.value;
 
    const formikApi = React.useMemo<NotOptional<FormikApi<Values>>>(
@@ -93,6 +94,7 @@ export const FormikProvider = <Values,>(props: React.PropsWithChildren<FormikPro
       getState,
       useState,
       TypedField,
+      TypedFieldArray,
     }),
     [
       handleBlur,
@@ -117,6 +119,7 @@ export const FormikProvider = <Values,>(props: React.PropsWithChildren<FormikPro
       getState,
       useState,
       TypedField,
+      TypedFieldArray,
     ]
   );
 

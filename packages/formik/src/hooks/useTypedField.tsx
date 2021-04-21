@@ -1,11 +1,18 @@
 import * as React from "react";
-import { FieldAttributes, TypedField } from '../types';
-import { Field } from "../Field";
+import { Field, FieldConfig } from "../Field";
+
+export type TypedField<FormValues> = <
+  Path extends string,
+  ExtraProps
+>(
+  props: FieldConfig<FormValues, Path, ExtraProps>
+) =>
+  React.ReactElement | null;
 
 export const useTypedField = <Values,>() => React.useMemo<TypedField<Values>>(
-    () => <Path extends string>(
-      props: FieldAttributes<Values, Path, any>
-    ) => 
-      <Field<Values, Path, any> {...props} />, 
+    () => (
+      props
+    ) =>
+      <Field {...props} />,
     []
 );

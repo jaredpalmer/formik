@@ -783,9 +783,10 @@ export function useFormik<Values extends FormikValues = FormikValues>({
         } else if (!!isMounted.current) {
           // ^^^ Make sure Formik is still mounted before updating state
           dispatch({ type: 'SUBMIT_FAILURE' });
-          // throw combinedErrors;
           if (isInstanceOfError) {
             throw combinedErrors;
+          } else {
+            throw new Error('Submit failure');
           }
         }
         return;

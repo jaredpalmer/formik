@@ -74,7 +74,7 @@ const createRenderField = (
       return injected;
     },
     ...renderForm(
-      <FieldComponent name="name" data-testid="name-input" {...props} />,
+      <FieldComponent name="name" data-testid="name-input" {...props as any} />,
       formProps
     ),
   };
@@ -154,7 +154,7 @@ describe('Field / FastField', () => {
         expect(props.field.onBlur).toBe(handleBlur);
       });
 
-      expect((componentInjectedProps as FieldProps).meta).toBeUndefined();
+      expect((componentInjectedProps as any).meta).toBeUndefined();
 
         [
           ...renderInjectedProps,
@@ -261,7 +261,7 @@ describe('Field / FastField', () => {
         expect(props.field.onBlur).toBe(handleBlur);
       });
 
-      expect((componentInjectedProps as FieldProps).meta).toBeUndefined();
+      expect((componentInjectedProps as any).meta).toBeUndefined();
 
       [
         ...renderInjectedProps,
@@ -575,7 +575,9 @@ describe('Field / FastField', () => {
       global.console.warn = jest.fn();
 
       const { rerender } = renderField({
+        // @ts-expect-error
         component: 'textarea',
+        // @ts-expect-error
         render: () => <option value="Jared">{TEXT}</option>,
       });
       rerender();
@@ -588,7 +590,9 @@ describe('Field / FastField', () => {
       global.console.warn = jest.fn();
 
       const { rerender } = renderField({
+        // @ts-expect-error
         component: () => null,
+        // @ts-expect-error
         render: () => <option value="Jared">{TEXT}</option>,
       });
       rerender();
@@ -602,6 +606,7 @@ describe('Field / FastField', () => {
 
       const { rerender } = renderField({
         children: <div>{TEXT}</div>,
+        // @ts-expect-error
         render: () => <div>{TEXT}</div>,
       });
       rerender();

@@ -113,6 +113,8 @@ describe('withFormik()', () => {
       validateOnMount: false,
       getState: expect.any(Function),
       useState: expect.any(Function),
+      TypedField: expect.any(Function),
+      TypedFieldArray: expect.any(Function),
     });
   });
 

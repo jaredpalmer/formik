@@ -44,7 +44,12 @@ export type FieldAsProps<
 > = FieldAsPropsWithoutExtraProps<Values, Path, ExtraProps> &
     ExtraPropsOrAnyProps<ExtraProps>;
 
-type FieldAsComponentConfig<
+/**
+ * field.as = Component
+ *
+ * @private
+ */
+export type FieldAsComponentConfig<
   Values,
   Path extends string,
   ExtraProps extends FieldAsExtraProps
@@ -166,8 +171,10 @@ export function useField<Values = any, Path extends string = any, ExtraProps = a
 
 /**
  * field.as = string
+ *
+ * @private
  */
-type FieldAsStringConfig<Values, Path extends string, ExtraProps> =
+export type FieldAsStringConfig<Values, Path extends string, ExtraProps> =
   React.PropsWithChildren<
     {
       as: string,
@@ -180,8 +187,10 @@ type FieldAsStringConfig<Values, Path extends string, ExtraProps> =
 
 /**
  * field.component = string
+ *
+ * @private
  */
-type FieldStringComponentConfig<Values, Path extends string> =
+export type FieldStringComponentConfig<Values, Path extends string> =
   React.PropsWithChildren<
     {
       as?: undefined,
@@ -192,9 +201,6 @@ type FieldStringComponentConfig<Values, Path extends string> =
     FieldHookConfig<Values, Path, {}> &
     GenericFieldHTMLAttributes;
 
-/**
- * field.component = Component
- */
 type LegacyBag<Values, Path extends string> = {
   field: FieldInputProps<Values, Path>;
   // if ppl want to restrict this for a given form, let them.
@@ -218,7 +224,12 @@ export type FieldComponentProps<
 > = FieldComponentPropsWithoutExtraProps<Values, Path, ExtraProps> &
   ExtraPropsOrAnyProps<ExtraProps>;
 
-type FieldComponentConfig<
+/**
+ * field.component = Component
+ *
+ * @private
+ */
+export type FieldComponentConfig<
   Values,
   Path extends string,
   ExtraProps extends FieldComponentExtraProps
@@ -235,13 +246,15 @@ type FieldComponentConfig<
       FieldHookConfig<Values, Path, ExtraProps> &
       ExtraPropsOrAnyProps<ExtraProps>;
 
-/**
- * field.render = Function
- */
-type FieldRenderFunction<Values, Path extends string> = (
+export type FieldRenderFunction<Values, Path extends string> = (
   props: FieldProps<Values, Path>
 ) => React.ReactElement | null;
 
+/**
+ * field.render = Function
+ *
+ * @private
+ */
 type FieldRenderConfig<Values, Path extends string> = {
   as?: undefined,
   component?: undefined,
@@ -251,6 +264,8 @@ type FieldRenderConfig<Values, Path extends string> = {
 
 /**
  * field.children = Function
+ *
+ * @private
  */
 type FieldChildrenConfig<Values, Path extends string> = {
   as?: undefined,
@@ -261,6 +276,8 @@ type FieldChildrenConfig<Values, Path extends string> = {
 
 /**
  * no config, <Field name="">
+ *
+ * @private
  */
 type FieldDefaultConfig<Values, Path extends string> =
   React.PropsWithChildren<
@@ -282,144 +299,11 @@ export type FieldConfig<Values, Path extends string, ExtraProps = any> =
   FieldChildrenConfig<Values, Path> |
   FieldDefaultConfig<Values, Path>;
 
+/**
+ * @deprecated use `FieldConfig`
+ */
 export type FieldAttributes<Values, Path extends string, ExtraProps = any> =
   FieldConfig<Values, Path, ExtraProps>;
-
-/**
- * FieldConfig Tests
- */
-let configTest: FieldConfig<any, any, { what: true }> | undefined = undefined;
-// AsString
-const fieldAsString: FieldAsStringConfig<any, any, any> = {} as any;
-fieldAsString.as = 'input';
-fieldAsString.onInput = (event) => {};
-configTest = {
-  as: "input",
-  name: '',
-  onInput: (e) => {},
-};
-// AsComponent
-const fieldAsConfig: FieldAsComponentConfig<any, any, { what: true }> = {} as any;
-fieldAsConfig.as = (props) => props.what && null;
-configTest = {
-  as: fieldAsConfig.as,
-  name: '',
-  what: true,
-};
-// AsComponent + Extra
-const fieldAsExtraConfig: FieldAsComponentConfig<any, any, { what: true }> = {} as any;
-fieldAsExtraConfig.as = (props) => props.what && null;
-configTest = {
-  as: fieldAsExtraConfig.as,
-  name: '',
-  what: true,
-};
-// StringComponent
-const fieldStringComponent: FieldStringComponentConfig<any, any> = {} as any;
-fieldStringComponent.component = 'input';
-fieldStringComponent.onInput = (event) => {};
-configTest = {
-  component: "input",
-  name: '',
-}
-// ComponentComponent
-const fieldComponentConfig: FieldComponentConfig<any, any, { what: true }> = {} as any;
-fieldComponentConfig.component = (props) => props.what && props.field.value ? null : null;
-
-// ComponentComponent
-configTest = {
-  component: fieldComponentConfig.component,
-  name: '',
-  what: true,
-};
-
-// ComponentComponent
-const fieldComponentWithExtraConfig: FieldComponentConfig<any, any, { what: true }> = {} as any;
-fieldComponentWithExtraConfig.component = (props) => props.what && props.field.value ? null : null;
-
-const fieldComponentWithExtra: FieldComponentConfig<any, any, { what: true }> = {} as any;
-fieldComponentWithExtra.component = (props) => props.what && null;
-configTest = {
-  component: fieldComponentWithExtra.component,
-  name: '',
-  what: true,
-};
-
-// RenderFunction
-const fieldRenderConfig: FieldRenderConfig<any, any> = {} as any;
-fieldRenderConfig.render = (props) => !!props.field.onChange && null;
-configTest = {
-  name: '',
-  render: fieldRenderConfig.render,
-};
-// ChildrenFunction
-const fieldChildrenConfig: FieldChildrenConfig<any, any> = {} as any;
-fieldChildrenConfig.children = (props) => !!props.field.onChange && null
-configTest = {
-  name: '',
-  children: fieldChildrenConfig.children,
-};
-// DefaultConfig
-configTest = {
-  name: '',
-};
-const proplessComponent = () => null;
-const propsAnyComponent = (props: any) => props ? null : null;
-const asComponent = (props: FieldAsProps<any, any>) => !!props.onChange && null;
-const asComponentWithExtra = (props: FieldAsProps<any, any, { what: true }>) => !!props.onChange && null;
-const asComponentWithOnlyExtra = (props: { what: true }) => !!props.what ? null : null;
-const componentComponent = (props: FieldComponentProps<any, any>) => !!props.field.onChange && null;
-const componentWithExtra = (props: FieldComponentProps<any, any, { what: true }>) => !!props.field.onChange && null;
-const componentWithOnlyExtra = (props: { what: true }) => !!props.what ? null : null;
-const renderFunction: FieldRenderFunction<any, any> = (props) => props.meta.value ? null : null;
-
-const formTests = (props: FieldConfig<any, any, {what: true}>) =>
-  <>
-    <input onInput={event => {}} />
-    {/* FieldAsString */}
-    <Field name="test" as="select" onInput={event => {}} />
-    {/* FieldAsComponent */}
-    <Field name="test" as={proplessComponent} />
-    <Field name="test" as={propsAnyComponent} />
-    <Field name="test" as={propsAnyComponent} what={true} />
-    {/* @ts-expect-error */}
-    <Field name="test" as={proplessComponent} what={true} />
-    <Field name="test" as={asComponent} />
-    <Field name="test" as={asComponentWithExtra} what={true} />
-    {/* @ts-expect-error */}
-    <Field name="test" as={asComponentWithExtra} what={false} />
-    <Field name="test" as={asComponentWithOnlyExtra} what={true} />
-    {/* @ts-expect-error */}
-    <Field name="test" as={asComponentWithOnlyExtra} what={false} />
-    {/* FieldStringComponent */}
-    <Field name="test" component="select" what={true} onInput={event => {}} />
-    {/* FieldComponent */}
-    <Field name="test" component={proplessComponent} />
-    <Field name="test" component={propsAnyComponent} />
-    <Field name="test" component={propsAnyComponent} what={true} />
-    {/* @ts-expect-error */}
-    <Field name="test" component={proplessComponent} what={true} />
-    <Field name="test" component={componentComponent} />
-    <Field name="test" component={componentWithExtra} what={true} />
-    {/* @ts-expect-error */}
-    <Field name="test" component={componentWithExtra} what={false} />
-    <Field name="test" component={componentWithOnlyExtra} what={true} />
-    {/* @ts-expect-error */}
-    <Field name="test" component={componentWithOnlyExtra} what={false} />
-    {/* FieldRender */}
-    <Field name="test" render={renderFunction} />
-    {/* FieldChildren */}
-    <Field name="test" children={renderFunction} />
-    <Field name="test">{renderFunction}</Field>
-    {/* Default */}
-    <Field name="test" onInput={event => {}} />
-
-    {/* Pass-Through Props */}
-    <Field<any, any, {what: true}> {...props} />
-    <Field {...props} />
-    {/* @ts-expect-error */}
-    <Field<any, any, {what: false}> {...props} />
-  </>
 
 export function Field<
   Values = any,
@@ -539,9 +423,9 @@ export function Field<
   } = props;
 
   return React.createElement(
-    props.render || props.component || "input",
+    props.as || props.component || "input",
     // field has FieldValue<> while HTML expects
-    { ...field, ...htmlProps, ref: props.innerRef } as any,
+    { ref: props.innerRef, ...field, ...htmlProps } as any,
     children
   );
 }

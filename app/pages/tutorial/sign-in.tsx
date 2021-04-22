@@ -6,6 +6,7 @@ import {
   Form,
   FormikProvider,
   FormikState,
+  NameOf,
   useFormik,
 } from 'formik';
 import * as Yup from 'yup';
@@ -24,10 +25,7 @@ type SignInValues = {
 };
 
 interface MyProps {
-  // how do we turn this into:
-  // 'username' | 'password' | 'name' | 'name.first' | 'name.last' | 'birthdate.year'
-  // ???????????
-  name: FieldName<SignInValues, any>; 
+  name: NameOf<SignInValues>;
 }
 
 const selectSignInState = (formikState: FormikState<SignInValues>) => ({
@@ -45,8 +43,8 @@ const SignInPage = () => {
     validateOnMount: router.query.validateOnMount === 'true',
     validateOnBlur: router.query.validateOnBlur !== 'false',
     validateOnChange: router.query.validateOnChange !== 'false',
-    initialValues: { 
-      username: '', 
+    initialValues: {
+      username: '',
       password: '',
       name: {
         first: "",
@@ -105,10 +103,10 @@ const SignInPage = () => {
       <FormikProvider value={formik}>
         <Form>
           <div>
-            <formik.TypedField 
+            <formik.TypedField
               name="birthdate.year"
-              validate={value => 
-                value === 0 
+              validate={value =>
+                value === 0
                   ? "Oh no"
                   : ""
               }

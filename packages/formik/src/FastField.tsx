@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { FormikValues } from './types';
+import { FormikValues, NameOf } from './types';
 import { Field, FieldAttributes } from './Field';
 
 /**
  * @deprecated Use Field + FieldConfig
  */
-export type FastFieldConfig<Values, Path extends string, ExtraProps> =
+export type FastFieldConfig<Values, Path extends NameOf<Values>, ExtraProps> =
   FieldAttributes<Values, Path, ExtraProps> & {
     shouldUpdate?: (nextProps: any, props: {}) => boolean;
   };
@@ -15,7 +15,7 @@ export type FastFieldConfig<Values, Path extends string, ExtraProps> =
  */
 export const FastField = <
   Values extends FormikValues = any,
-  Path extends string = any,
+  Path extends NameOf<Values> = any,
   ExtraProps = {}
 >({ shouldUpdate, ...props}: FastFieldConfig<Values, Path, ExtraProps>) => (
   <Field {...(props as FieldAttributes<Values, Path, ExtraProps>)} />

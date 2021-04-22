@@ -10,9 +10,9 @@ import {
   FieldHelperProps,
   FieldInputProps,
   FieldMetaProps,
-  FieldName,
   FieldValue,
   FormikState,
+  NameOf,
 } from '../types';
 import { useFormikState } from './useFormikState';
 import { isInputEvent, isObject, isShallowEqual } from '../utils';
@@ -23,25 +23,25 @@ import { FieldHookConfig, FormatFn, ParseFn, SingleValue } from '../Field';
  *
  * Pass `FieldMetaProps` from useFieldMeta, so we don't subscribe twice.
  */
-export const useFieldProps = <FormValues, Path extends string>(
-    nameOrOptions: FieldName<FormValues, Path> | FieldHookConfig<FormValues, Path, any>,
-    fieldMeta: FieldMetaProps<FieldValue<FormValues, Path>>
-  ): FieldInputProps<FormValues, Path> => {
+export const useFieldProps = <Values, Path extends NameOf<Values>>(
+    nameOrOptions: Path | FieldHookConfig<Values, Path, any>,
+    fieldMeta: FieldMetaProps<FieldValue<Values, Path>>
+  ): FieldInputProps<FieldValue<Values, Path>> => {
     const {
       handleChange,
       handleBlur,
       setFieldValue,
       getValueFromEvent
-    } = useFormikContext<FormValues>();
+    } = useFormikContext<Values>();
     const name = isObject(nameOrOptions) ? nameOrOptions.name : nameOrOptions;
     const valueState = fieldMeta.value;
     const touchedState = fieldMeta.touched;
 
-    const field: FieldInputProps<FormValues, Path> = {
+    const field: FieldInputProps<FieldValue<Values, Path>> = {
       name,
       // if this isn't a singular value, it should be parsed!
       // however, this is a fallback
-      value: valueState as SingleValue<FormValues, Path>,
+      value: valueState as SingleValue<FieldValue<Values, Path>>,
       onChange: handleChange,
       onBlur: handleBlur,
     };
@@ -52,8 +52,8 @@ export const useFieldProps = <FormValues, Path extends string>(
         value: valueProp, // value is special for checkboxes
         as: is,
         multiple,
-        parse = (/number|range/.test(type) ? numberParseFn : defaultParseFn) as ParseFn<SingleValue<FormValues, Path>>,
-        format = defaultFormatFn as FormatFn<SingleValue<FormValues, Path>>,
+        parse = (/number|range/.test(type) ? numberParseFn : defaultParseFn) as ParseFn<SingleValue<FieldValue<Values, Path>>>,
+        format = defaultFormatFn as FormatFn<SingleValue<FieldValue<Values, Path>>>,
         formatOnBlur = false,
       } = nameOrOptions;
 
@@ -97,13 +97,13 @@ export const useFieldProps = <FormValues, Path extends string>(
             setFieldValue(
               name,
               // we don't currently support arrays here
-              parse(getValueFromEvent(eventOrValue, name), field.name) as FieldValue<FormValues, Path>
+              parse(getValueFromEvent(eventOrValue, name), field.name) as FieldValue<Values, Path>
             );
           } else {
             setFieldValue(
               name,
               // we don't currently support arrays here
-              parse(eventOrValue, field.name) as FieldValue<FormValues, Path>
+              parse(eventOrValue, field.name) as FieldValue<Values, Path>
             );
           }
         };

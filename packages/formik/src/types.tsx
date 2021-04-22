@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Comparer, Selector } from 'use-optimized-selector';
-import { FieldHookConfig, SingleValue } from './Field';
+import { FieldBaseConfig, SingleValue } from './Field';
 import { TypedField } from './hooks/useTypedField';
 import { TypedFieldArray } from './hooks/useTypedFieldArray';
 
@@ -119,36 +119,72 @@ export type GetStateFn<Values> = () => FormikState<Values>;
 /**
  * Field Types
  */
-export type FieldValue<Values, Path extends string> =
+export type FieldValue<Values, Path extends NameOf<Values>> =
     string extends Path
         // if Path is any or never, return that as value
         ? Path
         : Values extends readonly unknown[]
           ? Path extends `${string}.${infer NextPath}`
-              ? FieldValue<Values[number], NextPath>
+              ? NextPath extends NameOf<Values[number]>
+                ? FieldValue<Values[number], NextPath>
+                : never
               : Values[number]
           : Path extends keyof Values
             ? Values[Path]
             : Path extends `${infer Key}.${infer NextPath}`
                 ? Key extends keyof Values
-                    ? FieldValue<Values[Key], NextPath>
+                    ? NextPath extends NameOf<Values[Key]>
+                      ? FieldValue<Values[Key], NextPath>
+                      : never
                     : never
                 : never;
 
-export type FieldName<Values, Path extends string> =
+export type FieldName<Values, Path extends NameOf<Values>> =
   FieldValue<Values, Path> extends never ? never : Path;
+
+/**
+ * Recursively convert objects to tuples, like
+ * `{ name: { first: string } }` -> `['name'] | ['name', 'first']`
+ */
+type RecursivelyTupleKeys<Value> = Value extends string
+  ? []
+  : Value extends (infer SingleValue)[] ?
+      [number, ...RecursivelyTupleKeys<SingleValue>]
+      : Value extends Record<string, any> ?
+          [keyof Value] |
+          {
+            [Key in keyof Value]: [Key, ...RecursivelyTupleKeys<Value[Key]>]
+          }[Extract<keyof Value, string>]
+      : [];
+
+/**
+ * Flatten tuples created by RecursivelyTupleKeys into a union of paths, like:
+ * `['name'] | ['name', 'first' ] -> 'name' | 'name.first'`
+ */
+type FlattenPathTuples<PathTuples extends any[]> =
+  PathTuples extends []
+    ? never
+    : PathTuples extends [infer SinglePath]
+      ? SinglePath
+      : PathTuples extends [infer Prefix, ...infer Rest]
+        ? Prefix extends string | number
+          ? `${Prefix}.${FlattenPathTuples<Extract<Rest, string[]>>}`
+          : never
+        : string;
+
+export type NameOf<Value> = object extends Value ? any : FlattenPathTuples<RecursivelyTupleKeys<Value>> & string;
 
 export type WithExtraProps<SourceType, ExtraProps> = SourceType extends ExtraProps
 ? SourceType
 : object extends ExtraProps ? SourceType : SourceType & ExtraProps;
 
-export type RegisterFieldFn<Values> = <Path extends string>(
-  name: FieldName<Values, Path>,
-  { validate }: Pick<FieldHookConfig<Values, Path>, 'validate'>
+export type RegisterFieldFn<Values> = <Path extends NameOf<Values>>(
+  name: Path,
+  { validate }: Pick<FieldBaseConfig<FieldValue<Values, Path>, Values, Path>, 'validate'>
 ) => void;
 
-export type UnregisterFieldFn<Values> = <Path extends string>(
-  name: FieldName<Values, Path>
+export type UnregisterFieldFn<Values> = <Path extends NameOf<Values>>(
+  name: Path
 ) => void;
 
 /**
@@ -172,19 +208,19 @@ export type SetValuesFn<Values extends FormikValues> = (
   shouldValidate?: boolean | undefined
 ) => Promise<void | FormikErrors<Values>>;
 
-export type SetFieldValueFn<Values extends FormikValues> = <Path extends string>(
-  field: FieldName<Values, Path>,
+export type SetFieldValueFn<Values extends FormikValues> = <Path extends NameOf<Values>>(
+  field: Path,
   value: FieldValue<Values, Path>,
   shouldValidate?: boolean | undefined
 ) => Promise<void | FormikErrors<Values>>;
 
-export type SetFieldErrorFn<Values> = <Path extends string>(
-  field: FieldName<Values, Path>,
+export type SetFieldErrorFn<Values> = <Path extends NameOf<Values>>(
+  field: Path,
   error: string | undefined
 ) => void;
 
-export type SetFieldTouchedFn<Values extends FormikValues> = <Path extends string>(
-  field: FieldName<Values, Path>,
+export type SetFieldTouchedFn<Values extends FormikValues> = <Path extends NameOf<Values>>(
+  field: Path,
   touched?: boolean | undefined,
   shouldValidate?: boolean | undefined
 ) => Promise<void | FormikErrors<Values>>;
@@ -193,8 +229,8 @@ export type ValidateFormFn<Values extends FormikValues> = (
   values?: Values
 ) => Promise<FormikErrors<Values>>;
 
-export type ValidateFieldFn<Values> = <Path extends string>(
-  name: FieldName<Values, Path>
+export type ValidateFieldFn<Values> = <Path extends NameOf<Values>>(
+  name: Path
 ) => Promise<void | string | undefined>;
 
 export type ResetFormFn<Values extends FormikValues> = (
@@ -476,11 +512,11 @@ export type FieldOnBlurProp = (
 ) => void;
 
 /** Field input value, name, and event handlers */
-export type FieldInputProps<FormValues, Path extends string> = {
+export type FieldInputProps<Value> = {
   /** Value of the field */
-  value: SingleValue<FormValues, Path>;
+  value: SingleValue<Value>;
   /** Name of the field */
-  name: FieldName<FormValues, Path>;
+  name: string;
   /** Multiple select? */
   multiple?: boolean;
   /** Is the field checked? */

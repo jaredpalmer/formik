@@ -16,7 +16,7 @@ import {
   FormikConfig,
   FieldAttributes,
   FieldComponentProps,
-  FieldProps,
+  FieldRenderProps,
 } from '../src';
 
 import { noop } from './testHelpers';
@@ -60,10 +60,10 @@ const createRenderField = (
   props: Partial<FieldAttributes<any, any, any>> = {},
   formProps?: Partial<FormikConfig<Values>>
 ) => {
-  let injected: FieldProps;
+  let injected: FieldRenderProps;
 
   if (!props.children && !props.render && !props.component && !props.as) {
-    props.children = (fieldProps: FieldProps) =>
+    props.children = (fieldProps: FieldRenderProps) =>
       (injected = fieldProps) && (
         <input {...fieldProps.field} name="name" data-testid="name-input" />
       );
@@ -112,11 +112,11 @@ describe('Field / FastField', () => {
 
   describe('receives correct values and types without ExtraProps', () => {
     it('<Field />', () => {
-      let renderInjectedProps: FieldProps[] = [];
+      let renderInjectedProps: FieldRenderProps[] = [];
       let componentInjectedProps: FieldComponentProps = {} as any;
       let asInjectedProps: { field: FieldAsProps } = {} as any;
 
-      const RenderField = (props: FieldProps) => {
+      const RenderField = (props: FieldRenderProps) => {
         renderInjectedProps.push(props);
 
         return <div data-testid="child">{TEXT}</div>;
@@ -180,11 +180,11 @@ describe('Field / FastField', () => {
 
     describe('receives (or doesn\'t receive) ExtraProps', () => {
       it('<Field />', () => {
-        let renderInjectedProps: FieldProps[] = [];
+        let renderInjectedProps: FieldRenderProps[] = [];
         let componentInjectedProps: FieldComponentProps<any, any, { what: true }> = {} as any;
-        let asInjectedProps: FieldAsProps<any, any, { what: true }> = {} as any;
+        let asInjectedProps: FieldAsProps<any, any, any, { what: true }> = {} as any;
 
-        const RenderField = (props: FieldProps) => {
+        const RenderField = (props: FieldRenderProps) => {
           renderInjectedProps.push(props);
 
           return <div data-testid="child">{TEXT}</div>;
@@ -195,7 +195,7 @@ describe('Field / FastField', () => {
           return <div data-testid="child">{TEXT}</div>;
         }
 
-        const AsField = (props: FieldAsProps<any, any, { what: true }>) => {
+        const AsField = (props: FieldAsProps<any, any, any, { what: true }>) => {
           asInjectedProps = props;
 
           return <div data-testid="child">{TEXT}</div>;
@@ -219,11 +219,11 @@ describe('Field / FastField', () => {
       });
 
     it('<FastField />', () => {
-      let renderInjectedProps: FieldProps[] = [];
+      let renderInjectedProps: FieldRenderProps[] = [];
       let componentInjectedProps: FieldComponentProps = {} as any;
       let asInjectedProps: { field: FieldAsProps } = {} as any;
 
-      const RenderField = (props: FieldProps) => {
+      const RenderField = (props: FieldRenderProps) => {
         renderInjectedProps.push(props);
 
         return <div data-testid="child">{TEXT}</div>;
@@ -604,7 +604,9 @@ describe('Field / FastField', () => {
     cases('warns if both children and render', renderField => {
       global.console.warn = jest.fn();
 
+      // this type is impossible
       const { rerender } = renderField({
+        // @ts-expect-error
         children: <div>{TEXT}</div>,
         // @ts-expect-error
         render: () => <div>{TEXT}</div>,

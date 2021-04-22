@@ -1,11 +1,12 @@
 import * as React from "react";
 import { Field, FieldConfig } from "../Field";
+import { NameOf } from "../types";
 
-export type TypedField<FormValues> = <
-  Path extends string,
-  ExtraProps
+export type TypedField<Values> = <
+  Path extends NameOf<Values>,
+  ExtraProps = {}
 >(
-  props: FieldConfig<FormValues, Path, ExtraProps>
+  props: FieldConfig<Values, Path, ExtraProps>
 ) =>
   React.ReactElement | null;
 

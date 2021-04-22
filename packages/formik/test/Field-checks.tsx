@@ -8,8 +8,31 @@ import {
     FieldAsStringConfig,
     FieldComponentConfig,
     FieldRenderFunction,
-    FieldStringComponentConfig
+    FieldStringComponentConfig,
+    FieldValue,
+    SingleValue,
+    createTypedField,
+    NameOf,
+    FieldRenderProps,
+    FieldRenderConfig,
+    FieldChildrenConfig,
+    TypedAsField,
+    TypedComponentField
 } from "../src";
+
+type PersonValues = {
+  name: {
+    first: string,
+    last: string,
+  },
+  motto: string,
+  age: number,
+  favoriteNumbers: number[];
+}
+
+type PersonWithFriendValues = PersonValues & {
+  bestFriend: PersonValues;
+}
 
 /**
  * FieldConfig Tests
@@ -91,15 +114,14 @@ import {
  };
  const proplessComponent = () => null;
  const propsAnyComponent = (props: any) => props ? null : null;
- const asComponent = (props: FieldAsProps<any, any>) => !!props.onChange && null;
- const asComponentWithExtra = (props: FieldAsProps<any, any, { what: true }>) => !!props.onChange && null;
- const asComponentWithOnlyExtra = (props: { what: true }) => !!props.what ? null : null;
- const componentComponent = (props: FieldComponentProps<any, any>) => !!props.field.onChange && null;
- const componentWithExtra = (props: FieldComponentProps<any, any, { what: true }>) => !!props.field.onChange && null;
  const componentWithOnlyExtra = (props: { what: true }) => !!props.what ? null : null;
+ const asComponent = (props: FieldAsProps) => !!props.onChange && null;
+ const asComponentWithExtra = (props: FieldAsProps<any, any, any, { what: true }>) => !!props.onChange && null;
+ const componentComponent = (props: FieldComponentProps<any, any, any, {}>) => !!props.field.onChange && null;
+ const componentWithExtra = (props: FieldComponentProps<any, any, any, { what: true }>) => !!props.field.onChange && null;
  const renderFunction: FieldRenderFunction<any, any> = (props) => props.meta.value ? null : null;
 
- const formTests = (props: FieldConfig<any, any, {what: true}>) =>
+ const fieldTests = (props: FieldConfig<PersonWithFriendValues, "age", {what: true}>) =>
   <>
     {/*
       * all the events below should be inferred,
@@ -129,7 +151,7 @@ import {
     <Field name="test" as={asComponent} />
     <Field name="test" as={asComponent}><div /></Field>
     <Field name="test" as={asComponentWithExtra} what={true} />
-    <Field name="test" as={asComponentWithOnlyExtra} what={true} />
+    <Field name="test" as={componentWithOnlyExtra} what={true} />
 
     {/* @ts-expect-error propless components don't have extraProps */}
     <Field name="test" as={proplessComponent} what={true} />
@@ -168,3 +190,116 @@ import {
     {/* @ts-expect-error extraProps should match */}
     <Field<any, any, {what: false}> {...props} />
   </>
+
+const TypedField = createTypedField<PersonWithFriendValues>();
+class TypedAsComponentClass extends React.Component<FieldAsProps<number, any, any, {}>> {
+  render() {
+    return this.props.value ? null : null;
+  }
+}
+const typedAsComponent: TypedAsField<number, {}> = (props) => props.value ? null : null;
+const typedAsComponentWithExtra: TypedAsField<number, { what: true }> = (props) => !!props.onChange && null;
+class TypedAsComponentClassWithExtra extends React.Component<FieldAsProps<number, any, any, { what: true }>> {
+  render() {
+    return this.props.value && this.props.what ? null : null;
+  }
+}
+const typedComponentComponent: TypedComponentField<number, {}> = (props) => !!props.field.onChange && null;
+const typedComponentWithExtra: TypedComponentField<number, { what: true }> = (props) => !!props.field.onChange && null;
+const typedRenderFunction = <Values, Path extends NameOf<Values>>(props: FieldRenderProps<Values, Path>) => props.meta.value ? null : null;
+
+const fieldTests = (props: FieldConfig<PersonWithFriendValues, "age", {what: true}>) =>
+ <>
+   {/*
+     * all the events below should be inferred,
+     * but can't because of GenericInputHTMLAttributes
+     */}
+   <input onInput={event => {}} />
+
+   {/* Default */}
+   <TypedField name="age" onInput={event => {}} />
+   {/* @ts-expect-error elements don't have extraProps */}
+   <TypedField name="age" what={true} />
+
+   {/* FieldAsString */}
+   <TypedField name="age" as="select" onInput={event => {}} />
+   {/* @ts-expect-error elements don't have extraProps */}
+   <TypedField name="age" as="select" what={true} />
+
+   {/* FieldStringComponent */}
+   <TypedField name="age" component="select" onInput={event => {}} />
+   {/* @ts-expect-error elements don't have extraProps */}
+   <TypedField name="age" component="select" what={true} />
+
+   {/* FieldAsComponent */}
+   <TypedField name="age" as={proplessComponent} />
+   <TypedField name="age" as={propsAnyComponent} />
+   <TypedField name="age" as={propsAnyComponent} what={true} />
+   <TypedField<"age", {}> name="age" as={typedAsComponent} />
+   <TypedField name="age" as={typedAsComponent} />
+   <TypedField name="age" as={TypedAsComponentClass} />
+   <TypedField name="age" as={typedAsComponent}><div /></TypedField>
+   <TypedField name="age" as={typedAsComponentWithExtra} what={true} />
+   <TypedField name="age" as={TypedAsComponentClassWithExtra} what={true} />
+   <TypedField name="age" as={componentWithOnlyExtra} what={true} />
+
+   {/* @ts-expect-error propless components don't have extraProps */}
+   <TypedField name="age" as={proplessComponent} what={true} />
+   {/* @ts-expect-error value type should match */}
+   <TypedField name="motto" as={typedAsComponent} />
+   {/* @ts-expect-error value type should match */}
+   <TypedField name="motto" as={TypedAsComponentClass} />
+   {/* @ts-expect-error extraProps is required */}
+   <TypedField name="age" as={typedAsComponentWithExtra} />
+   {/* @ts-expect-error extraProps is required */}
+   <TypedField name="age" as={TypedAsComponentClassWithExtra} />
+   {/* @ts-expect-error extraProps should match */}
+   <TypedField name="age" as={asComponentWithExtra} what={false} />
+   {/* @ts-expect-error extraProps is required */}
+   <TypedField name="age" as={TypedAsComponentClassWithExtra} what={false} />
+   {/* @ts-expect-error extraProps should match */}
+   <TypedField name="age" as={asComponentWithOnlyExtra} what={false} />
+
+   {/* FieldComponent */}
+   <TypedField name="age" component={proplessComponent} />
+   <TypedField name="age" component={propsAnyComponent} />
+   <TypedField name="age" component={propsAnyComponent} what={true} />
+   <TypedField name="age" component={typedComponentComponent} />
+   <TypedField name="age" component={typedComponentWithExtra} what={true} />
+   <TypedField name="age" component={componentWithOnlyExtra} what={true} />
+
+   {/* @ts-expect-error propless components don't have extraProps */}
+   <TypedField name="age" component={proplessComponent} what={true} />
+   {/* @ts-expect-error extraProps should match */}
+   <TypedField name="age" component={componentWithExtra} what={false} />
+   {/* @ts-expect-error extraProps should match */}
+   <TypedField name="age" component={componentWithOnlyExtra} what={false} />
+
+   {/* FieldRender */}
+   <TypedField name="age" render={typedRenderFunction} />
+   {/* @ts-expect-error render function doesn't have child component */}
+   <TypedField name="age" render={typedRenderFunction}><div /></TypedField>
+
+   {/* FieldChildren */}
+   <TypedField name="age" children={typedRenderFunction} />
+   <TypedField name="age">{typedRenderFunction}</TypedField>
+
+   {/* Pass-Through Props */}
+   <TypedField<any, {what: true}> {...props} />
+   <TypedField {...props} />
+   {/* @ts-expect-error extraProps should match */}
+   <TypedField<any, any, {what: false}> {...props} />
+ </>
+
+const number: FieldValue<PersonValues, "age"> | undefined = undefined;
+const numberArray: FieldValue<PersonValues, "favoriteNumbers"> | undefined = undefined;
+const singleNumber: SingleValue<FieldValue<PersonValues, "favoriteNumbers">> | undefined = undefined;
+const singleNumberInferrer = () =>
+  <TypedField
+    name="favoriteNumbers"
+    component={(props) => null}
+    // @ts-expect-error
+    value=""
+  />;
+
+const namesOf: NameOf<PersonWithFriendValues> = "age";

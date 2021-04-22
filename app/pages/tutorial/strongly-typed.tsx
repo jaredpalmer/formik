@@ -1,5 +1,5 @@
-import React, { ChangeEvent, ChangeEventHandler, EventHandler } from 'react';
-import { Formik, Form, ErrorMessage, createTypedField, Field, TypedAsField, FormatFn, useFormikContext, NameOf, FieldAsProps, FieldValue, ParseFn } from 'formik';
+import React from 'react';
+import { Formik, Form, ErrorMessage, createTypedField } from 'formik';
 import * as Yup from 'yup';
 
 let renderCount = 0;
@@ -28,23 +28,8 @@ const initialValues: FormValues = {
 
 const TypedField = createTypedField<FormValues>();
 
-const NumberField = <Values, Path extends NameOf<Values>>(props: FieldAsProps<number | "", Values, Path, { required: boolean }>) => {
-  const formik = useFormikContext<Values>();
-
-  const parse: ParseFn<number | ""> = React.useMemo(
-    () => props.parse ?? ((value: unknown) => value === "" ? "" : Number(value)),
-    [props.format]
-  );
-  const format = React.useMemo(
-    () => props.format ?? ((value: number | '') => Number(value) ? value.toLocaleString() : ""),
-    [props.format]
-  );
-  const handleChange = React.useCallback<ChangeEventHandler<HTMLInputElement>>(event => {
-    formik.setFieldValue(props.name, parse(event.target.value, props.name));
-  }, [parse])
-
-  return <input name={props.name} value={format(props.value)} onChange={handleChange} onBlur={props.onBlur} />
-};
+const parseNumberOrEmpty = (value: unknown) => value === "" ? "" : Number(value);
+const formatNumberOrEmpty = (value: number | '') => Number(value) ? value.toLocaleString() : "";
 
 const Basic = () => (
   <div>
@@ -87,6 +72,8 @@ const Basic = () => (
           name="age"
           placeholder="jane@acme.com"
           type="number"
+          parse={parseNumberOrEmpty}
+          format={formatNumberOrEmpty}
           validate={numlike =>
             numlike === ""
               ? "not a number"
@@ -131,7 +118,7 @@ const Basic = () => (
         <div>
           <label>
             Textarea
-            <TypedField name="textarea" as="textarea" validate={value => {}} />
+            <TypedField name="textarea" as="textarea" />
           </label>
         </div>
         <button type="submit">Submit</button>

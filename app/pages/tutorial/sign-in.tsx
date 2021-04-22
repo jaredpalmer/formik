@@ -104,12 +104,8 @@ const SignInPage = () => {
         <Form>
           <div>
             <formik.TypedField
-              name="birthdate.year"
-              validate={value =>
-                value === 0
-                  ? "Oh no"
-                  : ""
-              }
+              name="username"
+              validate={value => value.length > 0 ? "" : "Oh no"}
             />
             <ErrorMessage name="username" component="p" />
           </div>

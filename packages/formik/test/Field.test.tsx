@@ -189,7 +189,7 @@ describe('Field / FastField', () => {
 
           return <div data-testid="child">{TEXT}</div>;
         }
-        const ComponentField = (props: FieldComponentProps<any, any, { what: true }>) => {
+        const ComponentField = (props: FieldComponentProps<any, any, any, { what: true }>) => {
           componentInjectedProps = props;
 
           return <div data-testid="child">{TEXT}</div>;

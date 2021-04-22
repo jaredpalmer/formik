@@ -31,7 +31,7 @@ type PersonValues = {
 }
 
 type PersonWithFriendValues = PersonValues & {
-  bestFriend: PersonValues;
+  bestFriends: PersonValues[];
 }
 
 /**
@@ -215,6 +215,8 @@ const fieldTests = (props: FieldConfig<PersonWithFriendValues, "age", {what: tru
      * but can't because of GenericInputHTMLAttributes
      */}
    <input onInput={event => {}} />
+
+   <TypedField name="bestFriends.0.name.first" onInput={event => {}} />
 
    {/* Default */}
    <TypedField name="age" onInput={event => {}} />

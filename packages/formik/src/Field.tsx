@@ -31,9 +31,11 @@ export type SingleValue<Value> =
     : Value;
 
 /**
+ * These props are passed from Config to Components.
+ *
  * @private
  */
-export type FieldBaseConfig<Value, Values, Path extends NameOf<Values>> = {
+export type FieldPassThroughConfig<Value, Values, Path extends NameOf<Values>> = {
   /**
    * Validate a single field value independently
    */
@@ -75,30 +77,24 @@ export type FieldBaseConfig<Value, Values, Path extends NameOf<Values>> = {
   innerRef?: (instance: any) => void;
 }
 
-type FieldAsPropsWithoutExtraProps<
-  Value,
-  Values,
-  Path extends NameOf<Values>
-> =
-  FieldBaseConfig<Value, Values, Path> &
-  FieldInputProps<Value>;
+type FieldBaseProps<Value, Values, Path extends NameOf<Values>, SourceProps> =
+  FieldPassThroughConfig<Value, Values, Path> &
+  SourceProps;
 
-type FieldAsExtraProps = Omit<
-  Record<string, any>,
-  'as' | 'component' | 'render' | 'children' |
-    keyof FieldAsPropsWithoutExtraProps<any, any, any>
->;
+type AnyComponentType<ExtraProps> =
+  React.ComponentType<ExtraProps>;
 
 export type FieldAsProps<
   Value = any,
   Values = any,
   Path extends NameOf<Values> = any,
-  ExtraProps extends FieldAsExtraProps = {}
-> =
-  FieldAsPropsWithoutExtraProps<Value, Values, Path> &
-  ExtraPropsOrAnyProps<ExtraProps>;
+  ExtraProps = {}
+> = FieldBaseProps<Value, Values, Path, FieldInputProps<Value>> &
+  ExtraPropsOrAnyProps<ExtraProps>
 
-export type TypedAsField<Value, ExtraProps = {}> = <Values, Path extends NameOf<Values>>(
+export type TypedAsField<Value, ExtraProps = {}> = <
+  Values, Path extends NameOf<Values>
+>(
   props: FieldAsProps<
     Value,
     Values,
@@ -114,13 +110,14 @@ export type FieldHookConfig<Values, Path extends NameOf<Values>, ExtraProps = {}
   as?:
     | string
     | TypedAsField<FieldValue<Values, Path>, ExtraProps>
-    | React.ComponentType<FieldAsProps<FieldValue<Values, Path>, Values, Path, ExtraProps>>;
+    | React.ComponentType<FieldAsProps<FieldValue<Values, Path>, Values, Path, ExtraProps>>
+    | AnyComponentType<ExtraProps>;
 
   /**
    * Field name
    */
   name: Path;
-} & FieldBaseConfig<FieldValue<Values, Path>, Values, Path>;
+} & FieldPassThroughConfig<FieldValue<Values, Path>, Values, Path>;
 
 export function useField<Values = any, Path extends NameOf<Values> = any, ExtraProps = {}>(
   propsOrFieldName:
@@ -137,7 +134,7 @@ export function useField<Values = any, Path extends NameOf<Values> = any, ExtraP
     unregisterField,
   } = formik;
 
-  const props: FieldBaseConfig<FieldValue<Values, Path>, Values, Path> = isObject(propsOrFieldName)
+  const props: FieldPassThroughConfig<FieldValue<Values, Path>, Values, Path> = isObject(propsOrFieldName)
     ? propsOrFieldName
     : { name: propsOrFieldName };
 
@@ -183,10 +180,9 @@ export type BaseConfig<Values, Path extends NameOf<Values>, ExtraProps> = {
    */
   component?:
     | string
-    | React.ComponentType<
-        FieldComponentProps<FieldValue<Values, Path>, Values, Path, ExtraProps>
-      >
-    | TypedComponentField<FieldValue<Values, Path>, ExtraProps>;
+    | TypedComponentField<FieldValue<Values, Path>, ExtraProps>
+    | React.ComponentType<FieldComponentProps<FieldValue<Values, Path>, Values, Path, ExtraProps>>
+    | AnyComponentType<ExtraProps>;
 
   /**
    * Render prop (works like React router's <Route render={props =>} />)
@@ -206,12 +202,18 @@ type GenericFieldHTMLConfig = Omit<
   keyof BaseConfig<any, any, any>
 >;
 
+/**
+ * Passed to `<Field component={Component} />`.
+ */
 type LegacyBag<Values, Path extends NameOf<Values>> = {
   field: FieldInputProps<FieldValue<Values, Path>>;
   // if ppl want to restrict this for a given form, let them.
   form: FormikProps<Values>;
 }
 
+/**
+ * Passed to `render={Function}` or `children={Function}`.
+ */
 export type FieldRenderProps<Values = any, Path extends NameOf<Values> = any> =
   LegacyBag<Values, Path> & {
     meta: FieldMetaProps<FieldValue<Values, Path>>;
@@ -220,36 +222,23 @@ export type FieldRenderProps<Values = any, Path extends NameOf<Values> = any> =
 /**
  * @deprecated Field types do not share common props. Please choose:
  *
- * FieldComponentProps -> `field.component`,
- * FieldAsProps -> `field.as`,
- * FieldRenderProps -> `field.render, field.children = Function`
+ * FieldComponentProps: `field.component = Component`,
+ * FieldAsProps: `field.as = Component`,
+ * FieldRenderProps: `field.render, field.children = Function`
  */
 export type FieldProps<Values, Path extends NameOf<Values>> = FieldRenderProps<Values, Path>;
-
-type FieldComponentPropsWithoutExtraProps<
-  Value,
-  Values,
-  Path extends NameOf<Values>
-> =
-  FieldBaseConfig<Value, Values, Path> &
-  LegacyBag<Values, Path>;
-
-type FieldComponentExtraProps = Omit<
-  Record<string, any>,
-  'as' | 'component' | 'render' | 'children' |
-    keyof FieldComponentPropsWithoutExtraProps<any, any, any>
->;
 
 export type FieldComponentProps<
   Value = any,
   Values = any,
   Path extends NameOf<Values> = any,
-  ExtraProps extends FieldComponentExtraProps = {}
-> =
-  FieldComponentPropsWithoutExtraProps<Value, Values, Path> &
+  ExtraProps = {}
+> = FieldBaseProps<Value, Values, Path, LegacyBag<Values, Path>> &
   ExtraPropsOrAnyProps<ExtraProps>;
 
-export type TypedComponentField<Value, ExtraProps = {}> = <Values, Path extends NameOf<Values>>(
+export type TypedComponentField<Value, ExtraProps = {}> = <
+  Values, Path extends NameOf<Values>
+>(
   props: FieldComponentProps<
     Value,
     Values,
@@ -259,7 +248,7 @@ export type TypedComponentField<Value, ExtraProps = {}> = <Values, Path extends 
 ) => React.ReactElement | null;
 
 /**
- * field.as = string
+ * `field.as = string`
  *
  * @private
  */
@@ -271,27 +260,29 @@ export type FieldAsStringConfig<Values, Path extends NameOf<Values>, ExtraProps>
   }> & GenericFieldHTMLConfig;
 
 /**
- * field.as = Component
+ * `field.as = Component`
  *
  * @private
  */
 export type FieldAsComponentConfig<
   Values,
   Path extends NameOf<Values>,
-  ExtraProps extends FieldAsExtraProps
+  ExtraProps
 > =
-  React.PropsWithChildren<
+  BaseConfig<Values, Path, ExtraProps> & React.PropsWithChildren<
     {
-      as: React.ComponentType<FieldAsProps<FieldValue<Values, Path>, Values, Path, ExtraProps>>,
+      as:
+        | TypedAsField<FieldValue<Values, Path>, ExtraProps>
+        | React.ComponentType<FieldAsProps<FieldValue<Values, Path>, Values, Path, ExtraProps>>
+        | AnyComponentType<ExtraProps>;
       component?: undefined,
       render?: undefined,
     }
   > &
-    FieldHookConfig<Values, Path, ExtraProps> &
     ExtraPropsOrAnyProps<ExtraProps>;
 
 /**
- * field.component = string
+ * `field.component = string`
  *
  * @private
  */
@@ -303,21 +294,22 @@ export type FieldStringComponentConfig<Values, Path extends NameOf<Values>> =
   }> & GenericFieldHTMLConfig;
 
 /**
- * field.component = Component
+ * `field.component = Component`
  *
  * @private
  */
 export type FieldComponentConfig<
   Values,
   Path extends NameOf<Values>,
-  ExtraProps extends FieldComponentExtraProps
+  ExtraProps
 > =
   BaseConfig<Values, Path, ExtraProps> & React.PropsWithChildren<
     {
       as?: undefined,
-      component: React.ComponentType<
-        FieldComponentProps<FieldValue<Values, Path>, Values, Path, ExtraProps>
-      >,
+      component:
+        | TypedComponentField<FieldValue<Values, Path>, ExtraProps>
+        | React.ComponentType<FieldComponentProps<FieldValue<Values, Path>, Values, Path, ExtraProps>>
+        | AnyComponentType<ExtraProps>;
       render?: undefined,
     }
   > & ExtraPropsOrAnyProps<ExtraProps>;
@@ -327,7 +319,7 @@ export type FieldRenderFunction<Values, Path extends NameOf<Values>> = (
 ) => React.ReactElement | null;
 
 /**
- * field.render = Function
+ * `field.render = Function`
  *
  * @private
  */
@@ -340,7 +332,7 @@ export type FieldRenderConfig<Values, Path extends NameOf<Values>> =
   };
 
 /**
- * field.children = Function
+ * `field.children = Function`
  *
  * @private
  */
@@ -353,7 +345,7 @@ export type FieldChildrenConfig<Values, Path extends NameOf<Values>> =
   };
 
 /**
- * no config, <Field name="">
+ * no config, `<Field name="">`
  *
  * @private
  */

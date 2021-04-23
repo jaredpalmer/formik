@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Comparer, Selector } from 'use-optimized-selector';
-import { FieldBaseConfig, SingleValue } from './Field';
+import { FieldPassThroughConfig, SingleValue } from './Field';
 import { TypedField } from './hooks/useTypedField';
 import { TypedFieldArray } from './hooks/useTypedFieldArray';
 
@@ -177,7 +177,7 @@ export type WithExtraProps<SourceType, ExtraProps> = SourceType extends ExtraPro
 
 export type RegisterFieldFn<Values> = <Path extends NameOf<Values>>(
   name: Path,
-  { validate }: Pick<FieldBaseConfig<FieldValue<Values, Path>, Values, Path>, 'validate'>
+  { validate }: Pick<FieldPassThroughConfig<FieldValue<Values, Path>, Values, Path>, 'validate'>
 ) => void;
 
 export type UnregisterFieldFn<Values> = <Path extends NameOf<Values>>(

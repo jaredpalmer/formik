@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Comparer, Selector } from 'use-optimized-selector';
+import { number, string } from 'yup';
 import { FieldPassThroughConfig, SingleValue } from './Field';
 import { TypedField } from './hooks/useTypedField';
 import { TypedFieldArray } from './hooks/useTypedFieldArray';
@@ -117,59 +118,72 @@ export type FormikState<Values> = FormikReducerState<Values> &
 export type GetStateFn<Values> = () => FormikState<Values>;
 
 /**
- * Field Types
- */
-export type FieldValue<Values, Path extends NameOf<Values>> =
-    string extends Path
-        // if Path is any or never, return that as value
-        ? Path
-        : Values extends readonly unknown[]
-          ? Path extends `${string}.${infer NextPath}`
-              ? NextPath extends NameOf<Values[number]>
-                ? FieldValue<Values[number], NextPath>
-                : never
-              : Values[number]
-          : Path extends keyof Values
-            ? Values[Path]
-            : Path extends `${infer Key}.${infer NextPath}`
-                ? Key extends keyof Values
-                    ? NextPath extends NameOf<Values[Key]>
-                      ? FieldValue<Values[Key], NextPath>
-                      : never
-                    : never
-                : never;
-
-/**
  * Recursively convert objects to tuples, like
  * `{ name: { first: string } }` -> `['name'] | ['name', 'first']`
  */
-type RecursivelyTupleKeys<Value> = Value extends string
+export type RecursivelyTupleKeys<Values> = Values extends string
   ? []
-  : Value extends (infer SingleValue)[] ?
-      [number, ...RecursivelyTupleKeys<SingleValue>]
-      : Value extends Record<string, any> ?
-          [keyof Value] |
+  : Values extends (infer SingleValue)[]
+    ? [number, ...RecursivelyTupleKeys<SingleValue>]
+      : Values extends Record<string, any> ?
+          [keyof Values] |
           {
-            [Key in keyof Value]: [Key, ...RecursivelyTupleKeys<Value[Key]>]
-          }[Extract<keyof Value, string>]
+            [Key in keyof Values]: [Key, ...RecursivelyTupleKeys<Values[Key]>]
+          }[Extract<keyof Values, string>]
       : [];
 
 /**
  * Flatten tuples created by RecursivelyTupleKeys into a union of paths, like:
  * `['name'] | ['name', 'first' ] -> 'name' | 'name.first'`
  */
-type FlattenPathTuples<PathTuples extends any[]> =
+export type FlattenPathTuples<PathTuples extends any[]> =
   PathTuples extends []
     ? never
     : PathTuples extends [infer SinglePath]
-      ? SinglePath
+      ? SinglePath extends string | number
+        ? `${SinglePath}`
+        : never
       : PathTuples extends [infer Prefix, ...infer Rest]
         ? Prefix extends string | number
           ? `${Prefix}.${FlattenPathTuples<Extract<Rest, (string | number)[]>>}`
           : never
         : string;
 
-export type NameOf<Value> = object extends Value ? any : FlattenPathTuples<RecursivelyTupleKeys<Value>> & string;
+export type NameOf<Values> = object extends Values
+  ? any :
+  FlattenPathTuples<RecursivelyTupleKeys<Values>> & string;
+
+/**
+ * Field Types
+ */
+export type FieldValue<Values, Path extends NameOf<Values>> =
+  string extends Path
+    // if Path is any or never, return that as value
+    ? Path
+    : Values extends readonly (infer SingleValue)[]
+      ? Path extends `${string}.${infer NextPath}`
+        ? NextPath extends NameOf<Values[number]>
+          ? FieldValue<Values[number], NextPath>
+          : never
+        : SingleValue
+      : Path extends keyof Values
+        ? Values[Path]
+        : Path extends `${infer Key}.${infer NextPath}`
+          ? Key extends keyof Values
+            ? NextPath extends NameOf<Values[Key]>
+              ? FieldValue<Values[Key], NextPath>
+              : never
+            : never
+          : never;
+
+export type MatchField<Values, Value> =
+  NameOf<Values> extends (infer Path)
+    ? Path extends NameOf<Values>
+      ? FieldValue<Values, Path> extends never
+        ? never
+        : Path
+      : never
+    : never;
 
 export type WithExtraProps<SourceType, ExtraProps> = SourceType extends ExtraProps
 ? SourceType

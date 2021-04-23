@@ -17,21 +17,25 @@ import {
     FieldRenderConfig,
     FieldChildrenConfig,
     TypedAsField,
-    TypedComponentField
+    TypedComponentField,
+    MatchField,
+    RecursivelyTupleKeys
 } from "../src";
 
-type PersonValues = {
+type BasePerson = {
   name: {
     first: string,
     last: string,
   },
   motto: string,
+  nicknames: string[],
   age: number,
   favoriteNumbers: number[];
 }
 
-type PersonWithFriendValues = PersonValues & {
-  bestFriends: PersonValues[];
+type Person = BasePerson & {
+  partner: BasePerson;
+  friends: BasePerson[];
 }
 
 /**
@@ -113,7 +117,7 @@ configTest = {
   name: '',
 };
 
-const TypedField = createTypedField<PersonWithFriendValues>();
+const TypedField = createTypedField<Person>();
 
 const proplessComponent = () => null;
 const propsAnyComponent = (props: any) => props ? null : null;
@@ -190,12 +194,14 @@ const typedRenderFunction = <Values, Path extends NameOf<Values>>(
   props: FieldRenderProps<Values, Path>
 ) => props.meta.value ? null : null;
 
-const fieldTests = (props: FieldConfig<PersonWithFriendValues, "age", {what: true}>) =>
+const fieldTests = (props: FieldConfig<Person, "age", {what: true}>) =>
   <>
     {/* Default */}
     <Field name="age" />
     <TypedField name="age" />
-    <TypedField name="bestFriends.0.name.first" />
+    <TypedField name="favoriteNumbers.0" format={value => {}} />
+    <TypedField name="friends.0" format={value => {}} />
+    <TypedField name="friends.0.name.first" />
     {/* @ts-expect-error name doesn't match NameOf<Values> */}
     <TypedField name="aeg" />
     {/* @ts-expect-error name doesn't match NameOf<Values> */}
@@ -203,7 +209,7 @@ const fieldTests = (props: FieldConfig<PersonWithFriendValues, "age", {what: tru
 
     <Field name="age" aria-required={true} />
     <TypedField name="age" aria-required={true} />
-    <TypedField name="bestFriends.0.name.first" aria-required={true} />
+    <TypedField name="friends.0.name.first" aria-required={true} />
 
     {/* FieldAsString */}
     <Field name="age" as="select" />
@@ -262,7 +268,6 @@ const fieldTests = (props: FieldConfig<PersonWithFriendValues, "age", {what: tru
     <Field name="age" as={componentWithOnlyExtra} what={false} />
     {/* @ts-expect-error extraProps should match */}
     <TypedField name="age" as={asComponentWithExtra} what={false} />
-    {/* @ts-expect-error value type should match */}
     <TypedField name="motto" as={typedAsComponent} />
     {/* @ts-expect-error extraProps is required */}
     <TypedField name="age" as={typedAsComponentWithExtra} />
@@ -390,9 +395,9 @@ const featuresNotImplemented = () =>
     <TypedField name="motto" component={ClassComponent} />
   </>
 
-const number: FieldValue<PersonValues, "age"> | undefined = undefined;
-const numberArray: FieldValue<PersonValues, "favoriteNumbers"> | undefined = undefined;
-const singleNumber: SingleValue<FieldValue<PersonValues, "favoriteNumbers">> | undefined = undefined;
+const number: FieldValue<BasePerson, "age"> | undefined = undefined;
+const numberArray: FieldValue<BasePerson, "favoriteNumbers"> | undefined = undefined;
+const singleNumber: SingleValue<FieldValue<BasePerson, "favoriteNumbers">> | undefined = undefined;
 const singleNumberInferrer = () =>
   <TypedField
     name="favoriteNumbers"
@@ -401,4 +406,51 @@ const singleNumberInferrer = () =>
     value=""
   />;
 
-const namesOf: NameOf<PersonWithFriendValues> = "age";
+const basePerson: BasePerson = {
+  name: {
+    first: "",
+    last: "",
+  },
+  motto: "",
+  nicknames: [""],
+  age: 21,
+  favoriteNumbers: [1],
+}
+
+const person: Person = {
+  ...basePerson,
+  partner: basePerson,
+  friends: [
+    basePerson,
+    basePerson
+  ]
+};
+
+const str: FieldValue<Person, "motto"> = person.motto;
+const strs: FieldValue<Person, "nicknames"> = person.nicknames;
+const str1: FieldValue<Person, "nicknames.1"> = person.nicknames[1];
+const num: FieldValue<Person, "age"> = person.age;
+const nums: FieldValue<Person, "favoriteNumbers"> = person.favoriteNumbers;
+const num1: FieldValue<Person, "favoriteNumbers.1"> = person.favoriteNumbers[1];
+const obj: FieldValue<Person, "partner"> = person.partner;
+const objstr: FieldValue<Person, "partner.motto"> = person.partner.motto;
+const objstrs: FieldValue<Person, "partner.nicknames"> = person.partner.nicknames;
+const objstr1: FieldValue<Person, "partner.nicknames.1"> = person.partner.nicknames[1];
+const objnum: FieldValue<Person, "partner.age"> = person.partner.age;
+const objnums: FieldValue<Person, "partner.favoriteNumbers"> = person.partner.favoriteNumbers;
+const objnum1: FieldValue<Person, "partner.favoriteNumbers.1"> = person.partner.favoriteNumbers[1];
+const obj1: FieldValue<Person, "friends.1"> = person.friends[1];
+const obj1str: FieldValue<Person, "friends.1.motto"> = person.friends[1].motto;
+const obj1num: FieldValue<Person, "friends.1.age"> = person.friends[1].age;
+const obj1nums: FieldValue<Person, "friends.1.favoriteNumbers"> = person.friends[1].favoriteNumbers;
+const obj1num1: FieldValue<Person, "friends.1.favoriteNumbers.1"> = person.friends[1].favoriteNumbers[1];
+
+const namesOf: NameOf<Person> = "age";
+const ageMatches: MatchField<Person, number> = "age";
+const favoriteNumber0Matches: MatchField<Person, number> = "favoriteNumbers.0";
+const partnerAgeMatches: MatchField<Person, number> = "partner.age";
+const friend1AgeMatches: MatchField<Person, number> = "friends.1.age";
+
+const recursivelyTupledKeys: RecursivelyTupleKeys<Person> = ["friends", 0, "favoriteNumbers"];
+const hello: NameOf<Person> & `friends.${number}.favoriteNumbers` = "friends.1.favoriteNumbers";
+type huh2 = `friends.${number}` extends NameOf<Person> ? true : false;

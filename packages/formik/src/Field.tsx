@@ -18,9 +18,14 @@ import { selectFullState } from './helpers/form-helpers';
 /**
  * If ExtraProps is any, allow any props
  */
-export type ExtraPropsOrAnyProps<ExtraProps> = object extends ExtraProps
+type ExtraPropsOrAnyProps<ExtraProps> = object extends ExtraProps
     ? Record<string, any>
     : ExtraProps;
+
+type WithoutSourceProps<SourceProps> = Omit<
+  Record<string, any>,
+  'as' | 'component' | 'render' | 'children' | keyof SourceProps
+  >;
 
 export type ParseFn<Value> = (value: unknown, name: string) => Value;
 export type FormatFn<Value> = (value: Value, name: string) => any;
@@ -88,7 +93,9 @@ export type FieldAsProps<
   Value = any,
   Values = any,
   Path extends NameOf<Values> = any,
-  ExtraProps = {}
+  ExtraProps extends WithoutSourceProps<
+    FieldBaseProps<Value, Values, Path, FieldInputProps<Value>>
+  > = {}
 > = FieldBaseProps<Value, Values, Path, FieldInputProps<Value>> &
   ExtraPropsOrAnyProps<ExtraProps>
 
@@ -232,7 +239,9 @@ export type FieldComponentProps<
   Value = any,
   Values = any,
   Path extends NameOf<Values> = any,
-  ExtraProps = {}
+  ExtraProps extends WithoutSourceProps<
+    FieldBaseProps<Value, Values, Path, LegacyBag<Values, Path>>
+  > = {}
 > = FieldBaseProps<Value, Values, Path, LegacyBag<Values, Path>> &
   ExtraPropsOrAnyProps<ExtraProps>;
 
@@ -267,7 +276,9 @@ export type FieldAsStringConfig<Values, Path extends NameOf<Values>, ExtraProps>
 export type FieldAsComponentConfig<
   Values,
   Path extends NameOf<Values>,
-  ExtraProps
+  ExtraProps extends WithoutSourceProps<
+    BaseConfig<Values, Path, ExtraProps>
+  > = {}
 > =
   BaseConfig<Values, Path, ExtraProps> & React.PropsWithChildren<
     {
@@ -301,7 +312,9 @@ export type FieldStringComponentConfig<Values, Path extends NameOf<Values>> =
 export type FieldComponentConfig<
   Values,
   Path extends NameOf<Values>,
-  ExtraProps
+  ExtraProps extends WithoutSourceProps<
+    BaseConfig<Values, Path, ExtraProps>
+  > = {}
 > =
   BaseConfig<Values, Path, ExtraProps> & React.PropsWithChildren<
     {
@@ -358,10 +371,10 @@ export type FieldDefaultConfig<Values, Path extends NameOf<Values>> =
   } & GenericFieldHTMLConfig;
 
 export type FieldConfig<Values, Path extends NameOf<Values>, ExtraProps = {}> =
-  FieldAsStringConfig<Values, Path, ExtraProps> |
   FieldAsComponentConfig<Values, Path, ExtraProps> |
-  FieldStringComponentConfig<Values, Path> |
   FieldComponentConfig<Values, Path, ExtraProps> |
+  FieldAsStringConfig<Values, Path, ExtraProps> |
+  FieldStringComponentConfig<Values, Path> |
   FieldRenderConfig<Values, Path> |
   FieldChildrenConfig<Values, Path> |
   FieldDefaultConfig<Values, Path>;
@@ -468,7 +481,7 @@ export function Field<
 
     // We don't pass `meta` for backwards compat
     return React.createElement(
-      component,
+      props.component,
       { field, form, ...componentProps } as any,
       children
     );

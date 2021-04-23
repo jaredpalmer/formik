@@ -139,9 +139,6 @@ export type FieldValue<Values, Path extends NameOf<Values>> =
                     : never
                 : never;
 
-export type FieldName<Values, Path extends NameOf<Values>> =
-  FieldValue<Values, Path> extends never ? never : Path;
-
 /**
  * Recursively convert objects to tuples, like
  * `{ name: { first: string } }` -> `['name'] | ['name', 'first']`
@@ -168,7 +165,7 @@ type FlattenPathTuples<PathTuples extends any[]> =
       ? SinglePath
       : PathTuples extends [infer Prefix, ...infer Rest]
         ? Prefix extends string | number
-          ? `${Prefix}.${FlattenPathTuples<Extract<Rest, string[]>>}`
+          ? `${Prefix}.${FlattenPathTuples<Extract<Rest, (string | number)[]>>}`
           : never
         : string;
 

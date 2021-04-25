@@ -10,7 +10,7 @@ const parseNumberOrEmpty = (value: unknown) => value === "" ? "" : Number(value)
 const formatNumberOrEmpty = (value: number | '') =>
     Number(value) ? value.toLocaleString() : "";
 
-export const NumberField = <
+export const NumberAsField = <
     Values,
     Path extends PathMatchingValue<Values, number | "">
 >(props: FieldAsProps<

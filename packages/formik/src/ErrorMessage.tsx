@@ -1,22 +1,23 @@
 import * as React from 'react';
 import { isFunction } from './utils';
 import { useFieldMeta } from './hooks/hooks';
+import { PathOf } from 'formik';
 
-export interface ErrorMessageProps {
-  name: string;
+export interface ErrorMessageProps<Values> {
+  name: PathOf<Values>;
   className?: string;
   component?: string | React.ComponentType;
   children?: (errorMessage: string) => React.ReactNode;
   render?: (errorMessage: string) => React.ReactNode;
 }
 
-export function ErrorMessage({
+export function ErrorMessage<Values = any>({
   component,
   render,
   children,
   name,
   ...rest
-}: ErrorMessageProps): JSX.Element | null {
+}: ErrorMessageProps<Values>): JSX.Element | null {
   const { touched, error } = useFieldMeta(name);
 
   return !!touched && !!error

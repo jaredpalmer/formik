@@ -6,8 +6,9 @@ import {
   createTypedField
 } from 'formik';
 import * as Yup from 'yup';
-import { NumberField } from 'app/components/fields/number-as-field';
+import { NumberAsField } from 'app/components/fields/number-as-field';
 import { EmailFieldAsClass } from 'app/components/fields/email-field-as-class';
+import { NumberComponentField } from 'app/components/fields/number-component-field';
 
 let renderCount = 0;
 
@@ -57,7 +58,7 @@ const initialValues: FormValues = {
 
 const TypedField = createTypedField<FormValues>();
 
-const Basic = () => (
+const StronglyTypedPage = () => (
   <div>
     <h1>Sign Up</h1>
     <Formik
@@ -80,13 +81,13 @@ const Basic = () => (
           name="name.first"
           placeholder="Jane"
         />
-        <ErrorMessage name="firstName" component="p" />
+        <ErrorMessage<FormValues> name="name.first" component="p" />
 
         <TypedField
           name="name.last"
           placeholder="Doe"
         />
-        <ErrorMessage name="lastName" component="p" />
+        <ErrorMessage<FormValues> name="name.last" component="p" />
 
         <TypedField
           id="email"
@@ -95,12 +96,12 @@ const Basic = () => (
           type="email"
           hidden={true}
         />
-        <ErrorMessage name="email" component="p" />
+        <ErrorMessage<FormValues> name="email" component="p" />
 
         <TypedField
           id="age"
           name="age"
-          as={NumberField}
+          as={NumberAsField}
           type="number"
           hidden={false}
         />
@@ -108,7 +109,7 @@ const Basic = () => (
         <TypedField
           id="favorite-numbers-0"
           name="favoriteNumbers.0"
-          as={NumberField}
+          as={NumberAsField}
           placeholder="jane@acme.com"
           type="number"
           hidden={false}
@@ -117,7 +118,7 @@ const Basic = () => (
         <TypedField
           id="friends-0-favorite-numbers-0"
           name="friends.0.favoriteNumbers.0"
-          as={NumberField}
+          component={NumberComponentField}
           placeholder="Choose a favorite number"
           type="number"
           hidden={false}
@@ -169,4 +170,4 @@ const Basic = () => (
   </div>
 );
 
-export default Basic;
+export default StronglyTypedPage;

@@ -2,31 +2,26 @@ import * as React from 'react';
 import cloneDeep from 'lodash/cloneDeep';
 import { arraySwap, arrayMove, arrayInsert, arrayReplace, copyArrayLike } from './helpers/array-helpers';
 import { useFormikConfig, useFormikContext } from './FormikContext';
-import { FieldMetaProps, FieldValue, FormikApi, FormikReducerState, FormikValues, PathOf } from './types';
+import { FieldMetaProps, FieldValue, FormikApi, FormikReducerState, FormikValues, PathMatchingValue, PathOf } from './types';
 import { useEventCallback } from './hooks/useEventCallback';
 import { getIn, isEmptyArray, isEmptyChildren, isFunction, setIn } from './utils';
 import { useFieldMeta } from './hooks/hooks';
 
-export type FieldArrayValue<Values, Path extends PathOf<Values>> =
-  FieldValue<Values, Path> extends unknown[]
-    ? FieldValue<Values, Path>
-    : never;
-
 export type FieldArrayName<Values, Path extends PathOf<Values>> =
   FieldValue<Values, Path> extends never ? never : Path;
 
-export interface UseFieldArrayProps<Values = any, Path extends PathOf<Values> = any> {
+export interface UseFieldArrayProps<Values = any, Value = any> {
   /** Really the path to the array field to be updated */
-  name: FieldArrayName<Values, Path>;
+  name: PathMatchingValue<Values, Value[]>;
   /** Should field array validate the form AFTER array updates/changes? */
   validateOnChange?: boolean;
 }
 
-export interface ArrayHelpers<Values, Path extends PathOf<Values>> {
+export interface ArrayHelpers<Value> {
   /** Imperatively add a value to the end of an array */
-  push: (obj: FieldArrayValue<Values, Path>[number]) => void;
+  push: (obj: Value) => void;
   /** Curried fn to add a value to the end of an array */
-  handlePush: (obj: FieldArrayValue<Values, Path>[number]) => () => void;
+  handlePush: (obj: Value) => () => void;
   /** Imperatively swap two values in an array */
   swap: (indexA: number, indexB: number) => void;
   /** Curried fn to swap two values in an array */
@@ -36,50 +31,50 @@ export interface ArrayHelpers<Values, Path extends PathOf<Values>> {
   /** Imperatively move an element in an array to another index */
   handleMove: (from: number, to: number) => () => void;
   /** Imperatively insert an element at a given index into the array */
-  insert: (index: number, value: FieldArrayValue<Values, Path>[number]) => void;
+  insert: (index: number, value: Value) => void;
   /** Curried fn to insert an element at a given index into the array */
-  handleInsert: (index: number, value: FieldArrayValue<Values, Path>[number]) => () => void;
+  handleInsert: (index: number, value: Value) => () => void;
   /** Imperatively replace a value at an index of an array  */
-  replace: (index: number, value: FieldArrayValue<Values, Path>[number]) => void;
+  replace: (index: number, value: Value) => void;
   /** Curried fn to replace an element at a given index into the array */
-  handleReplace: (index: number, value: FieldArrayValue<Values, Path>[number]) => () => void;
+  handleReplace: (index: number, value: Value) => () => void;
   /** Imperatively add an element to the beginning of an array and return its length */
-  unshift: (value: FieldArrayValue<Values, Path>[number]) => number;
+  unshift: (value: Value) => number;
   /** Curried fn to add an element to the beginning of an array */
-  handleUnshift: (value: FieldArrayValue<Values, Path>[number]) => () => void;
+  handleUnshift: (value: Value) => () => void;
   /** Curried fn to remove an element at an index of an array */
   handleRemove: (index: number) => () => void;
   /** Curried fn to remove a value from the end of the array */
   handlePop: () => () => void;
   /** Imperatively remove and element at an index of an array */
-  remove<T>(index: number): T | undefined;
+  remove(index: number): Value | undefined;
   /** Imperatively remove and return value from the end of the array */
-  pop(): FieldArrayValue<Values, Path>[number] | undefined;
+  pop(): Value | undefined;
 }
 
-type UpdateFieldArrayFn<Values, Path extends PathOf<Values>> = (
-  array: FieldArrayValue<Values, Path> | boolean[]
+type UpdateFieldArrayFn<Value> = (
+  array: Value[] | boolean[]
 ) => void;
 
-export const useFieldArray = <Values extends FormikValues = any, Path extends PathOf<Values> = any>(
-  props: UseFieldArrayProps<Values, Path>
+export const useFieldArray = <Values extends FormikValues = any, Value = any>(
+  props: UseFieldArrayProps<Values, Value>
 ): [
-  FieldMetaProps<FieldArrayValue<Values, Path>>,
-  ArrayHelpers<Values, Path>,
+  FieldMetaProps<Value[]>,
+  ArrayHelpers<Value>,
   FormikApi<Values>
 ] => {
   const formik = useFormikContext<Values>();
   const { setFormikState } = formik;
-  const fieldMeta = useFieldMeta<FieldArrayValue<Values, Path>>(props.name);
+  const fieldMeta = useFieldMeta<Value[]>(props.name);
 
   const updateArrayField = useEventCallback(
     (
       // eslint-disable-next-line @typescript-eslint/ban-types
-      fn: UpdateFieldArrayFn<Values, Path>,
+      fn: UpdateFieldArrayFn<Value>,
       // eslint-disable-next-line @typescript-eslint/ban-types
-      alterTouched: boolean | UpdateFieldArrayFn<Values, Path>,
+      alterTouched: boolean | UpdateFieldArrayFn<Value>,
       // eslint-disable-next-line @typescript-eslint/ban-types
-      alterErrors: boolean | UpdateFieldArrayFn<Values, Path>
+      alterErrors: boolean | UpdateFieldArrayFn<Value>
     ) => {
       const name = props.name;
 
@@ -125,7 +120,7 @@ export const useFieldArray = <Values extends FormikValues = any, Path extends Pa
     }
   );
 
-  const push = useEventCallback<ArrayHelpers<Values, Path>['push']>(
+  const push = useEventCallback<ArrayHelpers<Value>['push']>(
     (value) =>
       updateArrayField(
         (arrayLike: ArrayLike<any>) => [
@@ -137,11 +132,11 @@ export const useFieldArray = <Values extends FormikValues = any, Path extends Pa
       )
   );
 
-  const handlePush = useEventCallback<ArrayHelpers<Values, Path>['handlePush']>(
+  const handlePush = useEventCallback<ArrayHelpers<Value>['handlePush']>(
     (value) => () => push(value),
   );
 
-  const swap = useEventCallback<ArrayHelpers<Values, Path>['swap']>(
+  const swap = useEventCallback<ArrayHelpers<Value>['swap']>(
     (indexA, indexB) =>
       updateArrayField(
         (array: any[]) => arraySwap(array, indexA, indexB),
@@ -150,7 +145,7 @@ export const useFieldArray = <Values extends FormikValues = any, Path extends Pa
       )
   );
 
-  const handleSwap = useEventCallback<ArrayHelpers<Values, Path>['handleSwap']>(
+  const handleSwap = useEventCallback<ArrayHelpers<Value>['handleSwap']>(
     (indexA, indexB) => () => swap(indexA, indexB)
   );
 
@@ -163,11 +158,11 @@ export const useFieldArray = <Values extends FormikValues = any, Path extends Pa
       )
   );
 
-  const handleMove = useEventCallback<ArrayHelpers<Values, Path>['handleMove']>(
+  const handleMove = useEventCallback<ArrayHelpers<Value>['handleMove']>(
     (from: number, to: number) => () => move(from, to)
   );
 
-  const insert = useEventCallback<ArrayHelpers<Values, Path>['insert']>(
+  const insert = useEventCallback<ArrayHelpers<Value>['insert']>(
     (index: number, value: any) =>
       updateArrayField(
         (array: any[]) => arrayInsert(array, index, value),
@@ -176,11 +171,11 @@ export const useFieldArray = <Values extends FormikValues = any, Path extends Pa
       )
   );
 
-  const handleInsert = useEventCallback<ArrayHelpers<Values, Path>['handleInsert']>(
+  const handleInsert = useEventCallback<ArrayHelpers<Value>['handleInsert']>(
     (index: number, value: any) => () => insert(index, value)
   );
 
-  const replace = useEventCallback<ArrayHelpers<Values, Path>['replace']>(
+  const replace = useEventCallback<ArrayHelpers<Value>['replace']>(
     (index: number, value: any) =>
       updateArrayField(
         (array: any[]) => arrayReplace(array, index, value),
@@ -189,11 +184,11 @@ export const useFieldArray = <Values extends FormikValues = any, Path extends Pa
       )
   );
 
-  const handleReplace = useEventCallback<ArrayHelpers<Values, Path>['handleReplace']>(
+  const handleReplace = useEventCallback<ArrayHelpers<Value>['handleReplace']>(
     (index: number, value: any) => () => replace(index, value)
   );
 
-  const unshift = useEventCallback<ArrayHelpers<Values, Path>['unshift']>(
+  const unshift = useEventCallback<ArrayHelpers<Value>['unshift']>(
     (value: any) => {
       let length = -1;
       updateArrayField(
@@ -223,11 +218,11 @@ export const useFieldArray = <Values extends FormikValues = any, Path extends Pa
     }
   );
 
-  const handleUnshift = useEventCallback<ArrayHelpers<Values, Path>['handleUnshift']>(
+  const handleUnshift = useEventCallback<ArrayHelpers<Value>['handleUnshift']>(
     (value: any) => () => unshift(value)
   );
 
-  const remove = useEventCallback<ArrayHelpers<Values, Path>['remove']>(
+  const remove = useEventCallback<ArrayHelpers<Value>['remove']>(
     <T,>(index: number): T => {
       // We need to make sure we also remove relevant pieces of `touched` and `errors`
       let result: any;
@@ -251,11 +246,11 @@ export const useFieldArray = <Values extends FormikValues = any, Path extends Pa
     }
   );
 
-  const handleRemove = useEventCallback<ArrayHelpers<Values, Path>['handleRemove']>(
-    (index: number) => () => remove<any>(index)
+  const handleRemove = useEventCallback<ArrayHelpers<Value>['handleRemove']>(
+    (index: number) => () => remove(index)
   );
 
-  const pop = useEventCallback<ArrayHelpers<Values, Path>['pop']>(
+  const pop = useEventCallback<ArrayHelpers<Value>['pop']>(
     () => {
       // Remove relevant pieces of `touched` and `errors` too!
       let result: any;
@@ -276,7 +271,7 @@ export const useFieldArray = <Values extends FormikValues = any, Path extends Pa
     }
   );
 
-  const handlePop = useEventCallback<ArrayHelpers<Values, Path>['handlePop']>(
+  const handlePop = useEventCallback<ArrayHelpers<Value>['handlePop']>(
     () => () => pop()
   );
 
@@ -327,33 +322,33 @@ export const useFieldArray = <Values extends FormikValues = any, Path extends Pa
   ];
 };
 
-export type FieldArrayRenderProps<Values, Path extends PathOf<Values>> =
-  ArrayHelpers<Values, Path> & {
+export type FieldArrayRenderProps<Values, Value> =
+  ArrayHelpers<Value> & {
     form: FormikApi<Values>;
-    field: FieldMetaProps<FieldArrayValue<Values, Path>>;
-    name: FieldArrayName<Values, Path>;
+    field: FieldMetaProps<Value[]>;
+    name: PathMatchingValue<Values, Value[]>;
   };
 
-export type FieldArrayProps<Values, Path extends PathOf<Values>> =
-  UseFieldArrayProps<Values, Path> & {
+export type FieldArrayProps<Values, Value> =
+  UseFieldArrayProps<Values, Value> & {
     /**
      * Field component to render. Can either be a string like 'select' or a component.
      */
-    component?: React.ComponentType<FieldArrayRenderProps<Values, Path>>;
+    component?: React.ComponentType<FieldArrayRenderProps<Values, Value>>;
 
     /**
       * Render prop (works like React router's <Route render={props =>} />)
       */
-    render?: (props: FieldArrayRenderProps<Values, Path>) => React.ReactElement | null;
+    render?: (props: FieldArrayRenderProps<Values, Value>) => React.ReactElement | null;
 
     /**
       * Children render function <Field name>{props => ...}</Field>)
       */
-    children?: (props: FieldArrayRenderProps<Values, Path>) => React.ReactElement | null;
+    children?: (props: FieldArrayRenderProps<Values, Value>) => React.ReactElement | null;
   };
 
-export const FieldArray = <Values extends FormikValues = any, Path extends PathOf<Values> = any>(
-  rawProps: FieldArrayProps<Values, Path>
+export const FieldArray = <Values extends FormikValues = any, Value = any>(
+  rawProps: FieldArrayProps<Values, Value>
 ) => {
   const {
     component,
@@ -367,7 +362,7 @@ export const FieldArray = <Values extends FormikValues = any, Path extends PathO
     ...rest,
   };
 
-  const [field, arrayHelpers, formikApi] = useFieldArray<Values, Path>(props);
+  const [field, arrayHelpers, formikApi] = useFieldArray(props);
   const { validateForm } = formikApi;
   const { validateOnChange: apiValidateOnChange } = useFormikConfig();
 
@@ -380,7 +375,7 @@ export const FieldArray = <Values extends FormikValues = any, Path extends PathO
     }
   }, [props.validateOnChange, field.value, apiValidateOnChange, validateForm]);
 
-  const renderProps: FieldArrayRenderProps<Values, Path> = React.useMemo(
+  const renderProps: FieldArrayRenderProps<Values, Value> = React.useMemo(
     () => ({
       ...arrayHelpers,
       form: formikApi,

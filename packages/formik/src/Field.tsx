@@ -88,15 +88,13 @@ type FieldBaseProps<Value, Values, Path extends PathOf<Values>, SourceProps> =
   SourceProps;
 
 type AnyComponentType<SourceProps, ExtraProps extends WithoutSourceProps<SourceProps>> =
-  React.ComponentType<ExtraProps> | React.ComponentType;
+  React.ComponentType<ExtraProps>;
 
 export type FieldAsProps<
   Value = any,
   Values = any,
   Path extends PathMatchingValue<Values, Value> = any,
-  ExtraProps extends WithoutSourceProps<
-    FieldBaseProps<Value, Values, Path, FieldInputProps<Value>>
-  > = {}
+  ExtraProps = {}
 > = FieldBaseProps<Value, Values, Path, FieldInputProps<Value>> &
   ExtraPropsOrAnyProps<ExtraProps>
 
@@ -215,12 +213,25 @@ export function useField<Values = any, Path extends PathOf<Values> = any, ExtraP
   ];
 }
 
+export abstract class FieldComponentComponentClass<
+  Value,
+  ExtraProps = {}
+> extends React.Component<
+  FieldComponentProps<
+    Value,
+    unknown,
+    unknown,
+    ExtraProps
+  >
+> {}
+
 type FieldComponentComponent<Values, Path extends PathOf<Values>, ExtraProps> =
   | TypedComponentField<FieldValue<Values, Path>, ExtraProps>
+  | FieldComponentComponentClass<FieldValue<Values, Path>, ExtraProps>
   | React.ComponentType<FieldComponentProps<
       FieldValue<Values, Path>,
-      Values,
-      Path & PathMatchingValue<Values, FieldValue<Values, Path>>,
+      any,
+      any,
       ExtraProps
     >>
   | AnyComponentType<
@@ -228,7 +239,7 @@ type FieldComponentComponent<Values, Path extends PathOf<Values>, ExtraProps> =
         FieldValue<Values, Path>,
         Values,
         Path,
-        LegacyBag<Values, Path>
+        LegacyBag<Values, FieldValue<Values, Path>>
       >,
       ExtraProps
     >
@@ -262,8 +273,8 @@ type GenericFieldHTMLConfig = Omit<
 /**
  * Passed to `<Field component={Component} />`.
  */
-type LegacyBag<Values, Path extends PathOf<Values>> = {
-  field: FieldInputProps<FieldValue<Values, Path>>;
+type LegacyBag<Values, Value> = {
+  field: FieldInputProps<Value>;
   // if ppl want to restrict this for a given form, let them.
   form: FormikProps<Values>;
 }
@@ -272,7 +283,7 @@ type LegacyBag<Values, Path extends PathOf<Values>> = {
  * Passed to `render={Function}` or `children={Function}`.
  */
 export type FieldRenderProps<Values = any, Path extends PathOf<Values> = any> =
-  LegacyBag<Values, Path> & {
+  LegacyBag<Values, FieldValue<Values, Path>> & {
     meta: FieldMetaProps<FieldValue<Values, Path>>;
   }
 
@@ -289,14 +300,16 @@ export type FieldComponentProps<
   Value = any,
   Values = any,
   Path extends PathMatchingValue<Values, Value> = any,
-  ExtraProps extends WithoutSourceProps<
-    FieldBaseProps<Value, Values, Path, LegacyBag<Values, Path>>
-  > = {}
-> = FieldBaseProps<Value, Values, Path, LegacyBag<Values, Path>> &
+  ExtraProps = {}
+> = FieldBaseProps<Value, Values, Path, LegacyBag<Values, Value>> &
   ExtraPropsOrAnyProps<ExtraProps>;
 
-export type TypedComponentField<Value, ExtraProps = {}> = <
-  Values, Path extends PathMatchingValue<Values, Value>
+export type TypedComponentField<
+  Value,
+  ExtraProps = {}
+> = <
+  Values,
+  Path extends PathMatchingValue<Values, Value>
 >(
   props: FieldComponentProps<
     Value,

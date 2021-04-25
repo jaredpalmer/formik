@@ -6,15 +6,18 @@ import {
   createTypedField
 } from 'formik';
 import * as Yup from 'yup';
-import { NumberField } from 'app/components/fields/number-field';
+import { NumberField } from 'app/components/fields/number-as-field';
+import { EmailFieldAsClass } from 'app/components/fields/email-field-as-class';
 
 let renderCount = 0;
 
+interface NameValue {
+  first: string,
+  last: string,
+}
+
 type BasePerson = {
-  name: {
-    first: string,
-    last: string,
-  },
+  name: NameValue,
   email: string,
   hasNicknames: boolean,
   nicknames: string[],
@@ -79,14 +82,18 @@ const Basic = () => (
         />
         <ErrorMessage name="firstName" component="p" />
 
-        <TypedField name="name.last" placeholder="Doe" />
+        <TypedField
+          name="name.last"
+          placeholder="Doe"
+        />
         <ErrorMessage name="lastName" component="p" />
 
         <TypedField
           id="email"
           name="email"
-          placeholder="jane@acme.com"
+          as={EmailFieldAsClass}
           type="email"
+          hidden={true}
         />
         <ErrorMessage name="email" component="p" />
 
@@ -111,7 +118,7 @@ const Basic = () => (
           id="friends-0-favorite-numbers-0"
           name="friends.0.favoriteNumbers.0"
           as={NumberField}
-          placeholder="jane@acme.com"
+          placeholder="Choose a favorite number"
           type="number"
           hidden={false}
         />

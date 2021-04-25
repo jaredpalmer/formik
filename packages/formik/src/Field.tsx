@@ -88,7 +88,7 @@ type FieldBaseProps<Value, Values, Path extends PathOf<Values>, SourceProps> =
   SourceProps;
 
 type AnyComponentType<SourceProps, ExtraProps extends WithoutSourceProps<SourceProps>> =
-  React.ComponentType<ExtraProps>;
+  React.ComponentType<ExtraProps> | React.ComponentType;
 
 export type FieldAsProps<
   Value = any,
@@ -115,12 +115,25 @@ export type TypedAsField<
   >
 ) => React.ReactElement | null;
 
+export abstract class FieldAsComponentClass<
+  Value,
+  ExtraProps = {}
+> extends React.Component<
+  FieldAsProps<
+    Value,
+    unknown,
+    unknown,
+    ExtraProps
+  >
+> {}
+
 export type FieldAsComponent<Values, Path extends PathOf<Values>, ExtraProps> =
   | TypedAsField<FieldValue<Values, Path>, ExtraProps>
+  | FieldAsComponentClass<FieldValue<Values, Path>, ExtraProps>
   | React.ComponentType<FieldAsProps<
       FieldValue<Values, Path>,
-      Values,
-      Path & PathMatchingValue<Values, FieldValue<Values, Path>>,
+      any,
+      any,
       ExtraProps
     >>
   | AnyComponentType<

@@ -518,8 +518,8 @@ export interface FieldHelperProps<Value> {
   setError: (error: string) => void;
 }
 
-export type FieldOnChangeProp = (
-  eventOrValue: React.ChangeEvent<any> | any
+export type FieldOnChangeProp<Value> = (
+  eventOrValue: React.ChangeEvent<any> | Value
 ) => void;
 export type FieldOnBlurProp = (
   eventOrValue: React.ChangeEvent<any> | any
@@ -536,7 +536,7 @@ export type FieldInputProps<Value> = {
   /** Is the field checked? */
   checked?: boolean;
   /** Change event handler */
-  onChange: FieldOnChangeProp;
+  onChange: FieldOnChangeProp<Value>;
   /** Blur event handler */
   onBlur: FieldOnBlurProp;
 };

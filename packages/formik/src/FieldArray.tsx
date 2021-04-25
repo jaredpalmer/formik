@@ -2,27 +2,27 @@ import * as React from 'react';
 import cloneDeep from 'lodash/cloneDeep';
 import { arraySwap, arrayMove, arrayInsert, arrayReplace, copyArrayLike } from './helpers/array-helpers';
 import { useFormikConfig, useFormikContext } from './FormikContext';
-import { FieldMetaProps, FieldValue, FormikApi, FormikReducerState, FormikValues, NameOf } from './types';
+import { FieldMetaProps, FieldValue, FormikApi, FormikReducerState, FormikValues, PathOf } from './types';
 import { useEventCallback } from './hooks/useEventCallback';
 import { getIn, isEmptyArray, isEmptyChildren, isFunction, setIn } from './utils';
 import { useFieldMeta } from './hooks/hooks';
 
-export type FieldArrayValue<Values, Path extends NameOf<Values>> =
+export type FieldArrayValue<Values, Path extends PathOf<Values>> =
   FieldValue<Values, Path> extends unknown[]
     ? FieldValue<Values, Path>
     : never;
 
-export type FieldArrayName<Values, Path extends NameOf<Values>> =
+export type FieldArrayName<Values, Path extends PathOf<Values>> =
   FieldValue<Values, Path> extends never ? never : Path;
 
-export interface UseFieldArrayProps<Values = any, Path extends NameOf<Values> = any> {
+export interface UseFieldArrayProps<Values = any, Path extends PathOf<Values> = any> {
   /** Really the path to the array field to be updated */
   name: FieldArrayName<Values, Path>;
   /** Should field array validate the form AFTER array updates/changes? */
   validateOnChange?: boolean;
 }
 
-export interface ArrayHelpers<Values, Path extends NameOf<Values>> {
+export interface ArrayHelpers<Values, Path extends PathOf<Values>> {
   /** Imperatively add a value to the end of an array */
   push: (obj: FieldArrayValue<Values, Path>[number]) => void;
   /** Curried fn to add a value to the end of an array */
@@ -57,11 +57,11 @@ export interface ArrayHelpers<Values, Path extends NameOf<Values>> {
   pop(): FieldArrayValue<Values, Path>[number] | undefined;
 }
 
-type UpdateFieldArrayFn<Values, Path extends NameOf<Values>> = (
+type UpdateFieldArrayFn<Values, Path extends PathOf<Values>> = (
   array: FieldArrayValue<Values, Path> | boolean[]
 ) => void;
 
-export const useFieldArray = <Values extends FormikValues = any, Path extends NameOf<Values> = any>(
+export const useFieldArray = <Values extends FormikValues = any, Path extends PathOf<Values> = any>(
   props: UseFieldArrayProps<Values, Path>
 ): [
   FieldMetaProps<FieldArrayValue<Values, Path>>,
@@ -327,14 +327,14 @@ export const useFieldArray = <Values extends FormikValues = any, Path extends Na
   ];
 };
 
-export type FieldArrayRenderProps<Values, Path extends NameOf<Values>> =
+export type FieldArrayRenderProps<Values, Path extends PathOf<Values>> =
   ArrayHelpers<Values, Path> & {
     form: FormikApi<Values>;
     field: FieldMetaProps<FieldArrayValue<Values, Path>>;
     name: FieldArrayName<Values, Path>;
   };
 
-export type FieldArrayProps<Values, Path extends NameOf<Values>> =
+export type FieldArrayProps<Values, Path extends PathOf<Values>> =
   UseFieldArrayProps<Values, Path> & {
     /**
      * Field component to render. Can either be a string like 'select' or a component.
@@ -352,7 +352,7 @@ export type FieldArrayProps<Values, Path extends NameOf<Values>> =
     children?: (props: FieldArrayRenderProps<Values, Path>) => React.ReactElement | null;
   };
 
-export const FieldArray = <Values extends FormikValues = any, Path extends NameOf<Values> = any>(
+export const FieldArray = <Values extends FormikValues = any, Path extends PathOf<Values> = any>(
   rawProps: FieldArrayProps<Values, Path>
 ) => {
   const {

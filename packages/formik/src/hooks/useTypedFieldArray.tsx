@@ -1,8 +1,8 @@
 import * as React from "react";
 import { FieldArray, FieldArrayProps } from "../FieldArray";
-import { NameOf } from "../types";
+import { PathOf } from "../types";
 
-export type TypedFieldArray<Values> = <Path extends NameOf<Values>>(
+export type TypedFieldArray<Values> = <Path extends PathOf<Values>>(
   props: FieldArrayProps<Values, Path>
 ) =>
   React.ReactElement | null;

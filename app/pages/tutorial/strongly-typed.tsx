@@ -1,35 +1,58 @@
 import React from 'react';
-import { Formik, Form, ErrorMessage, createTypedField } from 'formik';
+import {
+  Formik,
+  Form,
+  ErrorMessage,
+  createTypedField
+} from 'formik';
 import * as Yup from 'yup';
+import { NumberField } from 'app/components/fields/number-field';
 
 let renderCount = 0;
 
-type FormValues = {
-  firstName: string,
-  lastName: string,
+type BasePerson = {
+  name: {
+    first: string,
+    last: string,
+  },
   email: string,
+  hasNicknames: boolean,
+  nicknames: string[],
+  favoriteFoods: string[],
   age: number | '',
-  toggle: boolean,
-  checked: string[],
-  picked: number | '',
-  textarea: string,
+  favoriteNumbers: (number | "")[];
+  motto: string;
+}
+
+type FormValues = BasePerson & {
+  partner: BasePerson;
+  friends: BasePerson[];
+}
+
+const basePerson: BasePerson = {
+  name: {
+    first: "",
+    last: "",
+  },
+  email: "",
+  hasNicknames: false,
+  nicknames: [],
+  favoriteFoods: [],
+  age: 21,
+  favoriteNumbers: [],
+  motto: "",
 }
 
 const initialValues: FormValues = {
-  firstName: '',
-  lastName: '',
-  email: '',
-  age: 21,
-  toggle: false,
-  checked: [],
-  picked: '',
-  textarea: '',
+  ...basePerson,
+  partner: basePerson,
+  friends: [
+    basePerson,
+    basePerson
+  ]
 };
 
 const TypedField = createTypedField<FormValues>();
-
-const parseNumberOrEmpty = (value: unknown) => value === "" ? "" : Number(value);
-const formatNumberOrEmpty = (value: number | '') => Number(value) ? value.toLocaleString() : "";
 
 const Basic = () => (
   <div>
@@ -51,12 +74,12 @@ const Basic = () => (
     >
       <Form>
         <TypedField
-          name="firstName"
+          name="name.first"
           placeholder="Jane"
         />
         <ErrorMessage name="firstName" component="p" />
 
-        <TypedField name="lastName" placeholder="Doe" />
+        <TypedField name="name.last" placeholder="Doe" />
         <ErrorMessage name="lastName" component="p" />
 
         <TypedField
@@ -70,55 +93,66 @@ const Basic = () => (
         <TypedField
           id="age"
           name="age"
+          as={NumberField}
+          type="number"
+          hidden={false}
+        />
+
+        <TypedField
+          id="favorite-numbers-0"
+          name="favoriteNumbers.0"
+          as={NumberField}
           placeholder="jane@acme.com"
           type="number"
-          parse={parseNumberOrEmpty}
-          format={formatNumberOrEmpty}
-          validate={numlike =>
-            numlike === ""
-              ? "not a number"
-              : numlike === 0
-                ? "higher!!"
-                : ""
-          }
-          value={21}
+          hidden={false}
+        />
+
+        <TypedField
+          id="friends-0-favorite-numbers-0"
+          name="friends.0.favoriteNumbers.0"
+          as={NumberField}
+          placeholder="jane@acme.com"
+          type="number"
+          hidden={false}
         />
 
         <label>
-          <TypedField type="checkbox" name="toggle" />
+          <TypedField type="checkbox" name="hasNicknames" />
           <span style={{ marginLeft: 3 }}>Toggle</span>
         </label>
 
-        <div id="checkbox-group">Checkbox Group </div>
+        {/* todo: FieldArray for nicknames */}
+
+        <div id="checkbox-group">Checkbox Group</div>
         <div role="group" aria-labelledby="checkbox-group">
           <label>
-            <TypedField type="checkbox" name="checked" value="One" />
-            One
+            <TypedField type="checkbox" name="favoriteFoods" value="Pizza" />
+            Pizza
           </label>
           <label>
-            <TypedField type="checkbox" name="checked" value="Two" />
-            Two
+            <TypedField type="checkbox" name="favoriteFoods" value="Falafel" />
+            Falafel
           </label>
           <label>
-            <TypedField type="checkbox" name="checked" value="Three" />
-            Three
+            <TypedField type="checkbox" name="favoriteFoods" value="Dim Sum" />
+            Dim Sum
           </label>
         </div>
         <div id="my-radio-group">Picked</div>
         <div role="group" aria-labelledby="my-radio-group">
           <label>
-            <TypedField type="radio" name="picked" value={1} />
-            One
+            <TypedField type="radio" name="favoriteNumbers" value={1} />
+            1
           </label>
           <label>
-            <TypedField type="radio" name="picked" value={2} />
-            Two
+            <TypedField type="radio" name="favoriteNumbers" value={2} />
+            2
           </label>
         </div>
         <div>
           <label>
             Textarea
-            <TypedField name="textarea" as="textarea" />
+            <TypedField name="motto" as="textarea" />
           </label>
         </div>
         <button type="submit">Submit</button>

@@ -7,7 +7,8 @@ import {
   FieldInputProps,
   FieldValidator,
   FieldValue,
-  NameOf,
+  PathOf,
+  PathMatchingValue,
 } from './types';
 import { isFunction, isEmptyChildren, isObject } from './utils';
 import invariant from 'tiny-warning';
@@ -40,7 +41,7 @@ export type SingleValue<Value> =
  *
  * @private
  */
-export type FieldPassThroughConfig<Value, Values, Path extends NameOf<Values>> = {
+export type FieldPassThroughConfig<Path, Value> = {
   /**
    * Validate a single field value independently
    */
@@ -82,25 +83,29 @@ export type FieldPassThroughConfig<Value, Values, Path extends NameOf<Values>> =
   innerRef?: (instance: any) => void;
 }
 
-type FieldBaseProps<Value, Values, Path extends NameOf<Values>, SourceProps> =
-  FieldPassThroughConfig<Value, Values, Path> &
+type FieldBaseProps<Value, Values, Path extends PathOf<Values>, SourceProps> =
+  FieldPassThroughConfig<Path, Value> &
   SourceProps;
 
-type AnyComponentType<ExtraProps> =
+type AnyComponentType<SourceProps, ExtraProps extends WithoutSourceProps<SourceProps>> =
   React.ComponentType<ExtraProps>;
 
 export type FieldAsProps<
   Value = any,
   Values = any,
-  Path extends NameOf<Values> = any,
+  Path extends PathMatchingValue<Values, Value> = any,
   ExtraProps extends WithoutSourceProps<
     FieldBaseProps<Value, Values, Path, FieldInputProps<Value>>
   > = {}
 > = FieldBaseProps<Value, Values, Path, FieldInputProps<Value>> &
   ExtraPropsOrAnyProps<ExtraProps>
 
-export type TypedAsField<Value, ExtraProps = {}> = <
-  Values, Path extends NameOf<Values>
+export type TypedAsField<
+  Value,
+  ExtraProps = {}
+> = <
+  Values,
+  Path extends PathMatchingValue<Values, Value>
 >(
   props: FieldAsProps<
     Value,
@@ -110,23 +115,39 @@ export type TypedAsField<Value, ExtraProps = {}> = <
   >
 ) => React.ReactElement | null;
 
-export type FieldHookConfig<Values, Path extends NameOf<Values>, ExtraProps = {}> = {
+export type FieldAsComponent<Values, Path extends PathOf<Values>, ExtraProps> =
+  | TypedAsField<FieldValue<Values, Path>, ExtraProps>
+  | React.ComponentType<FieldAsProps<
+      FieldValue<Values, Path>,
+      Values,
+      Path & PathMatchingValue<Values, FieldValue<Values, Path>>,
+      ExtraProps
+    >>
+  | AnyComponentType<
+      FieldBaseProps<
+        FieldValue<Values, Path>,
+        Values,
+        Path,
+        FieldInputProps<FieldValue<Values, Path>>
+      >,
+      ExtraProps
+    >
+
+export type FieldHookConfig<Values, Path extends PathOf<Values>, ExtraProps = {}> = {
   /**
    * Component to render. Can either be a string e.g. 'select', 'input', or 'textarea', or a component.
    */
   as?:
     | string
-    | TypedAsField<FieldValue<Values, Path>, ExtraProps>
-    | React.ComponentType<FieldAsProps<FieldValue<Values, Path>, Values, Path, ExtraProps>>
-    | AnyComponentType<ExtraProps>;
+    | FieldAsComponent<Values, Path, ExtraProps>;
 
   /**
    * Field name
    */
   name: Path;
-} & FieldPassThroughConfig<FieldValue<Values, Path>, Values, Path>;
+} & FieldPassThroughConfig<Path, FieldValue<Values, Path>>;
 
-export function useField<Values = any, Path extends NameOf<Values> = any, ExtraProps = {}>(
+export function useField<Values = any, Path extends PathOf<Values> = any, ExtraProps = {}>(
   propsOrFieldName:
     Path |
     FieldHookConfig<Values, Path, ExtraProps>
@@ -141,7 +162,7 @@ export function useField<Values = any, Path extends NameOf<Values> = any, ExtraP
     unregisterField,
   } = formik;
 
-  const props: FieldPassThroughConfig<FieldValue<Values, Path>, Values, Path> = isObject(propsOrFieldName)
+  const props: FieldPassThroughConfig<Path, FieldValue<Values, Path>> = isObject(propsOrFieldName)
     ? propsOrFieldName
     : { name: propsOrFieldName };
 
@@ -181,15 +202,31 @@ export function useField<Values = any, Path extends NameOf<Values> = any, ExtraP
   ];
 }
 
-export type BaseConfig<Values, Path extends NameOf<Values>, ExtraProps> = {
+type FieldComponentComponent<Values, Path extends PathOf<Values>, ExtraProps> =
+  | TypedComponentField<FieldValue<Values, Path>, ExtraProps>
+  | React.ComponentType<FieldComponentProps<
+      FieldValue<Values, Path>,
+      Values,
+      Path & PathMatchingValue<Values, FieldValue<Values, Path>>,
+      ExtraProps
+    >>
+  | AnyComponentType<
+      FieldBaseProps<
+        FieldValue<Values, Path>,
+        Values,
+        Path,
+        LegacyBag<Values, Path>
+      >,
+      ExtraProps
+    >
+
+export type BaseConfig<Values, Path extends PathOf<Values>, ExtraProps> = {
   /**
    * Field component to render. Can either be a string like 'select' or a component.
    */
   component?:
     | string
-    | TypedComponentField<FieldValue<Values, Path>, ExtraProps>
-    | React.ComponentType<FieldComponentProps<FieldValue<Values, Path>, Values, Path, ExtraProps>>
-    | AnyComponentType<ExtraProps>;
+    | FieldComponentComponent<Values, Path, ExtraProps>;
 
   /**
    * Render prop (works like React router's <Route render={props =>} />)
@@ -212,7 +249,7 @@ type GenericFieldHTMLConfig = Omit<
 /**
  * Passed to `<Field component={Component} />`.
  */
-type LegacyBag<Values, Path extends NameOf<Values>> = {
+type LegacyBag<Values, Path extends PathOf<Values>> = {
   field: FieldInputProps<FieldValue<Values, Path>>;
   // if ppl want to restrict this for a given form, let them.
   form: FormikProps<Values>;
@@ -221,7 +258,7 @@ type LegacyBag<Values, Path extends NameOf<Values>> = {
 /**
  * Passed to `render={Function}` or `children={Function}`.
  */
-export type FieldRenderProps<Values = any, Path extends NameOf<Values> = any> =
+export type FieldRenderProps<Values = any, Path extends PathOf<Values> = any> =
   LegacyBag<Values, Path> & {
     meta: FieldMetaProps<FieldValue<Values, Path>>;
   }
@@ -233,12 +270,12 @@ export type FieldRenderProps<Values = any, Path extends NameOf<Values> = any> =
  * FieldAsProps: `field.as = Component`,
  * FieldRenderProps: `field.render, field.children = Function`
  */
-export type FieldProps<Values, Path extends NameOf<Values>> = FieldRenderProps<Values, Path>;
+export type FieldProps<Values, Path extends PathOf<Values>> = FieldRenderProps<Values, Path>;
 
 export type FieldComponentProps<
   Value = any,
   Values = any,
-  Path extends NameOf<Values> = any,
+  Path extends PathMatchingValue<Values, Value> = any,
   ExtraProps extends WithoutSourceProps<
     FieldBaseProps<Value, Values, Path, LegacyBag<Values, Path>>
   > = {}
@@ -246,7 +283,7 @@ export type FieldComponentProps<
   ExtraPropsOrAnyProps<ExtraProps>;
 
 export type TypedComponentField<Value, ExtraProps = {}> = <
-  Values, Path extends NameOf<Values>
+  Values, Path extends PathMatchingValue<Values, Value>
 >(
   props: FieldComponentProps<
     Value,
@@ -261,7 +298,7 @@ export type TypedComponentField<Value, ExtraProps = {}> = <
  *
  * @private
  */
-export type FieldAsStringConfig<Values, Path extends NameOf<Values>, ExtraProps> =
+export type FieldAsStringConfig<Values, Path extends PathOf<Values>, ExtraProps> =
   BaseConfig<Values, Path, ExtraProps> & React.PropsWithChildren<{
     as: string,
     component?: undefined,
@@ -275,17 +312,14 @@ export type FieldAsStringConfig<Values, Path extends NameOf<Values>, ExtraProps>
  */
 export type FieldAsComponentConfig<
   Values,
-  Path extends NameOf<Values>,
+  Path extends PathOf<Values>,
   ExtraProps extends WithoutSourceProps<
     BaseConfig<Values, Path, ExtraProps>
   > = {}
 > =
   BaseConfig<Values, Path, ExtraProps> & React.PropsWithChildren<
     {
-      as:
-        | TypedAsField<FieldValue<Values, Path>, ExtraProps>
-        | React.ComponentType<FieldAsProps<FieldValue<Values, Path>, Values, Path, ExtraProps>>
-        | AnyComponentType<ExtraProps>;
+      as: FieldAsComponent<Values, Path, ExtraProps>;
       component?: undefined,
       render?: undefined,
     }
@@ -297,7 +331,7 @@ export type FieldAsComponentConfig<
  *
  * @private
  */
-export type FieldStringComponentConfig<Values, Path extends NameOf<Values>> =
+export type FieldStringComponentConfig<Values, Path extends PathOf<Values>> =
   BaseConfig<Values, Path, {}> & React.PropsWithChildren<{
     as?: undefined,
     component: string,
@@ -311,7 +345,7 @@ export type FieldStringComponentConfig<Values, Path extends NameOf<Values>> =
  */
 export type FieldComponentConfig<
   Values,
-  Path extends NameOf<Values>,
+  Path extends PathOf<Values>,
   ExtraProps extends WithoutSourceProps<
     BaseConfig<Values, Path, ExtraProps>
   > = {}
@@ -319,15 +353,12 @@ export type FieldComponentConfig<
   BaseConfig<Values, Path, ExtraProps> & React.PropsWithChildren<
     {
       as?: undefined,
-      component:
-        | TypedComponentField<FieldValue<Values, Path>, ExtraProps>
-        | React.ComponentType<FieldComponentProps<FieldValue<Values, Path>, Values, Path, ExtraProps>>
-        | AnyComponentType<ExtraProps>;
+      component: FieldComponentComponent<Values, Path, ExtraProps>;
       render?: undefined,
     }
   > & ExtraPropsOrAnyProps<ExtraProps>;
 
-export type FieldRenderFunction<Values, Path extends NameOf<Values>> = (
+export type FieldRenderFunction<Values, Path extends PathOf<Values>> = (
   props: FieldRenderProps<Values, Path>
 ) => React.ReactElement | null;
 
@@ -336,7 +367,7 @@ export type FieldRenderFunction<Values, Path extends NameOf<Values>> = (
  *
  * @private
  */
-export type FieldRenderConfig<Values, Path extends NameOf<Values>> =
+export type FieldRenderConfig<Values, Path extends PathOf<Values>> =
   BaseConfig<Values, Path, {}> & {
     as?: undefined,
     component?: undefined,
@@ -349,7 +380,7 @@ export type FieldRenderConfig<Values, Path extends NameOf<Values>> =
  *
  * @private
  */
-export type FieldChildrenConfig<Values, Path extends NameOf<Values>> =
+export type FieldChildrenConfig<Values, Path extends PathOf<Values>> =
   BaseConfig<Values, Path, {}> & {
     as?: undefined,
     component?: undefined,
@@ -362,7 +393,7 @@ export type FieldChildrenConfig<Values, Path extends NameOf<Values>> =
  *
  * @private
  */
-export type FieldDefaultConfig<Values, Path extends NameOf<Values>> =
+export type FieldDefaultConfig<Values, Path extends PathOf<Values>> =
   BaseConfig<Values, Path, {}> & {
     as?: undefined,
     component?: undefined,
@@ -370,11 +401,11 @@ export type FieldDefaultConfig<Values, Path extends NameOf<Values>> =
     children?: undefined,
   } & GenericFieldHTMLConfig;
 
-export type FieldConfig<Values, Path extends NameOf<Values>, ExtraProps = {}> =
-  FieldAsComponentConfig<Values, Path, ExtraProps> |
-  FieldComponentConfig<Values, Path, ExtraProps> |
+export type FieldConfig<Values, Path extends PathOf<Values>, ExtraProps = {}> =
   FieldAsStringConfig<Values, Path, ExtraProps> |
+  FieldAsComponentConfig<Values, Path, ExtraProps> |
   FieldStringComponentConfig<Values, Path> |
+  FieldComponentConfig<Values, Path, ExtraProps> |
   FieldRenderConfig<Values, Path> |
   FieldChildrenConfig<Values, Path> |
   FieldDefaultConfig<Values, Path>;
@@ -382,12 +413,12 @@ export type FieldConfig<Values, Path extends NameOf<Values>, ExtraProps = {}> =
 /**
  * @deprecated use `FieldConfig`
  */
-export type FieldAttributes<Values, Path extends NameOf<Values>, ExtraProps = {}> =
+export type FieldAttributes<Values, Path extends PathOf<Values>, ExtraProps = {}> =
   FieldConfig<Values, Path, ExtraProps>;
 
 export function Field<
   Values = any,
-  Path extends NameOf<Values> = any,
+  Path extends PathOf<Values> = any,
   ExtraProps = {}
 >(
   props: FieldConfig<Values, Path, ExtraProps>
@@ -463,8 +494,8 @@ export function Field<
       ...fieldAsProps
     } = props as FieldAsComponentConfig<Values, Path, ExtraProps>;
     return React.createElement(
-      props.as,
-      { ...fieldAsProps, ...field } as any,
+      props.as as any,
+      { ...fieldAsProps, ...field },
       children
     );
   }
@@ -481,8 +512,8 @@ export function Field<
 
     // We don't pass `meta` for backwards compat
     return React.createElement(
-      props.component,
-      { field, form, ...componentProps } as any,
+      props.component as any,
+      { field, form, ...componentProps },
       children
     );
   }

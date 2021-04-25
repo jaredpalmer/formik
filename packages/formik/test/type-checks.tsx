@@ -10,15 +10,14 @@ import {
     FieldRenderFunction,
     FieldStringComponentConfig,
     FieldValue,
-    SingleValue,
     createTypedField,
-    NameOf,
+    PathOf,
     FieldRenderProps,
     FieldRenderConfig,
     FieldChildrenConfig,
     TypedAsField,
     TypedComponentField,
-    MatchField,
+    PathMatchingValue,
     RecursivelyTupleKeys
 } from "../src";
 
@@ -190,7 +189,7 @@ class ClassComponentOverlappingExtra extends React.Component<{name: string, what
     return this.props.name ? null : null;
   }
 }
-const typedRenderFunction = <Values, Path extends NameOf<Values>>(
+const typedRenderFunction = <Values, Path extends PathOf<Values>>(
   props: FieldRenderProps<Values, Path>
 ) => props.meta.value ? null : null;
 
@@ -268,6 +267,7 @@ const fieldTests = (props: FieldConfig<Person, "age", {what: true}>) =>
     <Field name="age" as={componentWithOnlyExtra} what={false} />
     {/* @ts-expect-error extraProps should match */}
     <TypedField name="age" as={asComponentWithExtra} what={false} />
+    {/* @ts-expect-error extraProps should match */}
     <TypedField name="motto" as={typedAsComponent} />
     {/* @ts-expect-error extraProps is required */}
     <TypedField name="age" as={typedAsComponentWithExtra} />
@@ -395,17 +395,6 @@ const featuresNotImplemented = () =>
     <TypedField name="motto" component={ClassComponent} />
   </>
 
-const number: FieldValue<BasePerson, "age"> | undefined = undefined;
-const numberArray: FieldValue<BasePerson, "favoriteNumbers"> | undefined = undefined;
-const singleNumber: SingleValue<FieldValue<BasePerson, "favoriteNumbers">> | undefined = undefined;
-const singleNumberInferrer = () =>
-  <TypedField
-    name="favoriteNumbers"
-    component={(props) => null}
-    // @ts-expect-error
-    value=""
-  />;
-
 const basePerson: BasePerson = {
   name: {
     first: "",
@@ -426,6 +415,12 @@ const person: Person = {
   ]
 };
 
+const recursivelyTupledKeys: RecursivelyTupleKeys<Person>[] = [
+  ["friends", 0],
+  ["friends", 0, "favoriteNumbers"],
+  ["friends", 0, "favoriteNumbers", 0]
+];
+
 const str: FieldValue<Person, "motto"> = person.motto;
 const strs: FieldValue<Person, "nicknames"> = person.nicknames;
 const str1: FieldValue<Person, "nicknames.1"> = person.nicknames[1];
@@ -445,12 +440,97 @@ const obj1num: FieldValue<Person, "friends.1.age"> = person.friends[1].age;
 const obj1nums: FieldValue<Person, "friends.1.favoriteNumbers"> = person.friends[1].favoriteNumbers;
 const obj1num1: FieldValue<Person, "friends.1.favoriteNumbers.1"> = person.friends[1].favoriteNumbers[1];
 
-const namesOf: NameOf<Person> = "age";
-const ageMatches: MatchField<Person, number> = "age";
-const favoriteNumber0Matches: MatchField<Person, number> = "favoriteNumbers.0";
-const partnerAgeMatches: MatchField<Person, number> = "partner.age";
-const friend1AgeMatches: MatchField<Person, number> = "friends.1.age";
+const strMatches: PathMatchingValue<Person, string> = "motto";
+const strsMatches: PathMatchingValue<Person, string[]> = "nicknames";
+const str1Matches: PathMatchingValue<Person, string> = "nicknames.1";
+const numMatches: PathMatchingValue<Person, number> = "age";
+const numsMatches: PathMatchingValue<Person, number[]> = "favoriteNumbers";
+const num1Matches: PathMatchingValue<Person, number> = "favoriteNumbers.1";
+const objMatches: PathMatchingValue<Person, BasePerson> = "partner";
+const objstrMatches: PathMatchingValue<Person, string> = "partner.motto";
+const objstrsMatches: PathMatchingValue<Person, string[]> = "partner.nicknames";
+const objstr1Matches: PathMatchingValue<Person, string> = "partner.nicknames.1";
+const objnumMatches: PathMatchingValue<Person, number> = "partner.age";
+const objnumsMatches: PathMatchingValue<Person, number[]> = "partner.favoriteNumbers";
+const objnum1Matches: PathMatchingValue<Person, number> = "partner.favoriteNumbers.1";
+const obj1Matches: PathMatchingValue<Person, BasePerson> = "friends.1";
+const obj1strMatches: PathMatchingValue<Person, string> = "friends.1.motto";
+const obj1numMatches: PathMatchingValue<Person, number> = "friends.1.age";
+const obj1numsMatches: PathMatchingValue<Person, number[]> = "friends.1.favoriteNumbers";
+const obj1num1Matches: PathMatchingValue<Person, number> = "friends.1.favoriteNumbers.1";
 
-const recursivelyTupledKeys: RecursivelyTupleKeys<Person> = ["friends", 0, "favoriteNumbers"];
-const hello: NameOf<Person> & `friends.${number}.favoriteNumbers` = "friends.1.favoriteNumbers";
-type huh2 = `friends.${number}` extends NameOf<Person> ? true : false;
+// @ts-expect-error
+const strValueFails: FieldValue<Person, "motto"> = person.age;
+// @ts-expect-error
+const strsValueFails: FieldValue<Person, "nicknames"> = person.favoriteNumbers;
+// @ts-expect-error
+const str1ValueFails: FieldValue<Person, "nicknames.1"> = person.favoriteNumbers[0]
+// @ts-expect-error
+const numValueFails: FieldValue<Person, "age"> = person.motto;
+// @ts-expect-error
+const numsValueFails: FieldValue<Person, "favoriteNumbers"> = person.nicknames;
+// @ts-expect-error
+const num1ValueFails: FieldValue<Person, "favoriteNumbers.1"> = person.nicknames[0];
+// @ts-expect-error
+const objValueFails: FieldValue<Person, "partner"> = person.friends;
+// @ts-expect-error
+const objstrValueFails: FieldValue<Person, "partner.motto"> = person.partner.age;
+// @ts-expect-error
+const objstrsValueFails: FieldValue<Person, "partner.nicknames"> = person.partner.favoriteNumbers;
+// @ts-expect-error
+const objstr1ValueFails: FieldValue<Person, "partner.nicknames.1"> = person.partner.favoriteNumbers[0]
+// @ts-expect-error
+const objnumValueFails: FieldValue<Person, "partner.age"> = person.partner.motto;
+// @ts-expect-error
+const objnumsValueFails: FieldValue<Person, "partner.favoriteNumbers"> = person.partner.nicknames;
+// @ts-expect-error
+const objnum1ValueFails: FieldValue<Person, "partner.favoriteNumbers.1"> = person.partner.nicknames[1];
+// @ts-expect-error
+const obj1ValueFails: FieldValue<Person, "friends.1"> = person.friends;
+// @ts-expect-error
+const obj1strValueFails: FieldValue<Person, "friends.1.motto"> = person.friends[1].age;
+// @ts-expect-error
+const obj1numValueFails: FieldValue<Person, "friends.1.age"> = person.friends[1].motto;
+// @ts-expect-error
+const obj1numsValueFails: FieldValue<Person, "friends.1.favoriteNumbers"> = person.friends[1].nicknames;
+// @ts-expect-error
+const obj1num1ValueFails: FieldValue<Person, "friends.1.favoriteNumbers.1"> = person.friends[1].nicknames[1];
+
+type NumberArrayMatchesString = FieldValue<Person, "nicknames.1" | "partner.nicknames.1"> extends number ? true : false;
+
+// @ts-expect-error
+const strFails: PathMatchingValue<Person, number> = "motto";
+// @ts-expect-error
+const strsFails: PathMatchingValue<Person, number[]> = "nicknames";
+// @ts-expect-error
+const str1Fails: PathMatchingValue<Person, number> = "nicknames.1";
+// @ts-expect-error
+const numFails: PathMatchingValue<Person, string> = "age";
+// @ts-expect-error
+const numsFails: PathMatchingValue<Person, string[]> = "favoriteNumbers";
+// @ts-expect-error
+const num1Fails: PathMatchingValue<Person, string> = "favoriteNumbers.1";
+// @ts-expect-error
+const objFails: PathMatchingValue<Person, Person> = "partner";
+// @ts-expect-error
+const objstrFails: PathMatchingValue<Person, number> = "partner.motto";
+// @ts-expect-error
+const objstrsFails: PathMatchingValue<Person, number[]> = "partner.nicknames";
+// @ts-expect-error
+const objstr1Fails: PathMatchingValue<Person, number> = "partner.nicknames.1";
+// @ts-expect-error
+const objnumFails: PathMatchingValue<Person, string> = "partner.age";
+// @ts-expect-error
+const objnumsFails: PathMatchingValue<Person, string[]> = "partner.favoriteNumbers";
+// @ts-expect-error
+const objnum1Fails: PathMatchingValue<Person, string> = "partner.favoriteNumbers.1";
+// @ts-expect-error
+const obj1Fails: PathMatchingValue<Person, Person> = "friends.1";
+// @ts-expect-error
+const obj1strFails: PathMatchingValue<Person, number> = "friends.1.motto";
+// @ts-expect-error
+const obj1numFails: PathMatchingValue<Person, string> = "friends.1.age";
+// @ts-expect-error
+const obj1numsFails: PathMatchingValue<Person, string[]> = "friends.1.favoriteNumbers";
+// @ts-expect-error
+const obj1num1Fails: PathMatchingValue<Person, string> = "friends.1.favoriteNumbers.1";

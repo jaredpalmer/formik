@@ -1,9 +1,9 @@
 import * as React from "react";
 import { Field, FieldConfig } from "../Field";
-import { NameOf } from "../types";
+import { PathOf } from "../types";
 
 export type TypedField<Values> = <
-  Path extends NameOf<Values>,
+  Path extends PathOf<Values>,
   ExtraProps = {}
 >(
   props: FieldConfig<Values, Path, ExtraProps>

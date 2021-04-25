@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Comparer, Selector } from 'use-optimized-selector';
-import { number, string } from 'yup';
 import { FieldPassThroughConfig, SingleValue } from './Field';
 import { TypedField } from './hooks/useTypedField';
 import { TypedFieldArray } from './hooks/useTypedFieldArray';
@@ -124,10 +123,13 @@ export type GetStateFn<Values> = () => FormikState<Values>;
 export type RecursivelyTupleKeys<Values> = Values extends string
   ? []
   : Values extends (infer SingleValue)[]
-    ? [number, ...RecursivelyTupleKeys<SingleValue>]
-      : Values extends Record<string, any> ?
-          [keyof Values] |
-          {
+    ?
+      | [number]
+      | [number, ...RecursivelyTupleKeys<SingleValue>]
+    : Values extends Record<string, any>
+      ?
+        | [keyof Values]
+        | {
             [Key in keyof Values]: [Key, ...RecursivelyTupleKeys<Values[Key]>]
           }[Extract<keyof Values, string>]
       : [];
@@ -149,20 +151,20 @@ export type FlattenPathTuples<PathTuples extends any[]> =
           : never
         : string;
 
-export type NameOf<Values> = object extends Values
+export type PathOf<Values> = object extends Values
   ? any :
   FlattenPathTuples<RecursivelyTupleKeys<Values>> & string;
 
 /**
  * Field Types
  */
-export type FieldValue<Values, Path extends NameOf<Values>> =
+export type FieldValue<Values, Path extends PathOf<Values>> =
   string extends Path
     // if Path is any or never, return that as value
     ? Path
     : Values extends readonly (infer SingleValue)[]
       ? Path extends `${string}.${infer NextPath}`
-        ? NextPath extends NameOf<Values[number]>
+        ? NextPath extends PathOf<Values[number]>
           ? FieldValue<Values[number], NextPath>
           : never
         : SingleValue
@@ -170,31 +172,29 @@ export type FieldValue<Values, Path extends NameOf<Values>> =
         ? Values[Path]
         : Path extends `${infer Key}.${infer NextPath}`
           ? Key extends keyof Values
-            ? NextPath extends NameOf<Values[Key]>
+            ? NextPath extends PathOf<Values[Key]>
               ? FieldValue<Values[Key], NextPath>
               : never
             : never
           : never;
 
-export type MatchField<Values, Value> =
-  NameOf<Values> extends (infer Path)
-    ? Path extends NameOf<Values>
-      ? FieldValue<Values, Path> extends never
-        ? never
-        : Path
+export type PathMatchingValue<Values, Value> =
+  // infer individual paths
+  PathOf<Values> extends (infer Path)
+    // reapply constraint
+    ? Path extends PathOf<Values>
+      ? FieldValue<Values, Path> extends Value
+        ? Path
+        : never
       : never
     : never;
 
-export type WithExtraProps<SourceType, ExtraProps> = SourceType extends ExtraProps
-? SourceType
-: object extends ExtraProps ? SourceType : SourceType & ExtraProps;
-
-export type RegisterFieldFn<Values> = <Path extends NameOf<Values>>(
+export type RegisterFieldFn<Values> = <Path extends PathOf<Values>>(
   name: Path,
-  { validate }: Pick<FieldPassThroughConfig<FieldValue<Values, Path>, Values, Path>, 'validate'>
+  { validate }: Pick<FieldPassThroughConfig<Path, FieldValue<Values, Path>>, 'validate'>
 ) => void;
 
-export type UnregisterFieldFn<Values> = <Path extends NameOf<Values>>(
+export type UnregisterFieldFn<Values> = <Path extends PathOf<Values>>(
   name: Path
 ) => void;
 
@@ -219,18 +219,21 @@ export type SetValuesFn<Values extends FormikValues> = (
   shouldValidate?: boolean | undefined
 ) => Promise<void | FormikErrors<Values>>;
 
-export type SetFieldValueFn<Values extends FormikValues> = <Path extends NameOf<Values>>(
+export type SetFieldValueFn<Values extends FormikValues> = <
+  Value,
+  Path extends PathMatchingValue<Values, Value>
+>(
   field: Path,
-  value: FieldValue<Values, Path>,
+  value: Value,
   shouldValidate?: boolean | undefined
 ) => Promise<void | FormikErrors<Values>>;
 
-export type SetFieldErrorFn<Values> = <Path extends NameOf<Values>>(
+export type SetFieldErrorFn<Values> = <Path extends PathOf<Values>>(
   field: Path,
   error: string | undefined
 ) => void;
 
-export type SetFieldTouchedFn<Values extends FormikValues> = <Path extends NameOf<Values>>(
+export type SetFieldTouchedFn<Values extends FormikValues> = <Path extends PathOf<Values>>(
   field: Path,
   touched?: boolean | undefined,
   shouldValidate?: boolean | undefined
@@ -240,7 +243,7 @@ export type ValidateFormFn<Values extends FormikValues> = (
   values?: Values
 ) => Promise<FormikErrors<Values>>;
 
-export type ValidateFieldFn<Values> = <Path extends NameOf<Values>>(
+export type ValidateFieldFn<Values> = <Path extends PathOf<Values>>(
   name: Path
 ) => Promise<void | string | undefined>;
 

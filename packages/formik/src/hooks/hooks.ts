@@ -12,7 +12,7 @@ import {
   FieldMetaProps,
   FieldValue,
   FormikState,
-  NameOf,
+  PathOf,
 } from '../types';
 import { useFormikState } from './useFormikState';
 import { isInputEvent, isObject, isShallowEqual } from '../utils';
@@ -23,7 +23,7 @@ import { FieldHookConfig, FormatFn, ParseFn, SingleValue } from '../Field';
  *
  * Pass `FieldMetaProps` from useFieldMeta, so we don't subscribe twice.
  */
-export const useFieldProps = <Values, Path extends NameOf<Values>>(
+export const useFieldProps = <Values, Path extends PathOf<Values>>(
     nameOrOptions: Path | FieldHookConfig<Values, Path, any>,
     fieldMeta: FieldMetaProps<FieldValue<Values, Path>>
   ): FieldInputProps<FieldValue<Values, Path>> => {

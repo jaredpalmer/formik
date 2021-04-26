@@ -3,10 +3,9 @@ import { Field, FieldConfig } from "../Field";
 import { PathOf } from "../types";
 
 export type TypedField<Values> = <
-  Path extends PathOf<Values>,
-  ExtraProps = {}
+  Path extends PathOf<Values>
 >(
-  props: FieldConfig<Values, Path, ExtraProps>
+  props: FieldConfig<Values, Path>
 ) =>
   React.ReactElement | null;
 

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { isFunction } from './utils';
 import { useFieldMeta } from './hooks/hooks';
-import { PathOf } from 'formik';
+import { PathOf } from './types';
 
 export interface ErrorMessageProps<Values> {
   name: PathOf<Values>;

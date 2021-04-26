@@ -28,6 +28,11 @@ function Home() {
               <a>Field Array</a>
             </Link>
           </li>
+          <li>
+            <Link href="/tutorial/strongly-typed">
+              <a>TypeScript</a>
+            </Link>
+          </li>
         </ul>
       </nav>
       <nav>

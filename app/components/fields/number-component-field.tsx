@@ -1,15 +1,10 @@
+import { parseNumberOrEmpty } from "app/helpers/parse-format-helpers";
 import {
     ParseFn,
     TypedComponentField,
 } from "formik";
 
-const parseNumberOrEmpty = (value: unknown) => value === "" ? "" : Number(value);
-
-export const NumberComponentField: TypedComponentField<number | "", {
-    hidden: boolean,
-    id: string,
-    placeholder?: string,
-}> = (props) => {
+export const NumberComponentField: TypedComponentField<number | ""> = (props) => {
     const parse: ParseFn<number | ""> = props.parse ?? parseNumberOrEmpty;
 
     const handleChange = (value: unknown) => {
@@ -18,12 +13,8 @@ export const NumberComponentField: TypedComponentField<number | "", {
 
     return <input
         {...props.field}
-        id={props.id}
-        type={props.hidden
-            ? "hidden"
-            : props.type
-        }
-        placeholder={props.placeholder}
+        type="text"
         onChange={handleChange}
+        inputMode="numeric"
     />
 };

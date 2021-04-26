@@ -5,8 +5,8 @@ import { Field, FieldAttributes } from './Field';
 /**
  * @deprecated Use Field + FieldConfig
  */
-export type FastFieldConfig<Values, Path extends PathOf<Values>, ExtraProps> =
-  FieldAttributes<Values, Path, ExtraProps> & {
+export type FastFieldConfig<Values, Path extends PathOf<Values>> =
+  FieldAttributes<Values, Path> & {
     shouldUpdate?: (nextProps: any, props: {}) => boolean;
   };
 
@@ -15,8 +15,7 @@ export type FastFieldConfig<Values, Path extends PathOf<Values>, ExtraProps> =
  */
 export const FastField = <
   Values extends FormikValues = any,
-  Path extends PathOf<Values> = any,
-  ExtraProps = {}
->({ shouldUpdate, ...props}: FastFieldConfig<Values, Path, ExtraProps>) => (
-  <Field {...(props as FieldAttributes<Values, Path, ExtraProps>)} />
+  Path extends PathOf<Values> = any
+>({ shouldUpdate, ...props}: FastFieldConfig<Values, Path>) => (
+  <Field {...(props as FieldAttributes<Values, Path>)} />
 );

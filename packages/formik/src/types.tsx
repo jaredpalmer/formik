@@ -161,33 +161,38 @@ export type PathOf<Values> = object extends Values
 export type FieldValue<Values, Path extends PathOf<Values>> =
   string extends Path
     // if Path is any or never, return that as value
-    ? Path
-    : Values extends readonly (infer SingleValue)[]
-      ? Path extends `${string}.${infer NextPath}`
-        ? NextPath extends PathOf<Values[number]>
-          ? FieldValue<Values[number], NextPath>
-          : never
-        : SingleValue
-      : Path extends keyof Values
-        ? Values[Path]
-        : Path extends `${infer Key}.${infer NextPath}`
-          ? Key extends keyof Values
-            ? NextPath extends PathOf<Values[Key]>
-              ? FieldValue<Values[Key], NextPath>
+    ? any
+    : object extends Values
+        // if Values is any, return any
+        ? any
+        : Values extends readonly (infer SingleValue)[]
+          ? Path extends `${string}.${infer NextPath}`
+            ? NextPath extends PathOf<Values[number]>
+              ? FieldValue<Values[number], NextPath>
               : never
-            : never
-          : never;
+            : SingleValue
+          : Path extends keyof Values
+            ? Values[Path]
+            : Path extends `${infer Key}.${infer NextPath}`
+              ? Key extends keyof Values
+                ? NextPath extends PathOf<Values[Key]>
+                  ? FieldValue<Values[Key], NextPath>
+                  : never
+                : never
+              : never;
 
 export type PathMatchingValue<Values, Value> =
-  // infer individual paths
-  PathOf<Values> extends (infer Path)
-    // reapply constraint
-    ? Path extends PathOf<Values>
-      ? FieldValue<Values, Path> extends Value
-        ? Path
+  object extends Values
+    ? any
+    // infer individual paths
+    : PathOf<Values> extends (infer Path)
+      // reapply constraint
+      ? Path extends PathOf<Values>
+        ? FieldValue<Values, Path> extends Value
+          ? Path
+          : never
         : never
-      : never
-    : never;
+      : never;
 
 export type RegisterFieldFn<Values> = <Path extends PathOf<Values>>(
   name: Path,

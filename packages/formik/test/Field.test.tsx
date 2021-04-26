@@ -55,9 +55,9 @@ function renderForm(
 }
 
 const createRenderField = (
-  FieldComponent: React.ComponentType<FieldAttributes<any, any, any>>
+  FieldComponent: React.ComponentType<FieldAttributes<any, any>>
 ) => (
-  props: Partial<FieldAttributes<any, any, any>> = {},
+  props: Partial<FieldAttributes<any, any>> = {},
   formProps?: Partial<FormikConfig<Values>>
 ) => {
   let injected: FieldRenderProps;
@@ -110,7 +110,7 @@ describe('Field / FastField', () => {
     });
   });
 
-  describe('receives correct values and types without ExtraProps', () => {
+  describe('receives correct values and types', () => {
     it('<Field />', () => {
       let renderInjectedProps: FieldRenderProps[] = [];
       let componentInjectedProps: FieldComponentProps = {} as any;
@@ -178,24 +178,25 @@ describe('Field / FastField', () => {
       });
     });
 
+    /*
     describe('receives (or doesn\'t receive) ExtraProps', () => {
       it('<Field />', () => {
         let renderInjectedProps: FieldRenderProps[] = [];
-        let componentInjectedProps: FieldComponentProps<any, any, { what: true }> = {} as any;
-        let asInjectedProps: FieldAsProps<any, any, any, { what: true }> = {} as any;
+        let componentInjectedProps: FieldComponentProps<any, any> = {} as any;
+        let asInjectedProps: FieldAsProps<any, any> = {} as any;
 
         const RenderField = (props: FieldRenderProps) => {
           renderInjectedProps.push(props);
 
           return <div data-testid="child">{TEXT}</div>;
         }
-        const ComponentField = (props: FieldComponentProps<any, any, any, { what: true }>) => {
+        const ComponentField = (props: FieldComponentProps<any, any>) => {
           componentInjectedProps = props;
 
           return <div data-testid="child">{TEXT}</div>;
         }
 
-        const AsField = (props: FieldAsProps<any, any, any, { what: true }>) => {
+        const AsField = (props: FieldAsProps<any, any>) => {
           asInjectedProps = props;
 
           return <div data-testid="child">{TEXT}</div>;
@@ -284,6 +285,7 @@ describe('Field / FastField', () => {
       expect(queryAllByText(TEXT)).toHaveLength(4);
     });
   });
+  */
 
   describe('children', () => {
     cases('renders a child element with component', () => {

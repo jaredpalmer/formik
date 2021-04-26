@@ -18,7 +18,8 @@ import {
     TypedAsField,
     TypedComponentField,
     PathMatchingValue,
-    RecursivelyTupleKeys
+    RecursivelyTupleKeys,
+    FieldComponentClass
 } from "../src";
 
 type BasePerson = {
@@ -40,9 +41,9 @@ type Person = BasePerson & {
 /**
  * FieldConfig Tests
  */
-let configTest: FieldConfig<any, any, { what: true }> | undefined = undefined;
+let configTest: FieldConfig<any, any> | undefined = undefined;
 // AsString
-const fieldAsString: FieldAsStringConfig<any, any, any> = {} as any;
+const fieldAsString: FieldAsStringConfig<any, any> = {} as any;
 fieldAsString.as = 'input';
 fieldAsString.onInput = (event) => {};
 configTest = {
@@ -51,20 +52,18 @@ configTest = {
   onInput: (e) => {},
 };
 // AsComponent
-const fieldAsConfig: FieldAsComponentConfig<any, any, { what: true }> = {} as any;
+const fieldAsConfig: FieldAsComponentConfig<any, any> = {} as any;
 fieldAsConfig.as = (props) => props.what && null;
 configTest = {
   as: fieldAsConfig.as,
   name: '',
-  what: true,
 };
 // AsComponent + Extra
-const fieldAsExtraConfig: FieldAsComponentConfig<any, any, { what: true }> = {} as any;
+const fieldAsExtraConfig: FieldAsComponentConfig<any, any> = {} as any;
 fieldAsExtraConfig.as = (props) => props.what && null;
 configTest = {
   as: fieldAsExtraConfig.as,
   name: '',
-  what: true,
 };
 // StringComponent
 const fieldStringComponent: FieldStringComponentConfig<any, any> = {} as any;
@@ -75,27 +74,18 @@ configTest = {
   name: '',
 }
 // ComponentComponent
-const fieldComponentConfig: FieldComponentConfig<any, any, { what: true }> = {} as any;
-fieldComponentConfig.component = (props) => props.what && props.field.value ? null : null;
+const fieldComponentConfig: FieldComponentConfig<any, any> = {} as any;
+fieldComponentConfig.component = (props) => props.field.value ? null : null;
 
 // ComponentComponent
 configTest = {
   component: fieldComponentConfig.component,
   name: '',
-  what: true,
 };
 
 // ComponentComponent
-const fieldComponentWithExtraConfig: FieldComponentConfig<any, any, { what: true }> = {} as any;
-fieldComponentWithExtraConfig.component = (props) => props.what && props.field.value ? null : null;
-
-const fieldComponentWithExtra: FieldComponentConfig<any, any, { what: true }> = {} as any;
-fieldComponentWithExtra.component = (props) => props.what && null;
-configTest = {
-  component: fieldComponentWithExtra.component,
-  name: '',
-  what: true,
-};
+const fieldComponentWithExtraConfig: FieldComponentConfig<any, any> = {} as any;
+fieldComponentWithExtraConfig.component = (props) => props.field.value ? null : null;
 
 // RenderFunction
 const fieldRenderConfig: FieldRenderConfig<any, any> = {} as any;
@@ -125,7 +115,6 @@ class PropsAnyClassComponent extends React.Component<any> {
     return this.props.what ? null : null;
   }
 }
-const componentWithOnlyExtra = (props: { what: true }) => !!props.what ? null : null;
 class ClassComponentWithOnlyExtra extends React.Component<{ what: true }> {
   render() {
     return this.props.what ? null : null;
@@ -133,53 +122,39 @@ class ClassComponentWithOnlyExtra extends React.Component<{ what: true }> {
 }
 
 const asComponent = (props: FieldAsProps) => !!props.onChange && null;
-const asComponentWithExtra =
-  (props: FieldAsProps<any, any, any, { what: true }>) => !!props.onChange && null;
 
 const componentComponent =
-  (props: FieldComponentProps<any, any, any, {}>) => !!props.field.onChange && null;
-const componentWithExtra =
-  (props: FieldComponentProps<any, any, any, { what: true }>) =>
-    !!props.field.onChange && null;
+  (props: FieldComponentProps<any, any>) => !!props.field.onChange && null;
 
 const renderFunction: FieldRenderFunction<any, any> =
   (props) => props.meta.value ? null : null;
 
-const typedAsComponent: TypedAsField<number, {}> =
+const typedAsComponent: TypedAsField<number> =
   (props) => props.value ? null : null;
-const typedAsComponentWithExtra: TypedAsField<number, { what: true }> =
-  (props) => !!props.onChange && null;
-class AsComponentClass extends React.Component<FieldAsProps<number, any, any, {}>> {
+class AsClassComponent<Values> extends React.Component<FieldAsProps<number, Values>> {
   render() {
     return this.props.value ? null : null;
   }
 }
-class AsComponentClassWithExtra extends React.Component<
-  FieldAsProps<number, any, any, { what: true }>
-> {
-  render() {
-    return this.props.value && this.props.what ? null : null;
-  }
-}
-const typedComponentComponent: TypedComponentField<number, {}> =
+const typedComponentComponent: TypedComponentField<number> =
   (props) => props.field ? null : null;
-const typedComponentWithExtra: TypedComponentField<number, { what: true }> =
+const typedComponentWithExtra: TypedComponentField<number> =
   (props) => props.field ? null : null;
-const componentOverlapping = (props: {name: string}) => props.name ? null : null;
+const componentPartialProps = (props: {name: string}) => props.name ? null : null;
 const componentOverlappingWithExtra = (props: {name: string, what: true}) => props.name && props.what ? null : null;
-class ClassComponent extends React.Component<FieldComponentProps<number, any, any, {}>> {
+class ClassComponent extends FieldComponentClass<number> {
   render() {
     return this.props.value ? null : null;
   }
 }
 class ClassComponentWithExtra extends React.Component<
-  FieldComponentProps<number, any, any, { what: true }>
+  FieldComponentProps<number, any>
 > {
   render() {
-    return this.props.value && this.props.what ? null : null;
+    return this.props.value ? null : null;
   }
 }
-class ClassComponentOverlapping extends React.Component<{name: string}> {
+class ClassComponentPartialProps extends React.Component<{name: string}> {
   render() {
     return this.props.name ? null : null;
   }
@@ -193,7 +168,7 @@ const typedRenderFunction = <Values, Path extends PathOf<Values>>(
   props: FieldRenderProps<Values, Path>
 ) => props.meta.value ? null : null;
 
-const fieldTests = (props: FieldConfig<Person, "age", {what: true}>) =>
+const fieldTests = (props: FieldConfig<Person, "age">) =>
   <>
     {/* Default */}
     <Field name="age" />
@@ -212,40 +187,19 @@ const fieldTests = (props: FieldConfig<Person, "age", {what: true}>) =>
 
     {/* FieldAsString */}
     <Field name="age" as="select" />
-    {/* @ts-expect-error elements don't have extraProps */}
-    <Field name="age" as="select" what={true} />
-    {/* @ts-expect-error elements don't have extraProps */}
-    <TypedField name="age" as="select" what={true} />
 
     {/* FieldStringComponent */}
     <Field name="age" component="select" />
     <TypedField name="age" component="select" />
-    {/* @ts-expect-error elements don't have extraProps */}
-    <Field name="age" component="select" what={true} />
-    {/* @ts-expect-error elements don't have extraProps */}
-    <TypedField name="age" component="select" what={true} />
 
     {/* FieldAsComponent */}
     <Field name="age" as={proplessComponent} />
     <TypedField name="age" as={proplessComponent} />
     <Field name="age" as={propsAnyComponent} />
     <TypedField name="age" as={propsAnyComponent} />
-    <Field name="age" as={propsAnyComponent} what={true} />
-    <TypedField name="age" as={propsAnyComponent} what={true} />
     <Field name="age" as={PropsAnyClassComponent} />
-    <TypedField name="age" as={PropsAnyClassComponent} />
-    <Field name="age" as={componentOverlapping} />
-    <TypedField name="age" as={componentOverlappingWithExtra} what={true} />
-    <Field name="age" as={ClassComponentOverlapping} />
-    <TypedField name="age" as={ClassComponentOverlapping} />
-    <Field name="age" as={ClassComponentOverlappingExtra} what={true} />
-    <TypedField name="age" as={ClassComponentOverlappingExtra} what={true} />
-    <Field name="age" as={PropsAnyClassComponent} what={true} />
-    <TypedField name="age" as={PropsAnyClassComponent} what={true} />
-    <Field name="age" as={componentWithOnlyExtra} what={true} />
-    <TypedField name="age" as={componentWithOnlyExtra} what={true} />
-    <Field name="age" as={ClassComponentWithOnlyExtra} what={true} />
-    <TypedField name="age" as={ClassComponentWithOnlyExtra} what={true} />
+    <Field name="age" as={componentPartialProps} />
+    <Field name="age" as={ClassComponentPartialProps} />
 
     <Field name="age" as={asComponent} />
     <Field name="age" as={typedAsComponent} />
@@ -253,53 +207,26 @@ const fieldTests = (props: FieldConfig<Person, "age", {what: true}>) =>
     <Field name="age" as={asComponent}><div /></Field>
     <Field name="age" as={typedAsComponent}><div /></Field>
     <TypedField name="age" as={typedAsComponent}><div /></TypedField>
-    <Field name="age" as={AsComponentClass} />
-    <TypedField name="age" as={AsComponentClass} />
-    <Field name="age" as={asComponentWithExtra} what={true} />
-    <Field name="age" as={typedAsComponentWithExtra} what={true} />
-    <TypedField name="age" as={typedAsComponentWithExtra} what={true} />
-    <Field name="age" as={AsComponentClassWithExtra} what={true} />
-    <TypedField name="age" as={AsComponentClassWithExtra} what={true} />
+    <Field name="age" as={AsClassComponent} />
+    <TypedField name="age" as={AsClassComponent} />
 
-    {/* @ts-expect-error extraProps should match */}
-    <Field name="age" as={asComponentWithExtra} what={false} />
-    {/* @ts-expect-error extraProps should match */}
-    <Field name="age" as={componentWithOnlyExtra} what={false} />
-    {/* @ts-expect-error extraProps should match */}
-    <TypedField name="age" as={asComponentWithExtra} what={false} />
-    {/* @ts-expect-error extraProps should match */}
+    {/* @ts-expect-error TypedFields must match props */}
+    <TypedField name="age" as={PropsAnyClassComponent} />
+    {/* @ts-expect-error TypedFields must match props */}
+    <TypedField name="age" as={ClassComponentPartialProps} />
+    {/* @ts-expect-error field value should match */}
     <TypedField name="motto" as={typedAsComponent} />
-    {/* @ts-expect-error extraProps is required */}
-    <TypedField name="age" as={typedAsComponentWithExtra} />
-    {/* @ts-expect-error extraProps is required */}
-    <TypedField name="age" as={TypedAsComponentClassWithExtra} />
-    {/* @ts-expect-error extraProps is required */}
-    <TypedField name="age" as={TypedAsComponentClassWithExtra} what={false} />
-    {/* @ts-expect-error extraProps should match */}
-    <TypedField name="age" as={asComponentWithOnlyExtra} what={false} />
+    {/* @ts-expect-error field value should match */}
+    <TypedField name="motto" as={AsClassComponent} />
 
     {/* FieldComponent */}
     <Field name="age" component={proplessComponent} />
     <TypedField name="age" component={proplessComponent} />
     <Field name="age" component={propsAnyComponent} />
     <TypedField name="age" component={propsAnyComponent} />
-    <Field name="age" component={propsAnyComponent} what={true} />
-    <TypedField name="age" component={propsAnyComponent} what={true} />
     <Field name="age" component={PropsAnyClassComponent} />
-    <TypedField name="age" component={PropsAnyClassComponent} />
-    <Field name="age" component={PropsAnyClassComponent} what={true} />
-    <TypedField name="age" component={PropsAnyClassComponent} what={true} />
-    <Field name="age" component={componentOverlapping} />
-    <TypedField name="age" component={componentOverlappingWithExtra} what={true} />
-    <Field name="age" component={ClassComponentOverlapping} />
-    <TypedField name="age" component={ClassComponentOverlapping} />
-    <Field name="age" component={ClassComponentOverlappingExtra} what={true} />
-    <TypedField name="age" component={ClassComponentOverlappingExtra} what={true} />
-    <Field name="age" component={componentWithOnlyExtra} what={true} />
-    <TypedField name="age" component={componentWithOnlyExtra} what={true} />
-    <Field name="age" component={ClassComponentWithOnlyExtra} what={true} />
-    <TypedField name="age" component={ClassComponentWithOnlyExtra} what={true} />
-
+    <Field name="age" component={componentPartialProps} />
+    <Field name="age" component={ClassComponentPartialProps} />
     <Field name="age" component={componentComponent} />
     <Field name="age" component={typedComponentComponent} />
     <TypedField name="age" component={typedComponentComponent} />
@@ -308,26 +235,15 @@ const fieldTests = (props: FieldConfig<Person, "age", {what: true}>) =>
     <TypedField name="age" component={typedComponentComponent}><div /></TypedField>
     <Field name="age" component={ClassComponent} />
     <TypedField name="age" component={ClassComponent} />
-    <Field name="age" component={componentWithExtra} what={true} />
-    <Field name="age" component={typedComponentWithExtra} what={true} />
-    <TypedField name="age" component={typedComponentWithExtra} what={true} />
-    <Field name="age" component={ClassComponentWithExtra} what={true} />
-    <TypedField name="age" component={ClassComponentWithExtra} what={true} />
 
-    {/* @ts-expect-error extraProps should match */}
-    <Field name="age" component={componentWithExtra} what={false} />
-    {/* @ts-expect-error extraProps should match */}
-    <Field name="age" component={componentWithOnlyExtra} what={false} />
-    {/* @ts-expect-error extraProps should match */}
-    <TypedField name="age" component={componentWithExtra} what={false} />
-    {/* @ts-expect-error value type should match */}
+    {/* @ts-expect-error TypedFields must match props */}
+    <TypedField name="age" component={PropsAnyClassComponent} />
+    {/* @ts-expect-error TypedFields must match props */}
+    <TypedField name="age" component={ClassComponentPartialProps} />
+    {/* @ts-expect-error field value should match */}
     <TypedField name="motto" component={typedComponentComponent} />
-    {/* @ts-expect-error extraProps is required */}
-    <TypedField name="age" component={typedComponentComponentWithExtra} />
-    {/* @ts-expect-error extraProps is required */}
-    <TypedField name="age" component={TypedComponentClassWithExtra} />
-    {/* @ts-expect-error extraProps should match */}
-    <TypedField name="age" component={componentWithOnlyExtra} what={false} />
+    {/* @ts-expect-error field value should match */}
+    <TypedField name="motto" component={ClassComponent} />
 
     {/* FieldRender */}
     <Field name="age" render={renderFunction} />
@@ -339,10 +255,8 @@ const fieldTests = (props: FieldConfig<Person, "age", {what: true}>) =>
     <Field name="age">{renderFunction}</Field>
 
     {/* Pass-Through Props */}
-    <Field<any, any, {what: true}> {...props} />
+    <Field<any, any> {...props} />
     <Field {...props} />
-    {/* @ts-expect-error extraProps should match */}
-    <Field<any, any, {what: false}> {...props} />
 
     {/* FieldRender */}
     <TypedField name="age" render={typedRenderFunction} />
@@ -354,10 +268,8 @@ const fieldTests = (props: FieldConfig<Person, "age", {what: true}>) =>
     <TypedField name="age">{typedRenderFunction}</TypedField>
 
     {/* Pass-Through Props */}
-    <TypedField<any, {what: true}> {...props} />
+    <TypedField<any> {...props} />
     <TypedField {...props} />
-    {/* @ts-expect-error extraProps should match */}
-    <TypedField<any, any, {what: false}> {...props} />
   </>
 
 const featuresNotImplemented = () =>
@@ -390,9 +302,86 @@ const featuresNotImplemented = () =>
     <TypedField name="age" component={proplessComponent} what={true} />
 
     {/* @ts-expect-error class component should match type */}
-    <TypedField name="motto" as={AsComponentClass} />
+    <TypedField name="motto" as={AsClassComponent} />
     {/* @ts-expect-error class component should match type */}
     <TypedField name="motto" component={ClassComponent} />
+
+    {/*
+      * Gave up on ExtraProps for now
+      */}
+    {/* @ts-expect-error elements don't have extraProps */}
+    <Field name="age" as="select" what={true} />
+    {/* @ts-expect-error elements don't have extraProps */}
+    <TypedField name="age" as="select" what={true} />
+    {/* @ts-expect-error elements don't have extraProps */}
+    <Field name="age" component="select" what={true} />
+    {/* @ts-expect-error elements don't have extraProps */}
+    <TypedField name="age" component="select" what={true} />
+    <Field name="age" as={propsAnyComponent} what={true} />
+    <TypedField name="age" as={propsAnyComponent} what={true} />
+    <TypedField name="age" as={componentOverlappingWithExtra} what={true} />
+    <Field name="age" as={ClassComponentOverlappingExtra} what={true} />
+    <TypedField name="age" as={ClassComponentOverlappingExtra} what={true} />
+    <Field name="age" as={PropsAnyClassComponent} what={true} />
+    <TypedField name="age" as={PropsAnyClassComponent} what={true} />
+    <Field name="age" as={componentWithOnlyExtra} what={true} />
+    <TypedField name="age" as={componentWithOnlyExtra} what={true} />
+    <Field name="age" as={ClassComponentWithOnlyExtra} what={true} />
+    <TypedField name="age" as={ClassComponentWithOnlyExtra} what={true} />
+    <Field name="age" as={asComponentWithExtra} what={true} />
+    <Field name="age" as={typedAsComponentWithExtra} what={true} />
+    <TypedField name="age" as={typedAsComponentWithExtra} what={true} />
+    <Field name="age" as={AsComponentClassWithExtra} what={true} />
+    <TypedField name="age" as={AsComponentClassWithExtra} what={true} />
+
+    {/* @ts-expect-error extraProps should match */}
+    <Field name="age" as={asComponentWithExtra} what={false} />
+    {/* @ts-expect-error extraProps should match */}
+    <Field name="age" as={componentWithOnlyExtra} what={false} />
+    {/* @ts-expect-error extraProps should match */}
+    <TypedField name="age" as={asComponentWithExtra} what={false} />
+    {/* @ts-expect-error extraProps is required */}
+    <TypedField name="age" as={typedAsComponentWithExtra} />
+    {/* @ts-expect-error extraProps is required */}
+    <TypedField name="age" as={TypedAsComponentClassWithExtra} />
+    {/* @ts-expect-error extraProps is required */}
+    <TypedField name="age" as={TypedAsComponentClassWithExtra} what={false} />
+    {/* @ts-expect-error extraProps should match */}
+    <TypedField name="age" as={asComponentWithOnlyExtra} what={false} />
+
+    <Field name="age" component={propsAnyComponent} what={true} />
+    <TypedField name="age" component={propsAnyComponent} what={true} />
+    <Field name="age" component={PropsAnyClassComponent} what={true} />
+    <TypedField name="age" component={PropsAnyClassComponent} what={true} />
+    <TypedField name="age" component={componentOverlappingWithExtra} what={true} />
+    <Field name="age" component={ClassComponentOverlappingExtra} what={true} />
+    <TypedField name="age" component={ClassComponentOverlappingExtra} what={true} />
+    <Field name="age" component={componentWithOnlyExtra} what={true} />
+    <TypedField name="age" component={componentWithOnlyExtra} what={true} />
+    <Field name="age" component={ClassComponentWithOnlyExtra} what={true} />
+    <TypedField name="age" component={ClassComponentWithOnlyExtra} what={true} />
+    <Field name="age" component={componentWithExtra} what={true} />
+    <Field name="age" component={typedComponentWithExtra} what={true} />
+    <TypedField name="age" component={typedComponentWithExtra} what={true} />
+    <Field name="age" component={ClassComponentWithExtra} what={true} />
+    <TypedField name="age" component={ClassComponentWithExtra} what={true} />
+    {/* @ts-expect-error extraProps is required */}
+    <TypedField name="age" component={typedComponentComponentWithExtra} />
+    {/* @ts-expect-error extraProps is required */}
+    <TypedField name="age" component={TypedComponentClassWithExtra} />
+    {/* @ts-expect-error extraProps should match */}
+    <Field name="age" component={componentWithExtra} what={false} />
+    {/* @ts-expect-error extraProps should match */}
+    <Field name="age" component={componentWithOnlyExtra} what={false} />
+    {/* @ts-expect-error extraProps should match */}
+    <TypedField name="age" component={componentWithExtra} what={false} />
+    {/* @ts-expect-error extraProps should match */}
+    <TypedField name="age" component={componentWithOnlyExtra} what={false} />
+
+    {/* @ts-expect-error extraProps should match */}
+    <Field<any, any, {what: false}> {...props} />
+    {/* @ts-expect-error extraProps should match */}
+    <TypedField<any, any, {what: false}> {...props} />
   </>
 
 const basePerson: BasePerson = {

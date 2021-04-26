@@ -3,12 +3,14 @@ import {
   Formik,
   Form,
   ErrorMessage,
-  createTypedField
+  createTypedField,
+  createTypedFieldArray
 } from 'formik';
 import * as Yup from 'yup';
 import { NumberAsField } from 'app/components/fields/number-as-field';
 import { EmailFieldAsClass } from 'app/components/fields/email-field-as-class';
 import { NumberComponentField } from 'app/components/fields/number-component-field';
+import { NumberRepeaterField } from 'app/components/fields/number-repeater-field';
 
 let renderCount = 0;
 
@@ -57,6 +59,7 @@ const initialValues: FormValues = {
 };
 
 const TypedField = createTypedField<FormValues>();
+const TypedFieldArray = createTypedFieldArray<FormValues>();
 
 const StronglyTypedPage = () => (
   <div>
@@ -90,38 +93,33 @@ const StronglyTypedPage = () => (
         <ErrorMessage<FormValues> name="name.last" component="p" />
 
         <TypedField
-          id="email"
           name="email"
           as={EmailFieldAsClass}
           type="email"
-          hidden={true}
         />
         <ErrorMessage<FormValues> name="email" component="p" />
 
         <TypedField
-          id="age"
           name="age"
           as={NumberAsField}
           type="number"
-          hidden={false}
         />
 
         <TypedField
-          id="favorite-numbers-0"
           name="favoriteNumbers.0"
           as={NumberAsField}
-          placeholder="jane@acme.com"
           type="number"
-          hidden={false}
+        />
+
+        <TypedFieldArray
+          name="favoriteNumbers"
+          component={NumberRepeaterField}
         />
 
         <TypedField
-          id="friends-0-favorite-numbers-0"
           name="friends.0.favoriteNumbers.0"
           component={NumberComponentField}
-          placeholder="Choose a favorite number"
           type="number"
-          hidden={false}
         />
 
         <label>

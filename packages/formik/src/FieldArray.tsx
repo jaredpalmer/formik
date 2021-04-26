@@ -10,7 +10,7 @@ import { useFieldMeta } from './hooks/hooks';
 export type FieldArrayName<Values, Path extends PathOf<Values>> =
   FieldValue<Values, Path> extends never ? never : Path;
 
-export interface UseFieldArrayProps<Values = any, Value = any> {
+export interface UseFieldArrayConfig<Values = any, Value = any> {
   /** Really the path to the array field to be updated */
   name: PathMatchingValue<Values, Value[]>;
   /** Should field array validate the form AFTER array updates/changes? */
@@ -57,7 +57,7 @@ type UpdateFieldArrayFn<Value> = (
 ) => void;
 
 export const useFieldArray = <Values extends FormikValues = any, Value = any>(
-  props: UseFieldArrayProps<Values, Value>
+  props: UseFieldArrayConfig<Values, Value>
 ): [
   FieldMetaProps<Value[]>,
   ArrayHelpers<Value>,
@@ -322,33 +322,33 @@ export const useFieldArray = <Values extends FormikValues = any, Value = any>(
   ];
 };
 
-export type FieldArrayRenderProps<Values, Value> =
+export type FieldArrayProps<Values, Value> =
   ArrayHelpers<Value> & {
     form: FormikApi<Values>;
     field: FieldMetaProps<Value[]>;
     name: PathMatchingValue<Values, Value[]>;
   };
 
-export type FieldArrayProps<Values, Value> =
-  UseFieldArrayProps<Values, Value> & {
+export type FieldArrayConfig<Values, Value> =
+  UseFieldArrayConfig<Values, Value> & {
     /**
      * Field component to render. Can either be a string like 'select' or a component.
      */
-    component?: React.ComponentType<FieldArrayRenderProps<Values, Value>>;
+    component?: React.ComponentType<FieldArrayProps<Values, Value>>;
 
     /**
       * Render prop (works like React router's <Route render={props =>} />)
       */
-    render?: (props: FieldArrayRenderProps<Values, Value>) => React.ReactElement | null;
+    render?: (props: FieldArrayProps<Values, Value>) => React.ReactElement | null;
 
     /**
       * Children render function <Field name>{props => ...}</Field>)
       */
-    children?: (props: FieldArrayRenderProps<Values, Value>) => React.ReactElement | null;
+    children?: (props: FieldArrayProps<Values, Value>) => React.ReactElement | null;
   };
 
 export const FieldArray = <Values extends FormikValues = any, Value = any>(
-  rawProps: FieldArrayProps<Values, Value>
+  rawProps: FieldArrayConfig<Values, Value>
 ) => {
   const {
     component,
@@ -375,7 +375,7 @@ export const FieldArray = <Values extends FormikValues = any, Value = any>(
     }
   }, [props.validateOnChange, field.value, apiValidateOnChange, validateForm]);
 
-  const renderProps: FieldArrayRenderProps<Values, Value> = React.useMemo(
+  const renderProps: FieldArrayProps<Values, Value> = React.useMemo(
     () => ({
       ...arrayHelpers,
       form: formikApi,

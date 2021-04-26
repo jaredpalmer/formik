@@ -2,11 +2,10 @@ import * as React from 'react';
 import {
   ErrorMessage,
   Field,
-  FieldName,
   Form,
   FormikProvider,
   FormikState,
-  NameOf,
+  PathOf,
   useFormik,
 } from 'formik';
 import * as Yup from 'yup';
@@ -25,7 +24,7 @@ type SignInValues = {
 };
 
 interface MyProps {
-  name: NameOf<SignInValues>;
+  name: PathOf<SignInValues>;
 }
 
 const selectSignInState = (formikState: FormikState<SignInValues>) => ({

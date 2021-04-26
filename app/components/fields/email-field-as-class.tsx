@@ -1,21 +1,14 @@
-import { FieldAsComponentClass } from 'formik';
+import { FieldAsClass, FieldAsProps } from 'formik';
 import React from 'react';
 
-export class EmailFieldAsClass extends FieldAsComponentClass<
-  string,
-  {
-    hidden: boolean;
-    id: string;
-  }
-> {
+export class EmailFieldAsClass extends FieldAsClass<string> {
   render() {
     return (
       <div className="email-field">
-        <label htmlFor={this.props.id}>
+        <label>
           Email
           <input
-            id={this.props.id}
-            type={this.props.hidden ? 'hidden' : this.props.type}
+            type={this.props.type}
             name={this.props.name}
             value={this.props.value}
             onChange={this.props.onChange}
@@ -26,3 +19,6 @@ export class EmailFieldAsClass extends FieldAsComponentClass<
     );
   }
 }
+
+export const TypedEmailField: React.ComponentClass<FieldAsProps<string, any>> =
+  EmailFieldAsClass;

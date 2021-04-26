@@ -1,45 +1,32 @@
+import { parseNumberOrEmpty, formatNumberOrEmpty } from "app/helpers/parse-format-helpers";
 import {
     FieldAsProps,
     FormatFn,
     ParseFn,
-    PathMatchingValue,
+    TypedAsField,
     useFormikContext
 } from "formik";
+import React from "react";
 
-const parseNumberOrEmpty = (value: unknown) => value === "" ? "" : Number(value);
-const formatNumberOrEmpty = (value: number | '') =>
-    Number(value) ? value.toLocaleString() : "";
-
-export const NumberAsField = <
+export const NumberAsField: TypedAsField<number | ""> = <
     Values,
-    Path extends PathMatchingValue<Values, number | "">
->(props: FieldAsProps<
-    number | "",
-    Values,
-    Path,
-    {
-        hidden: boolean,
-        id: string,
-        placeholder?: string,
-    }
->) => {
+>(props: FieldAsProps<number | "", Values>) => {
     const formik = useFormikContext<Values>();
     const parse: ParseFn<number | ""> = props.parse ?? parseNumberOrEmpty;
     const format: FormatFn<number | ""> = props.format ?? formatNumberOrEmpty;
 
-    const handleChange = (value: unknown) => {
-        formik.setFieldValue(props.name, parse(value, props.name));
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const parsedValue = parse(event.target.value, props.name);
+        console.log(parsedValue);
+        formik.setFieldValue(props.name, parsedValue);
     }
 
     return <input
-        type={props.hidden
-            ? "hidden"
-            : props.type
-        }
+        type="text"
         name={props.name}
         value={format(props.value, props.name)}
         onChange={handleChange}
         onBlur={formik.handleBlur}
-        placeholder={props.placeholder}
+        inputMode="numeric"
     />
 };

@@ -1,4 +1,5 @@
 export * from './hooks/useTypedField';
+export * from './hooks/useTypedFieldArray';
 export * from './hooks/useFormikState';
 export * from './hooks/hooks';
 export * from './Formik';

@@ -1,3 +1,5 @@
+import { PathMatchingValue } from './../types';
+import { FieldAsConfig, FieldPassThroughConfig } from './../Field';
 import { useMemo } from 'react';
 import { useFormikContext } from '../FormikContext';
 import {
@@ -10,23 +12,22 @@ import {
   FieldHelperProps,
   FieldInputProps,
   FieldMetaProps,
-  FieldValue,
   FormikState,
-  PathOf,
 } from '../types';
 import { useFormikState } from './useFormikState';
 import { isInputEvent, isObject, isShallowEqual } from '../utils';
-import { FieldHookConfig, FormatFn, ParseFn, SingleValue } from '../Field';
+import { FormatFn, ParseFn, SingleValue } from '../Field';
 
 /**
  * Get props to spread to input elements, like `<input {...fieldProps} />`.
  *
  * Pass `FieldMetaProps` from useFieldMeta, so we don't subscribe twice.
  */
-export const useFieldProps = <Values, Path extends PathOf<Values>>(
-    nameOrOptions: Path | FieldHookConfig<Values, Path, any>,
-    fieldMeta: FieldMetaProps<FieldValue<Values, Path>>
-  ): FieldInputProps<FieldValue<Values, Path>> => {
+export const useFieldProps = <Values, Value, Path extends PathMatchingValue<Values, Value>>(
+    nameOrOptions: Path |
+      (FieldAsConfig<Values, Path> & FieldPassThroughConfig<Path, Value>),
+    fieldMeta: FieldMetaProps<Value>
+  ): FieldInputProps<Value> => {
     const {
       handleChange,
       handleBlur,
@@ -37,12 +38,14 @@ export const useFieldProps = <Values, Path extends PathOf<Values>>(
     const valueState = fieldMeta.value;
     const touchedState = fieldMeta.touched;
 
-    const field: FieldInputProps<FieldValue<Values, Path>> = {
+    const field: FieldInputProps<Value> = {
       name,
       // if this isn't a singular value, it should be parsed!
       // however, this is a fallback
-      value: valueState as SingleValue<FieldValue<Values, Path>>,
-      onChange: handleChange,
+      value: valueState as SingleValue<Value>,
+      // handleChange isn't a match for onChange for custom value types
+      // however, this is a fallback
+      onChange: handleChange as any,
       onBlur: handleBlur,
     };
 
@@ -52,8 +55,8 @@ export const useFieldProps = <Values, Path extends PathOf<Values>>(
         value: valueProp, // value is special for checkboxes
         as: is,
         multiple,
-        parse = (/number|range/.test(type) ? numberParseFn : defaultParseFn) as ParseFn<SingleValue<FieldValue<Values, Path>>>,
-        format = defaultFormatFn as FormatFn<SingleValue<FieldValue<Values, Path>>>,
+        parse = (/number|range/.test(type) ? numberParseFn : defaultParseFn) as ParseFn<SingleValue<Value>>,
+        format = defaultFormatFn as FormatFn<SingleValue<Value>>,
         formatOnBlur = false,
       } = nameOrOptions;
 
@@ -97,13 +100,13 @@ export const useFieldProps = <Values, Path extends PathOf<Values>>(
             setFieldValue(
               name,
               // we don't currently support arrays here
-              parse(getValueFromEvent(eventOrValue, name), field.name) as FieldValue<Values, Path>
+              parse(getValueFromEvent(eventOrValue, name), field.name) as Value
             );
           } else {
             setFieldValue(
               name,
               // we don't currently support arrays here
-              parse(eventOrValue, field.name) as FieldValue<Values, Path>
+              parse(eventOrValue, field.name) as Value
             );
           }
         };

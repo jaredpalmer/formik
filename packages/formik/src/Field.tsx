@@ -87,7 +87,7 @@ type FieldBaseProps<Value, Values, Path extends PathOf<Values>, SourceProps> =
   FieldPassThroughConfig<Path, Value> &
   SourceProps;
 
-type AnyComponentType<SourceProps, ExtraProps extends WithoutSourceProps<SourceProps>> =
+type AnyComponentType<SourceProps, ExtraProps> =
   React.ComponentType<ExtraProps>;
 
 export type FieldAsProps<
@@ -96,7 +96,7 @@ export type FieldAsProps<
   Path extends PathMatchingValue<Values, Value> = any,
   ExtraProps = {}
 > = FieldBaseProps<Value, Values, Path, FieldInputProps<Value>> &
-  ExtraPropsOrAnyProps<ExtraProps>
+  ExtraProps
 
 export type TypedAsField<
   Value,
@@ -127,13 +127,6 @@ export abstract class FieldAsComponentClass<
 
 export type FieldAsComponent<Values, Path extends PathOf<Values>, ExtraProps> =
   | TypedAsField<FieldValue<Values, Path>, ExtraProps>
-  | FieldAsComponentClass<FieldValue<Values, Path>, ExtraProps>
-  | React.ComponentType<FieldAsProps<
-      FieldValue<Values, Path>,
-      any,
-      any,
-      ExtraProps
-    >>
   | AnyComponentType<
       FieldBaseProps<
         FieldValue<Values, Path>,
@@ -302,7 +295,7 @@ export type FieldComponentProps<
   Path extends PathMatchingValue<Values, Value> = any,
   ExtraProps = {}
 > = FieldBaseProps<Value, Values, Path, LegacyBag<Values, Value>> &
-  ExtraPropsOrAnyProps<ExtraProps>;
+  ExtraProps;
 
 export type TypedComponentField<
   Value,
@@ -339,9 +332,7 @@ export type FieldAsStringConfig<Values, Path extends PathOf<Values>, ExtraProps>
 export type FieldAsComponentConfig<
   Values,
   Path extends PathOf<Values>,
-  ExtraProps extends WithoutSourceProps<
-    BaseConfig<Values, Path, ExtraProps>
-  > = {}
+  ExtraProps = {}
 > =
   BaseConfig<Values, Path, ExtraProps> & React.PropsWithChildren<
     {
@@ -350,7 +341,7 @@ export type FieldAsComponentConfig<
       render?: undefined,
     }
   > &
-    ExtraPropsOrAnyProps<ExtraProps>;
+    ExtraProps;
 
 /**
  * `field.component = string`
@@ -372,9 +363,7 @@ export type FieldStringComponentConfig<Values, Path extends PathOf<Values>> =
 export type FieldComponentConfig<
   Values,
   Path extends PathOf<Values>,
-  ExtraProps extends WithoutSourceProps<
-    BaseConfig<Values, Path, ExtraProps>
-  > = {}
+  ExtraProps = {}
 > =
   BaseConfig<Values, Path, ExtraProps> & React.PropsWithChildren<
     {
@@ -382,7 +371,7 @@ export type FieldComponentConfig<
       component: FieldComponentComponent<Values, Path, ExtraProps>;
       render?: undefined,
     }
-  > & ExtraPropsOrAnyProps<ExtraProps>;
+  > & ExtraProps;
 
 export type FieldRenderFunction<Values, Path extends PathOf<Values>> = (
   props: FieldRenderProps<Values, Path>
@@ -512,6 +501,7 @@ export function Field<
   }
 
   if (props.as && typeof props.as !== 'string') {
+    // not sure why as !== string isn't removing FieldAsStringConfig
     const {
       render,
       component,
@@ -527,6 +517,7 @@ export function Field<
   }
 
   if (props.component && typeof props.component !== 'string') {
+    // not sure why component !== string isn't removing FieldStringComponentConfig
     const {
       // render props
       render,

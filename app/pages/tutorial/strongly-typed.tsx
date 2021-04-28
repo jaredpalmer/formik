@@ -3,7 +3,7 @@ import {
   Formik,
   Form,
   ErrorMessage,
-  createTypedField,
+  createCustomField,
   createTypedFieldArray
 } from 'formik';
 import * as Yup from 'yup';
@@ -11,6 +11,7 @@ import { NumberAsField } from 'app/components/fields/number-as-field';
 import { EmailFieldAsClass } from 'app/components/fields/email-field-as-class';
 import { NumberComponentField } from 'app/components/fields/number-component-field';
 import { NumberRepeaterField } from 'app/components/fields/number-repeater-field';
+import { createTypedFields } from 'app/components/fields';
 
 let renderCount = 0;
 
@@ -58,8 +59,7 @@ const initialValues: FormValues = {
   ]
 };
 
-const TypedField = createTypedField<FormValues>();
-const TypedFieldArray = createTypedFieldArray<FormValues>();
+const fields = createTypedFields<FormValues>();
 
 const StronglyTypedPage = () => (
   <div>
@@ -80,32 +80,38 @@ const StronglyTypedPage = () => (
       }}
     >
       <Form>
-        <TypedField
+        <fields.Field
           name="name.first"
           placeholder="Jane"
         />
         <ErrorMessage<FormValues> name="name.first" component="p" />
 
-        <TypedField
+        <fields.Field
           name="name.last"
           placeholder="Doe"
         />
         <ErrorMessage<FormValues> name="name.last" component="p" />
 
-        <TypedField
+        <fields.Field
           name="email"
           as={EmailFieldAsClass}
           type="email"
         />
         <ErrorMessage<FormValues> name="email" component="p" />
 
-        <TypedField
+        <fields.Field
           name="age"
           as={NumberAsField}
           type="number"
         />
 
-        <TypedField
+        <fields.NumberField
+          name="favoriteNumbers.0"
+          as={NumberAsField}
+          type="number"
+        />
+
+        <fields.Field
           name="favoriteNumbers.0"
           as={NumberAsField}
           type="number"
@@ -116,14 +122,14 @@ const StronglyTypedPage = () => (
           component={NumberRepeaterField}
         />
 
-        <TypedField
+        <fields.Field
           name="friends.0.favoriteNumbers.0"
           component={NumberComponentField}
           type="number"
         />
 
         <label>
-          <TypedField type="checkbox" name="hasNicknames" />
+          <fields.Field type="checkbox" name="hasNicknames" />
           <span style={{ marginLeft: 3 }}>Toggle</span>
         </label>
 
@@ -132,33 +138,33 @@ const StronglyTypedPage = () => (
         <div id="checkbox-group">Checkbox Group</div>
         <div role="group" aria-labelledby="checkbox-group">
           <label>
-            <TypedField type="checkbox" name="favoriteFoods" value="Pizza" />
+            <fields.Field type="checkbox" name="favoriteFoods" value="Pizza" />
             Pizza
           </label>
           <label>
-            <TypedField type="checkbox" name="favoriteFoods" value="Falafel" />
+            <fields.Field type="checkbox" name="favoriteFoods" value="Falafel" />
             Falafel
           </label>
           <label>
-            <TypedField type="checkbox" name="favoriteFoods" value="Dim Sum" />
+            <fields.Field type="checkbox" name="favoriteFoods" value="Dim Sum" />
             Dim Sum
           </label>
         </div>
         <div id="my-radio-group">Picked</div>
         <div role="group" aria-labelledby="my-radio-group">
           <label>
-            <TypedField type="radio" name="favoriteNumbers" value={1} />
+            <fields.Field type="radio" name="favoriteNumbers" value={1} />
             1
           </label>
           <label>
-            <TypedField type="radio" name="favoriteNumbers" value={2} />
+            <fields.Field type="radio" name="favoriteNumbers" value={2} />
             2
           </label>
         </div>
         <div>
           <label>
             Textarea
-            <TypedField name="motto" as="textarea" />
+            <fields.Field name="motto" as="textarea" />
           </label>
         </div>
         <button type="submit">Submit</button>

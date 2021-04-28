@@ -33,7 +33,7 @@ export type FieldPassThroughConfig<Path, Value> = {
   /**
    * Validate a single field value independently
    */
-  validate?: FieldValidator<Value>;
+  validate?: FieldValidator<SingleValue<Value>>;
 
   /**
    * Function to parse raw input value before setting it to state
@@ -71,60 +71,16 @@ export type FieldPassThroughConfig<Path, Value> = {
   innerRef?: (instance: any) => void;
 }
 
-type FieldBaseProps<Value, Values, SourceProps> =
-  FieldPassThroughConfig<PathMatchingValue<Values, Value>, Value> &
-  SourceProps;
-
-export type FieldAsProps<
-  Value = any,
-  Values = any
-> = FieldBaseProps<Value, Values, FieldInputProps<Value>>;
-
-export type TypedAsField<
-  Value,
-> = <
-  Values,
->(
-  props: FieldAsProps<
-    Value,
-    Values
-  >
-) => React.ReactElement | null;
-
-export abstract class FieldAsClass<
-  Value,
-> extends React.Component<
-  FieldAsProps<
-    Value,
-    unknown
-  >
-> {}
-
-export type FieldAsComponent<Values, Path extends PathOf<Values>> =
-  string extends Path
-    ? React.ComponentType<any>
-    : object extends Values
-      ? React.ComponentType<any>
-      : TypedAsField<FieldValue<Values, Path>> |
-        React.ComponentType<FieldAsProps<
-          FieldValue<Values, Path>,
-          Values
-        >>;
-
-export type FieldAsConfig<Values, Path extends PathOf<Values>> = {
-  /**
-   * Component to render. Can either be a string e.g. 'select', 'input', or 'textarea', or a component.
-   */
-   as?:
-   | string
-   | FieldAsComponent<Values, Path>;
-}
-
-export type FieldHookConfig<Values, Path extends PathOf<Values>> =
-  FieldAsConfig<Values, Path> &
+export type FieldHookConfigByPath<Values, Path extends PathOf<Values>> = { as?: any } &
   FieldPassThroughConfig<Path, FieldValue<Values, Path>>;
 
-export function useField<Values = any, Path extends PathOf<Values> = any>(
+export type FieldHookConfig<Values, Path extends PathOf<Values>> =
+  FieldHookConfigByPath<Values, Path>
+
+export function useField<
+  Values = any,
+  Path extends PathOf<Values> = any,
+>(
   propsOrFieldName:
     Path |
     FieldHookConfig<Values, Path>
@@ -139,7 +95,7 @@ export function useField<Values = any, Path extends PathOf<Values> = any>(
     unregisterField,
   } = formik;
 
-  const props: FieldPassThroughConfig<Path, FieldValue<Values, Path>> = isObject(propsOrFieldName)
+  const props: FieldHookConfig<Values, Path> = isObject(propsOrFieldName)
     ? propsOrFieldName
     : { name: propsOrFieldName };
 
@@ -179,6 +135,46 @@ export function useField<Values = any, Path extends PathOf<Values> = any>(
   ];
 }
 
+export type FieldAsProps<
+  Values = any,
+  Value = any
+> =
+  FieldPassThroughConfig<PathMatchingValue<Values, Value>, Value> &
+  FieldInputProps<Value>;
+
+export type TypedAsField<
+  Value,
+> = <
+  Values,
+>(
+  props: React.PropsWithChildren<FieldAsProps<
+    Values,
+    Value
+  >>
+) => React.ReactElement | null;
+
+export abstract class FieldAsClass<
+  Value,
+> extends React.Component<
+  FieldAsProps<
+    unknown,
+    Value
+  >
+> {}
+
+export type FieldAsComponent<Values, Value> =
+  React.ComponentType<FieldAsProps<
+    Values,
+    Value
+  >>;
+
+export type FieldComponentProps<
+  Value = any,
+  Values = any,
+> =
+  FieldPassThroughConfig<PathMatchingValue<Values, Value>, Value> &
+  LegacyBag<Values, Value>;
+
 export abstract class FieldComponentClass<
   Value,
 > extends React.Component<
@@ -188,41 +184,15 @@ export abstract class FieldComponentClass<
   >
 > {}
 
-type FieldComponentComponent<Values, Path extends PathOf<Values>> =
-  string extends Path
-    ? React.ComponentType<any>
-    : object extends Values
-      ? React.ComponentType<any>
-      : TypedComponentField<FieldValue<Values, Path>> |
-        React.ComponentType<FieldComponentProps<
-          FieldValue<Values, Path>,
-          Values
-        >>;
-
-export type BaseConfig<Values, Path extends PathOf<Values>> = {
-  /**
-   * Field component to render. Can either be a string like 'select' or a component.
-   */
-  component?:
-    | string
-    | FieldComponentComponent<Values, Path>;
-
-  /**
-   * Render prop (works like React router's <Route render={props =>} />)
-   * @deprecated
-   */
-  render?: FieldRenderFunction<Values, Path>;
-
-  /**
-   * Children render function <Field name>{props => ...}</Field>)
-   */
-  children?: FieldRenderFunction<Values, Path> | React.ReactNode;
-} &
-  FieldHookConfig<Values, Path>;
+type FieldComponentComponent<Values, Value> =
+  React.ComponentType<FieldComponentProps<
+    Value,
+    Values
+  >>;
 
 type GenericFieldHTMLConfig = Omit<
   GenericFieldHTMLAttributes,
-  keyof BaseConfig<any, any>
+  keyof FieldPassThroughConfig<any, any>
 >;
 
 /**
@@ -237,10 +207,14 @@ type LegacyBag<Values, Value> = {
 /**
  * Passed to `render={Function}` or `children={Function}`.
  */
-export type FieldRenderProps<Values = any, Path extends PathOf<Values> = any> =
-  LegacyBag<Values, FieldValue<Values, Path>> & {
-    meta: FieldMetaProps<FieldValue<Values, Path>>;
+export type FieldRenderProps<Values = any, Value = any> =
+  LegacyBag<Values, Value> & {
+    meta: FieldMetaProps<Value>;
   }
+
+export type FieldRenderFunction<Values, Value> = (
+  props: FieldRenderProps<Values, Value>
+) => React.ReactElement | null;
 
 /**
  * @deprecated Field types do not share common props. Please choose:
@@ -249,12 +223,8 @@ export type FieldRenderProps<Values = any, Path extends PathOf<Values> = any> =
  * FieldAsProps: `field.as = Component`,
  * FieldRenderProps: `field.render, field.children = Function`
  */
-export type FieldProps<Values, Path extends PathOf<Values>> = FieldRenderProps<Values, Path>;
-
-export type FieldComponentProps<
-  Value = any,
-  Values = any,
-> = FieldBaseProps<Value, Values, LegacyBag<Values, Value>>;
+export type FieldProps<Values, Path extends PathOf<Values>> =
+  FieldRenderProps<Values, FieldValue<Values, Path>>;
 
 export type TypedComponentField<Value> = <Values>(
   props: FieldComponentProps<Value, Values>
@@ -265,12 +235,19 @@ export type TypedComponentField<Value> = <Values>(
  *
  * @private
  */
-export type FieldAsStringConfig<Values, Path extends PathOf<Values>> =
-  BaseConfig<Values, Path> & React.PropsWithChildren<{
+export type FieldAsStringConfig<Values, Path extends PathOf<Values>, Value> =
+  React.PropsWithChildren<{
     as: string,
     component?: undefined,
     render?: undefined,
-  }> & GenericFieldHTMLConfig;
+  }>
+    & FieldPassThroughConfig<Path, Value>
+    & GenericFieldHTMLConfig;
+
+export type FieldAsStringConfigByPath<Values, Path extends PathOf<Values>> =
+  FieldAsStringConfig<Values, Path, FieldValue<Values, Path>>;
+export type FieldAsStringConfigByValue<Values, Value> =
+  FieldAsStringConfig<Values, PathMatchingValue<Values, Value>, Value>;
 
 /**
  * `field.as = Component`
@@ -279,27 +256,41 @@ export type FieldAsStringConfig<Values, Path extends PathOf<Values>> =
  */
 export type FieldAsComponentConfig<
   Values,
-  Path extends PathOf<Values>
+  Path extends PathOf<Values>,
+  Value
 > =
-  BaseConfig<Values, Path> & React.PropsWithChildren<
+  React.PropsWithChildren<
     {
-      as: FieldAsComponent<Values, Path>;
+      as: FieldAsComponent<Values, Value>;
       component?: undefined,
       render?: undefined,
     }
-  >;
+  >
+    & FieldPassThroughConfig<Path, Value>;
+
+export type FieldAsComponentConfigByPath<Values, Path extends PathOf<Values>> =
+  FieldAsComponentConfig<Values, Path, FieldValue<Values, Path>>;
+export type FieldAsComponentConfigByValue<Values, Value> =
+  FieldAsComponentConfig<Values, PathMatchingValue<Values, Value>, Value>;
 
 /**
  * `field.component = string`
  *
  * @private
  */
-export type FieldStringComponentConfig<Values, Path extends PathOf<Values>> =
-  BaseConfig<Values, Path> & React.PropsWithChildren<{
-    as?: undefined,
+export type FieldStringComponentConfig<Values, Path extends PathOf<Values>, Value> =
+  React.PropsWithChildren<{
     component: string,
+    as?: undefined,
     render?: undefined,
-  }> & GenericFieldHTMLConfig;
+  }>
+    & FieldPassThroughConfig<Path, Value>
+    & GenericFieldHTMLConfig;
+
+export type FieldStringComponentConfigByPath<Values, Path extends PathOf<Values>> =
+  FieldStringComponentConfig<Values, Path, FieldValue<Values, Path>>;
+export type FieldStringComponentConfigByValue<Values, Value> =
+  FieldStringComponentConfig<Values, PathMatchingValue<Values, Value>, Value>;
 
 /**
  * `field.component = Component`
@@ -308,104 +299,147 @@ export type FieldStringComponentConfig<Values, Path extends PathOf<Values>> =
  */
 export type FieldComponentConfig<
   Values,
-  Path extends PathOf<Values>
+  Path extends PathOf<Values>,
+  Value
 > =
-  BaseConfig<Values, Path> & React.PropsWithChildren<
+  React.PropsWithChildren<
     {
+      component: FieldComponentComponent<Values, Value>;
       as?: undefined,
-      component: FieldComponentComponent<Values, Path>;
       render?: undefined,
     }
-  >;
+  >
+    & FieldPassThroughConfig<Path, Value>;
 
-export type FieldRenderFunction<Values, Path extends PathOf<Values>> = (
-  props: FieldRenderProps<Values, Path>
-) => React.ReactElement | null;
+export type FieldComponentConfigByPath<Values, Path extends PathOf<Values>> =
+  FieldComponentConfig<Values, Path, FieldValue<Values, Path>>;
+export type FieldComponentConfigByValue<Values, Value> =
+  FieldComponentConfig<Values, PathMatchingValue<Values, Value>, Value>;
 
 /**
  * `field.render = Function`
  *
  * @private
  */
-export type FieldRenderConfig<Values, Path extends PathOf<Values>> =
-  BaseConfig<Values, Path> & {
+export type FieldRenderConfig<Values, Path extends PathOf<Values>, Value> =
+  {
+    render: FieldRenderFunction<Values, Value>;
     as?: undefined,
     component?: undefined,
-    render: FieldRenderFunction<Values, Path>;
     children?: undefined
-  };
+  } & FieldPassThroughConfig<Path, Value>;
+
+export type FieldRenderConfigByPath<Values, Path extends PathOf<Values>> =
+  FieldRenderConfig<Values, Path, FieldValue<Values, Path>>;
+export type FieldRenderConfigByValue<Values, Value> =
+  FieldRenderConfig<Values, PathMatchingValue<Values, Value>, Value>;
 
 /**
  * `field.children = Function`
  *
  * @private
  */
-export type FieldChildrenConfig<Values, Path extends PathOf<Values>> =
-  BaseConfig<Values, Path> & {
+export type FieldChildrenConfig<Values, Path extends PathOf<Values>, Value> =
+  {
+    children: FieldRenderFunction<Values, Value>;
     as?: undefined,
     component?: undefined,
     render?: undefined,
-    children: FieldRenderFunction<Values, Path>;
-  };
+  } & FieldPassThroughConfig<Path, Value>;
+
+export type FieldChildrenConfigByPath<Values, Path extends PathOf<Values>> =
+  FieldChildrenConfig<Values, Path, FieldValue<Values, Path>>;
+export type FieldChildrenConfigByValue<Values, Value> =
+  FieldChildrenConfig<Values, PathMatchingValue<Values, Value>, Value>;
 
 /**
  * no config, `<Field name="">`
  *
  * @private
  */
-export type FieldDefaultConfig<Values, Path extends PathOf<Values>> =
-  BaseConfig<Values, Path> & {
+export type FieldDefaultConfig<Values, Path extends PathOf<Values>, Value> =
+  {
     as?: undefined,
     component?: undefined,
     render?: undefined,
     children?: undefined,
-  } & GenericFieldHTMLConfig;
+  }
+    & FieldPassThroughConfig<Path, Value>
+    & GenericFieldHTMLConfig;
 
-export type FieldConfig<Values, Path extends PathOf<Values>> =
-  FieldAsStringConfig<Values, Path> |
-  FieldAsComponentConfig<Values, Path> |
-  FieldStringComponentConfig<Values, Path> |
-  FieldComponentConfig<Values, Path> |
-  FieldRenderConfig<Values, Path> |
-  FieldChildrenConfig<Values, Path> |
-  FieldDefaultConfig<Values, Path>;
+export type FieldDefaultConfigByPath<Values, Path extends PathOf<Values>> =
+  FieldDefaultConfig<Values, Path, FieldValue<Values, Path>>;
+export type FieldDefaultConfigByValue<Values, Value> =
+  FieldDefaultConfig<Values, PathMatchingValue<Values, Value>, Value>;
+
+export type FieldConfigByValue<Values, Value> =
+  FieldAsStringConfigByValue<Values, Value> |
+  FieldAsComponentConfigByValue<Values, Value> |
+  FieldStringComponentConfigByValue<Values, Value> |
+  FieldComponentConfigByValue<Values, Value> |
+  FieldRenderConfigByValue<Values, Value> |
+  FieldChildrenConfigByValue<Values, Value> |
+  FieldDefaultConfigByValue<Values, Value>;
+
+export type FieldConfigByPath<Values, Path extends PathOf<Values>> =
+  FieldAsStringConfigByPath<Values, Path> |
+  FieldAsComponentConfigByPath<Values, Path> |
+  FieldStringComponentConfigByPath<Values, Path> |
+  FieldComponentConfigByPath<Values, Path> |
+  FieldRenderConfigByPath<Values, Path> |
+  FieldChildrenConfigByPath<Values, Path> |
+  FieldDefaultConfigByPath<Values, Path>;
+
+export type FieldConfig<Values, Path extends PathOf<Values>, Value> =
+  FieldConfigByValue<Values, Value> | FieldConfigByPath<Values, Path>;
 
 /**
  * @deprecated use `FieldConfig`
  */
-export type FieldAttributes<Values, Path extends PathOf<Values>> =
-  FieldConfig<Values, Path>;
+export type FieldAttributes<Values, Path extends PathOf<Values>, Value> =
+  FieldConfig<Values, Path, Value>;
 
 export function Field<
   Values = any,
-  Path extends PathOf<Values> = any
+  Path extends PathOf<Values> = any,
+  Value = any,
 >(
-  props: FieldConfig<Values, Path>
+  _rawProps: FieldConfig<Values, Path, Value>
 ) {
+  //
+  // We accept FieldConfigByValue, but we cast it to FieldConfigByPath internally because
+  // TypeScript cannot connect the dots.
+  //
+  // If Typescript could compare the following, we wouldn't need this:
+  // Value === FieldValue<Values, PathMatchingValue<Values, Value>>
+  // number === number
+  //
+  const configAsPath = _rawProps as FieldConfigByPath<Values, Path>;
+
   if (__DEV__) {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     React.useEffect(() => {
       invariant(
-        !props.render,
-        `<Field render> has been deprecated and will be removed in future versions of Formik. Please use a child callback function instead. To get rid of this warning, replace <Field name="${props.name}" render={({field, form}) => ...} /> with <Field name="${props.name}">{({field, form, meta}) => ...}</Field>`
+        !configAsPath.render,
+        `<Field render> has been deprecated and will be removed in future versions of Formik. Please use a child callback function instead. To get rid of this warning, replace <Field name="${configAsPath.name}" render={({field, form}) => ...} /> with <Field name="${configAsPath.name}">{({field, form, meta}) => ...}</Field>`
       );
 
       invariant(
-        !(props.as && props.children && isFunction(props.children)),
+        !(configAsPath.as && configAsPath.children && isFunction(configAsPath.children)),
         'You should not use <Field as> and <Field children> as a function in the same <Field> component; <Field as> will be ignored.'
       );
 
       invariant(
-        !(props.component && props.children && isFunction(props.children)),
+        !(configAsPath.component && configAsPath.children && isFunction(configAsPath.children)),
         'You should not use <Field component> and <Field children> as a function in the same <Field> component; <Field component> will be ignored.'
       );
 
       invariant(
         !(
-          props.render &&
-          props.children &&
+          configAsPath.render &&
+          configAsPath.children &&
           // impossible type
-          !isEmptyChildren((props as any).children)
+          !isEmptyChildren((configAsPath as any).children)
         ),
         'You should not use <Field render> and <Field children> in the same <Field> component; <Field children> will be ignored'
       );
@@ -413,7 +447,7 @@ export function Field<
     }, []);
   }
 
-  const [field, meta] = useField(props);
+  const [field, meta] = useField(configAsPath);
 
   /**
    * If we use render function or use functional children, we continue to
@@ -427,7 +461,7 @@ export function Field<
   const formikState = formikApi.useState(
     selectFullState,
     Object.is,
-    !!props.render || isFunction(props.children) || (!!props.component && typeof props.component !== 'string')
+    !!configAsPath.render || isFunction(configAsPath.children) || (!!configAsPath.component && typeof configAsPath.component !== 'string')
   );
 
   const form = {
@@ -436,15 +470,15 @@ export function Field<
       ...formikState,
   };
 
-  if (props.render) {
-    return props.render({ field, form, meta });
+  if (configAsPath.render) {
+    return configAsPath.render({ field, form, meta });
   }
 
-  if (isFunction(props.children)) {
-    return props.children({ field, form, meta });
+  if (isFunction(configAsPath.children)) {
+    return configAsPath.children({ field, form, meta });
   }
 
-  if (props.as && typeof props.as !== 'string') {
+  if (configAsPath.as && typeof configAsPath.as !== 'string') {
     // not sure why as !== string isn't removing FieldAsStringConfig
     const {
       render,
@@ -452,15 +486,15 @@ export function Field<
       as,
       children,
       ...fieldAsProps
-    } = props as FieldAsComponentConfig<Values, Path>;
+    } = configAsPath;
     return React.createElement(
-      props.as as any,
-      { ...fieldAsProps, ...field },
+      as,
+      { ...fieldAsProps, ...field } as any,
       children
     );
   }
 
-  if (props.component && typeof props.component !== 'string') {
+  if (configAsPath.component && typeof configAsPath.component !== 'string') {
     // not sure why component !== string isn't removing FieldStringComponentConfig
     const {
       // render props
@@ -469,11 +503,11 @@ export function Field<
       as,
       component,
       ...componentProps
-    } = props as FieldComponentConfig<Values, Path>;
+    } = configAsPath;
 
     // We don't pass `meta` for backwards compat
     return React.createElement(
-      props.component as any,
+      component,
       { field, form, ...componentProps },
       children
     );
@@ -492,12 +526,12 @@ export function Field<
     render,
     children,
     ...htmlProps
-  } = props;
+  } = configAsPath;
 
   return React.createElement(
-    props.as || props.component || "input",
+    configAsPath.as || configAsPath.component || "input",
     // field has FieldValue<> while HTML expects
-    { ref: props.innerRef, ...field, ...htmlProps } as any,
+    { ref: configAsPath.innerRef, ...field, ...htmlProps },
     children
   );
 }

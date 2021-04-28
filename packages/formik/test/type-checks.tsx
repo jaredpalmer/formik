@@ -1,25 +1,18 @@
 import React from "react";
 import {
-    FieldConfig,
     FieldAsProps,
     FieldComponentProps,
     Field,
-    FieldAsComponentConfig,
-    FieldAsStringConfig,
-    FieldComponentConfig,
     FieldRenderFunction,
-    FieldStringComponentConfig,
     FieldValue,
-    createTypedField,
-    PathOf,
     FieldRenderProps,
-    FieldRenderConfig,
-    FieldChildrenConfig,
     TypedAsField,
     TypedComponentField,
     PathMatchingValue,
     RecursivelyTupleKeys,
-    FieldComponentClass
+    FieldComponentClass,
+    createTypedField,
+    FieldConfigByPath
 } from "../src";
 
 type BasePerson = {
@@ -38,74 +31,6 @@ type Person = BasePerson & {
   friends: BasePerson[];
 }
 
-/**
- * FieldConfig Tests
- */
-let configTest: FieldConfig<any, any> | undefined = undefined;
-// AsString
-const fieldAsString: FieldAsStringConfig<any, any> = {} as any;
-fieldAsString.as = 'input';
-fieldAsString.onInput = (event) => {};
-configTest = {
-  as: "input",
-  name: '',
-  onInput: (e) => {},
-};
-// AsComponent
-const fieldAsConfig: FieldAsComponentConfig<any, any> = {} as any;
-fieldAsConfig.as = (props) => props.what && null;
-configTest = {
-  as: fieldAsConfig.as,
-  name: '',
-};
-// AsComponent + Extra
-const fieldAsExtraConfig: FieldAsComponentConfig<any, any> = {} as any;
-fieldAsExtraConfig.as = (props) => props.what && null;
-configTest = {
-  as: fieldAsExtraConfig.as,
-  name: '',
-};
-// StringComponent
-const fieldStringComponent: FieldStringComponentConfig<any, any> = {} as any;
-fieldStringComponent.component = 'input';
-fieldStringComponent.onInput = (event) => {};
-configTest = {
-  component: "input",
-  name: '',
-}
-// ComponentComponent
-const fieldComponentConfig: FieldComponentConfig<any, any> = {} as any;
-fieldComponentConfig.component = (props) => props.field.value ? null : null;
-
-// ComponentComponent
-configTest = {
-  component: fieldComponentConfig.component,
-  name: '',
-};
-
-// ComponentComponent
-const fieldComponentWithExtraConfig: FieldComponentConfig<any, any> = {} as any;
-fieldComponentWithExtraConfig.component = (props) => props.field.value ? null : null;
-
-// RenderFunction
-const fieldRenderConfig: FieldRenderConfig<any, any> = {} as any;
-fieldRenderConfig.render = (props) => !!props.field.onChange && null;
-configTest = {
-  name: '',
-  render: fieldRenderConfig.render,
-};
-// ChildrenFunction
-const fieldChildrenConfig: FieldChildrenConfig<any, any> = {} as any;
-fieldChildrenConfig.children = (props) => !!props.field.onChange && null
-configTest = {
-  name: '',
-  children: fieldChildrenConfig.children,
-};
-// DefaultConfig
-configTest = {
-  name: '',
-};
-
 const TypedField = createTypedField<Person>();
 
 const proplessComponent = () => null;
@@ -121,7 +46,7 @@ class ClassComponentWithOnlyExtra extends React.Component<{ what: true }> {
   }
 }
 
-const asComponent = (props: FieldAsProps) => !!props.onChange && null;
+const asComponent = <Values,>(props: FieldAsProps<Values, any>) => !!props.onChange && null;
 
 const componentComponent =
   (props: FieldComponentProps<any, any>) => !!props.field.onChange && null;
@@ -131,7 +56,8 @@ const renderFunction: FieldRenderFunction<any, any> =
 
 const typedAsComponent: TypedAsField<number> =
   (props) => props.value ? null : null;
-class AsClassComponent<Values> extends React.Component<FieldAsProps<number, Values>> {
+
+class AsClassComponent<Values> extends React.Component<FieldAsProps<Values, number>> {
   render() {
     return this.props.value ? null : null;
   }
@@ -164,16 +90,16 @@ class ClassComponentOverlappingExtra extends React.Component<{name: string, what
     return this.props.name ? null : null;
   }
 }
-const typedRenderFunction = <Values, Path extends PathOf<Values>>(
-  props: FieldRenderProps<Values, Path>
+const typedRenderFunction = <Values, Value>(
+  props: FieldRenderProps<Values, Value>
 ) => props.meta.value ? null : null;
 
-const fieldTests = (props: FieldConfig<Person, "age">) =>
+const fieldTests = (props: FieldConfigByPath<Person, "age">) =>
   <>
     {/* Default */}
     <Field name="age" />
     <TypedField name="age" />
-    <TypedField name="favoriteNumbers.0" format={value => {}} />
+    <TypedField name="favoriteNumbers.0" />
     <TypedField name="friends.0" format={value => {}} />
     <TypedField name="friends.0.name.first" />
     {/* @ts-expect-error name doesn't match NameOf<Values> */}
@@ -240,6 +166,7 @@ const fieldTests = (props: FieldConfig<Person, "age">) =>
     <TypedField name="age" component={PropsAnyClassComponent} />
     {/* @ts-expect-error TypedFields must match props */}
     <TypedField name="age" component={ClassComponentPartialProps} />
+
     {/* @ts-expect-error field value should match */}
     <TypedField name="motto" component={typedComponentComponent} />
     {/* @ts-expect-error field value should match */}
@@ -268,7 +195,6 @@ const fieldTests = (props: FieldConfig<Person, "age">) =>
     <TypedField name="age">{typedRenderFunction}</TypedField>
 
     {/* Pass-Through Props */}
-    <TypedField<any> {...props} />
     <TypedField {...props} />
   </>
 

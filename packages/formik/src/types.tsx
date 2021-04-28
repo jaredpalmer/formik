@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Comparer, Selector } from 'use-optimized-selector';
 import { FieldPassThroughConfig, SingleValue } from './Field';
-import { TypedField } from './hooks/useTypedField';
+import { TypedFieldByPath } from './hooks/useTypedField';
 import { TypedFieldArray } from './hooks/useTypedFieldArray';
 
 /**
@@ -194,9 +194,13 @@ export type PathMatchingValue<Values, Value> =
         : never
       : never;
 
-export type RegisterFieldFn<Values> = <Path extends PathOf<Values>>(
-  name: Path,
-  { validate }: Pick<FieldPassThroughConfig<Path, FieldValue<Values, Path>>, 'validate'>
+export type RegisterFieldFn<Values> = <Path extends PathOf<Values>, Value>(
+  name: Path | PathMatchingValue<Values, Value>,
+  { validate }: Pick<
+    FieldPassThroughConfig<
+      Path | PathMatchingValue<Values, Value>,
+      Value | FieldValue<Values, Path>
+    >, 'validate'>
 ) => void;
 
 export type UnregisterFieldFn<Values> = <Path extends PathOf<Values>>(
@@ -225,11 +229,10 @@ export type SetValuesFn<Values extends FormikValues> = (
 ) => Promise<void | FormikErrors<Values>>;
 
 export type SetFieldValueFn<Values extends FormikValues> = <
-  Value,
-  Path extends PathMatchingValue<Values, Value>
+  Path extends PathOf<Values>
 >(
   field: Path,
-  value: Value,
+  value: FieldValue<Values, Path>,
   shouldValidate?: boolean | undefined
 ) => Promise<void | FormikErrors<Values>>;
 
@@ -366,7 +369,7 @@ export interface FormikRegistration<Values> {
 }
 
 export interface FormikFieldHelpers<Values> {
-  TypedField: TypedField<Values>;
+  TypedField: TypedFieldByPath<Values>;
   TypedFieldArray: TypedFieldArray<Values>;
 }
 

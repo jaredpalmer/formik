@@ -1,19 +1,17 @@
-import { parseNumberOrEmpty, formatNumberOrEmpty } from "app/helpers/parse-format-helpers";
+import { parsePhoneOrEmpty } from "app/helpers/parse-format-helpers";
 import {
     FieldAsProps,
-    FormatFn,
     ParseFn,
     TypedAsField,
     useFormikContext
 } from "formik";
 import React from "react";
 
-export const NumberAsField: TypedAsField<number | ""> = <
+export const PhoneAsField: TypedAsField<string> = <
     Values,
->(props: FieldAsProps<Values, number | "">) => {
+>(props: FieldAsProps<Values, string>) => {
     const formik = useFormikContext<Values>();
-    const parse: ParseFn<number | ""> = props.parse ?? parseNumberOrEmpty;
-    const format: FormatFn<number | ""> = props.format ?? formatNumberOrEmpty;
+    const parse: ParseFn<string> = props.parse ?? parsePhoneOrEmpty;
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const parsedValue = parse(event.target.value, props.name);
@@ -24,7 +22,7 @@ export const NumberAsField: TypedAsField<number | ""> = <
     return <input
         type="text"
         name={props.name}
-        value={format(props.value, props.name)}
+        value={props.format ? props.format(props.value, props.name) ? props.value}
         onChange={handleChange}
         onBlur={formik.handleBlur}
         inputMode="numeric"

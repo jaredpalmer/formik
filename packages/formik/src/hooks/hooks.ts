@@ -1,5 +1,5 @@
-import { PathMatchingValue } from './../types';
-import { FieldAsConfig, FieldPassThroughConfig } from './../Field';
+import { FieldValue, PathOf } from './../types';
+import { FieldHookConfigByPath } from './../Field';
 import { useMemo } from 'react';
 import { useFormikContext } from '../FormikContext';
 import {
@@ -23,11 +23,11 @@ import { FormatFn, ParseFn, SingleValue } from '../Field';
  *
  * Pass `FieldMetaProps` from useFieldMeta, so we don't subscribe twice.
  */
-export const useFieldProps = <Values, Value, Path extends PathMatchingValue<Values, Value>>(
+export const useFieldProps = <Values, Path extends PathOf<Values>>(
     nameOrOptions: Path |
-      (FieldAsConfig<Values, Path> & FieldPassThroughConfig<Path, Value>),
-    fieldMeta: FieldMetaProps<Value>
-  ): FieldInputProps<Value> => {
+      FieldHookConfigByPath<Values, Path>,
+    fieldMeta: FieldMetaProps<FieldValue<Values, Path>>
+  ): FieldInputProps<FieldValue<Values, Path>> => {
     const {
       handleChange,
       handleBlur,
@@ -38,11 +38,11 @@ export const useFieldProps = <Values, Value, Path extends PathMatchingValue<Valu
     const valueState = fieldMeta.value;
     const touchedState = fieldMeta.touched;
 
-    const field: FieldInputProps<Value> = {
+    const field: FieldInputProps<FieldValue<Values, Path>> = {
       name,
       // if this isn't a singular value, it should be parsed!
       // however, this is a fallback
-      value: valueState as SingleValue<Value>,
+      value: valueState as SingleValue<FieldValue<Values, Path>>,
       // handleChange isn't a match for onChange for custom value types
       // however, this is a fallback
       onChange: handleChange as any,
@@ -55,8 +55,8 @@ export const useFieldProps = <Values, Value, Path extends PathMatchingValue<Valu
         value: valueProp, // value is special for checkboxes
         as: is,
         multiple,
-        parse = (/number|range/.test(type) ? numberParseFn : defaultParseFn) as ParseFn<SingleValue<Value>>,
-        format = defaultFormatFn as FormatFn<SingleValue<Value>>,
+        parse = (/number|range/.test(type) ? numberParseFn : defaultParseFn) as ParseFn<SingleValue<FieldValue<Values, Path>>>,
+        format = defaultFormatFn as FormatFn<SingleValue<FieldValue<Values, Path>>>,
         formatOnBlur = false,
       } = nameOrOptions;
 
@@ -70,7 +70,7 @@ export const useFieldProps = <Values, Value, Path extends PathMatchingValue<Valu
           field.value = valueProp;
         }
       } else if (type === 'radio') {
-        field.checked = valueState === valueProp;
+        field.checked = valueState === valueProp!;
         // we need to force value on radio and multi-checkbox
         field.value = valueProp!;
       } else if (is === 'select' && multiple) {
@@ -100,13 +100,13 @@ export const useFieldProps = <Values, Value, Path extends PathMatchingValue<Valu
             setFieldValue(
               name,
               // we don't currently support arrays here
-              parse(getValueFromEvent(eventOrValue, name), field.name) as Value
+              parse(getValueFromEvent(eventOrValue, name), field.name) as FieldValue<Values, Path>
             );
           } else {
             setFieldValue(
               name,
               // we don't currently support arrays here
-              parse(eventOrValue, field.name) as Value
+              parse(eventOrValue, field.name) as FieldValue<Values, Path>
             );
           }
         };

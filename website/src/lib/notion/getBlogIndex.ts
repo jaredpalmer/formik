@@ -40,7 +40,7 @@ export default async function getBlogIndex(previews = true) {
         `Failed to load Notion posts, attempting to auto create table`
       );
       try {
-        await createTable();
+        // await createTable();
         console.log(`Successfully created table in Notion`);
       } catch (err) {
         console.error(

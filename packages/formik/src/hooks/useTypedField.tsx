@@ -1,26 +1,20 @@
 import * as React from "react";
-import { Field, FieldAsComponent, FieldConfigByPath, FieldConfigByValue, TypedAsField } from "../Field";
-import { PathOf } from "../types";
+import { Field, FieldConfig } from "../Field";
 
-export type TypedFieldByPath<Values> = <Path extends PathOf<Values>>(
-  props: FieldConfigByPath<Values, Path>
-) =>
-  React.ReactElement | null;
-
-export type TypedFieldByValue<Values> = <Value>(
-  props: FieldConfigByValue<Values, Value>
+export type TypedField<Values> = <Value>(
+  props: FieldConfig<Values, Value>
 ) =>
   React.ReactElement | null;
 
 export type CustomField<Value> = <
   Values,
 >(
-  props: FieldConfigByValue<Values, Value>
+  props: FieldConfig<Values, Value>
 ) =>
   React.ReactElement | null;
 
 export type FieldByValue<Values, Value> = (
-  props: FieldConfigByValue<Values, Value>
+  props: FieldConfig<Values, Value>
 ) =>
   React.ReactElement | null;
 
@@ -31,13 +25,6 @@ export const createCustomField = <Values,>() => <Value,>(
   FieldType: CustomField<Value>
 ): FieldByValue<Values, Value> =>
   (props) => <FieldType<Values> {...props} />;
-
-/**
- * Create a ResolvedField which maps a custom Field type to Values.
- */
-export const createAsField = <Values,>() => <Value,>(
-  FieldType: TypedAsField<Value>
-): FieldAsComponent<Values, Value> => (props) => <FieldType<Values> {...props} />;
 
 /**
  * Create a ResolvedField which maps a custom Field type to Values.
@@ -55,8 +42,8 @@ export const useCustomField = <Values,>() => <Value,>(
  * Create a typed field from anywhere.
  */
 export const createTypedField = <Values,>(
-  FieldType: TypedFieldByPath<Values> = Field
-): TypedFieldByPath<Values> => FieldType;
+  FieldType: TypedField<Values> = Field
+): TypedField<Values> => FieldType;
 
 /**
  * Create a TypedField from within Formik.
@@ -64,28 +51,8 @@ export const createTypedField = <Values,>(
  * @private
  */
 export const useTypedField = <Values,>(
-  FieldType: TypedFieldByPath<Values> = Field
-) => React.useMemo<TypedFieldByPath<Values>>(
+  FieldType: TypedField<Values> = Field
+) => React.useMemo<TypedField<Values>>(
   () => createTypedField<Values>(FieldType),
   []
 );
-
-/**
- * Create a typed field from anywhere.
- */
-export const createTypedFieldByValue = <Values, Value>(
-  FieldType: TypedFieldByValue<Values> = Field
-): FieldByValue<Values, Value> => FieldType;
-
-/**
- * Create a TypedField from within Formik.
- *
- * @private
- */
-export const useTypedFieldByValue = <Values, Value>(
-  FieldType: TypedFieldByValue<Values> = Field
-) =>
-  React.useMemo<FieldByValue<Values, Value>>(
-    () => createTypedFieldByValue<Values, Value>(FieldType),
-    []
-  );

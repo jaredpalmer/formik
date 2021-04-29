@@ -1,19 +1,19 @@
 import { formatNumberOrEmpty, parseNumberOrEmpty } from "app/helpers/parse-format-helpers";
 import {
     CustomField,
-    FieldConfigByValue,
-    useTypedFieldByValue
+    FieldConfig,
+    useTypedField
 } from "formik";
 import React from "react";
 import { NumberAsField } from "./number-as-field";
 
 export const NumberField: CustomField<number | ""> = <Values,>(
-    props: FieldConfigByValue<
+    props: FieldConfig<
         Values,
         number | ""
     >
 ) => {
-    const TypedField = useTypedFieldByValue<Values, number | "">();
+    const TypedField = useTypedField<Values>();
 
     return <TypedField
         type="text"

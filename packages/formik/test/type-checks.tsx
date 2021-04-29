@@ -12,7 +12,7 @@ import {
     RecursivelyTupleKeys,
     FieldComponentClass,
     createTypedField,
-    FieldConfigByPath
+    FieldConfig
 } from "../src";
 
 type BasePerson = {
@@ -33,9 +33,9 @@ type Person = BasePerson & {
 
 const TypedField = createTypedField<Person>();
 
-const proplessComponent = () => null;
-const propsAnyComponent = (props: any) => props ? null : null;
-class PropsAnyClassComponent extends React.Component<any> {
+const proplessFC = () => null;
+const propsAnyFC = (props: any) => props ? null : null;
+class PropsAnyClass extends React.Component<any> {
   render() {
     return this.props.what ? null : null;
   }
@@ -46,66 +46,72 @@ class ClassComponentWithOnlyExtra extends React.Component<{ what: true }> {
   }
 }
 
-const asComponent = <Values,>(props: FieldAsProps<Values, any>) => !!props.onChange && null;
+const asAnyFC = <Values,>(props: FieldAsProps<any, Values>) => !!props.onChange && null;
 
-const componentComponent =
+const componentAnyFC =
   (props: FieldComponentProps<any, any>) => !!props.field.onChange && null;
 
-const renderFunction: FieldRenderFunction<any, any> =
+const renderAnyFn: FieldRenderFunction<any, any> =
   (props) => props.meta.value ? null : null;
 
-const typedAsComponent: TypedAsField<number> =
+const asNumberFC: TypedAsField<number> =
   (props) => props.value ? null : null;
 
-class AsClassComponent<Values> extends React.Component<FieldAsProps<Values, number>> {
+class AsNumberClass<Values> extends React.Component<FieldAsProps<number, Values>> {
   render() {
     return this.props.value ? null : null;
   }
 }
-const typedComponentComponent: TypedComponentField<number> =
+const componentNumberFC: TypedComponentField<number> =
   (props) => props.field ? null : null;
-const typedComponentWithExtra: TypedComponentField<number> =
+const componentNumberFCWithExtra: TypedComponentField<number> =
   (props) => props.field ? null : null;
-const componentPartialProps = (props: {name: string}) => props.name ? null : null;
-const componentOverlappingWithExtra = (props: {name: string, what: true}) => props.name && props.what ? null : null;
-class ClassComponent extends FieldComponentClass<number> {
+const partialPropsFC = (props: {name: string}) => props.name ? null : null;
+const overlappingPropsFCWithExtra = (props: {name: string, what: true}) => props.name && props.what ? null : null;
+class ComponentNumberClass extends FieldComponentClass<number> {
   render() {
     return this.props.value ? null : null;
   }
 }
-class ClassComponentWithExtra extends React.Component<
-  FieldComponentProps<number, any>
+class ComponentNumberClassWithExtra<Values> extends React.Component<
+  FieldComponentProps<number, Values>
 > {
   render() {
     return this.props.value ? null : null;
   }
 }
-class ClassComponentPartialProps extends React.Component<{name: string}> {
+class PartialPropsClass extends React.Component<{name: string}> {
   render() {
     return this.props.name ? null : null;
   }
 }
-class ClassComponentOverlappingExtra extends React.Component<{name: string, what: true}> {
+class OverlappingPropsClassWithExtra extends React.Component<{name: string, what: true}> {
   render() {
     return this.props.name ? null : null;
   }
 }
-const typedRenderFunction = <Values, Value>(
+const renderNumberFN = <Values, Value>(
   props: FieldRenderProps<Values, Value>
 ) => props.meta.value ? null : null;
 
-const fieldTests = (props: FieldConfigByPath<Person, "age">) =>
+const fieldTests = (props: FieldConfig<Person, "age">) =>
   <>
     {/* Default */}
     <Field name="age" />
     <TypedField name="age" />
-    <TypedField name="favoriteNumbers.0" />
-    <TypedField name="friends.0" format={value => {}} />
+    <TypedField name="favoriteNumbers.0" value="" />
     <TypedField name="friends.0.name.first" />
-    {/* @ts-expect-error name doesn't match NameOf<Values> */}
+
+    <Field name="aeg" />
+    {/* @ts-expect-error name doesn't match PathOf<Values> */}
     <TypedField name="aeg" />
-    {/* @ts-expect-error name doesn't match NameOf<Values> */}
+    {/* @ts-expect-error name doesn't match PathOf<Values> */}
     <TypedField name="bestFriends.NOPE.name.first" />
+
+    <Field name="age" format={(value: string) => {}} />
+    <TypedField name="age" format={(value: number) => {}} />
+    {/* @ts-expect-error TypedField must match value */}
+    <TypedField name="age" format={(value: string) => {}} />
 
     <Field name="age" aria-required={true} />
     <TypedField name="age" aria-required={true} />
@@ -119,80 +125,80 @@ const fieldTests = (props: FieldConfigByPath<Person, "age">) =>
     <TypedField name="age" component="select" />
 
     {/* FieldAsComponent */}
-    <Field name="age" as={proplessComponent} />
-    <TypedField name="age" as={proplessComponent} />
-    <Field name="age" as={propsAnyComponent} />
-    <TypedField name="age" as={propsAnyComponent} />
-    <Field name="age" as={PropsAnyClassComponent} />
-    <Field name="age" as={componentPartialProps} />
-    <Field name="age" as={ClassComponentPartialProps} />
+    <Field name="age" as={proplessFC} />
+    <TypedField name="age" as={proplessFC} />
+    <Field name="age" as={propsAnyFC} />
+    <TypedField name="age" as={propsAnyFC} />
+    <Field name="age" as={PropsAnyClass} />
+    <Field name="age" as={partialPropsFC} />
+    <Field name="age" as={PartialPropsClass} />
 
-    <Field name="age" as={asComponent} />
-    <Field name="age" as={typedAsComponent} />
-    <TypedField name="age" as={typedAsComponent} />
-    <Field name="age" as={asComponent}><div /></Field>
-    <Field name="age" as={typedAsComponent}><div /></Field>
-    <TypedField name="age" as={typedAsComponent}><div /></TypedField>
-    <Field name="age" as={AsClassComponent} />
-    <TypedField name="age" as={AsClassComponent} />
+    <Field name="age" as={asAnyFC} />
+    <Field name="age" as={asNumberFC} />
+    <TypedField name="age" as={asNumberFC} />
+    <Field name="age" as={asAnyFC}><div /></Field>
+    <Field name="age" as={asNumberFC}><div /></Field>
+    <TypedField name="age" as={asNumberFC}><div /></TypedField>
+    <Field name="age" as={AsNumberClass} />
+    <TypedField name="age" as={AsNumberClass} />
 
     {/* @ts-expect-error TypedFields must match props */}
-    <TypedField name="age" as={PropsAnyClassComponent} />
+    <TypedField name="age" as={PropsAnyClass} />
     {/* @ts-expect-error TypedFields must match props */}
-    <TypedField name="age" as={ClassComponentPartialProps} />
+    <TypedField name="age" as={PartialPropsClass} />
     {/* @ts-expect-error field value should match */}
-    <TypedField name="motto" as={typedAsComponent} />
+    <TypedField name="motto" as={asNumberFC} />
     {/* @ts-expect-error field value should match */}
-    <TypedField name="motto" as={AsClassComponent} />
+    <TypedField name="motto" as={AsNumberClass} />
 
     {/* FieldComponent */}
-    <Field name="age" component={proplessComponent} />
-    <TypedField name="age" component={proplessComponent} />
-    <Field name="age" component={propsAnyComponent} />
-    <TypedField name="age" component={propsAnyComponent} />
-    <Field name="age" component={PropsAnyClassComponent} />
-    <Field name="age" component={componentPartialProps} />
-    <Field name="age" component={ClassComponentPartialProps} />
-    <Field name="age" component={componentComponent} />
-    <Field name="age" component={typedComponentComponent} />
-    <TypedField name="age" component={typedComponentComponent} />
-    <Field name="age" component={componentComponent}><div /></Field>
-    <Field name="age" component={typedComponentComponent}><div /></Field>
-    <TypedField name="age" component={typedComponentComponent}><div /></TypedField>
-    <Field name="age" component={ClassComponent} />
-    <TypedField name="age" component={ClassComponent} />
+    <Field name="age" component={proplessFC} />
+    <TypedField name="age" component={proplessFC} />
+    <Field name="age" component={propsAnyFC} />
+    <TypedField name="age" component={propsAnyFC} />
+    <Field name="age" component={PropsAnyClass} />
+    <Field name="age" component={partialPropsFC} />
+    <Field name="age" component={PartialPropsClass} />
+    <Field name="age" component={componentAnyFC} />
+    <Field name="age" component={componentNumberFC} />
+    <TypedField name="age" component={componentNumberFC} />
+    <Field name="age" component={componentAnyFC}><div /></Field>
+    <Field name="age" component={componentNumberFC}><div /></Field>
+    <TypedField name="age" component={componentNumberFC}><div /></TypedField>
+    <Field name="age" component={ComponentNumberClass} />
+    <TypedField name="age" component={ComponentNumberClass} />
 
     {/* @ts-expect-error TypedFields must match props */}
-    <TypedField name="age" component={PropsAnyClassComponent} />
+    <TypedField name="age" component={PropsAnyClass} />
     {/* @ts-expect-error TypedFields must match props */}
-    <TypedField name="age" component={ClassComponentPartialProps} />
+    <TypedField name="age" component={PartialPropsClass} />
 
     {/* @ts-expect-error field value should match */}
-    <TypedField name="motto" component={typedComponentComponent} />
+    <TypedField name="motto" component={componentNumberFC} />
     {/* @ts-expect-error field value should match */}
-    <TypedField name="motto" component={ClassComponent} />
+    <TypedField name="motto" component={ComponentNumberClass} />
 
     {/* FieldRender */}
-    <Field name="age" render={renderFunction} />
+    <Field name="age" render={renderAnyFn} />
     {/* @ts-expect-error render function doesn't have child component */}
-    <Field name="age" render={renderFunction}><div /></Field>
+    <Field name="age" render={renderAnyFn}><div /></Field>
 
     {/* FieldChildren */}
-    <Field name="age" children={renderFunction} />
-    <Field name="age">{renderFunction}</Field>
+    <Field name="age" children={renderAnyFn} />
+    <Field name="age">{renderAnyFn}</Field>
 
     {/* Pass-Through Props */}
     <Field<any, any> {...props} />
     <Field {...props} />
 
     {/* FieldRender */}
-    <TypedField name="age" render={typedRenderFunction} />
+    <TypedField name="age" render={renderNumberFN} />
     {/* @ts-expect-error render function doesn't have child component */}
-    <TypedField name="age" render={typedRenderFunction}><div /></TypedField>
+    <TypedField name="age" render={renderNumberFN}><div /></TypedField>
 
     {/* FieldChildren */}
-    <TypedField name="age" children={typedRenderFunction} />
-    <TypedField name="age">{typedRenderFunction}</TypedField>
+    <TypedField name="age" children={renderNumberFN} />
+    <TypedField name="age">{renderNumberFN}</TypedField>
 
     {/* Pass-Through Props */}
     <TypedField {...props} />
@@ -217,20 +223,20 @@ const featuresNotImplemented = () =>
     {/* @ts-expect-error elements shouldn't have extraProps */}
     <Field name="test" what={true} />
     {/* @ts-expect-error propless components don't have extraProps */}
-    <Field name="test" as={proplessComponent} what={true} />
+    <Field name="test" as={proplessFC} what={true} />
     {/* @ts-expect-error propless components don't have extraProps */}
-    <Field name="test" component={proplessComponent} what={true} />
+    <Field name="test" component={proplessFC} what={true} />
     {/* @ts-expect-error elements don't have extraProps */}
     <TypedField name="age" what={true} />
     {/* @ts-expect-error propless components don't have extraProps */}
-    <TypedField name="age" as={proplessComponent} what={true} />
+    <TypedField name="age" as={proplessFC} what={true} />
     {/* @ts-expect-error propless components don't have extraProps */}
-    <TypedField name="age" component={proplessComponent} what={true} />
+    <TypedField name="age" component={proplessFC} what={true} />
 
     {/* @ts-expect-error class component should match type */}
-    <TypedField name="motto" as={AsClassComponent} />
+    <TypedField name="motto" as={AsNumberClass} />
     {/* @ts-expect-error class component should match type */}
-    <TypedField name="motto" component={ClassComponent} />
+    <TypedField name="motto" component={ComponentNumberClass} />
 
     {/*
       * Gave up on ExtraProps for now
@@ -243,13 +249,13 @@ const featuresNotImplemented = () =>
     <Field name="age" component="select" what={true} />
     {/* @ts-expect-error elements don't have extraProps */}
     <TypedField name="age" component="select" what={true} />
-    <Field name="age" as={propsAnyComponent} what={true} />
-    <TypedField name="age" as={propsAnyComponent} what={true} />
-    <TypedField name="age" as={componentOverlappingWithExtra} what={true} />
-    <Field name="age" as={ClassComponentOverlappingExtra} what={true} />
-    <TypedField name="age" as={ClassComponentOverlappingExtra} what={true} />
-    <Field name="age" as={PropsAnyClassComponent} what={true} />
-    <TypedField name="age" as={PropsAnyClassComponent} what={true} />
+    <Field name="age" as={propsAnyFC} what={true} />
+    <TypedField name="age" as={propsAnyFC} what={true} />
+    <TypedField name="age" as={overlappingPropsFCWithExtra} what={true} />
+    <Field name="age" as={OverlappingPropsClassWithExtra} what={true} />
+    <TypedField name="age" as={OverlappingPropsClassWithExtra} what={true} />
+    <Field name="age" as={PropsAnyClass} what={true} />
+    <TypedField name="age" as={PropsAnyClass} what={true} />
     <Field name="age" as={componentWithOnlyExtra} what={true} />
     <TypedField name="age" as={componentWithOnlyExtra} what={true} />
     <Field name="age" as={ClassComponentWithOnlyExtra} what={true} />
@@ -275,22 +281,22 @@ const featuresNotImplemented = () =>
     {/* @ts-expect-error extraProps should match */}
     <TypedField name="age" as={asComponentWithOnlyExtra} what={false} />
 
-    <Field name="age" component={propsAnyComponent} what={true} />
-    <TypedField name="age" component={propsAnyComponent} what={true} />
-    <Field name="age" component={PropsAnyClassComponent} what={true} />
-    <TypedField name="age" component={PropsAnyClassComponent} what={true} />
-    <TypedField name="age" component={componentOverlappingWithExtra} what={true} />
-    <Field name="age" component={ClassComponentOverlappingExtra} what={true} />
-    <TypedField name="age" component={ClassComponentOverlappingExtra} what={true} />
+    <Field name="age" component={propsAnyFC} what={true} />
+    <TypedField name="age" component={propsAnyFC} what={true} />
+    <Field name="age" component={PropsAnyClass} what={true} />
+    <TypedField name="age" component={PropsAnyClass} what={true} />
+    <TypedField name="age" component={overlappingPropsFCWithExtra} what={true} />
+    <Field name="age" component={OverlappingPropsClassWithExtra} what={true} />
+    <TypedField name="age" component={OverlappingPropsClassWithExtra} what={true} />
     <Field name="age" component={componentWithOnlyExtra} what={true} />
     <TypedField name="age" component={componentWithOnlyExtra} what={true} />
     <Field name="age" component={ClassComponentWithOnlyExtra} what={true} />
     <TypedField name="age" component={ClassComponentWithOnlyExtra} what={true} />
     <Field name="age" component={componentWithExtra} what={true} />
-    <Field name="age" component={typedComponentWithExtra} what={true} />
-    <TypedField name="age" component={typedComponentWithExtra} what={true} />
-    <Field name="age" component={ClassComponentWithExtra} what={true} />
-    <TypedField name="age" component={ClassComponentWithExtra} what={true} />
+    <Field name="age" component={componentNumberFCWithExtra} what={true} />
+    <TypedField name="age" component={componentNumberFCWithExtra} what={true} />
+    <Field name="age" component={ComponentNumberClassWithExtra} what={true} />
+    <TypedField name="age" component={ComponentNumberClassWithExtra} what={true} />
     {/* @ts-expect-error extraProps is required */}
     <TypedField name="age" component={typedComponentComponentWithExtra} />
     {/* @ts-expect-error extraProps is required */}

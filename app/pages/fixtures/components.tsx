@@ -1,19 +1,19 @@
 import * as React from 'react';
-import { Formik, Field, Form, FieldProps } from 'formik';
+import { Formik, Field, Form, FieldComponentProps, FieldAsProps, FieldRenderProps } from 'formik';
 import { DebugProps } from '../../components/debugging/DebugProps';
 
 const initialValues = {
   name: '',
 };
 
-const RenderComponent = (props: FieldProps<string, typeof initialValues>) => (
+const RenderComponent = (props: FieldRenderProps<string, typeof initialValues>) => (
   <>
     <input data-testid="child" {...props.field} />
     <DebugProps {...props} />
   </>
 );
 const ComponentComponent = (
-  props: FieldProps<string, typeof initialValues>
+  props: FieldComponentProps<string, typeof initialValues>
 ) => (
   <>
     <input data-testid="child" {...props.field} />
@@ -21,7 +21,7 @@ const ComponentComponent = (
   </>
 );
 const AsComponent = (
-  props: FieldProps<string, typeof initialValues>['field']
+  props: FieldAsProps<string, typeof initialValues>
 ) => (
   <>
     <input data-testid="child" {...props} />

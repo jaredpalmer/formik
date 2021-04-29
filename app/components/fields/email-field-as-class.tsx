@@ -20,5 +20,5 @@ export class EmailFieldAsClass extends FieldAsClass<string> {
   }
 }
 
-export const TypedEmailField: React.ComponentClass<FieldAsProps<any, string>> =
+export const TypedEmailField: React.ComponentClass<FieldAsProps<string>> =
   EmailFieldAsClass;

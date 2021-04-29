@@ -3,14 +3,12 @@ import {
   Formik,
   Form,
   ErrorMessage,
-  createCustomField,
-  createTypedFieldArray
+  Field,
 } from 'formik';
 import * as Yup from 'yup';
 import { NumberAsField } from 'app/components/fields/number-as-field';
 import { EmailFieldAsClass } from 'app/components/fields/email-field-as-class';
 import { NumberComponentField } from 'app/components/fields/number-component-field';
-import { NumberRepeaterField } from 'app/components/fields/number-repeater-field';
 import { createTypedFields } from 'app/components/fields';
 
 let renderCount = 0;
@@ -105,6 +103,10 @@ const StronglyTypedPage = () => (
           type="number"
         />
 
+        <fields.Field
+         name="age"
+        />
+
         <fields.NumberField
           name="favoriteNumbers.0"
           as={NumberAsField}
@@ -115,11 +117,6 @@ const StronglyTypedPage = () => (
           name="favoriteNumbers.0"
           as={NumberAsField}
           type="number"
-        />
-
-        <TypedFieldArray
-          name="favoriteNumbers"
-          component={NumberRepeaterField}
         />
 
         <fields.Field
@@ -138,26 +135,26 @@ const StronglyTypedPage = () => (
         <div id="checkbox-group">Checkbox Group</div>
         <div role="group" aria-labelledby="checkbox-group">
           <label>
-            <fields.Field type="checkbox" name="favoriteFoods" value="Pizza" />
+            <Field type="checkbox" name="favoriteFoods" value="Pizza" />
             Pizza
           </label>
           <label>
-            <fields.Field type="checkbox" name="favoriteFoods" value="Falafel" />
+            <Field type="checkbox" name="favoriteFoods" value="Falafel" />
             Falafel
           </label>
           <label>
-            <fields.Field type="checkbox" name="favoriteFoods" value="Dim Sum" />
+            <Field type="checkbox" name="favoriteFoods" value="Dim Sum" />
             Dim Sum
           </label>
         </div>
         <div id="my-radio-group">Picked</div>
         <div role="group" aria-labelledby="my-radio-group">
           <label>
-            <fields.Field type="radio" name="favoriteNumbers" value={1} />
+            <Field type="radio" name="favoriteNumbers" value={1} />
             1
           </label>
           <label>
-            <fields.Field type="radio" name="favoriteNumbers" value={2} />
+            <Field type="radio" name="favoriteNumbers" value={2} />
             2
           </label>
         </div>

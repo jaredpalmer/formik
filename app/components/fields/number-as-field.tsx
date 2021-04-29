@@ -10,7 +10,7 @@ import React from "react";
 
 export const NumberAsField: TypedAsField<number | ""> = <
     Values,
->(props: FieldAsProps<Values, number | "">) => {
+>(props: FieldAsProps<number | "", Values>) => {
     const formik = useFormikContext<Values>();
     const parse: ParseFn<number | ""> = props.parse ?? parseNumberOrEmpty;
     const format: FormatFn<number | ""> = props.format ?? formatNumberOrEmpty;

@@ -9,7 +9,7 @@ import React from "react";
 
 export const PhoneAsField: TypedAsField<string> = <
     Values,
->(props: FieldAsProps<Values, string>) => {
+>(props: FieldAsProps<string, Values>) => {
     const formik = useFormikContext<Values>();
     const parse: ParseFn<string> = props.parse ?? parsePhoneOrEmpty;
 
@@ -22,7 +22,7 @@ export const PhoneAsField: TypedAsField<string> = <
     return <input
         type="text"
         name={props.name}
-        value={props.format ? props.format(props.value, props.name) ? props.value}
+        value={props.format ? props.format(props.value, props.name) : props.value}
         onChange={handleChange}
         onBlur={formik.handleBlur}
         inputMode="numeric"

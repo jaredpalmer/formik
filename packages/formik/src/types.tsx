@@ -534,11 +534,11 @@ export type FieldOnBlurProp = (
 ) => void;
 
 /** Field input value, name, and event handlers */
-export type FieldInputProps<Value> = {
+export type FieldInputProps<Value, Values> = {
   /** Value of the field */
   value: SingleValue<Value>;
   /** Name of the field */
-  name: string;
+  name: PathMatchingValue<Values, Value>;
   /** Multiple select? */
   multiple?: boolean;
   /** Is the field checked? */

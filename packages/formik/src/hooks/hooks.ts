@@ -26,7 +26,7 @@ export const useFieldProps = <Values, Value>(
     nameOrOptions: PathMatchingValue<Values, Value> |
       FieldHookConfig<Values, Value>,
     fieldMeta: FieldMetaProps<Value>
-  ): FieldInputProps<Value> => {
+  ): FieldInputProps<Value, Values> => {
     const {
       handleChange,
       handleBlur,
@@ -37,7 +37,7 @@ export const useFieldProps = <Values, Value>(
     const valueState = fieldMeta.value;
     const touchedState = fieldMeta.touched;
 
-    const field: FieldInputProps<Value> = {
+    const field: FieldInputProps<Value, Values> = {
       name,
       // if this isn't a singular value, it should be parsed!
       // however, this is a fallback

@@ -80,7 +80,7 @@ export function useField<
     PathMatchingValue<Values, Value> |
     FieldHookConfig<Values, Value>
 ): [
-  FieldInputProps<Value>,
+  FieldInputProps<Value, Values>,
   FieldMetaProps<Value>,
   FieldHelperProps<Value>
 ] {
@@ -135,7 +135,7 @@ export type FieldAsProps<
   Values = any
 > =
   FieldPassThroughConfig<Values, Value> &
-  FieldInputProps<Value>;
+  FieldInputProps<Value, Values>;
 
 export type TypedAsField<
   Value,
@@ -194,7 +194,7 @@ type GenericFieldHTMLConfig = Omit<
  * Passed to `<Field component={Component} />`.
  */
 type LegacyBag<Values, Value> = {
-  field: FieldInputProps<Value>;
+  field: FieldInputProps<Value, Values>;
   // if ppl want to restrict this for a given form, let them.
   form: FormikProps<Values>;
 }
@@ -410,7 +410,6 @@ export function Field<
   }
 
   if (props.as && typeof props.as !== 'string') {
-    // not sure why as !== string isn't removing FieldAsStringConfig
     const {
       render,
       component,
@@ -420,15 +419,13 @@ export function Field<
     } = props;
     return React.createElement(
       as,
-      { ...fieldAsProps, ...field } as any,
+      { ...fieldAsProps, ...field },
       children
     );
   }
 
   if (props.component && typeof props.component !== 'string') {
-    // not sure why component !== string isn't removing FieldStringComponentConfig
     const {
-      // render props
       render,
       children,
       as,
@@ -439,7 +436,7 @@ export function Field<
     // We don't pass `meta` for backwards compat
     return React.createElement(
       component,
-      { field, ...componentProps, form } as any,
+      { field, ...componentProps, form },
       children
     );
   }

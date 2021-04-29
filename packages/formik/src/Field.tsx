@@ -153,15 +153,17 @@ export abstract class FieldAsClass<
 > extends React.Component<
   FieldAsProps<
     Value,
-    unknown
+    any
   >
 > {}
 
 export type FieldAsComponent<Values, Value> =
-  React.ComponentType<FieldAsProps<
-    Value,
-    Values
-  >>;
+  any extends Values
+  ? React.ComponentType<any>
+  : React.ComponentType<FieldAsProps<
+      Value,
+      Values
+    >>;
 
 export type FieldComponentProps<
   Value = any,
@@ -180,7 +182,9 @@ export abstract class FieldComponentClass<
 > {}
 
 type FieldComponentComponent<Values, Value> =
-  React.ComponentType<FieldComponentProps<
+  any extends Values
+  ? React.ComponentType<any>
+  : React.ComponentType<FieldComponentProps<
     Value,
     Values
   >>;

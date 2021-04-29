@@ -46,7 +46,7 @@ class ClassComponentWithOnlyExtra extends React.Component<{ what: true }> {
   }
 }
 
-const asAnyFC = <Values,>(props: FieldAsProps<any, Values>) => !!props.onChange && null;
+const asAnyFC = (props: FieldAsProps<any, any>) => !!props.onChange && null;
 
 const componentAnyFC =
   (props: FieldComponentProps<any, any>) => !!props.field.onChange && null;
@@ -142,10 +142,9 @@ const fieldTests = (props: FieldConfig<Person, "age">) =>
     <Field name="age" as={AsNumberClass} />
     <TypedField name="age" as={AsNumberClass} />
 
-    {/* @ts-expect-error TypedFields must match props */}
     <TypedField name="age" as={PropsAnyClass} />
-    {/* @ts-expect-error TypedFields must match props */}
     <TypedField name="age" as={PartialPropsClass} />
+
     {/* @ts-expect-error field value should match */}
     <TypedField name="motto" as={asNumberFC} />
     {/* @ts-expect-error field value should match */}
@@ -165,13 +164,10 @@ const fieldTests = (props: FieldConfig<Person, "age">) =>
     <Field name="age" component={componentAnyFC}><div /></Field>
     <Field name="age" component={componentNumberFC}><div /></Field>
     <TypedField name="age" component={componentNumberFC}><div /></TypedField>
+    <TypedField name="age" component={PropsAnyClass} />
+    <TypedField name="age" component={PartialPropsClass} />
     <Field name="age" component={ComponentNumberClass} />
     <TypedField name="age" component={ComponentNumberClass} />
-
-    {/* @ts-expect-error TypedFields must match props */}
-    <TypedField name="age" component={PropsAnyClass} />
-    {/* @ts-expect-error TypedFields must match props */}
-    <TypedField name="age" component={PartialPropsClass} />
 
     {/* @ts-expect-error field value should match */}
     <TypedField name="motto" component={componentNumberFC} />
@@ -204,117 +200,117 @@ const fieldTests = (props: FieldConfig<Person, "age">) =>
     <TypedField {...props} />
   </>
 
-const featuresNotImplemented = () =>
-  <>
-    {/*
-      * all the events below should be inferred,
-      * but can't because of GenericInputHTMLAttributes
-      */}
-    <Field name="test" onInput={event => {}} />
-    <Field name="test" as="select" onInput={event => {}} />
-    <Field name="test" component="select" onInput={event => {}} />
-    <TypedField name="age" onInput={event => {}} />
-    <TypedField name="age" as="select" onInput={event => {}} />
-    <TypedField name="age" component="select" onInput={event => {}} />
+// const featuresNotImplemented = () =>
+//   <>
+//     {/*
+//       * all the events below should be inferred,
+//       * but can't because of GenericInputHTMLAttributes
+//       */}
+//     <Field name="test" onInput={event => {}} />
+//     <Field name="test" as="select" onInput={event => {}} />
+//     <Field name="test" component="select" onInput={event => {}} />
+//     <TypedField name="age" onInput={event => {}} />
+//     <TypedField name="age" as="select" onInput={event => {}} />
+//     <TypedField name="age" component="select" onInput={event => {}} />
 
-    {/*
-      * haven't figured out how to enforce no extra props when they don't exist
-      */}
-    {/* @ts-expect-error elements shouldn't have extraProps */}
-    <Field name="test" what={true} />
-    {/* @ts-expect-error propless components don't have extraProps */}
-    <Field name="test" as={proplessFC} what={true} />
-    {/* @ts-expect-error propless components don't have extraProps */}
-    <Field name="test" component={proplessFC} what={true} />
-    {/* @ts-expect-error elements don't have extraProps */}
-    <TypedField name="age" what={true} />
-    {/* @ts-expect-error propless components don't have extraProps */}
-    <TypedField name="age" as={proplessFC} what={true} />
-    {/* @ts-expect-error propless components don't have extraProps */}
-    <TypedField name="age" component={proplessFC} what={true} />
+//     {/*
+//       * haven't figured out how to enforce no extra props when they don't exist
+//       */}
+//     {/* @ts-expect-error elements shouldn't have extraProps */}
+//     <Field name="test" what={true} />
+//     {/* @ts-expect-error propless components don't have extraProps */}
+//     <Field name="test" as={proplessFC} what={true} />
+//     {/* @ts-expect-error propless components don't have extraProps */}
+//     <Field name="test" component={proplessFC} what={true} />
+//     {/* @ts-expect-error elements don't have extraProps */}
+//     <TypedField name="age" what={true} />
+//     {/* @ts-expect-error propless components don't have extraProps */}
+//     <TypedField name="age" as={proplessFC} what={true} />
+//     {/* @ts-expect-error propless components don't have extraProps */}
+//     <TypedField name="age" component={proplessFC} what={true} />
 
-    {/* @ts-expect-error class component should match type */}
-    <TypedField name="motto" as={AsNumberClass} />
-    {/* @ts-expect-error class component should match type */}
-    <TypedField name="motto" component={ComponentNumberClass} />
+//     {/* @ts-expect-error class component should match type */}
+//     <TypedField name="motto" as={AsNumberClass} />
+//     {/* @ts-expect-error class component should match type */}
+//     <TypedField name="motto" component={ComponentNumberClass} />
 
-    {/*
-      * Gave up on ExtraProps for now
-      */}
-    {/* @ts-expect-error elements don't have extraProps */}
-    <Field name="age" as="select" what={true} />
-    {/* @ts-expect-error elements don't have extraProps */}
-    <TypedField name="age" as="select" what={true} />
-    {/* @ts-expect-error elements don't have extraProps */}
-    <Field name="age" component="select" what={true} />
-    {/* @ts-expect-error elements don't have extraProps */}
-    <TypedField name="age" component="select" what={true} />
-    <Field name="age" as={propsAnyFC} what={true} />
-    <TypedField name="age" as={propsAnyFC} what={true} />
-    <TypedField name="age" as={overlappingPropsFCWithExtra} what={true} />
-    <Field name="age" as={OverlappingPropsClassWithExtra} what={true} />
-    <TypedField name="age" as={OverlappingPropsClassWithExtra} what={true} />
-    <Field name="age" as={PropsAnyClass} what={true} />
-    <TypedField name="age" as={PropsAnyClass} what={true} />
-    <Field name="age" as={componentWithOnlyExtra} what={true} />
-    <TypedField name="age" as={componentWithOnlyExtra} what={true} />
-    <Field name="age" as={ClassComponentWithOnlyExtra} what={true} />
-    <TypedField name="age" as={ClassComponentWithOnlyExtra} what={true} />
-    <Field name="age" as={asComponentWithExtra} what={true} />
-    <Field name="age" as={typedAsComponentWithExtra} what={true} />
-    <TypedField name="age" as={typedAsComponentWithExtra} what={true} />
-    <Field name="age" as={AsComponentClassWithExtra} what={true} />
-    <TypedField name="age" as={AsComponentClassWithExtra} what={true} />
+//     {/*
+//       * Gave up on ExtraProps for now
+//       */}
+//     {/* @ts-expect-error elements don't have extraProps */}
+//     <Field name="age" as="select" what={true} />
+//     {/* @ts-expect-error elements don't have extraProps */}
+//     <TypedField name="age" as="select" what={true} />
+//     {/* @ts-expect-error elements don't have extraProps */}
+//     <Field name="age" component="select" what={true} />
+//     {/* @ts-expect-error elements don't have extraProps */}
+//     <TypedField name="age" component="select" what={true} />
+//     <Field name="age" as={propsAnyFC} what={true} />
+//     <TypedField name="age" as={propsAnyFC} what={true} />
+//     <TypedField name="age" as={overlappingPropsFCWithExtra} what={true} />
+//     <Field name="age" as={OverlappingPropsClassWithExtra} what={true} />
+//     <TypedField name="age" as={OverlappingPropsClassWithExtra} what={true} />
+//     <Field name="age" as={PropsAnyClass} what={true} />
+//     <TypedField name="age" as={PropsAnyClass} what={true} />
+//     <Field name="age" as={componentWithOnlyExtra} what={true} />
+//     <TypedField name="age" as={componentWithOnlyExtra} what={true} />
+//     <Field name="age" as={ClassComponentWithOnlyExtra} what={true} />
+//     <TypedField name="age" as={ClassComponentWithOnlyExtra} what={true} />
+//     <Field name="age" as={asComponentWithExtra} what={true} />
+//     <Field name="age" as={typedAsComponentWithExtra} what={true} />
+//     <TypedField name="age" as={typedAsComponentWithExtra} what={true} />
+//     <Field name="age" as={AsComponentClassWithExtra} what={true} />
+//     <TypedField name="age" as={AsComponentClassWithExtra} what={true} />
 
-    {/* @ts-expect-error extraProps should match */}
-    <Field name="age" as={asComponentWithExtra} what={false} />
-    {/* @ts-expect-error extraProps should match */}
-    <Field name="age" as={componentWithOnlyExtra} what={false} />
-    {/* @ts-expect-error extraProps should match */}
-    <TypedField name="age" as={asComponentWithExtra} what={false} />
-    {/* @ts-expect-error extraProps is required */}
-    <TypedField name="age" as={typedAsComponentWithExtra} />
-    {/* @ts-expect-error extraProps is required */}
-    <TypedField name="age" as={TypedAsComponentClassWithExtra} />
-    {/* @ts-expect-error extraProps is required */}
-    <TypedField name="age" as={TypedAsComponentClassWithExtra} what={false} />
-    {/* @ts-expect-error extraProps should match */}
-    <TypedField name="age" as={asComponentWithOnlyExtra} what={false} />
+//     {/* @ts-expect-error extraProps should match */}
+//     <Field name="age" as={asComponentWithExtra} what={false} />
+//     {/* @ts-expect-error extraProps should match */}
+//     <Field name="age" as={componentWithOnlyExtra} what={false} />
+//     {/* @ts-expect-error extraProps should match */}
+//     <TypedField name="age" as={asComponentWithExtra} what={false} />
+//     {/* @ts-expect-error extraProps is required */}
+//     <TypedField name="age" as={typedAsComponentWithExtra} />
+//     {/* @ts-expect-error extraProps is required */}
+//     <TypedField name="age" as={TypedAsComponentClassWithExtra} />
+//     {/* @ts-expect-error extraProps is required */}
+//     <TypedField name="age" as={TypedAsComponentClassWithExtra} what={false} />
+//     {/* @ts-expect-error extraProps should match */}
+//     <TypedField name="age" as={asComponentWithOnlyExtra} what={false} />
 
-    <Field name="age" component={propsAnyFC} what={true} />
-    <TypedField name="age" component={propsAnyFC} what={true} />
-    <Field name="age" component={PropsAnyClass} what={true} />
-    <TypedField name="age" component={PropsAnyClass} what={true} />
-    <TypedField name="age" component={overlappingPropsFCWithExtra} what={true} />
-    <Field name="age" component={OverlappingPropsClassWithExtra} what={true} />
-    <TypedField name="age" component={OverlappingPropsClassWithExtra} what={true} />
-    <Field name="age" component={componentWithOnlyExtra} what={true} />
-    <TypedField name="age" component={componentWithOnlyExtra} what={true} />
-    <Field name="age" component={ClassComponentWithOnlyExtra} what={true} />
-    <TypedField name="age" component={ClassComponentWithOnlyExtra} what={true} />
-    <Field name="age" component={componentWithExtra} what={true} />
-    <Field name="age" component={componentNumberFCWithExtra} what={true} />
-    <TypedField name="age" component={componentNumberFCWithExtra} what={true} />
-    <Field name="age" component={ComponentNumberClassWithExtra} what={true} />
-    <TypedField name="age" component={ComponentNumberClassWithExtra} what={true} />
-    {/* @ts-expect-error extraProps is required */}
-    <TypedField name="age" component={typedComponentComponentWithExtra} />
-    {/* @ts-expect-error extraProps is required */}
-    <TypedField name="age" component={TypedComponentClassWithExtra} />
-    {/* @ts-expect-error extraProps should match */}
-    <Field name="age" component={componentWithExtra} what={false} />
-    {/* @ts-expect-error extraProps should match */}
-    <Field name="age" component={componentWithOnlyExtra} what={false} />
-    {/* @ts-expect-error extraProps should match */}
-    <TypedField name="age" component={componentWithExtra} what={false} />
-    {/* @ts-expect-error extraProps should match */}
-    <TypedField name="age" component={componentWithOnlyExtra} what={false} />
+//     <Field name="age" component={propsAnyFC} what={true} />
+//     <TypedField name="age" component={propsAnyFC} what={true} />
+//     <Field name="age" component={PropsAnyClass} what={true} />
+//     <TypedField name="age" component={PropsAnyClass} what={true} />
+//     <TypedField name="age" component={overlappingPropsFCWithExtra} what={true} />
+//     <Field name="age" component={OverlappingPropsClassWithExtra} what={true} />
+//     <TypedField name="age" component={OverlappingPropsClassWithExtra} what={true} />
+//     <Field name="age" component={componentWithOnlyExtra} what={true} />
+//     <TypedField name="age" component={componentWithOnlyExtra} what={true} />
+//     <Field name="age" component={ClassComponentWithOnlyExtra} what={true} />
+//     <TypedField name="age" component={ClassComponentWithOnlyExtra} what={true} />
+//     <Field name="age" component={componentWithExtra} what={true} />
+//     <Field name="age" component={componentNumberFCWithExtra} what={true} />
+//     <TypedField name="age" component={componentNumberFCWithExtra} what={true} />
+//     <Field name="age" component={ComponentNumberClassWithExtra} what={true} />
+//     <TypedField name="age" component={ComponentNumberClassWithExtra} what={true} />
+//     {/* @ts-expect-error extraProps is required */}
+//     <TypedField name="age" component={typedComponentComponentWithExtra} />
+//     {/* @ts-expect-error extraProps is required */}
+//     <TypedField name="age" component={TypedComponentClassWithExtra} />
+//     {/* @ts-expect-error extraProps should match */}
+//     <Field name="age" component={componentWithExtra} what={false} />
+//     {/* @ts-expect-error extraProps should match */}
+//     <Field name="age" component={componentWithOnlyExtra} what={false} />
+//     {/* @ts-expect-error extraProps should match */}
+//     <TypedField name="age" component={componentWithExtra} what={false} />
+//     {/* @ts-expect-error extraProps should match */}
+//     <TypedField name="age" component={componentWithOnlyExtra} what={false} />
 
-    {/* @ts-expect-error extraProps should match */}
-    <Field<any, any, {what: false}> {...props} />
-    {/* @ts-expect-error extraProps should match */}
-    <TypedField<any, any, {what: false}> {...props} />
-  </>
+//     {/* @ts-expect-error extraProps should match */}
+//     <Field<any, any, {what: false}> {...props} />
+//     {/* @ts-expect-error extraProps should match */}
+//     <TypedField<any, any, {what: false}> {...props} />
+//   </>
 
 const basePerson: BasePerson = {
   name: {

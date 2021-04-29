@@ -10,6 +10,7 @@ import { NumberAsField } from 'app/components/fields/number-as-field';
 import { EmailFieldAsClass } from 'app/components/fields/email-field-as-class';
 import { NumberComponentField } from 'app/components/fields/number-component-field';
 import { createTypedFields } from 'app/components/fields';
+import { NumberRepeaterField } from 'app/components/fields/number-repeater-field';
 
 let renderCount = 0;
 
@@ -108,7 +109,7 @@ const StronglyTypedPage = () => (
         />
 
         <fields.NumberField
-          name="favoriteNumbers.0"
+          name="age"
           as={NumberAsField}
           type="number"
         />
@@ -123,6 +124,11 @@ const StronglyTypedPage = () => (
           name="friends.0.favoriteNumbers.0"
           component={NumberComponentField}
           type="number"
+        />
+
+        <fields.FieldArray
+          name="favoriteNumbers"
+          component={NumberRepeaterField}
         />
 
         <label>

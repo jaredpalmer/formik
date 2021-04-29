@@ -2,7 +2,7 @@ import * as React from "react";
 import { FieldArray, FieldArrayConfig } from "../FieldArray";
 
 export type TypedFieldArray<Values> = <Value>(
-  props: FieldArrayConfig<Values, Value>
+  props: FieldArrayConfig<Value, Values>
 ) =>
   React.ReactElement | null;
 
@@ -10,7 +10,7 @@ export type TypedFieldArray<Values> = <Value>(
  * Get TypedFieldArray from anywhere.
  */
 export const createTypedFieldArray = <Values,>(): TypedFieldArray<Values> =>
-  (props) => <FieldArray {...props} />;
+  FieldArray;
 
 /**
  * Use TypedFieldArray from within a component.

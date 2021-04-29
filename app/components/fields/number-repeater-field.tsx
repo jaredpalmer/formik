@@ -8,8 +8,8 @@ import { NumberAsField } from "./number-as-field";
 export const NumberRepeaterField = <
     Values,
 >(props: FieldArrayProps<
-    Values,
-    number | ""
+    number | "",
+    Values
 >) => {
     return <div>
         {props.field.value?.length > 0

@@ -9,8 +9,8 @@ import { NumberAsField } from "./number-as-field";
 
 export const NumberField: CustomField<number | ""> = <Values,>(
     props: FieldConfig<
-        Values,
-        number | ""
+        number | "",
+        Values
     >
 ) => {
     const TypedField = useTypedField<Values>();
@@ -18,7 +18,7 @@ export const NumberField: CustomField<number | ""> = <Values,>(
     return <TypedField
         type="text"
         name={props.name}
-        format={formatNumberOrEmpty}
+        format={(formatNumberOrEmpty)}
         parse={parseNumberOrEmpty}
         as={NumberAsField}
     />

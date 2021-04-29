@@ -1,12 +1,12 @@
 import * as React from 'react';
-import { FormikValues, PathOf } from './types';
+import { FormikValues } from './types';
 import { Field, FieldAttributes } from './Field';
 
 /**
  * @deprecated Use Field + FieldConfig
  */
-export type FastFieldConfig<Values, Path extends PathOf<Values>> =
-  FieldAttributes<Values, Path> & {
+export type FastFieldConfig<Value, Values> =
+  FieldAttributes<Value, Values> & {
     shouldUpdate?: (nextProps: any, props: {}) => boolean;
   };
 
@@ -14,8 +14,8 @@ export type FastFieldConfig<Values, Path extends PathOf<Values>> =
  * @deprecated Field now only subscribes to its own slice of Formik's state.
  */
 export const FastField = <
-  Values extends FormikValues = any,
-  Path extends PathOf<Values> = any
->({ shouldUpdate, ...props}: FastFieldConfig<Values, Path>) => (
-  <Field {...(props as FieldAttributes<Values, Path>)} />
+  Value extends any = any,
+  Values extends FormikValues = any
+>({ shouldUpdate, ...props}: FastFieldConfig<Value, Values>) => (
+  <Field {...(props as FieldAttributes<Value, Values>)} />
 );

@@ -2,17 +2,14 @@ import * as React from 'react';
 import cloneDeep from 'lodash/cloneDeep';
 import { arraySwap, arrayMove, arrayInsert, arrayReplace, copyArrayLike } from './helpers/array-helpers';
 import { useFormikConfig, useFormikContext } from './FormikContext';
-import { FieldMetaProps, FieldValue, FormikApi, FormikReducerState, FormikValues, PathMatchingValue, PathOf } from './types';
+import { FieldMetaProps, FormikApi, FormikReducerState, FormikValues, PathMatchingValue } from './types';
 import { useEventCallback } from './hooks/useEventCallback';
 import { getIn, isEmptyArray, isEmptyChildren, isFunction, setIn } from './utils';
 import { useFieldMeta } from './hooks/hooks';
 
-export type FieldArrayName<Values, Path extends PathOf<Values>> =
-  FieldValue<Values, Path> extends never ? never : Path;
-
-export interface UseFieldArrayConfig<Values = any, Value = any> {
+export interface UseFieldArrayConfig<Value = any, Values = any> {
   /** Really the path to the array field to be updated */
-  name: PathMatchingValue<Values, Value[]>;
+  name: PathMatchingValue<Value[], Values>;
   /** Should field array validate the form AFTER array updates/changes? */
   validateOnChange?: boolean;
 }
@@ -56,8 +53,11 @@ type UpdateFieldArrayFn<Value> = (
   array: Value[] | boolean[]
 ) => void;
 
-export const useFieldArray = <Values extends FormikValues = any, Value = any>(
-  props: UseFieldArrayConfig<Values, Value>
+export const useFieldArray = <
+  Value extends any = any,
+  Values extends FormikValues = any
+>(
+  props: UseFieldArrayConfig<Value, Values>
 ): [
   FieldMetaProps<Value[]>,
   ArrayHelpers<Value>,
@@ -322,33 +322,36 @@ export const useFieldArray = <Values extends FormikValues = any, Value = any>(
   ];
 };
 
-export type FieldArrayProps<Values, Value> =
+export type FieldArrayProps<Value, Values> =
   ArrayHelpers<Value> & {
     form: FormikApi<Values>;
     field: FieldMetaProps<Value[]>;
-    name: PathMatchingValue<Values, Value[]>;
+    name: PathMatchingValue<Value[], Values>;
   };
 
-export type FieldArrayConfig<Values, Value> =
-  UseFieldArrayConfig<Values, Value> & {
+export type FieldArrayConfig<Value, Values> =
+  UseFieldArrayConfig<Value, Values> & {
     /**
      * Field component to render. Can either be a string like 'select' or a component.
      */
-    component?: React.ComponentType<FieldArrayProps<Values, Value>>;
+    component?: React.ComponentType<FieldArrayProps<Value, Values>>;
 
     /**
       * Render prop (works like React router's <Route render={props =>} />)
       */
-    render?: (props: FieldArrayProps<Values, Value>) => React.ReactElement | null;
+    render?: (props: FieldArrayProps<Value, Values>) => React.ReactElement | null;
 
     /**
       * Children render function <Field name>{props => ...}</Field>)
       */
-    children?: (props: FieldArrayProps<Values, Value>) => React.ReactElement | null;
+    children?: (props: FieldArrayProps<Value, Values>) => React.ReactElement | null;
   };
 
-export const FieldArray = <Values extends FormikValues = any, Value = any>(
-  rawProps: FieldArrayConfig<Values, Value>
+export const FieldArray = <
+  Value extends any = any,
+  Values extends FormikValues = any
+>(
+  rawProps: FieldArrayConfig<Value, Values>
 ) => {
   const {
     component,
@@ -375,7 +378,7 @@ export const FieldArray = <Values extends FormikValues = any, Value = any>(
     }
   }, [props.validateOnChange, field.value, apiValidateOnChange, validateForm]);
 
-  const renderProps: FieldArrayProps<Values, Value> = React.useMemo(
+  const renderProps: FieldArrayProps<Value, Values> = React.useMemo(
     () => ({
       ...arrayHelpers,
       form: formikApi,

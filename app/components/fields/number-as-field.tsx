@@ -3,12 +3,11 @@ import {
     FieldAsProps,
     FormatFn,
     ParseFn,
-    TypedAsField,
     useFormikContext
 } from "formik";
 import React from "react";
 
-export const NumberAsField: TypedAsField<number | ""> = <
+export const NumberAsField = <
     Values,
 >(props: FieldAsProps<number | "", Values>) => {
     const formik = useFormikContext<Values>();

@@ -27,7 +27,7 @@ export type SingleValue<Value> =
  *
  * @private
  */
-export type FieldPassThroughConfig<Values, Value> = {
+export type FieldPassThroughConfig<Value, Values> = {
   /**
    * Validate a single field value independently
    */
@@ -57,7 +57,7 @@ export type FieldPassThroughConfig<Values, Value> = {
   /**
    * Field name
    */
-  name: PathMatchingValue<Values, Value>;
+  name: PathMatchingValue<Value, Values>;
 
   /** HTML input type */
   type?: string;
@@ -69,16 +69,16 @@ export type FieldPassThroughConfig<Values, Value> = {
   innerRef?: (instance: any) => void;
 }
 
-export type FieldHookConfig<Values, Value> =
-  { as?: any } & FieldPassThroughConfig<Values, Value>
+export type FieldHookConfig<Value, Values> =
+  { as?: any } & FieldPassThroughConfig<Value, Values>
 
 export function useField<
-  Values = any,
   Value = any,
+  Values = any
 >(
   propsOrFieldName:
-    PathMatchingValue<Values, Value> |
-    FieldHookConfig<Values, Value>
+    PathMatchingValue<Value, Values> |
+    FieldHookConfig<Value, Values>
 ): [
   FieldInputProps<Value, Values>,
   FieldMetaProps<Value>,
@@ -90,7 +90,7 @@ export function useField<
     unregisterField,
   } = formik;
 
-  const props: FieldHookConfig<Values, Value> = isObject(propsOrFieldName)
+  const props: FieldHookConfig<Value, Values> = isObject(propsOrFieldName)
     ? propsOrFieldName
     : { name: propsOrFieldName };
 
@@ -134,14 +134,10 @@ export type FieldAsProps<
   Value = any,
   Values = any
 > =
-  FieldPassThroughConfig<Values, Value> &
+  FieldPassThroughConfig<Value, Values> &
   FieldInputProps<Value, Values>;
 
-export type TypedAsField<
-  Value,
-> = <
-  Values,
->(
+export type TypedAsField<Value> = <Values>(
   props: React.PropsWithChildren<FieldAsProps<
     Value,
     Values
@@ -157,7 +153,7 @@ export abstract class FieldAsClass<
   >
 > {}
 
-export type FieldAsComponent<Values, Value> =
+export type FieldAsComponent<Value, Values> =
   any extends Values
   ? React.ComponentType<any>
   : React.ComponentType<FieldAsProps<
@@ -167,10 +163,10 @@ export type FieldAsComponent<Values, Value> =
 
 export type FieldComponentProps<
   Value = any,
-  Values = any,
+  Values = any
 > =
-  FieldPassThroughConfig<Values, Value> &
-  LegacyBag<Values, Value>;
+  FieldPassThroughConfig<Value, Values> &
+  LegacyBag<Value, Values>;
 
 export abstract class FieldComponentClass<
   Value,
@@ -181,7 +177,7 @@ export abstract class FieldComponentClass<
   >
 > {}
 
-type FieldComponentComponent<Values, Value> =
+type FieldComponentComponent<Value, Values> =
   any extends Values
   ? React.ComponentType<any>
   : React.ComponentType<FieldComponentProps<
@@ -197,7 +193,7 @@ type GenericFieldHTMLConfig = Omit<
 /**
  * Passed to `<Field component={Component} />`.
  */
-type LegacyBag<Values, Value> = {
+type LegacyBag<Value, Values> = {
   field: FieldInputProps<Value, Values>;
   // if ppl want to restrict this for a given form, let them.
   form: FormikProps<Values>;
@@ -207,11 +203,11 @@ type LegacyBag<Values, Value> = {
  * Passed to `render={Function}` or `children={Function}`.
  */
 export type FieldRenderProps<Value = any, Values = any> =
-  LegacyBag<Values, Value> & {
+  LegacyBag<Value, Values> & {
     meta: FieldMetaProps<Value>;
   }
 
-export type FieldRenderFunction<Values, Value> = (
+export type FieldRenderFunction<Value, Values> = (
   props: FieldRenderProps<Value, Values>
 ) => React.ReactElement | null;
 
@@ -234,13 +230,13 @@ export type TypedComponentField<Value> = <Values>(
  *
  * @private
  */
-export type FieldAsStringConfig<Values, Value> =
+export type FieldAsStringConfig<Value, Values> =
   React.PropsWithChildren<{
     as: string,
     component?: undefined,
     render?: undefined,
   }>
-    & FieldPassThroughConfig<Values, Value>
+    & FieldPassThroughConfig<Value, Values>
     & GenericFieldHTMLConfig;
 
 
@@ -249,28 +245,28 @@ export type FieldAsStringConfig<Values, Value> =
  *
  * @private
  */
-export type FieldAsComponentConfig<Values, Value> =
+export type FieldAsComponentConfig<Value, Values> =
   React.PropsWithChildren<
     {
-      as: FieldAsComponent<Values, Value>;
+      as: FieldAsComponent<Value, Values>;
       component?: undefined,
       render?: undefined,
     }
   >
-    & FieldPassThroughConfig<Values, Value>;
+    & FieldPassThroughConfig<Value, Values>;
 
 /**
  * `field.component = string`
  *
  * @private
  */
-export type FieldStringComponentConfig<Values, Value> =
+export type FieldStringComponentConfig<Value, Values> =
   React.PropsWithChildren<{
     component: string,
     as?: undefined,
     render?: undefined,
   }>
-    & FieldPassThroughConfig<Values, Value>
+    & FieldPassThroughConfig<Value, Values>
     & GenericFieldHTMLConfig;
 
 /**
@@ -278,77 +274,77 @@ export type FieldStringComponentConfig<Values, Value> =
  *
  * @private
  */
-export type FieldComponentConfig<Values, Value> =
+export type FieldComponentConfig<Value, Values> =
   React.PropsWithChildren<
     {
-      component: FieldComponentComponent<Values, Value>;
+      component: FieldComponentComponent<Value, Values>;
       as?: undefined,
       render?: undefined,
     }
   >
-    & FieldPassThroughConfig<Values, Value>;
+    & FieldPassThroughConfig<Value, Values>;
 
 /**
  * `field.render = Function`
  *
  * @private
  */
-export type FieldRenderConfig<Values, Value> =
+export type FieldRenderConfig<Value, Values> =
   {
-    render: FieldRenderFunction<Values, Value>;
+    render: FieldRenderFunction<Value, Values>;
     as?: undefined,
     component?: undefined,
     children?: undefined
-  } & FieldPassThroughConfig<Values, Value>;
+  } & FieldPassThroughConfig<Value, Values>;
 
 /**
  * `field.children = Function`
  *
  * @private
  */
-export type FieldChildrenConfig<Values, Value> =
+export type FieldChildrenConfig<Value, Values> =
   {
-    children: FieldRenderFunction<Values, Value>;
+    children: FieldRenderFunction<Value, Values>;
     as?: undefined,
     component?: undefined,
     render?: undefined,
-  } & FieldPassThroughConfig<Values, Value>;
+  } & FieldPassThroughConfig<Value, Values>;
 
 /**
  * no config, `<Field name="">`
  *
  * @private
  */
-export type FieldDefaultConfig<Values, Value> =
+export type FieldDefaultConfig<Value, Values> =
   {
     as?: undefined,
     component?: undefined,
     render?: undefined,
     children?: undefined,
   }
-    & FieldPassThroughConfig<Values, Value>
+    & FieldPassThroughConfig<Value, Values>
     & GenericFieldHTMLConfig;
 
-export type FieldConfig<Values, Value> =
-  FieldAsStringConfig<Values, Value> |
-  FieldAsComponentConfig<Values, Value> |
-  FieldStringComponentConfig<Values, Value> |
-  FieldComponentConfig<Values, Value> |
-  FieldRenderConfig<Values, Value> |
-  FieldChildrenConfig<Values, Value> |
-  FieldDefaultConfig<Values, Value>;
+export type FieldConfig<Value, Values> =
+  FieldAsStringConfig<Value, Values> |
+  FieldAsComponentConfig<Value, Values> |
+  FieldStringComponentConfig<Value, Values> |
+  FieldComponentConfig<Value, Values> |
+  FieldRenderConfig<Value, Values> |
+  FieldChildrenConfig<Value, Values> |
+  FieldDefaultConfig<Value, Values>;
 
 /**
  * @deprecated use `FieldConfig`
  */
-export type FieldAttributes<Values, Value> =
-  FieldConfig<Values, Value>;
+export type FieldAttributes<Value, Values> =
+  FieldConfig<Value, Values>;
 
 export function Field<
-  Values = any,
   Value = any,
+  Values = any,
 >(
-  props: FieldConfig<Values, Value>
+  props: FieldConfig<Value, Values>
 ) {
 
   if (__DEV__) {

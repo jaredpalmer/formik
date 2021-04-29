@@ -2,19 +2,19 @@ import * as React from "react";
 import { Field, FieldConfig } from "../Field";
 
 export type TypedField<Values> = <Value>(
-  props: FieldConfig<Values, Value>
+  props: FieldConfig<Value, Values>
 ) =>
   React.ReactElement | null;
 
 export type CustomField<Value> = <
   Values,
 >(
-  props: FieldConfig<Values, Value>
+  props: FieldConfig<Value, Values>
 ) =>
   React.ReactElement | null;
 
-export type FieldByValue<Values, Value> = (
-  props: FieldConfig<Values, Value>
+export type FieldByValue<Value, Values> = (
+  props: FieldConfig<Value, Values>
 ) =>
   React.ReactElement | null;
 
@@ -23,7 +23,7 @@ export type FieldByValue<Values, Value> = (
  */
 export const createCustomField = <Values,>() => <Value,>(
   FieldType: CustomField<Value>
-): FieldByValue<Values, Value> =>
+): FieldByValue<Value, Values> =>
   (props) => <FieldType<Values> {...props} />;
 
 /**
@@ -33,7 +33,7 @@ export const createCustomField = <Values,>() => <Value,>(
  */
 export const useCustomField = <Values,>() => <Value,>(
   FieldType: CustomField<Value>
-) => React.useMemo<FieldByValue<Values, Value>>(
+) => React.useMemo<FieldByValue<Value, Values>>(
   () => createCustomField<Values>()(FieldType),
   [FieldType]
 );

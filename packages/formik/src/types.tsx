@@ -158,7 +158,7 @@ export type PathOf<Values> = object extends Values
 /**
  * Field Types
  */
-export type FieldValue<Values, Path extends PathOf<Values>> =
+type ValueMatchingPath<Values, Path extends PathOf<Values>> =
   string extends Path
     // if Path is any or never, return that as value
     ? any
@@ -168,7 +168,7 @@ export type FieldValue<Values, Path extends PathOf<Values>> =
         : Values extends readonly (infer SingleValue)[]
           ? Path extends `${string}.${infer NextPath}`
             ? NextPath extends PathOf<Values[number]>
-              ? FieldValue<Values[number], NextPath>
+              ? ValueMatchingPath<Values[number], NextPath>
               : never
             : SingleValue
           : Path extends keyof Values
@@ -176,31 +176,27 @@ export type FieldValue<Values, Path extends PathOf<Values>> =
             : Path extends `${infer Key}.${infer NextPath}`
               ? Key extends keyof Values
                 ? NextPath extends PathOf<Values[Key]>
-                  ? FieldValue<Values[Key], NextPath>
+                  ? ValueMatchingPath<Values[Key], NextPath>
                   : never
                 : never
               : never;
 
-export type PathMatchingValue<Values, Value> =
+export type PathMatchingValue<Value, Values> =
   object extends Values
     ? any
     // infer individual paths
     : PathOf<Values> extends (infer Path)
       // reapply constraint
       ? Path extends PathOf<Values>
-        ? FieldValue<Values, Path> extends Value
+        ? ValueMatchingPath<Values, Path> extends Value
           ? Path
           : never
         : never
       : never;
 
 export type RegisterFieldFn<Values> = <Value,>(
-  name: PathMatchingValue<Values, Value>,
-  { validate }: Pick<
-    FieldPassThroughConfig<
-      PathMatchingValue<Values, Value>,
-      Value
-    >, 'validate'>
+  name: PathMatchingValue<Value, Values>,
+  args: { validate?: FieldValidator<SingleValue<Value>> },
 ) => void;
 
 export type UnregisterFieldFn<Values> = <Path extends PathOf<Values>>(
@@ -231,7 +227,7 @@ export type SetValuesFn<Values extends FormikValues> = (
 export type SetFieldValueFn<Values extends FormikValues> = <
   Value
 >(
-  field: PathMatchingValue<Values, Value>,
+  field: PathMatchingValue<Value, Values>,
   value: Value,
   shouldValidate?: boolean | undefined
 ) => Promise<void | FormikErrors<Values>>;
@@ -538,7 +534,7 @@ export type FieldInputProps<Value, Values> = {
   /** Value of the field */
   value: SingleValue<Value>;
   /** Name of the field */
-  name: PathMatchingValue<Values, Value>;
+  name: PathMatchingValue<Value, Values>;
   /** Multiple select? */
   multiple?: boolean;
   /** Is the field checked? */

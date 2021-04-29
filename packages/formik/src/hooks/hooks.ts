@@ -22,9 +22,9 @@ import { FieldHookConfig, FormatFn, ParseFn, SingleValue } from '../Field';
  *
  * Pass `FieldMetaProps` from useFieldMeta, so we don't subscribe twice.
  */
-export const useFieldProps = <Values, Value>(
-    nameOrOptions: PathMatchingValue<Values, Value> |
-      FieldHookConfig<Values, Value>,
+export const useFieldProps = <Value, Values>(
+    nameOrOptions: PathMatchingValue<Value, Values> |
+      FieldHookConfig<Value, Values>,
     fieldMeta: FieldMetaProps<Value>
   ): FieldInputProps<Value, Values> => {
     const {

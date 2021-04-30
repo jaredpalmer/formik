@@ -123,21 +123,27 @@ export type FormikState<Values> = FormikReducerState<Values> &
 
 export type GetStateFn<Values> = () => FormikState<Values>;
 
+export type KeyValueMap<PathTuples extends any[], Value> = {
+  path: PathTuples,
+  value: Value
+}
+
 /**
  * Recursively convert objects to tuples, like
  * `{ name: { first: string } }` -> `['name'] | ['name', 'first']`
  */
-export type RecursivelyTupleKeys<Values> = Values extends string
-  ? []
-  : Values extends (infer SingleValue)[]
+export type RecursivelyTuplePaths<Values> = Values extends (infer SingleValue)[]
     ?
+      // we'll add a special case for numbers, so we can rebuild them with 0s
+      | ["0"]
+      | ["0", ...RecursivelyTuplePaths<SingleValue>]
       | [number]
-      | [number, ...RecursivelyTupleKeys<SingleValue>]
+      | [number, ...RecursivelyTuplePaths<SingleValue>]
     : Values extends Record<string, any>
       ?
         | [keyof Values]
         | {
-            [Key in keyof Values]: [Key, ...RecursivelyTupleKeys<Values[Key]>]
+            [Key in keyof Values]: [Key, ...RecursivelyTuplePaths<Values[Key]>]
           }[Extract<keyof Values, string>]
       : [];
 
@@ -145,27 +151,31 @@ export type RecursivelyTupleKeys<Values> = Values extends string
  * Flatten tuples created by RecursivelyTupleKeys into a union of paths, like:
  * `['name'] | ['name', 'first' ] -> 'name' | 'name.first'`
  */
-export type FlattenPathTuples<PathTuples extends any[]> =
+export type FlattenPathTuples<PathTuples extends any[], ValidSubtypes extends string | number = string | number> =
   PathTuples extends []
     ? never
     : PathTuples extends [infer SinglePath]
-      ? SinglePath extends string | number
+      ? SinglePath extends ValidSubtypes
         ? `${SinglePath}`
         : never
       : PathTuples extends [infer Prefix, ...infer Rest]
-        ? Prefix extends string | number
-          ? `${Prefix}.${FlattenPathTuples<Extract<Rest, (string | number)[]>>}`
+        ? Prefix extends ValidSubtypes
+          ? `${Prefix}.${FlattenPathTuples<Extract<Rest, ValidSubtypes[]>>}`
           : never
         : string;
 
 export type PathOf<Values> = object extends Values
   ? any :
-  FlattenPathTuples<RecursivelyTupleKeys<Values>> & string;
+  FlattenPathTuples<RecursivelyTuplePaths<Values>> & string;
+
+export type StringOnlyPathOf<Values> = object extends Values
+  ? any :
+  FlattenPathTuples<RecursivelyTuplePaths<Values>, string> & PathOf<Values>;
 
 /**
  * Field Types
  */
-type ValueMatchingPath<Values, Path extends PathOf<Values>> =
+export type ValueMatchingPath<Values, Path extends PathOf<Values>> =
   string extends Path
     // if Path is any or never, return that as value
     ? any
@@ -173,10 +183,14 @@ type ValueMatchingPath<Values, Path extends PathOf<Values>> =
         // if Values is any, return any
         ? any
         : Values extends readonly (infer SingleValue)[]
-          ? Path extends `${string}.${infer NextPath}`
+          ? Path extends `${number}.${infer NextPath}`
             ? NextPath extends PathOf<Values[number]>
               ? ValueMatchingPath<Values[number], NextPath>
               : never
+            : Path extends `0.${infer NextPath}`
+              ? NextPath extends PathOf<Values[number]>
+                ? ValueMatchingPath<Values[number], NextPath>
+                : never
             : SingleValue
           : Path extends keyof Values
             ? Values[Path]
@@ -188,16 +202,37 @@ type ValueMatchingPath<Values, Path extends PathOf<Values>> =
                 : never
               : never;
 
+export type RenumerateTemplate<Path extends string> = string extends Path
+  ? any
+  : Path extends `0.${infer NextPath}`
+    ? `${number}.${RenumerateTemplate<NextPath>}`
+    : Path extends `${infer Prefix}.${infer NextPath}`
+      ? `${Prefix}.${RenumerateTemplate<NextPath>}`
+      : Path extends `0`
+        ? `${number}`
+        : Path;
+
 export type PathMatchingValue<Value, Values> =
   object extends Values
     ? any
     // infer individual paths
-    : PathOf<Values> extends (infer Path)
+    : StringOnlyPathOf<Values> extends (infer Path)
       // reapply constraint
-      ? Path extends PathOf<Values>
+      ? Path extends StringOnlyPathOf<Values>
         ? ValueMatchingPath<Values, Path> extends Value
-          ? Path
+          ? RenumerateTemplate<Path>
           : never
+        : never
+      : never;
+
+export type AllPaths<Values> =
+  object extends Values
+    ? any
+    // infer individual paths
+    : StringOnlyPathOf<Values> extends (infer Path)
+      // reapply constraint
+      ? Path extends StringOnlyPathOf<Values>
+        ? Path
         : never
       : never;
 

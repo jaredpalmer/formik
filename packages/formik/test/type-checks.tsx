@@ -8,12 +8,16 @@ import {
     TypedAsField,
     TypedComponentField,
     PathMatchingValue,
-    RecursivelyTupleKeys,
+    RecursivelyTuplePaths,
     FieldComponentClass,
     FieldConfig,
     CustomField,
     useTypedField,
-    useCustomField
+    useCustomField,
+    ValueMatchingPath,
+    AllPaths,
+    PathOf,
+    StringOnlyPathOf
 } from "../src";
 
 type BasePerson = {
@@ -25,6 +29,8 @@ type BasePerson = {
   nicknames: string[],
   age: number,
   favoriteNumbers: number[];
+  rootStrPath: "rootStrValue";
+  arrayStrPath: ("arrayStrValue")[];
 }
 
 type Person = BasePerson & {
@@ -105,7 +111,7 @@ const fieldTests = (props: FieldConfig<"age", Person>) => {
     {/* Default */}
     <Field name="age" />
     <TypedField name="age" />
-    <TypedField name="favoriteNumbers.0" value="" />
+    <TypedField name="favoriteNumbers.0" value={0} />
     <TypedField name="friends.0.name.first" />
 
     <Field name="aeg" />
@@ -354,6 +360,8 @@ const basePerson: BasePerson = {
   nicknames: [""],
   age: 21,
   favoriteNumbers: [1],
+  rootStrPath: "rootStrValue",
+  arrayStrPath: ["arrayStrValue"],
 }
 
 const person: Person = {
@@ -364,12 +372,6 @@ const person: Person = {
     basePerson
   ]
 };
-
-const recursivelyTupledKeys: RecursivelyTupleKeys<Person>[] = [
-  ["friends", 0],
-  ["friends", 0, "favoriteNumbers"],
-  ["friends", 0, "favoriteNumbers", 0]
-];
 
 const strMatches: PathMatchingValue<string, Person> = "motto";
 const strsMatches: PathMatchingValue<string[], Person> = "nicknames";
@@ -394,6 +396,14 @@ const obj1num1Matches: PathMatchingValue<number, Person> = "friends.1.favoriteNu
 const strFails: PathMatchingValue<number, Person> = "motto";
 // @ts-expect-error
 const strsFails: PathMatchingValue<number, Person[]> = "nicknames";
+
+// @ts-expect-error paths aren't assignable to values that don't exist
+const invalidValueFails: PathMatchingValue<"notARealValue", Person> = "partner.age";
+// @ts-expect-error unexpected paths aren't assignable to invalid values
+const invalidPathFailsForInvalidValue: PathMatchingValue<"notARealValue", Person> = "notARealPath";
+// @ts-expect-error unexpected paths aren't assignable to invalid values
+const invalidArrayPathFailsForInvalidValue: PathMatchingValue<"notARealValue", Person> = "friends.1";
+
 // @ts-expect-error
 const str1Fails: PathMatchingValue<number, Person> = "nicknames.1";
 // @ts-expect-error
@@ -426,3 +436,31 @@ const obj1numFails: PathMatchingValue<string, Person> = "friends.1.age";
 const obj1numsFails: PathMatchingValue<string[], Person> = "friends.1.favoriteNumbers";
 // @ts-expect-error
 const obj1num1Fails: PathMatchingValue<string, Person> = "friends.1.favoriteNumbers.1";
+
+type TinyTest = {
+  favoriteNumbers: number[];
+}
+
+const recursivelyTupledKeys: RecursivelyTuplePaths<TinyTest>[] = [
+  ["favoriteNumbers"],
+  ["favoriteNumbers", "0"],
+  ["favoriteNumbers", 0],
+];
+
+// simple path
+let allTuples: RecursivelyTuplePaths<TinyTest> | undefined;
+let pathOf: PathOf<TinyTest> | undefined;
+let pathOfS: StringOnlyPathOf<TinyTest> | undefined;
+let allPaths: AllPaths<TinyTest> | undefined;
+let allValues: ValueMatchingPath<TinyTest, AllPaths<TinyTest>>;
+let strongValue: ValueMatchingPath<Person, "rootStrPath"> | undefined;
+let rootStrPath: PathMatchingValue<"rootStrValue", Person> | undefined;
+let arrayStrPath: PathMatchingValue<"arrayStrValue", Person> | undefined = "arrayStrPath.1";
+// @ts-expect-error
+let arrayStrPathFails: PathMatchingValue<"arrayStrValue", Person> | undefined = "friends.1";
+let arrayRootValue: ValueMatchingPath<Person['arrayStrPath'], '1'> | undefined;
+
+// @ts-expect-error
+const strongFails: PathMatchingValue<"valid", Person> = "weak";
+// @ts-expect-error array values aren't assignable to unexpected paths
+const invalidPathFails: PathMatchingValue<"notARealValue", Person> = "partner.nicknames.1";

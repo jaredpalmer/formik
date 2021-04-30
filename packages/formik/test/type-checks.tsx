@@ -129,6 +129,9 @@ const fieldTests = (props: FieldConfig<"age", Person>) => {
     <TypedField name="age" aria-required={true} />
     <TypedField name="friends.0.name.first" aria-required={true} />
 
+    {/* @ts-expect-error name doesn't match PathOf<Values> */}
+    <TypedField name="friends.0.age" aria-required={true} value="" />
+
     {/* FieldAsString */}
     <Field name="age" as="select" />
 

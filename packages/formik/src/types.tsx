@@ -1,8 +1,15 @@
 import * as React from 'react';
 import { Comparer, Selector } from 'use-optimized-selector';
-import { FieldPassThroughConfig, SingleValue } from './Field';
-import { TypedField } from './hooks/useTypedField';
-import { TypedFieldArray } from './hooks/useTypedFieldArray';
+import { TypedField } from './Field.types';
+import { TypedFieldArray } from './FieldArray.types';
+
+export type ParseFn<Value> = (value: unknown, name: string) => Value;
+export type FormatFn<Value> = (value: Value, name: string) => any;
+
+export type SingleValue<Value> =
+  Value extends (infer SingleValue)[]
+    ? SingleValue
+    : Value;
 
 /**
  * Values of fields in the form

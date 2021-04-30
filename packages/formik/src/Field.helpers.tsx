@@ -1,25 +1,13 @@
 import * as React from "react";
-import { Field, FieldConfig } from "../Field";
-
-export type TypedField<Values> = <Value>(
-  props: FieldConfig<Value, Values>
-) =>
-  React.ReactElement | null;
-
-export type CustomField<Value> = <
-  Values,
->(
-  props: FieldConfig<Value, Values>
-) =>
-  React.ReactElement | null;
-
-export type FieldByValue<Value, Values> = (
-  props: FieldConfig<Value, Values>
-) =>
-  React.ReactElement | null;
+import { Field } from "./Field";
+import {
+  CustomField,
+  FieldByValue,
+  TypedField
+} from "./Field.types";
 
 /**
- * Create a ResolvedField which maps a custom Field type to Values.
+ * Create a Field<Value, Values> from a CustomField<Value>.
  */
 export const createCustomField = <Values,>() => <Value,>(
   FieldType: CustomField<Value>
@@ -27,13 +15,11 @@ export const createCustomField = <Values,>() => <Value,>(
   (props) => <FieldType<Values> {...props} />;
 
 /**
- * Create a ResolvedField which maps a custom Field type to Values.
- *
- * @private
+ * Use a CustomField<Value> as Field<Value, Values>.
  */
 export const useCustomField = <Values,>() => <Value,>(
   FieldType: CustomField<Value>
-) => React.useMemo<FieldByValue<Value, Values>>(
+) => React.useMemo(
   () => createCustomField<Values>()(FieldType),
   [FieldType]
 );
@@ -52,7 +38,7 @@ export const createTypedField = <Values,>(
  */
 export const useTypedField = <Values,>(
   FieldType: TypedField<Values> = Field
-) => React.useMemo<TypedField<Values>>(
+) => React.useMemo(
   () => createTypedField<Values>(FieldType),
   []
 );

@@ -2,9 +2,9 @@ import { formatNumberOrEmpty, parseNumberOrEmpty } from "app/helpers/parse-forma
 import {
     CustomField,
     FieldConfig,
-    useTypedField
 } from "formik";
 import React from "react";
+import { useTypedFields } from ".";
 import { NumberAsField } from "./number-as-field";
 
 export const NumberField: CustomField<number | ""> = <Values,>(
@@ -13,9 +13,9 @@ export const NumberField: CustomField<number | ""> = <Values,>(
         Values
     >
 ) => {
-    const TypedField = useTypedField<Values>();
+    const fields = useTypedFields<Values>();
 
-    return <TypedField
+    return <fields.Field
         type="text"
         name={props.name}
         format={(formatNumberOrEmpty)}

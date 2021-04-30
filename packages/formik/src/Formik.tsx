@@ -41,8 +41,8 @@ import {
 } from './helpers/form-helpers';
 import { useFormikSubscriptions } from './hooks/useFormikSubscriptions';
 import { useEventCallback } from './hooks/useEventCallback';
-import { useTypedField } from './hooks/useTypedField';
-import { useTypedFieldArray } from './hooks/useTypedFieldArray';
+import { useTypedField } from './Field.helpers';
+import { useTypedFieldArray } from './FieldArray.helpers';
 
 // State reducer
 function formikReducer<Values>(

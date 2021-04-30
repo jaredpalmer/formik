@@ -1,6 +1,9 @@
-import { createTypedFieldArray } from './../../../packages/formik/src/hooks/useTypedFieldArray';
 import { NumberField } from 'app/components/fields/number-field';
-import { createCustomField, createTypedField } from 'formik';
+import {
+    createCustomField,
+    createTypedField,
+    createTypedFieldArray
+} from 'formik';
 import { useMemo } from 'react';
 
 export const createTypedFields = <Values,>() => ({

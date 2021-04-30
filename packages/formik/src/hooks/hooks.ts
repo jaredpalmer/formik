@@ -1,4 +1,3 @@
-import { PathMatchingValue } from './../types';
 import { useMemo } from 'react';
 import { useFormikContext } from '../FormikContext';
 import {
@@ -15,7 +14,8 @@ import {
 } from '../types';
 import { useFormikState } from './useFormikState';
 import { isInputEvent, isObject, isShallowEqual } from '../utils';
-import { FieldHookConfig, FormatFn, ParseFn, SingleValue } from '../Field';
+import { FormatFn, ParseFn, PathMatchingValue, SingleValue } from '../types';
+import { FieldHookConfig } from '../Field.types';
 
 /**
  * Get props to spread to input elements, like `<input {...fieldProps} />`.

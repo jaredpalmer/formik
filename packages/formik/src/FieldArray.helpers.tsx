@@ -1,10 +1,6 @@
 import * as React from "react";
-import { FieldArray, FieldArrayConfig } from "../FieldArray";
-
-export type TypedFieldArray<Values> = <Value>(
-  props: FieldArrayConfig<Value, Values>
-) =>
-  React.ReactElement | null;
+import { FieldArray } from "./FieldArray";
+import { TypedFieldArray } from "./FieldArray.types";
 
 /**
  * Get TypedFieldArray from anywhere.

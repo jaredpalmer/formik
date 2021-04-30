@@ -1,3 +1,3 @@
-# @johnrom/formik-v3
+# formik
 
 This is an experimental package. DO NOT USE IN PRODUCTION.

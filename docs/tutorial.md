@@ -226,7 +226,7 @@ const handleChange = event => {
     ...prevValues,
     // we use the name to tell Formik which key of `values` to update
     [event.target.name]: event.target.value
-  });
+  }));
 }
 ```
 

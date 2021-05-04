@@ -1,5 +1,5 @@
 {
-  "name": "@johnrom/formik-native-v3",
+  "name": "formik-native",
   "version": "3.1.0-types1",
   "license": "Apache-2.0",
   "author": "Jared Palmer <jared@palmer.net>",

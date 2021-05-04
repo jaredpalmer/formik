@@ -8,16 +8,13 @@ import {
     TypedAsField,
     TypedComponentField,
     PathMatchingValue,
-    RecursivelyTuplePaths,
     FieldComponentClass,
     FieldConfig,
     CustomField,
     useTypedField,
     useCustomField,
     ValueMatchingPath,
-    AllPaths,
     PathOf,
-    StringOnlyPathOf
 } from "../src";
 
 type BasePerson = {
@@ -444,24 +441,14 @@ type TinyTest = {
   favoriteNumbers: number[];
 }
 
-const recursivelyTupledKeys: RecursivelyTuplePaths<TinyTest>[] = [
-  ["favoriteNumbers"],
-  ["favoriteNumbers", "0"],
-  ["favoriteNumbers", 0],
-];
-
 // simple path
-let allTuples: RecursivelyTuplePaths<TinyTest> | undefined;
-let pathOf: PathOf<TinyTest> | undefined;
-let pathOfS: StringOnlyPathOf<TinyTest> | undefined;
-let allPaths: AllPaths<TinyTest> | undefined;
-let allValues: ValueMatchingPath<TinyTest, AllPaths<TinyTest>>;
-let strongValue: ValueMatchingPath<Person, "rootStrPath"> | undefined;
-let rootStrPath: PathMatchingValue<"rootStrValue", Person> | undefined;
-let arrayStrPath: PathMatchingValue<"arrayStrValue", Person> | undefined = "arrayStrPath.1";
+const pathOf: PathOf<TinyTest> | undefined = "favoriteNumbers";
+const strongValue: ValueMatchingPath<Person, "rootStrPath"> | undefined = "rootStrValue";
+const rootStrPath: PathMatchingValue<"rootStrValue", Person> | undefined = "partner.rootStrPath";
+const arrayStrPath: PathMatchingValue<"arrayStrValue", Person> | undefined = "arrayStrPath.1";
 // @ts-expect-error
-let arrayStrPathFails: PathMatchingValue<"arrayStrValue", Person> | undefined = "friends.1";
-let arrayRootValue: ValueMatchingPath<Person['arrayStrPath'], '1'> | undefined;
+const arrayStrPathFails: PathMatchingValue<"arrayStrValue", Person> | undefined = "friends.1";
+const arrayRootValue: ValueMatchingPath<Person['arrayStrPath'], '1'> | undefined = "arrayStrValue";
 
 // @ts-expect-error
 const strongFails: PathMatchingValue<"valid", Person> = "weak";

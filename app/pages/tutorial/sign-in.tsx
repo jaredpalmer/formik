@@ -5,7 +5,6 @@ import {
   Form,
   FormikProvider,
   FormikState,
-  PathOf,
   useFormik,
 } from 'formik';
 import * as Yup from 'yup';
@@ -22,10 +21,6 @@ type SignInValues = {
     year: number | "",
   }
 };
-
-interface MyProps {
-  name: PathOf<SignInValues>;
-}
 
 const selectSignInState = (formikState: FormikState<SignInValues>) => ({
   values: formikState.values,

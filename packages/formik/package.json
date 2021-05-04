@@ -30,6 +30,9 @@
   "umd:main": "dist/formik.umd.production.js",
   "module": "dist/formik.esm.js",
   "typings": "dist/index.d.ts",
+  "typesVersions": {
+    ">=4.1": { "helpers/path-helpers.d.ts": ["helpers/path-helpers.untyped.d.ts"] }
+  },
   "files": [
     "dist"
   ],

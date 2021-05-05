@@ -29,9 +29,13 @@
   "main": "dist/index.js",
   "umd:main": "dist/formik.umd.production.js",
   "module": "dist/formik.esm.js",
-  "typings": "dist/index.d.ts",
+  "types": "./dist/index.d.ts",
   "typesVersions": {
-    "<4.1": { "helpers/path-helpers.d.ts": ["helpers/path-helpers.untyped.d.ts"] }
+    "<4.1": {
+      "*": [
+        "dist/untyped/*"
+      ]
+    }
   },
   "files": [
     "dist"
@@ -43,9 +47,10 @@
     "test": "tsdx test --env=jsdom",
     "test:watch": "npm run test -- --watchAll",
     "start": "tsdx watch --tsconfig tsconfig.build.json --verbose --noClean",
-    "build": "tsdx build --tsconfig tsconfig.build.json",
-    "lint": "tsdx lint",
-    "prepublish": "npm run build"
+    "prepublish": "npm run build",
+    "build": "tsdx build --tsconfig tsconfig.build.json && build-untyped",
+    "build-untyped": "tsc --emitDeclarationOnly --noEmit false --project tsconfig.build.json --outDir dist/untyped && mv -f dist/untyped/helpers/path-helpers.untyped.d.ts dist/untyped/helpers/path-helpers.d.ts",
+    "lint": "tsdx lint"
   },
   "dependencies": {
     "deepmerge": "^2.1.1",

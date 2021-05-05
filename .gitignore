@@ -1,4 +1,5 @@
 dist
+dist-untyped
 compiled
 *.log
 coverage

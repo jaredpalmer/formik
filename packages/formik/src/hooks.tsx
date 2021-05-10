@@ -68,9 +68,9 @@ export type UseFieldProps<V = any> = {
  * Returns Formik field value updater function
  * @public
  */
-export function useSetFieldValue<
+export function useSetFieldValue<Values>(): FormikContextType<
   Values
->(): FormikContextType<Values>['setFieldValue'] {
+>['setFieldValue'] {
   return useFormikContextSelector<
     Values,
     FormikContextType<Values>['setFieldValue']
@@ -81,9 +81,9 @@ export function useSetFieldValue<
  * Returns Formik field touched updater function
  * @public
  */
-export function useSetFieldTouched<
+export function useSetFieldTouched<Values>(): FormikContextType<
   Values
->(): FormikContextType<Values>['setFieldTouched'] {
+>['setFieldTouched'] {
   return useFormikContextSelector<
     Values,
     FormikContextType<Values>['setFieldTouched']
@@ -365,7 +365,10 @@ export function useInitialStatus<Values>() {
  * Returns Formik errors and updater function
  * @public
  */
-export function useErrors<Values>() {
+export function useErrors<Values>(): [
+  FormikContextType<Values>['errors'],
+  FormikContextType<Values>['setErrors']
+] {
   const state = useFormikContextSelector<
     Values,
     FormikContextType<Values>['errors']
@@ -381,7 +384,10 @@ export function useErrors<Values>() {
  * Returns Formik values and updater function
  * @public
  */
-export function useValues<Values>() {
+export function useValues<Values>(): [
+  Values,
+  FormikContextType<Values>['setValues']
+] {
   const state = useFormikContextSelector<
     Values,
     FormikContextType<Values>['values']
@@ -397,7 +403,10 @@ export function useValues<Values>() {
  * Returns Formik touched state and updater function
  * @public
  */
-export function useTouched<Values>() {
+export function useTouched<Values>(): [
+  FormikContextType<Values>['touched'],
+  FormikContextType<Values>['setTouched']
+] {
   const state = useFormikContextSelector<
     Values,
     FormikContextType<Values>['touched']
@@ -449,7 +458,7 @@ export function useSetErrors<Values>() {
  * Returns Formik status state and updater function
  * @public
  */
-export function useStatus<T>() {
+export function useStatus<T>(): [T, FormikContextType<unknown>['setStatus']] {
   const state: T = useFormikContextSelector<
     unknown,
     FormikContextType<unknown>['status']

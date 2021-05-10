@@ -13,3 +13,6 @@ This example demonstrates how to work with array fields in Formik.
   sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
   ></iframe>
 </div>
+
+
+> **_NOTE:_** You must not use a ```React.Fragment``` Element as child within the ```FieldArray```.

@@ -68,9 +68,7 @@ export type UseFieldProps<V = any> = {
  * Returns Formik field value updater function
  * @public
  */
-export function useSetFieldValue<Values>(): FormikContextType<
-  Values
->['setFieldValue'] {
+export function useSetFieldValue<Values>() {
   return useFormikContextSelector<
     Values,
     FormikContextType<Values>['setFieldValue']
@@ -81,9 +79,7 @@ export function useSetFieldValue<Values>(): FormikContextType<
  * Returns Formik field touched updater function
  * @public
  */
-export function useSetFieldTouched<Values>(): FormikContextType<
-  Values
->['setFieldTouched'] {
+export function useSetFieldTouched<Values>() {
   return useFormikContextSelector<
     Values,
     FormikContextType<Values>['setFieldTouched']

@@ -34,8 +34,8 @@ import { Seo } from 'components/Seo';
 import { DocsPageFooter } from 'components/DocsPageFooter';
 import addRouterEvents from 'components/addRouterEvents';
 import MDXComponents from 'components/MDXComponents';
-import hydrate from 'next-mdx-remote/hydrate';
-import renderToString from 'next-mdx-remote/render-to-string';
+import { serialize } from 'next-mdx-remote/serialize';
+import { MDXRemote } from 'next-mdx-remote';
 import rehypeDocs from 'lib/docs/rehype-docs';
 
 interface DocsProps {
@@ -81,10 +81,6 @@ export default function Docs({ page, routes, route: _route }: DocsProps) {
     return <ErrorPage statusCode={404} />;
   }
 
-  const content = hydrate(page.mdxSource as any, {
-    components: MDXComponents,
-  });
-
   return (
     <>
       {tag && (
@@ -120,7 +116,13 @@ export default function Docs({ page, routes, route: _route }: DocsProps) {
 
                     <div className={s['markdown'] + ' w-full docs'}>
                       <h1>{page.title}</h1>
-                      <div className={s['markdown']}>{content}</div>
+                      <div className={s['markdown']}>
+                        {' '}
+                        <MDXRemote
+                          {...page.mdxSource}
+                          components={MDXComponents}
+                        />
+                      </div>
                       <DocsPageFooter
                         href={route?.path || ''}
                         route={route!}
@@ -137,7 +139,7 @@ export default function Docs({ page, routes, route: _route }: DocsProps) {
                           <h4 className="font-semibold uppercase text-sm mb-2 mt-2 text-gray-500">
                             On this page
                           </h4>
-                          <Toc />
+                          <Toc key={asPath} />
                         </div>
                       </div>
                     ) : null}
@@ -270,8 +272,7 @@ export const getStaticProps: GetStaticProps<any, { slug: string[] }> = async ({
 
   const { content, data } = matter(md);
 
-  const mdxSource = await renderToString(content ?? '', {
-    components: MDXComponents,
+  const mdxSource = await serialize(content ?? '', {
     mdxOptions: {
       remarkPlugins,
       rehypePlugins: [[rehypeDocs as any, { filePath: route.path!, tag }]],

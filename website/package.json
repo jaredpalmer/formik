@@ -21,6 +21,7 @@
     "@mdx-js/tag": "^0.20.3",
     "@next/mdx": "^9.4.0",
     "@next/plugin-google-analytics": "^10.0.3",
+    "@notionhq/client": "^0.1.3",
     "@zeit/fetch": "^6.0.0",
     "@zeit/react-jsx-parser": "^2.0.0",
     "async-sema": "^3.1.0",

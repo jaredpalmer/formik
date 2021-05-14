@@ -120,23 +120,26 @@ const FormTests = () => {
     onSubmit: noopVoid,
   });
 
-  formikAny.setFieldValue("age", 1);
-  formikAny.setFieldValue("age", "");
-  formikTyped.setFieldValue("age", 1);
-  formikTyped.setFieldValue("ageOrEmpty", 1);
-  formikTyped.setFieldValue("age", 1 as number | "");
-  formikTyped.setFieldValue("favoriteNumbers.0", 1);
+  React.useEffect(() => {
+    formikAny.setFieldValue("age", 1);
+    formikAny.setFieldValue("age", "");
+    formikTyped.setFieldValue("age", 1);
+    formikTyped.setFieldValue("ageOrEmpty", 1);
+    formikTyped.setFieldValue("age", 1 as number | "");
+    formikTyped.setFieldValue("favoriteNumbers.0", 1);
 
-  // @ts-expect-error value should match
-  formikTyped.setFieldValue("age", "");
-  // @ts-expect-error string is not assignable to PathOf<Person>
-  formikTyped.setFieldValue("age" as string, "" as any);
+    // @ts-expect-error value should match
+    formikTyped.setFieldValue("age", "");
+    // @ts-expect-error string is not assignable to PathOf<Person>
+    formikTyped.setFieldValue("age" as string, "" as any);
 
-  // not working due to:
-  // https://github.com/microsoft/TypeScript/issues/30808
-  formikTyped.setFieldValue("ageOrEmpty", "");
-  // but this works
-  formikTyped.setFieldValue<"">("ageOrEmpty", "");
+    // not working due to:
+    // https://github.com/microsoft/TypeScript/issues/30808
+    // @ts-expect-error
+    formikTyped.setFieldValue("ageOrEmpty", "");
+    // but this works
+    formikTyped.setFieldValue<"">("ageOrEmpty", "");
+  }, []);
 
   return (
     <FormikProvider value={formikTyped}>

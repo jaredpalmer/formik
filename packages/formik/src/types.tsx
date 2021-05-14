@@ -158,7 +158,7 @@ export type SetValuesFn<Values extends FormikValues> = (
 export type SetFieldValueFn<Values extends FormikValues> = <
   Value
 >(
-  field: PathLikeValue<Value, Values>,
+  field: PathLikeValue<Value, Values> | PathMatchingValue<Value, Values>,
   value: Value,
   shouldValidate?: boolean | undefined
 ) => Promise<void | FormikErrors<Values>>;

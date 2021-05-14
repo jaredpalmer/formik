@@ -9,9 +9,11 @@ import {
     FieldRenderProps,
     Form,
     Formik,
+    FormikProvider,
     TypedAsField,
     TypedComponentField,
     useCustomField,
+    useFormik,
     useTypedField
   } from "formik";
   import * as React from "react";
@@ -24,6 +26,7 @@ import {
     motto: string;
     nicknames: string[];
     age: number;
+    ageOrEmpty: number | "";
     favoriteNumbers: number[];
   };
 
@@ -40,6 +43,7 @@ import {
     motto: "",
     nicknames: [],
     age: 1,
+    ageOrEmpty: "",
     favoriteNumbers: []
   };
 
@@ -104,12 +108,50 @@ import {
     );
   };
 
-export const FieldTests = (props: FieldConfig<number, Person>) => {
+const noopVoid = () => {};
+
+const FormTests = () => {
+  const formikTyped = useFormik<Person>({
+    initialValues: person,
+    onSubmit: noopVoid,
+  });
+  const formikAny = useFormik<any>({
+    initialValues: person,
+    onSubmit: noopVoid,
+  });
+
+  formikAny.setFieldValue("age", 1);
+  formikAny.setFieldValue("age", "");
+  formikTyped.setFieldValue("age", 1);
+  formikTyped.setFieldValue("ageOrEmpty", 1);
+  formikTyped.setFieldValue("age", 1 as number | "");
+  formikTyped.setFieldValue("favoriteNumbers.0", 1);
+
+  // @ts-expect-error value should match
+  formikTyped.setFieldValue("age", "");
+  // @ts-expect-error string is not assignable to PathOf<Person>
+  formikTyped.setFieldValue("age" as string, "" as any);
+
+  // not working due to:
+  // https://github.com/microsoft/TypeScript/issues/30808
+  formikTyped.setFieldValue("ageOrEmpty", "");
+  // but this works
+  formikTyped.setFieldValue<"">("ageOrEmpty", "");
+
+  return (
+    <FormikProvider value={formikTyped}>
+      <Form>
+      </Form>
+    </FormikProvider>
+  );
+};
+
+const FieldTests = (props: FieldConfig<number, Person>) => {
   const TypedField = useTypedField<Person>();
   const TypedNumberFC = useCustomField<Person>()(CustomNumberFC);
 
   return (
-    <Formik initialValues={person} onSubmit={() => {}}>
+    <Formik initialValues={person} onSubmit={noopVoid}>
       <Form>
         {/* Default */}
         <Field name="age" />
@@ -250,4 +292,11 @@ export const FieldTests = (props: FieldConfig<number, Person>) => {
   );
 };
 
-export default FieldTests;
+const AllTests = () => {
+  return <>
+    <FormTests />
+    <FieldTests name="age" />
+  </>
+}
+
+export default AllTests;

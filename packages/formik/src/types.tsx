@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Comparer, Selector } from 'use-optimized-selector';
 import { TypedField } from './Field.types';
 import { TypedFieldArray } from './FieldArray.types';
-import { PathMatchingValue, PathOf } from './helpers/path-helpers';
+import { PathLikeValue, PathMatchingValue, PathOf } from './helpers/path-helpers';
 export { PathMatchingValue, PathOf, ValueMatchingPath } from './helpers/path-helpers';
 
 export type ParseFn<Value> = (value: unknown, name: string) => Value;
@@ -158,7 +158,7 @@ export type SetValuesFn<Values extends FormikValues> = (
 export type SetFieldValueFn<Values extends FormikValues> = <
   Value
 >(
-  field: PathMatchingValue<Value, Values>,
+  field: PathLikeValue<Value, Values>,
   value: Value,
   shouldValidate?: boolean | undefined
 ) => Promise<void | FormikErrors<Values>>;

@@ -60,6 +60,27 @@ export type PathMatchingValue<Value, Values> =
       : never;
 
 /**
+ * Gets PathOf<Values> which extend the requested type. Allows assigning narrower values to wider types.
+ * Useful for `setFieldValue<number>("numberOrStringPath", myNumber)`. Given:
+ *
+ * `Values = { name: string, age: number | string, friendCount: number }`,
+ *
+ * `PathLikeValue<number, Values> = "age" | "friendCount"`
+ */
+export type PathLikeValue<Value, Values> =
+  object extends Values
+    ? any
+    // infer individual paths
+    : StringOnlyPathOf<Values> extends (infer Path)
+      // reapply constraint
+      ? Path extends StringOnlyPathOf<Values>
+        ? Value extends ValueMatchingPath<Values, Path>
+          ? RenumerateTemplate<Path> & PathOf<Values>
+          : never
+        : never
+      : never;
+
+/**
  * Recursively convert objects to tuples, like:
  *
  * `{ name: { first: string } }` -> `['name'] | ['name', 'first']`

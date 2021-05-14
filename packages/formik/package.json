@@ -1,7 +1,7 @@
 {
   "name": "formik",
   "description": "Build forms in React, without the tears",
-  "version": "3.1.0-types1",
+  "version": "3.1.0-types8",
   "license": "Apache-2.0",
   "author": "Jared Palmer <jared@palmer.net> (https://jaredpalmer.com)",
   "repository": "formium/formik",
@@ -29,8 +29,13 @@
   "main": "dist/index.js",
   "umd:main": "dist/formik.umd.production.js",
   "module": "dist/formik.esm.js",
-  "types": "dist/index.d.ts",
+  "types": "index.d.ts",
   "typesVersions": {
+    ">=4.1": {
+      "*": [
+        "dist/*"
+      ]
+    },
     "<4.1": {
       "*": [
         "dist-untyped/*"
@@ -38,7 +43,8 @@
     }
   },
   "files": [
-    "dist"
+    "dist",
+    "dist-untyped"
   ],
   "peerDependencies": {
     "react": ">=16.8.0"

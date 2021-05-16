@@ -73,8 +73,7 @@ export interface FormikInitialState<Values> {
   initialStatus: FormikConfig<Values>['initialStatus'];
 }
 
-export type FormikReducerState<Values> = FormikInitialState<Values> &
-  FormikCurrentState<Values>;
+export interface FormikReducerState<Values> extends FormikInitialState<Values>, FormikCurrentState<Values> {};
 
 export type FormikMessage<Values> =
 | { type: 'SUBMIT_ATTEMPT' }
@@ -120,8 +119,9 @@ export interface FormikComputedState {
  */
 export type FormikComputedProps = FormikComputedState;
 
-export type FormikState<Values> = FormikReducerState<Values> &
-  FormikComputedState;
+export interface FormikState<Values> extends
+  FormikReducerState<Values>,
+  FormikComputedState {};
 
 export type GetStateFn<Values> = () => FormikState<Values>;
 
@@ -300,13 +300,15 @@ export interface FormikFieldHelpers<Values> {
   TypedFieldArray: TypedFieldArray<Values>;
 }
 
-export type FormikApi<Values extends FormikValues> = FormikHelpers<Values> &
-  FormikStateHelpers<Values> &
-  FormikHandlers &
-  FormikRegistration<Values> &
-  FormikFieldHelpers<Values> & {
-    getValueFromEvent: GetValueFromEventFn;
-  };
+export interface FormikApi<Values extends FormikValues> extends
+  FormikHelpers<Values>,
+  FormikStateHelpers<Values>,
+  FormikHandlers,
+  FormikRegistration<Values>,
+  FormikFieldHelpers<Values>
+{
+  getValueFromEvent: GetValueFromEventFn;
+};
 
 export interface FormikValidationConfig<Values> {
   /** Tells Formik to validate the form on each input's onChange event */
@@ -329,12 +331,11 @@ export interface FormikValidationConfig<Values> {
 /**
  * Base formik configuration/props shared between the HoC and Component.
  */
-export type FormikSharedConfig<
-  Props = {},
+export interface FormikPassThroughConfig<
   Values = any
-> = FormikValidationConfig<Values> & {
+> extends FormikValidationConfig<Values> {
   /** Tell Formik if initial form values are valid or not on first render */
-  isInitialValid?: boolean | ((props: Props) => boolean);
+  isInitialValid?: boolean | ((props: FormikConfig<Values>) => boolean);
   /** Should Formik reset the form when new initialValues change */
   enableReinitialize?: boolean;
 };
@@ -343,19 +344,20 @@ export type FormikSharedConfig<
  * State, handlers, and helpers made available to form component or render prop
  * of <Formik/>.
  */
-export type FormikProps<Values> = FormikSharedConfig<Values> &
-  FormikReducerState<Values> &
-  FormikInitialState<Values> &
-  FormikHelpers<Values> &
-  FormikFieldHelpers<Values> &
-  FormikHandlers &
-  FormikComputedState &
-  FormikRegistration<Values>;
+export interface FormikProps<Values> extends
+  FormikPassThroughConfig<Values>,
+  FormikReducerState<Values>,
+  FormikInitialState<Values>,
+  FormikHelpers<Values>,
+  FormikFieldHelpers<Values>,
+  FormikHandlers,
+  FormikComputedState,
+  FormikRegistration<Values> {}
 
 /**
  * <Formik /> props
  */
-export interface FormikConfig<Values> extends FormikSharedConfig {
+export interface FormikConfig<Values> extends FormikPassThroughConfig {
   /**
    * Form component to render
    */
@@ -410,12 +412,16 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
   innerRef?: React.Ref<FormikProps<Values>>;
 }
 
+/**
+ * The API and Config together which are then split into FormikContext and FormikConfigContext.
+ */
+export interface FormikApiAndConfig<Values> extends
+  FormikApi<Values>, FormikPassThroughConfig<Values> {}
 
 /**
  * State, handlers, and helpers made available to Formik's primitive components through context.
  */
-export type FormikContextType<Values> = FormikApi<Values> &
-  Pick<FormikConfig<Values>, 'validate' | 'validationSchema'>;
+export interface FormikContextType<Values> extends FormikApi<Values> {};
 
 export type GenericFieldHTMLAttributes =
   | JSX.IntrinsicElements['input']
@@ -496,10 +502,10 @@ export type ValidationHandler<Values extends FormikValues> = (
 /**
  * The expensive type returned by connect() and deprecated FormikConsumer, includes ContextType, State and Config
  */
-export type FormikConnectedType<Values> =
-  FormikContextType<Values> &
-  FormikSharedConfig<Values> &
-  FormikState<Values>;
+export interface FormikConnectedType<Values> extends
+  FormikContextType<Values>,
+  FormikPassThroughConfig<Values>,
+  FormikState<Values> {}
 
 /**
  * If an object has optional properties, force passing undefined.

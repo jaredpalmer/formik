@@ -30,7 +30,7 @@ type BasePerson = {
   arrayStrPath: ("arrayStrValue")[];
 }
 
-type Person = BasePerson & {
+interface Person extends BasePerson {
   partner: BasePerson;
   friends: BasePerson[];
 }

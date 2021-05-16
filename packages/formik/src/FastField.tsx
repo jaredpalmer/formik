@@ -3,13 +3,15 @@ import { FormikValues } from './types';
 import { Field } from './Field';
 import { FieldConfig } from './Field.types';
 
+interface FastFieldExtraConfig {
+  shouldUpdate?: (nextProps: any, props: {}) => boolean;
+}
+
 /**
  * @deprecated Use Field + FieldConfig
  */
 export type FastFieldConfig<Value, Values> =
-  FieldConfig<Value, Values> & {
-    shouldUpdate?: (nextProps: any, props: {}) => boolean;
-  };
+  FieldConfig<Value, Values> & FastFieldExtraConfig;
 
 /**
  * @deprecated Field now only subscribes to its own slice of Formik's state.

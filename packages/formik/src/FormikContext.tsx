@@ -3,7 +3,7 @@ import {
   FormikApi,
   FormikConnectedType,
   FormikContextType,
-  FormikSharedConfig,
+  FormikPassThroughConfig,
   FormikValues,
   NotOptional
 } from './types';
@@ -21,7 +21,7 @@ export const FormikContext = React.createContext<FormikContextType<any>>(
 FormikContext.displayName = 'FormikContext';
 
 export type FormikProviderProps<Values> = {
-  value: FormikContextType<Values> & FormikSharedConfig<Values>;
+  value: FormikContextType<Values> & FormikPassThroughConfig<Values>;
 }
 
 export const FormikProvider = <Values,>(props: React.PropsWithChildren<FormikProviderProps<Values>>) => {
@@ -123,7 +123,7 @@ export const FormikProvider = <Values,>(props: React.PropsWithChildren<FormikPro
     ]
   );
 
-  const formikConfig = React.useMemo<NotOptional<FormikSharedConfig<Values>>>(
+  const formikConfig = React.useMemo<NotOptional<FormikPassThroughConfig<Values>>>(
     () => ({
       validateOnChange,
       validateOnBlur,
@@ -168,12 +168,12 @@ export function useFormikContext<Values extends FormikValues>(): FormikApi<
  *
  * @private
  */
-const FormikConfigContext = React.createContext<FormikSharedConfig<any>>(
+const FormikConfigContext = React.createContext<FormikPassThroughConfig<any>>(
   undefined as any
 );
 FormikConfigContext.displayName = 'FormikConfigContext';
 
-export function useFormikConfig<Values extends FormikValues>(): FormikSharedConfig<
+export function useFormikConfig<Values extends FormikValues>(): FormikPassThroughConfig<
   Values
 > {
   const formikConfig = React.useContext(FormikConfigContext);

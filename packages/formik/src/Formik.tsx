@@ -10,17 +10,16 @@ import {
   FormikValues,
   FormikProps,
   FormikHelpers,
-  FormikApi,
   HandleBlurFn,
   HandleBlurEventFn,
   HandleChangeEventFn,
   HandleChangeFn,
-  FormikSharedConfig,
   RegisterFieldFn,
   UnregisterFieldFn,
   FieldValidator,
   FormikMessage,
   ValidateFieldFn,
+  FormikApiAndConfig,
 } from './types';
 import {
   isFunction,
@@ -120,7 +119,7 @@ interface FieldRegistry {
 
 export function useFormik<Values extends FormikValues = FormikValues>(
   rawProps: FormikConfig<Values>
-): FormikApi<Values> & FormikSharedConfig<Values> {
+): FormikApiAndConfig<Values> {
   const {
     validateOnChange = true,
     validateOnBlur = true,
@@ -128,10 +127,11 @@ export function useFormik<Values extends FormikValues = FormikValues>(
     enableReinitialize = false,
     ...rest
   } = rawProps;
-  const props = {
+  const props: FormikConfig<Values> = {
     validateOnChange,
     validateOnBlur,
     validateOnMount,
+    enableReinitialize,
     ...rest,
   };
 

@@ -30,7 +30,7 @@ type BasePerson = {
   motto: string;
 }
 
-type FormValues = BasePerson & {
+interface FormValues extends BasePerson {
   partner: BasePerson;
   friends: BasePerson[];
 }

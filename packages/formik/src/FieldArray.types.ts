@@ -48,27 +48,29 @@ export interface ArrayHelpers<Value> {
   pop(): Value | undefined;
 }
 
-export type FieldArrayProps<Value, Values> =
-  ArrayHelpers<Value> & {
-    form: FormikApi<Values>;
-    field: FieldMetaProps<Value[]>;
-    name: PathMatchingValue<Value[], Values>;
-  };
+export interface FieldArrayProps<Value, Values> extends
+  ArrayHelpers<Value>
+{
+  form: FormikApi<Values>;
+  field: FieldMetaProps<Value[]>;
+  name: PathMatchingValue<Value[], Values>;
+};
 
-export type FieldArrayConfig<Value, Values> =
-  UseFieldArrayConfig<Value, Values> & {
-    /**
-     * Field component to render. Can either be a string like 'select' or a component.
-     */
-    component?: React.ComponentType<FieldArrayProps<Value, Values>>;
+export interface FieldArrayConfig<Value, Values> extends
+  UseFieldArrayConfig<Value, Values>
+{
+  /**
+   * Field component to render. Can either be a string like 'select' or a component.
+   */
+  component?: React.ComponentType<FieldArrayProps<Value, Values>>;
 
-    /**
-      * Render prop (works like React router's <Route render={props =>} />)
-      */
-    render?: (props: FieldArrayProps<Value, Values>) => React.ReactElement | null;
+  /**
+    * Render prop (works like React router's <Route render={props =>} />)
+    */
+  render?: (props: FieldArrayProps<Value, Values>) => React.ReactElement | null;
 
-    /**
-      * Children render function <Field name>{props => ...}</Field>)
-      */
-    children?: (props: FieldArrayProps<Value, Values>) => React.ReactElement | null;
-  };
+  /**
+    * Children render function <Field name>{props => ...}</Field>)
+    */
+  children?: (props: FieldArrayProps<Value, Values>) => React.ReactElement | null;
+};

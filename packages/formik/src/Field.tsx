@@ -118,7 +118,7 @@ export function Field<
    * Otherwise, we will pointlessly get the initial values but never subscribe to updates.
    */
   const formikApi = useFormikContext<Values>();
-  const formikConfig = useFormikConfig();
+  const formikConfig = useFormikConfig<Values>();
   const formikState = formikApi.useState(
     selectFullState,
     Object.is,
@@ -147,6 +147,7 @@ export function Field<
       children,
       ...fieldAsProps
     } = props;
+
     return React.createElement(
       as,
       { ...fieldAsProps, ...field },

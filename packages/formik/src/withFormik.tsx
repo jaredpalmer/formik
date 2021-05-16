@@ -4,7 +4,7 @@ import { Formik } from './Formik';
 import {
   FormikHelpers,
   FormikProps,
-  FormikSharedConfig,
+  FormikPassThroughConfig,
   FormikValues,
   FormikTouched,
   FormikErrors,
@@ -14,15 +14,17 @@ import { isFunction } from './utils';
 /**
  * State, handlers, and helpers injected as props into the wrapped form component.
  * Used with withFormik()
- *
- * @deprecated  Use `OuterProps & FormikProps<Values>` instead.
  */
-export type InjectedFormikProps<Props, Values> = Props & FormikProps<Values>;
+export type InjectedFormikProps<OuterProps, Values> = OuterProps & FormikProps<Values>;
 
 /**
  * Formik helpers + { props }
  */
-export type FormikBag<P, V> = { props: P } & FormikHelpers<V>;
+export interface FormikBag<OuterProps, Values> extends
+  FormikHelpers<Values>
+{
+  props: OuterProps
+};
 
 /**
  * withFormik() configuration options. Backwards compatible.
@@ -31,7 +33,7 @@ export interface WithFormikConfig<
   Props,
   Values extends FormikValues = FormikValues,
   DeprecatedPayload = Values
-> extends FormikSharedConfig<Props> {
+> extends Omit<FormikPassThroughConfig<Props>, 'validate'> {
   /**
    * Set the display name of the component. Useful for React DevTools.
    */
@@ -79,16 +81,12 @@ export interface WithFormikConfig<
   validate?: (values: Values, props: Props) => void | object | Promise<any>;
 }
 
-export type CompositeComponent<P> =
-  | React.ComponentClass<P>
-  | React.StatelessComponent<P>;
-
 export interface ComponentDecorator<TOwnProps, TMergedProps> {
-  (component: CompositeComponent<TMergedProps>): React.ComponentType<TOwnProps>;
+  (component: React.ComponentType<TMergedProps>): React.ComponentType<TOwnProps>;
 }
 
 export interface InferableComponentDecorator<TOwnProps> {
-  <T extends CompositeComponent<TOwnProps>>(component: T): T;
+  <T extends React.ComponentType<TOwnProps>>(component: T): T;
 }
 
 /**
@@ -115,10 +113,10 @@ export function withFormik<
   ...config
 }: WithFormikConfig<OuterProps, Values, Payload>): ComponentDecorator<
   OuterProps,
-  OuterProps & FormikProps<Values>
+  InjectedFormikProps<OuterProps, Values>
 > {
   return function createFormik(
-    Component: CompositeComponent<OuterProps & FormikProps<Values>>
+    Component: React.ComponentType<InjectedFormikProps<OuterProps, Values>>
   ): React.ComponentClass<OuterProps> {
     const componentDisplayName =
       Component.displayName ||

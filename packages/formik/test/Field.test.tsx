@@ -11,18 +11,18 @@ import {
   Formik,
   Field,
   FastField,
-  FieldProps,
-  FieldConfig,
+  FieldAsProps,
   FormikProps,
   FormikConfig,
+  FieldAttributes,
+  FieldComponentProps,
+  FieldRenderProps,
 } from '../src';
 
 import { noop } from './testHelpers';
 
 const initialValues = { name: 'jared', email: 'hello@reason.nyc' };
 type Values = typeof initialValues;
-type FastFieldConfig = FieldConfig;
-
 type $FixMe = any;
 
 function renderForm(
@@ -55,15 +55,15 @@ function renderForm(
 }
 
 const createRenderField = (
-  FieldComponent: React.ComponentType<FieldConfig>
+  FieldComponent: React.ComponentType<FieldAttributes<any, any>>
 ) => (
-  props: Partial<FieldConfig> | Partial<FastFieldConfig> = {},
+  props: Partial<FieldAttributes<any, any>> = {},
   formProps?: Partial<FormikConfig<Values>>
 ) => {
-  let injected: FieldProps;
+  let injected: FieldRenderProps;
 
   if (!props.children && !props.render && !props.component && !props.as) {
-    props.children = (fieldProps: FieldProps) =>
+    props.children = (fieldProps: FieldRenderProps) =>
       (injected = fieldProps) && (
         <input {...fieldProps.field} name="name" data-testid="name-input" />
       );
@@ -74,14 +74,14 @@ const createRenderField = (
       return injected;
     },
     ...renderForm(
-      <FieldComponent name="name" data-testid="name-input" {...props} />,
+      <FieldComponent name="name" data-testid="name-input" {...props as any} />,
       formProps
     ),
   };
 };
 
-const renderField = createRenderField(Field);
-const renderFastField = createRenderField(FastField);
+const renderField = createRenderField(Field as any);
+const renderFastField = createRenderField(FastField as any);
 
 function cases(
   title: string,
@@ -110,98 +110,182 @@ describe('Field / FastField', () => {
     });
   });
 
-  describe('receives { field, form, meta } props and renders element', () => {
+  describe('receives correct values and types', () => {
     it('<Field />', () => {
-      let injected: FieldProps[] = [];
-      let asInjectedProps: FieldProps['field'] = {} as any;
+      let renderInjectedProps: FieldRenderProps[] = [];
+      let componentInjectedProps: FieldComponentProps = {} as any;
+      let asInjectedProps: { field: FieldAsProps } = {} as any;
 
-      const Component = (props: FieldProps) =>
-        injected.push(props) && <div data-testid="child">{TEXT}</div>;
+      const RenderField = (props: FieldRenderProps) => {
+        renderInjectedProps.push(props);
 
-      const AsComponent = (props: FieldProps['field']) =>
-        (asInjectedProps = props) && <div data-testid="child">{TEXT}</div>;
+        return <div data-testid="child">{TEXT}</div>;
+      }
+      const ComponentField = (props: FieldComponentProps) => {
+        componentInjectedProps = props;
+
+        return <div data-testid="child">{TEXT}</div>;
+      }
+
+      const AsField = (props: FieldAsProps) => {
+        asInjectedProps = { field: props };
+
+        return <div data-testid="child">{TEXT}</div>;
+      }
 
       const { getFormProps, queryAllByText } = renderForm(
         <>
-          <Field name="name" children={Component} />
-          <Field name="name" render={Component} />
-          <Field name="name" component={Component} />
-          <Field name="name" as={AsComponent} />
+          <Field name="name" children={RenderField} />
+          <Field name="name" render={RenderField} />
+          <Field name="name" component={ComponentField} />
+          <Field name="name" as={AsField} />
         </>
       );
 
-      const { handleBlur, handleChange } = getFormProps();
-      injected.forEach((props, idx) => {
+      const { handleBlur } = getFormProps();
+      [
+        ...renderInjectedProps,
+        componentInjectedProps,
+        asInjectedProps
+      ].forEach((props) => {
         expect(props.field.name).toBe('name');
         expect(props.field.value).toBe('jared');
-        expect(props.field.onChange).toBe(handleChange);
+        expect(props.field.onChange).toEqual(expect.any(Function));
         expect(props.field.onBlur).toBe(handleBlur);
-        expect(props.form).toEqual(getFormProps());
-        if (idx !== 2) {
-          expect(props.meta.value).toBe('jared');
-          expect(props.meta.error).toBeUndefined();
-          expect(props.meta.touched).toBe(false);
-          expect(props.meta.initialValue).toEqual('jared');
-        } else {
-          // Ensure that we do not pass through `meta` to
-          // <Field component> or <Field render>
-          expect(props.meta).toBeUndefined();
-        }
       });
 
-      expect(asInjectedProps.name).toBe('name');
-      expect(asInjectedProps.value).toBe('jared');
-      expect(asInjectedProps.onChange).toBe(handleChange);
-      expect(asInjectedProps.onBlur).toBe(handleBlur);
+      expect((componentInjectedProps as any).meta).toBeUndefined();
 
-      expect(queryAllByText(TEXT)).toHaveLength(4);
+        [
+          ...renderInjectedProps,
+          componentInjectedProps,
+        ].forEach((props) => {
+          expect(props.field.name).toBe('name');
+          expect(props.field.value).toBe('jared');
+          expect(props.field.onChange).toEqual(expect.any(Function));
+          expect(props.field.onBlur).toBe(handleBlur);
+          expect(props.form).toEqual(getFormProps());
+        });
+
+        renderInjectedProps.forEach((props) => {
+            expect(props.meta.value).toBe('jared');
+            expect(props.meta.error).toBeUndefined();
+            expect(props.meta.touched).toBe(false);
+            expect(props.meta.initialValue).toEqual('jared');
+        });
+
+        expect(queryAllByText(TEXT)).toHaveLength(4);
+      });
     });
 
-    it('<FastField />', () => {
-      let injected: FieldProps[] = [];
-      let asInjectedProps: FieldProps['field'] = {} as any;
+    /*
+    describe('receives (or doesn\'t receive) ExtraProps', () => {
+      it('<Field />', () => {
+        let renderInjectedProps: FieldRenderProps[] = [];
+        let componentInjectedProps: FieldComponentProps<any, any> = {} as any;
+        let asInjectedProps: FieldAsProps<any, any> = {} as any;
 
-      const Component = (props: FieldProps) =>
-        injected.push(props) && <div>{TEXT}</div>;
-      const AsComponent = (props: FieldProps['field']) =>
-        (asInjectedProps = props) && <div data-testid="child">{TEXT}</div>;
+        const RenderField = (props: FieldRenderProps) => {
+          renderInjectedProps.push(props);
+
+          return <div data-testid="child">{TEXT}</div>;
+        }
+        const ComponentField = (props: FieldComponentProps<any, any>) => {
+          componentInjectedProps = props;
+
+          return <div data-testid="child">{TEXT}</div>;
+        }
+
+        const AsField = (props: FieldAsProps<any, any>) => {
+          asInjectedProps = props;
+
+          return <div data-testid="child">{TEXT}</div>;
+        }
+
+        renderForm(
+          <>
+            <Field name="name" children={RenderField} what={true} />
+            <Field name="name" render={RenderField as any} what={true} />
+            <Field name="name" component={ComponentField} what={true} />
+            <Field name="name" as={AsField} what={true} />
+          </>
+        );
+
+        renderInjectedProps.forEach((props) => {
+          expect((props as any).what).toBeUndefined();
+        });
+
+        expect(componentInjectedProps.what).toBe(true);
+        expect(asInjectedProps.what).toBe(true);
+      });
+
+    it('<FastField />', () => {
+      let renderInjectedProps: FieldRenderProps[] = [];
+      let componentInjectedProps: FieldComponentProps = {} as any;
+      let asInjectedProps: { field: FieldAsProps } = {} as any;
+
+      const RenderField = (props: FieldRenderProps) => {
+        renderInjectedProps.push(props);
+
+        return <div data-testid="child">{TEXT}</div>;
+      }
+      const ComponentField = (props: FieldComponentProps) => {
+        componentInjectedProps = props;
+
+        return <div data-testid="child">{TEXT}</div>;
+      }
+
+      const AsField = (props: FieldAsProps) => {
+        asInjectedProps = { field: props };
+
+        return <div data-testid="child">{TEXT}</div>;
+      }
 
       const { getFormProps, queryAllByText } = renderForm(
         <>
-          <FastField name="name" children={Component} />
-          <FastField name="name" render={Component} />
-          {/* @todo fix the types here?? #shipit */}
-          <FastField name="name" component={Component as $FixMe} />
-          <FastField name="name" as={AsComponent} />
+          <FastField name="name" children={RenderField} />
+          <FastField name="name" render={RenderField} />
+          <FastField name="name" component={ComponentField} />
+          <FastField name="name" as={AsField} />
         </>
       );
 
-      const { handleBlur, handleChange } = getFormProps();
-      injected.forEach((props, idx) => {
+      const { handleBlur } = getFormProps();
+      [
+        ...renderInjectedProps,
+        componentInjectedProps,
+        asInjectedProps
+      ].forEach((props) => {
         expect(props.field.name).toBe('name');
         expect(props.field.value).toBe('jared');
-        expect(props.field.onChange).toBe(handleChange);
+        expect(props.field.onChange).toEqual(expect.any(Function));
+        expect(props.field.onBlur).toBe(handleBlur);
+      });
+
+      expect((componentInjectedProps as any).meta).toBeUndefined();
+
+      [
+        ...renderInjectedProps,
+        componentInjectedProps,
+      ].forEach((props) => {
+        expect(props.field.name).toBe('name');
+        expect(props.field.value).toBe('jared');
+        expect(props.field.onChange).toEqual(expect.any(Function));
         expect(props.field.onBlur).toBe(handleBlur);
         expect(props.form).toEqual(getFormProps());
-        if (idx !== 2) {
+      });
+
+      renderInjectedProps.forEach((props) => {
           expect(props.meta.value).toBe('jared');
           expect(props.meta.error).toBeUndefined();
           expect(props.meta.touched).toBe(false);
           expect(props.meta.initialValue).toEqual('jared');
-        } else {
-          // Ensure that we do not pass through `meta` to
-          // <Field component> or <Field render>
-          expect(props.meta).toBeUndefined();
-        }
       });
 
-      expect(asInjectedProps.name).toBe('name');
-      expect(asInjectedProps.value).toBe('jared');
-      expect(asInjectedProps.onChange).toBe(handleChange);
-      expect(asInjectedProps.onBlur).toBe(handleBlur);
       expect(queryAllByText(TEXT)).toHaveLength(4);
     });
   });
+  */
 
   describe('children', () => {
     cases('renders a child element with component', () => {
@@ -248,7 +332,7 @@ describe('Field / FastField', () => {
 
     cases('forwards innerRef to React component', renderField => {
       let injected: any; /** FieldProps ;) */
-      const Component = (props: FieldProps) => (injected = props) && null;
+      const Component = (props: FieldComponentProps) => (injected = props) && null;
 
       const innerRef = jest.fn();
       renderField({ component: Component, innerRef });
@@ -276,12 +360,14 @@ describe('Field / FastField', () => {
     });
 
     cases('forwards innerRef to React component', renderField => {
-      let injected: any; /** FieldProps ;) */
-      const Component = (props: FieldProps['field']) =>
+      let injected: FieldAsProps = {} as any;
+
+      const Component = (props: FieldAsProps) =>
         (injected = props) && null;
 
       const innerRef = jest.fn();
       renderField({ as: Component, innerRef });
+
       expect(injected.innerRef).toBe(innerRef);
     });
   });
@@ -491,7 +577,9 @@ describe('Field / FastField', () => {
       global.console.warn = jest.fn();
 
       const { rerender } = renderField({
+        // @ts-expect-error
         component: 'textarea',
+        // @ts-expect-error
         render: () => <option value="Jared">{TEXT}</option>,
       });
       rerender();
@@ -504,7 +592,9 @@ describe('Field / FastField', () => {
       global.console.warn = jest.fn();
 
       const { rerender } = renderField({
+        // @ts-expect-error
         component: () => null,
+        // @ts-expect-error
         render: () => <option value="Jared">{TEXT}</option>,
       });
       rerender();
@@ -516,8 +606,11 @@ describe('Field / FastField', () => {
     cases('warns if both children and render', renderField => {
       global.console.warn = jest.fn();
 
+      // this type is impossible
       const { rerender } = renderField({
+        // @ts-expect-error
         children: <div>{TEXT}</div>,
+        // @ts-expect-error
         render: () => <div>{TEXT}</div>,
       });
       rerender();
@@ -561,15 +654,3 @@ describe('Field / FastField', () => {
     expect(getProps().field.value).toBe('Binding');
   });
 });
-
-// @todo Deprecated
-// describe('<FastField />', () => {
-//   it('does NOT forward shouldUpdate to React component', () => {
-//     let injected: any;
-//     const Component = (props: FieldProps) => (injected = props) && null;
-
-//     const shouldUpdate = () => true;
-//     renderFastField({ component: Component, shouldUpdate });
-//     expect(injected.shouldUpdate).toBe(undefined);
-//   });
-// });

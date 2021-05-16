@@ -1,5 +1,9 @@
 {
   // Hack to fix https://github.com/formium/tsdx/issues/84#issuecomment-489690504
   "extends": "../tsconfig.build.json",
-  "include": ["."]
+  "include": ["."],
+  "compilerOptions": {
+    "noUnusedLocals": false,
+    "noUnusedParameters": false
+  }
 }

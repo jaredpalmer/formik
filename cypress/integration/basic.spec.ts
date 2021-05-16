@@ -2,7 +2,7 @@
 
 describe('basic validation', () => {
   it('should validate before submit', () => {
-    cy.visit('http://localhost:3000/basic');
+    cy.visit('http://localhost:3000/tutorial/basic');
 
     // Submit the form
     cy.get('button[type=submit]').click();
@@ -16,7 +16,7 @@ describe('basic validation', () => {
   });
 
   it('should validate show errors on change and blur', () => {
-    cy.visit('http://localhost:3000/sign-in');
+    cy.visit('http://localhost:3000/tutorial/sign-in');
 
     cy.get('input[name="username"]')
       .type('john')
@@ -34,7 +34,7 @@ describe('basic validation', () => {
   });
 
   it('should validate show errors on blur only', () => {
-    cy.visit('http://localhost:3000/sign-in', {
+    cy.visit('http://localhost:3000/tutorial/sign-in', {
       qs: {
         validateOnMount: false,
         validateOnChange: false,
@@ -82,7 +82,7 @@ describe('basic validation', () => {
       input.dispatchEvent(event);
     }
 
-    cy.visit('http://localhost:3000/sign-in');
+    cy.visit('http://localhost:3000/tutorial/sign-in');
 
     cy.get('body').then($body => {
       // We have set value through JS to simulate autofill behavior.

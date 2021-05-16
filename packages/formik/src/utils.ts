@@ -13,7 +13,7 @@ export const isFunction = (obj: any): obj is Function =>
   typeof obj === 'function';
 
 /** @private is the given object an Object? */
-export const isObject = (obj: any): obj is Object =>
+export const isObject = (obj: any): obj is object =>
   obj !== null && typeof obj === 'object';
 
 /** @private is the given object an integer? */
@@ -33,12 +33,34 @@ export const isEmptyChildren = (children: any): boolean =>
   React.Children.count(children) === 0;
 
 /** @private is the given object/value a promise? */
-export const isPromise = (value: any): value is PromiseLike<any> =>
-  isObject(value) && isFunction(value.then);
+export const isPromise = (value: any): value is Promise<any> =>
+  isObject(value) && isFunction((value as Promise<any>).then);
 
 /** @private is the given object/value a type of synthetic event? */
 export const isInputEvent = (value: any): value is React.SyntheticEvent<any> =>
-  value && isObject(value) && isObject(value.target);
+  value && isObject(value) && isObject((value as React.SyntheticEvent<any>).target);
+
+/** @private Are we in RN? */
+export const isReactNative =
+  typeof window !== 'undefined' &&
+  window.navigator &&
+  window.navigator.product &&
+  window.navigator.product === 'ReactNative';
+
+/** @private Shallow equality comparer for objects, for optimizing selectors */
+export const isShallowEqual = (
+  prev: Record<string, any>,
+  next: Record<string, any>
+) => {
+  if (Object.is(prev, next)) {
+    return true;
+  }
+
+  const prevKeys = Object.keys(prev);
+
+  return prevKeys.length === Object.keys(next).length &&
+    prevKeys.every(key => Object.is(prev[key], next[key]));
+}
 
 /**
  * Same as document.activeElement but wraps in a try-catch block. In IE it is

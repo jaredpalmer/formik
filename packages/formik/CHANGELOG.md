@@ -1,5 +1,15 @@
 # formik
 
+## 2.2.7
+
+### Patch Changes
+
+- [`e50040a`](https://github.com/formium/formik/commit/e50040abe49cf7bb46580ea46af6a2b487539830) [#2881](https://github.com/formium/formik/pull/2881) Thanks [@jinmayamashita](https://github.com/jinmayamashita)! - Prevent calling getSelectedValues when the element has not options
+
+* [`31405ab`](https://github.com/formium/formik/commit/31405abfc9373b2236eecf0f34f630906579e193) [#3201](https://github.com/formium/formik/pull/3201) Thanks [@artola](https://github.com/artola)! - Fixes regression that resulted in error update race condition from when using `validateOnMount`
+
+- [`c2d6926`](https://github.com/formium/formik/commit/c2d692659dc0c1ee43f7e9f60e18c36e0701eefe) [#2995](https://github.com/formium/formik/pull/2995) Thanks [@johnrom](https://github.com/johnrom)! - Allow explicitly setting `<form action>` to empty string (#2981). Note: previous code which passed an empty string would result in a noop (simply appending # to the url), but this will now result in a form submission to the current page.
+
 ## 2.2.6
 
 ### Patch Changes

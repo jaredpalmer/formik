@@ -1,5 +1,11 @@
 # formik
 
+## 2.2.8
+
+### Patch Changes
+
+- [`3a9c707`](https://github.com/formium/formik/commit/3a9c707c8eec200d6eae2955536fb987daf38854) [#3203](https://github.com/formium/formik/pull/3203) Thanks [@hixus](https://github.com/hixus)! - Fixes type of setError value as it is same as setFieldError message
+
 ## 2.2.7
 
 ### Patch Changes

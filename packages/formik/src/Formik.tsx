@@ -14,6 +14,7 @@ import {
   FieldInputProps,
   FormikHelpers,
   FormikHandlers,
+  FormikApi,
 } from './types';
 import {
   isFunction,
@@ -137,7 +138,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   enableReinitialize = false,
   onSubmit,
   ...rest
-}: FormikConfig<Values>) {
+}: FormikConfig<Values>): FormikApi<Values> {
   const props = {
     validateOnChange,
     validateOnBlur,
@@ -947,7 +948,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     [isInitialValid, dirty, state.errors, props]
   );
 
-  const ctx = {
+  const ctx: FormikApi<Values> = {
     ...state,
     initialValues: initialValues.current,
     initialErrors: initialErrors.current,

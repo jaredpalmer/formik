@@ -150,16 +150,19 @@ export interface FormikHandlers {
   getFieldHelpers: <Value = any>(name: string) => FieldHelperProps<Value>;
 }
 
-/**
- * Base formik configuration/props shared between the HoC and Component.
- */
-export interface FormikSharedConfig<Props = {}> {
+export interface FormikValidationConfig {
   /** Tells Formik to validate the form on each input's onChange event */
   validateOnChange?: boolean;
   /** Tells Formik to validate the form on each input's onBlur event */
   validateOnBlur?: boolean;
   /** Tells Formik to validate upon mount */
   validateOnMount?: boolean;
+}
+
+/**
+ * Base formik configuration/props shared between the HoC and Component.
+ */
+export interface FormikSharedConfig<Props = {}> extends FormikValidationConfig {
   /** Tell Formik if initial form values are valid or not on first render */
   isInitialValid?: boolean | ((props: Props) => boolean);
   /** Should Formik reset the form when new initialValues change */
@@ -247,6 +250,14 @@ export interface FormikRegistration {
   registerField: (name: string, fns: { validate?: FieldValidator }) => void;
   unregisterField: (name: string) => void;
 }
+
+export type FormikApi<Values extends FormikValues = FormikValues> =
+  & FormikHelpers<Values>
+  & FormikHandlers
+  & FormikRegistration
+  & FormikComputedProps<Values>
+  & FormikState<Values>
+  & FormikValidationConfig;
 
 /**
  * State, handlers, and helpers made available to Formik's primitive components through context.

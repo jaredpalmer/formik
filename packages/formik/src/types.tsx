@@ -251,13 +251,14 @@ export interface FormikRegistration {
   unregisterField: (name: string) => void;
 }
 
-export type FormikApi<Values extends FormikValues = FormikValues> =
-  & FormikHelpers<Values>
-  & FormikHandlers
-  & FormikRegistration
-  & FormikComputedProps<Values>
-  & FormikState<Values>
-  & FormikValidationConfig;
+export type FormikApi<
+  Values extends FormikValues = FormikValues
+> = FormikHelpers<Values> &
+  FormikHandlers &
+  FormikRegistration &
+  FormikComputedProps<Values> &
+  FormikState<Values> &
+  FormikValidationConfig;
 
 /**
  * State, handlers, and helpers made available to Formik's primitive components through context.

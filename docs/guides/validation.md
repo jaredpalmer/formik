@@ -68,7 +68,6 @@ To add Yup to your project, install it from NPM.
 
 ```sh
 npm install yup --save
-# typescript users should add the @types/yup
 ```
 
 ```jsx

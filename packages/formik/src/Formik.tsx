@@ -282,16 +282,17 @@ export function useFormik<Values extends FormikValues = FormikValues>({
             )
           : [Promise.resolve('DO_NOT_DELETE_YOU_WILL_BE_FIRED')]; // use special case ;)
 
-      return Promise.all(fieldValidations).then((fieldErrorsList: (string|void)[]) =>
-        fieldErrorsList.reduce((prev, curr, index) => {
-          if (curr === 'DO_NOT_DELETE_YOU_WILL_BE_FIRED') {
+      return Promise.all(fieldValidations).then(
+        (fieldErrorsList: (string | void)[]) =>
+          fieldErrorsList.reduce((prev, curr, index) => {
+            if (curr === 'DO_NOT_DELETE_YOU_WILL_BE_FIRED') {
+              return prev;
+            }
+            if (curr) {
+              prev = setIn(prev, fieldKeysWithValidation[index], curr);
+            }
             return prev;
-          }
-          if (curr) {
-            prev = setIn(prev, fieldKeysWithValidation[index], curr);
-          }
-          return prev;
-        }, {})
+          }, {})
       );
     },
     [runSingleFieldLevelValidation]
@@ -476,7 +477,9 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     }
   }, [enableReinitialize, props.initialStatus, props.initialTouched]);
 
-  const validateField: FormikHelpers<Values>['validateField'] = useEventCallback((name) => {
+  const validateField: FormikHelpers<
+    Values
+  >['validateField'] = useEventCallback(name => {
     // This will efficiently validate a single field by avoiding state
     // changes if the validation function is synchronous. It's different from
     // what is called when using validateForm.
@@ -511,25 +514,27 @@ export function useFormik<Values extends FormikValues = FormikValues>({
       }
     } else if (props.validationSchema) {
       dispatch({ type: 'SET_ISVALIDATING', payload: true });
-      return runValidationSchema(state.values, name)
-        .then((error: any) => {
-          dispatch({
-            type: 'SET_FIELD_ERROR',
-            payload: { field: name, value: error[name] },
-          });
-          dispatch({ type: 'SET_ISVALIDATING', payload: false });
+      return runValidationSchema(state.values, name).then((error: any) => {
+        dispatch({
+          type: 'SET_FIELD_ERROR',
+          payload: { field: name, value: error[name] },
         });
+        dispatch({ type: 'SET_ISVALIDATING', payload: false });
+      });
     }
 
     return Promise.resolve();
   });
 
-  const registerField = React.useCallback<FormikRegistration['registerField']>((name, { validate }) => {
-    if (!validate) return;
-    fieldRegistry.current[name] = {
-      validate,
-    };
-  }, []);
+  const registerField = React.useCallback<FormikRegistration['registerField']>(
+    (name, { validate }) => {
+      if (!validate) return;
+      fieldRegistry.current[name] = {
+        validate,
+      };
+    },
+    []
+  );
 
   const unregisterField = React.useCallback((name: string) => {
     delete fieldRegistry.current[name];
@@ -573,7 +578,9 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     []
   );
 
-  const setFieldValue: FormikHelpers<Values>['setFieldValue'] = useEventCallback(
+  const setFieldValue: FormikHelpers<
+    Values
+  >['setFieldValue'] = useEventCallback(
     (field: string, value: any, shouldValidate?: boolean) => {
       dispatch({
         type: 'SET_FIELD_VALUE',
@@ -658,7 +665,9 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     }
   );
 
-  const setFieldTouched: FormikHelpers<Values>['setFieldTouched'] = useEventCallback(
+  const setFieldTouched: FormikHelpers<
+    Values
+  >['setFieldTouched'] = useEventCallback(
     (field, touched = true, shouldValidate?) => {
       dispatch({
         type: 'SET_FIELD_TOUCHED',
@@ -706,16 +715,15 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     }
   );
 
-  const setFormikState = React.useCallback<FormikHelpers<Values>['setFormikState']>(
-    ( stateOrCb ) => {
-      if (isFunction(stateOrCb)) {
-        dispatch({ type: 'SET_FORMIK_STATE', payload: stateOrCb });
-      } else {
-        dispatch({ type: 'SET_FORMIK_STATE', payload: () => stateOrCb });
-      }
-    },
-    []
-  );
+  const setFormikState = React.useCallback<
+    FormikHelpers<Values>['setFormikState']
+  >(stateOrCb => {
+    if (isFunction(stateOrCb)) {
+      dispatch({ type: 'SET_FORMIK_STATE', payload: stateOrCb });
+    } else {
+      dispatch({ type: 'SET_FORMIK_STATE', payload: () => stateOrCb });
+    }
+  }, []);
 
   const setStatus = React.useCallback((status: any) => {
     dispatch({ type: 'SET_STATUS', payload: status });
@@ -875,12 +883,20 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   );
 
   const getFieldHelpers = React.useCallback<FormikHandlers['getFieldHelpers']>(
-    (name) => {
+    name => {
       return {
         setValue: (value: any, shouldValidate?: boolean) =>
-          setFieldValue(name, value, shouldValidate) as Promise<void | FormikErrors<any>>,
+          setFieldValue(
+            name,
+            value,
+            shouldValidate
+          ) as Promise<void | FormikErrors<any>>,
         setTouched: (value: boolean, shouldValidate?: boolean) =>
-          setFieldTouched(name, value, shouldValidate) as Promise<void | FormikErrors<any>>,
+          setFieldTouched(
+            name,
+            value,
+            shouldValidate
+          ) as Promise<void | FormikErrors<any>>,
         setError: (value: any) => setFieldError(name, value),
       };
     },

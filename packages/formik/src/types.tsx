@@ -92,7 +92,11 @@ export interface FormikHelpers<Values> {
     shouldValidate?: boolean
   ) => Promise<FormikErrors<Values> | void>;
   /** Set value of form field directly */
-  setFieldValue: (field: string, value: any, shouldValidate?: boolean) => Promise<FormikErrors<Values> | void>;
+  setFieldValue: (
+    field: string,
+    value: any,
+    shouldValidate?: boolean
+  ) => Promise<FormikErrors<Values> | void>;
   /** Set error message of a form field directly */
   setFieldError: (field: string, message: string | undefined) => void;
   /** Set whether field has been touched directly */
@@ -306,9 +310,15 @@ export interface FieldMetaProps<Value> {
 /** Imperative handles to change a field's value, error and touched */
 export interface FieldHelperProps<Value> {
   /** Set the field's value */
-  setValue: (value: Value, shouldValidate?: boolean) => Promise<FormikErrors<Value> | void>;
+  setValue: (
+    value: Value,
+    shouldValidate?: boolean
+  ) => Promise<FormikErrors<Value> | void>;
   /** Set the field's touched value */
-  setTouched: (value: boolean, shouldValidate?: boolean) => Promise<FormikErrors<Value> | void>;
+  setTouched: (
+    value: boolean,
+    shouldValidate?: boolean
+  ) => Promise<FormikErrors<Value> | void>;
   /** Set the field's error value */
   setError: (value: string | undefined) => void;
 }
@@ -329,8 +339,6 @@ export interface FieldInputProps<Value> {
   onBlur: FormikHandlers['handleBlur'];
 }
 
-export type FieldValidatorResponse =  string | void | Promise<string | void>
+export type FieldValidatorResponse = string | void | Promise<string | void>;
 
-export type FieldValidator = (
-  value: any
-) => FieldValidatorResponse;
+export type FieldValidator = (value: any) => FieldValidatorResponse;

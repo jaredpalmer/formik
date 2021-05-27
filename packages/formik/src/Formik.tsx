@@ -16,7 +16,7 @@ import {
   FormikApi,
   FormikRegistration,
   FieldValidator,
-  FieldValidatorResponse,
+  FieldValidatorResult,
 } from './types';
 import {
   isFunction,
@@ -260,7 +260,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   );
 
   const runSingleFieldLevelValidation = React.useCallback(
-    (field: string, value: void | string): FieldValidatorResponse => {
+    (field: string, value: void | string): FieldValidatorResult => {
       return new Promise(resolve =>
         resolve(fieldRegistry.current[field].validate(value))
       );
@@ -275,7 +275,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
       ).filter(f => isFunction(fieldRegistry.current[f].validate));
 
       // Construct an array with all of the field validation functions
-      const fieldValidations: FieldValidatorResponse[] =
+      const fieldValidations: FieldValidatorResult[] =
         fieldKeysWithValidation.length > 0
           ? fieldKeysWithValidation.map(f =>
               runSingleFieldLevelValidation(f, getIn(values, f))

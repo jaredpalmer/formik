@@ -477,7 +477,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     }
   }, [enableReinitialize, props.initialStatus, props.initialTouched]);
 
-  const validateField = useEventCallback((name: string) => {
+  const validateField: FormikHelpers<Values>['validateField'] = useEventCallback((name) => {
     // This will efficiently validate a single field by avoiding state
     // changes if the validation function is synchronous. It's different from
     // what is called when using validateForm.
@@ -508,12 +508,11 @@ export function useFormik<Values extends FormikValues = FormikValues>({
             value: maybePromise as string | undefined,
           },
         });
-        return Promise.resolve(maybePromise as string | undefined);
+        return Promise.resolve(maybePromise);
       }
     } else if (props.validationSchema) {
       dispatch({ type: 'SET_ISVALIDATING', payload: true });
       return runValidationSchema(state.values, name)
-        .then((x: any) => x)
         .then((error: any) => {
           dispatch({
             type: 'SET_FIELD_ERROR',

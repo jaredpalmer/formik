@@ -100,7 +100,7 @@ export interface FormikHelpers<Values> {
     field: string,
     isTouched?: boolean,
     shouldValidate?: boolean
-  ) => void;
+  ) => Promise<FormikErrors<Values> | void>;
   /** Validate form values */
   validateForm: (values?: any) => Promise<FormikErrors<Values>>;
   /** Validate field value */
@@ -308,7 +308,7 @@ export interface FieldHelperProps<Value> {
   /** Set the field's value */
   setValue: (value: Value, shouldValidate?: boolean) => void;
   /** Set the field's touched value */
-  setTouched: (value: boolean, shouldValidate?: boolean) => void;
+  setTouched: (value: boolean, shouldValidate?: boolean) => Promise<FormikErrors<Value> | void>;
   /** Set the field's error value */
   setError: (value: string | undefined) => void;
 }

@@ -10,7 +10,6 @@ import {
   FormikValues,
   FormikProps,
   FieldMetaProps,
-  FieldHelperProps,
   FieldInputProps,
   FormikHelpers,
   FormikHandlers,
@@ -659,8 +658,8 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     }
   );
 
-  const setFieldTouched = useEventCallback(
-    (field: string, touched: boolean = true, shouldValidate?: boolean) => {
+  const setFieldTouched: FormikHelpers<Values>['setFieldTouched'] = useEventCallback(
+    (field, touched = true, shouldValidate?) => {
       dispatch({
         type: 'SET_FIELD_TOUCHED',
         payload: {
@@ -875,13 +874,13 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     [state.errors, state.touched, state.values]
   );
 
-  const getFieldHelpers = React.useCallback(
-    (name: string): FieldHelperProps<any> => {
+  const getFieldHelpers = React.useCallback<FormikHandlers['getFieldHelpers']>(
+    (name) => {
       return {
         setValue: (value: any, shouldValidate?: boolean) =>
           setFieldValue(name, value, shouldValidate),
         setTouched: (value: boolean, shouldValidate?: boolean) =>
-          setFieldTouched(name, value, shouldValidate),
+          setFieldTouched(name, value, shouldValidate) as Promise<void | FormikErrors<any>>,
         setError: (value: any) => setFieldError(name, value),
       };
     },

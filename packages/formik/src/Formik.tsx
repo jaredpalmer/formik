@@ -708,12 +708,8 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     }
   );
 
-  const setFormikState = React.useCallback(
-    (
-      stateOrCb:
-        | FormikState<Values>
-        | ((state: FormikState<Values>) => FormikState<Values>)
-    ): void => {
+  const setFormikState = React.useCallback<FormikHelpers<Values>['setFormikState']>(
+    ( stateOrCb ) => {
       if (isFunction(stateOrCb)) {
         dispatch({ type: 'SET_FORMIK_STATE', payload: stateOrCb });
       } else {

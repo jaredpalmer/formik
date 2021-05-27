@@ -113,8 +113,7 @@ export interface FormikHelpers<Values> {
   setFormikState: (
     f:
       | FormikState<Values>
-      | ((prevState: FormikState<Values>) => FormikState<Values>),
-    cb?: () => void
+      | ((prevState: FormikState<Values>) => FormikState<Values>)
   ) => void;
 }
 

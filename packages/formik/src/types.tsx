@@ -85,7 +85,7 @@ export interface FormikHelpers<Values> {
   setTouched: (
     touched: FormikTouched<Values>,
     shouldValidate?: boolean
-  ) => void;
+  ) => Promise<FormikErrors<Values> | void>;
   /** Manually set values object  */
   setValues: (
     values: React.SetStateAction<Values>,

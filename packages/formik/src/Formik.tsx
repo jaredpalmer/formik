@@ -140,7 +140,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   enableReinitialize = false,
   onSubmit,
   ...rest
-}: FormikConfig<Values>) {
+}: FormikConfig<Values>): FormikApi<Values> {
   const props = {
     validateOnChange,
     validateOnBlur,
@@ -535,7 +535,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     delete fieldRegistry.current[name];
   }, []);
 
-  const setTouched = useEventCallback(
+  const setTouched: FormikHelpers<Values>['setTouched'] = useEventCallback(
     (touched: FormikTouched<Values>, shouldValidate?: boolean) => {
       dispatch({ type: 'SET_TOUCHED', payload: touched });
       const willValidate =

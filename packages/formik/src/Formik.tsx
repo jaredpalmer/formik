@@ -529,8 +529,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   });
 
   const registerField = React.useCallback<FormikRegistration['registerField']>(
-    (name, { validate }) => {
-      if (!validate) return;
+    (name, { validate }: any) => {
       fieldRegistry.current[name] = {
         validate,
       };

@@ -15,6 +15,9 @@ import {
   FormikHelpers,
   FormikHandlers,
   FormikApi,
+  FormikRegistration,
+  FieldValidator,
+  FieldValidatorResponse,
 } from './types';
 import {
   isFunction,
@@ -126,7 +129,7 @@ const emptyTouched: FormikTouched<unknown> = {};
 // and their validate functions
 interface FieldRegistry {
   [field: string]: {
-    validate: (value: any) => string | Promise<string> | undefined;
+    validate: FieldValidator;
   };
 }
 
@@ -138,7 +141,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   enableReinitialize = false,
   onSubmit,
   ...rest
-}: FormikConfig<Values>): FormikApi<Values> {
+}: FormikConfig<Values>) {
   const props = {
     validateOnChange,
     validateOnBlur,
@@ -258,9 +261,9 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   );
 
   const runSingleFieldLevelValidation = React.useCallback(
-    (field: string, value: void | string): Promise<string> => {
+    (field: string, value: void | string): FieldValidatorResponse => {
       return new Promise(resolve =>
-        resolve(fieldRegistry.current[field].validate(value) as string)
+        resolve(fieldRegistry.current[field].validate(value))
       );
     },
     []
@@ -273,14 +276,14 @@ export function useFormik<Values extends FormikValues = FormikValues>({
       ).filter(f => isFunction(fieldRegistry.current[f].validate));
 
       // Construct an array with all of the field validation functions
-      const fieldValidations: Promise<string>[] =
+      const fieldValidations: FieldValidatorResponse[] =
         fieldKeysWithValidation.length > 0
           ? fieldKeysWithValidation.map(f =>
               runSingleFieldLevelValidation(f, getIn(values, f))
             )
           : [Promise.resolve('DO_NOT_DELETE_YOU_WILL_BE_FIRED')]; // use special case ;)
 
-      return Promise.all(fieldValidations).then((fieldErrorsList: string[]) =>
+      return Promise.all(fieldValidations).then((fieldErrorsList: (string|void)[]) =>
         fieldErrorsList.reduce((prev, curr, index) => {
           if (curr === 'DO_NOT_DELETE_YOU_WILL_BE_FIRED') {
             return prev;
@@ -523,7 +526,8 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     return Promise.resolve();
   });
 
-  const registerField = React.useCallback((name: string, { validate }: any) => {
+  const registerField = React.useCallback<FormikRegistration['registerField']>((name, { validate }) => {
+    if (!validate) return;
     fieldRegistry.current[name] = {
       validate,
     };

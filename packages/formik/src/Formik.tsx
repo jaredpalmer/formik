@@ -573,7 +573,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     []
   );
 
-  const setFieldValue = useEventCallback(
+  const setFieldValue: FormikHelpers<Values>['setFieldValue'] = useEventCallback(
     (field: string, value: any, shouldValidate?: boolean) => {
       dispatch({
         type: 'SET_FIELD_VALUE',
@@ -878,7 +878,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     (name) => {
       return {
         setValue: (value: any, shouldValidate?: boolean) =>
-          setFieldValue(name, value, shouldValidate),
+          setFieldValue(name, value, shouldValidate) as Promise<void | FormikErrors<any>>,
         setTouched: (value: boolean, shouldValidate?: boolean) =>
           setFieldTouched(name, value, shouldValidate) as Promise<void | FormikErrors<any>>,
         setError: (value: any) => setFieldError(name, value),

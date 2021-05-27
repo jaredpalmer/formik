@@ -550,8 +550,8 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     dispatch({ type: 'SET_ERRORS', payload: errors });
   }, []);
 
-  const setValues = useEventCallback(
-    (values: React.SetStateAction<Values>, shouldValidate?: boolean) => {
+  const setValues: FormikHelpers<Values>['setValues'] = useEventCallback(
+    (values, shouldValidate?) => {
       const resolvedValues = isFunction(values) ? values(state.values) : values;
 
       dispatch({ type: 'SET_VALUES', payload: resolvedValues });

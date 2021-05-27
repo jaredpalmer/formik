@@ -90,7 +90,7 @@ export interface FormikHelpers<Values> {
   setValues: (
     values: React.SetStateAction<Values>,
     shouldValidate?: boolean
-  ) => void;
+  ) => Promise<FormikErrors<Values> | void>;
   /** Set value of form field directly */
   setFieldValue: (field: string, value: any, shouldValidate?: boolean) => void;
   /** Set error message of a form field directly */

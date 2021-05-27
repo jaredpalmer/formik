@@ -514,13 +514,15 @@ export function useFormik<Values extends FormikValues = FormikValues>({
       }
     } else if (props.validationSchema) {
       dispatch({ type: 'SET_ISVALIDATING', payload: true });
-      return runValidationSchema(state.values, name).then((error: any) => {
-        dispatch({
-          type: 'SET_FIELD_ERROR',
-          payload: { field: name, value: error[name] },
+      return runValidationSchema(state.values, name)
+        .then((x: any) => x)
+        .then((error: any) => {
+          dispatch({
+            type: 'SET_FIELD_ERROR',
+            payload: { field: name, value: error[name] },
+          });
+          dispatch({ type: 'SET_ISVALIDATING', payload: false });
         });
-        dispatch({ type: 'SET_ISVALIDATING', payload: false });
-      });
     }
 
     return Promise.resolve();

@@ -117,7 +117,11 @@ export interface FormikHelpers<Values> {
   setFormikState: (
     f:
       | FormikState<Values>
-      | ((prevState: FormikState<Values>) => FormikState<Values>)
+      | ((prevState: FormikState<Values>) => FormikState<Values>),
+    /**
+     * @deprecated cb is not called
+     */
+    cbDeprecated?: () => void
   ) => void;
 }
 

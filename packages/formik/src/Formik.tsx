@@ -128,7 +128,7 @@ const emptyTouched: FormikTouched<unknown> = {};
 // and their validate functions
 interface FieldRegistry {
   [field: string]: {
-    validate: FieldValidator;
+    validate?: FieldValidator;
   };
 }
 
@@ -262,7 +262,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   const runSingleFieldLevelValidation = React.useCallback(
     (field: string, value: void | string): FieldValidatorResult => {
       return new Promise(resolve =>
-        resolve(fieldRegistry.current[field].validate(value))
+        resolve(fieldRegistry.current[field].validate?.(value))
       );
     },
     []
@@ -489,7 +489,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
       isFunction(fieldRegistry.current[name].validate)
     ) {
       const value = getIn(state.values, name);
-      const maybePromise = fieldRegistry.current[name].validate(value);
+      const maybePromise = fieldRegistry.current[name].validate?.(value);
       if (isPromise(maybePromise)) {
         // Only flip isValidating if the function is async.
         dispatch({ type: 'SET_ISVALIDATING', payload: true });
@@ -529,7 +529,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   });
 
   const registerField = React.useCallback<FormikRegistration['registerField']>(
-    (name, { validate }: any) => {
+    (name, { validate }) => {
       fieldRegistry.current[name] = {
         validate,
       };

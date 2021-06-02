@@ -819,13 +819,13 @@ const MyTextInput = ({ label, ...props }) => {
   // which we can spread on <input>. We can use field meta to show an error
   // message if the field is invalid and it has been touched (i.e. visited)
   const [field, meta] = useField(props);
+  const showError = meta.touched && meta.error;
+  
   return (
     <>
       <label htmlFor={props.id || props.name}>{label}</label>
       <input className="text-input" {...field} {...props} />
-      {meta.touched && meta.error ? (
-        <div className="error">{meta.error}</div>
-      ) : null}
+      {showError && <div className="error">{meta.error}</div>}
     </>
   );
 };
@@ -836,28 +836,29 @@ const MyCheckbox = ({ children, ...props }) => {
   // return the correct bag of props for you -- a `checked` prop will be included
   // in `field` alongside `name`, `value`, `onChange`, and `onBlur`
   const [field, meta] = useField({ ...props, type: 'checkbox' });
+  const showError = meta.touched && meta.error;
+  
   return (
     <div>
       <label className="checkbox-input">
         <input type="checkbox" {...field} {...props} />
         {children}
       </label>
-      {meta.touched && meta.error ? (
-        <div className="error">{meta.error}</div>
-      ) : null}
+      {showError && <div className="error">{meta.error}</div>}
     </div>
   );
 };
 
 const MySelect = ({ label, ...props }) => {
   const [field, meta] = useField(props);
+  const showError = meta.touched && meta.error;
+  
   return (
     <div>
       <label htmlFor={props.id || props.name}>{label}</label>
       <select {...field} {...props} />
-      {meta.touched && meta.error ? (
-        <div className="error">{meta.error}</div>
-      ) : null}
+      {showError && <div className="error">{meta.error}</div>}
+      
     </div>
   );
 };

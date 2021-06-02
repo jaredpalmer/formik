@@ -14,23 +14,24 @@ import { connect } from './connect';
 
 type $FixMe = any;
 
-export interface FastFieldProps<V = any> {
-  field: FieldInputProps<V>;
-  meta: FieldMetaProps<V>;
-  form: FormikProps<V>; // if ppl want to restrict this for a given form, let them.
+export interface FastFieldProps<FieldValue = any, FormValues = any> {
+  field: FieldInputProps<FieldValue>;
+  meta: FieldMetaProps<FieldValue>;
+  form: FormikProps<FormValues>; // if ppl want to restrict this for a given form, let them.
 }
 
-export type FastFieldConfig<T> = FieldConfig & {
+export type FastFieldConfig<ExtraProps, FieldValue, FormValues> = FieldConfig<FieldValue, FormValues> & {
   /** Override FastField's default shouldComponentUpdate */
   shouldUpdate?: (
-    nextProps: T & GenericFieldHTMLAttributes,
+    nextProps: ExtraProps & GenericFieldHTMLAttributes,
     props: {}
   ) => boolean;
 };
 
-export type FastFieldAttributes<T> = GenericFieldHTMLAttributes &
-  FastFieldConfig<T> &
-  T;
+export type FastFieldAttributes<ExtraProps = {}, FieldValue = any, FormValues = any> =
+  GenericFieldHTMLAttributes<FormValues, FieldValue> &
+  FastFieldConfig<ExtraProps, FieldValue, FormValues> &
+  ExtraProps;
 
 type FastFieldInnerProps<Values = {}, Props = {}> = FastFieldAttributes<
   Props
@@ -188,7 +189,7 @@ class FastFieldInner<Values = {}, Props = {}> extends React.Component<
     }
 
     return React.createElement(
-      asElement as React.ComponentClass,
+      asElement,
       { ...field, ...props },
       children
     );

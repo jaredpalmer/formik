@@ -653,6 +653,20 @@ describe('<Formik>', () => {
         expect(getProps().values.age).toEqual(80);
       });
 
+      it('setValues should do nothing if values returned from function are unchanged', async () => {
+        const validate = jest.fn(() => Promise.resolve({}));
+        const { getProps } = renderFormik<Values>({ validate });
+
+        act(() => {
+          getProps().setValues((values: Values) => values);
+        });
+        // rerender();
+        await waitFor(() => {
+          expect(getProps().values).toEqual(InitialValues);
+          expect(validate).not.toHaveBeenCalled();
+        });
+      });
+
       it('setValues should run validations when validateOnChange is true (default)', async () => {
         const newValue: Values = { name: 'ian' };
         const validate = jest.fn(_values => ({}));

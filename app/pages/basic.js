@@ -20,9 +20,9 @@ const Basic = () => (
         email: Yup.string().email('Invalid email address').required('Required'),
         firstName: Yup.string().required('Required'),
         lastName: Yup.string()
+          .required('Required')
           .min(2, 'Must be longer than 2 characters')
-          .max(20, 'Nice try, nobody has a last name that long')
-          .required('Required'),
+          .max(20, 'Nice try, nobody has a last name that long'),
       })}
       onSubmit={async values => {
         await new Promise(r => setTimeout(r, 500));

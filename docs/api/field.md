@@ -16,7 +16,7 @@ There are a few different ways to render things with `<Field>`.
 - `<Field component>`
 - ~~`<Field render>`~~ _deprecated in 2.x. Using these will log warning_
 
-`as` can either be a React component or the name of an HTML element to render. Formik will automagically inject `onChange`, `onBlur`, `name`, and `value` props of the field designated by the `name` prop to the (custom) component.
+`as` can either be a React component or the name of an HTML element to render. Formik will automagically inject `onChange`, `onBlur`, `name`, and `value` props of the field designated by the `name` prop to the (custom) component. All additional props will be passed through.
 
 `children` can either be an array of elements (e.g. `<option>` in the case of `<Field as="select">`) or a callback function (a.k.a render prop). The render props are an object containing:
 

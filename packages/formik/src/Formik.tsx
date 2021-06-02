@@ -980,6 +980,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     validateOnBlur,
     validateOnChange,
     validateOnMount,
+    validationSchema: props.validationSchema,
   };
 
   return ctx;

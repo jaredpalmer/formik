@@ -528,6 +528,18 @@ describe('<Formik>', () => {
         });
       });
 
+      it('should reject the promise if the form is invalid', async () => {
+        const onSubmit = jest.fn();
+        const validate = jest.fn(() => ({ name: 'Error!' }));
+        const { getProps } = renderFormik({ onSubmit, validate });
+
+        await act(async () => {
+          await expect(getProps().submitForm()).rejects.toThrow(
+            'Submit failure'
+          );
+        });
+      });
+
       describe('submitForm helper should not break promise chain if handleSubmit has returned rejected Promise', () => {
         it('submitForm helper should not break promise chain if handleSubmit has returned rejected Promise', async () => {
           const error = new Error('This Error is typeof Error');
@@ -569,6 +581,18 @@ describe('<Formik>', () => {
 
         fireEvent.submit(getByTestId('form'));
         expect(onSubmit).not.toBeCalled();
+      });
+
+      it('should reject the promise if the form is invalid', async () => {
+        const onSubmit = jest.fn();
+        const validate = jest.fn(() => Promise.resolve({ name: 'Error!' }));
+        const { getProps } = renderFormik({ onSubmit, validate });
+
+        await act(async () => {
+          await expect(getProps().submitForm()).rejects.toThrow(
+            'Submit failure'
+          );
+        });
       });
 
       it('should not submit the form if validate function rejects with an error', async () => {
@@ -828,6 +852,8 @@ describe('<Formik>', () => {
       });
     });
   });
+
+  describe('submitForm', () => {});
 
   describe('FormikComputedProps', () => {
     it('should compute dirty as soon as any input is touched', () => {

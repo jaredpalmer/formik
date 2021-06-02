@@ -11,7 +11,7 @@ import { users } from 'users';
 export interface UsersProps {}
 
 const Users: React.FC<UsersProps> = props => {
-  const editUrl = `${siteConfig.repoUrl}/edit/master/docs/src/users.ts`;
+  const editUrl = `${siteConfig.repoUrl}/edit/master/website/src/users.ts`;
   const showcase = users.map(user => (
     <a
       href={user.infoLink}

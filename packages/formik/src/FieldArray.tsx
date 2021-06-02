@@ -6,6 +6,7 @@ import {
   FormikState,
   SharedRenderProps,
   FormikProps,
+  FormikErrors,
 } from './types';
 import {
   getIn,
@@ -160,7 +161,10 @@ class FieldArrayInner<Values = {}> extends React.Component<
       formik: { setFormikState },
     } = this.props;
     setFormikState((prevState: FormikState<any>) => {
-      let updateErrors = typeof alterErrors === 'function' ? alterErrors : fn;
+      let updateErrors =
+        typeof alterErrors === 'function'
+          ? alterErrors
+          : (error: FormikErrors<Values>) => error;
       let updateTouched =
         typeof alterTouched === 'function' ? alterTouched : fn;
 
@@ -221,8 +225,17 @@ class FieldArrayInner<Values = {}> extends React.Component<
   handleSwap = (indexA: number, indexB: number) => () =>
     this.swap(indexA, indexB);
 
-  move = (from: number, to: number) =>
-    this.updateArrayField((array: any[]) => move(array, from, to), true, true);
+  move = (from: number, to: number) => {
+    this.updateArrayField(
+      (array: any[]) => move(array, from, to),
+      (touched: Array<boolean>) => {
+        let touchedArr = copyArrayLike(touched);
+        touchedArr[to] = true;
+        return touchedArr;
+      },
+      true
+    );
+  };
 
   handleMove = (from: number, to: number) => () => this.move(from, to);
 

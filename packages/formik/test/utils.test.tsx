@@ -152,6 +152,7 @@ describe('utils', () => {
     const obj = {
       a: {
         b: 2,
+        c: false
       },
     };
 
@@ -166,6 +167,10 @@ describe('utils', () => {
     it('return "undefined" if value was not found using given path', () => {
       expect(getIn(obj, 'a.z')).toBeUndefined();
     });
+
+    it('return "undefined" if value was not found using given path and an intermediate value is "false', () => {
+        expect(getIn(obj, 'a.c.z')).toBeUndefined();
+      });
   });
 
   describe('setIn', () => {

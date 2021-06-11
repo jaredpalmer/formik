@@ -66,18 +66,24 @@ export function getActiveElement(doc?: Document): Element | null {
 /**
  * Deeply get a value from an object via its path.
  */
-export function getIn(
-  obj: any,
-  key: string | string[],
-  def?: any,
-  p: number = 0
-) {
-  const path = toPath(key);
-  while (obj && p < path.length) {
-    obj = obj[path[p++]];
+ export function getIn(
+    obj: any,
+    key: string | string[],
+    def?: any,
+    p: number = 0
+  ) {
+    const path = toPath(key);
+    while (obj && p < path.length) {
+      obj = obj[path[p++]];
+    }
+  
+    // check if path is not in the end
+    if(p !== path.length && !obj) {
+      return def;
+    }
+  
+    return obj === undefined ? def : obj;
   }
-  return obj === undefined ? def : obj;
-}
 
 /**
  * Deeply set a value from in object via it's path. If the value at `path`

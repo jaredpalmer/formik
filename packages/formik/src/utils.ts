@@ -76,6 +76,12 @@ export function getIn(
   while (obj && p < path.length) {
     obj = obj[path[p++]];
   }
+
+  // check if path is not in the end
+  if (p !== path.length && !obj) {
+    return def;
+  }
+
   return obj === undefined ? def : obj;
 }
 

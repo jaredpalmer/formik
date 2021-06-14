@@ -152,7 +152,11 @@ describe('utils', () => {
     const obj = {
       a: {
         b: 2,
+        c: false,
+        d: null,
       },
+      t: true,
+      s: 'a random string',
     };
 
     it('gets a value by array path', () => {
@@ -165,6 +169,22 @@ describe('utils', () => {
 
     it('return "undefined" if value was not found using given path', () => {
       expect(getIn(obj, 'a.z')).toBeUndefined();
+    });
+
+    it('return "undefined" if value was not found using given path and an intermediate value is "false"', () => {
+      expect(getIn(obj, 'a.c.z')).toBeUndefined();
+    });
+
+    it('return "undefined" if value was not found using given path and an intermediate value is "null"', () => {
+      expect(getIn(obj, 'a.d.z')).toBeUndefined();
+    });
+
+    it('return "undefined" if value was not found using given path and an intermediate value is "true"', () => {
+      expect(getIn(obj, 't.z')).toBeUndefined();
+    });
+
+    it('return "undefined" if value was not found using given path and an intermediate value is a string', () => {
+      expect(getIn(obj, 's.z')).toBeUndefined();
     });
   });
 

@@ -176,7 +176,7 @@ describe('utils', () => {
     });
 
     it('return "undefined" if value was not found using given path and an intermediate value is "null"', () => {
-      expect(getIn(obj, 'a.c.d')).toBeUndefined();
+      expect(getIn(obj, 'a.d.z')).toBeUndefined();
     });
 
     it('return "undefined" if value was not found using given path and an intermediate value is "true"', () => {

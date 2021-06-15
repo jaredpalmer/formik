@@ -96,6 +96,10 @@
               "path": "/docs/examples/with-material-ui.md"
             },
             {
+              "title": "PrimeReact",
+              "path": "/docs/examples/with-primereact.md"
+            },
+            {
               "title": "More Examples",
               "path": "/docs/examples/more-examples.md"
             }

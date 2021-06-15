@@ -1,5 +1,11 @@
 # formik
 
+## 2.2.9
+
+### Patch Changes
+
+- [`ca60ef9`](https://github.com/formium/formik/commit/ca60ef9517fdefdf928b627dd1c0039fe6febd5d) [#3227](https://github.com/formium/formik/pull/3227) Thanks [@johnrom](https://github.com/johnrom)! - Bump lodash and lodash-es to latest versions.
+
 ## 2.2.8
 
 ### Patch Changes

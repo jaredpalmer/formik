@@ -513,7 +513,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
         .then((error: any) => {
           dispatch({
             type: 'SET_FIELD_ERROR',
-            payload: { field: name, value: error[name] },
+            payload: { field: name, value: getIn(error, name) },
           });
           dispatch({ type: 'SET_ISVALIDATING', payload: false });
         });

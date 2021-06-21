@@ -425,6 +425,24 @@ describe('Field / FastField', () => {
         );
       }
     );
+
+    cases('constructs error for a nested field when validateField is called', async (renderField) => {
+      const validationSchema = Yup.object({
+        user: Yup.object().shape({
+          name: Yup.string().required('required')
+        })
+      });
+
+      const { getFormProps, rerender } = renderField({}, { validationSchema });
+
+      rerender();
+
+      act(() => {
+        getFormProps().validateField('user.name');
+      })
+
+      await waitFor(() => expect(getFormProps().errors).toEqual({ user: { name: 'required' }}));
+    })
   });
 
   describe('warnings', () => {

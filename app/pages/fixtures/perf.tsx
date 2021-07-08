@@ -1,10 +1,10 @@
-import React from 'react';
+import * as React from 'react';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 
 let renderCount = 0;
 
-const Basic = () => (
+const PerfPage = () => (
   <div>
     <h1>Sign Up</h1>
     <Formik
@@ -15,6 +15,25 @@ const Basic = () => (
         favorite: '',
         checked: [],
         picked: '',
+        lastName2: '',
+        lastName3: '',
+        lastName4: '',
+        lastName5: '',
+        lastName6: '',
+        lastName7: '',
+        lastName8: '',
+        lastName9: '',
+        lastName10: '',
+        lastName11: '',
+        lastName12: '',
+        lastName13: '',
+        lastName14: '',
+        lastName15: '',
+        lastName16: '',
+        lastName17: '',
+        lastName18: '',
+        lastName19: '',
+        lastName20: '',
       }}
       validationSchema={Yup.object().shape({
         email: Yup.string().email('Invalid email address').required('Required'),
@@ -34,6 +53,25 @@ const Basic = () => (
         <ErrorMessage name="firstName" component="p" />
 
         <Field name="lastName" placeholder="Doe" />
+        <Field name="lastName2" placeholder="Doe" />
+        <Field name="lastName3" placeholder="Doe" />
+        <Field name="lastName4" placeholder="Doe" />
+        <Field name="lastName5" placeholder="Doe" />
+        <Field name="lastName6" placeholder="Doe" />
+        <Field name="lastName7" placeholder="Doe" />
+        <Field name="lastName8" placeholder="Doe" />
+        <Field name="lastName9" placeholder="Doe" />
+        <Field name="lastName10" placeholder="Doe" />
+        <Field name="lastName11" placeholder="Doe" />
+        <Field name="lastName12" placeholder="Doe" />
+        <Field name="lastName13" placeholder="Doe" />
+        <Field name="lastName14" placeholder="Doe" />
+        <Field name="lastName15" placeholder="Doe" />
+        <Field name="lastName16" placeholder="Doe" />
+        <Field name="lastName17" placeholder="Doe" />
+        <Field name="lastName18" placeholder="Doe" />
+        <Field name="lastName19" placeholder="Doe" />
+        <Field name="lastName20" placeholder="Doe" />
         <ErrorMessage name="lastName" component="p" />
 
         <Field
@@ -82,4 +120,4 @@ const Basic = () => (
   </div>
 );
 
-export default Basic;
+export default PerfPage;

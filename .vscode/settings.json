@@ -1,3 +1,4 @@
 {
-  "typescript.tsdk": "node_modules/typescript/lib"
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "jest.pathToJest": "npm run test:vscode --",
 }

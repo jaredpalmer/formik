@@ -1,28 +1,41 @@
-import * as React from 'react';
 import hoistNonReactStatics from 'hoist-non-react-statics';
-
-import { FormikContextType } from './types';
-import { FormikConsumer } from './FormikContext';
+import * as React from 'react';
 import invariant from 'tiny-warning';
+import { FormikSharedConfig, FormikContextType, FormikState } from './types';
+import { useFormikConfig, useFormikContext } from './FormikContext';
+import { selectFullState } from './helpers/form-helpers';
+
+export type FormikConnectedType<Values> =
+  FormikContextType<Values> &
+  FormikSharedConfig<Values> &
+  FormikState<Values>;
 
 /**
  * Connect any component to Formik context, and inject as a prop called `formik`;
  * @param Comp React Component
  */
 export function connect<OuterProps, Values = {}>(
-  Comp: React.ComponentType<OuterProps & { formik: FormikContextType<Values> }>
+  Comp: React.ComponentType<OuterProps & { formik: FormikConnectedType<Values> }>
 ) {
-  const C: React.FC<OuterProps> = (props: OuterProps) => (
-    <FormikConsumer>
-      {formik => {
-        invariant(
-          !!formik,
-          `Formik context is undefined, please verify you are rendering <Form>, <Field>, <FastField>, <FieldArray>, or your custom context-using component as a child of a <Formik> component. Component name: ${Comp.name}`
-        );
-        return <Comp {...props} formik={formik} />;
-      }}
-    </FormikConsumer>
-  );
+  const C: React.FC<OuterProps> = (props: OuterProps) => {
+    const formik = useFormikContext<Values>();
+    const config = useFormikConfig<Values>();
+    const state = formik.useState(selectFullState);
+
+    invariant(
+      !!formik,
+      `Formik context is undefined, please verify you are rendering <Form>, <Field>, <FastField>, <FieldArray>, or your custom context-using component as a child of a <Formik> component. Component name: ${Comp.name}`
+    );
+
+    const legacyBag = {
+      ...formik,
+      ...config,
+      ...state,
+    }
+
+    return <Comp {...props} formik={legacyBag} />;
+  };
+
   const componentDisplayName =
     Comp.displayName ||
     Comp.name ||
@@ -40,7 +53,7 @@ export function connect<OuterProps, Values = {}>(
   return hoistNonReactStatics(
     C,
     Comp as React.ComponentClass<
-      OuterProps & { formik: FormikContextType<Values> }
+      OuterProps & { formik: FormikConnectedType<Values> }
     > // cast type to ComponentClass (even if SFC)
   ) as React.ComponentType<OuterProps>;
 }

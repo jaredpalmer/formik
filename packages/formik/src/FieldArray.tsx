@@ -1,32 +1,19 @@
 import * as React from 'react';
 import cloneDeep from 'lodash/cloneDeep';
-import { connect } from './connect';
-import {
-  FormikContextType,
-  FormikState,
-  SharedRenderProps,
-  FormikProps,
-} from './types';
-import {
-  getIn,
-  isEmptyChildren,
-  isFunction,
-  setIn,
-  isEmptyArray,
-} from './utils';
-import isEqual from 'react-fast-compare';
+import { useField } from './Field';
+import { arraySwap, arrayMove, arrayInsert, arrayReplace, copyArrayLike } from './helpers/array-helpers';
+import { useFormikConfig, useFormikContext } from './FormikContext';
+import { FieldMetaProps, FormikApi, FormikReducerState } from './types';
+import { useEventCallback } from './hooks/useEventCallback';
+import { getIn, isEmptyArray, isEmptyChildren, isFunction, setIn } from './utils';
 
-export type FieldArrayRenderProps = ArrayHelpers & {
-  form: FormikProps<any>;
-  name: string;
-};
-
-export type FieldArrayConfig = {
+export interface UseFieldArrayProps {
   /** Really the path to the array field to be updated */
   name: string;
   /** Should field array validate the form AFTER array updates/changes? */
   validateOnChange?: boolean;
-} & SharedRenderProps<FieldArrayRenderProps>;
+}
+
 export interface ArrayHelpers {
   /** Imperatively add a value to the end of an array */
   push: (obj: any) => void;
@@ -62,314 +49,338 @@ export interface ArrayHelpers {
   pop<T>(): T | undefined;
 }
 
-/**
- * Some array helpers!
- */
-export const move = (array: any[], from: number, to: number) => {
-  const copy = copyArrayLike(array);
-  const value = copy[from];
-  copy.splice(from, 1);
-  copy.splice(to, 0, value);
-  return copy;
-};
+export const useFieldArray = <Values, Value>(
+  props: UseFieldArrayProps
+): [FieldMetaProps<Value[]>, ArrayHelpers, FormikApi<Values>] => {
+  const formik = useFormikContext<Values>();
+  const { setFormikState } = formik;
+  const [, fieldMeta] = useField<Value[]>(props.name);
 
-export const swap = (
-  arrayLike: ArrayLike<any>,
-  indexA: number,
-  indexB: number
-) => {
-  const copy = copyArrayLike(arrayLike);
-  const a = copy[indexA];
-  copy[indexA] = copy[indexB];
-  copy[indexB] = a;
-  return copy;
-};
+  const updateArrayField = useEventCallback(
+    (
+      // eslint-disable-next-line @typescript-eslint/ban-types
+      fn: Function,
+      // eslint-disable-next-line @typescript-eslint/ban-types
+      alterTouched: boolean | Function,
+      // eslint-disable-next-line @typescript-eslint/ban-types
+      alterErrors: boolean | Function
+    ) => {
+      const name = props.name;
 
-export const insert = (
-  arrayLike: ArrayLike<any>,
-  index: number,
-  value: any
-) => {
-  const copy = copyArrayLike(arrayLike);
-  copy.splice(index, 0, value);
-  return copy;
-};
+      setFormikState((prevState: FormikReducerState<Values>) => {
+        const updateErrors =
+          typeof alterErrors === 'function' ? alterErrors : fn;
+        const updateTouched =
+          typeof alterTouched === 'function' ? alterTouched : fn;
 
-export const replace = (
-  arrayLike: ArrayLike<any>,
-  index: number,
-  value: any
-) => {
-  const copy = copyArrayLike(arrayLike);
-  copy[index] = value;
-  return copy;
-};
+        // values fn should be executed before updateErrors and updateTouched,
+        // otherwise it causes an error with unshift.
+        const values = setIn(
+          prevState.values,
+          name,
+          fn(getIn(prevState.values, name))
+        );
 
-const copyArrayLike = (arrayLike: ArrayLike<any>) => {
-  if (!arrayLike) {
-    return [];
-  } else if (Array.isArray(arrayLike)) {
-    return [...arrayLike];
-  } else {
-    const maxIndex = Object.keys(arrayLike)
-      .map(key => parseInt(key))
-      .reduce((max, el) => (el > max ? el : max), 0);
-    return Array.from({ ...arrayLike, length: maxIndex + 1 });
-  }
-};
+        let fieldError = alterErrors
+          ? updateErrors(getIn(prevState.errors, name))
+          : undefined;
+        let fieldTouched = alterTouched
+          ? updateTouched(getIn(prevState.touched, name))
+          : undefined;
 
-class FieldArrayInner<Values = {}> extends React.Component<
-  FieldArrayConfig & { formik: FormikContextType<Values> },
-  {}
-> {
-  static defaultProps = {
-    validateOnChange: true,
-  };
+        if (isEmptyArray(fieldError)) {
+          fieldError = undefined;
+        }
+        if (isEmptyArray(fieldTouched)) {
+          fieldTouched = undefined;
+        }
 
-  constructor(props: FieldArrayConfig & { formik: FormikContextType<Values> }) {
-    super(props);
-    // We need TypeScript generics on these, so we'll bind them in the constructor
-    // @todo Fix TS 3.2.1
-    this.remove = this.remove.bind(this) as any;
-    this.pop = this.pop.bind(this) as any;
-  }
-
-  componentDidUpdate(
-    prevProps: FieldArrayConfig & { formik: FormikContextType<Values> }
-  ) {
-    if (
-      this.props.validateOnChange &&
-      this.props.formik.validateOnChange &&
-      !isEqual(
-        getIn(prevProps.formik.values, prevProps.name),
-        getIn(this.props.formik.values, this.props.name)
-      )
-    ) {
-      this.props.formik.validateForm(this.props.formik.values);
+        return {
+          ...prevState,
+          values,
+          errors: alterErrors
+            ? setIn(prevState.errors, name, fieldError)
+            : prevState.errors,
+          touched: alterTouched
+            ? setIn(prevState.touched, name, fieldTouched)
+            : prevState.touched,
+        };
+      });
     }
-  }
+  );
 
-  updateArrayField = (
-    fn: Function,
-    alterTouched: boolean | Function,
-    alterErrors: boolean | Function
-  ) => {
-    const {
-      name,
+  const push = useEventCallback(
+    (value: any) =>
+      updateArrayField(
+        (arrayLike: ArrayLike<any>) => [
+          ...copyArrayLike(arrayLike),
+          cloneDeep(value),
+        ],
+        false,
+        false
+      )
+  );
 
-      formik: { setFormikState },
-    } = this.props;
-    setFormikState((prevState: FormikState<any>) => {
-      let updateErrors = typeof alterErrors === 'function' ? alterErrors : fn;
-      let updateTouched =
-        typeof alterTouched === 'function' ? alterTouched : fn;
+  const handlePush = useEventCallback(
+    (value: any) => () => push(value),
+  );
 
-      // values fn should be executed before updateErrors and updateTouched,
-      // otherwise it causes an error with unshift.
-      let values = setIn(
-        prevState.values,
-        name,
-        fn(getIn(prevState.values, name))
+  const swap = useEventCallback(
+    (indexA: number, indexB: number) =>
+      updateArrayField(
+        (array: any[]) => arraySwap(array, indexA, indexB),
+        true,
+        true
+      )
+  );
+
+  const handleSwap = useEventCallback(
+    (indexA: number, indexB: number) => () => swap(indexA, indexB)
+  );
+
+  const move = useEventCallback(
+    (from: number, to: number) =>
+      updateArrayField(
+        (array: any[]) => arrayMove(array, from, to),
+        true,
+        true
+      )
+  );
+
+  const handleMove = useEventCallback(
+    (from: number, to: number) => () => move(from, to)
+  );
+
+  const insert = useEventCallback(
+    (index: number, value: any) =>
+      updateArrayField(
+        (array: any[]) => arrayInsert(array, index, value),
+        (array: any[]) => arrayInsert(array, index, null),
+        (array: any[]) => arrayInsert(array, index, null)
+      )
+  );
+
+  const handleInsert = useEventCallback(
+    (index: number, value: any) => () => insert(index, value)
+  );
+
+  const replace = useEventCallback(
+    (index: number, value: any) =>
+      updateArrayField(
+        (array: any[]) => arrayReplace(array, index, value),
+        false,
+        false
+      )
+  );
+
+  const handleReplace = useEventCallback(
+    (index: number, value: any) => () => replace(index, value)
+  );
+
+  const unshift = useEventCallback(
+    (value: any) => {
+      let length = -1;
+      updateArrayField(
+        (array: any[]) => {
+          const arr = array ? [value, ...array] : [value];
+          if (length < 0) {
+            length = arr.length;
+          }
+          return arr;
+        },
+        (array: any[]) => {
+          const arr = array ? [null, ...array] : [null];
+          if (length < 0) {
+            length = arr.length;
+          }
+          return arr;
+        },
+        (array: any[]) => {
+          const arr = array ? [null, ...array] : [null];
+          if (length < 0) {
+            length = arr.length;
+          }
+          return arr;
+        }
+      );
+      return length;
+    }
+  );
+
+  const handleUnshift = useEventCallback(
+    (value: any) => () => unshift(value)
+  );
+
+  const remove = useEventCallback(
+    <T,>(index: number): T => {
+      // We need to make sure we also remove relevant pieces of `touched` and `errors`
+      let result: any;
+      updateArrayField(
+        // so this gets call 3 times
+        (array?: any[]) => {
+          const copy = array ? copyArrayLike(array) : [];
+          if (!result) {
+            result = copy[index];
+          }
+          if (isFunction(copy.splice)) {
+            copy.splice(index, 1);
+          }
+          return copy;
+        },
+        true,
+        true
       );
 
-      let fieldError = alterErrors
-        ? updateErrors(getIn(prevState.errors, name))
-        : undefined;
-      let fieldTouched = alterTouched
-        ? updateTouched(getIn(prevState.touched, name))
-        : undefined;
+      return result as T;
+    }
+  );
 
-      if (isEmptyArray(fieldError)) {
-        fieldError = undefined;
-      }
-      if (isEmptyArray(fieldTouched)) {
-        fieldTouched = undefined;
-      }
+  const handleRemove = useEventCallback(
+    (index: number) => () => remove<any>(index)
+  );
 
-      return {
-        ...prevState,
-        values,
-        errors: alterErrors
-          ? setIn(prevState.errors, name, fieldError)
-          : prevState.errors,
-        touched: alterTouched
-          ? setIn(prevState.touched, name, fieldTouched)
-          : prevState.touched,
-      };
-    });
+  const pop = useEventCallback(
+    <T,>(): T => {
+      // Remove relevant pieces of `touched` and `errors` too!
+      let result: any;
+      updateArrayField(
+        // so this gets call 3 times
+        (array: any[]) => {
+          const tmp = array;
+          if (!result) {
+            result = tmp && tmp.pop && tmp.pop();
+          }
+          return tmp;
+        },
+        true,
+        true
+      );
+
+      return result as T;
+    }
+  );
+
+  const handlePop = useEventCallback(
+    () => () => pop<any>()
+  );
+
+  /**
+   * Memoize for stability
+   */
+  return [
+    fieldMeta,
+    React.useMemo(
+      () => ({
+        push,
+        handlePush,
+        swap,
+        handleSwap,
+        move,
+        handleMove,
+        insert,
+        handleInsert,
+        replace,
+        handleReplace,
+        unshift,
+        handleUnshift,
+        handleRemove,
+        handlePop,
+        remove,
+        pop,
+      }),
+      [
+        handleInsert,
+        handleMove,
+        handlePop,
+        handlePush,
+        handleRemove,
+        handleReplace,
+        handleSwap,
+        handleUnshift,
+        insert,
+        move,
+        pop,
+        push,
+        remove,
+        replace,
+        swap,
+        unshift,
+      ]
+    ),
+    formik,
+  ];
+};
+
+export type FieldArrayRenderProps<Values, Value> = ArrayHelpers & {
+  form: FormikApi<Values>;
+  field: FieldMetaProps<Value[]>;
+  name: string;
+};
+
+export type FieldArrayProps<Values, Value> = UseFieldArrayProps & {
+  /**
+   * Field component to render. Can either be a string like 'select' or a component.
+   */
+   component?: React.ComponentType<FieldArrayRenderProps<Values, Value>>;
+
+   /**
+    * Render prop (works like React router's <Route render={props =>} />)
+    */
+   render?: (props: FieldArrayRenderProps<Values, Value>) => React.ReactElement | null;
+
+   /**
+    * Children render function <Field name>{props => ...}</Field>)
+    */
+   children?: (props: FieldArrayRenderProps<Values, Value>) => React.ReactElement | null;
+};
+
+export const FieldArray = <Values, Value>(
+  rawProps: FieldArrayProps<Values, Value>
+) => {
+  const {
+    component,
+    render,
+    children,
+    validateOnChange = true,
+    ...rest
+  } = rawProps;
+  const props = {
+    validateOnChange,
+    ...rest,
   };
 
-  push = (value: any) =>
-    this.updateArrayField(
-      (arrayLike: ArrayLike<any>) => [
-        ...copyArrayLike(arrayLike),
-        cloneDeep(value),
-      ],
-      false,
-      false
-    );
+  const [field, arrayHelpers, formikApi] = useFieldArray<Values, Value>(props);
+  const { validateForm } = formikApi;
+  const { validateOnChange: apiValidateOnChange } = useFormikConfig();
 
-  handlePush = (value: any) => () => this.push(value);
+  /**
+   * Should this go here?! Probably not. We should accept a validate fn and push it all the way to useField.
+   */
+  React.useEffect(() => {
+    if (props.validateOnChange && apiValidateOnChange) {
+      validateForm();
+    }
+  }, [props.validateOnChange, field.value, apiValidateOnChange, validateForm]);
 
-  swap = (indexA: number, indexB: number) =>
-    this.updateArrayField(
-      (array: any[]) => swap(array, indexA, indexB),
-      true,
-      true
-    );
-
-  handleSwap = (indexA: number, indexB: number) => () =>
-    this.swap(indexA, indexB);
-
-  move = (from: number, to: number) =>
-    this.updateArrayField((array: any[]) => move(array, from, to), true, true);
-
-  handleMove = (from: number, to: number) => () => this.move(from, to);
-
-  insert = (index: number, value: any) =>
-    this.updateArrayField(
-      (array: any[]) => insert(array, index, value),
-      (array: any[]) => insert(array, index, null),
-      (array: any[]) => insert(array, index, null)
-    );
-
-  handleInsert = (index: number, value: any) => () => this.insert(index, value);
-
-  replace = (index: number, value: any) =>
-    this.updateArrayField(
-      (array: any[]) => replace(array, index, value),
-      false,
-      false
-    );
-
-  handleReplace = (index: number, value: any) => () =>
-    this.replace(index, value);
-
-  unshift = (value: any) => {
-    let length = -1;
-    this.updateArrayField(
-      (array: any[]) => {
-        const arr = array ? [value, ...array] : [value];
-        if (length < 0) {
-          length = arr.length;
-        }
-        return arr;
-      },
-      (array: any[]) => {
-        const arr = array ? [null, ...array] : [null];
-        if (length < 0) {
-          length = arr.length;
-        }
-        return arr;
-      },
-      (array: any[]) => {
-        const arr = array ? [null, ...array] : [null];
-        if (length < 0) {
-          length = arr.length;
-        }
-        return arr;
-      }
-    );
-    return length;
-  };
-
-  handleUnshift = (value: any) => () => this.unshift(value);
-
-  remove<T>(index: number): T {
-    // We need to make sure we also remove relevant pieces of `touched` and `errors`
-    let result: any;
-    this.updateArrayField(
-      // so this gets call 3 times
-      (array?: any[]) => {
-        const copy = array ? copyArrayLike(array) : [];
-        if (!result) {
-          result = copy[index];
-        }
-        if (isFunction(copy.splice)) {
-          copy.splice(index, 1);
-        }
-        return copy;
-      },
-      true,
-      true
-    );
-
-    return result as T;
-  }
-
-  handleRemove = (index: number) => () => this.remove<any>(index);
-
-  pop<T>(): T {
-    // Remove relevant pieces of `touched` and `errors` too!
-    let result: any;
-    this.updateArrayField(
-      // so this gets call 3 times
-      (array: any[]) => {
-        const tmp = array;
-        if (!result) {
-          result = tmp && tmp.pop && tmp.pop();
-        }
-        return tmp;
-      },
-      true,
-      true
-    );
-
-    return result as T;
-  }
-
-  handlePop = () => () => this.pop<any>();
-
-  render() {
-    const arrayHelpers: ArrayHelpers = {
-      push: this.push,
-      pop: this.pop,
-      swap: this.swap,
-      move: this.move,
-      insert: this.insert,
-      replace: this.replace,
-      unshift: this.unshift,
-      remove: this.remove,
-      handlePush: this.handlePush,
-      handlePop: this.handlePop,
-      handleSwap: this.handleSwap,
-      handleMove: this.handleMove,
-      handleInsert: this.handleInsert,
-      handleReplace: this.handleReplace,
-      handleUnshift: this.handleUnshift,
-      handleRemove: this.handleRemove,
-    };
-
-    const {
-      component,
-      render,
-      children,
-      name,
-      formik: {
-        validate: _validate,
-        validationSchema: _validationSchema,
-        ...restOfFormik
-      },
-    } = this.props;
-
-    const props: FieldArrayRenderProps = {
+  const renderProps: FieldArrayRenderProps<Values, Value> = React.useMemo(
+    () => ({
       ...arrayHelpers,
-      form: restOfFormik,
-      name,
-    };
+      form: formikApi,
+      field: field,
+      name: props.name,
+    }),
+    [arrayHelpers, field, formikApi, props.name]
+  );
 
-    return component
-      ? React.createElement(component as any, props)
-      : render
-      ? (render as any)(props)
-      : children // children come last, always called
-      ? typeof children === 'function'
-        ? (children as any)(props)
-        : !isEmptyChildren(children)
-        ? React.Children.only(children)
-        : null
-      : null;
-  }
-}
-
-export const FieldArray = connect<FieldArrayConfig, any>(FieldArrayInner);
+  return component
+    ? React.createElement(component, renderProps)
+    : render
+    ? render(renderProps) ?? null
+    : children // children come last, always called
+    ? typeof children === 'function'
+      ? children(renderProps) ?? null
+      : !isEmptyChildren(children)
+      ? React.Children.only(children)
+      : null
+    : null;
+};

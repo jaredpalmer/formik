@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { Comparer, Selector } from 'use-optimized-selector';
 
+export type InputElements = "input" | "textarea" | "select";
+
 /**
  * Values of fields in the form
  */
@@ -196,7 +198,7 @@ export interface FormikStateHelpers<Values> {
 export type GetValueFromEventFn = (
   event: React.SyntheticEvent<any>,
   fieldName: string
-) => any;
+) => unknown;
 
 export type HandleSubmitFn = (
   e?: React.FormEvent<HTMLFormElement> | undefined
@@ -267,7 +269,6 @@ export type FormikApi<Values extends FormikValues> = FormikHelpers<Values> &
   FormikHandlers & {
     unregisterField: UnregisterFieldFn;
     registerField: RegisterFieldFn;
-    getValueFromEvent: GetValueFromEventFn;
   };
 
 /**

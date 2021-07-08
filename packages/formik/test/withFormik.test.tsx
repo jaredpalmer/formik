@@ -105,7 +105,6 @@ describe('withFormik()', () => {
       submitForm: expect.any(Function),
       touched: {},
       unregisterField: expect.any(Function),
-      getValueFromEvent: expect.any(Function),
       validateField: expect.any(Function),
       validateForm: expect.any(Function),
       validateOnBlur: true,

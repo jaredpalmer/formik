@@ -14,6 +14,7 @@ const Basic = () => (
         email: '',
         favorite: '',
         checked: [],
+        checkedNum: [],
         picked: '',
       }}
       validationSchema={Yup.object().shape({
@@ -61,6 +62,21 @@ const Basic = () => (
           </label>
           <label>
             <Field type="checkbox" name="checked" value="Three" />
+            Three
+          </label>
+        </div>
+        <div id="checkbox-group">Numeric Checkbox Group </div>
+        <div role="group" aria-labelledby="checkbox-group">
+          <label>
+            <Field type="checkbox" name="checkedNum" value={1} parse={value => parseInt(value, 10)} />
+            One
+          </label>
+          <label>
+            <Field type="checkbox" name="checkedNum" value={2} parse={value => parseInt(value, 10)} />
+            Two
+          </label>
+          <label>
+            <Field type="checkbox" name="checkedNum" value={3} parse={value => parseInt(value, 10)} />
             Three
           </label>
         </div>

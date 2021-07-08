@@ -47,7 +47,6 @@ export const FormikProvider = <Values,>(props: React.PropsWithChildren<FormikPro
     validateField,
     unregisterField,
     registerField,
-    getValueFromEvent,
     // state helpers
     getState,
     useState,
@@ -82,7 +81,6 @@ export const FormikProvider = <Values,>(props: React.PropsWithChildren<FormikPro
       validateField,
       unregisterField,
       registerField,
-      getValueFromEvent,
       getState,
       useState,
     }),

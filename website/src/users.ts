@@ -226,4 +226,9 @@ export const users = [
     image: '/images/logos/benchmark-uae.svg',
     infoLink: 'https://benchmark.ae/',
   },
+  {
+    caption: 'Bookingjini Labs',
+    image: '/images/logos/bookingjini-logo.svg',
+    infoLink: 'https://business.bookingjini.com/',
+  },
 ];

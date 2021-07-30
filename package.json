@@ -5,6 +5,7 @@
     "@changesets/changelog-github": "^0.2.7",
     "@changesets/cli": "^2.10.3",
     "@types/jest": "^26.0.14",
+    "@types/react": "^16.9.55",
     "cypress": "^5.2.0",
     "got": "10.0.4",
     "husky": "^4.3.0",
@@ -13,15 +14,22 @@
     "prettier": "^2.1.2",
     "release": "6.0.1",
     "tsdx": "^0.14.1",
-    "typescript": "^4.0.3"
+    "typescript": "^4.2.4"
   },
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "./app"
   ],
+  "resolutions": {
+    "**/typescript": "^4.2.4"
+  },
   "scripts": {
     "lerna": "lerna",
     "dev": "lerna run start --stream --parallel",
-    "test": "lerna run test --",
+    "test": "lerna run test -- --silent",
+    "test:watch": "lerna run test --stream --no-sort -- --watch",
+    "test:watchAll": "lerna run test --stream --no-sort -- --watchAll",
+    "test:vscode": "lerna run test --stream --no-sort --",
     "build": "lerna run build",
     "prepublish": "lerna run prepublish",
     "format": "prettier --write 'examples/**/*' 'packages/*/src/**/*' 'website/src/**/*.{ts,tsx,js,jsx,md,mdx}' 'app/pages/**/*'  'packages/*/test/**/*' 'README.md'",
@@ -32,7 +40,7 @@
     "cypress": "cypress run",
     "precommit": "lint-staged",
     "cypress:open": "cypress open",
-    "start:app": "npm run build && yarn --cwd packages/formik link && yarn --cwd node_modules/react link && yarn --cwd ./app link react formik && yarn --cwd ./app && yarn --cwd ./app run dev"
+    "start:app": "yarn --cwd ./app run dev"
   },
   "lint-staged": {
     "**/*.{ts,tsx,md,mdx,js,jsx}": [

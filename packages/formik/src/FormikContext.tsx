@@ -1,22 +1,211 @@
 import * as React from 'react';
-import { FormikContextType } from './types';
+import {
+  FormikApi,
+  FormikConnectedType,
+  FormikContextType,
+  FormikPassThroughConfig,
+  FormikValues,
+  NotOptional
+} from './types';
 import invariant from 'tiny-warning';
+import { selectFullState } from './helpers/form-helpers';
 
+/**
+ * This Context provides the completely stable Formik API
+ *
+ * @private
+ */
 export const FormikContext = React.createContext<FormikContextType<any>>(
   undefined as any
 );
 FormikContext.displayName = 'FormikContext';
 
-export const FormikProvider = FormikContext.Provider;
-export const FormikConsumer = FormikContext.Consumer;
+export type FormikProviderProps<Values> = {
+  value: FormikContextType<Values> & FormikPassThroughConfig<Values>;
+}
 
-export function useFormikContext<Values>() {
-  const formik = React.useContext<FormikContextType<Values>>(FormikContext);
+export const FormikProvider = <Values,>(props: React.PropsWithChildren<FormikProviderProps<Values>>) => {
+  /**
+   * Optimize Renders for ContextProviders.
+   *
+   * NotOptional allows us to enforce that even
+   * possibly undefined properties are passed here.
+   */
+  const {
+    // handlers
+    handleBlur,
+    handleChange,
+    handleReset,
+    handleSubmit,
+    // helpers
+    resetForm,
+    setErrors,
+    setFormikState,
+    setFieldTouched,
+    setFieldValue,
+    setFieldError,
+    setStatus,
+    setSubmitting,
+    setTouched,
+    setValues,
+    submitForm,
+    validateForm,
+    validateField,
+    unregisterField,
+    registerField,
+    // state helpers
+    getState,
+    useState,
+    // config
+    validateOnChange,
+    validateOnBlur,
+    validateOnMount,
+    enableReinitialize,
+    validationSchema,
+    validate,
+    isInitialValid,
+    TypedField,
+    TypedFieldArray,
+  } = props.value;
+
+   const formikApi = React.useMemo<NotOptional<FormikApi<Values>>>(
+    () => ({
+      handleBlur,
+      handleChange,
+      handleReset,
+      handleSubmit,
+      resetForm,
+      setErrors,
+      setFormikState,
+      setFieldTouched,
+      setFieldValue,
+      setFieldError,
+      setStatus,
+      setSubmitting,
+      setTouched,
+      setValues,
+      submitForm,
+      validateForm,
+      validateField,
+      unregisterField,
+      registerField,
+      getState,
+      useState,
+      TypedField,
+      TypedFieldArray,
+    }),
+    [
+      handleBlur,
+      handleChange,
+      handleReset,
+      handleSubmit,
+      resetForm,
+      setErrors,
+      setFormikState,
+      setFieldTouched,
+      setFieldValue,
+      setFieldError,
+      setStatus,
+      setSubmitting,
+      setTouched,
+      setValues,
+      submitForm,
+      validateForm,
+      validateField,
+      unregisterField,
+      registerField,
+      getState,
+      useState,
+      TypedField,
+      TypedFieldArray,
+    ]
+  );
+
+  const formikConfig = React.useMemo<NotOptional<FormikPassThroughConfig<Values>>>(
+    () => ({
+      validateOnChange,
+      validateOnBlur,
+      validateOnMount,
+      enableReinitialize,
+      validationSchema,
+      validate,
+      isInitialValid,
+    }),
+    [
+      validateOnChange,
+      validateOnBlur,
+      validateOnMount,
+      enableReinitialize,
+      validationSchema,
+      validate,
+      isInitialValid,
+    ]
+  );
+  return <FormikContext.Provider value={formikApi}>
+    <FormikConfigContext.Provider value={formikConfig}>
+      {props.children}
+    </FormikConfigContext.Provider>
+  </FormikContext.Provider>
+}
+
+export function useFormikContext<Values extends FormikValues>(): FormikApi<
+  Values
+> {
+  const formikApi = React.useContext(FormikContext);
+
+  invariant(
+    !!formikApi,
+    `Formik context is undefined, please verify you are calling useFormikContext() as child of a <Formik> component.`
+  );
+
+  return formikApi;
+}
+
+/**
+ * This Context provides Formik's configuration, which could change if a developer does not memoize.
+ *
+ * @private
+ */
+const FormikConfigContext = React.createContext<FormikPassThroughConfig<any>>(
+  undefined as any
+);
+FormikConfigContext.displayName = 'FormikConfigContext';
+
+export function useFormikConfig<Values extends FormikValues>(): FormikPassThroughConfig<
+  Values
+> {
+  const formikConfig = React.useContext(FormikConfigContext);
+
+  invariant(
+    !!formikConfig,
+    `FormikConfigContext is undefined, please verify you are calling useFormikConfigContext() as child of a <FormikProvider> component.`
+  );
+
+  return formikConfig;
+}
+
+/**
+ * @deprecated Please access state directly via the Formik API.
+ */
+export function FormikConsumer<Values = any>({
+  children,
+}: {
+  children: (formik: FormikConnectedType<Values>) => React.ReactNode;
+}) {
+  const formik = useFormikContext<Values>();
+  const state = formik.useState(selectFullState);
 
   invariant(
     !!formik,
     `Formik context is undefined, please verify you are calling useFormikContext() as child of a <Formik> component.`
   );
 
-  return formik;
+  return (
+    <>
+      {children({
+        ...formik,
+        ...state,
+      })}
+    </>
+  );
 }

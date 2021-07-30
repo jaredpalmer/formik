@@ -1,7 +1,7 @@
 {
   "name": "formik",
   "description": "Build forms in React, without the tears",
-  "version": "3.1.0-types8",
+  "version": "2.2.9",
   "license": "Apache-2.0",
   "author": "Jared Palmer <jared@palmer.net> (https://jaredpalmer.com)",
   "repository": "formium/formik",
@@ -29,22 +29,9 @@
   "main": "dist/index.js",
   "umd:main": "dist/formik.umd.production.js",
   "module": "dist/formik.esm.js",
-  "types": "index.d.ts",
-  "typesVersions": {
-    ">=4.1": {
-      "*": [
-        "dist/*"
-      ]
-    },
-    "<4.1": {
-      "*": [
-        "dist-untyped/*"
-      ]
-    }
-  },
+  "typings": "dist/index.d.ts",
   "files": [
-    "dist",
-    "dist-untyped"
+    "dist"
   ],
   "peerDependencies": {
     "react": ">=16.8.0"
@@ -53,19 +40,18 @@
     "test": "tsdx test --env=jsdom",
     "test:watch": "npm run test -- --watchAll",
     "start": "tsdx watch --tsconfig tsconfig.build.json --verbose --noClean",
-    "prepublish": "npm run build",
-    "build": "tsdx build --tsconfig tsconfig.build.json && npm run build-untyped",
-    "build-untyped": "tsc --emitDeclarationOnly --noEmit false --project tsconfig.build.json --outDir dist-untyped && mv -f dist-untyped/helpers/path-helpers.untyped.d.ts dist-untyped/helpers/path-helpers.d.ts",
-    "lint": "tsdx lint"
+    "build": "tsdx build --tsconfig tsconfig.build.json",
+    "lint": "tsdx lint",
+    "prepublish": "npm run build"
   },
   "dependencies": {
     "deepmerge": "^2.1.1",
     "hoist-non-react-statics": "^3.3.0",
-    "lodash": "^4.17.14",
-    "lodash-es": "^4.17.14",
+    "lodash": "^4.17.21",
+    "lodash-es": "^4.17.21",
     "react-fast-compare": "^2.0.1",
     "tiny-warning": "^1.0.2",
-    "tslib": "^2.0.1",
+    "tslib": "^1.10.0",
     "use-optimized-selector": "^1.0.0-beta3",
     "use-subscription": "^1.5.1"
   },

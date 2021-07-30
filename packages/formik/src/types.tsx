@@ -13,6 +13,8 @@ export type SingleValue<Value> =
     ? SingleValue
     : Value;
 
+export type InputElements = "input" | "textarea" | "select";
+
 /**
  * Values of fields in the form
  */
@@ -237,7 +239,7 @@ export interface FormikStateHelpers<Values> {
 export type GetValueFromEventFn = (
   event: React.SyntheticEvent<any>,
   fieldName: string
-) => any;
+) => unknown;
 
 export type HandleSubmitFn = (
   e?: React.FormEvent<HTMLFormElement> | undefined
@@ -307,7 +309,6 @@ export interface FormikApi<Values extends FormikValues> extends
   FormikRegistration<Values>,
   FormikFieldHelpers<Values>
 {
-  getValueFromEvent: GetValueFromEventFn;
 };
 
 export interface FormikValidationConfig<Values> {
@@ -456,7 +457,7 @@ export interface FieldHelperProps<Value> {
   /** Set the field's touched value */
   setTouched: (value: boolean, shouldValidate?: boolean) => void;
   /** Set the field's error value */
-  setError: (error: string) => void;
+  setError: (value: string | undefined) => void;
 }
 
 export type FieldOnChangeProp<Value> = (

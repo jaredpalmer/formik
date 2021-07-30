@@ -20,6 +20,7 @@ import {
   FormikMessage,
   ValidateFieldFn,
   FormikApiAndConfig,
+  InputElements,
 } from './types';
 import {
   isFunction,
@@ -30,7 +31,6 @@ import {
   getActiveElement,
   getIn,
   setNestedObjectValues,
-  isReactNative,
 } from './utils';
 import { FormikProvider } from './FormikContext';
 import invariant from 'tiny-warning';
@@ -42,6 +42,7 @@ import { useFormikSubscriptions } from './hooks/useFormikSubscriptions';
 import { useEventCallback } from './hooks/useEventCallback';
 import { useTypedField } from './Field.helpers';
 import { useTypedFieldArray } from './FieldArray.helpers';
+import { selectFieldOnChange } from './helpers/field-helpers';
 
 // State reducer
 function formikReducer<Values>(
@@ -365,9 +366,7 @@ export function useFormik<Values extends FormikValues = FormikValues>(
       return runAllValidations(values).then(combinedErrors => {
         if (!!isMounted.current) {
           dispatch({ type: 'SET_ISVALIDATING', payload: false });
-          if (!isEqual(getState().errors, combinedErrors)) {
-            dispatch({ type: 'SET_ERRORS', payload: combinedErrors });
-          }
+          dispatch({ type: 'SET_ERRORS', payload: combinedErrors });
         }
         return combinedErrors;
       });
@@ -684,37 +683,35 @@ export function useFormik<Values extends FormikValues = FormikValues>(
   );
 
   const executeChange = React.useCallback(
-    (eventOrTextValue: string | React.ChangeEvent<any>, maybePath?: string) => {
+    (eventOrTextValue: string | React.ChangeEvent<React.ElementRef<InputElements>>, maybePath?: string) => {
       // By default, assume that the first argument is a string. This allows us to use
       // handleChange with React Native and React Native Web's onChangeText prop which
       // provides just the value of the input.
       let field = maybePath;
-      let val = eventOrTextValue;
-      let parsed;
+
       // If the first argument is not a string though, it has to be a synthetic React Event (or a fake one),
       // so we handle like we would a normal HTML change event.
       if (!isString(eventOrTextValue)) {
         // If we can, persist the event
         // @see https://reactjs.org/docs/events.html#event-pooling
-        if ((eventOrTextValue as any).persist) {
-          (eventOrTextValue as React.ChangeEvent<any>).persist();
+        //
+        // but first, check if someone might have faked this value
+        if (typeof eventOrTextValue.persist !== "undefined") {
+          eventOrTextValue.persist();
         }
+
         const target = eventOrTextValue.target
-          ? (eventOrTextValue as React.ChangeEvent<any>).target
-          : (eventOrTextValue as React.ChangeEvent<any>).currentTarget;
+          ? eventOrTextValue.target
+          : eventOrTextValue.currentTarget;
 
         const {
-          type,
           name,
           id,
-          value,
-          checked,
           outerHTML,
-          options,
-          multiple,
         } = target;
 
         field = maybePath ? maybePath : name ? name : id;
+
         if (!field && __DEV__) {
           warnAboutMissingIdentifier({
             htmlContent: outerHTML,
@@ -722,21 +719,14 @@ export function useFormik<Values extends FormikValues = FormikValues>(
             handlerName: 'handleChange',
           });
         }
-        val = /number|range/.test(type)
-          ? ((parsed = parseFloat(value)), isNaN(parsed) ? '' : parsed)
-          : /checkbox/.test(type) // checkboxes
-          ? getValueForCheckbox(getIn(getState().values, field!), checked, value)
-          : options && multiple // <select multiple>
-          ? getSelectedValues(options)
-          : value;
-      }
 
-      if (field) {
-        // Set form fields by name
-        setFieldValue(field, val);
+        selectFieldOnChange({ setFieldValue, getState })(eventOrTextValue);
+
+      } else if (field) {
+        selectFieldOnChange({ setFieldValue, getState }, field)(eventOrTextValue);
       }
     },
-    [setFieldValue, getState().values]
+    [setFieldValue]
   );
 
   const handleChange = useEventCallback(
@@ -971,36 +961,10 @@ export function useFormik<Values extends FormikValues = FormikValues>(
     resetForm();
   });
 
-  const getValueFromEvent = useEventCallback(
-    (event: React.SyntheticEvent<any>, fieldName: string) => {
-      // React Native/Expo Web/maybe other render envs
-      if (
-        !isReactNative &&
-        event.nativeEvent &&
-        (event.nativeEvent as any).text !== undefined
-      ) {
-        return (event.nativeEvent as any).text;
-      }
-
-      // React Native
-      if (isReactNative && event.nativeEvent) {
-        return (event.nativeEvent as any).text;
-      }
-
-      const target = event.target ? event.target : event.currentTarget;
-      const { type, value, checked, options, multiple } = target;
-
-      return /checkbox/.test(type) // checkboxes
-        ? getValueForCheckbox(getIn(getState().values, fieldName!), checked, value)
-        : !!multiple // <select multiple>
-        ? getSelectedValues(options)
-        : value;
-    }
-  );
-
   const TypedField = useTypedField<Values>();
   const TypedFieldArray = useTypedFieldArray<Values>();
 
+  // mostly optimized renders
   return {
       // config
       enableReinitialize,
@@ -1031,7 +995,6 @@ export function useFormik<Values extends FormikValues = FormikValues>(
       validateField,
       unregisterField,
       registerField,
-      getValueFromEvent,
       // state helpers
       getState,
       useState,
@@ -1194,7 +1157,7 @@ function arrayMerge(target: any[], source: any[], options: any): any[] {
 }
 
 /** Return multi select values based on an array of options */
-function getSelectedValues(options: any[]) {
+export function getSelectedValues(options: HTMLOptionsCollection) {
   const result = [];
   if (options) {
     for (let index = 0; index < options.length; index++) {
@@ -1208,7 +1171,7 @@ function getSelectedValues(options: any[]) {
 }
 
 /** Return the next value for a checkbox */
-function getValueForCheckbox(
+export function getValueForCheckbox(
   currentValue: string | any[],
   checked: boolean,
   valueProp: any

@@ -58,7 +58,7 @@ There are 2 ways to render things with `<Formik />`
 - `<Formik children>`
 - ~~`<Formik render>`~~ Deprecated in 2.x
 
-Each render methods will be passed the same props:
+Each one of the render methods will be passed the same props:
 
 #### `dirty: boolean`
 

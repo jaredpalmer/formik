@@ -1,7 +1,7 @@
 export * from './exports';
 
-import { unstable_batchedUpdates } from 'react-dom';
+import { unstable_batchedUpdates } from 'react-native';
 import { setBatch } from './helpers/batch-helpers';
 
-// Formik for web uses react-dom batches.
+// Formik Native uses react-native batches.
 setBatch(unstable_batchedUpdates);

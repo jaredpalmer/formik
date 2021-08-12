@@ -36,6 +36,14 @@
   "peerDependencies": {
     "react": ">=16.8.0"
   },
+  "peerDependenciesMeta": {
+    "react-dom": {
+      "optional": true
+    },
+    "react-native": {
+      "optional": true
+    }
+  },
   "scripts": {
     "test": "tsdx test --env=jsdom",
     "test:watch": "npm run test -- --watchAll",
@@ -67,6 +75,7 @@
     "just-debounce-it": "^1.1.0",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
+    "react-native": "^0.64.2",
     "yup": "^0.28.1"
   },
   "jest": {

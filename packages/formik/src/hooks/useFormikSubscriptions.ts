@@ -11,9 +11,9 @@ import {
   Comparer,
   useOptimizedSelector,
 } from 'use-optimized-selector';
-import { useIsomorphicLayoutEffect } from './useIsomorphicLayoutEffect';
 import { useEventCallback } from './useEventCallback';
 import { FormikMessage } from '../Formik';
+import { BatchCallback, getBatch } from '../helpers/batch-helpers';
 
 export const useFormikSubscriptions = <Values>(
   initialState: FormikReducerState<Values>,
@@ -21,24 +21,12 @@ export const useFormikSubscriptions = <Values>(
   isFormValid: IsFormValidFn<Values>
 ) => {
   const stateRef = React.useRef<FormikReducerState<Values>>(initialState);
-
-  /**
-   * `stateInRender` should only be used to build the `formik.useState` hook.
-   * We optimize it heavily because it will be called by every
-   * subscription on every state update.
-   *
-   * Imperative methods will calculate computed state on the fly
-   * based on latest ref (getState).
-   */
-  const [stateInRender, setState] = React.useState(stateRef.current);
-
-  const computedStateInRender = React.useMemo(
-    () => populateComputedState(isFormValid, stateInRender),
-    [isFormValid, stateInRender]
-  );
-
-  const getStateInRender = useEventCallback(() => computedStateInRender);
+  const isInBatchRef = React.useRef(false);
   const subscriptionsRef = React.useRef<Function[]>([]);
+
+  const getState = useEventCallback(
+    () => populateComputedState(isFormValid, stateRef.current),
+  );
 
   /**
    * Update Subscriptions using RenderState.
@@ -55,7 +43,7 @@ export const useFormikSubscriptions = <Values>(
       // eslint-disable-next-line react-hooks/rules-of-hooks
       const subscription = React.useMemo(
         () => ({
-          getCurrentValue: () => selector(getStateInRender()),
+          getCurrentValue: () => selector(getState()),
           subscribe: shouldSubscribe
             ? (callback: Function) => {
                 subscriptionsRef.current.push(callback);
@@ -73,28 +61,33 @@ export const useFormikSubscriptions = <Values>(
       // eslint-disable-next-line react-hooks/rules-of-hooks
       return useSubscription(subscription);
     },
-    [getStateInRender]
-  );
-
-  useIsomorphicLayoutEffect(() => {
-    subscriptionsRef.current.forEach(callback => callback());
-  }, [stateInRender]);
-
-  const getState = useEventCallback(
-    () => populateComputedState(isFormValid, stateRef.current),
+    [subscriptionsRef]
   );
 
   /**
+   * Make sure to batch updates to subscriptions.
+   */
+  const batch = React.useCallback((callback: BatchCallback) => {
+    if (isInBatchRef.current) {
+      callback()
+    } else {
+      isInBatchRef.current = true;
+      getBatch()(callback);
+      isInBatchRef.current = false;
+    }
+  }, []);
+
+  /**
    * Each call to dispatch _immediately_ updates the ref.
-   * It also dispatches to React's internal dispatcher.
+   * It also batches updates to all subscribers.
    */
   const dispatch = React.useCallback(
     (msg: FormikMessage<Values>) => {
-      /**
-       * manually update state via reducer, and
-       * dispatch resolved value via setState
-       */
-      setState((stateRef.current = formikReducer(stateRef.current, msg)));
+      stateRef.current = formikReducer(stateRef.current, msg)
+
+      batch(() => {
+        subscriptionsRef.current.forEach(callback => callback());
+      })
     },
     [stateRef]
   );
@@ -102,6 +95,6 @@ export const useFormikSubscriptions = <Values>(
   return {
       useState,
       getState,
-      dispatch,
+      dispatch
   }
 };

@@ -1,7 +1,7 @@
 {
   "name": "@johnrom/formik-v3",
   "description": "Build forms in React, without the tears",
-  "version": "3.0.0-refs4",
+  "version": "3.0.0-refs6",
   "license": "Apache-2.0",
   "author": "Jared Palmer <jared@palmer.net> (https://jaredpalmer.com)",
   "repository": "formium/formik",
@@ -49,8 +49,7 @@
     "test:watch": "npm run test -- --watchAll",
     "start": "tsdx watch --tsconfig tsconfig.build.json --verbose --noClean",
     "build": "tsdx build --tsconfig tsconfig.build.json",
-    "lint": "tsdx lint",
-    "prepublish": "npm run build"
+    "lint": "tsdx lint"
   },
   "dependencies": {
     "deepmerge": "^2.1.1",

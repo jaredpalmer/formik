@@ -20,13 +20,37 @@ export const useFormikSubscriptions = <Values>(
   formikReducer: Reducer<FormikReducerState<Values>, FormikMessage<Values>>,
   isFormValid: IsFormValidFn<Values>
 ) => {
-  const stateRef = React.useRef<FormikReducerState<Values>>(initialState);
-  const isInBatchRef = React.useRef(false);
+  /**
+   * A list of callbacks for updating subscriptions.
+   * These should only be updated during a batch when using React-Dom / React-Native renderers.
+   */
   const subscriptionsRef = React.useRef<Function[]>([]);
 
-  const getState = useEventCallback(
+  /**
+   * StateRef contains only the Reducer State.
+   * Not computed state like isDirty, isValid.
+   */
+  const stateRef = React.useRef<FormikReducerState<Values>>(initialState);
+
+  /**
+   * Get computed state from current reducer state.
+   * Note: this creates a new computedState,
+   * and should only be used to update computedStateRef.
+   *
+   * Use computedStateRef to access the value.
+   */
+  const getComputedState = useEventCallback(
     () => populateComputedState(isFormValid, stateRef.current),
   );
+
+  // Don't call getComputedState on every render.
+  const computedStateRef = React.useRef(React.useMemo(() => getComputedState(), []));
+
+  /**
+   * Get latest state. Does not recreate state,
+   * but uses previously computed state created by dispatch.
+   */
+  const getState = React.useCallback(() => computedStateRef.current, [computedStateRef]);
 
   /**
    * Update Subscriptions using RenderState.
@@ -61,20 +85,14 @@ export const useFormikSubscriptions = <Values>(
       // eslint-disable-next-line react-hooks/rules-of-hooks
       return useSubscription(subscription);
     },
-    [subscriptionsRef]
+    [subscriptionsRef, computedStateRef]
   );
 
   /**
    * Make sure to batch updates to subscriptions.
    */
   const batch = React.useCallback((callback: BatchCallback) => {
-    if (isInBatchRef.current) {
-      callback()
-    } else {
-      isInBatchRef.current = true;
-      getBatch()(callback);
-      isInBatchRef.current = false;
-    }
+    getBatch()(callback);
   }, []);
 
   /**
@@ -83,7 +101,10 @@ export const useFormikSubscriptions = <Values>(
    */
   const dispatch = React.useCallback(
     (msg: FormikMessage<Values>) => {
-      stateRef.current = formikReducer(stateRef.current, msg)
+      stateRef.current = formikReducer(stateRef.current, msg);
+      // calculate computed state once on each dispatch,
+      // so it can be reused across subscriptions
+      computedStateRef.current = getComputedState();
 
       batch(() => {
         subscriptionsRef.current.forEach(callback => callback());
@@ -94,7 +115,7 @@ export const useFormikSubscriptions = <Values>(
 
   return {
       useState,
-      getState,
+      getState: getComputedState,
       dispatch
   }
 };

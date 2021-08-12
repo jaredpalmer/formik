@@ -1,4 +1,7 @@
-// practically https://github.com/reduxjs/react-redux/blob/master/src/utils/batch.ts
+// Borrowed from React-Redux, License MIT.
+// https://github.com/reduxjs/react-redux/blob/d4e4eba9ccbd488b103b3c5625a37e15b1427d11/src/utils/batch.ts
+// https://github.com/reduxjs/react-redux/blob/d4e4eba9ccbd488b103b3c5625a37e15b1427d11/LICENSE.md
+//
 export type BatchCallback = () => void;
 export type BatchFn = (callback: BatchCallback) => void;
 

@@ -4,4 +4,4 @@
 //
 // The Native compiler will skip this file in favor of the .native suffix.
 //
-export { unstable_batchedUpdates as batch } from 'react-dom'
+export { unstable_batchedUpdates } from 'react-dom'

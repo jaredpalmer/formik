@@ -4,4 +4,6 @@
 //
 // The Native compiler will detect this file with a .native suffix, and inject it in place of batch.ts.
 //
-export { unstable_batchedUpdates as batch } from 'react-native'
+import { unstable_batchedUpdates } from 'react-native'
+
+export { unstable_batchedUpdates }

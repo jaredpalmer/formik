@@ -1,7 +1,7 @@
 {
   "name": "@johnrom/formik-v3",
   "description": "Build forms in React, without the tears",
-  "version": "3.0.0-refs6",
+  "version": "3.0.0-refs7",
   "license": "Apache-2.0",
   "author": "Jared Palmer <jared@palmer.net> (https://jaredpalmer.com)",
   "repository": "formium/formik",
@@ -26,7 +26,7 @@
       "url": "https://opencollective.com/formik"
     }
   ],
-  "main": "dist/index.js",
+  "main": "dist/index.native.js",
   "umd:main": "dist/formik.umd.production.js",
   "module": "dist/formik.esm.js",
   "typings": "dist/index.d.ts",

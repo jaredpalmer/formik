@@ -74,7 +74,7 @@ keys and shape will match your schema exactly. Internally, Formik transforms raw
 on your behalf. If you are using `validate`, then that function will determine
 the `errors` objects shape.
 
-#### `handleBlur: (e: any) => void`
+#### `handleBlur: (e: React.FocusEvent<any>) => void`
 
 `onBlur` event handler. Useful for when you need to track whether an input has
 been `touched` or not. This should be passed to `<input onBlur={handleBlur} ... />`
@@ -86,7 +86,7 @@ General input change event handler. This will update the `values[key]` where
 not present, `handleChange` will look for an input's `id` attribute. Note:
 "input" here means all HTML inputs.
 
-#### `handleReset: () => void`
+#### `handleReset: (e: React.SyntheticEvent<any>) => void`
 
 Reset handler. Will reset the form to its initial state. This should be passed
 to `<button onClick={handleReset}>...</button>`

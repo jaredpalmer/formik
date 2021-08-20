@@ -1,7 +1,7 @@
 {
   "name": "@johnrom/formik-v3",
   "description": "Build forms in React, without the tears",
-  "version": "3.0.0-refs7",
+  "version": "3.0.0-native1",
   "license": "Apache-2.0",
   "author": "Jared Palmer <jared@palmer.net> (https://jaredpalmer.com)",
   "repository": "formium/formik",
@@ -26,7 +26,7 @@
       "url": "https://opencollective.com/formik"
     }
   ],
-  "main": "dist/index.native.js",
+  "main": "dist/index.js",
   "umd:main": "dist/formik.umd.production.js",
   "module": "dist/formik.esm.js",
   "typings": "dist/index.d.ts",
@@ -48,8 +48,11 @@
     "test": "tsdx test --env=jsdom",
     "test:watch": "npm run test -- --watchAll",
     "start": "tsdx watch --tsconfig tsconfig.build.json --verbose --noClean",
-    "build": "tsdx build --tsconfig tsconfig.build.json",
-    "lint": "tsdx lint"
+    "build": "yarn run build-native && yarn run move-native && yarn run build-web",
+    "lint": "tsdx lint",
+    "build-native": "yarn run tsdx build --tsconfig tsconfig.build.json --entry src/index.native.tsx --name formik-v3.native",
+    "move-native": "mv dist/index.js dist/index.native.js",
+    "build-web": "tsdx build --tsconfig tsconfig.build.json --noClean"
   },
   "dependencies": {
     "deepmerge": "^2.1.1",

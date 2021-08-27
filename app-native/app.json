@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "app-native-2",
-    "slug": "app-native-2",
+    "name": "app-native",
+    "slug": "app-native",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",

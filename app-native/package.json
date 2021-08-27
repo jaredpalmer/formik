@@ -2,14 +2,15 @@
   "name": "formik-dev-native",
   "version": "0.1.0",
   "private": true,
-  "main": "node_modules/expo/AppEntry.js",
+  "main": "__generated__/AppEntry.js",
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
     "eject": "expo eject",
-    "test": "jest --watchAll"
+    "test": "jest --watchAll",
+    "postinstall": "expo-yarn-workspaces postinstall"
   },
   "jest": {
     "preset": "jest-expo"
@@ -30,8 +31,8 @@
     "react": "16.13.1",
     "react-dom": "16.13.1",
     "react-native": "https://github.com/expo/react-native/archive/sdk-42.0.0.tar.gz",
-    "react-native-reanimated": "~2.2.0",
     "react-native-gesture-handler": "~1.10.2",
+    "react-native-reanimated": "~2.2.0",
     "react-native-safe-area-context": "3.2.0",
     "react-native-screens": "~3.4.0",
     "react-native-web": "~0.13.12"
@@ -40,7 +41,11 @@
     "@babel/core": "^7.9.0",
     "@types/react": "~16.9.35",
     "@types/react-native": "~0.63.2",
+    "expo-yarn-workspaces": "^1.5.2",
     "jest-expo": "~41.0.0-beta.0",
     "typescript": "~4.0.0"
+  },
+  "expo-yarn-workspaces": {
+    "symlinks": []
   }
 }

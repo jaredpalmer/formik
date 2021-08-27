@@ -79,8 +79,8 @@
     "@types/warning": "^3.0.0",
     "@types/yup": "^0.24.9",
     "just-debounce-it": "^1.1.0",
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1",
+    "react": "16.13.1",
+    "react-dom": "16.13.1",
     "react-native": "https://github.com/expo/react-native/archive/sdk-42.0.0.tar.gz",
     "yup": "^0.28.1"
   },

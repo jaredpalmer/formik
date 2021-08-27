@@ -9,8 +9,7 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "eject": "expo eject",
-    "test": "jest --watchAll",
-    "postinstall": "expo-yarn-workspaces postinstall"
+    "test": "jest --watchAll"
   },
   "jest": {
     "preset": "jest-expo"

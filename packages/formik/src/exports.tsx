@@ -1,3 +1,4 @@
+export * from './helpers/batch-helpers';
 export * from './hooks/useFormikState';
 export * from './hooks/hooks';
 export * from './Formik';
@@ -11,6 +12,3 @@ export * from './connect';
 export * from './ErrorMessage';
 export * from './FormikContext';
 export * from './FastField';
-
-// allow devs to override (or disable) batching functionality.
-export { setBatch } from './helpers/batch-helpers';

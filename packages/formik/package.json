@@ -27,6 +27,7 @@
     }
   ],
   "main": "dist/index.js",
+  "react-native": "dist/index.native.js",
   "umd:main": "dist/formik.umd.production.js",
   "module": "dist/formik.esm.js",
   "typings": "dist/index.d.ts",

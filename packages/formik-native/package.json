@@ -24,7 +24,7 @@
     "build": "tsdx build --tsconfig tsconfig.build.json",
     "test": "tsdx test",
     "lint": "tsdx lint",
-    "prepublish": "npm run build"
+    "prepublish": "yarn build"
   },
   "peerDependencies": {
     "react": ">=16.8.0"

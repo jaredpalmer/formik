@@ -49,7 +49,7 @@
   },
   "scripts": {
     "test": "tsdx test --env=jsdom",
-    "test:watch": "npm run test -- --watchAll",
+    "test:watch": "yarn test -- --watchAll",
     "start": "tsdx watch --tsconfig tsconfig.build.json --verbose --noClean",
     "build": "yarn run build-native && yarn run move-native && yarn run build-alternate && yarn run move-alternate && yarn run build-web",
     "lint": "tsdx lint",
@@ -57,7 +57,8 @@
     "move-native": "mv dist/index.js dist/index.native.js",
     "build-alternate": "yarn run tsdx build --tsconfig tsconfig.build.json --noClean --entry src/index.alternate.tsx --name formik-v3.alternate",
     "move-alternate": "mv dist/index.js dist/index.alternate.js",
-    "build-web": "yarn run tsdx build --tsconfig tsconfig.build.json --noClean"
+    "build-web": "yarn run tsdx build --tsconfig tsconfig.build.json --noClean",
+    "prepublish": "yarn build"
   },
   "dependencies": {
     "deepmerge": "^2.1.1",

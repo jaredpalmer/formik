@@ -12,12 +12,13 @@
     "lint-staged": "^10.4.0",
     "prettier": "^2.1.2",
     "release": "6.0.1",
-    "tsdx": "^0.14.1",
+    "@johnrom/tsdx": "0.14.2-noclean",
     "typescript": "^4.0.3"
   },
   "workspaces": [
     "packages/*",
-    "./app"
+    "./app",
+    "./app-native"
   ],
   "scripts": {
     "lerna": "lerna",
@@ -36,7 +37,9 @@
     "cypress": "cypress run",
     "precommit": "lint-staged",
     "cypress:open": "cypress open",
-    "start:app": "yarn --cwd ./app run dev"
+    "start:app": "yarn --cwd ./app run dev",
+    "start:native": "yarn --cwd ./app-native run start",
+    "postinstall": "cd ./app-native && expo-yarn-workspaces postinstall"
   },
   "lint-staged": {
     "**/*.{ts,tsx,md,mdx,js,jsx}": [

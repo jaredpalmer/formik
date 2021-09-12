@@ -3,7 +3,8 @@
   "useWorkspaces": true,
   "packages": [
     "packages/*",
-    "./app"
+    "./app",
+    "./app-native"
   ],
   "command": {
     "version": {

@@ -17,7 +17,6 @@
   ],
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
-  "react-native": "src/index.js",
   "typings": "dist/index.d.ts",
   "files": ["dist"],
   "scripts": {

@@ -3903,10 +3903,10 @@
     "@babel/runtime" "^7.7.2"
     regenerator-runtime "^0.13.3"
 
-"@johnrom/tsdx@0.14.2-noclean":
-  version "0.14.2-noclean"
-  resolved "https://registry.yarnpkg.com/@johnrom/tsdx/-/tsdx-0.14.2-noclean.tgz#3d68f8ba935525be8dca224b0dc9b7b3a314f0a0"
-  integrity sha512-pU0G25UGjqHaQ9mzTZ0iDeSa56lO6xtTYggbIju7I5gbW7Dg+LXzc6U4NcHBT+lS3i+HBTbKijKwVIECMCcVMQ==
+"@johnrom/tsdx@0.14.2-noclean2":
+  version "0.14.2-noclean2"
+  resolved "https://registry.yarnpkg.com/@johnrom/tsdx/-/tsdx-0.14.2-noclean2.tgz#25d066a347d60b49c040c9736d91ccacd1ec4dfb"
+  integrity sha512-ZYWMw+2P89EZ1gbYXbO1COwnWNYbxuo0r59Y5pHMY8ezyDmxACx8BTVHl5zse578hoJXO8C0LCD0jdOqQsd4Tw==
   dependencies:
     "@babel/core" "^7.4.4"
     "@babel/helper-module-imports" "^7.0.0"

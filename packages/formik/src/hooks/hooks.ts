@@ -7,13 +7,13 @@ import {
 } from '../helpers/field-helpers';
 import {
   FieldHelperProps,
+  FieldHookConfig,
   FieldInputProps,
   FieldMetaProps,
   FormikState,
 } from '../types';
 import { useFormikState } from './useFormikState';
 import { isObject, isShallowEqual } from '../utils';
-import { FieldHookConfig } from '../Field';
 
 /**
  * Get props to spread to input elements, like `<input {...fieldProps} />`.

@@ -67,6 +67,28 @@ export interface FormikInitialState<Values> {
 export type FormikReducerState<Values> = FormikInitialState<Values> &
   FormikCurrentState<Values>;
 
+export type FormikMessage<Values> =
+  | { type: 'SUBMIT_ATTEMPT' }
+  | { type: 'SUBMIT_FAILURE' }
+  | { type: 'SUBMIT_SUCCESS' }
+  | { type: 'SET_ISVALIDATING'; payload: boolean }
+  | { type: 'SET_ISSUBMITTING'; payload: boolean }
+  | { type: 'SET_VALUES'; payload: Values }
+  | { type: 'SET_FIELD_VALUE'; payload: { field: string; value?: any } }
+  | { type: 'SET_FIELD_TOUCHED'; payload: { field: string; value?: boolean } }
+  | { type: 'SET_FIELD_ERROR'; payload: { field: string; value?: string } }
+  | { type: 'SET_TOUCHED'; payload: FormikTouched<Values> }
+  | { type: 'SET_ERRORS'; payload: FormikErrors<Values> }
+  | { type: 'SET_STATUS'; payload: any }
+  | {
+      type: 'SET_FORMIK_STATE';
+      payload: (s: FormikReducerState<Values>) => FormikReducerState<Values>;
+    }
+  | {
+      type: 'RESET_FORM';
+      payload: Partial<FormikReducerState<Values>>;
+    };
+
 /**
  * Formik computed state. These are read-only and
  * result from updates to FormikState but do not live there.
@@ -370,6 +392,11 @@ export interface FormikRegistration {
 export type FormikContextType<Values> = FormikApi<Values> &
   Pick<FormikConfig<Values>, 'validate' | 'validationSchema'>;
 
+export type FormikConnectedType<Values> =
+  FormikContextType<Values> &
+  FormikSharedConfig<Values> &
+  FormikState<Values>;
+
 export type GenericFieldHTMLAttributes =
   | JSX.IntrinsicElements['input']
   | JSX.IntrinsicElements['select']
@@ -432,6 +459,61 @@ export interface FieldInputProps<Value> {
 export type FieldValidator = (
   value: any
 ) => string | void | Promise<string | void>;
+
+export type ParseFn<Value> = (value: unknown, name: string) => Value;
+export type FormatFn<Value> = (value: Value, name: string) => any;
+
+export type FieldHookConfig<V = any> = {
+
+  /**
+   * Component to render. Can either be a string e.g. 'select', 'input', or 'textarea', or a component.
+   */
+  as?:
+    | string
+    | React.ComponentType<FieldInputProps<V>>
+    | React.ComponentType
+    | React.ForwardRefExoticComponent<any>;
+
+  /**
+   * Validate a single field value independently
+   */
+  validate?: FieldValidator;
+
+  /**
+   * Function to parse raw input value before setting it to state
+   */
+  parse?: ParseFn<V>;
+
+  /**
+   * Function to transform value passed to input
+   */
+  format?: FormatFn<V>;
+
+  /**
+   * Wait until blur event before formatting input value?
+   * @default false
+   */
+  formatOnBlur?: boolean;
+
+  /**
+   * HTML multiple attribute
+   */
+  multiple?: boolean;
+
+  /**
+   * Field name
+   */
+  name: string;
+
+  /** HTML input type */
+  type?: string;
+
+  /** Field value */
+  value?: any;
+
+  /** Inner ref */
+  innerRef?: (instance: any) => void;
+}
 
 // This is an object that contains a map of all registered fields
 // and their validate functions

@@ -1,5 +1,4 @@
-import { FieldHookConfig } from '../Field';
-import { FormikApi, FormikReducerState, InputElements } from '../types';
+import { FieldHookConfig, FormikApi, FormikReducerState, InputElements } from '../types';
 import { getIn, getValueFromEvent, isInputEvent, isObject } from '../utils';
 
 /**

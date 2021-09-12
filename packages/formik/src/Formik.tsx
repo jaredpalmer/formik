@@ -17,6 +17,8 @@ import {
   HandleChangeFn,
   FormikSharedConfig,
   InputElements,
+  FieldRegistry,
+  FormikMessage,
 } from './types';
 import {
   isFunction,
@@ -37,28 +39,6 @@ import {
 import { useFormikSubscriptions } from './hooks/useFormikSubscriptions';
 import { useEventCallback } from './hooks/useEventCallback';
 import { selectFieldOnChange } from './helpers/field-helpers';
-
-export type FormikMessage<Values> =
-  | { type: 'SUBMIT_ATTEMPT' }
-  | { type: 'SUBMIT_FAILURE' }
-  | { type: 'SUBMIT_SUCCESS' }
-  | { type: 'SET_ISVALIDATING'; payload: boolean }
-  | { type: 'SET_ISSUBMITTING'; payload: boolean }
-  | { type: 'SET_VALUES'; payload: Values }
-  | { type: 'SET_FIELD_VALUE'; payload: { field: string; value?: any } }
-  | { type: 'SET_FIELD_TOUCHED'; payload: { field: string; value?: boolean } }
-  | { type: 'SET_FIELD_ERROR'; payload: { field: string; value?: string } }
-  | { type: 'SET_TOUCHED'; payload: FormikTouched<Values> }
-  | { type: 'SET_ERRORS'; payload: FormikErrors<Values> }
-  | { type: 'SET_STATUS'; payload: any }
-  | {
-      type: 'SET_FORMIK_STATE';
-      payload: (s: FormikReducerState<Values>) => FormikReducerState<Values>;
-    }
-  | {
-      type: 'RESET_FORM';
-      payload: Partial<FormikReducerState<Values>>;
-    };
 
 // State reducer
 function formikReducer<Values>(
@@ -124,14 +104,6 @@ function formikReducer<Values>(
     default:
       return state;
   }
-}
-
-// This is an object that contains a map of all registered fields
-// and their validate functions
-interface FieldRegistry {
-  [field: string]: {
-    validate: (value: any) => string | Promise<string> | undefined;
-  };
 }
 
 export function useFormik<Values extends FormikValues = FormikValues>(

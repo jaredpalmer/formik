@@ -5,7 +5,7 @@ import {
   FieldMetaProps,
   FieldHelperProps,
   FieldInputProps,
-  FieldValidator,
+  FieldHookConfig,
 } from './types';
 import { isFunction, isEmptyChildren, isObject } from './utils';
 import invariant from 'tiny-warning';
@@ -17,61 +17,6 @@ export interface FieldProps<V = any, FormValues = any> {
   field: FieldInputProps<V>;
   form: FormikProps<FormValues>; // if ppl want to restrict this for a given form, let them.
   meta: FieldMetaProps<V>;
-}
-
-export type ParseFn<Value> = (value: unknown, name: string) => Value;
-export type FormatFn<Value> = (value: Value, name: string) => any;
-
-export type FieldHookConfig<V = any> = {
-
-  /**
-   * Component to render. Can either be a string e.g. 'select', 'input', or 'textarea', or a component.
-   */
-  as?:
-    | string
-    | React.ComponentType<FieldInputProps<V>>
-    | React.ComponentType
-    | React.ForwardRefExoticComponent<any>;
-
-  /**
-   * Validate a single field value independently
-   */
-  validate?: FieldValidator;
-
-  /**
-   * Function to parse raw input value before setting it to state
-   */
-  parse?: ParseFn<V>;
-
-  /**
-   * Function to transform value passed to input
-   */
-  format?: FormatFn<V>;
-
-  /**
-   * Wait until blur event before formatting input value?
-   * @default false
-   */
-  formatOnBlur?: boolean;
-
-  /**
-   * HTML multiple attribute
-   */
-  multiple?: boolean;
-
-  /**
-   * Field name
-   */
-  name: string;
-
-  /** HTML input type */
-  type?: string;
-
-  /** Field value */
-  value?: any;
-
-  /** Inner ref */
-  innerRef?: (instance: any) => void;
 }
 
 export function useField<Val = any, FormValues = any>(

@@ -1,14 +1,9 @@
 import hoistNonReactStatics from 'hoist-non-react-statics';
 import * as React from 'react';
 import invariant from 'tiny-warning';
-import { FormikSharedConfig, FormikContextType, FormikState } from './types';
 import { useFormikConfig, useFormikContext } from './FormikContext';
 import { selectFullState } from './helpers/form-helpers';
-
-export type FormikConnectedType<Values> =
-  FormikContextType<Values> &
-  FormikSharedConfig<Values> &
-  FormikState<Values>;
+import { FormikConnectedType } from './types';
 
 /**
  * Connect any component to Formik context, and inject as a prop called `formik`;

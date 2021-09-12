@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { FormikApi, FormikContextType, FormikSharedConfig, FormikValues, NotOptional } from './types';
+import { FormikApi, FormikConnectedType, FormikContextType, FormikSharedConfig, FormikValues, NotOptional } from './types';
 import invariant from 'tiny-warning';
-import { FormikConnectedType } from './connect';
 import { selectFullState } from './helpers/form-helpers';
 
 /**

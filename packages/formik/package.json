@@ -30,7 +30,9 @@
   "umd:main": "dist/formik.umd.production.js",
   "module": "dist/formik.esm.js",
   "typings": "dist/index.d.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "peerDependencies": {
     "react": ">=16.8.0"
   },
@@ -43,7 +45,7 @@
     "prepublish": "npm run build"
   },
   "dependencies": {
-    "deepmerge": "^2.1.1",
+    "deepmerge": "^4.2.2",
     "hoist-non-react-statics": "^3.3.0",
     "lodash": "^4.17.21",
     "lodash-es": "^4.17.21",

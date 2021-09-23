@@ -1104,7 +1104,7 @@ export function prepareDataForValidation<T extends FormikValues>(
 }
 
 /**
- * deepmerge merging array at some index algorithm
+ * deepmerge - merge array at same index algorithm
  * https://github.com/TehShrike/deepmerge/tree/v4.2.2#arraymerge-example-combine-arrays
  */
 function arrayMerge(target: any[], source: any[], options: any): any[] {

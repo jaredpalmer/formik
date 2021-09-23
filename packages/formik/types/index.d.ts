@@ -28,6 +28,7 @@ declare module 'deepmerge' {
       clone?: boolean;
       arrayMerge?(destination: any[], source: any[], options?: Options): any[];
       isMergeableObject?(value: object): boolean;
+      cloneUnlessOtherwiseSpecified?(value: object, options?: Options): object
     }
 
     function all<T>(objects: Array<Partial<T>>, options?: Options): T;

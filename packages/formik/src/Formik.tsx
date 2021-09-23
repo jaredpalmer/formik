@@ -1104,19 +1104,15 @@ export function prepareDataForValidation<T extends FormikValues>(
 }
 
 /**
- * deepmerge array merging algorithm
- * https://github.com/KyleAMathews/deepmerge#combine-array
+ * deepmerge merging array at some index algorithm
+ * https://github.com/TehShrike/deepmerge/tree/v4.2.2#arraymerge-example-combine-arrays
  */
 function arrayMerge(target: any[], source: any[], options: any): any[] {
   const destination = target.slice();
 
   source.forEach(function merge(e: any, i: number) {
     if (typeof destination[i] === 'undefined') {
-      const cloneRequested = options.clone !== false;
-      const shouldClone = cloneRequested && options.isMergeableObject(e);
-      destination[i] = shouldClone
-        ? deepmerge(Array.isArray(e) ? [] : {}, e, options)
-        : e;
+        destination[i] = options.cloneUnlessOtherwiseSpecified(e, options)
     } else if (options.isMergeableObject(e)) {
       destination[i] = deepmerge(target[i], e, options);
     } else if (target.indexOf(e) === -1) {

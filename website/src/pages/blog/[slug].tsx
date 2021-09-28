@@ -1,36 +1,17 @@
-import fs from 'fs';
-import matter from 'gray-matter';
-import { MDXRemote } from 'next-mdx-remote';
-import { serialize } from 'next-mdx-remote/serialize';
-import imageSize from 'rehype-img-size';
-import styles from 'components/markdown.module.css';
-import dynamic from 'next/dynamic';
-import Head from 'next/head';
-import Link from 'next/link';
-import path from 'path';
-import { postFilePaths, POSTS_PATH } from 'lib/blog/mdxUtils';
-import { Footer } from 'components/Footer';
-import Image from 'next/image';
 import { Banner } from 'components/Banner';
-import { Sticky } from 'components/Sticky';
+import { Footer } from 'components/Footer';
+import styles from 'components/markdown.module.css';
+import MDXComponents from 'components/MDXComponents';
 import { Nav } from 'components/Nav';
 import { Seo } from 'components/Seo';
-import { CustomLink } from 'components/CustomLink';
-
-// Custom components/renderers to pass to MDX.
-// Since the MDX files aren't loaded by webpack, they have no knowledge of how
-// to handle import statements. Instead, you must include components in scope
-// here.
-const components = {
-  pre: (p: any) => <div {...p} />,
-  img: (props: any) => (
-    // height and width are part of the props, so they get automatically passed here with {...props}
-    <Image {...props} layout="responsive" loading="lazy" />
-  ),
-  code: dynamic(() => import('../../components/Highlight2')),
-  a: CustomLink,
-  Head,
-};
+import { Sticky } from 'components/Sticky';
+import fs from 'fs';
+import matter from 'gray-matter';
+import { postFilePaths, POSTS_PATH } from 'lib/blog/mdxUtils';
+import { MDXRemote } from 'next-mdx-remote';
+import { serialize } from 'next-mdx-remote/serialize';
+import path from 'path';
+import imageSize from 'rehype-img-size';
 
 export default function PostPage({ source, frontMatter }: any) {
   return (
@@ -63,7 +44,7 @@ export default function PostPage({ source, frontMatter }: any) {
           <div className="relative">
             <div className="mx-auto">
               <div className={styles['markdown']}>
-                <MDXRemote {...source} components={components} />
+                <MDXRemote {...source} components={MDXComponents} />
               </div>
             </div>
           </div>

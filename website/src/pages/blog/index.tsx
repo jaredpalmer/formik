@@ -45,13 +45,13 @@ export default function Index({ posts }: any) {
                     type="email"
                     name="email"
                     required={true}
-                    className="w-full px-4 py-2 text-base leading-6 text-gray-900 placeholder-gray-500 transition duration-150 ease-in-out bg-white border border-gray-300 rounded-md appearance-none focus:outline-none focus:shadow-outline-blue focus:border-blue-300 lg:max-w-xs"
+                    className="w-full px-4 py-2 text-base leading-6 text-gray-900 placeholder-gray-500 transition duration-150 ease-in-out bg-white border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring focus:ring-blue focus:border-blue-300 lg:max-w-xs"
                     placeholder="Enter your email"
                   />
                   <span className="inline-flex flex-shrink-0 ml-3 rounded-md shadow-sm">
                     <button
                       type="button"
-                      className="inline-flex items-center px-4 py-2 text-base font-medium leading-6 text-white transition duration-150 ease-in-out bg-blue-600 border border-transparent rounded-md hover:bg-blue-500 focus:outline-none focus:border-blue-700 focus:shadow-outline-blue active:bg-blue-700"
+                      className="inline-flex items-center px-4 py-2 text-base font-medium leading-6 text-white transition duration-150 ease-in-out bg-blue-600 border border-transparent rounded-md hover:bg-blue-500 focus:outline-none focus:border-blue-700 focus:ring focus:ring-blue active:bg-blue-700"
                     >
                       Notify me
                     </button>
@@ -61,7 +61,7 @@ export default function Index({ posts }: any) {
             </div>
             <div className={markdownStyles['markdown']}>
               {posts.length === 0 && <p>There are no posts yet</p>}
-              <div className="grid gap-16 pt-10 mt-6 border-t border-gray-100 lg:grid-cols-2 lg:col-gap-5 lg:row-gap-12">
+              <div className="grid gap-16 pt-10 mt-6 border-t border-gray-100 lg:grid-cols-2 lg:gap-x-5 lg:gap-y-12">
                 {posts.map((post: any) => {
                   return (
                     <div key={post.filePath} className="pb-6 space-y-2">

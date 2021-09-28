@@ -1,5 +1,4 @@
 import { mdx } from '@mdx-js/react';
-import Component from '@reactions/component';
 import React, { useState } from 'react';
 import { useButton } from 'react-aria';
 import { LiveEditor, LiveError, LivePreview, LiveProvider } from 'react-live';
@@ -26,14 +25,14 @@ export const liveErrorStyle: any = {
 };
 
 const LiveCodePreview = (props: any) => (
-  <div className="font-sans text-gray-900 rounded-md p-4 overflow-x-scroll">
+  <div className="p-4 overflow-x-scroll font-sans text-gray-900 rounded-md">
     <LivePreview {...props} />
   </div>
 );
 
 const EditableNotice = (props: any) => {
   return (
-    <div className="absolute right-0 top-0 p-3 text-gray-400 text-xs font-sans uppercase">
+    <div className="absolute top-0 right-0 p-3 font-sans text-xs text-gray-400 uppercase">
       Editable Example
     </div>
   );
@@ -49,7 +48,7 @@ const CopyButton = (props: {
   return (
     <button
       {...buttonProps}
-      className="text-gray-600 py-2 bg-gray-100 font-semibold w-full text-sm hover:bg-gray-200 transition duration-100 ease-in-out"
+      className="w-full py-2 text-sm font-semibold text-gray-600 transition duration-100 ease-in-out bg-gray-100 hover:bg-gray-200"
       ref={ref}
     >
       {children}
@@ -84,7 +83,6 @@ const CodeBlock = ({
     transformCode: (code: string) => `<>${code}</>`,
     scope: {
       mdx,
-      Component,
     },
     noInline,
     ...props,
@@ -96,7 +94,7 @@ const CodeBlock = ({
   if (language === 'jsx' && live === true) {
     return (
       <LiveProvider {...liveProviderProps}>
-        <div className="border relative rounded shadow-sm">
+        <div className="relative border rounded shadow-sm">
           <LiveCodePreview />
           <EditableNotice />
           {isCollapsed ? (
@@ -113,10 +111,10 @@ const CodeBlock = ({
                   style={liveEditorStyle}
                   className="outline-none "
                 />
-                <div className="absolute right-0 top-0 p-2">
+                <div className="absolute top-0 right-0 p-2">
                   <TWButton
                     size="xs"
-                    className="font-sans mr-2"
+                    className="mr-2 font-sans"
                     onPress={onCopy}
                   >
                     {hasCopied ? 'Copied' : 'Copy'}
@@ -134,7 +132,7 @@ const CodeBlock = ({
               <LiveError style={liveErrorStyle} />
               <div className="border-t">
                 <button
-                  className="text-gray-600 py-2 bg-gray-100 font-semibold w-full text-sm hover:bg-gray-200 transition duration-100 ease-in-out"
+                  className="w-full py-2 text-sm font-semibold text-gray-600 transition duration-100 ease-in-out bg-gray-100 hover:bg-gray-200"
                   onClick={() => setCollapse(true)}
                 >
                   Hide Code
@@ -161,7 +159,7 @@ const CodeBlock = ({
     <LiveProvider disabled {...liveProviderProps}>
       <div className="relative">
         <LiveEditor style={liveEditorStyle} className="rounded shadow-sm" />
-        <div className="absolute right-0 top-0 p-2">
+        <div className="absolute top-0 right-0 p-2">
           <TWButton size="xs" className="font-sans" onPress={onCopy}>
             {hasCopied ? 'Copied' : 'Copy'}
           </TWButton>

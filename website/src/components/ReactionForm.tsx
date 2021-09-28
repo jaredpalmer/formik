@@ -62,6 +62,7 @@ export function ReactionForm() {
     trackCustomEvent({
       category: 'Feedback Button',
       action: 'feedback',
+      name: 'feedback',
       label: window.location.pathname,
       value,
     });
@@ -70,17 +71,17 @@ export function ReactionForm() {
 
   if (feedbackGiven) {
     return (
-      <div className="font-semibold text-lg text-center mb-4  ">
+      <div className="mb-4 text-lg font-semibold text-center ">
         Thanks for letting us know!
       </div>
     );
   } else {
     return (
       <>
-        <div className="font-semibold text-lg text-center mb-4  ">
+        <div className="mb-4 text-lg font-semibold text-center ">
           Was this page helpful?
         </div>
-        <div className="grid grid-cols-4 gap-2  w-64 mx-auto">
+        <div className="grid w-64 grid-cols-4 gap-2 mx-auto">
           <FeedbackButton intent="tears" onPress={makeTrackedHandler(0)} />
           <FeedbackButton intent="meh" onPress={makeTrackedHandler(1)} />
           <FeedbackButton intent="happy" onPress={makeTrackedHandler(2)} />

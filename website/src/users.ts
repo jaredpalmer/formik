@@ -55,6 +55,10 @@ export const users = [
     image: '/images/logos/priceline.png',
     infoLink: 'https://priceline.com',
     pinned: true,
+    style: {
+      height: 150,
+      width: 200,
+    },
   },
   {
     caption: 'Booking.com',
@@ -67,6 +71,10 @@ export const users = [
     image: '/images/logos/nasdaq.svg',
     infoLink: 'https://www.nasdaq.com',
     pinned: true,
+    style: {
+      width: 155,
+      height: 44,
+    },
   },
   {
     caption: 'PWC',

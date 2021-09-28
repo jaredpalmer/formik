@@ -104,13 +104,13 @@ export const Search: React.FC<SearchProps> = ({ appId }) => {
         <button
           ref={searchButtonRef}
           type="button"
-          className="group form-input hover:text-gray-600 hover:border-gray-300 transition duration-150 ease-in-out pointer flex items-center bg-gray-50 text-left w-full  text-gray-500 rounded-lg text-sm align-middle"
+          className="flex items-center w-full px-2 py-2 text-sm leading-6 text-left text-gray-500 align-middle transition duration-150 ease-in-out border rounded-lg group hover:text-gray-600 hover:border-gray-300 pointer bg-gray-50 focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
           onClick={onOpen}
         >
           <svg
             width="1em"
             height="1em"
-            className="mr-3 align-middle text-gray-600 flex-shrink-0 group-hover:text-gray-700"
+            className="flex-shrink-0 mr-3 text-gray-600 align-middle group-hover:text-gray-700"
             style={{ marginBottom: 2 }}
             viewBox="0 0 20 20"
           >
@@ -127,13 +127,13 @@ export const Search: React.FC<SearchProps> = ({ appId }) => {
           Search docs
           <span className="ml-auto">
             <kbd
-              className="border border-gray-300 mr-1 bg-gray-100 align-middle p-0 inline-flex justify-center items-center  text-xs text-center mr-0 rounded group-hover:border-gray-300 transition duration-150 ease-in-out "
+              className="inline-flex items-center justify-center p-0 mr-0 mr-1 text-xs text-center align-middle transition duration-150 ease-in-out bg-gray-100 border border-gray-300 rounded group-hover:border-gray-300 "
               style={{ minWidth: '1.8em' }}
             >
               ⌘
             </kbd>
             <kbd
-              className="border border-gray-300 bg-gray-100 align-middle p-0 inline-flex justify-center items-center  text-xs text-center ml-auto mr-0 rounded group-hover:border-gray-300 transition duration-150 ease-in-out "
+              className="inline-flex items-center justify-center p-0 ml-auto mr-0 text-xs text-center align-middle transition duration-150 ease-in-out bg-gray-100 border border-gray-300 rounded group-hover:border-gray-300 "
               style={{ minWidth: '1.8em' }}
             >
               K
@@ -141,7 +141,6 @@ export const Search: React.FC<SearchProps> = ({ appId }) => {
           </span>
         </button>
       </div>
-
       {isShowing &&
         createPortal(
           <DocSearchModal

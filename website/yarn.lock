@@ -548,11 +548,6 @@
   resolved "https://registry.yarnpkg.com/@next/mdx/-/mdx-9.5.5.tgz#c5742c7db722905c4c7456098c1f2ba1cae3994d"
   integrity sha512-IdwwXrxqNhZuEeyVdCKtv1R2CqIsAZm/rtCUbE5WImFW3VK8nrSFDFi+JkoWoDcHgGgaJYgfoYAoieHV5POGJg==
 
-"@next/plugin-google-analytics@^10.0.3":
-  version "10.0.5"
-  resolved "https://registry.yarnpkg.com/@next/plugin-google-analytics/-/plugin-google-analytics-10.0.5.tgz#6c3a6d098576348636e92b65becba087d63ef946"
-  integrity sha512-wQl1AJITSdK693CdLh62jtedHO8A/f3COhX8n8k5EYYYrQJj3QD8BldSPwMGdyfB7bXoLsZNb4jsscsUmNwPNg==
-
 "@next/polyfill-module@11.1.2":
   version "11.1.2"
   resolved "https://registry.yarnpkg.com/@next/polyfill-module/-/polyfill-module-11.1.2.tgz#1fe92c364fdc81add775a16c678f5057c6aace98"

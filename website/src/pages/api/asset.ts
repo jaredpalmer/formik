@@ -35,7 +35,7 @@ export default async function notionApi(
       res.setHeader('Location', (signedUrls as any).pop());
       res.end();
     }
-  } catch (error) {
+  } catch (error: any) {
     handleError(res, error);
   }
 }

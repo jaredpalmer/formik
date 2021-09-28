@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+      <urlset xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 
+      http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" 
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+      xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" 
+      xmlns:xhtml="http://www.w3.org/1999/xhtml">
+      
+	<url>
+		<loc>https://formik.org/500</loc>
+		<lastmod>2021-09-28</lastmod>
+	</url>
+
+	<url>
+		<loc>https://formik.org/blog/formik-3-alpha</loc>
+		<lastmod>2021-09-28</lastmod>
+	</url>
+
+	<url>
+		<loc>https://formik.org/blog/new-docs</loc>
+		<lastmod>2021-09-28</lastmod>
+	</url>
+
+	<url>
+		<loc>https://formik.org/blog</loc>
+		<lastmod>2021-09-28</lastmod>
+	</url>
+
+	<url>
+		<loc>https://formik.org/docs/3rd-party-bindings</loc>
+		<lastmod>2021-09-28</lastmod>
+	</url>
+
+	<url>
+		<loc>https://formik.org/docs/api/connect</loc>
+		<lastmod>2021-09-28</lastmod>
+	</url>
+
+	<url>
+		<loc>https://formik.org/docs/api/errormessage</loc>
+		<lastmod>2021-09-28</lastmod>
+	</url>
+
+	<url>
+		<loc>https://formik.org/docs/api/fastfield</loc>
+		<lastmod>2021-09-28</lastmod>
+	</url>
+
+	<url>
+		<loc>https://formik.org/docs/api/field</loc>
+		<lastmod>2021-09-28</lastmod>
+	</url>
+
+	<url>
+		<loc>https://formik.org/docs/api/fieldarray</loc>
+		<lastmod>2021-09-28</lastmod>
+	</url>
+
+	<url>
+		<loc>https://formik.org/docs/api/form</loc>
+		<lastmod>2021-09-28</lastmod>
+	</url>
+
+	<url>
+		<loc>https://formik.org/docs/api/formik</loc>
+		<lastmod>2021-09-28</lastmod>
+	</url>
+
+	<url>
+		<loc>https://formik.org/docs/api/useField</loc>
+		<lastmod>2021-09-28</lastmod>
+	</url>
+
+	<url>
+		<loc>https://formik.org/docs/api/useFormik</loc>
+		<lastmod>2021-09-28</lastmod>
+	</url>
+
+	<url>
+		<loc>https://formik.org/docs/api/useFormikContext</loc>
+		<lastmod>2021-09-28</lastmod>
+	</url>
+
+	<url>
+		<loc>https://formik.org/docs/api/withFormik</loc>
+		<lastmod>2021-09-28</lastmod>
+	</url>
+
+	<url>
+		<loc>https://formik.org/docs/examples/async-submission</loc>
+		<lastmod>2021-09-28</lastmod>
+	</url>
+
+	<url>
+		<loc>https://formik.org/docs/examples/basic</loc>
+		<lastmod>2021-09-28</lastmod>
+	</url>
+
+	<url>
+		<loc>https://formik.org/docs/examples/checkboxes</loc>
+		<lastmod>2021-09-28</lastmod>
+	</url>
+
+	<url>
+		<loc>https://formik.org/docs/examples/dependent-fields-async-api-request</loc>
+		<lastmod>2021-09-28</lastmod>
+	</url>
+
+	<url>
+		<loc>https://formik.org/docs/examples/dependent-fields</loc>
+		<lastmod>2021-09-28</lastmod>
+	</url>
+
+	<url>
+		<loc>https://formik.org/docs/examples/field-arrays</loc>
+		<lastmod>2021-09-28</lastmod>
+	</url>
+
+	<url>
+		<loc>https://formik.org/docs/examples/instant-feedback</loc>
+		<lastmod>2021-09-28</lastmod>
+	</url>
+
+	<url>
+		<loc>https://formik.org/docs/examples/more-examples</loc>
+		<lastmod>2021-09-28</lastmod>
+	</url>
+
+	<url>
+		<loc>https://formik.org/docs/examples/radio-group</loc>
+		<lastmod>2021-09-28</lastmod>
+	</url>
+
+	<url>
+		<loc>https://formik.org/docs/examples/typescript</loc>
+		<lastmod>2021-09-28</lastmod>
+	</url>
+
+	<url>
+		<loc>https://formik.org/docs/examples/with-material-ui</loc>
+		<lastmod>2021-09-28</lastmod>
+	</url>
+
+	<url>
+		<loc>https://formik.org/docs/guides/arrays</loc>
+		<lastmod>2021-09-28</lastmod>
+	</url>
+
+	<url>
+		<loc>https://formik.org/docs/guides/form-submission</loc>
+		<lastmod>2021-09-28</lastmod>
+	</url>
+
+	<url>
+		<loc>https://formik.org/docs/guides/react-native</loc>
+		<lastmod>2021-09-28</lastmod>
+	</url>
+
+	<url>
+		<loc>https://formik.org/docs/guides/typescript</loc>
+		<lastmod>2021-09-28</lastmod>
+	</url>
+
+	<url>
+		<loc>https://formik.org/docs/guides/validation</loc>
+		<lastmod>2021-09-28</lastmod>
+	</url>
+
+	<url>
+		<loc>https://formik.org/docs/migrating-v2</loc>
+		<lastmod>2021-09-28</lastmod>
+	</url>
+
+	<url>
+		<loc>https://formik.org/docs/overview</loc>
+		<lastmod>2021-09-28</lastmod>
+	</url>
+
+	<url>
+		<loc>https://formik.org/docs/resources</loc>
+		<lastmod>2021-09-28</lastmod>
+	</url>
+
+	<url>
+		<loc>https://formik.org/docs/tutorial</loc>
+		<lastmod>2021-09-28</lastmod>
+	</url>
+
+	<url>
+		<loc>https://formik.org/index</loc>
+		<lastmod>2021-09-28</lastmod>
+	</url>
+
+	<url>
+		<loc>https://formik.org/users</loc>
+		<lastmod>2021-09-28</lastmod>
+	</url>
+</urlset>

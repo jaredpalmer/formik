@@ -8,6 +8,7 @@ declare module 'remark-images';
 declare module 'rehype-shiki';
 declare module 'remark-rehype';
 declare module 'rehype-format';
+declare module 'rehype-img-size';
 declare module 'rehype-stringify';
 declare module 'classnames';
 declare module 'docsearch.js';

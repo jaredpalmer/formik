@@ -100,7 +100,9 @@ const Code = ({
     >
       {({ className, style, tokens, getLineProps, getTokenProps }) => (
         <pre
-          className={className + ' bg-gray-50 pb-4 pt-4 pr-4 overflow-scroll'}
+          className={
+            className + ' bg-gray-50 pb-4 pt-4 pr-4 overflow-scroll mb-4'
+          }
           style={{
             ...style,
             border: '1px solid #eee',
@@ -113,12 +115,12 @@ const Code = ({
               {tokens.length > 1 ? (
                 <span
                   aria-hidden="true"
-                  className="select-none text-gray-300 text-right w-5 inline-block mx-2"
+                  className="inline-block w-5 mx-2 text-right text-gray-300 select-none"
                 >
                   {i + 1}
                 </span>
               ) : (
-                <span className="mx-2 w-5" />
+                <span className="w-5 mx-2" />
               )}{' '}
               {line.map((token, key) => (
                 <span key={key} {...getTokenProps({ token, key })} />

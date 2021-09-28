@@ -23,6 +23,7 @@ const createFunctionWithTimeout = (
 };
 
 interface CustomEvent {
+  name: string;
   /** The value that will appear as the event action in Google Analytics Event reports. */
   action: string;
   /** The category of the event. */
@@ -54,6 +55,7 @@ interface CustomEvent {
  * @see https://developers.google.com/analytics/devguides/collection/analyticsjs/field-reference#events
  */
 export function trackCustomEvent({
+  name,
   category,
   action,
   label,
@@ -78,6 +80,6 @@ export function trackCustomEvent({
       );
     }
 
-    (window as any).gtag(`event`, trackingEventOptions);
+    (window as any).gtag(`event`, name, trackingEventOptions);
   }
 }

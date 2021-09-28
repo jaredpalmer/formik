@@ -10,8 +10,6 @@ import matter from 'gray-matter';
 import { postFilePaths, POSTS_PATH } from 'lib/blog/mdxUtils';
 import Link from 'next/link';
 import path from 'path';
-import * as React from 'react';
-import blogStyles from 'styles/blog.module.css';
 
 export default function Index({ posts }: any) {
   return (
@@ -62,9 +60,7 @@ export default function Index({ posts }: any) {
               </div>
             </div>
             <div className={markdownStyles['markdown']}>
-              {posts.length === 0 && (
-                <p className={blogStyles.noPosts}>There are no posts yet</p>
-              )}
+              {posts.length === 0 && <p>There are no posts yet</p>}
               <div className="grid gap-16 pt-10 mt-6 border-t border-gray-100 lg:grid-cols-2 lg:col-gap-5 lg:row-gap-12">
                 {posts.map((post: any) => {
                   return (
@@ -84,7 +80,7 @@ export default function Index({ posts }: any) {
                           <a className="block">
                             <span className="cursor-pointer hover:underline">
                               {!post.data.published && (
-                                <span className={blogStyles.draftBadge}>
+                                <span className="text-white bg-black rounded-xl">
                                   Draft
                                 </span>
                               )}

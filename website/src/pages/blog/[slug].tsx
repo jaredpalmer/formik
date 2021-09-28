@@ -8,8 +8,6 @@ import dynamic from 'next/dynamic';
 import Head from 'next/head';
 import Link from 'next/link';
 import path from 'path';
-import blogStyles from '../../styles/blog.module.css';
-import postStyles from '../../styles/post.module.css';
 import { postFilePaths, POSTS_PATH } from 'lib/blog/mdxUtils';
 import { Footer } from 'components/Footer';
 import Image from 'next/image';
@@ -64,7 +62,7 @@ export default function PostPage({ source, frontMatter }: any) {
           </div>
           <div className="relative">
             <div className="mx-auto">
-              <div className={`${postStyles.post} ${styles['markdown']} `}>
+              <div className={styles['markdown']}>
                 <MDXRemote {...source} components={components} />
               </div>
             </div>

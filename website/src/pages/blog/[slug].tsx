@@ -42,7 +42,7 @@ export default function PostPage({ source, frontMatter, preview }: any) {
         <Sticky className="z-20">
           <Nav />
         </Sticky>
-        <Seo title={frontMatter.Page + ' | Blog'} />
+        <Seo title={frontMatter.title + ' | Blog'} />
         {preview && (
           <div className={blogStyles.previewAlertContainer}>
             <div className={blogStyles.previewAlert}>

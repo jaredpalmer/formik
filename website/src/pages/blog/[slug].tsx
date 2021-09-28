@@ -17,7 +17,7 @@ import { Banner } from 'components/Banner';
 import { Sticky } from 'components/Sticky';
 import { Nav } from 'components/Nav';
 import { Seo } from 'components/Seo';
-import { CustomLink } from 'components/blog/CustomLink';
+import { CustomLink } from 'components/CustomLink';
 
 // Custom components/renderers to pass to MDX.
 // Since the MDX files aren't loaded by webpack, they have no knowledge of how

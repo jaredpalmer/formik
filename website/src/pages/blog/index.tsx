@@ -112,9 +112,6 @@ export default function Index({ posts }: any) {
                           </a>
                         </Link>
                       </div>
-                      {/* {post.Authors.length > 0 && (
-                  <div className="authors">By: {post.Authors.join(' ')}</div>
-                )} */}
                     </div>
                   );
                 })}

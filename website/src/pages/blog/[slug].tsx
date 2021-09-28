@@ -34,7 +34,7 @@ const components = {
   Head,
 };
 
-export default function PostPage({ source, frontMatter, preview }: any) {
+export default function PostPage({ source, frontMatter }: any) {
   return (
     <>
       <div className="h-full min-h-full">
@@ -43,19 +43,6 @@ export default function PostPage({ source, frontMatter, preview }: any) {
           <Nav />
         </Sticky>
         <Seo title={frontMatter.title + ' | Blog'} />
-        {preview && (
-          <div className={blogStyles.previewAlertContainer}>
-            <div className={blogStyles.previewAlert}>
-              <b>Note:</b>
-              {` `}Viewing in preview mode{' '}
-              <Link href={`/api/clear-preview?slug=${frontMatter.Slug}`}>
-                <button className={blogStyles.escapePreview}>
-                  Exit Preview
-                </button>
-              </Link>
-            </div>
-          </div>
-        )}
         <div className="container max-w-3xl px-4 pt-6 pb-12 mx-auto sm:px-6 lg:px-8 max-w-screen">
           <div className="my-10 space-y-4">
             <div className="flex items-center ">
@@ -75,7 +62,6 @@ export default function PostPage({ source, frontMatter, preview }: any) {
               {frontMatter.title || ''}
             </h1>
           </div>
-
           <div className="relative">
             <div className="mx-auto">
               <div className={`${postStyles.post} ${styles['markdown']} `}>
@@ -84,7 +70,6 @@ export default function PostPage({ source, frontMatter, preview }: any) {
             </div>
           </div>
         </div>
-
         <Footer />
       </div>
     </>

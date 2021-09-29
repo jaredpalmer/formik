@@ -105,7 +105,7 @@ const Basic = () => (
            and all changes by all <Field>s and <FastField>s */}
           <label htmlFor="lastName">LastName</label>
           <Field name="lastName" placeholder="Baby">
-            {() => (
+            {({ field, form }) => (
               <div>
                 <input {...field} />
                 {/**  Works because this is inside

@@ -425,6 +425,27 @@ describe('Field / FastField', () => {
         );
       }
     );
+
+    cases(
+      'runs validation with field value and all form values',
+      async (renderField) => {
+        const validate = jest.fn();
+        const value = 'ideffix';
+        const {getByTestId, rerender} = renderField({
+          validate,
+          component: 'input',
+        })
+        rerender();
+        fireEvent.change(getByTestId('name-input'), {
+          target: { name: 'name', value },
+        });
+        rerender()
+        await waitFor(() => {
+          expect(validate.mock.calls[0]).toEqual([value, {email: initialValues.email, name: value}])
+        })
+      }
+    )
+
   });
 
   describe('warnings', () => {

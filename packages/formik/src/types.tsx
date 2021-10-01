@@ -318,6 +318,7 @@ export interface FieldInputProps<Value> {
   onBlur: FormikHandlers['handleBlur'];
 }
 
-export type FieldValidator = (
-  value: any
+export type FieldValidator<Values = any> = (
+  value: any,
+  allValues: Values
 ) => string | void | Promise<string | void>;

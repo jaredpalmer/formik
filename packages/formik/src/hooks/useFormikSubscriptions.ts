@@ -1,6 +1,6 @@
 import React, { Reducer } from 'react';
 import { useSubscription } from 'use-subscription';
-import { populateComputedState, IsFormValidFn } from '../helpers/form-helpers';
+import { populateComputedState, IsFormValidFn, selectFullState } from '../helpers/form-helpers';
 import {
   FormikMessage,
   FormikReducerState,
@@ -56,7 +56,7 @@ export const useFormikSubscriptions = <Values>(
    */
   const useState = React.useCallback(
     <Return>(
-      selector: Selector<FormikState<Values>, Return>,
+      selector: Selector<FormikState<Values>, Return> = selectFullState as any,
       comparer: Comparer<Return> = Object.is,
       shouldSubscribe: boolean = true
     ) => {

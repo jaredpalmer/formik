@@ -103,7 +103,7 @@ By default, this loader injects the `LayoutDocs.tsx` layout component as a wrapp
 
 ### Notion-powered Blog with [Static Site Generation](https://github.com/vercel/next.js/issues/9524)
 
-Instead of using a traditional CMS or MDX, this blog you're reading right now is actually powered by [Notion](https://notion.so) and Next.js's Static Site Generation feature. We keep posts in a table in a Notion API with relevant metadata and then map Notion's undocumented API to custom React components in `[./src/pages/blog/[...slug].tsx](https://github.com/formik/formik/blob/master/website2/src/pages/blog/%5B...slug%5D.tsx)` . The result is amazing and a fantastic writing experience. For a more detailed example of this setup and one that you can deploy immediately, go here: [https://notion-blog.now.sh/](https://notion-blog.now.sh/)
+Instead of using a traditional CMS or MDX, this blog you're reading right now is actually powered by [Notion](https://notion.so) and Next.js's Static Site Generation feature. We keep posts in a table in a Notion API with relevant metadata and then map Notion's undocumented API to custom React components in [./src/pages/blog/[...slug].tsx](https://github.com/formik/formik/blob/master/website2/src/pages/blog/%5B...slug%5D.tsx) . The result is amazing and a fantastic writing experience. For a more detailed example of this setup and one that you can deploy immediately, go here: [https://notion-blog.now.sh/](https://notion-blog.now.sh/)
 
 ![/images/blog/notion-cms-screenshot.png](/images/blog/notion-cms-screenshot.png)
 

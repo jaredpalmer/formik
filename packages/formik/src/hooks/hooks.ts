@@ -78,7 +78,10 @@ export const useFieldProps = <Val>(
       }
     }
 
-    field.onChange = selectFieldOnChange({ setFieldValue, getState }, nameOrOptions);
+    field.onChange = selectFieldOnChange(
+      { setFieldValue, getState },
+      nameOrOptions
+    );
   }
 
   return field;
@@ -156,3 +159,7 @@ export const useIsValid = () => useFormikContext().useState(selectIsValid);
 const selectIsSubmitting = (state: FormikState<any>) => state.isSubmitting;
 export const useIsSubmitting = () =>
   useFormikContext().useState(selectIsSubmitting);
+
+const selectIsValidating = (state: FormikState<any>) => state.isValidating;
+export const useIsValidating = () =>
+  useFormikContext().useState(selectIsValidating);

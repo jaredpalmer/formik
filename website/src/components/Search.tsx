@@ -30,7 +30,7 @@ const options = {
 
 let DocSearchModal: any = null;
 
-export const Search: React.FC<SearchProps> = ({ appId }) => {
+export const Search: React.FC<SearchProps> = () => {
   const searchButtonRef = React.useRef<HTMLButtonElement | null>(null);
   const [isShowing, setIsShowing] = React.useState(false);
   const [initialQuery, setInitialQuery] = React.useState<string | null>(null);
@@ -95,7 +95,7 @@ export const Search: React.FC<SearchProps> = ({ appId }) => {
       <Head>
         <link
           rel="preconnect"
-          href={`https://${appId}-dsn.algolia.net`}
+          href={`https://${options.appId}-dsn.algolia.net`}
           crossOrigin="true"
         />
       </Head>

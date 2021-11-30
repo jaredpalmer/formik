@@ -299,7 +299,7 @@ export interface FieldHelperProps<Value> {
   /** Set the field's touched value */
   setTouched: (value: boolean, shouldValidate?: boolean) => void;
   /** Set the field's error value */
-  setError: (value: Value) => void;
+  setError: (value: string | undefined) => void;
 }
 
 /** Field input value, name, and event handlers */

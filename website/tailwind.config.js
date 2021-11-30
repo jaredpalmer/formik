@@ -3,18 +3,12 @@
 const defaultTheme = require('tailwindcss/defaultTheme');
 
 module.exports = {
-  corePlugins: {
-    preflight: true,
-    float: false,
-  },
-  purge: {
-    enabled: process.env.NODE_ENV !== 'development',
-    content: ['./src/**/*.ts', './src/**/*.tsx'],
-    options: {
-      defaultExtractor: content => content.match(/[\w-/.:]+(?<!:)/g) || [],
-    },
-  },
+  mode: 'jit',
+  purge: ['./src/**/*.ts', './src/**/*.tsx'],
   theme: {
+    colors: {
+      ...defaultTheme.colors,
+    },
     screens: {
       sm: '640px',
       md: '768px',
@@ -29,22 +23,7 @@ module.exports = {
     container: {
       padding: '1rem',
     },
-    customForms: theme => ({
-      sm: {
-        'input, textarea, multiselect, select': {
-          fontSize: theme('fontSize.sm'),
-          padding: `${theme('spacing.1')} ${theme('spacing.2')}`,
-        },
-        select: {
-          paddingRight: `${theme('spacing.4')}`,
-        },
-        'checkbox, radio': {
-          width: theme('spacing.3'),
-          height: theme('spacing.3'),
-        },
-      },
-    }),
   },
   variants: {},
-  plugins: [require('@tailwindcss/ui')],
+  plugins: [require('@tailwindcss/forms')],
 };

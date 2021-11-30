@@ -90,7 +90,7 @@ const Home: React.FC<HomeProps> = props => {
                   <div className="mt-5  mx-auto sm:flex sm:justify-center lg:justify-start lg:mx-0 md:mt-8">
                     <div className="rounded-md shadow">
                       <Link href="/docs/overview">
-                        <a className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-500 focus:outline-none focus:border-blue-700 focus:shadow-outline-blue transition duration-150 ease-in-out md:py-4 md:text-lg md:px-10">
+                        <a className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-500 focus:outline-none focus:border-blue-700 focus:ring focus:ring-blue transition duration-150 ease-in-out md:py-4 md:text-lg md:px-10">
                           Get Started
                         </a>
                       </Link>
@@ -100,7 +100,7 @@ const Home: React.FC<HomeProps> = props => {
                         href={siteConfig.repoUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-blue-600 bg-white hover:text-blue-500 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue transition duration-150 ease-in-out md:py-4 md:text-lg md:px-10"
+                        className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-blue-600 bg-white hover:text-blue-500 focus:outline-none focus:border-blue-300 focus:ring focus:ring-blue transition duration-150 ease-in-out md:py-4 md:text-lg md:px-10"
                       >
                         GitHub
                       </a>
@@ -313,7 +313,7 @@ const Home: React.FC<HomeProps> = props => {
             <div className="mt-8 flex lg:flex-shrink-0 lg:mt-0">
               <div className="inline-flex rounded-md shadow">
                 <Link href="/docs/overview">
-                  <a className="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-500 focus:outline-none focus:shadow-outline transition duration-150 ease-in-out">
+                  <a className="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-500 focus:outline-none focus:ring transition duration-150 ease-in-out">
                     Get Started
                   </a>
                 </Link>
@@ -321,7 +321,7 @@ const Home: React.FC<HomeProps> = props => {
               <div className="ml-3 inline-flex rounded-md shadow">
                 <a
                   href={siteConfig.repoUrl}
-                  className="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-blue-600 bg-white hover:text-blue-500 focus:outline-none focus:shadow-outline transition duration-150 ease-in-out"
+                  className="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-blue-600 bg-white hover:text-blue-500 focus:outline-none focus:ring transition duration-150 ease-in-out"
                 >
                   GitHub
                 </a>

@@ -130,13 +130,13 @@ export const TWButton = forwardRefWithAs<TWButtonProps, 'button'>(
       className: cx(
         'font-medium inline-flex items-center  focus:outline-none transition duration-150 ease-in-out',
         {
-          [`shadow-xs  border border-transparent text-white bg-${tailwindColor}-600 hover:bg-${tailwindColor}-500 focus:border-${tailwindColor}-700 focus:shadow-outline-${tailwindColor} active:border-${tailwindColor}-700`]:
+          [`ring-1 ring-black ring-opacity-5  border border-transparent text-white bg-${tailwindColor}-600 hover:bg-${tailwindColor}-500 focus:border-${tailwindColor}-700 focus:ring focus:ring-${tailwindColor} active:border-${tailwindColor}-700`]:
             !!tailwindColor && !minimal,
-          [`shadow-xs border border-gray-300 text-gray-700 bg-white hover:text-gray-500  focus:shadow-outline-blue focus:border-blue-300 active:text-gray-800 active:bg-gray-50`]:
+          [`ring-1 ring-black ring-opacity-5 border border-gray-300 text-gray-700 bg-white hover:text-gray-500  focus:ring focus:ring-blue focus:border-blue-300 active:text-gray-800 active:bg-gray-50`]:
             !tailwindColor && !minimal,
-          [`hover:bg-${tailwindColor}-100 active:bg-${tailwindColor}-200 text-${tailwindColor}-700 focus:shadow-outline-${tailwindColor} border-transparent`]:
+          [`hover:bg-${tailwindColor}-100 active:bg-${tailwindColor}-200 text-${tailwindColor}-700 focus:ring focus:ring-${tailwindColor} border-transparent`]:
             minimal && tailwindColor,
-          [`hover:bg-gray-200 active:bg-gray-300 text-gray-900 focus:shadow-outline-blue border-transparent`]:
+          [`hover:bg-gray-200 active:bg-gray-300 text-gray-900 focus:ring focus:ring-blue border-transparent`]:
             minimal && !tailwindColor,
         },
         sizeClasses,

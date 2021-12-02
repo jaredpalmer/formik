@@ -132,7 +132,7 @@
 .markdown > ol > li > ol > li > code,
 .markdown > p a > code,
 .markdown > table > tbody > tr > td:not(:first-child) > code {
-  @apply bg-gray-100 shadow-xs rounded px-1;
+  @apply bg-gray-100 ring-1 ring-black ring-opacity-5 rounded px-1;
   margin-left: 2px;
   margin-right: 2px;
   padding-top: 2px;

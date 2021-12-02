@@ -1,3 +1,12 @@
+export const GA_TRACKING_ID = process.env.NEXT_PUBLIC_GA_TRACKING_ID;
+
+// https://developers.google.com/analytics/devguides/collection/gtagjs/pages
+export const pageview = (url: string) => {
+  (window as any).gtag('config', GA_TRACKING_ID, {
+    page_path: url,
+  });
+};
+
 const createFunctionWithTimeout = (
   callback: () => void,
   opt_timeout = 1000
@@ -14,6 +23,7 @@ const createFunctionWithTimeout = (
 };
 
 interface CustomEvent {
+  name: string;
   /** The value that will appear as the event action in Google Analytics Event reports. */
   action: string;
   /** The category of the event. */
@@ -45,6 +55,7 @@ interface CustomEvent {
  * @see https://developers.google.com/analytics/devguides/collection/analyticsjs/field-reference#events
  */
 export function trackCustomEvent({
+  name,
   category,
   action,
   label,
@@ -69,6 +80,6 @@ export function trackCustomEvent({
       );
     }
 
-    (window as any).gtag(`event`, trackingEventOptions);
+    (window as any).gtag(`event`, name, trackingEventOptions);
   }
 }

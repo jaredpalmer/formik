@@ -11,6 +11,6 @@ A few popular frameworks have open source wrappers readily available:
 - [Ant Design](https://github.com/jannikbuschke/formik-antd)
 - [Fabric](https://github.com/kmees/formik-office-ui-fabric-react)
 - [Material UI](https://github.com/stackworx/formik-material-ui)
-- [Reactstrap](https://github.com/shoaibkhan94/reactstrap-formik)
+- [Reactstrap](https://github.com/LaplancheMaxime/reactstrap-formik-adapter)
 - [Semantic UI 2.0](https://github.com/JT501/formik-semantic-ui-react)
 - [Semantic UI](https://github.com/turner-industries/formik-semantic-ui)

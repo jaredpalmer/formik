@@ -416,7 +416,7 @@ const validate = values => {
 };
 ```
 
-- Asynchronous and return a Promise that's resolves to an object containing `errors`
+- Asynchronous and return a Promise that resolves to an object containing `errors`
 
 ```js
 // Async Validation

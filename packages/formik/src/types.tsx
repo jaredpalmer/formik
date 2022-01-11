@@ -27,7 +27,7 @@ export type FormikTouched<Values> = {
   [K in keyof Values]?: Values[K] extends any[]
     ? Values[K][number] extends object // [number] is the special sauce to get the type of array's element. More here https://github.com/Microsoft/TypeScript/pull/21316
       ? FormikTouched<Values[K][number]>[]
-      : boolean
+      : boolean[]
     : Values[K] extends object
     ? FormikTouched<Values[K]>
     : boolean;

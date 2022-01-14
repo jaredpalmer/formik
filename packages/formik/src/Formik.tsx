@@ -150,6 +150,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   const initialTouched = React.useRef(props.initialTouched || emptyTouched);
   const initialStatus = React.useRef(props.initialStatus);
   const isMounted = React.useRef<boolean>(false);
+  const skipDirty = React.useRef<boolean>(false);
   const fieldRegistry = React.useRef<FieldRegistry>({});
   if (__DEV__) {
     // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -571,7 +572,10 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   );
 
   const setFieldValue = useEventCallback(
-    (field: string, value: any, shouldValidate?: boolean) => {
+    (field: string, value: any, shouldValidate?: boolean, skipDirtyForm?: boolean) => {
+      if(skipDirtyForm) {
+        skipDirty.current = true;
+      }
       dispatch({
         type: 'SET_FIELD_VALUE',
         payload: {
@@ -588,7 +592,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   );
 
   const executeChange = React.useCallback(
-    (eventOrTextValue: string | React.ChangeEvent<any>, maybePath?: string) => {
+    (eventOrTextValue: string | React.ChangeEvent<any>, maybePath?: string, skipDirtyForm?: boolean) => {
       // By default, assume that the first argument is a string. This allows us to use
       // handleChange with React Native and React Native Web's onChangeText prop which
       // provides just the value of the input.
@@ -637,7 +641,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
 
       if (field) {
         // Set form fields by name
-        setFieldValue(field, val);
+        setFieldValue(field, val, false, skipDirtyForm);
       }
     },
     [setFieldValue, state.values]
@@ -931,7 +935,13 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   );
 
   const dirty = React.useMemo(
-    () => !isEqual(initialValues.current, state.values),
+    () => {
+      if(skipDirty.current){
+        skipDirty.current = false;
+        return false;
+      }
+      return !isEqual(initialValues.current, state.values)
+    },
     [initialValues.current, state.values]
   );
 

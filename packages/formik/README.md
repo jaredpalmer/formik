@@ -8,6 +8,17 @@
 
 <br>
 
+## *** Changes for this version ***
+
+Function `setFieldValue` has a new parameter called `skipDirtyForm` by default false
+</br>
+The new signature is `setFieldValue(path: string, value: any, shouldValidate: boolean default false, skipDirtyForm: boolean default false)`
+When called with `skipDirtyForm=true`, the dirty flag is set to false, this is useful when values are changed by the developer and the user is agnostic of these changes, they don't affect the business 
+and they should be ignored  
+
+</br>
+</br>
+
 [![Stable Release](https://img.shields.io/npm/v/formik.svg)](https://npm.im/formik)
 [![Blazing Fast](https://badgen.now.sh/badge/speed/blazing%20%F0%9F%94%A5/green)](https://npm.im/formik)
 [![gzip size](http://img.badgesize.io/https://unpkg.com/formik@latest/dist/formik.umd.production.min.js?compression=gzip)](https://unpkg.com/formik@latest/dist/formik.umd.production.min.js)

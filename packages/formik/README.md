@@ -17,7 +17,6 @@ When called with `skipDirtyForm=true`, the dirty flag is set to false, this is u
 and they should be ignored  
 
 </br>
-</br>
 
 [![Stable Release](https://img.shields.io/npm/v/formik.svg)](https://npm.im/formik)
 [![Blazing Fast](https://badgen.now.sh/badge/speed/blazing%20%F0%9F%94%A5/green)](https://npm.im/formik)

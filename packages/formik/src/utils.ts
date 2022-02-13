@@ -127,11 +127,7 @@ export function setIn(obj: any, path: string, value: any): any {
     return obj;
   }
 
-  if (value === undefined) {
-    delete resVal[pathArray[i]];
-  } else {
-    resVal[pathArray[i]] = value;
-  }
+  resVal[pathArray[i]] = value;
 
   // If the path array has a single element, the loop did not run.
   // Deleting on `resVal` had no effect in this scenario, so we delete on the result instead.

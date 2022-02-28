@@ -34,6 +34,7 @@
   "peerDependencies": {
     "react": ">=16.8.0"
   },
+  "sideEffects": false,
   "scripts": {
     "test": "tsdx test --env=jsdom",
     "test:watch": "npm run test -- --watchAll",

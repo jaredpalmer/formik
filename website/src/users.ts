@@ -234,4 +234,9 @@ export const users = [
     image: '/images/logos/benchmark-uae.svg',
     infoLink: 'https://benchmark.ae/',
   },
+    {
+    caption: 'Dev IT Jobs',
+    image: '/images/logos/dev-it-jobs.svg',
+    infoLink: 'https://devitjobs.uk',
+  },
 ];

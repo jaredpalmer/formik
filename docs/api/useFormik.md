@@ -9,7 +9,7 @@ title: useFormik()
 
 ## Use cases for `useFormik()`
 
-- You are Jared
+- You are Jared or Mike
 - You are modifying the returned value and creating a modified version of `<Formik>` for your own consumption
 - You want to avoid using React Context (possibly for perf reasons)
 

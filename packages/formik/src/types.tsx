@@ -268,6 +268,10 @@ export interface FormikHandlers {
   handleChange: HandleChangeFn;
 }
 
+export type FormValidator<Values extends FormikValues> = (
+  values: Values,
+) => void | FormikErrors<Values> | Promise<FormikErrors<Values> | void>;
+
 export interface FormikValidationConfig<Values> {
   /** Tells Formik to validate the form on each input's onChange event */
   validateOnChange?: boolean;
@@ -283,7 +287,7 @@ export interface FormikValidationConfig<Values> {
    * Validation function. Must return an error object or promise that
    * throws an error object where that object keys map to corresponding value.
    */
-  validate?: (values: Values) => void | object | ValidateFn<Values>;
+  validate?: FormValidator<Values>;
 }
 
 export type FormikApi<Values extends FormikValues> = FormikHelpers<Values> &
@@ -522,11 +526,6 @@ export interface FieldRegistry {
     validate: (value: any) => string | Promise<string> | undefined;
   };
 }
-
-export type ValidationHandler<Values extends FormikValues> = (
-  values: Values,
-  field?: string
-) => Promise<FormikErrors<Values>>;
 
 /**
  * If an object has optional properties, force passing undefined.

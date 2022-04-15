@@ -663,7 +663,7 @@ describe('<Formik>', () => {
         });
         // rerender();
         await waitFor(() => {
-          expect(validate).toHaveBeenCalledWith(newValue, undefined);
+          expect(validate).toHaveBeenCalledWith(newValue);
         });
       });
       it('setValues should NOT run validations when validateOnChange is false', async () => {

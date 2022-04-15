@@ -211,9 +211,9 @@ export function useFormik<Values extends FormikValues = FormikValues>(
   }, []);
 
   const runValidateHandler = React.useCallback(
-    (values: Values, field?: string): Promise<FormikErrors<Values>> => {
+    (values: Values): Promise<FormikErrors<Values>> => {
       return new Promise((resolve, reject) => {
-        const maybePromisedErrors = (props.validate as any)(values, field);
+        const maybePromisedErrors = props.validate?.(values);
         if (maybePromisedErrors == null) {
           // use loose null check here on purpose
           resolve(emptyErrors);

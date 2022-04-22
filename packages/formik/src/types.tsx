@@ -295,7 +295,7 @@ export interface FieldMetaProps<Value> {
 /** Imperative handles to change a field's value, error and touched */
 export interface FieldHelperProps<Value> {
   /** Set the field's value */
-  setValue: (value: Value, shouldValidate?: boolean) => void;
+  setValue: (value: Value, shouldValidate?: boolean) => Promise<void>;
   /** Set the field's touched value */
   setTouched: (value: boolean, shouldValidate?: boolean) => void;
   /** Set the field's error value */

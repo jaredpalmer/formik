@@ -305,11 +305,11 @@ class FieldArrayInner<Values = {}> extends React.Component<
     this.updateArrayField(
       // so this gets call 3 times
       (array: any[]) => {
-        const tmp = array;
+        const copy = copyArrayLike(array);
         if (!result) {
-          result = tmp && tmp.pop && tmp.pop();
+          result = copy.pop();
         }
-        return tmp;
+        return copy;
       },
       true,
       true

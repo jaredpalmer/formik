@@ -194,7 +194,7 @@ export const Footer: React.FC<FooterProps> = props => {
               <FormiumLogo />
             </ExternalLink>
             <div className="text-gray-400 text-xs pt-1">
-              Copyright &copy; 2020 Formium, Inc. All rights reserved.{' '}
+              Copyright &copy; {new Date().getFullYear()} Formium, Inc. All rights reserved.
             </div>
           </div>
         </div>

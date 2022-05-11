@@ -394,7 +394,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
       if (props.onReset) {
         const maybePromisedOnReset = (props.onReset as any)(
           state.values,
-          imperativeMethodsAndState
+          imperativeMethods
         );
 
         if (isPromise(maybePromisedOnReset)) {
@@ -829,7 +829,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     }
   );
 
-  const imperativeMethodsAndState: FormikHelpers<Values> & FormikState<Values> = {
+  const imperativeMethods: FormikHelpers<Values> = {
     resetForm,
     validateForm: validateFormWithHighPriority,
     validateField,
@@ -843,12 +843,10 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     setValues,
     setFormikState,
     submitForm,
-
-    ...state,
   };
 
   const executeSubmit = useEventCallback(() => {
-    return onSubmit(state.values, imperativeMethodsAndState);
+    return onSubmit(state.values, { ...imperativeMethods, ...state });
   });
 
   const handleReset = useEventCallback(e => {

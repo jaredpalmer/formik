@@ -1,0 +1,19 @@
+name: "Close stale issues/prs"
+on:
+  schedule:
+    - cron: "1 0 * * *"
+
+jobs:
+  stale:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/stale@v3
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          days-before-stale: 30
+          days-before-close: 60
+          stale-issue-label: "stale"
+          stale-pr-label: "stale"
+          stale-pr-message: "This pull request is stale because it has been open 30 days with no activity. Remove stale label or comment or this will be closed in 60 days"
+          stale-issue-message: "This issue is stale because it has been open 30 days with no activity. Remove stale label or comment or this will be closed in 60 days"
+          any-of-labels: "Resolution: Duplicate,Resolution: Invalid,Resolution: Support Redirect,Resolution: Unsolved,Resolution: User Land,Resolution: Wontfix,Resolution: Workaround,Status: Author Feedback,Status: Needs More Information"

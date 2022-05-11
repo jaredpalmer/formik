@@ -12,7 +12,8 @@ import {
   FieldMetaProps,
   FieldHelperProps,
   FieldInputProps,
-  FormikHelpers, FormikHandlers,
+  FormikHelpers,
+  FormikHandlers,
 } from './types';
 import {
   isFunction,
@@ -27,7 +28,6 @@ import {
 } from './utils';
 import { FormikProvider } from './FormikContext';
 import invariant from 'tiny-warning';
-import { unstable_LowPriority, unstable_runWithPriority } from 'scheduler';
 
 type FormikMessage<Values> =
   | { type: 'SUBMIT_ATTEMPT' }
@@ -259,7 +259,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   const runSingleFieldLevelValidation = React.useCallback(
     (field: string, value: void | string): Promise<string> => {
       return new Promise(resolve =>
-        resolve(fieldRegistry.current[field].validate(value))
+        resolve(fieldRegistry.current[field].validate(value) as string)
       );
     },
     []
@@ -318,36 +318,6 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     ]
   );
 
-  // Run validations and dispatching the result as low-priority via rAF.
-  //
-  // The thinking is that validation as a result of onChange and onBlur
-  // should never block user input. Note: This method should never be called
-  // during the submission phase because validation prior to submission
-  // is actaully high-priority since we absolutely need to guarantee the
-  // form is valid before executing props.onSubmit.
-  const validateFormWithLowPriority = useEventCallback(
-    (values: Values = state.values) => {
-      return unstable_runWithPriority(unstable_LowPriority, () => {
-        return runAllValidations(values)
-          .then(combinedErrors => {
-            if (!!isMounted.current) {
-              dispatch({ type: 'SET_ERRORS', payload: combinedErrors });
-            }
-            return combinedErrors;
-          })
-          .catch(actualException => {
-            if (process.env.NODE_ENV !== 'production') {
-              // Users can throw during validate, however they have no way of handling their error on touch / blur. In low priority, we need to handle it
-              console.warn(
-                `Warning: An unhandled error was caught during low priority validation in <Formik validate />`,
-                actualException
-              );
-            }
-          });
-      });
-    }
-  );
-
   // Run all validations methods and update state accordingly
   const validateFormWithHighPriority = useEventCallback(
     (values: Values = state.values) => {
@@ -355,14 +325,22 @@ export function useFormik<Values extends FormikValues = FormikValues>({
       return runAllValidations(values).then(combinedErrors => {
         if (!!isMounted.current) {
           dispatch({ type: 'SET_ISVALIDATING', payload: false });
-          if (!isEqual(state.errors, combinedErrors)) {
-            dispatch({ type: 'SET_ERRORS', payload: combinedErrors });
-          }
+          dispatch({ type: 'SET_ERRORS', payload: combinedErrors });
         }
         return combinedErrors;
       });
     }
   );
+
+  React.useEffect(() => {
+    if (
+      validateOnMount &&
+      isMounted.current === true &&
+      isEqual(initialValues.current, props.initialValues)
+    ) {
+      validateFormWithHighPriority(initialValues.current);
+    }
+  }, [validateOnMount, validateFormWithHighPriority]);
 
   const resetForm = React.useCallback(
     (nextState?: Partial<FormikState<Values>>) => {
@@ -436,17 +414,22 @@ export function useFormik<Values extends FormikValues = FormikValues>({
       isMounted.current === true &&
       !isEqual(initialValues.current, props.initialValues)
     ) {
-      initialValues.current = props.initialValues;
-
       if (enableReinitialize) {
+        initialValues.current = props.initialValues;
         resetForm();
       }
 
       if (validateOnMount) {
-        validateFormWithLowPriority(initialValues.current);
+        validateFormWithHighPriority(initialValues.current);
       }
     }
-  }, [enableReinitialize, props.initialValues, resetForm, validateOnMount, validateFormWithLowPriority]);
+  }, [
+    enableReinitialize,
+    props.initialValues,
+    resetForm,
+    validateOnMount,
+    validateFormWithHighPriority,
+  ]);
 
   React.useEffect(() => {
     if (
@@ -495,7 +478,10 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     // changes if the validation function is synchronous. It's different from
     // what is called when using validateForm.
 
-    if (isFunction(fieldRegistry.current[name].validate)) {
+    if (
+      fieldRegistry.current[name] &&
+      isFunction(fieldRegistry.current[name].validate)
+    ) {
       const value = getIn(state.values, name);
       const maybePromise = fieldRegistry.current[name].validate(value);
       if (isPromise(maybePromise)) {
@@ -552,7 +538,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
       const willValidate =
         shouldValidate === undefined ? validateOnBlur : shouldValidate;
       return willValidate
-        ? validateFormWithLowPriority(state.values)
+        ? validateFormWithHighPriority(state.values)
         : Promise.resolve();
     }
   );
@@ -562,12 +548,14 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   }, []);
 
   const setValues = useEventCallback(
-    (values: Values, shouldValidate?: boolean) => {
-      dispatch({ type: 'SET_VALUES', payload: values });
+    (values: React.SetStateAction<Values>, shouldValidate?: boolean) => {
+      const resolvedValues = isFunction(values) ? values(state.values) : values;
+
+      dispatch({ type: 'SET_VALUES', payload: resolvedValues });
       const willValidate =
         shouldValidate === undefined ? validateOnChange : shouldValidate;
       return willValidate
-        ? validateFormWithLowPriority(values)
+        ? validateFormWithHighPriority(resolvedValues)
         : Promise.resolve();
     }
   );
@@ -594,7 +582,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
       const willValidate =
         shouldValidate === undefined ? validateOnChange : shouldValidate;
       return willValidate
-        ? validateFormWithLowPriority(setIn(state.values, field, value))
+        ? validateFormWithHighPriority(setIn(state.values, field, value))
         : Promise.resolve();
     }
   );
@@ -612,7 +600,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
       if (!isString(eventOrTextValue)) {
         // If we can, persist the event
         // @see https://reactjs.org/docs/events.html#event-pooling
-        if ((eventOrTextValue as React.ChangeEvent<any>).persist) {
+        if ((eventOrTextValue as any).persist) {
           (eventOrTextValue as React.ChangeEvent<any>).persist();
         }
         const target = eventOrTextValue.target
@@ -642,7 +630,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
           ? ((parsed = parseFloat(value)), isNaN(parsed) ? '' : parsed)
           : /checkbox/.test(type) // checkboxes
           ? getValueForCheckbox(getIn(state.values, field!), checked, value)
-          : !!multiple // <select multiple>
+          : options && multiple // <select multiple>
           ? getSelectedValues(options)
           : value;
       }
@@ -679,7 +667,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
       const willValidate =
         shouldValidate === undefined ? validateOnBlur : shouldValidate;
       return willValidate
-        ? validateFormWithLowPriority(state.values)
+        ? validateFormWithHighPriority(state.values)
         : Promise.resolve();
     }
   );
@@ -843,7 +831,6 @@ export function useFormik<Values extends FormikValues = FormikValues>({
 
   const imperativeMethodsAndState: FormikHelpers<Values> & FormikState<Values> = {
     resetForm,
-
     validateForm: validateFormWithHighPriority,
     validateField,
     setErrors,
@@ -1051,7 +1038,7 @@ function warnAboutMissingIdentifier({
   console.warn(
     `Warning: Formik called \`${handlerName}\`, but you forgot to pass an \`id\` or \`name\` attribute to your input:
     ${htmlContent}
-    Formik cannot determine which value to update. For more info see https://github.com/jaredpalmer/formik#${documentationAnchorLink}
+    Formik cannot determine which value to update. For more info see https://formik.org/docs/api/formik#${documentationAnchorLink}
   `
   );
 }
@@ -1125,7 +1112,7 @@ export function prepareDataForValidation<T extends FormikValues>(
 function arrayMerge(target: any[], source: any[], options: any): any[] {
   const destination = target.slice();
 
-  source.forEach(function(e: any, i: number) {
+  source.forEach(function merge(e: any, i: number) {
     if (typeof destination[i] === 'undefined') {
       const cloneRequested = options.clone !== false;
       const shouldClone = cloneRequested && options.isMergeableObject(e);

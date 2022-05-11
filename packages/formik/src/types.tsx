@@ -208,7 +208,7 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
    * Reset handler
    */
   onReset?: (
-    values: Values, 
+    values: Values,
     formikHelpersState: FormikHelpers<Values> & FormikState<Values>
   ) => void;
 

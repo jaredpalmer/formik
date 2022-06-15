@@ -14,14 +14,14 @@ annoying parts:
 2.  Validation and error messages
 3.  Handling form submission
 
-By colocating all of the above in one place, Formik will keep things
+By colocating all of the above in one place, Formik keeps things
 organized--making testing, refactoring, and reasoning about your forms a breeze.
 
 ## Motivation
 
 I ([@jaredpalmer](https://twitter.com/jaredpalmer)) wrote Formik while building a large internal administrative dashboard with
-[@eonwhite](https://twitter.com/eonwhite). With around ~30 unique forms, it
-quickly became obvious that we could benefit by standardizing not just our input
+[@eonwhite](https://twitter.com/eonwhite). With around 30 unique forms, it
+quickly became obvious that we could benefit from standardizing not just our input
 components but also the way in which data flowed through our forms.
 
 ### Why not Redux-Form?
@@ -84,13 +84,13 @@ You can also try before you buy with this
 
 ### CDN
 
-If you're not using a module bundler or package manager we also have a global ("UMD") build hosted on the [unpkg.com](https://unpkg.com) CDN. Simply add the following `<script>` tag to the bottom of your HTML file:
+If you're not using a module bundler or package manager, we also have a global ("UMD") build hosted on the [unpkg.com](https://unpkg.com) CDN. Simply add the following `<script>` tag to the bottom of your HTML file:
 
 ```html
 <script src="https://unpkg.com/formik/dist/formik.umd.production.min.js"></script>
 ```
 
-Once you've added this you will have access to the `window.Formik.<Insert_Component_Name_Here>` variables.
+Once you've added this, you will have access to the `window.Formik.<Insert_Component_Name_Here>` variables.
 
 > This installation/usage requires the [React CDN script bundles](https://reactjs.org/docs/cdn-links.html) to be on the page as well.
 

@@ -1,5 +1,6 @@
 {
   "name": "formik-project",
+  "version": "1.22.19",
   "private": true,
   "devDependencies": {
     "@changesets/changelog-github": "^0.2.7",

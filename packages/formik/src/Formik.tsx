@@ -600,7 +600,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
       if (!isString(eventOrTextValue)) {
         // If we can, persist the event
         // @see https://reactjs.org/docs/events.html#event-pooling
-        if ((eventOrTextValue as any).persist) {
+        if ((eventOrTextValue as any)?.persist) {
           (eventOrTextValue as React.ChangeEvent<any>).persist();
         }
         const target = eventOrTextValue.target
@@ -674,7 +674,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
 
   const executeBlur = React.useCallback(
     (e: any, path?: string) => {
-      if (e.persist) {
+      if (e?.persist) {
         e.persist();
       }
       const { name, id, outerHTML } = e.target;

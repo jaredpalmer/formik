@@ -99,7 +99,9 @@ export const MyReactNativeForm = props => (
 export const MyTextField = props => {
   const [field] = useField(props);
   const onChange = e => {
-    e.persist();
+    if (e?.persist) {
+        e.persist();
+      }
     if (e.target.value === 'foo') {
       // Using the curried version of onChange,
       // effectively equivalent to setFieldValue() no longer works
@@ -118,7 +120,9 @@ export const MyTextField = props => {
 export const MyTextField = props => {
   const [field] = useField(props);
   const onChange = e => {
-    e.persist();
+    if (e?.persist) {
+        e.persist();
+      }
     if (e.target.value === 'foo') {
       // You can now just set the value
       field.onChange('bar');

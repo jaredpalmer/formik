@@ -136,6 +136,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   isInitialValid,
   enableReinitialize = false,
   onSubmit,
+  preventStickingSubmissions,
   ...rest
 }: FormikConfig<Values>) {
   const props = {
@@ -143,6 +144,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     validateOnBlur,
     validateOnMount,
     onSubmit,
+    preventStickingSubmissions,
     ...rest,
   };
   const initialValues = React.useRef(props.initialValues);
@@ -980,6 +982,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     validateOnBlur,
     validateOnChange,
     validateOnMount,
+    preventStickingSubmissions
   };
 
   return ctx;

@@ -982,7 +982,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     validateOnBlur,
     validateOnChange,
     validateOnMount,
-    preventStickingSubmissions
+    preventStickingSubmissions,
   };
 
   return ctx;

@@ -22,8 +22,8 @@ fdescribe('<ErrorMessage />', () => {
     let actualFProps: any;
     let message = 'Wrong';
     render(
-      <TestForm
-        render={(fProps: FormikProps<TestFormValues>) => {
+      <TestForm>
+        {(fProps: FormikProps<TestFormValues>) => {
           actualFProps = fProps;
           return (
             <div>
@@ -33,7 +33,7 @@ fdescribe('<ErrorMessage />', () => {
             </div>
           );
         }}
-      />
+      </TestForm>
     );
 
     await act(async () => {

@@ -31,7 +31,7 @@ describe('Yup helpers', () => {
     it('should validate', async () => {
       try {
         await validateYupSchema({}, schema);
-      } catch (e) {
+      } catch (e: any) {
         expect(e.name).toEqual('ValidationError');
         expect(e.errors).toEqual(['required']);
       }

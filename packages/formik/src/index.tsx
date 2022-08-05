@@ -9,3 +9,5 @@ export * from './connect';
 export * from './ErrorMessage';
 export * from './FormikContext';
 export * from './FastField';
+export * from './useFormikSelector';
+export * from './EventManager';

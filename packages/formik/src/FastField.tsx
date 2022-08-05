@@ -6,11 +6,14 @@ import {
   FormikContextType,
   FieldMetaProps,
   FieldInputProps,
+  FormikEvents,
+  FormikState,
 } from './types';
 import invariant from 'tiny-warning';
 import { getIn, isEmptyChildren, isFunction } from './utils';
 import { FieldConfig } from './Field';
 import { connect } from './connect';
+import isEqual from 'react-fast-compare';
 
 type $FixMe = any;
 
@@ -36,14 +39,22 @@ type FastFieldInnerProps<Values = {}, Props = {}> = FastFieldAttributes<
   Props
 > & { formik: FormikContextType<Values> };
 
+type FastFieldInnerState<Value> = Pick<
+  FieldMetaProps<Value>,
+  'value' | 'error' | 'touched'
+> &
+  Pick<FormikState<Value>, 'isSubmitting'>;
+
 /**
  * Custom Field component for quickly hooking into Formik
  * context and wiring up forms.
  */
 class FastFieldInner<Values = {}, Props = {}> extends React.Component<
   FastFieldInnerProps<Values, Props>,
-  {}
+  FastFieldInnerState<Values>
 > {
+  unsubscribe = () => {};
+
   constructor(props: FastFieldInnerProps<Values, Props>) {
     super(props);
     const { render, children, component, as: is, name } = props;
@@ -70,26 +81,14 @@ class FastFieldInner<Values = {}, Props = {}> extends React.Component<
       !(render && children && !isEmptyChildren(children)),
       'You should not use <FastField render> and <FastField children> in the same <FastField> component; <FastField children> will be ignored'
     );
-  }
 
-  shouldComponentUpdate(props: FastFieldInnerProps<Values, Props>) {
-    if (this.props.shouldUpdate) {
-      return this.props.shouldUpdate(props, this.props);
-    } else if (
-      props.name !== this.props.name ||
-      getIn(props.formik.values, this.props.name) !==
-        getIn(this.props.formik.values, this.props.name) ||
-      getIn(props.formik.errors, this.props.name) !==
-        getIn(this.props.formik.errors, this.props.name) ||
-      getIn(props.formik.touched, this.props.name) !==
-        getIn(this.props.formik.touched, this.props.name) ||
-      Object.keys(this.props).length !== Object.keys(props).length ||
-      props.formik.isSubmitting !== this.props.formik.isSubmitting
-    ) {
-      return true;
-    } else {
-      return false;
-    }
+    const { values, errors, touched, isSubmitting } = props.formik;
+    this.state = {
+      value: getIn(values, props.name),
+      error: getIn(errors, props.name),
+      touched: !!getIn(touched, props.name),
+      isSubmitting,
+    };
   }
 
   componentDidMount() {
@@ -98,6 +97,20 @@ class FastFieldInner<Values = {}, Props = {}> extends React.Component<
     this.props.formik.registerField(this.props.name, {
       validate: this.props.validate,
     });
+    this.unsubscribe = this.props.formik.eventManager.on(
+      FormikEvents.stateUpdate,
+      formikState => {
+        const state = {
+          value: getIn(formikState.values, this.props.name),
+          error: getIn(formikState.errors, this.props.name),
+          touched: !!getIn(formikState.touched, this.props.name),
+          isSubmitting: formikState.isSubmitting,
+        };
+        if (!isEqual(this.state, state)) {
+          this.setState(state);
+        }
+      }
+    );
   }
 
   componentDidUpdate(prevProps: FastFieldAttributes<Props>) {
@@ -117,6 +130,7 @@ class FastFieldInner<Values = {}, Props = {}> extends React.Component<
 
   componentWillUnmount() {
     this.props.formik.unregisterField(this.props.name);
+    this.unsubscribe();
   }
 
   render() {

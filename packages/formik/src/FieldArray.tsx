@@ -6,6 +6,7 @@ import {
   FormikState,
   SharedRenderProps,
   FormikProps,
+  FormikEvents,
 } from './types';
 import {
   getIn,
@@ -14,7 +15,6 @@ import {
   setIn,
   isEmptyArray,
 } from './utils';
-import isEqual from 'react-fast-compare';
 
 export type FieldArrayRenderProps = ArrayHelpers & {
   form: FormikProps<any>;
@@ -61,6 +61,7 @@ export interface ArrayHelpers {
   /** Imperatively remove and return value from the end of the array */
   pop<T>(): T | undefined;
 }
+type FieldArrayState = { count: number };
 
 /**
  * Some array helpers!
@@ -120,11 +121,12 @@ const copyArrayLike = (arrayLike: ArrayLike<any>) => {
 
 class FieldArrayInner<Values = {}> extends React.Component<
   FieldArrayConfig & { formik: FormikContextType<Values> },
-  {}
+  FieldArrayState
 > {
   static defaultProps = {
     validateOnChange: true,
   };
+  unsubscribe = () => {};
 
   constructor(props: FieldArrayConfig & { formik: FormikContextType<Values> }) {
     super(props);
@@ -132,21 +134,42 @@ class FieldArrayInner<Values = {}> extends React.Component<
     // @todo Fix TS 3.2.1
     this.remove = this.remove.bind(this) as any;
     this.pop = this.pop.bind(this) as any;
+
+    const { values } = props.formik;
+    const value = getIn(values, props.name);
+    this.state = {
+      count: Array.isArray(value) ? value.length : 0,
+    };
   }
 
-  componentDidUpdate(
-    prevProps: FieldArrayConfig & { formik: FormikContextType<Values> }
-  ) {
-    if (
-      this.props.validateOnChange &&
-      this.props.formik.validateOnChange &&
-      !isEqual(
-        getIn(prevProps.formik.values, prevProps.name),
-        getIn(this.props.formik.values, this.props.name)
-      )
-    ) {
-      this.props.formik.validateForm(this.props.formik.values);
-    }
+  componentDidMount() {
+    const {
+      formik: { values, eventManager },
+      name,
+      validateOnChange,
+    } = this.props;
+    let prevValue = getIn(values, name);
+    this.unsubscribe = eventManager.on(
+      FormikEvents.stateUpdate,
+      (state, formik) => {
+        const value = getIn(state.values, name);
+        if (
+          validateOnChange &&
+          formik.validateOnChange &&
+          prevValue !== value
+        ) {
+          formik.validateForm(state.values);
+        }
+        if (this.state.count !== value.length) {
+          this.setState({ count: value.length });
+        }
+        prevValue = value;
+      }
+    );
+  }
+
+  componentWillUnmount() {
+    this.unsubscribe();
   }
 
   updateArrayField = (

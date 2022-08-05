@@ -2,7 +2,7 @@ import * as React from 'react';
 import { act, render, waitFor } from '@testing-library/react';
 import * as Yup from 'yup';
 
-import { withFormik, FormikProps } from '../src';
+import { withFormik, FormikProps, EventManager } from '../src';
 import { noop } from './testHelpers';
 
 interface Values {
@@ -112,6 +112,7 @@ describe('withFormik()', () => {
       validateOnBlur: true,
       validateOnMount: false,
       validateOnChange: true,
+      eventManager: new EventManager(),
     });
   });
 

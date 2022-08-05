@@ -14,6 +14,9 @@ import {
   FieldInputProps,
   FormikHelpers,
   FormikHandlers,
+  FormikEventListener,
+  FormikContextType,
+  FormikEvents,
 } from './types';
 import {
   isFunction,
@@ -28,6 +31,7 @@ import {
 } from './utils';
 import { FormikProvider } from './FormikContext';
 import invariant from 'tiny-warning';
+import { EventManager } from './EventManager';
 
 type FormikMessage<Values> =
   | { type: 'SUBMIT_ATTEMPT' }
@@ -151,6 +155,9 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   const initialStatus = React.useRef(props.initialStatus);
   const isMounted = React.useRef<boolean>(false);
   const fieldRegistry = React.useRef<FieldRegistry>({});
+  const eventManagerRef = React.useRef(
+    new EventManager<FormikEventListener<Values>>()
+  );
   if (__DEV__) {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     React.useEffect(() => {
@@ -181,6 +188,9 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     isValidating: false,
     submitCount: 0,
   });
+  const formikRef = React.useRef<FormikContextType<Values>>({
+    ...state,
+  } as any);
 
   const runValidateHandler = React.useCallback(
     (values: Values, field?: string): Promise<FormikErrors<Values>> => {
@@ -320,7 +330,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
 
   // Run all validations methods and update state accordingly
   const validateFormWithHighPriority = useEventCallback(
-    (values: Values = state.values) => {
+    (values: Values = formikRef.current.values) => {
       dispatch({ type: 'SET_ISVALIDATING', payload: true });
       return runAllValidations(values).then(combinedErrors => {
         if (!!isMounted.current) {
@@ -538,7 +548,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
       const willValidate =
         shouldValidate === undefined ? validateOnBlur : shouldValidate;
       return willValidate
-        ? validateFormWithHighPriority(state.values)
+        ? validateFormWithHighPriority(formikRef.current.values)
         : Promise.resolve();
     }
   );
@@ -582,7 +592,9 @@ export function useFormik<Values extends FormikValues = FormikValues>({
       const willValidate =
         shouldValidate === undefined ? validateOnChange : shouldValidate;
       return willValidate
-        ? validateFormWithHighPriority(setIn(state.values, field, value))
+        ? validateFormWithHighPriority(
+            setIn(formikRef.current.values, field, value)
+          )
         : Promise.resolve();
     }
   );
@@ -629,7 +641,11 @@ export function useFormik<Values extends FormikValues = FormikValues>({
         val = /number|range/.test(type)
           ? ((parsed = parseFloat(value)), isNaN(parsed) ? '' : parsed)
           : /checkbox/.test(type) // checkboxes
-          ? getValueForCheckbox(getIn(state.values, field!), checked, value)
+          ? getValueForCheckbox(
+              getIn(formikRef.current.values, field!),
+              checked,
+              value
+            )
           : options && multiple // <select multiple>
           ? getSelectedValues(options)
           : value;
@@ -640,7 +656,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
         setFieldValue(field, val);
       }
     },
-    [setFieldValue, state.values]
+    [setFieldValue]
   );
 
   const handleChange = useEventCallback<FormikHandlers['handleChange']>(
@@ -667,7 +683,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
       const willValidate =
         shouldValidate === undefined ? validateOnBlur : shouldValidate;
       return willValidate
-        ? validateFormWithHighPriority(state.values)
+        ? validateFormWithHighPriority(formikRef.current.values)
         : Promise.resolve();
     }
   );
@@ -861,19 +877,18 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     resetForm();
   });
 
-  const getFieldMeta = React.useCallback(
-    (name: string): FieldMetaProps<any> => {
-      return {
-        value: getIn(state.values, name),
-        error: getIn(state.errors, name),
-        touched: !!getIn(state.touched, name),
-        initialValue: getIn(initialValues.current, name),
-        initialTouched: !!getIn(initialTouched.current, name),
-        initialError: getIn(initialErrors.current, name),
-      };
-    },
-    [state.errors, state.touched, state.values]
-  );
+  const getFieldMeta = React.useCallback((name: string): FieldMetaProps<
+    any
+  > => {
+    return {
+      value: getIn(formikRef.current.values, name),
+      error: getIn(formikRef.current.errors, name),
+      touched: !!getIn(formikRef.current.touched, name),
+      initialValue: getIn(initialValues.current, name),
+      initialTouched: !!getIn(initialTouched.current, name),
+      initialError: getIn(initialErrors.current, name),
+    };
+  }, []);
 
   const getFieldHelpers = React.useCallback(
     (name: string): FieldHelperProps<any> => {
@@ -892,7 +907,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     (nameOrOptions): FieldInputProps<any> => {
       const isAnObject = isObject(nameOrOptions);
       const name = isAnObject ? nameOrOptions.name : nameOrOptions;
-      const valueState = getIn(state.values, name);
+      const valueState = getIn(formikRef.current.values, name);
 
       const field: FieldInputProps<any> = {
         name,
@@ -927,7 +942,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
       }
       return field;
     },
-    [handleBlur, handleChange, state.values]
+    [handleBlur, handleChange]
   );
 
   const dirty = React.useMemo(
@@ -947,7 +962,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     [isInitialValid, dirty, state.errors, props]
   );
 
-  const ctx = {
+  const ctx: FormikContextType<Values> = {
     ...state,
     initialValues: initialValues.current,
     initialErrors: initialErrors.current,
@@ -980,9 +995,30 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     validateOnBlur,
     validateOnChange,
     validateOnMount,
+    eventManager: eventManagerRef.current,
   };
 
-  return ctx;
+  React.useEffect(() => {
+    if (
+      (Object.keys(state) as [keyof FormikState<Values>]).findIndex(
+        key => state[key] !== formikRef.current[key]
+      ) === -1
+    )
+      return;
+
+    Object.assign(formikRef.current, state, { dirty, isValid });
+    eventManagerRef.current.emit(
+      FormikEvents.stateUpdate,
+      state,
+      formikRef.current
+    );
+  }, [state]);
+
+  if (!formikRef.current.initialValues) {
+    Object.assign(formikRef.current, ctx);
+  }
+
+  return formikRef.current;
 }
 
 export function Formik<

@@ -8,7 +8,8 @@ import {
   FieldValidator,
 } from './types';
 import { useFormikContext } from './FormikContext';
-import { isFunction, isEmptyChildren, isObject } from './utils';
+import { useFormikSelector } from './useFormikSelector';
+import { isFunction, isEmptyChildren, isObject, getIn } from './utils';
 import invariant from 'tiny-warning';
 
 export interface FieldProps<V = any, FormValues = any> {
@@ -94,6 +95,12 @@ export function useField<Val = any>(
 
   const { name: fieldName, validate: validateFn } = props;
 
+  useFormikSelector(({ values, errors, touched }) => ({
+    value: getIn(values, fieldName),
+    error: getIn(errors, fieldName),
+    touched: getIn(touched, fieldName),
+  }));
+
   React.useEffect(() => {
     if (fieldName) {
       registerField(fieldName, {
@@ -141,6 +148,12 @@ export function Field({
 
     ...formik
   } = useFormikContext();
+
+  useFormikSelector(({ values, errors, touched }) => ({
+    value: getIn(values, name),
+    error: getIn(errors, name),
+    touched: getIn(touched, name),
+  }));
 
   if (__DEV__) {
     // eslint-disable-next-line react-hooks/rules-of-hooks

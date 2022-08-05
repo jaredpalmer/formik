@@ -1413,7 +1413,9 @@ describe('<Formik>', () => {
 
     await act(async () => {
       await getProps().validateForm();
+    });
 
+    await act(async () => {
       expect(getProps().errors).toEqual({
         users: [{ firstName: 'required', lastName: 'required' }],
       });
@@ -1435,8 +1437,10 @@ describe('<Formik>', () => {
     await act(async () => {
       try {
         await getProps().validateForm();
-      } catch ({ message }) {
-        caughtError = message;
+      } catch (e) {
+        if (e instanceof Error) {
+          caughtError = e.message;
+        }
       }
     });
 

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { EventManager } from './EventManager';
 /**
  * Values of fields in the form
  */
@@ -252,7 +253,9 @@ export interface FormikRegistration {
  * State, handlers, and helpers made available to Formik's primitive components through context.
  */
 export type FormikContextType<Values> = FormikProps<Values> &
-  Pick<FormikConfig<Values>, 'validate' | 'validationSchema'>;
+  Pick<FormikConfig<Values>, 'validate' | 'validationSchema'> & {
+    eventManager: EventManager<FormikEventListener<Values>>;
+  };
 
 export interface SharedRenderProps<T> {
   /**
@@ -321,3 +324,12 @@ export interface FieldInputProps<Value> {
 export type FieldValidator = (
   value: any
 ) => string | void | Promise<string | void>;
+
+export type FormikEventListener<Values> = (
+  formikState: FormikState<Values>,
+  actions: FormikContextType<Values>
+) => void;
+
+export const FormikEvents = {
+  stateUpdate: 'stateUpdate',
+};

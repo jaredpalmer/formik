@@ -1,7 +1,8 @@
 import * as React from 'react';
-import { FormikContextType } from './types';
+import { FieldMetaProps, FormikContextType, FormikEvents } from './types';
 import { getIn, isFunction } from './utils';
 import { connect } from './connect';
+import isEqual from 'react-fast-compare';
 
 export interface ErrorMessageProps {
   name: string;
@@ -11,23 +12,44 @@ export interface ErrorMessageProps {
   render?: (errorMessage: string) => React.ReactNode;
 }
 
+type ErrorMessageState<Value> = Pick<
+  FieldMetaProps<Value>,
+  'error' | 'touched'
+>;
+
 class ErrorMessageImpl extends React.Component<
-  ErrorMessageProps & { formik: FormikContextType<any> }
+  ErrorMessageProps & { formik: FormikContextType<any> },
+  ErrorMessageState<any>
 > {
-  shouldComponentUpdate(
-    props: ErrorMessageProps & { formik: FormikContextType<any> }
-  ) {
-    if (
-      getIn(this.props.formik.errors, this.props.name) !==
-        getIn(props.formik.errors, this.props.name) ||
-      getIn(this.props.formik.touched, this.props.name) !==
-        getIn(props.formik.touched, this.props.name) ||
-      Object.keys(this.props).length !== Object.keys(props).length
-    ) {
-      return true;
-    } else {
-      return false;
-    }
+  unsubscribe = () => {};
+
+  constructor(props: ErrorMessageProps & { formik: FormikContextType<any> }) {
+    super(props);
+
+    const { errors, touched } = props.formik;
+    this.state = {
+      error: getIn(errors, props.name),
+      touched: !!getIn(touched, props.name),
+    };
+  }
+
+  componentDidMount() {
+    this.unsubscribe = this.props.formik.eventManager.on(
+      FormikEvents.stateUpdate,
+      formikState => {
+        const state = {
+          error: getIn(formikState.errors, this.props.name),
+          touched: !!getIn(formikState.touched, this.props.name),
+        };
+        if (!isEqual(this.state, state)) {
+          this.setState(state);
+        }
+      }
+    );
+  }
+
+  componentWillUnmount() {
+    this.unsubscribe();
   }
 
   render() {

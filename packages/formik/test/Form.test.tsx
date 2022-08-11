@@ -6,6 +6,7 @@ import {
   waitFor,
 } from '@testing-library/react';
 import { Form, Formik } from '../src';
+import { ENTER_KEY_CODE } from '../src/Form';
 import * as React from 'react';
 
 describe('<Form />', () => {
@@ -42,10 +43,10 @@ describe('<Form />', () => {
       fireEvent.submit(form);
       fireEvent.submit(form);
       fireEvent.submit(form);
-      fireEvent.keyUp(form, { keyCode: 13 });
+      fireEvent.keyUp(form, { keyCode: ENTER_KEY_CODE });
       fireEvent.submit(form);
       fireEvent.submit(form);
-      fireEvent.keyUp(form, { keyCode: 13 });
+      fireEvent.keyUp(form, { keyCode: ENTER_KEY_CODE });
     });
 
     await waitFor(() => expect(onSubmit).toBeCalledTimes(2));
@@ -66,7 +67,7 @@ describe('<Form />', () => {
       fireEvent.submit(form);
       fireEvent.submit(form);
       fireEvent.submit(form);
-      fireEvent.keyUp(form, { keyCode: 13 });
+      fireEvent.keyUp(form, { keyCode: ENTER_KEY_CODE });
     });
 
     await waitFor(() => expect(onSubmit).toBeCalledTimes(1));

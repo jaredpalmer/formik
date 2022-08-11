@@ -11,7 +11,7 @@ export type FormikFormProps = Pick<
 
 type FormProps = React.ComponentPropsWithoutRef<'form'>;
 
-const ENTER_KEY_CODE = 13;
+export const ENTER_KEY_CODE = 13;
 
 // @todo tests
 export const Form = React.forwardRef<HTMLFormElement, FormProps>(

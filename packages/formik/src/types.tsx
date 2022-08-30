@@ -92,12 +92,12 @@ export interface FormikHelpers<Values> {
     shouldValidate?: boolean
   ) => void;
   /** Set value of form field directly */
-  setFieldValue: (field: string, value: any, shouldValidate?: boolean) => void;
+  setFieldValue: (field: FieldKey<Values>, value: any, shouldValidate?: boolean) => void;
   /** Set error message of a form field directly */
-  setFieldError: (field: string, message: string | undefined) => void;
+  setFieldError: (field: FieldKey<Values>, message: string | undefined) => void;
   /** Set whether field has been touched directly */
   setFieldTouched: (
-    field: string,
+    field: FieldKey<Values>,
     isTouched?: boolean,
     shouldValidate?: boolean
   ) => void;
@@ -321,3 +321,8 @@ export interface FieldInputProps<Value> {
 export type FieldValidator = (
   value: any
 ) => string | void | Promise<string | void>;
+
+/**
+ * Generic field name type to help intellisense in suggesting field names
+ */
+ export type FieldKey<Values> = keyof Values & string;

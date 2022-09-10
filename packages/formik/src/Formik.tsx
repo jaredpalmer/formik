@@ -417,10 +417,9 @@ export function useFormik<Values extends FormikValues = FormikValues>({
       if (enableReinitialize) {
         initialValues.current = props.initialValues;
         resetForm();
-      }
-
-      if (validateOnMount) {
-        validateFormWithHighPriority(initialValues.current);
+        if (validateOnMount) {
+          validateFormWithHighPriority(initialValues.current);
+        }
       }
     }
   }, [

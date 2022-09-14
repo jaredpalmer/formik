@@ -169,7 +169,7 @@ export interface FormikSharedConfig<Props = {}> {
 /**
  * <Formik /> props
  */
-export interface FormikConfig<Values> extends FormikSharedConfig {
+export interface FormikConfig<Values, ValidValues extends Values = Values> extends FormikSharedConfig {
   /**
    * Form component to render
    */
@@ -213,8 +213,8 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
    * Submission handler
    */
   onSubmit: (
-    values: Values,
-    formikHelpers: FormikHelpers<Values>
+    values: ValidValues,
+    formikHelpers: FormikHelpers<ValidValues>
   ) => void | Promise<any>;
   /**
    * A Yup Schema or a function that returns a Yup schema

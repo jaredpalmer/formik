@@ -101,6 +101,8 @@ export interface FormikHelpers<Values> {
     isTouched?: boolean,
     shouldValidate?: boolean
   ) => void;
+  /** Remove all field-related data (value, error, touched etc.) */
+  removeField: (field: string, shouldValidate?: boolean) => void;
   /** Validate form values */
   validateForm: (values?: any) => Promise<FormikErrors<Values>>;
   /** Validate field value */
@@ -300,6 +302,8 @@ export interface FieldHelperProps<Value> {
   setTouched: (value: boolean, shouldValidate?: boolean) => void;
   /** Set the field's error value */
   setError: (value: string | undefined) => void;
+  /** Remove all field-related data (value, error, touched etc.) */
+  remove: (shouldValidate?: boolean) => void;
 }
 
 /** Field input value, name, and event handlers */

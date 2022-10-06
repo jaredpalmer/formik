@@ -28,6 +28,7 @@ import {
 } from './utils';
 import { FormikProvider } from './FormikContext';
 import invariant from 'tiny-warning';
+import { isExplicitUndefinedValuesEnabled } from './explicitUndefinedValuesFlag';
 
 type FormikMessage<Values> =
   | { type: 'SUBMIT_ATTEMPT' }
@@ -39,6 +40,7 @@ type FormikMessage<Values> =
   | { type: 'SET_FIELD_VALUE'; payload: { field: string; value?: any } }
   | { type: 'SET_FIELD_TOUCHED'; payload: { field: string; value?: boolean } }
   | { type: 'SET_FIELD_ERROR'; payload: { field: string; value?: string } }
+  | { type: 'REMOVE_FIELD'; payload: { field: string } }
   | { type: 'SET_TOUCHED'; payload: FormikTouched<Values> }
   | { type: 'SET_ERRORS'; payload: FormikErrors<Values> }
   | { type: 'SET_STATUS'; payload: any }
@@ -76,7 +78,19 @@ function formikReducer<Values>(
     case 'SET_FIELD_VALUE':
       return {
         ...state,
-        values: setIn(state.values, msg.payload.field, msg.payload.value),
+        values: setIn(
+          state.values,
+          msg.payload.field,
+          msg.payload.value,
+          !isExplicitUndefinedValuesEnabled()
+        ),
+      };
+    case 'REMOVE_FIELD':
+      return {
+        ...state,
+        values: setIn(state.values, msg.payload.field, undefined, true),
+        errors: setIn(state.errors, msg.payload.field, undefined, true),
+        touched: setIn(state.touched, msg.payload.field, undefined, true),
       };
     case 'SET_FIELD_TOUCHED':
       return {
@@ -582,7 +596,32 @@ export function useFormik<Values extends FormikValues = FormikValues>({
       const willValidate =
         shouldValidate === undefined ? validateOnChange : shouldValidate;
       return willValidate
-        ? validateFormWithHighPriority(setIn(state.values, field, value))
+        ? validateFormWithHighPriority(
+            setIn(
+              state.values,
+              field,
+              value,
+              !isExplicitUndefinedValuesEnabled()
+            )
+          )
+        : Promise.resolve();
+    }
+  );
+
+  const removeField = useEventCallback(
+    (field: string, shouldValidate?: boolean) => {
+      dispatch({
+        type: 'REMOVE_FIELD',
+        payload: {
+          field,
+        },
+      });
+      const willValidate =
+        shouldValidate === undefined ? validateOnChange : shouldValidate;
+      return willValidate
+        ? validateFormWithHighPriority(
+            setIn(state.values, field, undefined, true)
+          )
         : Promise.resolve();
     }
   );
@@ -837,6 +876,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     setFieldError,
     setFieldTouched,
     setFieldValue,
+    removeField,
     setStatus,
     setSubmitting,
     setTouched,
@@ -883,6 +923,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
         setTouched: (value: boolean, shouldValidate?: boolean) =>
           setFieldTouched(name, value, shouldValidate),
         setError: (value: any) => setFieldError(name, value),
+        remove: (shouldValidate?: boolean) => removeField(name, shouldValidate),
       };
     },
     [setFieldValue, setFieldTouched, setFieldError]
@@ -963,6 +1004,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     setFieldTouched,
     setFieldValue,
     setFieldError,
+    removeField,
     setStatus,
     setSubmitting,
     setTouched,

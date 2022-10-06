@@ -190,6 +190,14 @@ describe('utils', () => {
       expect(newObj).not.toHaveProperty('x');
     });
 
+    it("doesn't removes flat value if `shouldRemoveUndefined` flag is explicitly set to `false`", () => {
+      const obj = { x: 'y' };
+      const newObj = setIn(obj, 'x', undefined, false);
+      expect(obj).toEqual({ x: 'y' });
+      expect(newObj).toEqual({ x: undefined });
+      expect(newObj).toHaveProperty('x');
+    });
+
     it('sets nested value', () => {
       const obj = { x: 'y' };
       const newObj = setIn(obj, 'nested.value', 'nested value');
@@ -212,6 +220,14 @@ describe('utils', () => {
       expect(newObj.nested).not.toHaveProperty('value');
     });
 
+    it("doesn't removes nested value if `shouldRemoveUndefined` flag is explicitly set to `false`", () => {
+      const obj = { x: 'y', nested: { value: 'a' } };
+      const newObj = setIn(obj, 'nested.value', undefined, false);
+      expect(obj).toEqual({ x: 'y', nested: { value: 'a' } });
+      expect(newObj).toEqual({ x: 'y', nested: { value: undefined } });
+      expect(newObj.nested).toHaveProperty('value');
+    });
+
     it('updates deep nested value', () => {
       const obj = { x: 'y', twofoldly: { nested: { value: 'a' } } };
       const newObj = setIn(obj, 'twofoldly.nested.value', 'b');
@@ -227,6 +243,18 @@ describe('utils', () => {
       expect(obj).toEqual({ x: 'y', twofoldly: { nested: { value: 'a' } } });
       expect(newObj).toEqual({ x: 'y', twofoldly: { nested: {} } });
       expect(newObj.twofoldly.nested).not.toHaveProperty('value');
+    });
+
+    it("doesn't removes deep nested value if `shouldRemoveUndefined` flag is explicitly set to `false`", () => {
+      const obj = { x: 'y', twofoldly: { nested: { value: 'a' } } };
+      const newObj = setIn(obj, 'twofoldly.nested.value', undefined, false);
+      expect(obj.twofoldly.nested === newObj.twofoldly.nested).toEqual(false);
+      expect(obj).toEqual({ x: 'y', twofoldly: { nested: { value: 'a' } } });
+      expect(newObj).toEqual({
+        x: 'y',
+        twofoldly: { nested: { value: undefined } },
+      });
+      expect(newObj.twofoldly.nested).toHaveProperty('value');
     });
 
     it('shallow clone data along the update path', () => {

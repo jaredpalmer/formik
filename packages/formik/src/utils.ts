@@ -147,24 +147,27 @@ export function setIn(obj: any, path: string, value: any): any {
  * @param object
  * @param value
  * @param visited
+ * @param path
  * @param response
  */
 export function setNestedObjectValues<T>(
   object: any,
   value: any,
-  visited: any = new WeakMap(),
+  visited: any = new Set(),
+  path: string = "",
   response: any = {}
 ): T {
   for (let k of Object.keys(object)) {
     const val = object[k];
+    const currentPath = path ? `${path}.${k}` : `${k}`;
     if (isObject(val)) {
-      if (!visited.get(val)) {
-        visited.set(val, true);
+      if (!visited.has(currentPath)) {
+        visited.add(currentPath);
         // In order to keep array values consistent for both dot path  and
         // bracket syntax, we need to check if this is an array so that
         // this will output  { friends: [true] } and not { friends: { "0": true } }
         response[k] = Array.isArray(val) ? [] : {};
-        setNestedObjectValues(val, value, visited, response[k]);
+        setNestedObjectValues(val, value, visited, currentPath, response[k]);
       }
     } else {
       response[k] = value;

@@ -13,7 +13,7 @@ title: Utils
 
 #### `setIn(obj: any, path: string, value: any): any`
 
-#### `setNestedObjectValues<T>(object: any, value: any, visited?: any, path?: string, response?: any): T`
+#### `setNestedObjectValues<T>(object: any, value: any, response?: any): T`
 
 #### `isEmptyArray: (value?: any) => boolean`
 

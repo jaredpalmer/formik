@@ -6,6 +6,7 @@ import { useRouter } from 'next/router';
 const SignIn = () => {
   const router = useRouter();
   const [errorLog, setErrorLog] = useState([]);
+  
 
   const formik = useFormik({
     validateOnMount: router.query.validateOnMount === 'true',
@@ -21,36 +22,38 @@ const SignIn = () => {
       alert(JSON.stringify(values, null, 2));
     },
   });
+  
+const {values,errors,touched,isValid} = formik
 
   useEffect(() => {
-    if (formik.errors.username && formik.touched.username) {
+    if (errors.username && touched.username) {
       setErrorLog(logs => [
         ...logs,
         {
           name: 'username',
-          value: formik.values.username,
-          error: formik.errors.username,
+          value: values.username,
+          error: errors.username,
         },
       ]);
     }
 
-    if (formik.errors.password && formik.touched.password) {
+    if (errors.password && touched.password) {
       setErrorLog(logs => [
         ...logs,
         {
           name: 'password',
-          value: formik.values.password,
-          error: formik.errors.password,
+          value: values.password,
+          error: errors.password,
         },
       ]);
     }
   }, [
-    formik.values.username,
-    formik.errors.username,
-    formik.touched.username,
-    formik.values.password,
-    formik.errors.password,
-    formik.touched.password,
+    values.username,
+    errors.username,
+    touched.username,
+    values.password,
+    errors.password,
+    touched.password,
   ]);
 
   return (
@@ -69,7 +72,7 @@ const SignIn = () => {
             <ErrorMessage name="password" component="p" />
           </div>
 
-          <button type="submit" disabled={!formik.isValid}>
+          <button type="submit" disabled={!isValid}>
             Submit
           </button>
 

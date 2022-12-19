@@ -15,7 +15,7 @@ jobs:
     name: Test on node ${{ matrix.node }}
 
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v3
 
       - name: Use Node.js ${{ matrix.node }}
         uses: actions/setup-node@v1

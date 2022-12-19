@@ -40,7 +40,7 @@
     "start": "tsdx watch --tsconfig tsconfig.build.json --verbose --noClean",
     "build": "tsdx build --tsconfig tsconfig.build.json",
     "lint": "tsdx lint",
-    "prepublish": "npm run build"
+    "prepare": "npm run build"
   },
   "dependencies": {
     "deepmerge": "^2.1.1",

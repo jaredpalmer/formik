@@ -23,7 +23,7 @@
     "dev": "lerna run start --stream --parallel",
     "test": "lerna run test --",
     "build": "lerna run build",
-    "prepublish": "lerna run prepublish",
+    "prepare": "lerna run prepublish",
     "format": "prettier --write 'examples/**/*' 'packages/*/src/**/*' 'website/src/**/*.{ts,tsx,js,jsx,md,mdx}' 'app/pages/**/*'  'packages/*/test/**/*' 'README.md'",
     "changeset": "changeset",
     "release": "changeset publish",

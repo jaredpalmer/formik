@@ -8,7 +8,7 @@ description: Learn how to build forms in React with Formik.
 
 Welcome to the Formik tutorial. This will teach you everything you need to know to build simple and complex forms in React.
 
-If you’re impatient and just want to start hacking on your machine locally, check out [the 60-second quickstart](./overview#installation).
+If you’re impatient and just want to start hacking on your machine locally, check out [the 60-second quickstart](./overview.md#installation).
 
 ### What are we building?
 
@@ -967,4 +967,4 @@ If you have extra time or want to practice your new Formik skills, here are some
 - Add a shake animation to each field when it displays an error and has been visited
 - Persist form state to the browser’s [sessionStorage](https://developer.mozilla.org/en-US/docs/Web/API/Window/sessionStorage) so that form progress is kept in between page refreshes
 
-Throughout this tutorial, we touched on Formik concepts including form state, fields, validation, hooks, render props, and React context. For a more detailed explanation of each of these topics, check out the rest of the [documentation](./overview). To learn more about defining the components and hooks in the tutorial, check out the [API reference](./api/formik).
+Throughout this tutorial, we touched on Formik concepts including form state, fields, validation, hooks, render props, and React context. For a more detailed explanation of each of these topics, check out the rest of the [documentation](./overview.md). To learn more about defining the components and hooks in the tutorial, check out the [API reference](./api/formik.md).

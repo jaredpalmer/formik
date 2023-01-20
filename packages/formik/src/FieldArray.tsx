@@ -27,7 +27,7 @@ export type FieldArrayConfig = {
   /** Should field array validate the form AFTER array updates/changes? */
   validateOnChange?: boolean;
 } & SharedRenderProps<FieldArrayRenderProps>;
-export interface ArrayHelpers<T = void> {
+export interface ArrayHelpers<T = unknown[]> {
   /** Imperatively add a value to the end of an array */
   push: (obj: T) => void;
   /** Curried fn to add a value to the end of an array */

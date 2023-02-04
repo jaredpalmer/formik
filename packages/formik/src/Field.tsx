@@ -119,11 +119,12 @@ export function useField<Val = any>(
     'Invalid field name. Either pass `useField` a string or an object containing a `name` key.'
   );
 
-  return [
-    getFieldProps(props),
-    getFieldMeta(fieldName),
-    getFieldHelpers(fieldName),
-  ];
+  const fieldHelpers = React.useMemo(() => getFieldHelpers(fieldName), [
+    getFieldHelpers,
+    fieldName,
+  ]);
+
+  return [getFieldProps(props), getFieldMeta(fieldName), fieldHelpers];
 }
 
 export function Field({

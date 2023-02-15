@@ -103,7 +103,7 @@ const Code = ({
       {({ className, style, tokens, getLineProps, getTokenProps }) => (
         <div className="relative">
           <div className="absolute top-0 right-0 p-2">
-            <TWButton size="xs" className="font-sans" onPress={onCopy}>
+            <TWButton size="xs" className="font-sans" onClick={onCopy}>
               {hasCopied ? 'Copied!' : 'Copy'}
             </TWButton>
           </div>

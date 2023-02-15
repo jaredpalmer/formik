@@ -15,11 +15,7 @@ export interface SearchProps {
 }
 
 function Hit({ hit, children }: any) {
-  return (
-    <Link href={hit.url.replace()}>
-      {children}
-    </Link>
-  );
+  return <Link href={hit.url.replace()}>{children}</Link>;
 }
 
 const options = {

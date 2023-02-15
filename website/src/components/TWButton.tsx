@@ -28,7 +28,7 @@ export interface TWButtonProps {
   /** Right icon */
   iconRight?: React.ReactElement;
   /** Click handler */
-  onPress?: () => void;
+  onClick?: () => void;
 }
 
 const mapIntentToColor = {

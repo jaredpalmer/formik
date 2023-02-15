@@ -65,7 +65,7 @@
     "use-onclickoutside": "^0.3.1"
   },
   "devDependencies": {
-    "@tailwindcss/forms": "^0.3.3",
+    "@tailwindcss/forms": "^0.5.3",
     "@types/body-scroll-lock": "^2.6.1",
     "@types/classnames": "^2.3.1",
     "@types/mdx-js__react": "^1.5.1",
@@ -75,7 +75,7 @@
     "@types/react-dom": "^16.9.7",
     "@types/react-highlight": "^0.12.2",
     "algoliasearch": "3.35.1",
-    "autoprefixer": "^10.3.6",
+    "autoprefixer": "^10.4.13",
     "eslint": "^7.32.0",
     "eslint-config-next": "13.1.7-canary.15",
     "eslint-plugin-prettier": "^4.0.0",
@@ -84,10 +84,10 @@
     "mdast-util-to-string": "^1.1.0",
     "next-remote-watch": "^1.0.0",
     "nextjs-sitemap-generator": "^1.1.0",
-    "postcss": "^8.3.8",
-    "prettier": "^2.4.1",
+    "postcss": "^8.4.21",
+    "prettier": "^2.8.4",
     "remark-parse": "^8.0.2",
-    "tailwindcss": "^2.2.16",
+    "tailwindcss": "^3.2.6",
     "typescript": "^4.4.3",
     "unified": "^9.0.0"
   }

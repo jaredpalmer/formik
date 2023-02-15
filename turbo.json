@@ -1,0 +1,13 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "pipeline": {
+    "build": {
+      // ^build means build must be run in dependencies
+      // before it can be run in this workspace
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**"]
+    },
+    "test": {},
+    "lint": {}
+  }
+}

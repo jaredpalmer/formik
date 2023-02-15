@@ -8,7 +8,6 @@
     "cypress": "^5.2.0",
     "got": "10.0.4",
     "husky": "^4.3.0",
-    "lerna": "^3.19.0",
     "lint-staged": "^10.4.0",
     "prettier": "^2.1.2",
     "release": "6.0.1",
@@ -19,11 +18,10 @@
     "packages/*"
   ],
   "scripts": {
-    "lerna": "lerna",
-    "dev": "lerna run start --stream --parallel",
-    "test": "lerna run test --",
-    "build": "lerna run build",
-    "prepublish": "lerna run prepublish",
+    "dev": "turbo run start --stream --parallel",
+    "test": "turbo run test",
+    "build": "turbo run build",
+    "prepublish": "turbo run prepublish",
     "format": "prettier --write 'examples/**/*' 'packages/*/src/**/*' 'website/src/**/*.{ts,tsx,js,jsx,md,mdx}' 'app/pages/**/*'  'packages/*/test/**/*' 'README.md'",
     "changeset": "changeset",
     "release": "changeset publish",

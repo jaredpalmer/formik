@@ -75,17 +75,17 @@ export default function Index({ posts }: any) {
                       <Link
                         as={`/blog/${post.filePath.replace(/\.mdx?$/, '')}`}
                         href={`/blog/[slug]`}
-                      >
-                        <a className="block">
-                          <span className="cursor-pointer hover:underline">
-                            {!post.data.published && (
-                              <span className="text-white bg-black rounded-xl">
-                                Draft
-                              </span>
-                            )}
-                            {post.data.title}
-                          </span>{' '}
-                        </a>
+                        className="block">
+
+                        <span className="cursor-pointer hover:underline">
+                          {!post.data.published && (
+                            <span className="text-white bg-black rounded-xl">
+                              Draft
+                            </span>
+                          )}
+                          {post.data.title}
+                        </span>{' '}
+
                       </Link>
                     </h3>
                     <div className="mt-3 leading-6 text-gray-500 ">
@@ -105,10 +105,9 @@ export default function Index({ posts }: any) {
                       <Link
                         as={`/blog/${post.filePath.replace(/\.mdx?$/, '')}`}
                         href={`/blog/[slug]`}
-                      >
-                        <a className="text-base font-semibold leading-6 text-blue-600 transition duration-150 ease-in-out hover:text-blue-500">
-                          Read More <span aria-hidden="true">→</span>
-                        </a>
+                        className="text-base font-semibold leading-6 text-blue-600 transition duration-150 ease-in-out hover:text-blue-500">
+                        Read More<span aria-hidden="true">→</span>
+
                       </Link>
                     </div>
                   </div>

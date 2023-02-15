@@ -9,24 +9,21 @@ module.exports = {
   env: {
     NEXT_PUBLIC_GA_TRACKING_ID: process.env.NEXT_PUBLIC_GA_TRACKING_ID || '',
   },
-
-  experimental: {
-    rewrites() {
-      return [
-        {
-          source: '/feed.xml',
-          destination: '/_next/static/feed.xml',
-        },
-        {
-          source: '/docs{/}?',
-          destination: '/docs/overview',
-        },
-        {
-          source: '/docs/tag/:tag{/}?',
-          destination: '/docs/tag/:tag/overview',
-        },
-      ];
-    },
+  rewrites() {
+    return [
+      {
+        source: '/feed.xml',
+        destination: '/_next/static/feed.xml',
+      },
+      {
+        source: '/docs{/}?',
+        destination: '/docs/overview',
+      },
+      {
+        source: '/docs/tag/:tag{/}?',
+        destination: '/docs/tag/:tag/overview',
+      },
+    ];
   },
   webpack: (config, { dev, isServer, ...options }) => {
     config.module.rules.push({
@@ -50,11 +47,6 @@ module.exports = {
 
       config.entry = async () => {
         const entries = { ...(await originalEntry()) };
-
-        // These scripts can import components from the app and use ES modules
-        // entries['./scripts/build-rss.js'] = './scripts/build-rss.js';
-        // entries['./scripts/index-docs.js'] = './scripts/index-docs.js';
-
         return entries;
       };
     }

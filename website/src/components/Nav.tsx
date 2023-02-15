@@ -4,7 +4,6 @@ import * as React from 'react';
 import { siteConfig } from 'siteConfig';
 import { ExternalLink } from './ExternalLink';
 import { Logo } from './Logo';
-import { Search } from './Search';
 
 export const Nav: React.FC = () => {
   const router = useRouter();
@@ -15,41 +14,42 @@ export const Nav: React.FC = () => {
           <div className="md:col-span-3 flex items-center justify-between h-16">
             <div>
               <Link href="/" as="/">
-                <a>
-                  <span className="sr-only">Home</span>
-                  <Logo />
-                </a>
+                <span className="sr-only">Home</span>
+                <Logo />
               </Link>
             </div>
           </div>
           <div className="md:col-span-9 items-center flex justify-between md:justify-end  space-x-6 h-16">
             <div className="flex justify-between md:justify-end items-center flex-1 md:space-x-2">
               <div>
-                <Link href="/docs/overview">
-                  <a className="rounded-md py-2 px-3 inline-flex items-center leading-5 font-medium text-gray-900 betterhover:hover:bg-gray-50 betterhover:hover:text-gray-900 focus:outline-none focus:text-gray-900 focus:bg-gray-50 transition duration-150 ease-in-out">
-                    Docs
-                  </a>
+                <Link
+                  href="/docs/overview"
+                  className="rounded-md py-2 px-3 inline-flex items-center leading-5 font-medium text-gray-900 hover:bg-gray-50 hover:text-gray-900 outline-none focus:text-gray-900 focus:bg-gray-50 transition duration-150 ease-in-out"
+                >
+                  Docs
                 </Link>
               </div>
               <div>
-                <Link href="/blog">
-                  <a className="rounded-md py-2 px-3 inline-flex items-center leading-5 font-medium text-gray-900 betterhover:hover:bg-gray-50 betterhover:hover:text-gray-900 focus:outline-none focus:text-gray-900 focus:bg-gray-50 transition duration-150 ease-in-out">
-                    Blog
-                  </a>
+                <Link
+                  href="/blog"
+                  className="rounded-md py-2 px-3 inline-flex items-center leading-5 font-medium text-gray-900 hover:bg-gray-50 hover:text-gray-900 outline-none focus:text-gray-900 focus:bg-gray-50 transition duration-150 ease-in-out"
+                >
+                  Blog
                 </Link>
               </div>
               <div>
-                <Link href="/users">
-                  <a className="rounded-md py-2 px-3 inline-flex items-center leading-5 font-medium text-gray-900 betterhover:hover:bg-gray-50 betterhover:hover:text-gray-900 focus:outline-none focus:text-gray-900 focus:bg-gray-50 transition duration-150 ease-in-out">
-                    Users
-                  </a>
+                <Link
+                  href="/users"
+                  className="rounded-md py-2 px-3 inline-flex items-center leading-5 font-medium text-gray-900 hover:bg-gray-50 hover:text-gray-900 outline-none focus:text-gray-900 focus:bg-gray-50 transition duration-150 ease-in-out"
+                >
+                  Users
                 </Link>
               </div>
 
               <div>
                 <ExternalLink
                   href="https://formium.io/contact/sales?utm_source=formik-site&utm_medium=navbar&utm_campaign=formik-website"
-                  className="rounded-md py-2 px-3 inline-flex items-center leading-5 font-medium text-gray-900 betterhover:hover:bg-gray-50 betterhover:hover:text-gray-900 focus:outline-none focus:text-gray-900 focus:bg-gray-50 transition duration-150 ease-in-out"
+                  className="rounded-md py-2 px-3 inline-flex items-center leading-5 font-medium text-gray-900 hover:bg-gray-50 hover:text-gray-900 focus:outline-none focus:text-gray-900 focus:bg-gray-50 transition duration-150 ease-in-out"
                 >
                   Enterprise
                 </ExternalLink>
@@ -57,7 +57,7 @@ export const Nav: React.FC = () => {
               <div className="hidden lg:block">
                 <ExternalLink
                   href="https://forms.formium.io/f/5f06126f5b703c00012005fa"
-                  className="rounded-md py-2 px-3 inline-flex items-center leading-5 font-medium text-gray-900 betterhover:hover:bg-gray-50 betterhover:hover:text-gray-900 focus:outline-none focus:text-gray-900 focus:bg-gray-50 transition duration-150 ease-in-out"
+                  className="rounded-md py-2 px-3 inline-flex items-center leading-5 font-medium text-gray-900 hover:bg-gray-50 hover:text-gray-900 focus:outline-none focus:text-gray-900 focus:bg-gray-50 transition duration-150 ease-in-out"
                 >
                   Feedback
                 </ExternalLink>
@@ -65,7 +65,7 @@ export const Nav: React.FC = () => {
               <div>
                 <ExternalLink
                   href={siteConfig.repoUrl}
-                  className="rounded-md py-2 px-3 inline-flex items-center leading-5 font-medium text-gray-900 betterhover:hover:bg-gray-50 betterhover:hover:text-gray-900 focus:outline-none focus:text-gray-900 focus:bg-gray-50 transition duration-150 ease-in-out"
+                  className="rounded-md py-2 px-3 inline-flex items-center leading-5 font-medium text-gray-900 hover:bg-gray-50 hover:text-gray-900 focus:outline-none focus:text-gray-900 focus:bg-gray-50 transition duration-150 ease-in-out"
                 >
                   <span className="sr-only">GitHub</span>
                   <svg
@@ -82,7 +82,7 @@ export const Nav: React.FC = () => {
               <div className="hidden lg:block">
                 <ExternalLink
                   href={siteConfig.twitterUrl}
-                  className="rounded-md py-2 px-3 inline-flex items-center leading-5 font-medium text-gray-900 betterhover:hover:bg-gray-50 betterhover:hover:text-gray-900 focus:outline-none focus:text-gray-900 focus:bg-gray-50 transition duration-150 ease-in-out"
+                  className="rounded-md py-2 px-3 inline-flex items-center leading-5 font-medium text-gray-900 hover:bg-gray-50 hover:text-gray-900 focus:outline-none focus:text-gray-900 focus:bg-gray-50 transition duration-150 ease-in-out"
                 >
                   <span className="sr-only">Twitter</span>
                   <svg
@@ -98,7 +98,7 @@ export const Nav: React.FC = () => {
               <div>
                 <ExternalLink
                   href={siteConfig.discordUrl}
-                  className="rounded-md py-2 px-3 inline-flex items-center leading-5 font-medium text-gray-900 betterhover:hover:bg-gray-50 betterhover:hover:text-gray-900 focus:outline-none focus:text-gray-900 focus:bg-gray-50 transition duration-150 ease-in-out"
+                  className="rounded-md py-2 px-3 inline-flex items-center leading-5 font-medium text-gray-900 hover:bg-gray-50 hover:text-gray-900 focus:outline-none focus:text-gray-900 focus:bg-gray-50 transition duration-150 ease-in-out"
                 >
                   <span className="sr-only">Discord</span>
                   <svg

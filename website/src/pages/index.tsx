@@ -9,7 +9,7 @@ import { Footer } from 'components/Footer';
 import { ClientsMarquee } from 'components/clients/ClientsMarquee';
 import { Seo } from 'components/Seo';
 import Head from 'next/head';
-import Image from 'next/image';
+import Image from 'next/legacy/image';
 
 export interface HomeProps {}
 
@@ -66,7 +66,7 @@ const Home: React.FC<HomeProps> = props => {
           </div>
 
           <div className="py-24 mx-auto container px-4 sm:mt-12  relative">
-            <div className="hidden lg:block absolute lg:w-3/5 right-0 lg:-rotate-30 lg:translate-x-1/3 lg:-translate-y-16 md:w-1/2 sm:w-2/3 top-0  transform  -translate-y-12">
+            <div className="hidden lg:block absolute lg:w-3/5 right-0 lg:-rotate-[30deg] lg:translate-x-1/3 lg:-translate-y-16 md:w-1/2 sm:w-2/3 top-0  transform  -translate-y-12">
               <Image
                 src="/images/hero6.png"
                 width={1042}
@@ -89,7 +89,7 @@ const Home: React.FC<HomeProps> = props => {
 
                   <div className="mt-5  mx-auto sm:flex sm:justify-center lg:justify-start lg:mx-0 md:mt-8">
                     <div className="rounded-md shadow">
-                      <Link href="/docs/overview">
+                      <Link href="/docs/overview" legacyBehavior>
                         <a className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-500 focus:outline-none focus:border-blue-700 focus:ring focus:ring-blue transition duration-150 ease-in-out md:py-4 md:text-lg md:px-10">
                           Get Started
                         </a>
@@ -312,7 +312,7 @@ const Home: React.FC<HomeProps> = props => {
             </h2>
             <div className="mt-8 flex lg:flex-shrink-0 lg:mt-0">
               <div className="inline-flex rounded-md shadow">
-                <Link href="/docs/overview">
+                <Link href="/docs/overview" legacyBehavior>
                   <a className="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-500 focus:outline-none focus:ring transition duration-150 ease-in-out">
                     Get Started
                   </a>

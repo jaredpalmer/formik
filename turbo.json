@@ -7,6 +7,12 @@
       "dependsOn": ["^build"],
       "outputs": ["dist/**"]
     },
+    "prepublish": {
+      // ^build means build must be run in dependencies
+      // before it can be run in this workspace
+      "dependsOn": ["^prepublish"],
+      "outputs": ["dist/**"]
+    },
     "test": {},
     "lint": {}
   }

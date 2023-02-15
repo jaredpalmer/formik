@@ -27,20 +27,38 @@
     }
   ],
   "main": "dist/index.js",
+  "react-native": "dist/index.native.js",
   "umd:main": "dist/formik.umd.production.js",
   "module": "dist/formik.esm.js",
   "typings": "dist/index.d.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "peerDependencies": {
-    "react": ">=16.8.0"
+    "react": ">=16.8.0",
+    "react-dom": "^16.8.0",
+    "react-native": "^0.64.2"
+  },
+  "peerDependenciesMeta": {
+    "react-dom": {
+      "optional": true
+    },
+    "react-native": {
+      "optional": true
+    }
   },
   "scripts": {
     "test": "tsdx test --env=jsdom",
-    "test:watch": "npm run test -- --watchAll",
+    "test:watch": "yarn test -- --watchAll",
     "start": "tsdx watch --tsconfig tsconfig.build.json --verbose --noClean",
-    "build": "tsdx build --tsconfig tsconfig.build.json",
+    "build": "yarn run build-native && yarn run move-native && yarn run build-alternate && yarn run move-alternate && yarn run build-web",
     "lint": "tsdx lint",
-    "prepublish": "npm run build"
+    "build-native": "yarn run tsdx build --tsconfig tsconfig.build.json --entry src/index.native.tsx --name formik-v3.native",
+    "move-native": "mv dist/index.js dist/index.native.js",
+    "build-alternate": "yarn run tsdx build --tsconfig tsconfig.build.json --noClean --entry src/index.alternate.tsx --name formik-v3.alternate",
+    "move-alternate": "mv dist/index.js dist/index.alternate.js",
+    "build-web": "yarn run tsdx build --tsconfig tsconfig.build.json --noClean",
+    "prepublish": "yarn build"
   },
   "dependencies": {
     "deepmerge": "^2.1.1",
@@ -49,7 +67,9 @@
     "lodash-es": "^4.17.21",
     "react-fast-compare": "^2.0.1",
     "tiny-warning": "^1.0.2",
-    "tslib": "^1.10.0"
+    "tslib": "^1.10.0",
+    "use-optimized-selector": "^1.0.0-beta3",
+    "use-subscription": "^1.5.1"
   },
   "devDependencies": {
     "@testing-library/react": "^11.1.0",
@@ -57,11 +77,13 @@
     "@types/lodash": "^4.14.119",
     "@types/react": "^16.9.55",
     "@types/react-dom": "^16.9.9",
+    "@types/use-subscription": "^1.0.0",
     "@types/warning": "^3.0.0",
     "@types/yup": "^0.24.9",
     "just-debounce-it": "^1.1.0",
-    "react": "^17.0.1",
-    "react-dom": "^17.0.1",
+    "react": "16.13.1",
+    "react-dom": "16.13.1",
+    "react-native": "https://github.com/expo/react-native/archive/sdk-42.0.0.tar.gz",
     "yup": "^0.28.1"
   },
   "jest": {

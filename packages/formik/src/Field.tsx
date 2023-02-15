@@ -5,11 +5,13 @@ import {
   FieldMetaProps,
   FieldHelperProps,
   FieldInputProps,
-  FieldValidator,
+  FieldHookConfig,
 } from './types';
-import { useFormikContext } from './FormikContext';
 import { isFunction, isEmptyChildren, isObject } from './utils';
 import invariant from 'tiny-warning';
+import { useFieldHelpers, useFieldMeta, useFieldProps } from './hooks/hooks';
+import { useFormikConfig, useFormikContext } from './FormikContext';
+import { selectFullState } from './helpers/form-helpers';
 
 export interface FieldProps<V = any, FormValues = any> {
   field: FieldInputProps<V>;
@@ -17,82 +19,22 @@ export interface FieldProps<V = any, FormValues = any> {
   meta: FieldMetaProps<V>;
 }
 
-export interface FieldConfig<V = any> {
-  /**
-   * Field component to render. Can either be a string like 'select' or a component.
-   */
-  component?:
-    | string
-    | React.ComponentType<FieldProps<V>>
-    | React.ComponentType
-    | React.ForwardRefExoticComponent<any>;
-
-  /**
-   * Component to render. Can either be a string e.g. 'select', 'input', or 'textarea', or a component.
-   */
-  as?:
-    | React.ComponentType<FieldProps<V>['field']>
-    | string
-    | React.ComponentType
-    | React.ForwardRefExoticComponent<any>;
-
-  /**
-   * Render prop (works like React router's <Route render={props =>} />)
-   * @deprecated
-   */
-  render?: (props: FieldProps<V>) => React.ReactNode;
-
-  /**
-   * Children render function <Field name>{props => ...}</Field>)
-   */
-  children?: ((props: FieldProps<V>) => React.ReactNode) | React.ReactNode;
-
-  /**
-   * Validate a single field value independently
-   */
-  validate?: FieldValidator;
-
-  /**
-   * Field name
-   */
-  name: string;
-
-  /** HTML input type */
-  type?: string;
-
-  /** Field value */
-  value?: any;
-
-  /** Inner ref */
-  innerRef?: (instance: any) => void;
-}
-
-export type FieldAttributes<T> = GenericFieldHTMLAttributes &
-  FieldConfig<T> &
-  T & { name: string };
-
-export type FieldHookConfig<T> = GenericFieldHTMLAttributes & FieldConfig<T>;
-
-export function useField<Val = any>(
+export function useField<Val = any, FormValues = any>(
   propsOrFieldName: string | FieldHookConfig<Val>
 ): [FieldInputProps<Val>, FieldMetaProps<Val>, FieldHelperProps<Val>] {
-  const formik = useFormikContext();
+  const formik = useFormikContext<FormValues>();
   const {
-    getFieldProps,
-    getFieldMeta,
-    getFieldHelpers,
     registerField,
     unregisterField,
   } = formik;
 
-  const isAnObject = isObject(propsOrFieldName);
-
-  // Normalize propsOrFieldName to FieldHookConfig<Val>
-  const props: FieldHookConfig<Val> = isAnObject
-    ? (propsOrFieldName as FieldHookConfig<Val>)
-    : { name: propsOrFieldName as string };
+  const props = isObject(propsOrFieldName)
+    ? propsOrFieldName
+    : { name: propsOrFieldName };
 
   const { name: fieldName, validate: validateFn } = props;
+
+  const fieldMeta = useFieldMeta<Val>(fieldName);
 
   React.useEffect(() => {
     if (fieldName) {
@@ -120,34 +62,55 @@ export function useField<Val = any>(
   );
 
   return [
-    getFieldProps(props),
-    getFieldMeta(fieldName),
-    getFieldHelpers(fieldName),
+    useFieldProps(props, fieldMeta),
+    fieldMeta,
+    useFieldHelpers(fieldName),
   ];
 }
 
-export function Field({
-  validate,
-  name,
+export interface FieldConfig<V = any> {
+  /**
+   * Field component to render. Can either be a string like 'select' or a component.
+   */
+  component?:
+    | string
+    | React.ComponentType<FieldProps<V>>
+    | React.ComponentType
+    | React.ForwardRefExoticComponent<any>;
+
+  /**
+   * Render prop (works like React router's <Route render={props =>} />)
+   * @deprecated
+   */
+  render?: (props: FieldProps<V>) => React.ReactNode;
+
+  /**
+   * Children render function <Field name>{props => ...}</Field>)
+   */
+  children?: ((props: FieldProps<V>) => React.ReactNode) | React.ReactNode;
+
+  /** Inner ref */
+  innerRef?: (instance: any) => void;
+}
+
+export type FieldAttributes<T> = GenericFieldHTMLAttributes &
+  FieldHookConfig<T> &
+  FieldConfig<T> &
+  T & { name: string };
+
+export function Field<FormValues = any>({
   render,
   children,
   as: is, // `as` is reserved in typescript lol
   component,
   ...props
 }: FieldAttributes<any>) {
-  const {
-    validate: _validate,
-    validationSchema: _validationSchema,
-
-    ...formik
-  } = useFormikContext();
-
   if (__DEV__) {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     React.useEffect(() => {
       invariant(
         !render,
-        `<Field render> has been deprecated and will be removed in future versions of Formik. Please use a child callback function instead. To get rid of this warning, replace <Field name="${name}" render={({field, form}) => ...} /> with <Field name="${name}">{({field, form, meta}) => ...}</Field>`
+        `<Field render> has been deprecated and will be removed in future versions of Formik. Please use a child callback function instead. To get rid of this warning, replace <Field name="${props.name}" render={({field, form}) => ...} /> with <Field name="${props.name}">{({field, form, meta}) => ...}</Field>`
       );
 
       invariant(
@@ -168,19 +131,28 @@ export function Field({
     }, []);
   }
 
-  // Register field and field-level validation with parent <Formik>
-  const { registerField, unregisterField } = formik;
-  React.useEffect(() => {
-    registerField(name, {
-      validate: validate,
-    });
-    return () => {
-      unregisterField(name);
-    };
-  }, [registerField, unregisterField, name, validate]);
-  const field = formik.getFieldProps({ name, ...props });
-  const meta = formik.getFieldMeta(name);
-  const legacyBag = { field, form: formik };
+  const [field, meta] = useField(props);
+
+  /**
+   * If we use render function or use functional children, we continue to
+   * subscribe to the full FormikState because these do not have access to hooks.
+   * We also do this for Component for backwards compatibility.
+   *
+   * Otherwise, we will pointlessly get the initial values but never subscribe to updates.
+   */
+  const formikApi = useFormikContext<FormValues>();
+  const formikConfig = useFormikConfig();
+  const formikState = formikApi.useState(
+    selectFullState,
+    Object.is,
+    !!render || isFunction(children) || (!!component && typeof component !== 'string')
+  );
+
+  const legacyBag = { field, form: {
+    ...formikApi,
+    ...formikConfig,
+    ...formikState,
+  } };
 
   if (render) {
     return render({ ...legacyBag, meta });
@@ -193,7 +165,7 @@ export function Field({
   if (component) {
     // This behavior is backwards compat with earlier Formik 0.9 to 1.x
     if (typeof component === 'string') {
-      const { innerRef, ...rest } = props;
+      const { innerRef, validate, parse, format, ...rest } = props;
       return React.createElement(
         component,
         { ref: innerRef, ...field, ...rest },
@@ -203,7 +175,7 @@ export function Field({
     // We don't pass `meta` for backwards compat
     return React.createElement(
       component,
-      { field, form: formik, ...props },
+      { field, form: legacyBag.form, ...props },
       children
     );
   }
@@ -212,7 +184,7 @@ export function Field({
   const asElement = is || 'input';
 
   if (typeof asElement === 'string') {
-    const { innerRef, ...rest } = props;
+    const { innerRef, parse, format, ...rest } = props;
     return React.createElement(
       asElement,
       { ref: innerRef, ...field, ...rest },

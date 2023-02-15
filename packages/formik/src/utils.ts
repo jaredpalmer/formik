@@ -1,6 +1,7 @@
 import clone from 'lodash/clone';
 import toPath from 'lodash/toPath';
 import * as React from 'react';
+import { InputElements } from './types';
 
 // Assertions
 
@@ -13,7 +14,7 @@ export const isFunction = (obj: any): obj is Function =>
   typeof obj === 'function';
 
 /** @private is the given object an Object? */
-export const isObject = (obj: any): obj is Object =>
+export const isObject = (obj: any): obj is object =>
   obj !== null && typeof obj === 'object';
 
 /** @private is the given object an integer? */
@@ -34,11 +35,33 @@ export const isEmptyChildren = (children: any): boolean =>
 
 /** @private is the given object/value a promise? */
 export const isPromise = (value: any): value is PromiseLike<any> =>
-  isObject(value) && isFunction(value.then);
+  isObject(value) && isFunction((value as PromiseLike<any>).then);
 
 /** @private is the given object/value a type of synthetic event? */
-export const isInputEvent = (value: any): value is React.SyntheticEvent<any> =>
-  value && isObject(value) && isObject(value.target);
+export const isInputEvent = (value: any): value is React.SyntheticEvent<React.ElementRef<InputElements>> =>
+  value && isObject(value) && isObject((value as React.SyntheticEvent<React.ElementRef<InputElements>>).target);
+
+/** @private Are we in RN? */
+export const isReactNative =
+  typeof window !== 'undefined' &&
+  window.navigator &&
+  window.navigator.product &&
+  window.navigator.product === 'ReactNative';
+
+/** @private Shallow equality comparer for objects, for optimizing selectors */
+export const isShallowEqual = (
+  prev: Record<string, any>,
+  next: Record<string, any>
+) => {
+  if (Object.is(prev, next)) {
+    return true;
+  }
+
+  const prevKeys = Object.keys(prev);
+
+  return prevKeys.length === Object.keys(next).length &&
+    prevKeys.every(key => Object.is(prev[key], next[key]));
+}
 
 /**
  * Same as document.activeElement but wraps in a try-catch block. In IE it is
@@ -173,3 +196,24 @@ export function setNestedObjectValues<T>(
 
   return response;
 }
+
+export const getValueFromEvent = (event: React.SyntheticEvent<any>) => {
+    // React Native/Expo Web/maybe other render envs
+    if (
+      !isReactNative &&
+      event.nativeEvent &&
+      (event.nativeEvent as any).text !== undefined
+    ) {
+      return (event.nativeEvent as any).text;
+    }
+
+    // React Native
+    if (isReactNative && event.nativeEvent) {
+      return (event.nativeEvent as any).text;
+    }
+
+    const target = event.target ? event.target : event.currentTarget;
+    const { value } = target;
+
+    return value;
+  }

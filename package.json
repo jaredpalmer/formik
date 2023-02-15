@@ -12,16 +12,21 @@
     "lint-staged": "^10.4.0",
     "prettier": "^2.1.2",
     "release": "6.0.1",
-    "tsdx": "^0.14.1",
+    "@johnrom/tsdx": "0.14.2-noclean3",
     "typescript": "^4.0.3"
   },
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "./app",
+    "./app-native"
   ],
   "scripts": {
     "lerna": "lerna",
     "dev": "lerna run start --stream --parallel",
-    "test": "lerna run test --",
+    "test": "lerna run test -- --silent",
+    "test:watch": "lerna run test --stream --no-sort -- --watch",
+    "test:watchAll": "lerna run test --stream --no-sort -- --watchAll",
+    "test:vscode": "lerna run test --stream --no-sort --",
     "build": "lerna run build",
     "prepublish": "lerna run prepublish",
     "format": "prettier --write 'examples/**/*' 'packages/*/src/**/*' 'website/src/**/*.{ts,tsx,js,jsx,md,mdx}' 'app/pages/**/*'  'packages/*/test/**/*' 'README.md'",
@@ -32,7 +37,9 @@
     "cypress": "cypress run",
     "precommit": "lint-staged",
     "cypress:open": "cypress open",
-    "start:app": "npm run build && yarn --cwd packages/formik link && yarn --cwd node_modules/react link && yarn --cwd ./app link react formik && yarn --cwd ./app && yarn --cwd ./app run dev"
+    "start:app": "yarn --cwd ./app run dev",
+    "start:native": "yarn --cwd ./app-native run start",
+    "postinstall": "cd ./app-native && expo-yarn-workspaces postinstall"
   },
   "lint-staged": {
     "**/*.{ts,tsx,md,mdx,js,jsx}": [

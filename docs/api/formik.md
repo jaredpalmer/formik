@@ -93,7 +93,7 @@ to `<button onClick={handleReset}>...</button>`
 
 #### `handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void`
 
-Submit handler. This should be passed to `<form onSubmit={props.handleSubmit}>...</form>`. To learn more about the submission process, see [Form Submission](../docs/uides/form-submission.md).
+Submit handler. This should be passed to `<form onSubmit={props.handleSubmit}>...</form>`. To learn more about the submission process, see [Form Submission](../docs/guides/form-submission.md).
 
 #### `isSubmitting: boolean`
 

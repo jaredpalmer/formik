@@ -65,7 +65,7 @@ const Home: React.FC<HomeProps> = props => {
             </svg>
           </div>
 
-          <div className="py-24 mx-auto container px-4 sm:mt-12  relative">
+          <div className="py-24 mx-auto container px-4 lg:px-0 sm:mt-12  relative">
             <div className="hidden lg:block absolute lg:w-3/5 right-0 lg:-rotate-[30deg] lg:translate-x-1/3 lg:-translate-y-16 md:w-1/2 sm:w-2/3 top-0  transform  -translate-y-12">
               <Image
                 src="/images/hero6.png"
@@ -74,8 +74,8 @@ const Home: React.FC<HomeProps> = props => {
                 priority={true}
               />
             </div>
-            <div className="grid grid-cols-12 gap-8">
-              <div className="col-span-12 lg:col-span-6 ">
+            <div className="lg:flex lg:max-w-md xl:max-w-xl lg:items-start lg:space-between">
+              <div className="">
                 <div className="text-center lg:text-left md:max-w-2xl md:mx-auto ">
                   <h1 className="text-4xl tracking-tight leading-10 font-extrabold text-gray-900 sm:leading-none sm:text-6xl lg:text-5xl xl:text-6xl">
                     Build forms in React,
@@ -108,6 +108,7 @@ const Home: React.FC<HomeProps> = props => {
                   </div>
                 </div>
               </div>
+              <div />
             </div>
           </div>
         </div>

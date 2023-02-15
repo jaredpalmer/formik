@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { mergeProps, useButton, useHover } from 'react-aria';
-import Image from 'next/image';
+import Image from "next/legacy/image";
 import cn from 'classnames';
 import { trackCustomEvent } from 'utils/analytics';
 import { useRouter } from 'next/router';

@@ -42,6 +42,7 @@ specifiers:
   next-mdx-remote: ^3.0.4
   next-remote-watch: ^1.0.0
   nextjs-sitemap-generator: ^1.1.0
+  node-fetch: ^3.3.0
   postcss: ^8.4.21
   prettier: ^2.8.4
   prismjs: ^1.20.0
@@ -86,7 +87,7 @@ dependencies:
   '@mdx-js/tag': 0.20.3_react@18.2.0
   '@next/font': 13.1.7-canary.15
   '@next/mdx': 9.5.5_@mdx-js+loader@1.6.22
-  '@zeit/fetch': 6.0.0_@types+node-fetch@2.6.2
+  '@zeit/fetch': 6.0.0_v3tinv6w2zeaixop7sujeal7vy
   body-scroll-lock: 3.1.5
   classnames: 2.3.2
   copy-to-clipboard: 3.3.3
@@ -100,6 +101,7 @@ dependencies:
   isomorphic-unfetch: 3.1.0
   next: 13.1.7-canary.15_biqbaboplfbrettd7655fr4n2y
   next-mdx-remote: 3.0.8_biqbaboplfbrettd7655fr4n2y
+  node-fetch: 3.3.0
   prismjs: 1.29.0
   react: 18.2.0
   react-aria: 3.22.0_biqbaboplfbrettd7655fr4n2y
@@ -2246,26 +2248,28 @@ packages:
       lru-cache: 5.1.1
     dev: false
 
-  /@zeit/fetch-cached-dns/1.2.0:
+  /@zeit/fetch-cached-dns/1.2.0_node-fetch@3.3.0:
     resolution: {integrity: sha512-fEKOrDQJy3CewywYVwe2mHsv3H1rITmkfB68h2TiVOz6QWWuXU0C5xBIFG9Ov59sioEQdlk5829PXwJYyx6X0A==}
     peerDependencies:
       node-fetch: '*'
     dependencies:
       '@zeit/dns-cached-resolve': 2.1.0
+      node-fetch: 3.3.0
     dev: false
 
-  /@zeit/fetch-retry/5.0.1:
+  /@zeit/fetch-retry/5.0.1_node-fetch@3.3.0:
     resolution: {integrity: sha512-pypvAakip4gLrLDlYbyLDEbRk01YU2mFuJ87/BofZ/JqtCZf7NsIzbFgiqqaI93RxM9ZZIAQ9h373betrdR/YQ==}
     peerDependencies:
       node-fetch: '*'
     dependencies:
       async-retry: 1.3.3
       debug: 3.2.7
+      node-fetch: 3.3.0
     transitivePeerDependencies:
       - supports-color
     dev: false
 
-  /@zeit/fetch/6.0.0_@types+node-fetch@2.6.2:
+  /@zeit/fetch/6.0.0_v3tinv6w2zeaixop7sujeal7vy:
     resolution: {integrity: sha512-Sf7voV8Dx3bT245WSy/Pn2q2nJCVoDIxGKP8FGiBrfMAQaPtDP9nDO6rTV43EUDdilJ363YTYb/zLfrzj1lc5g==}
     peerDependencies:
       '@types/node-fetch': '2'
@@ -2273,10 +2277,11 @@ packages:
     dependencies:
       '@types/async-retry': 1.2.1
       '@types/node-fetch': 2.6.2
-      '@zeit/fetch-cached-dns': 1.2.0
-      '@zeit/fetch-retry': 5.0.1
+      '@zeit/fetch-cached-dns': 1.2.0_node-fetch@3.3.0
+      '@zeit/fetch-retry': 5.0.1_node-fetch@3.3.0
       agentkeepalive: 3.4.1
       debug: 3.1.0
+      node-fetch: 3.3.0
     transitivePeerDependencies:
       - supports-color
     dev: false
@@ -2889,6 +2894,11 @@ packages:
     engines: {node: '>=0.10'}
     dependencies:
       assert-plus: 1.0.0
+    dev: false
+
+  /data-uri-to-buffer/4.0.1:
+    resolution: {integrity: sha512-0R9ikRb668HB7QDxT1vkpuUBtqc53YyAwMwGeUFKRojY/NWKvdZ+9UYtRfGmhqNbRkTSVpMbmyhXipFFv2cb/A==}
+    engines: {node: '>= 12'}
     dev: false
 
   /date-fns/2.29.3:
@@ -3645,6 +3655,14 @@ packages:
       reusify: 1.0.4
     dev: true
 
+  /fetch-blob/3.2.0:
+    resolution: {integrity: sha512-7yAQpD2UMJzLi1Dqv7qFYnPbaPx7ZfFK6PiIxQ4PfkGPyNyl2Ugx+a/umUonmKqjhM4DnfbMvdX6otXq83soQQ==}
+    engines: {node: ^12.20 || >= 14.13}
+    dependencies:
+      node-domexception: 1.0.0
+      web-streams-polyfill: 3.2.1
+    dev: false
+
   /file-entry-cache/6.0.1:
     resolution: {integrity: sha512-7Gps/XWymbLk2QLYK4NzpMOrYjMhdIxXuIvy2QBsLE6ljuodKvdkWs/cpyJJ3CVIVpH0Oi1Hvg1ovbMzLdFBBg==}
     engines: {node: ^10.12.0 || >=12.0.0}
@@ -3723,6 +3741,13 @@ packages:
       asynckit: 0.4.0
       combined-stream: 1.0.8
       mime-types: 2.1.35
+
+  /formdata-polyfill/4.0.10:
+    resolution: {integrity: sha512-buewHzMvYL29jdeQTVILecSaZKnt/RJWjoZCF5OW60Z67/GmSLBkOFM7qh1PI3zFNtJbaZL5eQu1vLfazOwj4g==}
+    engines: {node: '>=12.20.0'}
+    dependencies:
+      fetch-blob: 3.2.0
+    dev: false
 
   /formik/2.2.9_react@18.2.0:
     resolution: {integrity: sha512-LQLcISMmf1r5at4/gyJigGn0gOwFbeEAlji+N9InZF6LIMXnFNkO42sCI8Jt84YZggpD4cPWObAZaxpEFtSzNA==}
@@ -4966,6 +4991,11 @@ packages:
       date-fns: 2.29.3
     dev: true
 
+  /node-domexception/1.0.0:
+    resolution: {integrity: sha512-/jKZoMpw0F8GRwl4/eLROPA3cfcXtLApP0QzLmUT/HuPCZWyB7IY9ZrMeKw2O/nFIqPQB3PVM9aYm0F312AXDQ==}
+    engines: {node: '>=10.5.0'}
+    dev: false
+
   /node-emoji/1.11.0:
     resolution: {integrity: sha512-wo2DpQkQp7Sjm2A0cq+sN7EHKO6Sl0ctXeBdFZrL9T9+UywORbufTcTZxom8YqpLQt/FqNMUkOpkZrJVYSKD3A==}
     dependencies:
@@ -4982,6 +5012,15 @@ packages:
         optional: true
     dependencies:
       whatwg-url: 5.0.0
+    dev: false
+
+  /node-fetch/3.3.0:
+    resolution: {integrity: sha512-BKwRP/O0UvoMKp7GNdwPlObhYGB5DQqwhEDQlNKuoqwVYSxkSZCSbHjnFFmUEtwSKRPU4kNK8PbDYYitwaE3QA==}
+    engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
+    dependencies:
+      data-uri-to-buffer: 4.0.1
+      fetch-blob: 3.2.0
+      formdata-polyfill: 4.0.10
     dev: false
 
   /node-releases/2.0.10:
@@ -6670,6 +6709,11 @@ packages:
 
   /web-namespaces/1.1.4:
     resolution: {integrity: sha512-wYxSGajtmoP4WxfejAPIr4l0fVh+jeMXZb08wNc0tMg6xsfZXj3cECqIK0G7ZAqUq0PP8WlMDtaOGVBTAWztNw==}
+    dev: false
+
+  /web-streams-polyfill/3.2.1:
+    resolution: {integrity: sha512-e0MO3wdXWKrLbL0DgGnUV7WHVuw9OUvL4hjgnPkIeEvESk74gAITi5G606JtZPp39cd8HA9VQzCIvA49LpPN5Q==}
+    engines: {node: '>= 8'}
     dev: false
 
   /webidl-conversions/3.0.1:

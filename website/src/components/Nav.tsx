@@ -4,7 +4,6 @@ import * as React from 'react';
 import { siteConfig } from 'siteConfig';
 import { ExternalLink } from './ExternalLink';
 import { Logo } from './Logo';
-import { Search } from './Search';
 
 export const Nav: React.FC = () => {
   const router = useRouter();

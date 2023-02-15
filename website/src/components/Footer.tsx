@@ -19,47 +19,42 @@ export const Footer: React.FC<FooterProps> = props => {
                 <li>
                   <Link
                     href="/docs/overview"
-                    className="text-base leading-6 text-gray-500 hover:text-gray-900">
-                    
-                      Docs
-                    
+                    className="text-base leading-6 text-gray-500 hover:text-gray-900"
+                  >
+                    Docs
                   </Link>
                 </li>
                 <li className="mt-4">
                   <Link
                     href="/docs/tutorial"
-                    className="text-base leading-6 text-gray-500 hover:text-gray-900">
-                    
-                      Learn
-                    
+                    className="text-base leading-6 text-gray-500 hover:text-gray-900"
+                  >
+                    Learn
                   </Link>
                 </li>
                 <li className="mt-4">
                   <Link
                     href="/docs/guides/validation"
-                    className="text-base leading-6 text-gray-500 hover:text-gray-900">
-                    
-                      Guides
-                    
+                    className="text-base leading-6 text-gray-500 hover:text-gray-900"
+                  >
+                    Guides
                   </Link>
                 </li>
                 <li className="mt-4">
                   <Link
                     href="/docs/api/formik"
-                    className="text-base leading-6 text-gray-500 hover:text-gray-900">
-                    
-                      API Reference
-                    
+                    className="text-base leading-6 text-gray-500 hover:text-gray-900"
+                  >
+                    API Reference
                   </Link>
                 </li>
 
                 <li className="mt-4">
                   <Link
                     href="/blog"
-                    className="text-base leading-6 text-gray-500 hover:text-gray-900">
-                    
-                      Blog
-                    
+                    className="text-base leading-6 text-gray-500 hover:text-gray-900"
+                  >
+                    Blog
                   </Link>
                 </li>
               </ul>
@@ -72,10 +67,9 @@ export const Footer: React.FC<FooterProps> = props => {
                 <li>
                   <Link
                     href="/users"
-                    className="text-base leading-6 text-gray-500 hover:text-gray-900">
-                    
-                      User Showcase
-                    
+                    className="text-base leading-6 text-gray-500 hover:text-gray-900"
+                  >
+                    User Showcase
                   </Link>
                 </li>
                 <li className="mt-4">
@@ -83,9 +77,7 @@ export const Footer: React.FC<FooterProps> = props => {
                     href="https://opencollective.com/formik"
                     className="text-base leading-6 text-gray-500 hover:text-gray-900"
                   >
-                    <a className="text-base leading-6 text-gray-500 hover:text-gray-900">
-                      Funding
-                    </a>
+                    Funding
                   </ExternalLink>
                 </li>
                 <li className="mt-4">

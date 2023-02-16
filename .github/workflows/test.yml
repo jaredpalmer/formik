@@ -28,7 +28,7 @@ jobs:
           cache: 'pnpm'
 
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --filter={packages/*}...
 
-      - name: Build
+      - name: Test
         run: pnpm test

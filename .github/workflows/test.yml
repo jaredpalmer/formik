@@ -1,41 +1,34 @@
-name: Unit Test
+name: CI
 
 on:
+  push:
+    branches: ['main']
   pull_request:
-    types: [opened, synchronize, reopened]
+    types: [opened, synchronize]
 
 jobs:
-  test:
+  build:
+    name: Build and Test
+    timeout-minutes: 15
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node: ['12.x']
-
-    name: Test on node ${{ matrix.node }}
-
     steps:
-      - uses: actions/checkout@v1
-
-      - name: Use Node.js ${{ matrix.node }}
-        uses: actions/setup-node@v1
+      - name: Check out code
+        uses: actions/checkout@v3
         with:
-          node-version: ${{ matrix.node }}
+          fetch-depth: 2
 
-      - uses: actions/cache@v1
+      - uses: pnpm/action-setup@v2.0.1
         with:
-          path: ~/.cache/yarn
-          key: ${{ runner.os }}-yarn-${{ hashFiles(format('{0}{1}', github.workspace, '/yarn.lock')) }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
+          version: 7.16.1
 
-      - name: Install deps, build, and test
-        run: |
-          node --version
-          npm --version
-          yarn --version        
-          yarn install --frozen-lockfile
-          yarn test --coverage
-        env:
-          CI: true
-          NODE_OPTIONS: --max-old-space-size=4096
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build
+        run: pnpm test

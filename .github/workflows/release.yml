@@ -7,19 +7,27 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
-    if: github.repository == 'formium/formik'
+    if: github.repository == 'jaredpalmer/formik'
     steps:
       - uses: actions/checkout@v2
         with:
-          fetch-depth: 0
-
-      - name: Use Node.js 12.x
-        uses: actions/setup-node@v1
+          fetch-depth: 2
+      
+      - uses: pnpm/action-setup@v2.0.1
         with:
-          version: 12.x
+          version: 6.32.2
+ 
+      - name: Setup Node.js environment
+          uses: actions/setup-node@v3
+          with:
+            node-version: 16
+            cache: 'pnpm'
+ 
+      - name: Install dependencies
+        run: pnpm install
 
-      - name: Install deps and build (with cache)
-        uses: bahmutov/npm-install@v1
+      - name: Build
+        run: pnpm build
 
       - name: Create Release Pull Request or Publish to npm
         uses: changesets/action@master

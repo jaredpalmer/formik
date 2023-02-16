@@ -1,0 +1,3 @@
+workspaces:
+  - website
+  - packages/*

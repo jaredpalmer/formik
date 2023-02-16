@@ -2,16 +2,28 @@
   "$schema": "https://turbo.build/schema.json",
   "pipeline": {
     "build": {
-      // ^build means build must be run in dependencies
-      // before it can be run in this workspace
       "dependsOn": ["^build"],
       "outputs": ["dist/**"]
     },
     "prepublish": {
-      // ^build means build must be run in dependencies
-      // before it can be run in this workspace
       "dependsOn": ["^prepublish"],
       "outputs": ["dist/**"]
+    },
+    "website#build": {
+      "inputs": [
+        "../docs/**.md",
+        "src/**",
+        "scripts/*",
+        "public/**",
+        "package.json",
+        "next.config.js",
+        "tsconfig.json",
+        "postcss.config.js",
+        "tailwind.config.js",
+        ".eslintignore"
+      ],
+      "dependsOn": ["^build"],
+      "outputs": [".next/**"]
     },
     "test": {},
     "lint": {}

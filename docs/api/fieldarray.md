@@ -16,17 +16,17 @@ export const FriendList = () => (
   <div>
     <h1>Friend List</h1>
     <Formik
-      initialValues={{ friends: ['jared', 'ian', 'brent'] }}
-      onSubmit={values =>
+      initialValues={{ friends: ["jared", "ian","brent"]}}
+      onSubmit={(values) =>
         setTimeout(() => {
           alert(JSON.stringify(values, null, 2));
         }, 500)
       }
-      render={({ values }) => (
+    >
+      {({ values }) => (
         <Form>
-          <FieldArray
-            name="friends"
-            render={arrayHelpers => (
+          <FieldArray name="friends">
+            {(arrayHelpers) => (
               <div>
                 {values.friends && values.friends.length > 0 ? (
                   values.friends.map((friend, index) => (
@@ -34,33 +34,41 @@ export const FriendList = () => (
                       <Field name={`friends.${index}`} />
                       <button
                         type="button"
-                        onClick={() => arrayHelpers.remove(index)} // remove a friend from the list
+                        onClick={() =>
+                          arrayHelpers.remove(index)
+                        } // remove a friend from the list
                       >
                         -
                       </button>
                       <button
                         type="button"
-                        onClick={() => arrayHelpers.insert(index, '')} // insert an empty string at a position
+                        onClick={() =>
+                          arrayHelpers.insert(index,"")
+                        } // insert an empty string at a position
                       >
                         +
                       </button>
                     </div>
-                  ))
-                ) : (
-                  <button type="button" onClick={() => arrayHelpers.push('')}>
-                    {/* show this when user has removed all friends from the list */}
-                    Add a friend
-                  </button>
-                )}
-                <div>
-                  <button type="submit">Submit</button>
+                  ))) : (
+                    <button
+                      type="button"
+                      onClick={() =>
+                        arrayHelpers.push("")
+                      }
+                    >
+                      {/* show this when user has removed all friends from the list */}
+                      Add a friend
+                    </button>
+                  )}
+                  <div>
+                    <button type="submit">Submit</button>
+                  </div>
                 </div>
-              </div>
             )}
-          />
+          </FieldArray>
         </Form>
       )}
-    />
+    </Formik>
   </div>
 );
 ```
@@ -154,12 +162,13 @@ import { Field, getIn } from 'formik';
 const ErrorMessage = ({ name }) => (
   <Field
     name={name}
-    render={({ form }) => {
+  >
+    {({ form }) => {
       const error = getIn(form.errors, name);
       const touch = getIn(form.touched, name);
       return touch && error ? error : null;
     }}
-  />
+  </Field>
 );
 
 // Usage
@@ -201,7 +210,8 @@ export const FriendList = () => (
     <Formik
       initialValues={{ friends: ['jared', 'ian', 'brent'] }}
       onSubmit={...}
-      render={formikProps => (
+    >
+      {formikProps => (
         <FieldArray
           name="friends"
           render={({ move, swap, push, insert, unshift, pop }) => (
@@ -210,7 +220,8 @@ export const FriendList = () => (
             </Form>
           )}
         />
-    />
+      )}
+    </Formik>
   </div>
 );
 ```
@@ -228,13 +239,14 @@ export const FriendList = () => (
     <Formik
       initialValues={{ friends: ['jared', 'ian', 'brent'] }}
       onSubmit={...}
-      render={formikProps => (
+    >
+      {formikProps => (
         <FieldArray
           name="friends"
           component={MyDynamicForm}
         />
       )}
-    />
+    </Formik>
   </div>
 );
 
@@ -264,7 +276,8 @@ export const FriendList = () => (
     <Formik
       initialValues={{ friends: ['jared', 'ian', 'brent'] }}
       onSubmit={...}
-      render={formikProps => (
+    >
+      {formikProps => (
         <FieldArray name="friends">
           {({ move, swap, push, insert, unshift, pop, form }) => {
             return (
@@ -275,7 +288,7 @@ export const FriendList = () => (
           }}
         </FieldArray>
       )}
-    />
+    </Formik>
   </div>
 );
 ```

@@ -38,3 +38,4 @@ description: Formik conference talks, courses, videos, blog posts, learning reso
 - [The Joy of Forms with React and Formik](https://keyholesoftware.com/2017/10/23/the-joy-of-forms-with-react-and-formik/) by [Mat Warger](https://twitter.com/mwarger) - Oct 23, 2017
 - [Painless React Forms with Formik](https://hackernoon.com/painless-react-forms-with-formik-e61b70473c60) by [João Miguel Cunha](https://twitter.com/lokuzt) - Sep 8, 2017
 - [Using Formik to Handle Forms in React](https://css-tricks.com/using-formik-to-handle-forms-in-react) by [Adebiyi Adedotun](https://twitter.com/AdebiyiAL) - Apr 28, 2020
+- [Formik for React guide](https://codedeepdives.com/blog/formik-guide) Jan 2, 2023

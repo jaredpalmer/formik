@@ -114,9 +114,9 @@ export interface FormikHelpers<Values> {
   ) => void;
 }
 
-export type SetFieldValue = (
+export type SetFieldValue<ValueType = any> = (
   field: string,
-  value: any,
+  value: ValueType,
   shouldValidate?: boolean
 ) => void;
 export type SetFieldError = (

@@ -234,4 +234,9 @@ export const users = [
     image: '/images/logos/benchmark-uae.svg',
     infoLink: 'https://benchmark.ae/',
   },
+{
+    caption: 'Tailverse',
+    image: '/images/logos/tailverse.svg',
+    infoLink: 'https://tailverse.tech/',
+  },
 ];

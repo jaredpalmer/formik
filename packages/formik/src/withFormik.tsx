@@ -81,7 +81,7 @@ export interface WithFormikConfig<
 
 export type CompositeComponent<P> =
   | React.ComponentClass<P>
-  | React.StatelessComponent<P>;
+  | React.FunctionComponent<P>;
 
 export interface ComponentDecorator<TOwnProps, TMergedProps> {
   (component: CompositeComponent<TMergedProps>): React.ComponentType<TOwnProps>;

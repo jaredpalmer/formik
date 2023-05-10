@@ -37,7 +37,7 @@ const Users: React.FC<UsersProps> = props => {
         description="Companies and projects using Formik in production."
       />
       <Container>
-        <div className="my-12 space-y-12">
+        <div className="container px-4 my-12 space-y-12">
           <div className="lg:text-center">
             <p className="text-base font-semibold leading-6 tracking-wide text-blue-600 uppercase">
               Showcase
@@ -53,7 +53,7 @@ const Users: React.FC<UsersProps> = props => {
             </p>
           </div>
 
-          <div className="grid items-center grid-cols-3 gap-16 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 ">
+          <div className="px-4 grid items-center grid-cols-3 gap-16 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 ">
             {showcase}
           </div>
           <div className="space-y-6 text-center md:space-y-10">

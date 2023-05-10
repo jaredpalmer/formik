@@ -114,7 +114,7 @@ const Home: React.FC<HomeProps> = props => {
         </div>
         <div className="text-lg border-t border-gray-100 bg-gray-50 ">
           <div className="py-24  ">
-            <div className="mx-auto container">
+            <div className="mx-auto container px-4">
               <div className="lg:grid lg:grid-cols-3 lg:gap-8">
                 <div>
                   <div>

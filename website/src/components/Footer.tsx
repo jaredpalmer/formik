@@ -8,7 +8,7 @@ export interface FooterProps {}
 export const Footer: React.FC<FooterProps> = props => {
   return (
     <div className="bg-gray-50 border-t border-gray-200">
-      <div className="container mx-auto py-12 px-4 sm:px-6 lg:py-16 lg:px-8">
+      <div className="container mx-auto py-12 lg:py-16 px-4 ">
         <div className="lg:grid lg:grid-cols-3 lg:gap-8">
           <div className="lg:grid lg:grid-cols-3 gap-8 lg:col-span-2">
             <div className="mt-12 lg:mt-0">

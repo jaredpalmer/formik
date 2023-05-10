@@ -1,0 +1,9 @@
+.next
+.now
+.env
+.env.*
+node_modules
+*.log
+.DS_Store
+.vercel
+public/sitemap.xml

@@ -69,7 +69,7 @@ export interface FieldConfig<V = any> {
 
 export type FieldAttributes<T> = GenericFieldHTMLAttributes &
   FieldConfig<T> &
-  T & { name: string };
+  { name: string };
 
 export type FieldHookConfig<T> = GenericFieldHTMLAttributes & FieldConfig<T>;
 

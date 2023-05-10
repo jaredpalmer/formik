@@ -4,8 +4,9 @@ import cn from 'classnames';
 
 export interface StickyProps {
   offset?: number;
-  shadow?: boolean;
   className?: string;
+  shadow?: boolean;
+  children: React.ReactNode;
 }
 
 export const Sticky: React.FC<StickyProps> = ({ offset, children, shadow }) => {

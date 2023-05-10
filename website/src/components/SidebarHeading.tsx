@@ -2,6 +2,7 @@ import * as React from 'react';
 
 export const SidebarHeading: React.FC<{
   title: string;
+  children: React.ReactNode;
 }> = ({ title, children }) => {
   return (
     // <div>

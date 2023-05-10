@@ -13,7 +13,9 @@ import {
   FormikConfig,
   FormikProps,
   prepareDataForValidation,
+  enableExplicitUndefinedValues,
 } from '../src';
+import { disableExplicitUndefinedValues } from '../src/explicitUndefinedValuesFlag';
 import { noop } from './testHelpers';
 
 jest.spyOn(global.console, 'warn');
@@ -694,6 +696,36 @@ describe('<Formik>', () => {
         });
       });
 
+      // @todo - remove this test case in next major release, this behavior is wrong
+      it("setFieldValue removes value if it's undefined", async () => {
+        const { getProps, rerender } = renderFormik<Values>();
+
+        act(() => {
+          getProps().setFieldValue('age', undefined);
+        });
+        rerender();
+        await waitFor(() => {
+          expect(getProps().values).not.toHaveProperty('age');
+        });
+      });
+
+      it("setFieldValue doesn't removes value if it's undefined and if 'explicitUndefinedValues' flag is set", async () => {
+        enableExplicitUndefinedValues();
+
+        const { getProps, rerender } = renderFormik<Values>();
+
+        act(() => {
+          getProps().setFieldValue('age', undefined);
+        });
+        rerender();
+        await waitFor(() => {
+          expect(getProps().values).toHaveProperty('age');
+          expect(getProps().values.age).toEqual(undefined);
+        });
+
+        disableExplicitUndefinedValues();
+      });
+
       it('setFieldValue should run validations when validateOnChange is true (default)', async () => {
         const validate = jest.fn(() => ({}));
         const { getProps, rerender } = renderFormik({ validate });
@@ -825,6 +857,32 @@ describe('<Formik>', () => {
         });
 
         expect(getProps().status).toEqual(status);
+      });
+
+      it('removeField removes all field-related data from the formik', async () => {
+        const { getProps, rerender } = renderFormik();
+
+        act(() => {
+          getProps().setFieldValue('age', 17);
+          getProps().setFieldError('age', 'Too young to drink');
+          getProps().setFieldTouched('age', true);
+        });
+        rerender();
+        await waitFor(() => {
+          expect(getProps().values.age).toEqual(17);
+          expect(getProps().errors.age).toEqual('Too young to drink');
+          expect(getProps().touched.age).toEqual(true);
+        });
+
+        act(() => {
+          getProps().removeField('age');
+        });
+        rerender();
+        await waitFor(() => {
+          expect(getProps().values).not.toHaveProperty('age');
+          expect(getProps().errors).not.toHaveProperty('age');
+          expect(getProps().touched).not.toHaveProperty('age');
+        });
       });
     });
   });

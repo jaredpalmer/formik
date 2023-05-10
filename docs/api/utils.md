@@ -11,7 +11,7 @@ title: Utils
 
 #### `getIn(obj: any, key: string | string[], def?: any, p?: number): any`
 
-#### `setIn(obj: any, path: string, value: any): any`
+#### `setIn(obj: any, path: string, value: any, shouldRemoveUndefined?: boolean = true): any`
 
 #### `setNestedObjectValues<T>(object: any, value: any, visited?: any, response?: any): T`
 

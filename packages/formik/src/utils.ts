@@ -103,7 +103,12 @@ export function getIn(
  * @see https://github.com/developit/linkstate
  * @see https://github.com/jaredpalmer/formik/pull/123
  */
-export function setIn(obj: any, path: string, value: any): any {
+export function setIn(
+  obj: any,
+  path: string,
+  value: any,
+  shouldRemoveUndefined: boolean = true
+): any {
   let res: any = clone(obj); // this keeps inheritance when obj is a class
   let resVal: any = res;
   let i = 0;
@@ -127,7 +132,7 @@ export function setIn(obj: any, path: string, value: any): any {
     return obj;
   }
 
-  if (value === undefined) {
+  if (value === undefined && shouldRemoveUndefined) {
     delete resVal[pathArray[i]];
   } else {
     resVal[pathArray[i]] = value;
@@ -135,7 +140,7 @@ export function setIn(obj: any, path: string, value: any): any {
 
   // If the path array has a single element, the loop did not run.
   // Deleting on `resVal` had no effect in this scenario, so we delete on the result instead.
-  if (i === 0 && value === undefined) {
+  if (i === 0 && value === undefined && shouldRemoveUndefined) {
     delete res[pathArray[i]];
   }
 

@@ -15,6 +15,7 @@ import {
   isEmptyArray,
 } from './utils';
 import isEqual from 'react-fast-compare';
+import { isExplicitUndefinedValuesEnabled } from './explicitUndefinedValuesFlag';
 
 export type FieldArrayRenderProps = ArrayHelpers & {
   form: FormikProps<any>;
@@ -169,7 +170,8 @@ class FieldArrayInner<Values = {}> extends React.Component<
       let values = setIn(
         prevState.values,
         name,
-        fn(getIn(prevState.values, name))
+        fn(getIn(prevState.values, name)),
+        !isExplicitUndefinedValuesEnabled()
       );
 
       let fieldError = alterErrors

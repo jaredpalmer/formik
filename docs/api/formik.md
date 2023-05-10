@@ -196,6 +196,12 @@ Number of times user tried to submit the form. Increases when [`handleSubmit`](#
 Set the value of a field imperatively. `field` should match the key of
 `values` you wish to update. Useful for creating custom input change handlers. Calling this will trigger validation to run if `validateOnChange` is set to `true` (which it is by default). You can also explicitly prevent/skip validation by passing a third argument as `false`.
 
+#### `removeField: (field: string, shouldValidate?: boolean) => void`
+
+Remove field from the form (will remove it from `values`, `errors` and `touched`).
+Useful if some form fields are dynamically added/removed and field data should be removed on field unmount.
+Calling this will trigger validation to run if `validateOnChange` is set to `true` (which it is by default). You can also explicitly prevent/skip validation by passing a second argument as `false`.
+
 #### `setStatus: (status?: any) => void`
 
 Set a top-level `status` to anything you want imperatively. Useful for
@@ -444,7 +450,7 @@ are called.
 
 Default is `true`. Use this option to tell Formik to run validations on `change`
 events and `change`-related methods. More specifically, when either
-`handleChange`, `setFieldValue`, or `setValues` are called.
+`handleChange`, `setFieldValue`, `setValues`, or `removeField` are called.
 
 ### `validateOnMount?: boolean`
 

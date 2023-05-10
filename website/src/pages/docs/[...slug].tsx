@@ -108,7 +108,7 @@ export default function Docs({ page, routes, route: _route }: DocsProps) {
                   </SidebarMobile>
                 </Sticky>
 
-                <div className="container mx-auto pb-12 pt-6 content">
+                <div className="container mx-auto pb-12 pt-6 px-4 content">
                   <div className="flex relative">
                     <Sidebar fixed>
                       <SidebarRoutes routes={routes} />

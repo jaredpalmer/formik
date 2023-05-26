@@ -1,6 +1,6 @@
 import * as React from 'react';
 import dynamic from 'next/dynamic';
-import Image from 'next/image';
+import Image from 'next/legacy/image';
 import { CustomLink } from './CustomLink';
 import Head from 'next/head';
 

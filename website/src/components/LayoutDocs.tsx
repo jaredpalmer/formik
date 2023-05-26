@@ -26,6 +26,7 @@ interface DocsProps {
   page: Page;
   routes: RouteItem[];
   route: RouteItem;
+  children: React.ReactNode;
   meta?: any;
 }
 

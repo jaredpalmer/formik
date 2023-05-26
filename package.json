@@ -5,15 +5,13 @@
     "@changesets/changelog-github": "^0.2.7",
     "@changesets/cli": "^2.10.3",
     "@types/jest": "^26.0.14",
-    "cypress": "^5.2.0",
+    "cypress": "^12.13.0",
     "got": "10.0.4",
     "husky": "^4.3.0",
     "lerna": "^3.19.0",
     "lint-staged": "^10.4.0",
     "prettier": "^2.1.2",
-    "release": "6.0.1",
-    "tsdx": "^0.14.1",
-    "typescript": "^4.0.3"
+    "release": "6.0.1"
   },
   "workspaces": [
     "packages/*"

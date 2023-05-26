@@ -7,7 +7,6 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
-    if: github.repository == 'formium/formik'
     steps:
       - uses: actions/checkout@v2
         with:

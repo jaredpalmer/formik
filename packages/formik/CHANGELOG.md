@@ -1,5 +1,11 @@
 # formik
 
+## 2.3.1
+
+### Patch Changes
+
+- [`290d92b`](https://github.com/jaredpalmer/formik/commit/290d92b34056593f551ad55baf00dc6f8c700bbe) [#3793](https://github.com/jaredpalmer/formik/pull/3793) Thanks [@probablyup](https://github.com/probablyup)! - Fix potential infinite loop scenario when `initialValues` changes but `enableReinitialize` is not truthy.
+
 ## 2.3.0
 
 ### Minor Changes

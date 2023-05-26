@@ -383,6 +383,14 @@ describe('<FieldArray />', () => {
       expect(formikBag.errors.friends).toEqual(undefined);
       expect(formikBag.touched.friends).toEqual(undefined);
     });
+    it('should clean up errors', () => {
+      act(() => {
+        formikBag.setFieldError('friends.1', 'Field error');
+        arrayHelpers.remove(1);
+      });
+
+      expect(formikBag.errors.friends).toEqual(undefined);
+    });
   });
 
   describe('given array-like object representing errors', () => {

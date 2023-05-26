@@ -306,7 +306,12 @@ class FieldArrayInner<Values = {}> extends React.Component<
         if (isFunction(copy.splice)) {
           copy.splice(index, 1);
         }
-        return copy;
+        // if the array only includes undefined values we have to return an empty array
+        return isFunction(copy.every)
+          ? copy.every(v => v === undefined)
+            ? []
+            : copy
+          : copy;
       },
       true,
       true

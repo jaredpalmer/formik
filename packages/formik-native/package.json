@@ -1,6 +1,6 @@
 {
   "name": "formik-native",
-  "version": "2.1.17",
+  "version": "2.1.18",
   "license": "Apache-2.0",
   "author": "Jared Palmer <jared@palmer.net>",
   "repository": "formium/formik",
@@ -19,9 +19,7 @@
   "module": "dist/index.esm.js",
   "react-native": "src/index.js",
   "typings": "dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "scripts": {
     "start": "tsdx watch --tsconfig tsconfig.build.json --verbose --noClean",
     "build": "tsdx build --tsconfig tsconfig.build.json",
@@ -33,7 +31,7 @@
     "react": ">=16.8.0"
   },
   "dependencies": {
-    "formik": "2.2.9"
+    "formik": "2.2.10"
   },
   "devDependencies": {
     "@react-native-community/eslint-config": "^0.0.5",

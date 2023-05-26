@@ -1,5 +1,21 @@
 # formik
 
+## 2.2.10
+
+### Patch Changes
+
+- [`22e236e`](https://github.com/jaredpalmer/formik/commit/22e236ed8035c7c5824232202c8ce52193338d5a) [#3784](https://github.com/jaredpalmer/formik/pull/3784) Thanks [@probablyup](https://github.com/probablyup)! - Improve performance of the `FieldArray` component by adding a `shouldComponentUpdate` check; this should help avoid unnecessary re-renders which may affect the performance of a form.
+
+* [`bc9cb28`](https://github.com/jaredpalmer/formik/commit/bc9cb28df7ad07277a499e8301cfd1bb7b230b86) [#3785](https://github.com/jaredpalmer/formik/pull/3785) Thanks [@probablyup](https://github.com/probablyup)! - Fixed field error state for array fields that have an error and become empty through an API like `arrayHelpers.remove`.
+
+  The prior behavior resolved the field error to `[undefined]`, now it is simply `undefined`.
+
+- [`9cbf150`](https://github.com/jaredpalmer/formik/commit/9cbf150e65d7c5498900f19b4fa1897ca8a2c87f) [#3787](https://github.com/jaredpalmer/formik/pull/3787) Thanks [@probablyup](https://github.com/probablyup)! - Fix infinite loop issue in `Field` when field helpers (`setTouched`, etc) are used as an argument in `React.useEffect`.
+
+* [`9c75a9f`](https://github.com/jaredpalmer/formik/commit/9c75a9f639eb38ad55c351e5e1def8a7e5ebd1f3) [#3780](https://github.com/jaredpalmer/formik/pull/3780) Thanks [@probablyup](https://github.com/probablyup)! - Fixed an issue with array field errors being incorrectly split into an array of individual characters instead of an array of error strings.
+
+- [`35fa4cc`](https://github.com/jaredpalmer/formik/commit/35fa4cc38260d709a5570dd3c9ef82831758a5f5) [#3783](https://github.com/jaredpalmer/formik/pull/3783) Thanks [@probablyup](https://github.com/probablyup)! - Fix validation of deep.dot.path field references when using the `validateField` API.
+
 ## 2.2.9
 
 ### Patch Changes

@@ -7,16 +7,16 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
-    if: github.repository == 'formium/formik'
+    if: github.repository == 'jaredpalmer/formik'
     steps:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
 
-      - name: Use Node.js 12.x
+      - name: Use Node.js 16.x
         uses: actions/setup-node@v1
         with:
-          version: 12.x
+          version: 16.x
 
       - name: Install deps and build (with cache)
         uses: bahmutov/npm-install@v1

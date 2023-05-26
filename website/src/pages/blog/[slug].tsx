@@ -22,7 +22,7 @@ export default function PostPage({ source, frontMatter }: any) {
           <Nav />
         </Sticky>
         <Seo title={frontMatter.title + ' | Blog'} />
-        <div className="container max-w-3xl px-4 pt-6 pb-12 mx-auto sm:px-6 lg:px-8 max-w-screen">
+        <div className="container max-w-3xl px-4 pt-6 pb-12 mx-auto lg:px-8 max-w-screen">
           <div className="my-10 space-y-4">
             <div className="flex items-center ">
               {frontMatter.authors && frontMatter.authors.length > 0 && (

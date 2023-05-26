@@ -27,6 +27,8 @@ export type FieldArrayConfig = {
   name: string;
   /** Should field array validate the form AFTER array updates/changes? */
   validateOnChange?: boolean;
+  /** Override FieldArray's default shouldComponentUpdate */
+  shouldUpdate?: (nextProps: {}, props: {}) => boolean;
 } & SharedRenderProps<FieldArrayRenderProps>;
 export interface ArrayHelpers {
   /** Imperatively add a value to the end of an array */
@@ -151,6 +153,26 @@ class FieldArrayInner<Values = {}> extends React.Component<
     // @todo Fix TS 3.2.1
     this.remove = this.remove.bind(this) as any;
     this.pop = this.pop.bind(this) as any;
+  }
+
+  shouldComponentUpdate(props: any) {
+    if (this.props.shouldUpdate) {
+      return this.props.shouldUpdate(props, this.props);
+    } else if (
+      props.name !== this.props.name ||
+      getIn(props.formik.values, this.props.name) !==
+        getIn(this.props.formik.values, this.props.name) ||
+      getIn(props.formik.errors, this.props.name) !==
+        getIn(this.props.formik.errors, this.props.name) ||
+      getIn(props.formik.touched, this.props.name) !==
+        getIn(this.props.formik.touched, this.props.name) ||
+      Object.keys(this.props).length !== Object.keys(props).length ||
+      props.formik.isSubmitting !== this.props.formik.isSubmitting
+    ) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   componentDidUpdate(

@@ -1,20 +1,21 @@
-import * as React from 'react';
 import cloneDeep from 'lodash/cloneDeep';
+import * as React from 'react';
+import isEqual from 'react-fast-compare';
 import { connect } from './connect';
 import {
   FormikContextType,
+  FormikProps,
   FormikState,
   SharedRenderProps,
-  FormikProps,
 } from './types';
 import {
   getIn,
+  isEmptyArray,
   isEmptyChildren,
   isFunction,
+  isObject,
   setIn,
-  isEmptyArray,
 } from './utils';
-import isEqual from 'react-fast-compare';
 
 export type FieldArrayRenderProps = ArrayHelpers & {
   form: FormikProps<any>;
@@ -26,6 +27,8 @@ export type FieldArrayConfig = {
   name: string;
   /** Should field array validate the form AFTER array updates/changes? */
   validateOnChange?: boolean;
+  /** Override FieldArray's default shouldComponentUpdate */
+  shouldUpdate?: (nextProps: {}, props: {}) => boolean;
 } & SharedRenderProps<FieldArrayRenderProps>;
 export interface ArrayHelpers<T = unknown[]> {
   /** Imperatively add a value to the end of an array */
@@ -118,6 +121,24 @@ const copyArrayLike = (arrayLike: ArrayLike<any>) => {
   }
 };
 
+const createAlterationHandler = (
+  alteration: boolean | Function,
+  defaultFunction: Function
+) => {
+  const fn = typeof alteration === 'function' ? alteration : defaultFunction;
+
+  return (data: any | any[]) => {
+    if (Array.isArray(data) || isObject(data)) {
+      const clone = copyArrayLike(data);
+      return fn(clone);
+    }
+
+    // This can be assumed to be a primitive, which
+    // is a case for top level validation errors
+    return data;
+  };
+};
+
 class FieldArrayInner<Values = {}> extends React.Component<
   FieldArrayConfig & { formik: FormikContextType<Values> },
   {}
@@ -132,6 +153,26 @@ class FieldArrayInner<Values = {}> extends React.Component<
     // @todo Fix TS 3.2.1
     this.remove = this.remove.bind(this) as any;
     this.pop = this.pop.bind(this) as any;
+  }
+
+  shouldComponentUpdate(props: any) {
+    if (this.props.shouldUpdate) {
+      return this.props.shouldUpdate(props, this.props);
+    } else if (
+      props.name !== this.props.name ||
+      getIn(props.formik.values, this.props.name) !==
+        getIn(this.props.formik.values, this.props.name) ||
+      getIn(props.formik.errors, this.props.name) !==
+        getIn(this.props.formik.errors, this.props.name) ||
+      getIn(props.formik.touched, this.props.name) !==
+        getIn(this.props.formik.touched, this.props.name) ||
+      Object.keys(this.props).length !== Object.keys(props).length ||
+      props.formik.isSubmitting !== this.props.formik.isSubmitting
+    ) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   componentDidUpdate(
@@ -160,9 +201,8 @@ class FieldArrayInner<Values = {}> extends React.Component<
       formik: { setFormikState },
     } = this.props;
     setFormikState((prevState: FormikState<any>) => {
-      let updateErrors = typeof alterErrors === 'function' ? alterErrors : fn;
-      let updateTouched =
-        typeof alterTouched === 'function' ? alterTouched : fn;
+      let updateErrors = createAlterationHandler(alterErrors, fn);
+      let updateTouched = createAlterationHandler(alterTouched, fn);
 
       // values fn should be executed before updateErrors and updateTouched,
       // otherwise it causes an error with unshift.
@@ -288,7 +328,12 @@ class FieldArrayInner<Values = {}> extends React.Component<
         if (isFunction(copy.splice)) {
           copy.splice(index, 1);
         }
-        return copy;
+        // if the array only includes undefined values we have to return an empty array
+        return isFunction(copy.every)
+          ? copy.every(v => v === undefined)
+            ? []
+            : copy
+          : copy;
       },
       true,
       true
@@ -305,7 +350,7 @@ class FieldArrayInner<Values = {}> extends React.Component<
     this.updateArrayField(
       // so this gets call 3 times
       (array: any[]) => {
-        const tmp = array;
+        const tmp = array.slice();
         if (!result) {
           result = tmp && tmp.pop && tmp.pop();
         }

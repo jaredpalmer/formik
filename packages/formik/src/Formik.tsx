@@ -513,7 +513,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
         .then((error: any) => {
           dispatch({
             type: 'SET_FIELD_ERROR',
-            payload: { field: name, value: error[name] },
+            payload: { field: name, value: getIn(error, name) },
           });
           dispatch({ type: 'SET_ISVALIDATING', payload: false });
         });
@@ -1066,12 +1066,13 @@ export function validateYupSchema<T extends FormikValues>(
   values: T,
   schema: any,
   sync: boolean = false,
-  context: any = {}
+  context?: any
 ): Promise<Partial<T>> {
-  const validateData: FormikValues = prepareDataForValidation(values);
-  return schema[sync ? 'validateSync' : 'validate'](validateData, {
+  const normalizedValues: FormikValues = prepareDataForValidation(values);
+
+  return schema[sync ? 'validateSync' : 'validate'](normalizedValues, {
     abortEarly: false,
-    context: context,
+    context: context || normalizedValues,
   });
 }
 

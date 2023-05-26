@@ -23,7 +23,7 @@ export default function Index({ posts }: any) {
           title="Blog"
           description="The latest Formik news, announcements, articles, and resources."
         />
-        <div className="container px-4 pt-16 pb-20 mx-auto bg-white lg:pt-24 lg:pb-28">
+        <div className="container px-4 lg:px-0 pt-16 pb-20 mx-auto bg-white lg:pt-24 lg:pb-28">
           <div className="relative ">
             <div>
               <h1 className="text-3xl font-extrabold leading-9 tracking-tight text-gray-900 lg:text-5xl sm:text-4xl sm:leading-10 ">

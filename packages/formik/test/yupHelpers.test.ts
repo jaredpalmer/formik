@@ -1,16 +1,24 @@
+import * as Yup from 'yup';
 import { validateYupSchema, yupToFormErrors } from '../src';
 
-const Yup = require('yup');
 const schema = Yup.object().shape({
-  name: Yup.string('Name must be a string').required('required'),
-  field: Yup.string('Field must be a string'),
+  name: Yup.string().required('required'),
+  field: Yup.string(),
 });
+
 const nestedSchema = Yup.object().shape({
   object: Yup.object().shape({
-    nestedField: Yup.string('Field must be a string'),
-    nestedArray: Yup.array().of(
-      Yup.string('Field must be a string').nullable()
-    ),
+    nestedField: Yup.string(),
+    nestedArray: Yup.array().of(Yup.string().nullable(true)),
+  }),
+});
+
+const deepNestedSchema = Yup.object({
+  object: Yup.object({
+    nestedField: Yup.number().required(),
+  }),
+  object2: Yup.object({
+    nestedFieldWithRef: Yup.number().min(0).max(Yup.ref('$object.nestedField')),
   }),
 });
 
@@ -32,8 +40,10 @@ describe('Yup helpers', () => {
       try {
         await validateYupSchema({}, schema);
       } catch (e) {
-        expect(e.name).toEqual('ValidationError');
-        expect(e.errors).toEqual(['required']);
+        const err = e as Yup.ValidationError;
+
+        expect(err.name).toEqual('ValidationError');
+        expect(err.errors).toEqual(['required']);
       }
     });
 
@@ -83,6 +93,20 @@ describe('Yup helpers', () => {
         expect(result.object!.nestedArray!).toEqual([undefined, 'foo', 'bar']);
       } catch (e) {
         throw e;
+      }
+    });
+
+    it('should provide current values as context to enable deep object field validation', async () => {
+      try {
+        await validateYupSchema(
+          { object: { nestedField: 23 }, object2: { nestedFieldWithRef: 24 } },
+          deepNestedSchema
+        );
+      } catch (e) {
+        expect((e as Yup.ValidationError).name).toEqual('ValidationError');
+        expect((e as Yup.ValidationError).errors).toEqual([
+          'object2.nestedFieldWithRef must be less than or equal to 23',
+        ]);
       }
     });
   });

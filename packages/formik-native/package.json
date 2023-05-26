@@ -19,7 +19,9 @@
   "module": "dist/index.esm.js",
   "react-native": "src/index.js",
   "typings": "dist/index.d.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "start": "tsdx watch --tsconfig tsconfig.build.json --verbose --noClean",
     "build": "tsdx build --tsconfig tsconfig.build.json",
@@ -38,6 +40,8 @@
     "@types/react": "^16.9.55",
     "@types/react-native": "^0.63.32",
     "react": "^17.0.1",
-    "react-native": "https://github.com/expo/react-native/archive/sdk-33.0.0.tar.gz"
+    "react-native": "https://github.com/expo/react-native/archive/sdk-33.0.0.tar.gz",
+    "tsdx": "^0.14.1",
+    "typescript": "^4.0.3"
   }
 }

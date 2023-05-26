@@ -14,6 +14,7 @@ import {
   FieldInputProps,
   FormikHelpers,
   FormikHandlers,
+  FieldKey,
 } from './types';
 import {
   isFunction,
@@ -560,7 +561,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   );
 
   const setFieldError = React.useCallback(
-    (field: string, value: string | undefined) => {
+    (field: FieldKey<Values>, value: string | undefined) => {
       dispatch({
         type: 'SET_FIELD_ERROR',
         payload: { field, value },
@@ -570,7 +571,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   );
 
   const setFieldValue = useEventCallback(
-    (field: string, value: any, shouldValidate?: boolean) => {
+    (field: FieldKey<Values>, value: any, shouldValidate?: boolean) => {
       dispatch({
         type: 'SET_FIELD_VALUE',
         payload: {
@@ -655,7 +656,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   );
 
   const setFieldTouched = useEventCallback(
-    (field: string, touched: boolean = true, shouldValidate?: boolean) => {
+    (field: FieldKey<Values>, touched: boolean = true, shouldValidate?: boolean) => {
       dispatch({
         type: 'SET_FIELD_TOUCHED',
         payload: {

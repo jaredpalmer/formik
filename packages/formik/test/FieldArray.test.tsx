@@ -1,5 +1,5 @@
-import * as React from 'react';
 import { act, fireEvent, render, screen } from '@testing-library/react';
+import * as React from 'react';
 import * as Yup from 'yup';
 
 import { FieldArray, Formik, isFunction } from '../src';

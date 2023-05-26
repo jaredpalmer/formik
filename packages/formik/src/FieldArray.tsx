@@ -1,22 +1,21 @@
-import * as React from 'react';
 import cloneDeep from 'lodash/cloneDeep';
-
+import * as React from 'react';
+import isEqual from 'react-fast-compare';
 import { connect } from './connect';
 import {
   FormikContextType,
+  FormikProps,
   FormikState,
   SharedRenderProps,
-  FormikProps,
 } from './types';
 import {
   getIn,
+  isEmptyArray,
   isEmptyChildren,
   isFunction,
+  isObject,
   setIn,
-  isEmptyArray,
 } from './utils';
-import isEqual from 'react-fast-compare';
-import { isObject } from './utils';
 
 export type FieldArrayRenderProps = ArrayHelpers & {
   form: FormikProps<any>;

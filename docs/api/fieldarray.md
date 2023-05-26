@@ -1,7 +1,6 @@
 ---
 id: fieldarray
 title: <FieldArray />
-custom_edit_url: https://github.com/jaredpalmer/formik/edit/master/docs/api/fieldarray.md
 ---
 
 `<FieldArray />` is a component that helps with common array/list manipulations. You pass it a `name` property with the path to the key within `values` that holds the relevant array. `<FieldArray />` will then give you access to array helper methods via render props. For convenience, calling these methods will trigger validation and also manage `touched` for you.
@@ -68,7 +67,7 @@ export const FriendList = () => (
 
 ### `name: string`
 
-The name or path to the relevant key in [`values`](api/formik.md#values-field-string-any).
+The name or path to the relevant key in [`values`](./formik.md#values-field-string-any).
 
 ### `validateOnChange?: boolean`
 
@@ -76,7 +75,7 @@ Default is `true`. Determines if form validation should or should not be run _af
 
 ## FieldArray Array of Objects
 
-You can also iterate through an array of objects, by following a convention of `object[index]property` or `object.index.property` for the name attributes of `<Field />` or `<input />` elements in `<FieldArray />`.
+You can also iterate through an array of objects, by following a convention of `object[index].property` or `object.index.property` for the name attributes of `<Field />` or `<input />` elements in `<FieldArray />`.
 
 ```jsx
 <Form>
@@ -86,9 +85,10 @@ You can also iterate through an array of objects, by following a convention of `
       <div>
         {values.friends.map((friend, index) => (
           <div key={index}>
+            {/** both these conventions do the same */}
             <Field name={`friends[${index}].name`} />
-            <Field name={`friends.${index}.age`} /> // both these conventions do
-            the same
+            <Field name={`friends.${index}.age`} />
+
             <button type="button" onClick={() => arrayHelpers.remove(index)}>
               -
             </button>
@@ -110,19 +110,15 @@ You can also iterate through an array of objects, by following a convention of `
 
 Validation can be tricky with `<FieldArray>`.
 
-If you use [`validationSchema`](api/formik.md#validationschema-schema-schema) and your form has array validation requirements (like a min length) as well as nested array field requirements, displaying errors can be tricky. Formik/Yup will show validation errors inside out. For example,
+If you use [`validationSchema`](./guides/validation.md#validationschema) and your form has array validation requirements (like a min length) as well as nested array field requirements, displaying errors can be tricky. Formik/Yup will show validation errors inside out. For example,
 
 ```js
 const schema = Yup.object().shape({
   friends: Yup.array()
     .of(
       Yup.object().shape({
-        name: Yup.string()
-          .min(4, 'too short')
-          .required('Required'), // these constraints take precedence
-        salary: Yup.string()
-          .min(3, 'cmon')
-          .required('Required'), // these constraints take precedence
+        name: Yup.string().min(4, 'too short').required('Required'), // these constraints take precedence
+        salary: Yup.string().min(3, 'cmon').required('Required'), // these constraints take precedence
       })
     )
     .required('Must have friends') // these constraints are shown if and only if inner constraints are satisfied

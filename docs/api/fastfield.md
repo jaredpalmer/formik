@@ -1,7 +1,6 @@
 ---
 id: fastfield
 title: <FastField />
-custom_edit_url: https://github.com/jaredpalmer/formik/edit/master/docs/api/fastfield.md
 ---
 
 ## Before we start
@@ -23,7 +22,7 @@ For example, `<FastField name="firstName" />` will only re-render when there are
 - A prop is added/removed to the `<FastField name="firstName" />`
 - The `name` prop changes
 
-Other than for these aforementioned situations, `<FastField />` will not re-render when other parts of of Formik state change. However, all updates triggered by a `<FastField />` will trigger re-renders to other "vanilla" `<Field />` components.
+Other than for these aforementioned situations, `<FastField />` will not re-render when other parts of Formik state change. However, all updates triggered by a `<FastField />` will trigger re-renders to other "vanilla" `<Field />` components.
 
 ## When to use `<FastField />`
 
@@ -51,9 +50,7 @@ const Basic = () => (
         firstName: Yup.string().required(),
         middleInitial: Yup.string(),
         lastName: Yup.string().required(),
-        email: Yup.string()
-          .email()
-          .required(),
+        email: Yup.string().email().required(),
       })}
       onSubmit={values => {
         setTimeout(() => {
@@ -69,8 +66,9 @@ const Basic = () => (
 
           {/** Updates for all changes because it's from the
            top-level formikProps which get all updates */}
-          {form.touched.firstName &&
-            form.errors.firstName && <div>{form.errors.firstName}</div>}
+          {form.touched.firstName && form.errors.firstName && (
+            <div>{form.errors.firstName}</div>
+          )}
 
           <label htmlFor="middleInitial">Middle Initial</label>
           <FastField name="middleInitial" placeholder="F">
@@ -107,7 +105,7 @@ const Basic = () => (
            and all changes by all <Field>s and <FastField>s */}
           <label htmlFor="lastName">LastName</label>
           <Field name="lastName" placeholder="Baby">
-            {( }) => (
+            {() => (
               <div>
                 <input {...field} />
                 {/**  Works because this is inside

@@ -4,9 +4,7 @@ import { object, string } from 'yup';
 import { Debug } from './Debug';
 
 const validationSchema = object().shape({
-  email: string()
-    .email('Invalid email')
-    .required('Field is required'),
+  email: string().email('Invalid email').required('Field is required'),
   username: string()
     .min(4, 'Must be at least 4 characters')
     .required('Field is required'),
@@ -32,20 +30,12 @@ const ValidateFieldWithSchema = () => (
         <Form>
           <label htmlFor="username">Username</label>
           <div>
-            <Field
-              name="username"
-              type="text"
-              placeholder="Username"
-            />
+            <Field name="username" type="text" placeholder="Username" />
             <ErrorMessage name="username" />
           </div>
           <br />
           <div>
-            <Field
-              name="email"
-              type="text"
-              placeholder="Email"
-            />
+            <Field name="email" type="text" placeholder="Email" />
             <ErrorMessage name="email" />
           </div>
 

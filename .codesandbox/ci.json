@@ -1,5 +1,6 @@
 {
-  "sandboxes": ["ooh2y"],
   "buildCommand": "build",
-  "packages": ["packages/formik", "packages/formik-native"]
+  "node": "16",
+  "packages": ["packages/formik", "packages/formik-native"],
+  "sandboxes": ["ooh2y"]
 }

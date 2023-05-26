@@ -1,10 +1,7 @@
 ---
 id: typescript
 title: TypeScript
-custom_edit_url: https://github.com/jaredpalmer/formik/edit/master/docs/guides/typescript.md
 ---
-
-[![TypeScript Types](https://img.shields.io/npm/types/formik.svg)](https://npm.im/formik)
 
 The Formik source code is written in TypeScript, so you can rest easy that Formik's
 types will always be up-to-date. As a mental model, Formik's type signatures are very
@@ -39,20 +36,13 @@ export const MyApp: React.FC<{}> = () => {
           alert(JSON.stringify(values, null, 2));
           actions.setSubmitting(false);
         }}
-        render={formikBag => (
-          <Form>
-            <Field
-              name="firstName"
-              render={({ field, form, meta }) => (
-                <div>
-                  <input type="text" {...field} placeholder="First Name" />
-                  {meta.touched && meta.error && meta.error}
-                </div>
-              )}
-            />
-          </Form>
-        )}
-      />
+      >
+        <Form>
+          <label htmlFor="firstName">First Name</label>
+          <Field id="firstName" name="firstName" placeholder="First Name" />
+          <button type="submit">Submit</button>
+        </Form>
+      </Formik>
     </div>
   );
 };
@@ -112,7 +102,7 @@ const MyForm = withFormik<MyFormProps, FormValues>({
 
   // Add a custom validation function (this can be async too!)
   validate: (values: FormValues) => {
-    let errors: FormikErrors = {};
+    let errors: FormikErrors<FormValues> = {};
     if (!values.email) {
       errors.email = 'Required';
     } else if (!isValidEmail(values.email)) {

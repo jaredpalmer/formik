@@ -5,6 +5,7 @@ import { Search } from './Search';
 export const Sidebar: React.FC<{
   active?: boolean;
   fixed?: boolean;
+  children: React.ReactNode;
 }> = ({ active, children, fixed }) => {
   const [searching, setSearching] = useState(false);
 

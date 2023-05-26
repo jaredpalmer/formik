@@ -7,8 +7,8 @@ const pinnedLogos = users.filter(p => p.pinned);
 export const ClientsMarquee = React.memo(props => {
   return (
     <div className="overflow-x-hidden">
-      <div className="relative translate-x-1/2" {...props}>
-        <div className="wrapper inline-block">
+      <div className="relative" {...props}>
+        <div className="inline-block wrapper">
           {pinnedLogos.map(({ caption, infoLink, image, style }) => (
             <Client
               className="mx-8 align-middle opacity-50"
@@ -27,14 +27,14 @@ export const ClientsMarquee = React.memo(props => {
             }
 
             to {
-              transform: translate3d(-50%, 0, 0);
+              transform: translate3d(-100%, 0, 0);
             }
           }
           .wrapper {
             position: relative;
             white-space: nowrap;
             display: inline-block;
-            animation: slidein 100s linear infinite;
+            animation: slidein 60s linear infinite;
             filter: grayscale(100%);
           }
         `}</style>

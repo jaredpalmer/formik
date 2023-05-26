@@ -1,5 +1,12 @@
 # formik-native
 
+## 2.1.19
+
+### Patch Changes
+
+- Updated dependencies [[`73de78d`](https://github.com/jaredpalmer/formik/commit/73de78d169f0bc25bd84dff0beaed3cc7a2cbb11), [`39a7bf7`](https://github.com/jaredpalmer/formik/commit/39a7bf7ca31f2ef5b149a8ff02bab64667e19654)]:
+  - formik@2.3.0
+
 ## 2.1.18
 
 ### Patch Changes

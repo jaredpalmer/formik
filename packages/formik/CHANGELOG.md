@@ -1,5 +1,50 @@
 # formik
 
+## 2.3.0
+
+### Minor Changes
+
+- [`73de78d`](https://github.com/jaredpalmer/formik/commit/73de78d169f0bc25bd84dff0beaed3cc7a2cbb11) [#3788](https://github.com/jaredpalmer/formik/pull/3788) Thanks [@probablyup](https://github.com/probablyup)! - Added typescript generics to `ArrayHelpers` interface and its methods so that users who use TypeScript can set the type for their arrays and have type safety on array utils. I have also gone ahead and made supplying a type for the generic optional for the sake of backwards compatibility so any existing TS code that does not give a type for the FieldArray will continue to work as they always have.
+
+* [`39a7bf7`](https://github.com/jaredpalmer/formik/commit/39a7bf7ca31f2ef5b149a8ff02bab64667e19654) [#3786](https://github.com/jaredpalmer/formik/pull/3786) Thanks [@probablyup](https://github.com/probablyup)! - Yup by default only allows for cross-field validation within the
+  same field object. This is not that useful in most scenarios because
+  a sufficiently-complex form will have several `yup.object()` in the
+  schema.
+
+  ```ts
+  const deepNestedSchema = Yup.object({
+    object: Yup.object({
+      nestedField: Yup.number().required(),
+    }),
+    object2: Yup.object({
+      // this doesn't work because `object.nestedField` is outside of `object2`
+      nestedFieldWithRef: Yup.number()
+        .min(0)
+        .max(Yup.ref('object.nestedField')),
+    }),
+  });
+  ```
+
+  However, Yup offers something called `context` which can operate across
+  the entire schema when using a \$ prefix:
+
+  ```ts
+  const deepNestedSchema = Yup.object({
+    object: Yup.object({
+      nestedField: Yup.number().required(),
+    }),
+    object2: Yup.object({
+      // this works because of the "context" feature, enabled by $ prefix
+      nestedFieldWithRef: Yup.number()
+        .min(0)
+        .max(Yup.ref('$object.nestedField')),
+    }),
+  });
+  ```
+
+  With this change, you may now validate against any field in the entire schema,
+  regardless of position when using the \$ prefix.
+
 ## 2.2.10
 
 ### Patch Changes

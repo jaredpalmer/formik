@@ -1,5 +1,13 @@
 # formik
 
+## 2.3.2
+
+### Patch Changes
+
+- [`f086b5a`](https://github.com/jaredpalmer/formik/commit/f086b5a3bb6a155b4dc4ac3735c88805f9f5c4e4) [#3237](https://github.com/jaredpalmer/formik/pull/3237) Thanks [@pieplu](https://github.com/pieplu)! - Changed `getIn` to return undefined when it can't find a value AND a parent of that value is "falsy" ( "" / 0 / null / false )
+
+* [`6d8f018`](https://github.com/jaredpalmer/formik/commit/6d8f018d7f52b863405b2e310be4b4195c2ba39c) [#3792](https://github.com/jaredpalmer/formik/pull/3792) Thanks [@probablyup](https://github.com/probablyup)! - Update the type for `setFieldValue` to reflect the returned `Promise` and potential returned error(s).
+
 ## 2.3.1
 
 ### Patch Changes

@@ -5,7 +5,7 @@
     "@changesets/changelog-github": "^0.2.7",
     "@changesets/cli": "^2.10.3",
     "@types/jest": "^26.0.14",
-    "cypress": "^5.2.0",
+    "cypress": "^12.13.0",
     "got": "10.0.4",
     "husky": "^4.3.0",
     "lerna": "^3.19.0",

@@ -96,7 +96,7 @@ export interface FormikHelpers<Values> {
     field: string,
     value: any,
     shouldValidate?: boolean
-  ): Promise<Values>;
+  ): Promise<void | FormikErrors<Values>>;
   /** Set error message of a form field directly */
   setFieldError: (field: string, message: string | undefined) => void;
   /** Set whether field has been touched directly */

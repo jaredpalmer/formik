@@ -15,11 +15,7 @@ export interface SearchProps {
 }
 
 function Hit({ hit, children }: any) {
-  return (
-    <Link href={hit.url.replace()}>
-      <a>{children}</a>
-    </Link>
-  );
+  return <Link href={hit.url.replace()}>{children}</Link>;
 }
 
 const options = {
@@ -96,7 +92,7 @@ export const Search: React.FC<SearchProps> = () => {
         <link
           rel="preconnect"
           href={`https://${options.appId}-dsn.algolia.net`}
-          crossOrigin="true"
+          crossOrigin="anonymous"
         />
       </Head>
 

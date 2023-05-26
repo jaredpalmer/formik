@@ -4,11 +4,11 @@ on: [pull_request]
 
 jobs:
   cypress-run:
-    runs-on: ubuntu-16.04
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - name: Cypress run
-        uses: cypress-io/github-action@v2
+        uses: cypress-io/github-action@v5
         with:
           start: npm run start:app
           wait-on: 'http://localhost:3000'

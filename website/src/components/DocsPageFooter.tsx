@@ -32,15 +32,14 @@ export const DocsPageFooter = React.memo<DocsPageFooterProps>(
                   removeFromLast(prevRoute.path, '.'),
                   tag as string
                 )}
+                className="flex-1 max-w-md block border border-gray-200 p-4 rounded-lg hover:text-blue-600 duration-150 ease-out"
               >
-                <a className="flex-1 max-w-md block border border-gray-200 p-4 rounded-lg betterhover:hover:text-blue-600 duration-150 ease-out">
-                  <span className="text-sm block text-gray-500 mb-1 ">
-                    Previous
-                  </span>
-                  <span className="text-xl block  font-semibold">
-                    {prevRoute.title}
-                  </span>
-                </a>
+                <span className="text-sm block text-gray-500 mb-1 ">
+                  Previous
+                </span>
+                <span className="text-xl block  font-semibold">
+                  {prevRoute.title}
+                </span>
               </NextLink>
             ) : (
               <div className="flex-1" />
@@ -51,15 +50,12 @@ export const DocsPageFooter = React.memo<DocsPageFooterProps>(
                   removeFromLast(nextRoute.path, '.'),
                   tag as string
                 )}
+                className="flex-1 max-w-md text-right block border border-gray-200  p-4 rounded-lg hover:text-blue-600 duration-150 ease-out"
               >
-                <a className="flex-1 max-w-md text-right block border border-gray-200  p-4 rounded-lg betterhover:hover:text-blue-600 duration-150 ease-out">
-                  <span className="text-sm block text-gray-500 mb-1 ">
-                    Next
-                  </span>
-                  <span className="text-xl block  font-semibold ">
-                    {nextRoute.title}
-                  </span>
-                </a>
+                <span className="text-sm block text-gray-500 mb-1 ">Next</span>
+                <span className="text-xl block  font-semibold ">
+                  {nextRoute.title}
+                </span>
               </NextLink>
             ) : (
               <div className="flex-1" />
@@ -74,10 +70,12 @@ export const DocsPageFooter = React.memo<DocsPageFooterProps>(
         <div className="flex my-2">
           <div className="md:flex-1 md:text-right">
             {tag ? (
-              <NextLink href={href} as={slug}>
-                <a className="text-gray-600 underline">
-                  Go to the live version of this page
-                </a>
+              <NextLink
+                href={href}
+                as={slug}
+                className="text-gray-600 underline"
+              >
+                Go to the live version of this page
               </NextLink>
             ) : (
               <a

@@ -22,7 +22,7 @@ For example, `<FastField name="firstName" />` will only re-render when there are
 - A prop is added/removed to the `<FastField name="firstName" />`
 - The `name` prop changes
 
-Other than for these aforementioned situations, `<FastField />` will not re-render when other parts of of Formik state change. However, all updates triggered by a `<FastField />` will trigger re-renders to other "vanilla" `<Field />` components.
+Other than for these aforementioned situations, `<FastField />` will not re-render when other parts of Formik state change. However, all updates triggered by a `<FastField />` will trigger re-renders to other "vanilla" `<Field />` components.
 
 ## When to use `<FastField />`
 

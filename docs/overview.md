@@ -45,7 +45,7 @@ to you.**
 My talk at React Alicante goes much deeper into Formik's motivation and philosophy, introduces the library (by watching me build a mini version of it), and demos how to build a non-trivial form (with arrays, custom inputs, etc.) using the real thing.
 
 <div className="embed-responsive aspect-ratio-16-9">
-  <iframe className="embed-responsive-item" width="600" height="315" src="https://www.youtube.com/embed/oiNtnehlaTo" frameBorder="0" allow="autoplay; encrypted-media" allowFullscreen title="Taming Forms in React - Jared Palmer"></iframe>
+  <iframe className="embed-responsive-item" width="600" height="315" src="https://www.youtube.com/embed/oiNtnehlaTo" frameBorder="0" allow="autoplay; encrypted-media" allowFullScreen title="Taming Forms in React - Jared Palmer"></iframe>
 </div>
 
 ## Influences
@@ -81,18 +81,6 @@ Formik is compatible with React v15+ and works with ReactDOM and React Native.
 
 You can also try before you buy with this
 **[demo of Formik on CodeSandbox.io](https://codesandbox.io/s/zKrK5YLDZ)**
-
-### CDN
-
-If you're not using a module bundler or package manager we also have a global ("UMD") build hosted on the [unpkg.com](https://unpkg.com) CDN. Simply add the following `<script>` tag to the bottom of your HTML file:
-
-```html
-<script src="https://unpkg.com/formik/dist/formik.umd.production.min.js"></script>
-```
-
-Once you've added this you will have access to the `window.Formik.<Insert_Component_Name_Here>` variables.
-
-> This installation/usage requires the [React CDN script bundles](https://reactjs.org/docs/cdn-links.html) to be on the page as well.
 
 ### In-browser Playgrounds
 

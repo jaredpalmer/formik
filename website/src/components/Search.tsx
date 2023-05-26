@@ -15,11 +15,7 @@ export interface SearchProps {
 }
 
 function Hit({ hit, children }: any) {
-  return (
-    <Link href={hit.url.replace()}>
-      <a>{children}</a>
-    </Link>
-  );
+  return <Link href={hit.url.replace()}>{children}</Link>;
 }
 
 const options = {
@@ -30,7 +26,7 @@ const options = {
 
 let DocSearchModal: any = null;
 
-export const Search: React.FC<SearchProps> = ({ appId }) => {
+export const Search: React.FC<SearchProps> = () => {
   const searchButtonRef = React.useRef<HTMLButtonElement | null>(null);
   const [isShowing, setIsShowing] = React.useState(false);
   const [initialQuery, setInitialQuery] = React.useState<string | null>(null);
@@ -95,8 +91,8 @@ export const Search: React.FC<SearchProps> = ({ appId }) => {
       <Head>
         <link
           rel="preconnect"
-          href={`https://${appId}-dsn.algolia.net`}
-          crossOrigin="true"
+          href={`https://${options.appId}-dsn.algolia.net`}
+          crossOrigin="anonymous"
         />
       </Head>
 

@@ -85,14 +85,18 @@ export interface FormikHelpers<Values> {
   setTouched: (
     touched: FormikTouched<Values>,
     shouldValidate?: boolean
-  ) => void;
+  ) => Promise<FormikErrors<Values> | void>;
   /** Manually set values object  */
   setValues: (
     values: React.SetStateAction<Values>,
     shouldValidate?: boolean
-  ) => void;
+  ) => Promise<FormikErrors<Values> | void>;
   /** Set value of form field directly */
-  setFieldValue: (field: string, value: any, shouldValidate?: boolean) => void;
+  setFieldValue: (
+    field: string,
+    value: any,
+    shouldValidate?: boolean
+  ) => Promise<FormikErrors<Values> | void>;
   /** Set error message of a form field directly */
   setFieldError: (field: string, message: string | undefined) => void;
   /** Set whether field has been touched directly */
@@ -100,11 +104,11 @@ export interface FormikHelpers<Values> {
     field: string,
     isTouched?: boolean,
     shouldValidate?: boolean
-  ) => void;
+  ) => Promise<FormikErrors<Values> | void>;
   /** Validate form values */
   validateForm: (values?: any) => Promise<FormikErrors<Values>>;
   /** Validate field value */
-  validateField: (field: string) => void;
+  validateField: (field: string) => Promise<string | undefined | void>;
   /** Reset form */
   resetForm: (nextState?: Partial<FormikState<Values>>) => void;
   /** Submit the form imperatively */
@@ -114,7 +118,10 @@ export interface FormikHelpers<Values> {
     f:
       | FormikState<Values>
       | ((prevState: FormikState<Values>) => FormikState<Values>),
-    cb?: () => void
+    /**
+     * @deprecated cb is not called
+     */
+    cbDeprecated?: () => void
   ) => void;
 }
 
@@ -150,16 +157,19 @@ export interface FormikHandlers {
   getFieldHelpers: <Value = any>(name: string) => FieldHelperProps<Value>;
 }
 
-/**
- * Base formik configuration/props shared between the HoC and Component.
- */
-export interface FormikSharedConfig<Props = {}> {
+export interface FormikValidationConfig {
   /** Tells Formik to validate the form on each input's onChange event */
   validateOnChange?: boolean;
   /** Tells Formik to validate the form on each input's onBlur event */
   validateOnBlur?: boolean;
   /** Tells Formik to validate upon mount */
   validateOnMount?: boolean;
+}
+
+/**
+ * Base formik configuration/props shared between the HoC and Component.
+ */
+export interface FormikSharedConfig<Props = {}> extends FormikValidationConfig {
   /** Tell Formik if initial form values are valid or not on first render */
   isInitialValid?: boolean | ((props: Props) => boolean);
   /** Should Formik reset the form when new initialValues change */
@@ -248,6 +258,15 @@ export interface FormikRegistration {
   unregisterField: (name: string) => void;
 }
 
+export type FormikApi<
+  Values extends FormikValues = FormikValues
+> = FormikHelpers<Values> &
+  FormikHandlers &
+  FormikRegistration &
+  FormikComputedProps<Values> &
+  FormikState<Values> &
+  FormikValidationConfig;
+
 /**
  * State, handlers, and helpers made available to Formik's primitive components through context.
  */
@@ -295,9 +314,15 @@ export interface FieldMetaProps<Value> {
 /** Imperative handles to change a field's value, error and touched */
 export interface FieldHelperProps<Value> {
   /** Set the field's value */
-  setValue: (value: Value, shouldValidate?: boolean) => void;
+  setValue: (
+    value: Value,
+    shouldValidate?: boolean
+  ) => Promise<FormikErrors<Value> | void>;
   /** Set the field's touched value */
-  setTouched: (value: boolean, shouldValidate?: boolean) => void;
+  setTouched: (
+    value: boolean,
+    shouldValidate?: boolean
+  ) => Promise<FormikErrors<Value> | void>;
   /** Set the field's error value */
   setError: (value: string | undefined) => void;
 }
@@ -318,6 +343,6 @@ export interface FieldInputProps<Value> {
   onBlur: FormikHandlers['handleBlur'];
 }
 
-export type FieldValidator = (
-  value: any
-) => string | void | Promise<string | void>;
+export type FieldValidatorResult = string | void | Promise<string | void>;
+
+export type FieldValidator = (value: any) => FieldValidatorResult;

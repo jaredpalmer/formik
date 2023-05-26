@@ -1066,12 +1066,13 @@ export function validateYupSchema<T extends FormikValues>(
   values: T,
   schema: any,
   sync: boolean = false,
-  context: any = {}
+  context?: any
 ): Promise<Partial<T>> {
-  const validateData: FormikValues = prepareDataForValidation(values);
-  return schema[sync ? 'validateSync' : 'validate'](validateData, {
+  const normalizedValues: FormikValues = prepareDataForValidation(values);
+
+  return schema[sync ? 'validateSync' : 'validate'](normalizedValues, {
     abortEarly: false,
-    context: context,
+    context: context || normalizedValues,
   });
 }
 

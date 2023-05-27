@@ -22,3 +22,6 @@ website/i18n
 !website2/yarn.lock
 .env
 .vercel
+/test-results/
+/playwright-report/
+/playwright/.cache/

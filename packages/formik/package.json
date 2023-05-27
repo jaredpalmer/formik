@@ -30,7 +30,9 @@
   "umd:main": "dist/formik.umd.production.js",
   "module": "dist/formik.esm.js",
   "typings": "dist/index.d.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "peerDependencies": {
     "react": ">=16.8.0"
   },
@@ -39,8 +41,7 @@
     "test:watch": "npm run test -- --watchAll",
     "start": "tsdx watch --tsconfig tsconfig.build.json --verbose --noClean",
     "build": "tsdx build --tsconfig tsconfig.build.json",
-    "lint": "tsdx lint",
-    "prepublish": "npm run build"
+    "lint": "tsdx lint"
   },
   "dependencies": {
     "deepmerge": "^2.1.1",

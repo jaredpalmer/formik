@@ -49,7 +49,7 @@ export function SidebarMobile({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="lg:hidden">
-      <Container>
+      <Container className="px-4">
         <div className="sidebar-search py-2 z-10">
           <Search />
         </div>
@@ -67,7 +67,7 @@ export function SidebarMobile({ children }: { children: React.ReactNode }) {
           </div>
         </label>
         <div className="docs-dropdown shadow-xl" ref={menuRef}>
-          <Container>
+          <Container className="px-4">
             <nav>{children}</nav>
           </Container>
         </div>

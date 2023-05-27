@@ -19,13 +19,14 @@
   "module": "dist/index.esm.js",
   "react-native": "src/index.js",
   "typings": "dist/index.d.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "start": "tsdx watch --tsconfig tsconfig.build.json --verbose --noClean",
     "build": "tsdx build --tsconfig tsconfig.build.json",
     "test": "tsdx test",
-    "lint": "tsdx lint",
-    "prepublish": "npm run build"
+    "lint": "tsdx lint"
   },
   "peerDependencies": {
     "react": ">=16.8.0"

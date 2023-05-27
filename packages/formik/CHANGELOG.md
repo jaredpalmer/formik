@@ -1,5 +1,11 @@
 # formik
 
+## 2.4.0
+
+### Minor Changes
+
+- [`2f53b70`](https://github.com/jaredpalmer/formik/commit/2f53b70ef9c086a268330fa263390a2edd0164dd) [#3796](https://github.com/jaredpalmer/formik/pull/3796) Thanks [@probablyup](https://github.com/probablyup)! - Add support for Yup ["transforms"](https://github.com/jquense/yup#parsing-transforms).
+
 ## 2.3.3
 
 ### Patch Changes

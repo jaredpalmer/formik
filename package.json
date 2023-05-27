@@ -6,22 +6,19 @@
     "@changesets/cli": "^2.10.3",
     "@types/jest": "^26.0.14",
     "cypress": "^12.13.0",
-    "got": "10.0.4",
     "husky": "^4.3.0",
-    "lerna": "^3.19.0",
     "lint-staged": "^10.4.0",
     "prettier": "^2.1.2",
-    "release": "6.0.1"
+    "turbo": "^1.9.9"
   },
   "workspaces": [
     "packages/*"
   ],
   "scripts": {
-    "lerna": "lerna",
-    "dev": "lerna run start --stream --parallel",
-    "test": "lerna run test --",
-    "build": "lerna run build",
-    "prepublish": "lerna run prepublish",
+    "dev": "turbo run start",
+    "test": "turbo run test --",
+    "build": "turbo run build",
+    "prepublish": "turbo run build",
     "format": "prettier --write 'examples/**/*' 'packages/*/src/**/*' 'website/src/**/*.{ts,tsx,js,jsx,md,mdx}' 'app/pages/**/*'  'packages/*/test/**/*' 'README.md'",
     "changeset": "changeset",
     "release": "changeset publish",

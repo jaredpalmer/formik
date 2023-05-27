@@ -15,7 +15,7 @@
     "packages/*"
   ],
   "scripts": {
-    "dev": "turbo run start --stream --parallel",
+    "dev": "turbo run start",
     "test": "turbo run test --",
     "build": "turbo run build",
     "prepublish": "turbo run prepublish",

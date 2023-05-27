@@ -1,5 +1,11 @@
 # formik
 
+## 2.3.3
+
+### Patch Changes
+
+- [`f075a0c`](https://github.com/jaredpalmer/formik/commit/f075a0cf8228c135ff71c58e139246ad24aae529) [#3798](https://github.com/jaredpalmer/formik/pull/3798) Thanks [@probablyup](https://github.com/probablyup)! - Fixed the use of generics for the `ArrayHelpers` type such that `any[]` is the default array type and for each individual method the array item type can be overridden if necessary.
+
 ## 2.3.2
 
 ### Patch Changes

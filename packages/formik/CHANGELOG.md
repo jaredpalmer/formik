@@ -1,5 +1,31 @@
 # formik
 
+## 2.4.0
+
+### Minor Changes
+
+- [`2f53b70`](https://github.com/jaredpalmer/formik/commit/2f53b70ef9c086a268330fa263390a2edd0164dd) [#3796](https://github.com/jaredpalmer/formik/pull/3796) Thanks [@probablyup](https://github.com/probablyup)! - Add support for Yup ["transforms"](https://github.com/jquense/yup#parsing-transforms).
+
+## 2.3.3
+
+### Patch Changes
+
+- [`f075a0c`](https://github.com/jaredpalmer/formik/commit/f075a0cf8228c135ff71c58e139246ad24aae529) [#3798](https://github.com/jaredpalmer/formik/pull/3798) Thanks [@probablyup](https://github.com/probablyup)! - Fixed the use of generics for the `ArrayHelpers` type such that `any[]` is the default array type and for each individual method the array item type can be overridden if necessary.
+
+## 2.3.2
+
+### Patch Changes
+
+- [`f086b5a`](https://github.com/jaredpalmer/formik/commit/f086b5a3bb6a155b4dc4ac3735c88805f9f5c4e4) [#3237](https://github.com/jaredpalmer/formik/pull/3237) Thanks [@pieplu](https://github.com/pieplu)! - Changed `getIn` to return undefined when it can't find a value AND a parent of that value is "falsy" ( "" / 0 / null / false )
+
+* [`6d8f018`](https://github.com/jaredpalmer/formik/commit/6d8f018d7f52b863405b2e310be4b4195c2ba39c) [#3792](https://github.com/jaredpalmer/formik/pull/3792) Thanks [@probablyup](https://github.com/probablyup)! - Update the type for `setFieldValue` to reflect the returned `Promise` and potential returned error(s).
+
+## 2.3.1
+
+### Patch Changes
+
+- [`290d92b`](https://github.com/jaredpalmer/formik/commit/290d92b34056593f551ad55baf00dc6f8c700bbe) [#3793](https://github.com/jaredpalmer/formik/pull/3793) Thanks [@probablyup](https://github.com/probablyup)! - Fix potential infinite loop scenario when `initialValues` changes but `enableReinitialize` is not truthy.
+
 ## 2.3.0
 
 ### Minor Changes

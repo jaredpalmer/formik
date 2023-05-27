@@ -134,15 +134,18 @@ describe('withFormik()', () => {
   });
 
   it('calls validationSchema', async () => {
-    const validate = jest.fn(() => Promise.resolve());
+    const validationSchema = Yup.object();
+
+    jest.spyOn(validationSchema, 'validate');
+
     const { getProps } = renderWithFormik({
-      validationSchema: { validate },
+      validationSchema,
     });
 
     act(() => {
       getProps().submitForm();
     });
-    await waitFor(() => expect(validate).toHaveBeenCalled());
+    await waitFor(() => expect(validationSchema.validate).toHaveBeenCalled());
   });
 
   it('calls validationSchema function with props', async () => {

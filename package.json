@@ -4,8 +4,8 @@
   "devDependencies": {
     "@changesets/changelog-github": "^0.2.7",
     "@changesets/cli": "^2.10.3",
+    "@playwright/test": "^1.34.3",
     "@types/jest": "^26.0.14",
-    "cypress": "^12.13.0",
     "husky": "^4.3.0",
     "lint-staged": "^10.4.0",
     "prettier": "^2.1.2",
@@ -24,9 +24,9 @@
     "release": "changeset publish",
     "git-reset": "git reset --hard HEAD",
     "git-clean": "git clean -d -x -e node_modules -e packages -f",
-    "cypress": "cypress run",
+    "e2e": "playwright test",
     "precommit": "lint-staged",
-    "cypress:open": "cypress open",
+    "e2e:ui": "playwright test --ui",
     "start:app": "npm run build && yarn --cwd packages/formik link && yarn --cwd node_modules/react link && yarn --cwd ./app link react formik && yarn --cwd ./app && yarn --cwd ./app run dev"
   },
   "lint-staged": {

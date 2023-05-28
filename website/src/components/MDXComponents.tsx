@@ -21,6 +21,6 @@ export default {
   pre: (p: any) => <div {...p} />,
   img: Img,
   code: dynamic(() => import('./Highlight2')),
-  // a: Link,
+  a: Link,
   Head,
 };

@@ -8,10 +8,13 @@
     "start": "next start"
   },
   "dependencies": {
-    "formik": "^2.1.5",
-    "next": "9.5.3",
-    "react": "16.13.1",
-    "react-dom": "16.13.1",
+    "formik": "latest",
+    "next": "latest",
+    "react": "latest",
+    "react-dom": "latest",
     "yup": "^0.29.3"
+  },
+  "devDependencies": {
+    "typescript": "^4.0.0"
   }
 }

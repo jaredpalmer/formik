@@ -10,11 +10,14 @@ import matter from 'gray-matter';
 import { postFilePaths, POSTS_PATH } from 'lib/blog/mdxUtils';
 import Link from 'next/link';
 import path from 'path';
+import { Inter } from 'next/font/google';
+
+const inter = Inter({ subsets: ['latin'] });
 
 export default function Index({ posts }: any) {
   return (
     <>
-      <div className="h-full min-h-full">
+      <div className={cn('h-full min-h-full', inter.className)}>
         <Banner />
         <Sticky>
           <Nav />
@@ -23,7 +26,7 @@ export default function Index({ posts }: any) {
           title="Blog"
           description="The latest Formik news, announcements, articles, and resources."
         />
-        <div className="container px-4 pt-16 pb-20 mx-auto bg-white lg:pt-24 lg:pb-28">
+        <div className="container px-4 lg:px-0 pt-16 pb-20 mx-auto bg-white lg:pt-24 lg:pb-28">
           <div className="relative ">
             <div>
               <h1 className="text-3xl font-extrabold leading-9 tracking-tight text-gray-900 lg:text-5xl sm:text-4xl sm:leading-10 ">
@@ -74,8 +77,7 @@ export default function Index({ posts }: any) {
                       )}
                       <h3 className="mt-2 text-2xl font-semibold leading-7 text-gray-900">
                         <Link
-                          as={`/blog/${post.filePath.replace(/\.mdx?$/, '')}`}
-                          href={`/blog/[slug]`}
+                          href={`/blog/${post.filePath.replace(/\.mdx?$/, '')}`}
                           className="block"
                         >
                           <span className="cursor-pointer hover:underline">
@@ -85,7 +87,7 @@ export default function Index({ posts }: any) {
                               </span>
                             )}
                             {post.data.title}
-                          </span>{' '}
+                          </span>
                         </Link>
                       </h3>
                       <div className="mt-3 leading-6 text-gray-500 ">
@@ -103,8 +105,7 @@ export default function Index({ posts }: any) {
 
                       <div className="mt-3">
                         <Link
-                          as={`/blog/${post.filePath.replace(/\.mdx?$/, '')}`}
-                          href={`/blog/[slug]`}
+                          href={`/blog/${post.filePath.replace(/\.mdx?$/, '')}`}
                           className="text-base font-semibold leading-6 text-blue-600 transition duration-150 ease-in-out hover:text-blue-500"
                         >
                           Read More<span aria-hidden="true">→</span>

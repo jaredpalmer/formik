@@ -1,7 +1,7 @@
 {
   "name": "formik",
   "description": "Build forms in React, without the tears",
-  "version": "2.2.9",
+  "version": "2.4.0",
   "license": "Apache-2.0",
   "author": "Jared Palmer <jared@palmer.net> (https://jaredpalmer.com)",
   "repository": "formium/formik",
@@ -30,7 +30,9 @@
   "umd:main": "dist/formik.umd.production.js",
   "module": "dist/formik.esm.js",
   "typings": "dist/index.d.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "peerDependencies": {
     "react": ">=16.8.0"
   },
@@ -39,8 +41,7 @@
     "test:watch": "npm run test -- --watchAll",
     "start": "tsdx watch --tsconfig tsconfig.build.json --verbose --noClean",
     "build": "tsdx build --tsconfig tsconfig.build.json",
-    "lint": "tsdx lint",
-    "prepublish": "npm run build"
+    "lint": "tsdx lint"
   },
   "dependencies": {
     "deepmerge": "^2.1.1",
@@ -62,6 +63,8 @@
     "just-debounce-it": "^1.1.0",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
+    "tsdx": "^0.14.1",
+    "typescript": "^4.0.3",
     "yup": "^0.28.1"
   },
   "jest": {

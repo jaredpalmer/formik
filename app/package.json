@@ -10,8 +10,8 @@
   "dependencies": {
     "formik": "latest",
     "next": "latest",
-    "react": "latest",
-    "react-dom": "latest",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "yup": "^0.29.3"
   },
   "devDependencies": {

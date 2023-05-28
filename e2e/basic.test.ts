@@ -24,13 +24,13 @@ test('should validate show errors on change and blur', async ({ page }) => {
   await page.goto('http://localhost:3000/sign-in');
 
   await page.fill('input[name="username"]', 'john');
-  await page.dispatchEvent('input[name="username"]', 'blur');
+  await page.locator('input[name="username"]').evaluate(node => node.blur());
   expect(
     await page.$$eval('input[name="username"] + p', nodes => nodes.length)
   ).toBe(0);
 
   await page.fill('input[name="password"]', '123');
-  await page.dispatchEvent('input[name="password"]', 'blur');
+  await page.locator('input[name="password"]').evaluate(node => node.blur());
   expect(
     await page.$$eval('input[name="password"] + p', nodes => nodes.length)
   ).toBe(0);
@@ -44,13 +44,13 @@ test('should validate show errors on blur only', async ({ page }) => {
   );
 
   await page.fill('input[name="username"]', 'john');
-  await page.dispatchEvent('input[name="username"]', 'blur');
+  await page.locator('input[name="username"]').evaluate(node => node.blur());
   expect(
     await page.$$eval('input[name="username"] + p', nodes => nodes.length)
   ).toBe(0);
 
   await page.fill('input[name="password"]', '123');
-  await page.dispatchEvent('input[name="password"]', 'blur');
+  await page.locator('input[name="password"]').evaluate(node => node.blur());
   expect(
     await page.$$eval('input[name="password"] + p', nodes => nodes.length)
   ).toBe(0);

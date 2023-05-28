@@ -38,7 +38,7 @@
     "@react-native-community/eslint-config": "^0.0.5",
     "@types/react": "^16.9.55",
     "@types/react-native": "^0.63.32",
-    "react": "^17.0.1",
+    "react": "^18.2.0",
     "react-native": "https://github.com/expo/react-native/archive/sdk-33.0.0.tar.gz",
     "tsdx": "^0.14.1",
     "typescript": "^4.0.3"

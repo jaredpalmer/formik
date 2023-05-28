@@ -12,13 +12,14 @@
     "turbo": "^1.9.9"
   },
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "website"
   ],
   "scripts": {
     "dev": "turbo run start",
     "test": "turbo run test --",
     "build": "turbo run build",
-    "prepublish": "turbo run build",
+    "prepublish": "turbo run build --filter {./packages/*}...",
     "format": "prettier --write 'examples/**/*' 'packages/*/src/**/*' 'website/src/**/*.{ts,tsx,js,jsx,md,mdx}' 'app/pages/**/*'  'packages/*/test/**/*' 'README.md'",
     "changeset": "changeset",
     "release": "changeset publish",

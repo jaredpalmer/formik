@@ -37,7 +37,9 @@ import MDXComponents from 'components/MDXComponents';
 import { serialize } from 'next-mdx-remote/serialize';
 import { MDXRemote } from 'next-mdx-remote';
 import rehypeDocs from 'lib/docs/rehype-docs';
+import { Inter } from 'next/font/google';
 
+const inter = Inter({ subsets: ['latin'] });
 interface DocsProps {
   page: Page;
   routes: RouteItem[];
@@ -88,7 +90,7 @@ export default function Docs({ page, routes, route: _route }: DocsProps) {
           <meta name="robots" content="noindex" />
         </Head>
       )}
-      <div>
+      <div className={inter.className}>
         <Banner />
         {isMobile ? (
           <Nav />

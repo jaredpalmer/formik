@@ -22,6 +22,10 @@ import { Seo } from './Seo';
 import MDXComponents from './MDXComponents';
 import Head from 'next/head';
 import { getManifest } from 'manifests/getManifest';
+import { Inter } from 'next/font/google';
+
+// If loading a variable font, you don't need to specify the font weight
+const inter = Inter({ subsets: ['latin'] });
 interface DocsProps {
   page: Page;
   routes: RouteItem[];
@@ -59,7 +63,7 @@ export const LayoutDocs: React.FC<DocsProps> = props => {
           <meta name="robots" content="noindex" />
         </Head>
       )}
-      <div>
+      <div className={inter.className}>
         <Banner />
         {isMobile ? (
           <Nav />

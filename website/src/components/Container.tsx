@@ -1,10 +1,12 @@
 import * as React from 'react';
 import cn from 'classnames';
+import { HTMLProps } from 'react';
 
-export interface ContainerProps {}
-
-export const Container: React.FC<ContainerProps> = props => {
-  return <div className={cn('container mx-auto')} {...props} />;
+export const Container: React.FC<JSX.IntrinsicElements['div']> = ({
+  className,
+  ...props
+}) => {
+  return <div className={cn('container mx-auto', className)} {...props} />;
 };
 
 Container.displayName = 'Container';

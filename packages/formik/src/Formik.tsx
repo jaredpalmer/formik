@@ -218,10 +218,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
    */
   const runValidationSchema = React.useCallback(
     (values: Values, field?: string): Promise<FormikErrors<Values>> => {
-      const validationSchema = props.validationSchema;
-      const schema = isFunction(validationSchema)
-        ? validationSchema(field)
-        : validationSchema;
+      const schema = getValidationSchema(props.validationSchema);
       const promise =
         field && schema.validateAt
           ? schema.validateAt(field, values)
@@ -417,10 +414,9 @@ export function useFormik<Values extends FormikValues = FormikValues>({
       if (enableReinitialize) {
         initialValues.current = props.initialValues;
         resetForm();
-      }
-
-      if (validateOnMount) {
-        validateFormWithHighPriority(initialValues.current);
+        if (validateOnMount) {
+          validateFormWithHighPriority(initialValues.current);
+        }
       }
     }
   }, [
@@ -513,7 +509,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
         .then((error: any) => {
           dispatch({
             type: 'SET_FIELD_ERROR',
-            payload: { field: name, value: error[name] },
+            payload: { field: name, value: getIn(error, name) },
           });
           dispatch({ type: 'SET_ISVALIDATING', payload: false });
         });
@@ -846,7 +842,11 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   };
 
   const executeSubmit = useEventCallback(() => {
-    return onSubmit(state.values, imperativeMethods);
+    const schema = getValidationSchema(props.validationSchema);
+    const actualizedValues =
+      schema && schema.cast ? schema.cast(state.values) : state.values;
+
+    return onSubmit(actualizedValues, imperativeMethods);
   });
 
   const handleReset = useEventCallback(e => {
@@ -1024,6 +1024,16 @@ export function Formik<
   );
 }
 
+function getValidationSchema<Values extends FormikValues = FormikValues>(
+  validationSchema?: FormikConfig<Values>['validationSchema']
+) {
+  if (!validationSchema) {
+    return;
+  }
+
+  return isFunction(validationSchema) ? validationSchema() : validationSchema;
+}
+
 function warnAboutMissingIdentifier({
   htmlContent,
   documentationAnchorLink,
@@ -1066,12 +1076,13 @@ export function validateYupSchema<T extends FormikValues>(
   values: T,
   schema: any,
   sync: boolean = false,
-  context: any = {}
+  context?: any
 ): Promise<Partial<T>> {
-  const validateData: FormikValues = prepareDataForValidation(values);
-  return schema[sync ? 'validateSync' : 'validate'](validateData, {
+  const normalizedValues: FormikValues = prepareDataForValidation(values);
+
+  return schema[sync ? 'validateSync' : 'validate'](normalizedValues, {
     abortEarly: false,
-    context: context,
+    context: context || normalizedValues,
   });
 }
 

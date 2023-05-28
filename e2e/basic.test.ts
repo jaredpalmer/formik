@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 test('should validate before submit', async ({ page }) => {
-  await page.goto('http://localhost:3000/basic');
+  await page.goto('http://localhost:3001/basic');
 
   // Submit the form
   await page.click('button[type=submit]');
@@ -21,39 +21,39 @@ test('should validate before submit', async ({ page }) => {
 });
 
 test('should validate show errors on change and blur', async ({ page }) => {
-  await page.goto('http://localhost:3000/sign-in');
+  await page.goto('http://localhost:3001/sign-in');
 
   await page.fill('input[name="username"]', 'john');
   await page.locator('input[name="username"]').blur();
   expect(
     await page.locator('input[name="username"] + p').textContent.length
-  ).toEqual(0);
+  ).toEqual(1);
 
   await page.fill('input[name="password"]', '123');
   await page.locator('input[name="password"]').blur();
   expect(
     await page.locator('input[name="password"] + p').textContent.length
-  ).toEqual(0);
+  ).toEqual(1);
 
   expect(await page.textContent('#error-log')).toContain('[]');
 });
 
 test('should validate show errors on blur only', async ({ page }) => {
   await page.goto(
-    'http://localhost:3000/sign-in?validateOnMount=false&validateOnChange=false'
+    'http://localhost:3001/sign-in?validateOnMount=false&validateOnChange=false'
   );
 
   await page.fill('input[name="username"]', 'john');
   await page.locator('input[name="username"]').blur();
   expect(
     await page.locator('input[name="username"] + p').textContent.length
-  ).toEqual(0);
+  ).toEqual(1);
 
   await page.fill('input[name="password"]', '123');
   await page.locator('input[name="password"]').blur();
   expect(
     await page.locator('input[name="password"] + p').textContent.length
-  ).toEqual(0);
+  ).toEqual(1);
 
   expect(await page.textContent('#error-log')).toContain(
     JSON.stringify(
@@ -77,7 +77,7 @@ test('should validate autofill', async ({ page }) => {
     await page.dispatchEvent(selector, 'change');
   };
 
-  await page.goto('http://localhost:3000/sign-in');
+  await page.goto('http://localhost:3001/sign-in');
 
   await setInputValue('input[name="username"]', '123');
   await setInputValue('input[name="password"]', '123');

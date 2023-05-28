@@ -234,4 +234,9 @@ export const users = [
     image: '/images/logos/benchmark-uae.svg',
     infoLink: 'https://benchmark.ae/',
   },
+  {
+    caption: 'iTitans',
+    image: '/images/logos/ititans.png',
+    infoLink: 'https://www.ititans.com/',
+  },
 ];

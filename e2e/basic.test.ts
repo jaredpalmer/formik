@@ -26,14 +26,14 @@ test('should validate show errors on change and blur', async ({ page }) => {
   await page.fill('input[name="username"]', 'john');
   await page.locator('input[name="username"]').blur();
   expect(
-    await page.locator('input[name="username"] + p').isVisible()
-  ).toBeFalsy();
+    await page.locator('input[name="username"] + p').textContent.length
+  ).toEqual(0);
 
   await page.fill('input[name="password"]', '123');
   await page.locator('input[name="password"]').blur();
   expect(
-    await page.locator('input[name="password"] + p').isVisible()
-  ).toBeFalsy();
+    await page.locator('input[name="password"] + p').textContent.length
+  ).toEqual(0);
 
   expect(await page.textContent('#error-log')).toContain('[]');
 });
@@ -46,14 +46,14 @@ test('should validate show errors on blur only', async ({ page }) => {
   await page.fill('input[name="username"]', 'john');
   await page.locator('input[name="username"]').blur();
   expect(
-    await page.locator('input[name="username"] + p').isVisible()
-  ).toBeFalsy();
+    await page.locator('input[name="username"] + p').textContent.length
+  ).toEqual(0);
 
   await page.fill('input[name="password"]', '123');
   await page.locator('input[name="password"]').blur();
   expect(
-    await page.locator('input[name="password"] + p').isVisible()
-  ).toBeFalsy();
+    await page.locator('input[name="password"] + p').textContent.length
+  ).toEqual(0);
 
   expect(await page.textContent('#error-log')).toContain(
     JSON.stringify(

@@ -234,4 +234,9 @@ export const users = [
     image: '/images/logos/benchmark-uae.svg',
     infoLink: 'https://benchmark.ae/',
   },
+  {
+    caption: 'RemoteScout',
+    image: '/images/logos/remotescout.svg',
+    infoLink: 'https://remotescout.ch/',
+  },
 ];

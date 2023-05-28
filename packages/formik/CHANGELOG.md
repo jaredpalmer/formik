@@ -1,5 +1,92 @@
 # formik
 
+## 2.4.0
+
+### Minor Changes
+
+- [`2f53b70`](https://github.com/jaredpalmer/formik/commit/2f53b70ef9c086a268330fa263390a2edd0164dd) [#3796](https://github.com/jaredpalmer/formik/pull/3796) Thanks [@probablyup](https://github.com/probablyup)! - Add support for Yup ["transforms"](https://github.com/jquense/yup#parsing-transforms).
+
+## 2.3.3
+
+### Patch Changes
+
+- [`f075a0c`](https://github.com/jaredpalmer/formik/commit/f075a0cf8228c135ff71c58e139246ad24aae529) [#3798](https://github.com/jaredpalmer/formik/pull/3798) Thanks [@probablyup](https://github.com/probablyup)! - Fixed the use of generics for the `ArrayHelpers` type such that `any[]` is the default array type and for each individual method the array item type can be overridden if necessary.
+
+## 2.3.2
+
+### Patch Changes
+
+- [`f086b5a`](https://github.com/jaredpalmer/formik/commit/f086b5a3bb6a155b4dc4ac3735c88805f9f5c4e4) [#3237](https://github.com/jaredpalmer/formik/pull/3237) Thanks [@pieplu](https://github.com/pieplu)! - Changed `getIn` to return undefined when it can't find a value AND a parent of that value is "falsy" ( "" / 0 / null / false )
+
+* [`6d8f018`](https://github.com/jaredpalmer/formik/commit/6d8f018d7f52b863405b2e310be4b4195c2ba39c) [#3792](https://github.com/jaredpalmer/formik/pull/3792) Thanks [@probablyup](https://github.com/probablyup)! - Update the type for `setFieldValue` to reflect the returned `Promise` and potential returned error(s).
+
+## 2.3.1
+
+### Patch Changes
+
+- [`290d92b`](https://github.com/jaredpalmer/formik/commit/290d92b34056593f551ad55baf00dc6f8c700bbe) [#3793](https://github.com/jaredpalmer/formik/pull/3793) Thanks [@probablyup](https://github.com/probablyup)! - Fix potential infinite loop scenario when `initialValues` changes but `enableReinitialize` is not truthy.
+
+## 2.3.0
+
+### Minor Changes
+
+- [`73de78d`](https://github.com/jaredpalmer/formik/commit/73de78d169f0bc25bd84dff0beaed3cc7a2cbb11) [#3788](https://github.com/jaredpalmer/formik/pull/3788) Thanks [@probablyup](https://github.com/probablyup)! - Added typescript generics to `ArrayHelpers` interface and its methods so that users who use TypeScript can set the type for their arrays and have type safety on array utils. I have also gone ahead and made supplying a type for the generic optional for the sake of backwards compatibility so any existing TS code that does not give a type for the FieldArray will continue to work as they always have.
+
+* [`39a7bf7`](https://github.com/jaredpalmer/formik/commit/39a7bf7ca31f2ef5b149a8ff02bab64667e19654) [#3786](https://github.com/jaredpalmer/formik/pull/3786) Thanks [@probablyup](https://github.com/probablyup)! - Yup by default only allows for cross-field validation within the
+  same field object. This is not that useful in most scenarios because
+  a sufficiently-complex form will have several `yup.object()` in the
+  schema.
+
+  ```ts
+  const deepNestedSchema = Yup.object({
+    object: Yup.object({
+      nestedField: Yup.number().required(),
+    }),
+    object2: Yup.object({
+      // this doesn't work because `object.nestedField` is outside of `object2`
+      nestedFieldWithRef: Yup.number()
+        .min(0)
+        .max(Yup.ref('object.nestedField')),
+    }),
+  });
+  ```
+
+  However, Yup offers something called `context` which can operate across
+  the entire schema when using a \$ prefix:
+
+  ```ts
+  const deepNestedSchema = Yup.object({
+    object: Yup.object({
+      nestedField: Yup.number().required(),
+    }),
+    object2: Yup.object({
+      // this works because of the "context" feature, enabled by $ prefix
+      nestedFieldWithRef: Yup.number()
+        .min(0)
+        .max(Yup.ref('$object.nestedField')),
+    }),
+  });
+  ```
+
+  With this change, you may now validate against any field in the entire schema,
+  regardless of position when using the \$ prefix.
+
+## 2.2.10
+
+### Patch Changes
+
+- [`22e236e`](https://github.com/jaredpalmer/formik/commit/22e236ed8035c7c5824232202c8ce52193338d5a) [#3784](https://github.com/jaredpalmer/formik/pull/3784) Thanks [@probablyup](https://github.com/probablyup)! - Improve performance of the `FieldArray` component by adding a `shouldComponentUpdate` check; this should help avoid unnecessary re-renders which may affect the performance of a form.
+
+* [`bc9cb28`](https://github.com/jaredpalmer/formik/commit/bc9cb28df7ad07277a499e8301cfd1bb7b230b86) [#3785](https://github.com/jaredpalmer/formik/pull/3785) Thanks [@probablyup](https://github.com/probablyup)! - Fixed field error state for array fields that have an error and become empty through an API like `arrayHelpers.remove`.
+
+  The prior behavior resolved the field error to `[undefined]`, now it is simply `undefined`.
+
+- [`9cbf150`](https://github.com/jaredpalmer/formik/commit/9cbf150e65d7c5498900f19b4fa1897ca8a2c87f) [#3787](https://github.com/jaredpalmer/formik/pull/3787) Thanks [@probablyup](https://github.com/probablyup)! - Fix infinite loop issue in `Field` when field helpers (`setTouched`, etc) are used as an argument in `React.useEffect`.
+
+* [`9c75a9f`](https://github.com/jaredpalmer/formik/commit/9c75a9f639eb38ad55c351e5e1def8a7e5ebd1f3) [#3780](https://github.com/jaredpalmer/formik/pull/3780) Thanks [@probablyup](https://github.com/probablyup)! - Fixed an issue with array field errors being incorrectly split into an array of individual characters instead of an array of error strings.
+
+- [`35fa4cc`](https://github.com/jaredpalmer/formik/commit/35fa4cc38260d709a5570dd3c9ef82831758a5f5) [#3783](https://github.com/jaredpalmer/formik/pull/3783) Thanks [@probablyup](https://github.com/probablyup)! - Fix validation of deep.dot.path field references when using the `validateField` API.
+
 ## 2.2.9
 
 ### Patch Changes

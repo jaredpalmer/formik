@@ -1,9 +1,8 @@
+import va from '@vercel/analytics';
+import cn from 'classnames';
+import { useRouter } from 'next/router';
 import * as React from 'react';
 import { mergeProps, useButton, useHover } from 'react-aria';
-import Image from 'next/legacy/image';
-import cn from 'classnames';
-import { trackCustomEvent } from 'utils/analytics';
-import { useRouter } from 'next/router';
 
 export interface FeedbackButtonProps {
   intent: 'tears' | 'meh' | 'happy' | 'awesome';
@@ -59,7 +58,7 @@ export function ReactionForm() {
   }, [asPath, setFeedbackGiven]);
 
   const makeTrackedHandler = (value: number) => () => {
-    trackCustomEvent({
+    va.track('Feedback Button', {
       category: 'Feedback Button',
       action: 'feedback',
       name: 'feedback',

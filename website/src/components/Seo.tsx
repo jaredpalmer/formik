@@ -1,6 +1,6 @@
 import React from 'react';
 import Head from 'next/head';
-import { withRouter, Router } from 'next/router';
+import { useRouter } from 'next/router';
 
 export interface SeoProps {
   title: string;
@@ -10,14 +10,14 @@ export interface SeoProps {
   children?: React.ReactNode;
 }
 
-export const Seo = withRouter(
-  ({
-    title,
-    description,
-    image = '/images/formik-og.png',
-    router,
-    children,
-  }: SeoProps & { router: Router }) => (
+export const Seo: React.FC<SeoProps> = ({
+  title,
+  description,
+  image = '/images/formik-og.png',
+  children,
+}: SeoProps) => {
+  const router = useRouter();
+  return (
     <Head>
       {/* DEFAULT */}
 
@@ -81,5 +81,5 @@ export const Seo = withRouter(
 
       {children}
     </Head>
-  )
-);
+  );
+};

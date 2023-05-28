@@ -8,7 +8,7 @@ export interface FooterProps {}
 export const Footer: React.FC<FooterProps> = props => {
   return (
     <div className="bg-gray-50 border-t border-gray-200">
-      <div className="container mx-auto py-12 px-4 sm:px-6 lg:py-16 lg:px-8">
+      <div className="container mx-auto py-12 lg:py-16 px-4 lg:px-0 ">
         <div className="lg:grid lg:grid-cols-3 lg:gap-8">
           <div className="lg:grid lg:grid-cols-3 gap-8 lg:col-span-2">
             <div className="mt-12 lg:mt-0">
@@ -178,7 +178,7 @@ export const Footer: React.FC<FooterProps> = props => {
                 type="email"
                 name="email"
                 required={true}
-                className="appearance-none w-full px-4 py-2 border border-gray-300 text-base leading-6 rounded-md text-gray-900 bg-white placeholder-gray-500 focus:outline-none focus:ring focus:ring-blue focus:border-blue-300 transition duration-150 ease-in-out lg:max-w-xs"
+                className="appearance-none w-full px-4 py-2 outline-none border border-gray-300 text-base leading-6 rounded-md text-gray-900 bg-white placeholder-gray-500 focus:outline-none focus:ring focus:ring-blue focus:border-blue-300 transition duration-150 ease-in-out lg:max-w-xs"
                 placeholder="Enter your email"
               />
               <span className="mt-2 lg:mt-0 lg:ml-3 flex-shrink-0 inline-flex rounded-md shadow-sm">

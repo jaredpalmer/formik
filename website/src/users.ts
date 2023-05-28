@@ -234,4 +234,9 @@ export const users = [
     image: '/images/logos/benchmark-uae.svg',
     infoLink: 'https://benchmark.ae/',
   },
+  {
+    caption: 'Authdog',
+    image: '/images/logos/authdog.svg',
+    infoLink: 'https://www.authdog.com',
+  },
 ];

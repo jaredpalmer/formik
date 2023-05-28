@@ -234,4 +234,9 @@ export const users = [
     image: '/images/logos/benchmark-uae.svg',
     infoLink: 'https://benchmark.ae/',
   },
+  {
+    caption: 'Pharmacy Marketplace',
+    image: '/images/logos/pharmacymarketplace.png',
+    infoLink: 'https://pharmacymarketplace.com',
+  },
 ];

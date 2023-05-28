@@ -234,4 +234,9 @@ export const users = [
     image: '/images/logos/benchmark-uae.svg',
     infoLink: 'https://benchmark.ae/',
   },
+  {
+    caption: 'Northflank',
+    image: '/images/logos/northflank.svg',
+    infoLink: 'https://northflank.com',
+  },
 ];

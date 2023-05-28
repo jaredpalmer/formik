@@ -71,7 +71,7 @@
     "@types/mdx-js__react": "^1.5.1",
     "@types/node": "^13.13.0",
     "@types/node-fetch": "^2.5.7",
-    "@types/react": "^18.2.6",
+    "@types/react": "^18.2.7",
     "@types/react-dom": "^18.2.4",
     "@types/react-highlight": "^0.12.2",
     "algoliasearch": "3.35.1",

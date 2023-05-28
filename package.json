@@ -12,7 +12,8 @@
     "turbo": "^1.9.9"
   },
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "website"
   ],
   "scripts": {
     "dev": "turbo run start",

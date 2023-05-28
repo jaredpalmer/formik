@@ -2,9 +2,7 @@ import * as React from 'react';
 import cn from 'classnames';
 import { HTMLProps } from 'react';
 
-export type ContainerProps = HTMLProps<HTMLDivElement>;
-
-export const Container: React.FC<ContainerProps> = ({
+export const Container: React.FC<JSX.IntrinsicElements['div']> = ({
   className,
   ...props
 }) => {

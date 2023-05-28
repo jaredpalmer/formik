@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 test('should validate before submit', async ({ page }) => {
-  await page.goto('http://localhost:3001/basic');
+  await page.goto('/basic');
 
   // Submit the form
   await page.click('button[type=submit]');
@@ -21,7 +21,7 @@ test('should validate before submit', async ({ page }) => {
 });
 
 test('should validate show errors on change and blur', async ({ page }) => {
-  await page.goto('http://localhost:3001/sign-in');
+  await page.goto('/sign-in');
 
   await page.fill('input[name="username"]', 'john');
   await page.locator('input[name="username"]').blur();
@@ -39,9 +39,7 @@ test('should validate show errors on change and blur', async ({ page }) => {
 });
 
 test('should validate show errors on blur only', async ({ page }) => {
-  await page.goto(
-    'http://localhost:3001/sign-in?validateOnMount=false&validateOnChange=false'
-  );
+  await page.goto('/sign-in?validateOnMount=false&validateOnChange=false');
 
   await page.fill('input[name="username"]', 'john');
   await page.locator('input[name="username"]').blur();
@@ -77,7 +75,7 @@ test('should validate autofill', async ({ page }) => {
     await page.dispatchEvent(selector, 'change');
   };
 
-  await page.goto('http://localhost:3001/sign-in');
+  await page.goto('/sign-in');
 
   await setInputValue('input[name="username"]', '123');
   await setInputValue('input[name="password"]', '123');

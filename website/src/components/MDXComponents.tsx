@@ -1,8 +1,8 @@
 import * as React from 'react';
 import dynamic from 'next/dynamic';
-import Image from "next/image";
-import { CustomLink } from './CustomLink';
+import Image from 'next/image';
 import Head from 'next/head';
+import Link from 'next/link';
 
 const Img = (props: any) => (
   <Image
@@ -10,9 +10,10 @@ const Img = (props: any) => (
     loading="lazy"
     sizes="100vw"
     style={{
-      width: "100%",
-      height: "auto"
-    }} />
+      width: '100%',
+      height: 'auto',
+    }}
+  />
 );
 
 export default {
@@ -20,6 +21,6 @@ export default {
   pre: (p: any) => <div {...p} />,
   img: Img,
   code: dynamic(() => import('./Highlight2')),
-  a: CustomLink,
+  // a: Link,
   Head,
 };

@@ -71,6 +71,7 @@ const Home: React.FC<HomeProps> = props => {
           <div className="py-24 mx-auto container px-4 lg:px-0 sm:mt-12  relative">
             <div className="hidden lg:block absolute lg:w-3/5 right-0 lg:-rotate-[30deg] lg:translate-x-1/3 lg:-translate-y-16 md:w-1/2 sm:w-2/3 top-0  transform  -translate-y-12">
               <Image
+                alt="Formik Hero Background Image"
                 src="/images/hero6.png"
                 width={1042}
                 height={990}

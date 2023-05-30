@@ -722,7 +722,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     dispatch({ type: 'SET_ISSUBMITTING', payload: isSubmitting });
   }, []);
 
-  const submitForm = useEventCallback(() => {
+  const submitForm = useEventCallback((options?: { skipValidation?: boolean } ) => {
     dispatch({ type: 'SUBMIT_ATTEMPT' });
     return validateFormWithHighPriority().then(
       (combinedErrors: FormikErrors<Values>) => {
@@ -736,7 +736,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
         const isInstanceOfError = combinedErrors instanceof Error;
         const isActuallyValid =
           !isInstanceOfError && Object.keys(combinedErrors).length === 0;
-        if (isActuallyValid) {
+        if (isActuallyValid || options?.skipValidation) {
           // Proceed with submit...
           //
           // To respect sync submit fns, we can't simply wrap executeSubmit in a promise and
@@ -759,6 +759,15 @@ export function useFormik<Values extends FormikValues = FormikValues>({
             throw error;
           }
 
+          if(options?.skipValidation){
+            return Promise.resolve(promiseOrUndefined)
+              .then(result => {
+                dispatch({ type: 'SUBMIT_SUCCESS' });
+                return result
+              })
+          }
+
+          
           return Promise.resolve(promiseOrUndefined)
             .then(result => {
               if (!!isMounted.current) {
@@ -767,6 +776,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
               return result;
             })
             .catch(_errors => {
+              
               if (!!isMounted.current) {
                 dispatch({ type: 'SUBMIT_FAILURE' });
                 // This is a legit error rejected by the onSubmit fn
@@ -788,7 +798,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   });
 
   const handleSubmit = useEventCallback(
-    (e?: React.FormEvent<HTMLFormElement>) => {
+    (e?: React.FormEvent<HTMLFormElement>, options?: { skipValidation?: boolean }) => {
       if (e && e.preventDefault && isFunction(e.preventDefault)) {
         e.preventDefault();
       }
@@ -816,7 +826,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
         }
       }
 
-      submitForm().catch(reason => {
+      submitForm(options).catch(reason => {
         console.warn(
           `Warning: An unhandled error was caught from submitForm()`,
           reason

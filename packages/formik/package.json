@@ -1,5 +1,5 @@
 {
-  "name": "formik",
+  "name": "@wombat-software/formik",
   "description": "Build forms in React, without the tears",
   "version": "2.4.0",
   "license": "Apache-2.0",

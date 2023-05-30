@@ -1,5 +1,5 @@
 {
-  "name": "formik-native",
+  "name": "@wombat-software/formik-native",
   "version": "2.1.23",
   "license": "Apache-2.0",
   "author": "Jared Palmer <jared@palmer.net>",

@@ -171,9 +171,8 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     };
   }, []);
 
-  const [state, dispatch] = React.useReducer<
-    React.Reducer<FormikState<Values>, FormikMessage<Values>>
-  >(formikReducer, {
+  const [, setIteration] = React.useState(0);
+  const stateRef = React.useRef<FormikState<Values>>({
     values: props.initialValues,
     errors: props.initialErrors || emptyErrors,
     touched: props.initialTouched || emptyTouched,
@@ -182,6 +181,17 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     isValidating: false,
     submitCount: 0,
   });
+
+  const state = stateRef.current;
+
+  const dispatch = React.useCallback((action: FormikMessage<Values>) => {
+    const prev = stateRef.current;
+
+    stateRef.current = formikReducer(prev, action);
+
+    // force rerender
+    if (prev !== stateRef.current) setIteration(x => x + 1);
+  }, []);
 
   const runValidateHandler = React.useCallback(
     (values: Values, field?: string): Promise<FormikErrors<Values>> => {

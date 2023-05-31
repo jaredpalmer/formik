@@ -25,6 +25,16 @@
 - Jared Palmer [@jaredpalmer](https://twitter.com/jaredpalmer)
 - Ian White [@eonwhite](https://twitter.com/eonwhite)
 
+## Contributing
+
+This monorepo uses `yarn`, so to start you'll need the package manager installed.
+
+To run E2E tests you'll also need Playwright set up, which can be done locally via `npx playwright install`. Afterward, run `yarn start:app` and in a separate tab run `yarn e2e:ui` to boot up the test runner.
+
+When you're done with your changes, we use [changesets](https://github.com/changesets/changesets) to manage release notes. Run `yarn changeset` to autogenerate notes to be appended to your pull request.
+
+Thank you!
+
 ## Contributors
 
 Formik is made with <3 thanks to these wonderful people

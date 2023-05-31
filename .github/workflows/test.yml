@@ -20,25 +20,14 @@ jobs:
       - name: Use Node.js ${{ matrix.node }}
         uses: actions/setup-node@v3
         with:
+          cache: yarn
           node-version: ${{ matrix.node }}
-
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "dir=$(yarn cache dir)" >> $GITHUB_OUTPUT
-
-      - uses: actions/cache@v3
-        id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
-        with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
 
       - name: Install deps, build, and test
         run: |
           node --version
           npm --version
-          yarn --version        
+          yarn --version
           yarn install --frozen-lockfile
           yarn test --coverage
         env:

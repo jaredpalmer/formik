@@ -1,4 +1,4 @@
-import { defineConfig, devices } from '@playwright/test';
+import { PlaywrightTestProject, defineConfig, devices } from '@playwright/test';
 
 /**
  * Read environment variables from file.
@@ -42,10 +42,13 @@ export default defineConfig({
       use: { ...devices['Desktop Firefox'] },
     },
 
-    {
-      name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
-    },
+    // this one does not seem to be functional in github actions
+    !process.env.CI
+      ? {
+          name: 'webkit',
+          use: { ...devices['Desktop Safari'] },
+        }
+      : null,
 
     /* Test against mobile viewports. */
     // {
@@ -66,7 +69,7 @@ export default defineConfig({
     //   name: 'Google Chrome',
     //   use: { ..devices['Desktop Chrome'], channel: 'chrome' },
     // },
-  ],
+  ].filter(Boolean) as PlaywrightTestProject[],
 
   /* Run your local dev server before starting the tests */
   webServer: {

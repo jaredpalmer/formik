@@ -31,21 +31,20 @@ export default defineConfig({
   },
 
   /* Configure projects for major browsers */
-  /* https://github.com/microsoft/playwright/issues/17975#issuecomment-1274884660 */
   projects: [
     {
       name: 'chromium',
-      use: { channel: 'chrome' },
+      use: { defaultBrowserType: 'chromium' },
     },
 
     {
       name: 'firefox',
-      use: { channel: 'firefox' },
+      use: { defaultBrowserType: 'firefox' },
     },
 
     {
       name: 'webkit',
-      use: { channel: 'webkit' },
+      use: { defaultBrowserType: 'webkit' },
     },
 
     /* Test against mobile viewports. */

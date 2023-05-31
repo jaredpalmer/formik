@@ -1,6 +1,9 @@
 {
   "name": "formik-project",
   "private": true,
+  "resolutions": {
+    "shelljs": "0.8.5"
+  },
   "devDependencies": {
     "@changesets/changelog-github": "^0.2.7",
     "@changesets/cli": "^2.10.3",

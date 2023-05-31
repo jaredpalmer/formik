@@ -27,9 +27,7 @@ export function SidebarNavLink({
             {title}
           </a>
         ) : (
-          <Link href={href} as={pathname} legacyBehavior>
-            <a>{title}</a>
-          </Link>
+          <Link href={pathname}>{title}</Link>
         )
       }
       <style jsx>{`

@@ -2,24 +2,24 @@ name: Release
 on:
   push:
     branches:
-      - master
+      - main
       - next
 jobs:
   release:
     runs-on: ubuntu-latest
-    if: github.repository == 'formium/formik'
+    if: github.repository == 'jaredpalmer/formik'
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
-      - name: Use Node.js 12.x
-        uses: actions/setup-node@v1
+      - uses: actions/setup-node@v3
         with:
-          version: 16.x
+          cache: yarn
+          node-version: 18
 
-      - name: Install deps and build (with cache)
-        uses: bahmutov/npm-install@v1
+      - name: Install Dependencies
+        run: yarn install
 
       - name: Create Release Pull Request or Publish to npm
         uses: changesets/action@master

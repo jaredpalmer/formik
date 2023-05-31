@@ -7,6 +7,9 @@ import { Nav } from 'components/Nav';
 import { Container } from 'components/Container';
 import { Seo } from 'components/Seo';
 import { users } from 'users';
+import { Inter } from 'next/font/google';
+import cn from 'classnames';
+const inter = Inter({ subsets: ['latin'] });
 
 export interface UsersProps {}
 
@@ -27,7 +30,7 @@ const Users: React.FC<UsersProps> = props => {
     </a>
   ));
   return (
-    <div className="h-full min-h-full ">
+    <div className={cn('h-full min-h-full', inter.className)}>
       <Banner />
       <Sticky>
         <Nav />
@@ -37,7 +40,7 @@ const Users: React.FC<UsersProps> = props => {
         description="Companies and projects using Formik in production."
       />
       <Container>
-        <div className="my-12 space-y-12">
+        <div className="container px-4 lg:px-0 my-12 space-y-12">
           <div className="lg:text-center">
             <p className="text-base font-semibold leading-6 tracking-wide text-blue-600 uppercase">
               Showcase
@@ -53,7 +56,7 @@ const Users: React.FC<UsersProps> = props => {
             </p>
           </div>
 
-          <div className="grid items-center grid-cols-3 gap-16 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 ">
+          <div className="px-4 grid items-center grid-cols-3 gap-16 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 ">
             {showcase}
           </div>
           <div className="space-y-6 text-center md:space-y-10">

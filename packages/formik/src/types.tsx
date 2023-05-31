@@ -118,7 +118,7 @@ export type SetFieldValue<ValueType = any> = (
   field: string,
   value: ValueType,
   shouldValidate?: boolean
-) => void;
+) => Promise<void | FormikErrors<Values>>
 export type SetFieldError = (
   field: string,
   message: string | undefined

@@ -1,20 +1,21 @@
-import * as React from 'react';
 import cloneDeep from 'lodash/cloneDeep';
+import * as React from 'react';
+import isEqual from 'react-fast-compare';
 import { connect } from './connect';
 import {
   FormikContextType,
+  FormikProps,
   FormikState,
   SharedRenderProps,
-  FormikProps,
 } from './types';
 import {
   getIn,
+  isEmptyArray,
   isEmptyChildren,
   isFunction,
+  isObject,
   setIn,
-  isEmptyArray,
 } from './utils';
-import isEqual from 'react-fast-compare';
 
 export type FieldArrayRenderProps = ArrayHelpers & {
   form: FormikProps<any>;
@@ -27,11 +28,11 @@ export type FieldArrayConfig = {
   /** Should field array validate the form AFTER array updates/changes? */
   validateOnChange?: boolean;
 } & SharedRenderProps<FieldArrayRenderProps>;
-export interface ArrayHelpers {
+export interface ArrayHelpers<T extends any[] = any[]> {
   /** Imperatively add a value to the end of an array */
-  push: (obj: any) => void;
+  push<X = T[number]>(obj: X): void;
   /** Curried fn to add a value to the end of an array */
-  handlePush: (obj: any) => () => void;
+  handlePush<X = T[number]>(obj: X): () => void;
   /** Imperatively swap two values in an array */
   swap: (indexA: number, indexB: number) => void;
   /** Curried fn to swap two values in an array */
@@ -41,31 +42,31 @@ export interface ArrayHelpers {
   /** Imperatively move an element in an array to another index */
   handleMove: (from: number, to: number) => () => void;
   /** Imperatively insert an element at a given index into the array */
-  insert: (index: number, value: any) => void;
+  insert<X = T[number]>(index: number, value: X): void;
   /** Curried fn to insert an element at a given index into the array */
-  handleInsert: (index: number, value: any) => () => void;
+  handleInsert<X = T[number]>(index: number, value: X): () => void;
   /** Imperatively replace a value at an index of an array  */
-  replace: (index: number, value: any) => void;
+  replace<X = T[number]>(index: number, value: X): void;
   /** Curried fn to replace an element at a given index into the array */
-  handleReplace: (index: number, value: any) => () => void;
+  handleReplace<X = T[number]>(index: number, value: X): () => void;
   /** Imperatively add an element to the beginning of an array and return its length */
-  unshift: (value: any) => number;
+  unshift<X = T[number]>(value: X): number;
   /** Curried fn to add an element to the beginning of an array */
-  handleUnshift: (value: any) => () => void;
+  handleUnshift<X = T[number]>(value: X): () => void;
   /** Curried fn to remove an element at an index of an array */
   handleRemove: (index: number) => () => void;
   /** Curried fn to remove a value from the end of the array */
   handlePop: () => () => void;
   /** Imperatively remove and element at an index of an array */
-  remove<T>(index: number): T | undefined;
+  remove<X = T[number]>(index: number): X | undefined;
   /** Imperatively remove and return value from the end of the array */
-  pop<T>(): T | undefined;
+  pop<X = T[number]>(): X | undefined;
 }
 
 /**
  * Some array helpers!
  */
-export const move = (array: any[], from: number, to: number) => {
+export const move = <T,>(array: T[], from: number, to: number) => {
   const copy = copyArrayLike(array);
   const value = copy[from];
   copy.splice(from, 1);
@@ -73,8 +74,8 @@ export const move = (array: any[], from: number, to: number) => {
   return copy;
 };
 
-export const swap = (
-  arrayLike: ArrayLike<any>,
+export const swap = <T,>(
+  arrayLike: ArrayLike<T>,
   indexA: number,
   indexB: number
 ) => {
@@ -85,20 +86,20 @@ export const swap = (
   return copy;
 };
 
-export const insert = (
-  arrayLike: ArrayLike<any>,
+export const insert = <T,>(
+  arrayLike: ArrayLike<T>,
   index: number,
-  value: any
+  value: T
 ) => {
   const copy = copyArrayLike(arrayLike);
   copy.splice(index, 0, value);
   return copy;
 };
 
-export const replace = (
-  arrayLike: ArrayLike<any>,
+export const replace = <T,>(
+  arrayLike: ArrayLike<T>,
   index: number,
-  value: any
+  value: T
 ) => {
   const copy = copyArrayLike(arrayLike);
   copy[index] = value;
@@ -116,6 +117,24 @@ const copyArrayLike = (arrayLike: ArrayLike<any>) => {
       .reduce((max, el) => (el > max ? el : max), 0);
     return Array.from({ ...arrayLike, length: maxIndex + 1 });
   }
+};
+
+const createAlterationHandler = (
+  alteration: boolean | Function,
+  defaultFunction: Function
+) => {
+  const fn = typeof alteration === 'function' ? alteration : defaultFunction;
+
+  return (data: any | any[]) => {
+    if (Array.isArray(data) || isObject(data)) {
+      const clone = copyArrayLike(data);
+      return fn(clone);
+    }
+
+    // This can be assumed to be a primitive, which
+    // is a case for top level validation errors
+    return data;
+  };
 };
 
 class FieldArrayInner<Values = {}> extends React.Component<
@@ -160,9 +179,8 @@ class FieldArrayInner<Values = {}> extends React.Component<
       formik: { setFormikState },
     } = this.props;
     setFormikState((prevState: FormikState<any>) => {
-      let updateErrors = typeof alterErrors === 'function' ? alterErrors : fn;
-      let updateTouched =
-        typeof alterTouched === 'function' ? alterTouched : fn;
+      let updateErrors = createAlterationHandler(alterErrors, fn);
+      let updateTouched = createAlterationHandler(alterTouched, fn);
 
       // values fn should be executed before updateErrors and updateTouched,
       // otherwise it causes an error with unshift.
@@ -288,7 +306,12 @@ class FieldArrayInner<Values = {}> extends React.Component<
         if (isFunction(copy.splice)) {
           copy.splice(index, 1);
         }
-        return copy;
+        // if the array only includes undefined values we have to return an empty array
+        return isFunction(copy.every)
+          ? copy.every(v => v === undefined)
+            ? []
+            : copy
+          : copy;
       },
       true,
       true
@@ -305,7 +328,7 @@ class FieldArrayInner<Values = {}> extends React.Component<
     this.updateArrayField(
       // so this gets call 3 times
       (array: any[]) => {
-        const tmp = array;
+        const tmp = array.slice();
         if (!result) {
           result = tmp && tmp.pop && tmp.pop();
         }

@@ -1,5 +1,15 @@
 # formik
 
+## 2.4.1
+
+### Patch Changes
+
+- [`2b194c2`](https://github.com/jaredpalmer/formik/commit/2b194c287dc281ec2a8ff691d75c6b798ab5f70c) [#3808](https://github.com/jaredpalmer/formik/pull/3808) Thanks [@NagaiKoki](https://github.com/NagaiKoki)! - fix type of setFieldValue function
+
+* [`708bcb2`](https://github.com/jaredpalmer/formik/commit/708bcb24785f1f8fbb5dfd649de3df4fddf7a113) [#3813](https://github.com/jaredpalmer/formik/pull/3813) Thanks [@probablyup](https://github.com/probablyup)! - Revert `FieldArray` "shouldComponentUpdate" performance optimization. As it turns out, it's a common use case to have JSX controlled via non-Formik state/props inside of `FieldArray`, so it's not safe to cancel re-renders here.
+
+- [`187e47d`](https://github.com/jaredpalmer/formik/commit/187e47de0c4289cb279e25d69f8172cfa14369d2) [#3815](https://github.com/jaredpalmer/formik/pull/3815) Thanks [@probablyup](https://github.com/probablyup)! - Revert Yup transform support for the time being, this may be re-introduced in a future release under an opt-in prop.
+
 ## 2.4.0
 
 ### Minor Changes

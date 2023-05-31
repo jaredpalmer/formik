@@ -1,4 +1,4 @@
-import { defineConfig, devices } from '@playwright/test';
+import { defineConfig } from '@playwright/test';
 
 /**
  * Read environment variables from file.
@@ -31,20 +31,21 @@ export default defineConfig({
   },
 
   /* Configure projects for major browsers */
+  /* https://github.com/microsoft/playwright/issues/17975#issuecomment-1274884660 */
   projects: [
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: { channel: 'chrome' },
     },
 
     {
       name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
+      use: { channel: 'firefox' },
     },
 
     {
       name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
+      use: { channel: 'webkit' },
     },
 
     /* Test against mobile viewports. */

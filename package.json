@@ -2,7 +2,8 @@
   "name": "formik-project",
   "private": true,
   "resolutions": {
-    "shelljs": "0.8.5"
+    "shelljs": "0.8.5",
+    "typescript": "^4.0.0"
   },
   "devDependencies": {
     "@changesets/changelog-github": "^0.2.7",

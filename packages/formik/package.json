@@ -1,10 +1,10 @@
 {
   "name": "@wombat-software/formik",
   "description": "Build forms in React, without the tears",
-  "version": "2.4.0",
+  "version": "2.4.1",
   "license": "Apache-2.0",
   "author": "Jared Palmer <jared@palmer.net> (https://jaredpalmer.com)",
-  "repository": "formium/formik",
+  "repository": "wombat-software/formik",
   "homepage": "https://formik.org",
   "keywords": [
     "formik",

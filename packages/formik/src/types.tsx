@@ -180,7 +180,7 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
   /**
    * Form component to render
    */
-  component?: React.ComponentType<FormikProps<Values>> | React.ReactNode;
+  component?: React.ComponentType<FormikProps<Values>>;
 
   /**
    * Render prop (works like React router's <Route render={props =>} />)
@@ -265,7 +265,7 @@ export interface SharedRenderProps<T> {
   /**
    * Field component to render. Can either be a string like 'select' or a component.
    */
-  component?: string | React.ComponentType<T | void>;
+  component?: keyof JSX.IntrinsicElements | React.ComponentType<T | void>;
 
   /**
    * Render prop (works like React router's <Route render={props =>} />)

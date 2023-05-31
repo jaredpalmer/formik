@@ -1,33 +1,34 @@
-import * as React from 'react';
-import isEqual from 'react-fast-compare';
 import deepmerge from 'deepmerge';
 import isPlainObject from 'lodash/isPlainObject';
+import * as React from 'react';
+import isEqual from 'react-fast-compare';
+import invariant from 'tiny-warning';
+import { FieldConfig } from './Field';
+import { FormikProvider } from './FormikContext';
 import {
+  FieldHelperProps,
+  FieldInputProps,
+  FieldMetaProps,
   FormikConfig,
   FormikErrors,
+  FormikHandlers,
+  FormikHelpers,
+  FormikProps,
   FormikState,
   FormikTouched,
   FormikValues,
-  FormikProps,
-  FieldMetaProps,
-  FieldHelperProps,
-  FieldInputProps,
-  FormikHelpers,
-  FormikHandlers,
 } from './types';
 import {
-  isFunction,
-  isString,
-  setIn,
-  isEmptyChildren,
-  isPromise,
-  setNestedObjectValues,
   getActiveElement,
   getIn,
+  isEmptyChildren,
+  isFunction,
   isObject,
+  isPromise,
+  isString,
+  setIn,
+  setNestedObjectValues,
 } from './utils';
-import { FormikProvider } from './FormikContext';
-import invariant from 'tiny-warning';
 
 type FormikMessage<Values> =
   | { type: 'SUBMIT_ATTEMPT' }
@@ -888,9 +889,11 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   );
 
   const getFieldProps = React.useCallback(
-    (nameOrOptions): FieldInputProps<any> => {
+    (nameOrOptions: string | FieldConfig<any>): FieldInputProps<any> => {
       const isAnObject = isObject(nameOrOptions);
-      const name = isAnObject ? nameOrOptions.name : nameOrOptions;
+      const name = isAnObject
+        ? (nameOrOptions as FieldConfig<any>).name
+        : nameOrOptions;
       const valueState = getIn(state.values, name);
 
       const field: FieldInputProps<any> = {
@@ -905,7 +908,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
           value: valueProp, // value is special for checkboxes
           as: is,
           multiple,
-        } = nameOrOptions;
+        } = nameOrOptions as FieldConfig<any>;
 
         if (type === 'checkbox') {
           if (valueProp === undefined) {

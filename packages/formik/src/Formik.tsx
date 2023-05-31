@@ -218,7 +218,10 @@ export function useFormik<Values extends FormikValues = FormikValues>({
    */
   const runValidationSchema = React.useCallback(
     (values: Values, field?: string): Promise<FormikErrors<Values>> => {
-      const schema = getValidationSchema(props.validationSchema);
+      const validationSchema = props.validationSchema;
+      const schema = isFunction(validationSchema)
+        ? validationSchema(field)
+        : validationSchema;
       const promise =
         field && schema.validateAt
           ? schema.validateAt(field, values)
@@ -842,11 +845,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   };
 
   const executeSubmit = useEventCallback(() => {
-    const schema = getValidationSchema(props.validationSchema);
-    const actualizedValues =
-      schema && schema.cast ? schema.cast(state.values) : state.values;
-
-    return onSubmit(actualizedValues, imperativeMethods);
+    return onSubmit(state.values, imperativeMethods);
   });
 
   const handleReset = useEventCallback(e => {
@@ -1022,16 +1021,6 @@ export function Formik<
         : null}
     </FormikProvider>
   );
-}
-
-function getValidationSchema<Values extends FormikValues = FormikValues>(
-  validationSchema?: FormikConfig<Values>['validationSchema']
-) {
-  if (!validationSchema) {
-    return;
-  }
-
-  return isFunction(validationSchema) ? validationSchema() : validationSchema;
 }
 
 function warnAboutMissingIdentifier({

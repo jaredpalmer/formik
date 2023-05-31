@@ -1435,8 +1435,8 @@ describe('<Formik>', () => {
     await act(async () => {
       try {
         await getProps().validateForm();
-      } catch (err) {
-        caughtError = (err as Yup.ValidationError).message;
+      } catch ({ message }) {
+        caughtError = message;
       }
     });
 
@@ -1449,69 +1449,5 @@ describe('<Formik>', () => {
     const { getProps } = renderFormik({ innerRef });
 
     expect(innerRef.current).toEqual(getProps());
-  });
-
-  it('transforms in yup schema are applied on validation', async () => {
-    const validationSchema = Yup.object({
-      users: Yup.array().of(
-        Yup.object({
-          firstName: Yup.string()
-            .transform(currentValue =>
-              currentValue.split('').reverse().join('')
-            )
-            // @ts-expect-error incorrect typing for second arg
-            .oneOf(['foo'], x => x.value),
-        })
-      ),
-    });
-
-    const { getProps } = renderFormik({
-      initialValues: { users: [{ firstName: 'foo' }] },
-      validationSchema,
-    });
-
-    await act(async () => {
-      await getProps().validateForm();
-
-      expect(getProps().errors).toEqual({
-        users: [
-          {
-            // the transform reverses "foo" to "oof", which then fails the `oneOf` assertion
-            firstName: 'oof',
-          },
-        ],
-      });
-    });
-  });
-
-  it('transforms in yup schema are applied on submit', async () => {
-    const validationSchema = Yup.object({
-      users: Yup.array().of(
-        Yup.object({
-          firstName: Yup.string().transform(currentValue =>
-            currentValue.split('').reverse().join('')
-          ),
-        })
-      ),
-    });
-
-    const spy = jest.fn();
-
-    const { getProps } = renderFormik({
-      initialValues: { users: [{ firstName: 'foo' }] },
-      onSubmit: spy,
-      validationSchema,
-    });
-
-    await act(async () => {
-      await getProps().submitForm();
-
-      expect(spy).toHaveBeenCalledWith(
-        {
-          users: [{ firstName: 'oof' }],
-        },
-        expect.anything()
-      );
-    });
   });
 });

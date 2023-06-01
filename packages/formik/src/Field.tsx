@@ -6,46 +6,43 @@ import {
   FieldHelperProps,
   FieldInputProps,
   FieldValidator,
+  FieldAsProps,
 } from './types';
 import { useFormikContext } from './FormikContext';
 import { isFunction, isEmptyChildren, isObject } from './utils';
 import invariant from 'tiny-warning';
 
-export interface FieldProps<V = any, FormValues = any> {
-  field: FieldInputProps<V>;
+type $FixMe = any;
+
+export type FieldProps<FieldValue = any, FormValues = any, ExtraProps = {}> = {
+  field: FieldInputProps<FieldValue>;
   form: FormikProps<FormValues>; // if ppl want to restrict this for a given form, let them.
-  meta: FieldMetaProps<V>;
-}
+  meta: FieldMetaProps<FieldValue>;
+} & ExtraProps;
 
-export interface FieldConfig<V = any> {
-  /**
-   * Field component to render. Can either be a string like 'select' or a component.
-   */
-  component?:
-    | string
-    | React.ComponentType<FieldProps<V>>
-    | React.ComponentType
-    | React.ForwardRefExoticComponent<any>;
+export type LegacyComponentProps<FieldValue = any, ExtraProps extends object = {}, FormValues = any> =
+  Omit<FieldProps<FieldValue, FormValues>, 'meta'> & ExtraProps;
 
-  /**
-   * Component to render. Can either be a string e.g. 'select', 'input', or 'textarea', or a component.
-   */
-  as?:
-    | React.ComponentType<FieldProps<V>['field']>
-    | string
-    | React.ComponentType
-    | React.ForwardRefExoticComponent<any>;
+export type FieldComponent<FieldValue, FormValues, ExtraProps extends object = {}> =
+  React.ComponentType<LegacyComponentProps<FieldValue, ExtraProps, FormValues>>;
 
+export type FieldAs<FieldValue, ExtraProps> =
+  React.ComponentType<FieldAsProps<FieldValue, ExtraProps>>;
+
+/**
+ * These Generics should be flipped, since FieldValue can be inferred
+ */
+export interface FieldConfig<FieldValue = any, FormValues = any, ExtraProps extends object = {}> {
   /**
    * Render prop (works like React router's <Route render={props =>} />)
    * @deprecated
    */
-  render?: (props: FieldProps<V>) => React.ReactNode;
+  render?: (props: FieldProps<FieldValue, FormValues, ExtraProps>) => JSX.Element;
 
   /**
    * Children render function <Field name>{props => ...}</Field>)
    */
-  children?: ((props: FieldProps<V>) => React.ReactNode) | React.ReactNode;
+  children?: ((props: FieldProps<FieldValue, FormValues, ExtraProps>) => JSX.Element) | React.ReactNode;
 
   /**
    * Validate a single field value independently
@@ -61,21 +58,29 @@ export interface FieldConfig<V = any> {
   type?: string;
 
   /** Field value */
-  value?: any;
+  value?: FieldValue;
 
   /** Inner ref */
   innerRef?: (instance: any) => void;
 }
 
-export type FieldAttributes<T> = GenericFieldHTMLAttributes &
-  FieldConfig<T> &
-  T & { name: string };
+export type NonFormikProps<TValue, GenericProps> = Exclude<TValue,
+  | keyof GenericProps
+  | keyof FieldConfig
+>;
 
-export type FieldHookConfig<T> = GenericFieldHTMLAttributes & FieldConfig<T>;
+export type FieldAttributes<ExtraProps extends object = {}, FieldValue = any, FormValues = any> =
+  GenericFieldHTMLAttributes<FieldValue, FormValues, ExtraProps> &
+  FieldConfig<FieldValue, FormValues> &
+  ExtraProps;
 
-export function useField<Val = any>(
-  propsOrFieldName: string | FieldHookConfig<Val>
-): [FieldInputProps<Val>, FieldMetaProps<Val>, FieldHelperProps<Val>] {
+export type FieldHookConfig<FieldValue, FormValues> =
+  GenericFieldHTMLAttributes<FieldValue, FormValues> &
+  FieldConfig<FieldValue, FormValues>;
+
+export function useField<FieldValue = any, FormValues = any>(
+  propsOrFieldName: string | FieldHookConfig<FieldValue, FormValues>
+): [FieldInputProps<FieldValue>, FieldMetaProps<FieldValue>, FieldHelperProps<FieldValue>] {
   const formik = useFormikContext();
   const {
     getFieldProps,
@@ -88,8 +93,8 @@ export function useField<Val = any>(
   const isAnObject = isObject(propsOrFieldName);
 
   // Normalize propsOrFieldName to FieldHookConfig<Val>
-  const props: FieldHookConfig<Val> = isAnObject
-    ? (propsOrFieldName as FieldHookConfig<Val>)
+  const props: FieldHookConfig<FieldValue, FormValues> = isAnObject
+    ? (propsOrFieldName as FieldHookConfig<FieldValue, FormValues>)
     : { name: propsOrFieldName as string };
 
   const { name: fieldName, validate: validateFn } = props;
@@ -127,21 +132,35 @@ export function useField<Val = any>(
   return [getFieldProps(props), getFieldMeta(fieldName), fieldHelpers];
 }
 
-export function Field({
+export const isNativeInput = (type?: unknown): type is 'select' | 'input' | 'textarea' => {
+  return typeof type === "string";
+}
+
+/**
+ * @template FormValues Type of Formik's Values. FormValues is never inferrable.
+ * @template ExtraProps Custom props passed to underlying component type. Inferrable by Custom Component props or children type signature.
+ * @template FieldValue Value type of this Field. Inferrable by the value prop.
+ */
+export function Field<
+  FormValues = any,
+  ExtraProps extends object = {},
+  FieldValue = any,
+>({
   validate,
   name,
   render,
   children,
   as: is, // `as` is reserved in typescript lol
   component,
+  value,
   ...props
-}: FieldAttributes<any>) {
+}: FieldAttributes<ExtraProps, FieldValue, FormValues>): JSX.Element {
   const {
     validate: _validate,
     validationSchema: _validationSchema,
 
     ...formik
-  } = useFormikContext();
+  } = useFormikContext<FormValues>();
 
   if (__DEV__) {
     // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -179,8 +198,8 @@ export function Field({
       unregisterField(name);
     };
   }, [registerField, unregisterField, name, validate]);
-  const field = formik.getFieldProps({ name, ...props });
-  const meta = formik.getFieldMeta(name);
+  const field = formik.getFieldProps<FieldValue, FormValues, ExtraProps>({ name, ...props });
+  const meta = formik.getFieldMeta<FieldValue>(name);
   const legacyBag = { field, form: formik };
 
   if (render) {
@@ -193,11 +212,12 @@ export function Field({
 
   if (component) {
     // This behavior is backwards compat with earlier Formik 0.9 to 1.x
-    if (typeof component === 'string') {
+    if (typeof component === "string") {
       const { innerRef, ...rest } = props;
+
       return React.createElement(
         component,
-        { ref: innerRef, ...field, ...rest },
+        { ref: innerRef, ...field, ...(rest as $FixMe) },
         children
       );
     }
@@ -216,10 +236,32 @@ export function Field({
     const { innerRef, ...rest } = props;
     return React.createElement(
       asElement,
-      { ref: innerRef, ...field, ...rest },
+      { ref: innerRef, ...field, ...(rest as $FixMe) },
       children
     );
   }
 
   return React.createElement(asElement, { ...field, ...props }, children);
+}
+
+export const MyFieldComponentUsage: React.FC<LegacyComponentProps<number, { why: string }>> = props => {
+  return <input onChange={props.field.onChange} />
+}
+
+export const MyFieldAsUsage: React.FC<FieldAsProps<number, { why: string }>> = props => {
+  return <input onChange={props.onChange} />
+}
+
+export type MyFormValues = {
+  hello: string;
+}
+
+export const MyField = () => {
+  return <>
+    <Field as="input" name="hello" value={1} />
+    <Field as="textarea" name="hello" value={1} />
+    <Field as="select" name="hello" value={1} />
+    <Field as={MyFieldAsUsage} name="hello" value={1} why="" onChange={event => {}} />
+    <Field component={MyFieldComponentUsage} name="hello" value={1} why="" />
+  </>
 }

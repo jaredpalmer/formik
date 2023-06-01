@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { FieldHookConfig, FieldAs, FieldComponent } from 'Field';
 /**
  * Values of fields in the form
  */
@@ -149,9 +150,9 @@ export interface FormikHandlers {
       : (e: string | React.ChangeEvent<any>) => void;
   };
 
-  getFieldProps: <Value = any>(props: any) => FieldInputProps<Value>;
-  getFieldMeta: <Value>(name: string) => FieldMetaProps<Value>;
-  getFieldHelpers: <Value = any>(name: string) => FieldHelperProps<Value>;
+  getFieldProps: <FieldValue = any, FormValues = any>(props: FieldHookConfig<FieldValue, FormValues>) => FieldInputProps<FieldValue>;
+  getFieldMeta: <FieldValue>(name: string) => FieldMetaProps<FieldValue>;
+  getFieldHelpers: <FieldValue = any>(name: string) => FieldHelperProps<FieldValue>;
 }
 
 /**
@@ -173,29 +174,24 @@ export interface FormikSharedConfig<Props = {}> {
 /**
  * <Formik /> props
  */
-export interface FormikConfig<Values> extends FormikSharedConfig {
-  /**
-   * Form component to render
-   */
-  component?: React.ComponentType<FormikProps<Values>> | React.ReactNode;
-
+export interface FormikConfig<FormValues> extends FormikSharedConfig {
   /**
    * Render prop (works like React router's <Route render={props =>} />)
    * @deprecated
    */
-  render?: (props: FormikProps<Values>) => React.ReactNode;
+  render?: (props: FormikProps<FormValues>) => React.ReactNode;
 
   /**
    * React children or child render callback
    */
   children?:
-    | ((props: FormikProps<Values>) => React.ReactNode)
+    | ((props: FormikProps<FormValues>) => React.ReactNode)
     | React.ReactNode;
 
   /**
    * Initial values of the form
    */
-  initialValues: Values;
+  initialValues: FormValues;
 
   /**
    * Initial status
@@ -203,22 +199,22 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
   initialStatus?: any;
 
   /** Initial object map of field names to specific error for that field */
-  initialErrors?: FormikErrors<Values>;
+  initialErrors?: FormikErrors<FormValues>;
 
   /** Initial object map of field names to whether the field has been touched */
-  initialTouched?: FormikTouched<Values>;
+  initialTouched?: FormikTouched<FormValues>;
 
   /**
    * Reset handler
    */
-  onReset?: (values: Values, formikHelpers: FormikHelpers<Values>) => void;
+  onReset?: (values: FormValues, formikHelpers: FormikHelpers<FormValues>) => void;
 
   /**
    * Submission handler
    */
   onSubmit: (
-    values: Values,
-    formikHelpers: FormikHelpers<Values>
+    values: FormValues,
+    formikHelpers: FormikHelpers<FormValues>
   ) => void | Promise<any>;
   /**
    * A Yup Schema or a function that returns a Yup schema
@@ -229,21 +225,21 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
    * Validation function. Must return an error object or promise that
    * throws an error object where that object keys map to corresponding value.
    */
-  validate?: (values: Values) => void | object | Promise<FormikErrors<Values>>;
+  validate?: (values: FormValues) => void | object | Promise<FormikErrors<FormValues>>;
 
   /** Inner ref */
-  innerRef?: React.Ref<FormikProps<Values>>;
+  innerRef?: React.Ref<FormikProps<FormValues>>;
 }
 
 /**
  * State, handlers, and helpers made available to form component or render prop
  * of <Formik/>.
  */
-export type FormikProps<Values> = FormikSharedConfig &
-  FormikState<Values> &
-  FormikHelpers<Values> &
+export type FormikProps<FormValues> = FormikSharedConfig &
+  FormikState<FormValues> &
+  FormikHelpers<FormValues> &
   FormikHandlers &
-  FormikComputedProps<Values> &
+  FormikComputedProps<FormValues> &
   FormikRegistration & { submitForm: () => Promise<any> };
 
 /** Internal Formik registration methods that get passed down as props */
@@ -275,21 +271,41 @@ export interface SharedRenderProps<T> {
   children?: (props: T) => React.ReactNode;
 }
 
-export type GenericFieldHTMLAttributes =
-  | JSX.IntrinsicElements['input']
-  | JSX.IntrinsicElements['select']
-  | JSX.IntrinsicElements['textarea'];
+export type GenericFieldHTMLAttributes<FieldValue = any, FormValues = any, ExtraProps extends object = {}> =
+  | ({
+    as?: 'input',
+    component?: 'input',
+  } & JSX.IntrinsicElements['input'])
+  | ({
+    as?: 'select',
+    component?: 'select',
+  } & JSX.IntrinsicElements['select'])
+  | ({
+    as?: 'textarea',
+    component?: 'textarea',
+  } & JSX.IntrinsicElements['textarea'])
+  | {
+    as?: FieldAs<FieldValue, ExtraProps>,
+    component?: FieldComponent<FieldValue, FormValues, ExtraProps>,
+  } | ({
+    as?: undefined,
+    component?: undefined
+  } & (
+    JSX.IntrinsicElements["input"] |
+    JSX.IntrinsicElements["select"] |
+    JSX.IntrinsicElements["textarea"]
+  ))
 
 /** Field metadata */
-export interface FieldMetaProps<Value> {
+export interface FieldMetaProps<FieldValue> {
   /** Value of the field */
-  value: Value;
+  value: FieldValue;
   /** Error message of the field */
   error?: string;
   /** Has the field been visited? */
   touched: boolean;
   /** Initial value of the field */
-  initialValue?: Value;
+  initialValue?: FieldValue;
   /** Initial touched state of the field */
   initialTouched: boolean;
   /** Initial error message of the field */
@@ -307,9 +323,9 @@ export interface FieldHelperProps<Value> {
 }
 
 /** Field input value, name, and event handlers */
-export interface FieldInputProps<Value> {
+export type FieldInputProps<FieldValue> = {
   /** Value of the field */
-  value: Value;
+  value: FieldValue;
   /** Name of the field */
   name: string;
   /** Multiple select? */
@@ -320,7 +336,9 @@ export interface FieldInputProps<Value> {
   onChange: FormikHandlers['handleChange'];
   /** Blur event handler */
   onBlur: FormikHandlers['handleBlur'];
-}
+};
+
+export type FieldAsProps<FieldValue, ExtraProps> = FieldInputProps<FieldValue> & ExtraProps;
 
 export type FieldValidator = (
   value: any

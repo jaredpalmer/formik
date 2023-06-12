@@ -97,6 +97,17 @@ Either a React component or the name of an HTML element to render. If not specif
 // --> {touched.email && error.email ? error.email : null}
 ```
 
+### `id`
+
+`id?: string`
+
+A field's id in Formik state. To get access to DOM elements for e2e testing purposes, tt doesn't impact the implementation in any way as the prop can still be omitted. 
+```jsx
+// id will be used only for testing purposes
+// not contributing anything to the core implementation.
+<ErrorMessage name="email" id="form_email_id" />
+```
+
 ### `name`
 
 `name: string`

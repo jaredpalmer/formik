@@ -1,5 +1,11 @@
 # formik
 
+## 2.4.2
+
+### Patch Changes
+
+- [`96280d3`](https://github.com/jaredpalmer/formik/commit/96280d388eaa0f2e9fb84e7fd2aa45450de3a949) [#3817](https://github.com/jaredpalmer/formik/pull/3817) Thanks [@probablyup](https://github.com/probablyup)! - Updated internal types to support React 18.
+
 ## 2.4.1
 
 ### Patch Changes

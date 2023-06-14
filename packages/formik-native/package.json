@@ -34,7 +34,7 @@
   },
   "devDependencies": {
     "@react-native-community/eslint-config": "^0.0.5",
-    "@types/react": "^16.9.55",
+    "@types/react": "^18.2.7",
     "@types/react-native": "^0.63.32",
     "react": "^18.2.0",
     "react-native": "https://github.com/expo/react-native/archive/sdk-33.0.0.tar.gz",

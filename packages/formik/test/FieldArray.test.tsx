@@ -2,7 +2,7 @@ import { act, fireEvent, render, screen } from '@testing-library/react';
 import * as React from 'react';
 import * as Yup from 'yup';
 
-import { FieldArray, Formik, isFunction } from '../src';
+import { FieldArray, FieldArrayRenderProps, Formik, isFunction } from '../src';
 
 const noop = () => {};
 
@@ -80,7 +80,7 @@ describe('<FieldArray />', () => {
   describe('props.push()', () => {
     it('should add a value to the end of the field array', () => {
       let formikBag: any;
-      let arrayHelpers: any;
+      let arrayHelpers: FieldArrayRenderProps;
       render(
         <TestForm>
           {(props: any) => {
@@ -154,7 +154,7 @@ describe('<FieldArray />', () => {
     it('should push clone not actual reference', () => {
       let personTemplate = { firstName: '', lastName: '' };
       let formikBag: any;
-      let arrayHelpers: any;
+      let arrayHelpers: FieldArrayRenderProps;
       render(
         <TestForm initialValues={{ people: [] }}>
           {(props: any) => {
@@ -187,7 +187,7 @@ describe('<FieldArray />', () => {
   describe('props.pop()', () => {
     it('should remove and return the last value from the field array', () => {
       let formikBag: any;
-      let arrayHelpers: any;
+      let arrayHelpers: FieldArrayRenderProps;
       render(
         <TestForm>
           {(props: any) => {
@@ -217,7 +217,7 @@ describe('<FieldArray />', () => {
   describe('props.swap()', () => {
     it('should swap two values in field array', () => {
       let formikBag: any;
-      let arrayHelpers: any;
+      let arrayHelpers: FieldArrayRenderProps;
       render(
         <TestForm>
           {(props: any) => {
@@ -246,7 +246,7 @@ describe('<FieldArray />', () => {
   describe('props.insert()', () => {
     it('should insert a value at given index of field array', () => {
       let formikBag: any;
-      let arrayHelpers: any;
+      let arrayHelpers: FieldArrayRenderProps;
       render(
         <TestForm>
           {(props: any) => {
@@ -275,7 +275,7 @@ describe('<FieldArray />', () => {
   describe('props.replace()', () => {
     it('should replace a value at given index of field array', () => {
       let formikBag: any;
-      let arrayHelpers: any;
+      let arrayHelpers: FieldArrayRenderProps;
       render(
         <TestForm>
           {(props: any) => {
@@ -304,7 +304,7 @@ describe('<FieldArray />', () => {
   describe('props.unshift()', () => {
     it('should add a value to start of field array and return its length', () => {
       let formikBag: any;
-      let arrayHelpers: any;
+      let arrayHelpers: FieldArrayRenderProps;
       render(
         <TestForm>
           {(props: any) => {
@@ -334,7 +334,7 @@ describe('<FieldArray />', () => {
 
   describe('props.remove()', () => {
     let formikBag: any;
-    let arrayHelpers: any;
+    let arrayHelpers: FieldArrayRenderProps;
 
     beforeEach(() => {
       render(
@@ -396,7 +396,7 @@ describe('<FieldArray />', () => {
   describe('given array-like object representing errors', () => {
     it('should run arrayHelpers successfully', async () => {
       let formikBag: any;
-      let arrayHelpers: any;
+      let arrayHelpers: FieldArrayRenderProps;
       render(
         <TestForm>
           {(props: any) => {
@@ -440,7 +440,7 @@ describe('<FieldArray />', () => {
     });
 
     let formikBag: any;
-    let arrayHelpers: any;
+    let arrayHelpers: FieldArrayRenderProps;
 
     beforeEach(() => {
       render(

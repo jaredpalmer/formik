@@ -1,7 +1,7 @@
 // List of projects/orgs using your project for the users page.
 
 export const siteConfig = {
-  editUrl: 'https://github.com/formik/formik/edit/master',
+  editUrl: 'https://github.com/formik/formik/edit/main',
   copyright: `Copyright © ${new Date().getFullYear()} Jared Palmer. All Rights Reserved.`,
   repoUrl: 'https://github.com/formik/formik',
   discordUrl: 'https://discord.com/invite/pJSg287',

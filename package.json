@@ -16,6 +16,7 @@
     "turbo": "^1.9.9"
   },
   "workspaces": [
+    "app",
     "packages/*",
     "website"
   ],
@@ -32,7 +33,7 @@
     "e2e": "playwright test",
     "precommit": "lint-staged",
     "e2e:ui": "playwright test --ui",
-    "start:app": "turbo run build --filter formik... && yarn --cwd packages/formik link && yarn --cwd ./app link formik && yarn --cwd ./app && yarn --cwd ./app run dev"
+    "start:app": "turbo run build --filter formik && yarn workspace app build && yarn workspace app start"
   },
   "lint-staged": {
     "**/*.{ts,tsx,md,mdx,js,jsx}": [

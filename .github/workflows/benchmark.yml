@@ -5,6 +5,12 @@ on:
   push:
     branches: [main]
 
+permissions:
+  # deployments permission to deploy GitHub pages website
+  deployments: write
+  # contents permission to update benchmark contents in gh-pages branch
+  contents: write
+
 jobs:
   benchmark:
     runs-on: ubuntu-latest
@@ -47,11 +53,15 @@ jobs:
           tool: benchmarkjs
           external-data-json-path: ./benchmark-cache/benchmark-data.json
           output-file-path: output.txt
+          # comment for PRs that's updated with current perf relative to baseline (main)
+          summary-always: true
           # warn if slowness is detected; might be transient on rerun
           alert-threshold: 110%
+          comment-on-alert: true
+          fail-on-alert: true
           # if things get considerably slower, deny the PR
           fail-threshold: 120%
-          fail-on-alert: true
-          comment-on-alert: true
+          # needed for pushing historical results to gh-pages & commenting on PRs
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          summary-always: true
+          # creates a gh-pages deployment with historical benchmarking data
+          auto-push: true

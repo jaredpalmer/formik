@@ -4,7 +4,10 @@
   "version": "2.4.2",
   "license": "Apache-2.0",
   "author": "Jared Palmer <jared@palmer.net> (https://jaredpalmer.com)",
-  "repository": "formium/formik",
+  "contributors": [
+    "Evan Jacobs <probablyup@gmail.com> (https://probablyup.com)"
+  ],
+  "repository": "jaredpalmer/formik",
   "homepage": "https://formik.org",
   "keywords": [
     "formik",
@@ -30,7 +33,9 @@
   "umd:main": "dist/formik.umd.production.js",
   "module": "dist/formik.esm.js",
   "typings": "dist/index.d.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "peerDependencies": {
     "react": ">=16.8.0"
   },
@@ -57,13 +62,12 @@
     "@types/react": "^18.2.7",
     "@types/react-dom": "^18.2.4",
     "@types/warning": "^3.0.0",
-    "@types/yup": "^0.24.9",
     "just-debounce-it": "^1.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "tsdx": "^0.14.1",
     "typescript": "^4.0.3",
-    "yup": "^0.28.1"
+    "yup": "^0.32.0"
   },
   "jest": {
     "globals": {

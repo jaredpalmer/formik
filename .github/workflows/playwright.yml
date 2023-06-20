@@ -3,10 +3,9 @@ on:
   push:
     branches: [main]
   pull_request:
-    branches: [main]
 jobs:
   test:
-    timeout-minutes: 5
+    timeout-minutes: 10
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3

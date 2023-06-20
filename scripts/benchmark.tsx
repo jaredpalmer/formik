@@ -14,7 +14,7 @@ suite
     if (event.target.error) throw event.target.error;
 
     // Output benchmark result by converting benchmark result to string
-    console.log(JSON.stringify(event.target));
+    console.log(String(event.target));
   })
   .run();
 

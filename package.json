@@ -21,9 +21,10 @@
   ],
   "scripts": {
     "dev": "turbo run start",
-    "test": "turbo run test --filter {./packages/*}... --",
+    "test": "turbo run test --filter='./packages/*' --",
     "build": "turbo run build",
-    "prepublish": "turbo run build --filter {./packages/*}...",
+    "build:codesandbox": "yarn build --filter='./packages/*'",
+    "prepublish": "turbo run build --filter='./packages/*'",
     "format": "prettier --write 'examples/**/*' 'packages/*/src/**/*' 'website/src/**/*.{ts,tsx,js,jsx,md,mdx}' 'app/pages/**/*'  'packages/*/test/**/*' 'README.md'",
     "changeset": "changeset",
     "release": "changeset publish",
@@ -32,7 +33,7 @@
     "e2e": "playwright test",
     "precommit": "lint-staged",
     "e2e:ui": "playwright test --ui",
-    "start:app": "turbo run build --filter formik... && yarn --cwd packages/formik link && yarn --cwd ./app link formik && yarn --cwd ./app && yarn --cwd ./app run dev"
+    "start:app": "turbo run build --filter=formik && yarn --cwd packages/formik link && yarn --cwd ./app link formik && yarn --cwd ./app && yarn --cwd ./app run dev"
   },
   "lint-staged": {
     "**/*.{ts,tsx,md,mdx,js,jsx}": [

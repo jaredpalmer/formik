@@ -49,7 +49,6 @@ jobs:
           output-file-path: output.txt
           # warn if slowness is detected; might be transient on rerun
           alert-threshold: 110%
-          comment-on-alert: true
           # if things get considerably slower, deny the PR
           fail-threshold: 120%
           fail-on-alert: true

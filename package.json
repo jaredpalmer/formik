@@ -33,7 +33,7 @@
     "e2e": "playwright test",
     "precommit": "lint-staged",
     "e2e:ui": "playwright test --ui",
-    "start:app": "turbo run build --filter formik && yarn workspace app build && yarn workspace app start"
+    "start:app": "turbo run build --filter=formik --filter=app && turbo run start --filter=app"
   },
   "lint-staged": {
     "**/*.{ts,tsx,md,mdx,js,jsx}": [

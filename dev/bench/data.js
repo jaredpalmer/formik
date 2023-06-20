@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1687294562909,
+  "lastUpdate": 1687294565305,
   "repoUrl": "https://github.com/jaredpalmer/formik",
   "entries": {
     "Benchmark": [
@@ -314,6 +314,44 @@ window.BENCHMARK_DATA = {
             "range": "±3.81%",
             "unit": "ops/sec",
             "extra": "75 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "570070+probablyup@users.noreply.github.com",
+            "name": "Evan Jacobs",
+            "username": "probablyup"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "bc104f7659e4c4192227b47028146b62e36cd8ec",
+          "message": "chore: match codesandbox node version to other ci jobs (#3833)\n\n* chore: match codesandbox node version to other ci jobs\r\n\r\n* chore: update commands slightly\r\n\r\n* chore: updated sandbox with improved nav styling\r\n\r\n---------\r\n\r\nCo-authored-by: Jared Palmer <jared@jaredpalmer.com>",
+          "timestamp": "2023-06-20T13:52:57-07:00",
+          "tree_id": "4f4c22e595b1d9d22868f5bb07fa59931d6a5542",
+          "url": "https://github.com/jaredpalmer/formik/commit/bc104f7659e4c4192227b47028146b62e36cd8ec"
+        },
+        "date": 1687294560294,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "formik (simple example)",
+            "value": 10780,
+            "range": "±3.32%",
+            "unit": "ops/sec",
+            "extra": "84 samples"
+          },
+          {
+            "name": "react hook form (simple example)",
+            "value": 9325,
+            "range": "±4.83%",
+            "unit": "ops/sec",
+            "extra": "78 samples"
           }
         ]
       },

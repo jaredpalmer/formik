@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1687291674003,
+  "lastUpdate": 1687294447325,
   "repoUrl": "https://github.com/jaredpalmer/formik",
   "entries": {
     "Benchmark": [
@@ -204,6 +204,44 @@ window.BENCHMARK_DATA = {
             "range": "±3.32%",
             "unit": "ops/sec",
             "extra": "82 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "570070+probablyup@users.noreply.github.com",
+            "name": "Evan Jacobs",
+            "username": "probablyup"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "674f694f9d4ac8a8bd13f80f7b1deca439604895",
+          "message": "feat: add benchmarking (#3831)\n\n* feat: add benchmarking\r\n\r\n* fix: add tool\r\n\r\n* fix: output\r\n\r\n* chore: add rhf benchmark\r\n\r\n* chore: revise workflow\r\n\r\n* chore: adjust caching path to avoid overlap\r\n\r\n* chore: enable comments and summaries\r\n\r\n* chore: add myself to contributors\r\n\r\n* chore: allow historical benchmarking data microsite\r\n\r\n* chore: adjust setup based on error message\r\n\r\n* chore: disable fast fail for matrix jobs\r\n\r\n* chore: increase timeout to allow for actions variability",
+          "timestamp": "2023-06-20T13:51:18-07:00",
+          "tree_id": "d2891385c7483ac6e032f6218a289168a5a38cdc",
+          "url": "https://github.com/jaredpalmer/formik/commit/674f694f9d4ac8a8bd13f80f7b1deca439604895"
+        },
+        "date": 1687294445859,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "formik (simple example)",
+            "value": 11335,
+            "range": "±2.71%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "react hook form (simple example)",
+            "value": 10080,
+            "range": "±3.72%",
+            "unit": "ops/sec",
+            "extra": "80 samples"
           }
         ]
       }

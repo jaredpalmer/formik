@@ -38,14 +38,14 @@ jobs:
       - name: Download previous benchmark data
         uses: actions/cache@v3
         with:
-          path: ./cache
+          path: ./benchmark-cache
           key: ${{ runner.os }}-benchmark
 
       - name: Store benchmark result
         uses: benchmark-action/github-action-benchmark@v1
         with:
           tool: benchmarkjs
-          external-data-json-path: ./cache/benchmark-data.json
+          external-data-json-path: ./benchmark-cache/benchmark-data.json
           output-file-path: output.txt
           # warn if slowness is detected; might be transient on rerun
           alert-threshold: 110%

@@ -4,7 +4,10 @@
   "version": "2.4.2",
   "license": "Apache-2.0",
   "author": "Jared Palmer <jared@palmer.net> (https://jaredpalmer.com)",
-  "repository": "formium/formik",
+  "contributors": [
+    "Evan Jacobs <probablyup@gmail.com> (https://probablyup.com)"
+  ],
+  "repository": "jaredpalmer/formik",
   "homepage": "https://formik.org",
   "keywords": [
     "formik",

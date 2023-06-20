@@ -52,3 +52,6 @@ jobs:
           # if things get considerably slower, deny the PR
           fail-threshold: 120%
           fail-on-alert: true
+          comment-on-alert: true
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          summary-always: true

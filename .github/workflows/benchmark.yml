@@ -41,17 +41,10 @@ jobs:
       - name: Run benchmark
         run: yarn benchmark
 
-      - name: Download previous benchmark data
-        uses: actions/cache@v3
-        with:
-          path: ./benchmark-cache
-          key: ${{ runner.os }}-benchmark
-
       - name: Store benchmark result
         uses: benchmark-action/github-action-benchmark@v1
         with:
           tool: benchmarkjs
-          external-data-json-path: ./benchmark-cache/benchmark-data.json
           output-file-path: output.txt
           # comment for PRs that's updated with current perf relative to baseline (main)
           summary-always: true

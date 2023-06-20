@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1687290982515,
+  "lastUpdate": 1687291672942,
   "repoUrl": "https://github.com/jaredpalmer/formik",
   "entries": {
     "Benchmark": [
@@ -136,6 +136,40 @@ window.BENCHMARK_DATA = {
             "range": "±3.74%",
             "unit": "ops/sec",
             "extra": "81 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "name": "jaredpalmer",
+            "username": "jaredpalmer"
+          },
+          "committer": {
+            "name": "jaredpalmer",
+            "username": "jaredpalmer"
+          },
+          "id": "a474b6fe1b2fd0d77fc7b9d37899a3772b0cc0e4",
+          "message": "feat: add benchmarking",
+          "timestamp": "2023-06-20T16:43:19Z",
+          "url": "https://github.com/jaredpalmer/formik/pull/3831/commits/a474b6fe1b2fd0d77fc7b9d37899a3772b0cc0e4"
+        },
+        "date": 1687291671415,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "formik (simple example)",
+            "value": 11070,
+            "range": "±6.13%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "react hook form (simple example)",
+            "value": 10307,
+            "range": "±3.32%",
+            "unit": "ops/sec",
+            "extra": "82 samples"
           }
         ]
       }

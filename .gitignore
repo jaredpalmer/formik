@@ -10,9 +10,6 @@ legacy.d.ts
 
 node_modules
 package-lock.json
-yarn.lock
-!/docs/yarn.lock
-!/yarn.lock
 
 website/translated_docs
 website/build
@@ -25,3 +22,15 @@ website/i18n
 /test-results/
 /playwright-report/
 /playwright/.cache/
+
+# benchmarks
+output.txt
+
+# yarn 3
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions

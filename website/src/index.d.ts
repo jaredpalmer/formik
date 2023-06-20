@@ -1,3 +1,4 @@
+declare module 'gray-matter';
 declare module 'remark-html';
 declare module 'remark-toc';
 declare module 'remark-footnotes';
@@ -5,7 +6,6 @@ declare module 'remark-github';
 declare module 'remark-slug';
 declare module 'remark-autolink-headings';
 declare module 'remark-images';
-declare module 'rehype-shiki';
 declare module 'remark-rehype';
 declare module 'rehype-format';
 declare module 'rehype-img-size';

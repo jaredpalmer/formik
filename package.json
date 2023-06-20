@@ -1,6 +1,7 @@
 {
   "name": "formik-project",
   "private": true,
+  "type": "module",
   "resolutions": {
     "shelljs": "0.8.5",
     "typescript": "^4.0.0"
@@ -8,11 +9,18 @@
   "devDependencies": {
     "@changesets/changelog-github": "^0.2.7",
     "@changesets/cli": "^2.10.3",
+    "@hookform/resolvers": "^3.1.1",
     "@playwright/test": "^1.34.3",
+    "@types/benchmark": "^2.1.2",
     "@types/jest": "^25.0.0",
+    "benchmark": "^2.1.4",
+    "esm": "^3.2.25",
     "husky": "^4.3.0",
     "lint-staged": "^10.4.0",
     "prettier": "^2.1.2",
+    "react-hook-form": "^7.45.0",
+    "ts-node": "^10.9.1",
+    "tslib": "^2.5.3",
     "turbo": "^1.9.9"
   },
   "workspaces": [
@@ -32,7 +40,8 @@
     "e2e": "playwright test",
     "precommit": "lint-staged",
     "e2e:ui": "playwright test --ui",
-    "start:app": "turbo run build --filter formik... && yarn --cwd packages/formik link && yarn --cwd ./app link formik && yarn --cwd ./app && yarn --cwd ./app run dev"
+    "start:app": "turbo run build --filter formik... && yarn --cwd packages/formik link && yarn --cwd ./app link formik && yarn --cwd ./app && yarn --cwd ./app run dev",
+    "benchmark": "ts-node scripts/benchmark.tsx | tee output.txt"
   },
   "lint-staged": {
     "**/*.{ts,tsx,md,mdx,js,jsx}": [

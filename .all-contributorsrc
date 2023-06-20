@@ -121,6 +121,22 @@
         "bug",
         "code"
       ]
+    },
+    {
+      "login": "probablyup",
+      "name": "Evan Jacobs",
+      "avatar_url": "https://avatars.githubusercontent.com/u/570070?v=4",
+      "profile": "https://probablyup.com",
+      "contributions": [
+        "question",
+        "code",
+        "design",
+        "doc",
+        "example",
+        "ideas",
+        "review",
+        "test"
+      ]
     }
   ],
   "repoType": "github"

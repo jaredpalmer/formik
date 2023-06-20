@@ -1,13 +1,18 @@
+import { yupResolver } from '@hookform/resolvers/yup';
 import Benchmark from 'benchmark';
+import { Field, FieldArray, Form, Formik } from 'formik';
 import React from 'react';
 import { renderToString } from 'react-dom/server';
-import { Field, FieldArray, Form, Formik } from 'formik';
+import { useFieldArray, useForm } from 'react-hook-form';
 import * as yup from 'yup';
 
 const suite = new Benchmark.Suite({ initCount: 50 });
 
 suite
-  .add('formik simple form', () => renderToString(<FormikSimpleForm />))
+  .add('formik (simple example)', () => renderToString(<FormikSimpleExample />))
+  .add('react hook form (simple example)', () =>
+    renderToString(<ReactHookFormSimpleExample />)
+  )
   // TODO: add react-hook-form variant to cross-test
   .on('cycle', (event: Benchmark.Event) => {
     // @ts-expect-error surface execution errors, type does not include "error" field
@@ -26,7 +31,7 @@ const schema = yup.object({
 });
 
 // generic Formik implementation
-function FormikSimpleForm() {
+function FormikSimpleExample() {
   return (
     <Formik
       initialValues={{
@@ -48,7 +53,7 @@ function FormikSimpleForm() {
             {({ push, remove }) => (
               <>
                 {values.guests.map((_, index) => (
-                  <div>
+                  <div key={index}>
                     <Field name={`guests[${index}].name`} />{' '}
                     <button onClick={() => remove(index)}>Remove</button>
                   </div>
@@ -61,5 +66,48 @@ function FormikSimpleForm() {
         </Form>
       )}
     </Formik>
+  );
+}
+
+// generic react-hook-form implementation
+function ReactHookFormSimpleExample() {
+  const { control, register, handleSubmit } = useForm({
+    defaultValues: {
+      firstName: '',
+      lastName: '',
+      email: '',
+      guests: [],
+    },
+    resolver: yupResolver(schema),
+  });
+
+  const { fields, append, remove } = useFieldArray({
+    control,
+    // @ts-expect-error incorrect schema resolution in library types
+    name: 'guests',
+  });
+
+  return (
+    <form onSubmit={handleSubmit(() => {})}>
+      <input {...register('firstName')} />
+      <input {...register('lastName')} />
+      <input {...register('email')} />
+
+      <>
+        {fields.map((field, index) => (
+          <div key={field.id}>
+            <input
+              {...register(
+                // @ts-expect-error incorrect schema resolution in library types
+                `guests.${index}.name`
+              )}
+            />{' '}
+            <button onClick={() => remove(index)}>Remove</button>
+          </div>
+        ))}
+
+        <button onClick={() => append({ name: '' })}>Add guest</button>
+      </>
+    </form>
   );
 }

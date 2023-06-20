@@ -7,6 +7,7 @@ next.d.ts
 legacy.d.ts
 .idea
 *.orig
+output.txt
 
 node_modules
 package-lock.json

@@ -67,7 +67,7 @@ export const FriendList = () => (
 
 ### `name: string`
 
-The name or path to the relevant key in [`values`](./formik.md#values-field-string-any).
+The name or path to the relevant key in [`values`](./formik#values--field-string-any-).
 
 ### `validateOnChange?: boolean`
 

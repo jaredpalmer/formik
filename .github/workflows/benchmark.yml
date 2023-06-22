@@ -5,12 +5,6 @@ on:
   push:
     branches: [main]
 
-permissions:
-  # deployments permission to deploy GitHub pages website
-  deployments: write
-  # contents permission to update benchmark contents in gh-pages branch
-  contents: write
-
 jobs:
   benchmark:
     runs-on: ubuntu-latest
@@ -37,7 +31,13 @@ jobs:
           npm --version
           yarn --version
           yarn install --frozen-lockfile
-          yarn build
+          yarn build:benchmark
+
+      - name: Download previous benchmark data
+        uses: actions/cache@v3
+        with:
+          path: ./benchmark-cache
+          key: ${{ runner.os }}-benchmark
 
       - name: Run benchmark
         run: yarn benchmark
@@ -46,6 +46,7 @@ jobs:
         uses: benchmark-action/github-action-benchmark@v1
         with:
           tool: benchmarkjs
+          external-data-json-path: ./benchmark-cache/benchmark-data.json
           output-file-path: output.txt
           # comment for PRs that's updated with current perf relative to baseline (main)
           summary-always: true
@@ -55,7 +56,5 @@ jobs:
           fail-on-alert: true
           # if things get considerably slower, deny the PR
           fail-threshold: 120%
-          # needed for pushing historical results to gh-pages & commenting on PRs
+          # needed for commenting on PRs
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          # creates a gh-pages deployment with historical benchmarking data
-          auto-push: true

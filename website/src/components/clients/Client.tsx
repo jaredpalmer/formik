@@ -1,5 +1,5 @@
 import React from 'react';
-import Image from "next/image";
+import Image from 'next/image';
 
 interface ClientProps {
   name: string;
@@ -19,9 +19,10 @@ export const Client = React.memo<ClientProps>(
         loading="lazy"
         className="inline"
         style={{
-          maxWidth: "100%",
-          height: "auto"
-        }} />
+          maxWidth: '100%',
+          height: 'auto',
+        }}
+      />
     </span>
   )
 );

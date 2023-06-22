@@ -10,5 +10,9 @@
       "formik-native": ["./packages/react-native/src"],
       "$test/*": ["test/*"]
     }
+  },
+  "ts-node": {
+    "esm": true,
+    "transpileOnly": true
   }
 }

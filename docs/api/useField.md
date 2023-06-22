@@ -128,7 +128,7 @@ function MyOtherComponent(props) {
 This object is a subset of the props that you would pass to `<Field>`. It contains:
 
 - `name: string` - The name of the field
-- `validate?: (value: any) => undefined | string | Promise<any>` - See [the documentation for `<Field>`](../field#validate)
+- `validate?: (value: any) => undefined | string | Promise<any>` - See [the documentation for `<Field>`](./field#validate)
 - `type?: string` - The type of the HTML input (`text`, `number` and etc.)
 - `multiple?: boolean` - Whether or not the multiple values can be selected.
 - `value?: string`- Works only for inputs of type `checkbox` and `radio`. When a form is submitted, checkboxes and radios are submitted with the provided `value`. Read more about it on [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/checkbox#Value).

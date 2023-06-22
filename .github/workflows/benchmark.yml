@@ -31,7 +31,7 @@ jobs:
           npm --version
           yarn --version
           yarn install --frozen-lockfile
-          yarn build
+          yarn build:benchmark
 
       - name: Download previous benchmark data
         uses: actions/cache@v3

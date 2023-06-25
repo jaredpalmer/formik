@@ -101,7 +101,7 @@ Either a React component or the name of an HTML element to render. If not specif
 
 `id?: string`
 
-A field's id in Formik state. To get access to DOM elements for e2e testing purposes, tt doesn't impact the implementation in any way as the prop can still be omitted. 
+A field's id in Formik state. To get access to DOM elements for e2e testing purposes, it doesn't impact the implementation in any way as the prop can still be omitted. 
 ```jsx
 // id will be used only for testing purposes
 // not contributing anything to the core implementation.

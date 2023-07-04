@@ -86,12 +86,12 @@ export interface FormikHelpers<Values> {
   setTouched: (
     touched: FormikTouched<Values>,
     shouldValidate?: boolean
-  ) => void;
+  ) => Promise<void | FormikErrors<Values>>;
   /** Manually set values object  */
   setValues: (
     values: React.SetStateAction<Values>,
     shouldValidate?: boolean
-  ) => void;
+  ) => Promise<void | FormikErrors<Values>>;
   /** Set value of form field directly */
   setFieldValue: (
     field: string,
@@ -105,11 +105,11 @@ export interface FormikHelpers<Values> {
     field: string,
     isTouched?: boolean,
     shouldValidate?: boolean
-  ) => void;
+  ) =>  Promise<void | FormikErrors<Values>>;
   /** Validate form values */
   validateForm: (values?: any) => Promise<FormikErrors<Values>>;
   /** Validate field value */
-  validateField: (field: string) => void;
+  validateField: (field: string) => Promise<void> | Promise<string | undefined>;
   /** Reset form */
   resetForm: (nextState?: Partial<FormikState<Values>>) => void;
   /** Submit the form imperatively */

@@ -177,10 +177,12 @@ Set `errors` imperatively.
 Set the error message of a field imperatively. `field` should match the key of
 `errors` you wish to update. Useful for creating custom input error handlers.
 
-#### `setFieldTouched: (field: string, isTouched?: boolean, shouldValidate?: boolean) => void`
+#### `setFieldTouched: (field: string, isTouched?: boolean, shouldValidate?: boolean) => Promise<void | FormikErrors>`
 
 Set the touched state of a field imperatively. `field` should match the key of
 `touched` you wish to update. Useful for creating custom input blur handlers. Calling this method will trigger validation to run if `validateOnBlur` is set to `true` (which it is by default). `isTouched` defaults to `true` if not specified. You can also explicitly prevent/skip validation by passing a third argument as `false`.
+
+If `validateOnBlur` is set to `true` and there are errors, they will be resolved in the returned `Promise`.
 
 #### `submitForm: () => Promise`
 
@@ -208,13 +210,17 @@ use it to pass API responses back into your component in `handleSubmit`.
 
 Set `isSubmitting` imperatively. You would call it with `setSubmitting(false)` in your `onSubmit` handler to finish the cycle. To learn more about the submission process, see [Form Submission](../guides/form-submission.md).
 
-#### `setTouched: (fields: { [field: string]: boolean }, shouldValidate?: boolean) => void`
+#### `setTouched: (fields: { [field: string]: boolean }, shouldValidate?: boolean) => Promise<void | FormikErrors>`
 
 Set `touched` imperatively. Calling this will trigger validation to run if `validateOnBlur` is set to `true` (which it is by default). You can also explicitly prevent/skip validation by passing a second argument as `false`.
+
+If `validateOnBlur` is set to `true` and there are errors, they will be resolved in the returned `Promise`.
 
 #### `setValues: (fields: React.SetStateAction<{ [field: string]: any }>, shouldValidate?: boolean) => void`
 
 Set `values` imperatively. Calling this will trigger validation to run if `validateOnChange` is set to `true` (which it is by default). You can also explicitly prevent/skip validation by passing a second argument as `false`.
+
+If `validateOnChange` is set to `true` and there are errors, they will be resolved in the returned `Promise`.
 
 #### `status?: any`
 

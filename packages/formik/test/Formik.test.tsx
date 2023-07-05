@@ -12,6 +12,7 @@ import {
   Formik,
   FormikConfig,
   FormikProps,
+  FormikValues,
   prepareDataForValidation,
 } from '../src';
 import { noop } from './testHelpers';
@@ -60,10 +61,12 @@ const InitialValues = {
   age: 30,
 };
 
-function renderFormik<V = Values>(props?: Partial<FormikConfig<V>>) {
+function renderFormik<V extends FormikValues = Values>(
+  props?: Partial<FormikConfig<V>>
+) {
   let injected: FormikProps<V>;
   const { rerender, ...rest } = render(
-    <Formik
+    <Formik<V>
       onSubmit={noop as any}
       initialValues={InitialValues as any}
       {...props}
@@ -1397,6 +1400,7 @@ describe('<Formik>', () => {
     const validate = () => ({
       users: [{ firstName: 'required' }],
     });
+
     const validationSchema = Yup.object({
       users: Yup.array().of(
         Yup.object({
@@ -1413,10 +1417,10 @@ describe('<Formik>', () => {
 
     await act(async () => {
       await getProps().validateForm();
+    });
 
-      expect(getProps().errors).toEqual({
-        users: [{ firstName: 'required', lastName: 'required' }],
-      });
+    expect(getProps().errors).toEqual({
+      users: [{ firstName: 'required', lastName: 'required' }],
     });
   });
 
@@ -1435,8 +1439,8 @@ describe('<Formik>', () => {
     await act(async () => {
       try {
         await getProps().validateForm();
-      } catch ({ message }) {
-        caughtError = message;
+      } catch (err) {
+        caughtError = (err as Yup.ValidationError).message;
       }
     });
 

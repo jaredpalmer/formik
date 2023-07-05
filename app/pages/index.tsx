@@ -7,14 +7,10 @@ function Home() {
       <h1>Formik Examples and Fixtures</h1>
       <ul>
         <li>
-          <Link href="/basic">
-            <a>Basic</a>
-          </Link>
+          <Link href="/basic">Basic</Link>
         </li>
         <li>
-          <Link href="/async-submission">
-            <a>Async Submission</a>
-          </Link>
+          <Link href="/async-submission">Async Submission</Link>
         </li>
       </ul>
       <style jsx>{`

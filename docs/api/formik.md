@@ -269,7 +269,7 @@ const ContactForm = ({
 );
 ```
 
-**Warning:** `<Formik component>` takes precendence over `<Formik render>` so
+**Warning:** `<Formik component>` takes precedence over `<Formik render>` so
 don’t use both in the same `<Formik>`.
 
 ### `render: (props: FormikProps<Values>) => ReactNode`

@@ -93,19 +93,11 @@ export interface FormikHelpers<Values> {
     shouldValidate?: boolean
   ) => void;
   /** Set value of form field directly */
-  setFieldValue: (
-    field: string,
-    value: any,
-    shouldValidate?: boolean
-  ) => Promise<void | FormikErrors<Values>>;
+  setFieldValue: SetFieldValue;
   /** Set error message of a form field directly */
-  setFieldError: (field: string, message: string | undefined) => void;
+  setFieldError: SetFieldError;
   /** Set whether field has been touched directly */
-  setFieldTouched: (
-    field: string,
-    isTouched?: boolean,
-    shouldValidate?: boolean
-  ) => void;
+  setFieldTouched: SetFieldTouched;
   /** Validate form values */
   validateForm: (values?: any) => Promise<FormikErrors<Values>>;
   /** Validate field value */
@@ -122,6 +114,21 @@ export interface FormikHelpers<Values> {
     cb?: () => void
   ) => void;
 }
+
+export type SetFieldValue<ValueType = any> = (
+  field: string,
+  value: ValueType,
+  shouldValidate?: boolean
+) => Promise<void | FormikErrors<Values>>
+export type SetFieldError = (
+  field: string,
+  message: string | undefined
+) => void;
+export type SetFieldTouched = (
+  field: string,
+  isTouched?: boolean,
+  shouldValidate?: boolean
+) => void;
 
 /**
  * Formik form event handlers

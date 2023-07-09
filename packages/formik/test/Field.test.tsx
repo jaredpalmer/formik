@@ -443,7 +443,9 @@ describe('Field / FastField', () => {
         rerender();
 
         act(() => {
-          getFormProps().validateField('user.name');
+          type FormikPropsWithNewValues = FormikProps<Values & Yup.InferType<typeof validationSchema>>;
+
+          (getFormProps() as unknown as FormikPropsWithNewValues).validateField('user.name');
         });
 
         await waitFor(() =>

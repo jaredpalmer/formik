@@ -6,6 +6,7 @@ import {
   FormikContextType,
   FormikProps,
   FormikState,
+  FormikValues,
   SharedRenderProps,
 } from './types';
 import {
@@ -17,8 +18,8 @@ import {
   setIn,
 } from './utils';
 
-export type FieldArrayRenderProps = ArrayHelpers & {
-  form: FormikProps<any>;
+export type FieldArrayRenderProps<T extends FormikValues = any> = ArrayHelpers & {
+  form: FormikProps<T>;
   name: string;
 };
 
@@ -137,7 +138,7 @@ const createAlterationHandler = (
   };
 };
 
-class FieldArrayInner<Values = {}> extends React.Component<
+class FieldArrayInner<Values extends FormikValues = {}> extends React.Component<
   FieldArrayConfig & { formik: FormikContextType<Values> },
   {}
 > {
@@ -369,7 +370,7 @@ class FieldArrayInner<Values = {}> extends React.Component<
       },
     } = this.props;
 
-    const props: FieldArrayRenderProps = {
+    const props: FieldArrayRenderProps<Values> = {
       ...arrayHelpers,
       form: restOfFormik,
       name,

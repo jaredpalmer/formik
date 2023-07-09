@@ -17,12 +17,12 @@ import { isFunction } from './utils';
  *
  * @deprecated  Use `OuterProps & FormikProps<Values>` instead.
  */
-export type InjectedFormikProps<Props, Values> = Props & FormikProps<Values>;
+export type InjectedFormikProps<Props, Values extends FormikValues> = Props & FormikProps<Values>;
 
 /**
  * Formik helpers + { props }
  */
-export type FormikBag<P, V> = { props: P } & FormikHelpers<V>;
+export type FormikBag<P, V extends FormikValues> = { props: P } & FormikHelpers<V>;
 
 /**
  * withFormik() configuration options. Backwards compatible.

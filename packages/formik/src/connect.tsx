@@ -1,7 +1,7 @@
 import * as React from 'react';
 import hoistNonReactStatics from 'hoist-non-react-statics';
 
-import { FormikContextType } from './types';
+import { FormikContextType, FormikValues } from './types';
 import { FormikConsumer } from './FormikContext';
 import invariant from 'tiny-warning';
 
@@ -9,10 +9,10 @@ import invariant from 'tiny-warning';
  * Connect any component to Formik context, and inject as a prop called `formik`;
  * @param Comp React Component
  */
-export function connect<OuterProps, Values = {}>(
-  Comp: React.ComponentType<OuterProps & { formik: FormikContextType<Values> }>
+export function connect<TOuterProps, TFormikValues extends FormikValues = {}>(
+  Comp: React.ComponentType<TOuterProps & { formik: FormikContextType<TFormikValues> }>
 ) {
-  const C: React.FC<OuterProps> = props => (
+  const C: React.FC<TOuterProps> = props => (
     <FormikConsumer>
       {formik => {
         invariant(
@@ -32,7 +32,7 @@ export function connect<OuterProps, Values = {}>(
 
   // Assign Comp to C.WrappedComponent so we can access the inner component in tests
   // For example, <Field.WrappedComponent /> gets us <FieldInner/>
-  (C as React.FC<OuterProps> & {
+  (C as React.FC<TOuterProps> & {
     WrappedComponent: typeof Comp;
   }).WrappedComponent = Comp;
 
@@ -41,7 +41,7 @@ export function connect<OuterProps, Values = {}>(
   return hoistNonReactStatics(
     C,
     Comp as React.ComponentClass<
-      OuterProps & { formik: FormikContextType<Values> }
+      TOuterProps & { formik: FormikContextType<TFormikValues> }
     > // cast type to ComponentClass (even if SFC)
   );
 }

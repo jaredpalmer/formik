@@ -53,7 +53,4 @@ class ErrorMessageImpl extends React.Component<
   }
 }
 
-export const ErrorMessage = connect<
-  ErrorMessageProps,
-  ErrorMessageProps & { formik: FormikContextType<any> }
->(ErrorMessageImpl);
+export const ErrorMessage = connect<ErrorMessageProps, any>(ErrorMessageImpl);

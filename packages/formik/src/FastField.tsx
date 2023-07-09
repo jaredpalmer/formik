@@ -6,6 +6,7 @@ import {
   FormikContextType,
   FieldMetaProps,
   FieldInputProps,
+  FormikValues,
 } from './types';
 import invariant from 'tiny-warning';
 import { getIn, isEmptyChildren, isFunction } from './utils';
@@ -14,10 +15,10 @@ import { connect } from './connect';
 
 type $FixMe = any;
 
-export interface FastFieldProps<V = any> {
-  field: FieldInputProps<V>;
-  meta: FieldMetaProps<V>;
-  form: FormikProps<V>; // if ppl want to restrict this for a given form, let them.
+export interface FastFieldProps<TFormikValues extends FormikValues = any, TFieldValue = any> {
+  field: FieldInputProps<TFieldValue>;
+  meta: FieldMetaProps<TFieldValue>;
+  form: FormikProps<TFormikValues>; // if ppl want to restrict this for a given form, let them.
 }
 
 export type FastFieldConfig<T> = FieldConfig & {
@@ -32,7 +33,7 @@ export type FastFieldAttributes<T> = GenericFieldHTMLAttributes &
   FastFieldConfig<T> &
   T;
 
-type FastFieldInnerProps<Values = {}, Props = {}> = FastFieldAttributes<
+type FastFieldInnerProps<Values extends FormikValues = {}, Props = {}> = FastFieldAttributes<
   Props
 > & { formik: FormikContextType<Values> };
 
@@ -40,7 +41,7 @@ type FastFieldInnerProps<Values = {}, Props = {}> = FastFieldAttributes<
  * Custom Field component for quickly hooking into Formik
  * context and wiring up forms.
  */
-class FastFieldInner<Values = {}, Props = {}> extends React.Component<
+class FastFieldInner<Values extends FormikValues = {}, Props = {}> extends React.Component<
   FastFieldInnerProps<Values, Props>,
   {}
 > {
@@ -147,14 +148,14 @@ class FastFieldInner<Values = {}, Props = {}> extends React.Component<
       initialError: getIn(formik.initialErrors, name),
     };
 
-    const bag = { field, meta, form: restOfFormik };
+    const bag: FastFieldProps<Values> = { field, meta, form: restOfFormik };
 
     if (render) {
       return (render as any)(bag);
     }
 
     if (isFunction(children)) {
-      return (children as (props: FastFieldProps<any>) => React.ReactNode)(bag);
+      return (children as (props: FastFieldProps<Values>) => React.ReactNode)(bag);
     }
 
     if (component) {

@@ -9,14 +9,15 @@ import {
   FieldHelperProps,
   FieldInputProps,
   FieldMetaProps,
+  FormikBlurHandlerFn,
+  FormikChangeHandlerFn,
   FormikConfig,
-  FormikErrors,
-  FormikHandlers,
+  FormikErrors, 
   FormikHelpers,
   FormikProps,
   FormikState,
   FormikTouched,
-  FormikValues,
+  FormikValues
 } from './types';
 import {
   getActiveElement,
@@ -27,10 +28,10 @@ import {
   isPromise,
   isString,
   setIn,
-  setNestedObjectValues,
+  setNestedObjectValues
 } from './utils';
 
-type FormikMessage<Values> =
+type FormikMessage<Values extends FormikValues> =
   | { type: 'SUBMIT_ATTEMPT' }
   | { type: 'SUBMIT_FAILURE' }
   | { type: 'SUBMIT_SUCCESS' }
@@ -53,7 +54,7 @@ type FormikMessage<Values> =
     };
 
 // State reducer
-function formikReducer<Values>(
+function formikReducer<Values extends FormikValues>(
   state: FormikState<Values>,
   msg: FormikMessage<Values>
 ) {
@@ -119,8 +120,8 @@ function formikReducer<Values>(
 }
 
 // Initial empty states // objects
-const emptyErrors: FormikErrors<unknown> = {};
-const emptyTouched: FormikTouched<unknown> = {};
+const emptyErrors: FormikErrors<{}> = {};
+const emptyTouched: FormikTouched<{}> = {};
 
 // This is an object that contains a map of all registered fields
 // and their validate functions
@@ -138,7 +139,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   enableReinitialize = false,
   onSubmit,
   ...rest
-}: FormikConfig<Values>) {
+}: FormikConfig<Values>): FormikProps<Values> {
   const props = {
     validateOnChange,
     validateOnBlur,
@@ -653,7 +654,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     [setFieldValue, state.values]
   );
 
-  const handleChange = useEventCallback<FormikHandlers['handleChange']>(
+  const handleChange = useEventCallback<FormikChangeHandlerFn>(
     (
       eventOrPath: string | React.ChangeEvent<any>
     ): void | ((eventOrTextValue: string | React.ChangeEvent<any>) => void) => {
@@ -703,7 +704,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     [setFieldTouched]
   );
 
-  const handleBlur = useEventCallback<FormikHandlers['handleBlur']>(
+  const handleBlur = useEventCallback<FormikBlurHandlerFn>(
     (eventOrString: any): void | ((e: any) => void) => {
       if (isString(eventOrString)) {
         return event => executeBlur(event, eventOrString);
@@ -959,7 +960,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     [isInitialValid, dirty, state.errors, props]
   );
 
-  const ctx = {
+  const ctx: FormikProps<Values> = {
     ...state,
     initialValues: initialValues.current,
     initialErrors: initialErrors.current,
@@ -1018,7 +1019,7 @@ export function Formik<
     }, []);
   }
   return (
-    <FormikProvider value={formikbag}>
+    <FormikProvider value={formikbag as unknown as FormikProps<FormikValues>}>
       {component
         ? React.createElement(component as any, formikbag)
         : render
@@ -1056,7 +1057,7 @@ function warnAboutMissingIdentifier({
 /**
  * Transform Yup ValidationError to a more usable object
  */
-export function yupToFormErrors<Values>(yupError: any): FormikErrors<Values> {
+export function yupToFormErrors<Values extends FormikValues>(yupError: any): FormikErrors<Values> {
   let errors: FormikErrors<Values> = {};
   if (yupError.inner) {
     if (yupError.inner.length === 0) {

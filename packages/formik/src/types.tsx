@@ -328,10 +328,12 @@ export type FieldValidator = (
 export type FormikValueKeys<TValues extends object> = FlatProperties<TValues, '.'>;
 
 type FlatProperties<TObject extends object, TSeparator extends string> = 
-| `${keyof TObject & (string | number)}`
-| {
-  [K in keyof TObject]: 
-    TObject[K] extends object ?
-    `${K & (string | number)}${TSeparator}${FlatProperties<TObject[K], TSeparator>}` :
-    never;
-}[keyof TObject];
+  TObject extends object ?
+    | `${keyof TObject & (string | number)}`
+    | {
+      [K in keyof TObject]: 
+        TObject[K] extends object ?
+        `${K & (string | number)}${TSeparator}${FlatProperties<TObject[K], TSeparator>}` :
+        never;
+    }[keyof TObject]
+  : never;

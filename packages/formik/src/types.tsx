@@ -148,7 +148,7 @@ export interface FormikHandlers<TValues extends FormikValues> {
   handleBlur: FormikBlurHandlerFn;
   handleChange: FormikChangeHandlerFn;
 
-  getFieldProps: <TFieldValue>(props: string | FieldConfig<TFieldValue>) => FieldInputProps<TFieldValue>;
+  getFieldProps: <TFieldValue>(props: FormikValueKeys<TValues> | FieldConfig<TFieldValue>) => FieldInputProps<TFieldValue>;
   getFieldMeta: <TFieldValue>(name: FormikValueKeys<TValues>) => FieldMetaProps<TFieldValue>;
   getFieldHelpers: <TFieldValue>(name: FormikValueKeys<TValues>) => FieldHelperProps<TFieldValue>;
 }

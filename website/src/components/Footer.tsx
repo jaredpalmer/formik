@@ -170,7 +170,7 @@ export const Footer: React.FC<FooterProps> = props => {
             <form
               action="https://api.formik.com/submit/palmerhq/formik-newsletter"
               method="post"
-              className="mt-4 sm:flex sm:max-w-md"
+              className="mt-4 lg:flex lg:max-w-md"
             >
               <input type="hidden" name="_honeypot" value="" />
               <input

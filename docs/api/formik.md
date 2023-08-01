@@ -458,3 +458,7 @@ and/or `initialValues` change.
 [A Yup schema](https://github.com/jquense/yup) or a function that returns a Yup
 schema. This is used for validation. Errors are mapped by key to the inner
 component's `errors`. Its keys should match those of `values`.
+
+### `validationSchemaContext?: object`
+
+A [context object](https://github.com/jquense/yup#schemavalidatevalue-any-options-object-promiseinfertypeschema-validationerror) that is passed to the [Yup schema](https://github.com/jquense/yup) provided via the [validationSchema prop](#validationschema-schema----schema).

@@ -1454,4 +1454,28 @@ describe('<Formik>', () => {
 
     expect(innerRef.current).toEqual(getProps());
   });
+
+  it('should pass context to validationSchema', async () => {
+    const validationSchema = Yup.object().shape({
+      usernameOrEmail: Yup.string().when(
+        '$validateAsEmail',
+        (validateAsEmail, schema) =>
+          validateAsEmail ? schema.email('Invalid email') : schema
+      ),
+    });
+
+    const { getProps } = renderFormik({
+      initialValues: { usernameOrEmail: 'john' },
+      validationSchema,
+      validationSchemaContext: { validateAsEmail: true },
+    });
+
+    await act(async () => {
+      await getProps().validateForm();
+    });
+
+    expect(getProps().errors).toEqual({
+      usernameOrEmail: 'Invalid email',
+    });
+  });
 });

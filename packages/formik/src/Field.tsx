@@ -202,14 +202,14 @@ export function Field({
       const { innerRef, ...rest } = props;
       return React.createElement(
         component,
-        { ref: innerRef, ...field, ...rest },
+        { ref: innerRef, ...field, name, ...rest },
         children
       );
     }
     // We don't pass `meta` for backwards compat
     return React.createElement(
       component,
-      { field, form: formik, ...props },
+      { field, form: formik, name, ...props },
       children
     );
   }
@@ -221,7 +221,7 @@ export function Field({
     const { innerRef, ...rest } = props;
     return React.createElement(
       asElement,
-      { ref: innerRef, ...field, ...rest },
+      { ref: innerRef, ...field, name, ...rest },
       children
     );
   }

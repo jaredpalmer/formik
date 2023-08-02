@@ -12,7 +12,7 @@ import invariant from 'tiny-warning';
 export function connect<OuterProps, Values = {}>(
   Comp: React.ComponentType<OuterProps & { formik: FormikContextType<Values> }>
 ) {
-  const C: React.FC<OuterProps> = (props: OuterProps) => (
+  const C: React.FC<OuterProps> = props => (
     <FormikConsumer>
       {formik => {
         invariant(
@@ -23,6 +23,7 @@ export function connect<OuterProps, Values = {}>(
       }}
     </FormikConsumer>
   );
+
   const componentDisplayName =
     Comp.displayName ||
     Comp.name ||
@@ -32,7 +33,7 @@ export function connect<OuterProps, Values = {}>(
   // Assign Comp to C.WrappedComponent so we can access the inner component in tests
   // For example, <Field.WrappedComponent /> gets us <FieldInner/>
   (C as React.FC<OuterProps> & {
-    WrappedComponent: React.ReactNode;
+    WrappedComponent: typeof Comp;
   }).WrappedComponent = Comp;
 
   C.displayName = `FormikConnect(${componentDisplayName})`;
@@ -42,5 +43,5 @@ export function connect<OuterProps, Values = {}>(
     Comp as React.ComponentClass<
       OuterProps & { formik: FormikContextType<Values> }
     > // cast type to ComponentClass (even if SFC)
-  ) as React.ComponentType<OuterProps>;
+  );
 }

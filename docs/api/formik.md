@@ -93,11 +93,11 @@ to `<button onClick={handleReset}>...</button>`
 
 #### `handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void`
 
-Submit handler. This should be passed to `<form onSubmit={props.handleSubmit}>...</form>`. To learn more about the submission process, see [Form Submission](../docs/guides/form-submission.md).
+Submit handler. This should be passed to `<form onSubmit={props.handleSubmit}>...</form>`. To learn more about the submission process, see [Form Submission](../guides/form-submission.md).
 
 #### `isSubmitting: boolean`
 
-Submitting state of the form. Returns `true` if submission is in progress and `false` otherwise. IMPORTANT: Formik will set this to `true` as soon as submission is _attempted_. To learn more about the submission process, see [Form Submission](../docs/guides/form-submission.md).
+Submitting state of the form. Returns `true` if submission is in progress and `false` otherwise. IMPORTANT: Formik will set this to `true` as soon as submission is _attempted_. To learn more about the submission process, see [Form Submission](../guides/form-submission.md).
 
 #### `isValid: boolean`
 
@@ -107,7 +107,7 @@ Returns `true` if there are no `errors` (i.e. the `errors` object is empty) and 
 
 #### `isValidating: boolean`
 
-Returns `true` if Formik is running validation during submission, or by calling [`validateForm`] directly `false` otherwise. To learn more about what happens with `isValidating` during the submission process, see [Form Submission](../docs/guides/form-submission.md).
+Returns `true` if Formik is running validation during submission, or by calling [`validateForm`] directly `false` otherwise. To learn more about what happens with `isValidating` during the submission process, see [Form Submission](../guides/form-submission.md).
 
 #### `resetForm: (nextState?: Partial<FormikState<Values>>) => void`
 
@@ -177,10 +177,12 @@ Set `errors` imperatively.
 Set the error message of a field imperatively. `field` should match the key of
 `errors` you wish to update. Useful for creating custom input error handlers.
 
-#### `setFieldTouched: (field: string, isTouched?: boolean, shouldValidate?: boolean) => void`
+#### `setFieldTouched: (field: string, isTouched?: boolean, shouldValidate?: boolean) => Promise<void | FormikErrors>`
 
 Set the touched state of a field imperatively. `field` should match the key of
 `touched` you wish to update. Useful for creating custom input blur handlers. Calling this method will trigger validation to run if `validateOnBlur` is set to `true` (which it is by default). `isTouched` defaults to `true` if not specified. You can also explicitly prevent/skip validation by passing a third argument as `false`.
+
+If `validateOnBlur` is set to `true` and there are errors, they will be resolved in the returned `Promise`.
 
 #### `submitForm: () => Promise`
 
@@ -188,8 +190,8 @@ Trigger a form submission. The promise will be rejected if form is invalid.
 
 #### `submitCount: number`
 
-Number of times user tried to submit the form. Increases when [`handleSubmit`](#handlesubmit-e-reactformevent-htmlformelement-void) is called, resets after calling
-[`handleReset`](#handlereset-void). `submitCount` is readonly computed property and should not be mutated directly.
+Number of times user tried to submit the form. Increases when [`handleSubmit`](#handlesubmit-e-reactformeventhtmlformelement--void) is called, resets after calling
+[`handleReset`](#handlereset---void). `submitCount` is readonly computed property and should not be mutated directly.
 
 #### `setFieldValue: (field: string, value: any, shouldValidate?: boolean) => Promise<void | FormikErrors>`
 
@@ -206,15 +208,19 @@ use it to pass API responses back into your component in `handleSubmit`.
 
 #### `setSubmitting: (isSubmitting: boolean) => void`
 
-Set `isSubmitting` imperatively. You would call it with `setSubmitting(false)` in your `onSubmit` handler to finish the cycle. To learn more about the submission process, see [Form Submission](../docs/guides/form-submission.md).
+Set `isSubmitting` imperatively. You would call it with `setSubmitting(false)` in your `onSubmit` handler to finish the cycle. To learn more about the submission process, see [Form Submission](../guides/form-submission.md).
 
-#### `setTouched: (fields: { [field: string]: boolean }, shouldValidate?: boolean) => void`
+#### `setTouched: (fields: { [field: string]: boolean }, shouldValidate?: boolean) => Promise<void | FormikErrors>`
 
 Set `touched` imperatively. Calling this will trigger validation to run if `validateOnBlur` is set to `true` (which it is by default). You can also explicitly prevent/skip validation by passing a second argument as `false`.
+
+If `validateOnBlur` is set to `true` and there are errors, they will be resolved in the returned `Promise`.
 
 #### `setValues: (fields: React.SetStateAction<{ [field: string]: any }>, shouldValidate?: boolean) => void`
 
 Set `values` imperatively. Calling this will trigger validation to run if `validateOnChange` is set to `true` (which it is by default). You can also explicitly prevent/skip validation by passing a second argument as `false`.
+
+If `validateOnChange` is set to `true` and there are errors, they will be resolved in the returned `Promise`.
 
 #### `status?: any`
 
@@ -223,7 +229,7 @@ otherwise be expressed/stored with other methods. This is useful for capturing
 and passing through API responses to your inner component.
 
 `status` should only be modified by calling
-[`setStatus`](#setstatus-status-any-void).
+[`setStatus`](#setstatus-status-any--void).
 
 #### `touched: { [field: string]: boolean }`
 
@@ -269,7 +275,7 @@ const ContactForm = ({
 );
 ```
 
-**Warning:** `<Formik component>` takes precendence over `<Formik render>` so
+**Warning:** `<Formik component>` takes precedence over `<Formik render>` so
 don’t use both in the same `<Formik>`.
 
 ### `render: (props: FormikProps<Values>) => ReactNode`

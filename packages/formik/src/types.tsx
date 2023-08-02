@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { FieldConfig } from './Field';
 /**
  * Values of fields in the form
  */
@@ -85,12 +86,12 @@ export interface FormikHelpers<Values> {
   setTouched: (
     touched: FormikTouched<Values>,
     shouldValidate?: boolean
-  ) => void;
+  ) => Promise<void | FormikErrors<Values>>;
   /** Manually set values object  */
   setValues: (
     values: React.SetStateAction<Values>,
     shouldValidate?: boolean
-  ) => void;
+  ) => Promise<void | FormikErrors<Values>>;
   /** Set value of form field directly */
   setFieldValue: <T extends keyof Values>(
     field: T,
@@ -104,11 +105,11 @@ export interface FormikHelpers<Values> {
     field: keyof  Values,
     isTouched?: boolean,
     shouldValidate?: boolean
-  ) => void;
+  ) =>  Promise<void | FormikErrors<Values>>;
   /** Validate form values */
   validateForm: (values?: any) => Promise<FormikErrors<Values>>;
   /** Validate field value */
-  validateField: (field: keyof Values) => void;
+  validateField: (field: keyof Values) => Promise<void> | Promise<string | undefined>;
   /** Reset form */
   resetForm: (nextState?: Partial<FormikState<Values>>) => void;
   /** Submit the form imperatively */
@@ -149,7 +150,9 @@ export interface FormikHandlers {
       : (e: string | React.ChangeEvent<any>) => void;
   };
 
-  getFieldProps: <Value = any>(props: any) => FieldInputProps<Value>;
+  getFieldProps: <Value = any>(
+    props: string | FieldConfig<Value>
+  ) => FieldInputProps<Value>;
   getFieldMeta: <Value>(name: string) => FieldMetaProps<Value>;
   getFieldHelpers: <Value = any>(name: string) => FieldHelperProps<Value>;
 }
@@ -177,7 +180,7 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
   /**
    * Form component to render
    */
-  component?: React.ComponentType<FormikProps<Values>> | React.ReactNode;
+  component?: React.ComponentType<FormikProps<Values>>;
 
   /**
    * Render prop (works like React router's <Route render={props =>} />)
@@ -262,7 +265,7 @@ export interface SharedRenderProps<T> {
   /**
    * Field component to render. Can either be a string like 'select' or a component.
    */
-  component?: string | React.ComponentType<T | void>;
+  component?: keyof JSX.IntrinsicElements | React.ComponentType<T | void>;
 
   /**
    * Render prop (works like React router's <Route render={props =>} />)
@@ -299,9 +302,9 @@ export interface FieldMetaProps<Value> {
 /** Imperative handles to change a field's value, error and touched */
 export interface FieldHelperProps<Value> {
   /** Set the field's value */
-  setValue: (value: Value, shouldValidate?: boolean) => void;
+  setValue: (value: Value, shouldValidate?: boolean) => Promise<void | FormikErrors<Value>>;
   /** Set the field's touched value */
-  setTouched: (value: boolean, shouldValidate?: boolean) => void;
+  setTouched: (value: boolean, shouldValidate?: boolean) => Promise<void | FormikErrors<Value>>;
   /** Set the field's error value */
   setError: (value: string | undefined) => void;
 }

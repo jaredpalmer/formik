@@ -4,6 +4,7 @@ import { getIn, isFunction } from './utils';
 import { connect } from './connect';
 
 export interface ErrorMessageProps {
+  id?: string;
   name: string;
   className?: string;
   component?: string | React.ComponentType;

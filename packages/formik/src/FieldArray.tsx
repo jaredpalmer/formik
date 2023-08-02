@@ -178,6 +178,7 @@ class FieldArrayInner<Values = {}> extends React.Component<
 
       formik: { setFormikState },
     } = this.props;
+
     setFormikState((prevState: FormikState<any>) => {
       let updateErrors = createAlterationHandler(alterErrors, fn);
       let updateTouched = createAlterationHandler(alterTouched, fn);
@@ -268,26 +269,19 @@ class FieldArrayInner<Values = {}> extends React.Component<
     this.updateArrayField(
       (array: any[]) => {
         const arr = array ? [value, ...array] : [value];
-        if (length < 0) {
-          length = arr.length;
-        }
+
+        length = arr.length;
+
         return arr;
       },
       (array: any[]) => {
-        const arr = array ? [null, ...array] : [null];
-        if (length < 0) {
-          length = arr.length;
-        }
-        return arr;
+        return array ? [null, ...array] : [null];
       },
       (array: any[]) => {
-        const arr = array ? [null, ...array] : [null];
-        if (length < 0) {
-          length = arr.length;
-        }
-        return arr;
+        return array ? [null, ...array] : [null];
       }
     );
+
     return length;
   };
 

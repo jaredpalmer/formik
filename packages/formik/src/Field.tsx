@@ -53,6 +53,11 @@ export interface FieldConfig<V = any> {
   validate?: FieldValidator;
 
   /**
+   * Used for 'select' and related input types.
+   */
+  multiple?: boolean;
+
+  /**
    * Field name
    */
   name: string;

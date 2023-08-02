@@ -1,5 +1,11 @@
 # formik
 
+## 2.4.3
+
+### Patch Changes
+
+- [`9e0a661`](https://github.com/jaredpalmer/formik/commit/9e0a661513af75d1b848e5be7a4916c53b78760f) [#3843](https://github.com/jaredpalmer/formik/pull/3843) Thanks [@bonimba](https://github.com/bonimba)! - Fix FormikHelper and FieldHelperProps types
+
 ## 2.4.2
 
 ### Patch Changes

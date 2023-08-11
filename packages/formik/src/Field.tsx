@@ -22,19 +22,19 @@ export interface FieldConfig<V = any> {
    * Field component to render. Can either be a string like 'select' or a component.
    */
   component?:
-    | string
-    | React.ComponentType<FieldProps<V>>
-    | React.ComponentType
-    | React.ForwardRefExoticComponent<any>;
+  | string
+  | React.ComponentType<FieldProps<V>>
+  | React.ComponentType
+  | React.ForwardRefExoticComponent<any>;
 
   /**
    * Component to render. Can either be a string e.g. 'select', 'input', or 'textarea', or a component.
    */
   as?:
-    | React.ComponentType<FieldProps<V>['field']>
-    | string
-    | React.ComponentType
-    | React.ForwardRefExoticComponent<any>;
+  | React.ComponentType<FieldProps<V>['field']>
+  | string
+  | React.ComponentType
+  | React.ForwardRefExoticComponent<any>;
 
   /**
    * Render prop (works like React router's <Route render={props =>} />)
@@ -72,9 +72,11 @@ export interface FieldConfig<V = any> {
   innerRef?: (instance: any) => void;
 }
 
-export type FieldAttributes<T> = GenericFieldHTMLAttributes &
+export type FieldAttributes<T> = { className?: string; } & GenericFieldHTMLAttributes &
   FieldConfig<T> &
-  T & { name: string };
+  T & {
+    name: string,
+  };
 
 export type FieldHookConfig<T> = GenericFieldHTMLAttributes & FieldConfig<T>;
 
@@ -139,6 +141,7 @@ export function Field({
   children,
   as: is, // `as` is reserved in typescript lol
   component,
+  className,
   ...props
 }: FieldAttributes<any>) {
   const {
@@ -202,14 +205,14 @@ export function Field({
       const { innerRef, ...rest } = props;
       return React.createElement(
         component,
-        { ref: innerRef, ...field, ...rest },
+        { ref: innerRef, ...field, ...rest, className },
         children
       );
     }
     // We don't pass `meta` for backwards compat
     return React.createElement(
       component,
-      { field, form: formik, ...props },
+      { field, form: formik, ...props, className },
       children
     );
   }
@@ -221,10 +224,10 @@ export function Field({
     const { innerRef, ...rest } = props;
     return React.createElement(
       asElement,
-      { ref: innerRef, ...field, ...rest },
+      { ref: innerRef, ...field, ...rest, className },
       children
     );
   }
 
-  return React.createElement(asElement, { ...field, ...props }, children);
+  return React.createElement(asElement, { ...field, ...props, className }, children);
 }

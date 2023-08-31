@@ -417,7 +417,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
         dispatchFn();
       }
     },
-    [props.initialErrors, props.initialStatus, props.initialTouched]
+    [props.initialErrors, props.initialStatus, props.initialTouched, props.onReset]
   );
 
   React.useEffect(() => {

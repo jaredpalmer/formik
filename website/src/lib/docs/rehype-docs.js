@@ -13,7 +13,7 @@ function removeExt(path) {
   const basePath = path.split(/#|\?/)[0];
   const i = basePath.lastIndexOf('.');
 
-  if (i === -1) return path;
+  if (i === -1 || i === 0) return path;
   return basePath.substring(0, i) + path.substring(basePath.length);
 }
 
@@ -50,7 +50,7 @@ export default function rehypeDocs({ filePath, tag }) {
   const slugger = new GithubSlugger();
   const anchorSlugger = new GithubSlugger();
   // Don't use the custom tag here, relative URLs to repo files should always go to canary
-  const blobUrl = `${GITHUB_URL}/${REPO_NAME}/blob/master`;
+  const blobUrl = `${GITHUB_URL}/${REPO_NAME}/blob/main`;
 
   function visitAnchor(node) {
     const props = node.properties;
@@ -96,8 +96,16 @@ export default function rehypeDocs({ filePath, tag }) {
     props.href = hash
       ? `${relativePath}#${anchorSlugger.slug(hash)}`
       : relativePath;
-    // Relative URL for another documentation route
+
+    //turn URL to absolute path for correct doc route
     if (isDocs) {
+      let absolutePath = resolve(filePath, relativePath);
+      // Reset the slugger because single pages can have multiple urls to the same hash
+      anchorSlugger.reset();
+      props.href = hash
+        ? `${absolutePath}#${anchorSlugger.slug(hash)}`
+        : absolutePath;
+      props.className = 'absolute-link';
       props.href = removeExt(
         tag ? props.href.replace('/docs', `/docs/tag/${tag}`) : props.href
       );

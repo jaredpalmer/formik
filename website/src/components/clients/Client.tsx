@@ -14,10 +14,14 @@ export const Client = React.memo<ClientProps>(
       <Image
         src={image}
         alt={name}
-        width={style?.width ?? style?.maxWidth ?? 175}
-        height={style?.height ?? 75}
+        width={style?.width ?? style?.maxWidth ?? (175 as any)}
+        height={style?.height ?? (75 as any)}
         loading="lazy"
         className="inline"
+        style={{
+          maxWidth: '100%',
+          height: 'auto',
+        }}
       />
     </span>
   )

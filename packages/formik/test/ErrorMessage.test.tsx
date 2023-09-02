@@ -45,6 +45,7 @@ fdescribe('<ErrorMessage />', () => {
 
     await act(async () => {
       await actualFProps.setFieldTouched('email');
+      await actualFProps.setFieldError('email', message);
     });
 
     // Renders after being visited with an error.

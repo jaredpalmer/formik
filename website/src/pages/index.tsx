@@ -10,7 +10,10 @@ import { ClientsMarquee } from 'components/clients/ClientsMarquee';
 import { Seo } from 'components/Seo';
 import Head from 'next/head';
 import Image from 'next/image';
+import { Inter } from 'next/font/google';
+import cn from 'classnames';
 
+const inter = Inter({ subsets: ['latin'] });
 export interface HomeProps {}
 
 const Home: React.FC<HomeProps> = props => {
@@ -23,7 +26,7 @@ const Home: React.FC<HomeProps> = props => {
       <Head>
         <title>Formik: Build forms in React, without the tears</title>
       </Head>
-      <div className="bg-gray-50 h-full min-h-full">
+      <div className={cn('bg-gray-50 h-full min-h-full', inter.className)}>
         <Banner />
         <Sticky>
           <Nav />
@@ -65,17 +68,22 @@ const Home: React.FC<HomeProps> = props => {
             </svg>
           </div>
 
-          <div className="py-24 mx-auto container px-4 sm:mt-12  relative">
-            <div className="hidden lg:block absolute lg:w-3/5 right-0 lg:-rotate-30 lg:translate-x-1/3 lg:-translate-y-16 md:w-1/2 sm:w-2/3 top-0  transform  -translate-y-12">
+          <div className="py-24 mx-auto container px-4 lg:px-0 sm:mt-12  relative">
+            <div className="hidden lg:block absolute lg:w-3/5 right-0 lg:-rotate-[30deg] lg:translate-x-1/3 lg:-translate-y-16 md:w-1/2 sm:w-2/3 top-0  transform  -translate-y-12">
               <Image
+                alt="Formik Hero Background Image"
                 src="/images/hero6.png"
                 width={1042}
                 height={990}
                 priority={true}
+                style={{
+                  maxWidth: '100%',
+                  height: 'auto',
+                }}
               />
             </div>
-            <div className="grid grid-cols-12 gap-8">
-              <div className="col-span-12 lg:col-span-6 ">
+            <div className="lg:flex lg:max-w-md xl:max-w-xl lg:items-start lg:space-between">
+              <div className="">
                 <div className="text-center lg:text-left md:max-w-2xl md:mx-auto ">
                   <h1 className="text-4xl tracking-tight leading-10 font-extrabold text-gray-900 sm:leading-none sm:text-6xl lg:text-5xl xl:text-6xl">
                     Build forms in React,
@@ -89,10 +97,11 @@ const Home: React.FC<HomeProps> = props => {
 
                   <div className="mt-5  mx-auto sm:flex sm:justify-center lg:justify-start lg:mx-0 md:mt-8">
                     <div className="rounded-md shadow">
-                      <Link href="/docs/overview">
-                        <a className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-500 focus:outline-none focus:border-blue-700 focus:ring focus:ring-blue transition duration-150 ease-in-out md:py-4 md:text-lg md:px-10">
-                          Get Started
-                        </a>
+                      <Link
+                        href="/docs/overview"
+                        className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-500 focus:outline-none focus:border-blue-700 focus:ring focus:ring-blue transition duration-150 ease-in-out md:py-4 md:text-lg md:px-10"
+                      >
+                        Get Started
                       </Link>
                     </div>
                     <div className="mt-3 rounded-md shadow sm:mt-0 sm:ml-3">
@@ -108,12 +117,13 @@ const Home: React.FC<HomeProps> = props => {
                   </div>
                 </div>
               </div>
+              <div />
             </div>
           </div>
         </div>
         <div className="text-lg border-t border-gray-100 bg-gray-50 ">
           <div className="py-24  ">
-            <div className="mx-auto container">
+            <div className="mx-auto container px-4 lg:px-0">
               <div className="lg:grid lg:grid-cols-3 lg:gap-8">
                 <div>
                   <div>
@@ -312,10 +322,11 @@ const Home: React.FC<HomeProps> = props => {
             </h2>
             <div className="mt-8 flex lg:flex-shrink-0 lg:mt-0">
               <div className="inline-flex rounded-md shadow">
-                <Link href="/docs/overview">
-                  <a className="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-500 focus:outline-none focus:ring transition duration-150 ease-in-out">
-                    Get Started
-                  </a>
+                <Link
+                  href="/docs/overview"
+                  className="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-500 focus:outline-none focus:ring transition duration-150 ease-in-out"
+                >
+                  Get Started
                 </Link>
               </div>
               <div className="ml-3 inline-flex rounded-md shadow">

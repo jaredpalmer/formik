@@ -100,13 +100,31 @@ describe('Field / FastField', () => {
 
   describe('renders an <input /> by default', () => {
     it('<Field />', () => {
-      const { container } = renderForm(<Field name="name" />);
+      const className = 'field-custom'
+      const { container } = renderForm(<Field name="name" className={className} />);
       expect(container.querySelectorAll('input')).toHaveLength(1);
+      expect(container.querySelector(`.${className}`)?.getAttribute('value')).toEqual('jared')
     });
 
     it('<FastField />', () => {
       const { container } = renderForm(<FastField name="name" />);
       expect(container.querySelectorAll('input')).toHaveLength(1);
+    });
+  });
+
+  describe('renders an <input /> with className', () => {
+    it('<Field />', () => {
+      const className = 'field-custom'
+      const { container } = renderForm(<Field name="name" className={className} />);
+      expect(container.querySelectorAll(`.${className}`)).toHaveLength(1)
+      expect(container.querySelector(`.${className}`)?.getAttribute('value')).toEqual('jared')
+    });
+
+    it('<FastField />', () => {
+      const className = 'field-custom'
+      const { container } = renderForm(<FastField name="name" className={className} />);
+      expect(container.querySelectorAll(`.${className}`)).toHaveLength(1)
+      expect(container.querySelector(`.${className}`)?.getAttribute('value')).toEqual('jared')
     });
   });
 
@@ -422,6 +440,32 @@ describe('Field / FastField', () => {
           expect(getFormProps().errors).toEqual({
             name: errorMessage,
           })
+        );
+      }
+    );
+
+    cases(
+      'constructs error for a nested field when validateField is called',
+      async renderField => {
+        const validationSchema = Yup.object({
+          user: Yup.object().shape({
+            name: Yup.string().required('required'),
+          }),
+        });
+
+        const { getFormProps, rerender } = renderField(
+          {},
+          { validationSchema }
+        );
+
+        rerender();
+
+        act(() => {
+          getFormProps().validateField('user.name');
+        });
+
+        await waitFor(() =>
+          expect(getFormProps().errors).toEqual({ user: { name: 'required' } })
         );
       }
     );

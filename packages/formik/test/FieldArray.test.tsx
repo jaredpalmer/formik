@@ -1,7 +1,8 @@
-import * as React from 'react';
 import { act, fireEvent, render, screen } from '@testing-library/react';
+import * as React from 'react';
+import * as Yup from 'yup';
 
-import { FieldArray, Formik, isFunction } from '../src';
+import { FieldArray, FieldArrayRenderProps, Formik, isFunction } from '../src';
 
 const noop = () => {};
 
@@ -79,7 +80,7 @@ describe('<FieldArray />', () => {
   describe('props.push()', () => {
     it('should add a value to the end of the field array', () => {
       let formikBag: any;
-      let arrayHelpers: any;
+      let arrayHelpers: FieldArrayRenderProps;
       render(
         <TestForm>
           {(props: any) => {
@@ -153,7 +154,7 @@ describe('<FieldArray />', () => {
     it('should push clone not actual reference', () => {
       let personTemplate = { firstName: '', lastName: '' };
       let formikBag: any;
-      let arrayHelpers: any;
+      let arrayHelpers: FieldArrayRenderProps;
       render(
         <TestForm initialValues={{ people: [] }}>
           {(props: any) => {
@@ -186,7 +187,7 @@ describe('<FieldArray />', () => {
   describe('props.pop()', () => {
     it('should remove and return the last value from the field array', () => {
       let formikBag: any;
-      let arrayHelpers: any;
+      let arrayHelpers: FieldArrayRenderProps;
       render(
         <TestForm>
           {(props: any) => {
@@ -216,7 +217,7 @@ describe('<FieldArray />', () => {
   describe('props.swap()', () => {
     it('should swap two values in field array', () => {
       let formikBag: any;
-      let arrayHelpers: any;
+      let arrayHelpers: FieldArrayRenderProps;
       render(
         <TestForm>
           {(props: any) => {
@@ -245,7 +246,7 @@ describe('<FieldArray />', () => {
   describe('props.insert()', () => {
     it('should insert a value at given index of field array', () => {
       let formikBag: any;
-      let arrayHelpers: any;
+      let arrayHelpers: FieldArrayRenderProps;
       render(
         <TestForm>
           {(props: any) => {
@@ -274,7 +275,7 @@ describe('<FieldArray />', () => {
   describe('props.replace()', () => {
     it('should replace a value at given index of field array', () => {
       let formikBag: any;
-      let arrayHelpers: any;
+      let arrayHelpers: FieldArrayRenderProps;
       render(
         <TestForm>
           {(props: any) => {
@@ -303,7 +304,7 @@ describe('<FieldArray />', () => {
   describe('props.unshift()', () => {
     it('should add a value to start of field array and return its length', () => {
       let formikBag: any;
-      let arrayHelpers: any;
+      let arrayHelpers: FieldArrayRenderProps;
       render(
         <TestForm>
           {(props: any) => {
@@ -333,7 +334,7 @@ describe('<FieldArray />', () => {
 
   describe('props.remove()', () => {
     let formikBag: any;
-    let arrayHelpers: any;
+    let arrayHelpers: FieldArrayRenderProps;
 
     beforeEach(() => {
       render(
@@ -382,12 +383,20 @@ describe('<FieldArray />', () => {
       expect(formikBag.errors.friends).toEqual(undefined);
       expect(formikBag.touched.friends).toEqual(undefined);
     });
+    it('should clean up errors', () => {
+      act(() => {
+        formikBag.setFieldError('friends.1', 'Field error');
+        arrayHelpers.remove(1);
+      });
+
+      expect(formikBag.errors.friends).toEqual(undefined);
+    });
   });
 
   describe('given array-like object representing errors', () => {
     it('should run arrayHelpers successfully', async () => {
       let formikBag: any;
-      let arrayHelpers: any;
+      let arrayHelpers: FieldArrayRenderProps;
       render(
         <TestForm>
           {(props: any) => {
@@ -422,6 +431,279 @@ describe('<FieldArray />', () => {
       expect(el).toEqual('michael');
       const finalExpected = ['michael', 'brian', 'andrea', 'jared'];
       expect(formikBag.values.friends).toEqual(finalExpected);
+    });
+  });
+
+  describe('schema validation', () => {
+    const schema = Yup.object({
+      friends: Yup.array(Yup.string().required()).required().min(3),
+    });
+
+    let formikBag: any;
+    let arrayHelpers: FieldArrayRenderProps;
+
+    beforeEach(() => {
+      render(
+        <Formik
+          initialValues={{ friends: [] }}
+          onSubmit={noop}
+          validationSchema={schema}
+          validateOnMount
+        >
+          {(props: any) => {
+            formikBag = props;
+            return (
+              <FieldArray name="friends">
+                {arrayProps => {
+                  arrayHelpers = arrayProps;
+                  return null;
+                }}
+              </FieldArray>
+            );
+          }}
+        </Formik>
+      );
+    });
+
+    describe('props.push()', () => {
+      it('should return error string with top level violation', async () => {
+        await act(async () => {
+          await arrayHelpers.push('michael');
+        });
+
+        expect(formikBag.errors.friends).toBe(
+          'friends field must have at least 3 items'
+        );
+      });
+
+      it('should return errors array with nested value violation', async () => {
+        await act(async () => {
+          await arrayHelpers.push('michael');
+          arrayHelpers.push('brian');
+          arrayHelpers.push('');
+          arrayHelpers.push('andrea');
+        });
+
+        expect(formikBag.errors.friends).toHaveLength(3);
+        expect(formikBag.errors.friends[0]).toBeUndefined();
+        expect(formikBag.errors.friends[1]).toBeUndefined();
+        expect(formikBag.errors.friends[2]).toBe(
+          'friends[2] is a required field'
+        );
+      });
+    });
+
+    describe('props.swap()', () => {
+      it('should return error string with top level violation', async () => {
+        await act(async () => {
+          await arrayHelpers.push('michael');
+          arrayHelpers.push('brian');
+          arrayHelpers.swap(0, 1);
+        });
+
+        expect(formikBag.errors.friends).toBe(
+          'friends field must have at least 3 items'
+        );
+      });
+
+      it('should return errors array with nested value violation', async () => {
+        await act(async () => {
+          await arrayHelpers.push('michael');
+          arrayHelpers.push('brian');
+          arrayHelpers.push('');
+          arrayHelpers.push('andrea');
+          arrayHelpers.swap(1, 2);
+        });
+
+        expect(formikBag.errors.friends).toHaveLength(2);
+        expect(formikBag.errors.friends[0]).toBeUndefined();
+        expect(formikBag.errors.friends[1]).toBe(
+          'friends[1] is a required field'
+        );
+      });
+    });
+
+    describe('props.move()', () => {
+      it('should return error string with top level violation', async () => {
+        await act(async () => {
+          await arrayHelpers.push('michael');
+          arrayHelpers.push('brian');
+          arrayHelpers.move(0, 1);
+        });
+
+        expect(formikBag.errors.friends).toBe(
+          'friends field must have at least 3 items'
+        );
+      });
+
+      it('should return errors array with nested value violation', async () => {
+        await act(async () => {
+          await arrayHelpers.push('michael');
+          arrayHelpers.push('brian');
+          arrayHelpers.push('');
+          arrayHelpers.push('andrea');
+          arrayHelpers.move(1, 2);
+        });
+
+        expect(formikBag.errors.friends).toHaveLength(2);
+        expect(formikBag.errors.friends[0]).toBeUndefined();
+        expect(formikBag.errors.friends[1]).toBe(
+          'friends[1] is a required field'
+        );
+      });
+    });
+
+    describe('props.insert()', () => {
+      it('should return error string with top level violation', async () => {
+        await act(async () => {
+          await arrayHelpers.push('michael');
+          arrayHelpers.insert(1, 'brian');
+        });
+
+        expect(formikBag.errors.friends).toBe(
+          'friends field must have at least 3 items'
+        );
+      });
+
+      it('should return errors array with nested value violation', async () => {
+        await act(async () => {
+          await arrayHelpers.push('michael');
+          arrayHelpers.push('brian');
+          arrayHelpers.push('andrea');
+          arrayHelpers.insert(1, '');
+        });
+
+        expect(formikBag.errors.friends).toHaveLength(2);
+        expect(formikBag.errors.friends[0]).toBeUndefined();
+        expect(formikBag.errors.friends[1]).toBe(
+          'friends[1] is a required field'
+        );
+      });
+    });
+
+    describe('props.unshift()', () => {
+      it('should return error string with top level violation', async () => {
+        await act(async () => {
+          await arrayHelpers.push('michael');
+          arrayHelpers.unshift('brian');
+        });
+
+        expect(formikBag.errors.friends).toBe(
+          'friends field must have at least 3 items'
+        );
+      });
+
+      it('should return errors array with nested value violation', async () => {
+        await act(async () => {
+          await arrayHelpers.push('');
+          arrayHelpers.push('brian');
+          arrayHelpers.push('andrea');
+
+          arrayHelpers.unshift('michael');
+        });
+
+        expect(formikBag.errors.friends).toHaveLength(2);
+        expect(formikBag.errors.friends[0]).toBeUndefined();
+        expect(formikBag.errors.friends[1]).toBe(
+          'friends[1] is a required field'
+        );
+      });
+    });
+
+    describe('props.remove()', () => {
+      it('should return error string with top level violation ', async () => {
+        await act(async () => {
+          await arrayHelpers.push('michael');
+          arrayHelpers.push('brian');
+          arrayHelpers.push('andrea');
+          arrayHelpers.remove(0);
+          arrayHelpers.remove(0);
+        });
+
+        expect(formikBag.errors.friends).toBe(
+          'friends field must have at least 3 items'
+        );
+      });
+
+      it('should return errors array with nested value violation', async () => {
+        await act(async () => {
+          await arrayHelpers.push('michael');
+          arrayHelpers.push('brian');
+          arrayHelpers.push(''); // index specific violation
+          arrayHelpers.push('andrea');
+          arrayHelpers.remove(0);
+        });
+
+        expect(formikBag.errors.friends).toHaveLength(2);
+        expect(formikBag.errors.friends[0]).toBeUndefined();
+        expect(formikBag.errors.friends[1]).toBe(
+          'friends[1] is a required field'
+        );
+        expect(formikBag.errors.friends[2]).toBeUndefined();
+        expect(formikBag.errors.friends[4]).toBeUndefined();
+      });
+    });
+
+    describe('props.pop()', () => {
+      it('should return error string with top level violation', async () => {
+        await act(async () => {
+          await arrayHelpers.push('michael');
+          arrayHelpers.push('brian');
+          arrayHelpers.push('andrea');
+          arrayHelpers.pop();
+        });
+
+        expect(formikBag.errors.friends).toBe(
+          'friends field must have at least 3 items'
+        );
+      });
+
+      it('should return errors array with nested value violation', async () => {
+        await act(async () => {
+          await arrayHelpers.push('michael');
+          arrayHelpers.push('brian');
+          arrayHelpers.push('');
+          arrayHelpers.push('andrea');
+          arrayHelpers.pop();
+        });
+
+        expect(formikBag.errors.friends).toHaveLength(3);
+        expect(formikBag.errors.friends[0]).toBeUndefined();
+        expect(formikBag.errors.friends[1]).toBeUndefined();
+        expect(formikBag.errors.friends[2]).toBe(
+          'friends[2] is a required field'
+        );
+      });
+    });
+
+    describe('props.replace()', () => {
+      it('should return error string with top level violation', async () => {
+        await act(async () => {
+          await arrayHelpers.push('michael');
+          arrayHelpers.replace(0, 'brian');
+        });
+
+        expect(formikBag.errors.friends).toBe(
+          'friends field must have at least 3 items'
+        );
+      });
+
+      it('should return errors array with nested value violation', async () => {
+        await act(async () => {
+          arrayHelpers.unshift('michael');
+          await arrayHelpers.push('brian');
+          arrayHelpers.push('andrea');
+          arrayHelpers.push('jared');
+
+          await arrayHelpers.replace(1, '');
+        });
+
+        expect(formikBag.errors.friends).toHaveLength(2);
+        expect(formikBag.errors.friends[0]).toBeUndefined();
+        expect(formikBag.errors.friends[1]).toBe(
+          'friends[1] is a required field'
+        );
+      });
     });
   });
 });

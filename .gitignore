@@ -7,6 +7,7 @@ next.d.ts
 legacy.d.ts
 .idea
 *.orig
+output.txt
 
 node_modules
 package-lock.json
@@ -22,3 +23,6 @@ website/i18n
 !website2/yarn.lock
 .env
 .vercel
+/test-results/
+/playwright-report/
+/playwright/.cache/

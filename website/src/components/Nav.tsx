@@ -13,7 +13,7 @@ export const Nav: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-12 md:gap-8">
           <div className="md:col-span-3 flex items-center justify-between h-16">
             <div>
-              <Link href="/" as="/">
+              <Link href="/">
                 <span className="sr-only">Home</span>
                 <Logo />
               </Link>

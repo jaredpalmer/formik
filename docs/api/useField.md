@@ -128,7 +128,7 @@ function MyOtherComponent(props) {
 This object is a subset of the props that you would pass to `<Field>`. It contains:
 
 - `name: string` - The name of the field
-- `validate?: (value: any) => undefined | string | Promise<any>` - See [the documentation for `<Field>`](../field#validate)
+- `validate?: (value: any) => undefined | string | Promise<any>` - See [the documentation for `<Field>`](./field#validate)
 - `type?: string` - The type of the HTML input (`text`, `number` and etc.)
 - `multiple?: boolean` - Whether or not the multiple values can be selected.
 - `value?: string`- Works only for inputs of type `checkbox` and `radio`. When a form is submitted, checkboxes and radios are submitted with the provided `value`. Read more about it on [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/checkbox#Value).
@@ -159,6 +159,10 @@ An object that contains relevant computed metadata about a field. More specifica
 
 An object that contains helper functions which you can use to imperatively change the value, error value or touched status for the field in question. This is useful for components which need to change a field's status directly, without triggering change or blur events.
 
-- `setValue(value: any, shouldValidate?: boolean): void` - A function to change the field's value. Calling this will trigger validation to run if `validateOnChange` is set to `true` (which it is by default). You can also explicitly prevent/skip validation by passing a second argument as `false`.
+- `setValue(value: any, shouldValidate?: boolean): Promise<void | FormikErrors>` - A function to change the field's value. Calling this will trigger validation to run if `validateOnChange` is set to `true` (which it is by default). You can also explicitly prevent/skip validation by passing a second argument as `false`.
+If `validateOnChange` is set to `true` and there are errors, they will be resolved in the returned `Promise`.
+
 - `setTouched(value: boolean, shouldValidate?: boolean): void` - A function to change the field's touched status. Calling this will trigger validation to run if `validateOnBlur` is set to `true` (which it is by default). You can also explicitly prevent/skip validation by passing a second argument as `false`.
+If `validateOnBlur` is set to `true` and there are errors, they will be resolved in the returned `Promise`.
+
 - `setError(value: any): void` - A function to change the field's error value

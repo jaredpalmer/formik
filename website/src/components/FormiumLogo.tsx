@@ -1,13 +1,6 @@
 import * as React from 'react';
 
-interface FormiumLogoProps extends React.SVGProps<SVGSVGElement> {
-  disableText?: boolean;
-}
-
-export const FormiumLogo: React.FC<FormiumLogoProps> = ({
-  disableText,
-  ...props
-}) => {
+export const FormiumLogo: React.FC<JSX.IntrinsicElements['svg']> = props => {
   return (
     <svg
       width={'101px'}

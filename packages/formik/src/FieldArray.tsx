@@ -27,14 +27,12 @@ export type FieldArrayConfig = {
   name: string;
   /** Should field array validate the form AFTER array updates/changes? */
   validateOnChange?: boolean;
-  /** Override FieldArray's default shouldComponentUpdate */
-  shouldUpdate?: (nextProps: {}, props: {}) => boolean;
 } & SharedRenderProps<FieldArrayRenderProps>;
-export interface ArrayHelpers<T = unknown[]> {
+export interface ArrayHelpers<T extends any[] = any[]> {
   /** Imperatively add a value to the end of an array */
-  push: (obj: T) => void;
+  push<X = T[number]>(obj: X): void;
   /** Curried fn to add a value to the end of an array */
-  handlePush: (obj: T) => () => void;
+  handlePush<X = T[number]>(obj: X): () => void;
   /** Imperatively swap two values in an array */
   swap: (indexA: number, indexB: number) => void;
   /** Curried fn to swap two values in an array */
@@ -44,25 +42,25 @@ export interface ArrayHelpers<T = unknown[]> {
   /** Imperatively move an element in an array to another index */
   handleMove: (from: number, to: number) => () => void;
   /** Imperatively insert an element at a given index into the array */
-  insert: (index: number, value: T) => void;
+  insert<X = T[number]>(index: number, value: X): void;
   /** Curried fn to insert an element at a given index into the array */
-  handleInsert: (index: number, value: T) => () => void;
+  handleInsert<X = T[number]>(index: number, value: X): () => void;
   /** Imperatively replace a value at an index of an array  */
-  replace: (index: number, value: T) => void;
+  replace<X = T[number]>(index: number, value: X): void;
   /** Curried fn to replace an element at a given index into the array */
-  handleReplace: (index: number, value: T) => () => void;
+  handleReplace<X = T[number]>(index: number, value: X): () => void;
   /** Imperatively add an element to the beginning of an array and return its length */
-  unshift: (value: T) => number;
+  unshift<X = T[number]>(value: X): number;
   /** Curried fn to add an element to the beginning of an array */
-  handleUnshift: (value: T) => () => void;
+  handleUnshift<X = T[number]>(value: X): () => void;
   /** Curried fn to remove an element at an index of an array */
   handleRemove: (index: number) => () => void;
   /** Curried fn to remove a value from the end of the array */
   handlePop: () => () => void;
   /** Imperatively remove and element at an index of an array */
-  remove<T>(index: number): T | undefined;
+  remove<X = T[number]>(index: number): X | undefined;
   /** Imperatively remove and return value from the end of the array */
-  pop<T>(): T | undefined;
+  pop<X = T[number]>(): X | undefined;
 }
 
 /**
@@ -155,26 +153,6 @@ class FieldArrayInner<Values = {}> extends React.Component<
     this.pop = this.pop.bind(this) as any;
   }
 
-  shouldComponentUpdate(props: any) {
-    if (this.props.shouldUpdate) {
-      return this.props.shouldUpdate(props, this.props);
-    } else if (
-      props.name !== this.props.name ||
-      getIn(props.formik.values, this.props.name) !==
-        getIn(this.props.formik.values, this.props.name) ||
-      getIn(props.formik.errors, this.props.name) !==
-        getIn(this.props.formik.errors, this.props.name) ||
-      getIn(props.formik.touched, this.props.name) !==
-        getIn(this.props.formik.touched, this.props.name) ||
-      Object.keys(this.props).length !== Object.keys(props).length ||
-      props.formik.isSubmitting !== this.props.formik.isSubmitting
-    ) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
   componentDidUpdate(
     prevProps: FieldArrayConfig & { formik: FormikContextType<Values> }
   ) {
@@ -200,6 +178,7 @@ class FieldArrayInner<Values = {}> extends React.Component<
 
       formik: { setFormikState },
     } = this.props;
+
     setFormikState((prevState: FormikState<any>) => {
       let updateErrors = createAlterationHandler(alterErrors, fn);
       let updateTouched = createAlterationHandler(alterTouched, fn);
@@ -290,26 +269,19 @@ class FieldArrayInner<Values = {}> extends React.Component<
     this.updateArrayField(
       (array: any[]) => {
         const arr = array ? [value, ...array] : [value];
-        if (length < 0) {
-          length = arr.length;
-        }
+
+        length = arr.length;
+
         return arr;
       },
       (array: any[]) => {
-        const arr = array ? [null, ...array] : [null];
-        if (length < 0) {
-          length = arr.length;
-        }
-        return arr;
+        return array ? [null, ...array] : [null];
       },
       (array: any[]) => {
-        const arr = array ? [null, ...array] : [null];
-        if (length < 0) {
-          length = arr.length;
-        }
-        return arr;
+        return array ? [null, ...array] : [null];
       }
     );
+
     return length;
   };
 

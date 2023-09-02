@@ -5,19 +5,18 @@
 
 **Table of Contents**
 
-- [Contributing to Formik](#contributing-to-formik)
-  - [Code of Conduct](#code-of-conduct)
-  - [Ways to Contribute](#ways-to-contribute)
-  - [Working on your first Pull Request?](#working-on-your-first-pull-request)
-  - [Sending a Pull Request](#sending-a-pull-request)
-  - [Working locally](#working-locally)
-    - [Develop](#develop)
-    - [Test](#test)
-  - [How to increase the chance of a change being accepted?](#how-to-increase-the-chance-of-a-change-being-accepted)
-  - [Working locally](#working-locally-1)
-    - [Watching / Building packages](#watching--building-packages)
-    - [Unit testing](#unit-testing)
-    - [Playground / Integration testing](#playground--integration-testing)
+- [Code of Conduct](#code-of-conduct)
+- [Ways to Contribute](#ways-to-contribute)
+- [Working on your first Pull Request?](#working-on-your-first-pull-request)
+- [Sending a Pull Request](#sending-a-pull-request)
+- [Working locally](#working-locally)
+  - [Develop](#develop)
+  - [Test](#test)
+- [How to increase the chance of a change being accepted?](#how-to-increase-the-chance-of-a-change-being-accepted)
+- [Working locally](#working-locally-1)
+  - [Watching / Building packages](#watching--building-packages)
+  - [Unit testing](#unit-testing)
+  - [Playground / Integration testing](#playground--integration-testing)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -155,11 +154,11 @@ yarn test
 
 ### Playground / Integration testing
 
-There is a Next.js playground that also serves as the app used for integration tests. What's cool is you can run Formik's build setup, next.js, and cypress all at the same time and everything will just magically "work" and live reload whenever you make a change.
+There is a Next.js playground that also serves as the app used for integration tests. What's cool is you can run Formik's build setup, next.js, and playwright all at the same time and everything will just magically "work" and live reload whenever you make a change.
 This is the suggested development workflow going forward.
 
 1. From the root, open a terminal and run `yarn dev` to start [TSDX](https://tsdx.io) watch on all packages
 2. Then start the playground app with `yarn start:app` in another terminal window (it will boot to http://localhost:3000)
-3. And finally, you can open a third tab to run cypress
-   - You can use Cypress UI using `yarn cypress:open`
-   - Or, if you'd rather not deal GUI, just run `yarn cypress`
+3. And finally, you can open a third tab to run playwright
+   - You can use playwright UI using `yarn e2e:ui`
+   - Or, if you'd rather not deal GUI, just run `yarn e2e`

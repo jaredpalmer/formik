@@ -2,38 +2,34 @@ name: Unit Test
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened]
+  push:
+    branches: [main]
 
 jobs:
   test:
     runs-on: ubuntu-latest
 
     strategy:
+      fail-fast: false
       matrix:
-        node: ['16.x']
+        node: ['18.x']
 
     name: Test on node ${{ matrix.node }}
 
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v3
 
       - name: Use Node.js ${{ matrix.node }}
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
+          cache: yarn
           node-version: ${{ matrix.node }}
-
-      - uses: actions/cache@v1
-        with:
-          path: ~/.cache/yarn
-          key: ${{ runner.os }}-yarn-${{ hashFiles(format('{0}{1}', github.workspace, '/yarn.lock')) }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
 
       - name: Install deps, build, and test
         run: |
           node --version
           npm --version
-          yarn --version        
+          yarn --version
           yarn install --frozen-lockfile
           yarn test --coverage
         env:

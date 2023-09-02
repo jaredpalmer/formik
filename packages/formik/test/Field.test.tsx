@@ -100,13 +100,31 @@ describe('Field / FastField', () => {
 
   describe('renders an <input /> by default', () => {
     it('<Field />', () => {
-      const { container } = renderForm(<Field name="name" />);
+      const className = 'field-custom'
+      const { container } = renderForm(<Field name="name" className={className} />);
       expect(container.querySelectorAll('input')).toHaveLength(1);
+      expect(container.querySelector(`.${className}`)?.getAttribute('value')).toEqual('jared')
     });
 
     it('<FastField />', () => {
       const { container } = renderForm(<FastField name="name" />);
       expect(container.querySelectorAll('input')).toHaveLength(1);
+    });
+  });
+
+  describe('renders an <input /> with className', () => {
+    it('<Field />', () => {
+      const className = 'field-custom'
+      const { container } = renderForm(<Field name="name" className={className} />);
+      expect(container.querySelectorAll(`.${className}`)).toHaveLength(1)
+      expect(container.querySelector(`.${className}`)?.getAttribute('value')).toEqual('jared')
+    });
+
+    it('<FastField />', () => {
+      const className = 'field-custom'
+      const { container } = renderForm(<FastField name="name" className={className} />);
+      expect(container.querySelectorAll(`.${className}`)).toHaveLength(1)
+      expect(container.querySelector(`.${className}`)?.getAttribute('value')).toEqual('jared')
     });
   });
 

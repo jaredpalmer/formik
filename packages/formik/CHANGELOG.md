@@ -1,5 +1,53 @@
 # formik
 
+## 2.4.3
+
+### Patch Changes
+
+- [`9e0a661`](https://github.com/jaredpalmer/formik/commit/9e0a661513af75d1b848e5be7a4916c53b78760f) [#3843](https://github.com/jaredpalmer/formik/pull/3843) Thanks [@bonimba](https://github.com/bonimba)! - Fix FormikHelper and FieldHelperProps types
+
+## 2.4.2
+
+### Patch Changes
+
+- [`96280d3`](https://github.com/jaredpalmer/formik/commit/96280d388eaa0f2e9fb84e7fd2aa45450de3a949) [#3817](https://github.com/jaredpalmer/formik/pull/3817) Thanks [@probablyup](https://github.com/probablyup)! - Updated internal types to support React 18.
+
+## 2.4.1
+
+### Patch Changes
+
+- [`2b194c2`](https://github.com/jaredpalmer/formik/commit/2b194c287dc281ec2a8ff691d75c6b798ab5f70c) [#3808](https://github.com/jaredpalmer/formik/pull/3808) Thanks [@NagaiKoki](https://github.com/NagaiKoki)! - fix type of setFieldValue function
+
+* [`708bcb2`](https://github.com/jaredpalmer/formik/commit/708bcb24785f1f8fbb5dfd649de3df4fddf7a113) [#3813](https://github.com/jaredpalmer/formik/pull/3813) Thanks [@probablyup](https://github.com/probablyup)! - Revert `FieldArray` "shouldComponentUpdate" performance optimization. As it turns out, it's a common use case to have JSX controlled via non-Formik state/props inside of `FieldArray`, so it's not safe to cancel re-renders here.
+
+- [`187e47d`](https://github.com/jaredpalmer/formik/commit/187e47de0c4289cb279e25d69f8172cfa14369d2) [#3815](https://github.com/jaredpalmer/formik/pull/3815) Thanks [@probablyup](https://github.com/probablyup)! - Revert Yup transform support for the time being, this may be re-introduced in a future release under an opt-in prop.
+
+## 2.4.0
+
+### Minor Changes
+
+- [`2f53b70`](https://github.com/jaredpalmer/formik/commit/2f53b70ef9c086a268330fa263390a2edd0164dd) [#3796](https://github.com/jaredpalmer/formik/pull/3796) Thanks [@probablyup](https://github.com/probablyup)! - Add support for Yup ["transforms"](https://github.com/jquense/yup#parsing-transforms).
+
+## 2.3.3
+
+### Patch Changes
+
+- [`f075a0c`](https://github.com/jaredpalmer/formik/commit/f075a0cf8228c135ff71c58e139246ad24aae529) [#3798](https://github.com/jaredpalmer/formik/pull/3798) Thanks [@probablyup](https://github.com/probablyup)! - Fixed the use of generics for the `ArrayHelpers` type such that `any[]` is the default array type and for each individual method the array item type can be overridden if necessary.
+
+## 2.3.2
+
+### Patch Changes
+
+- [`f086b5a`](https://github.com/jaredpalmer/formik/commit/f086b5a3bb6a155b4dc4ac3735c88805f9f5c4e4) [#3237](https://github.com/jaredpalmer/formik/pull/3237) Thanks [@pieplu](https://github.com/pieplu)! - Changed `getIn` to return undefined when it can't find a value AND a parent of that value is "falsy" ( "" / 0 / null / false )
+
+* [`6d8f018`](https://github.com/jaredpalmer/formik/commit/6d8f018d7f52b863405b2e310be4b4195c2ba39c) [#3792](https://github.com/jaredpalmer/formik/pull/3792) Thanks [@probablyup](https://github.com/probablyup)! - Update the type for `setFieldValue` to reflect the returned `Promise` and potential returned error(s).
+
+## 2.3.1
+
+### Patch Changes
+
+- [`290d92b`](https://github.com/jaredpalmer/formik/commit/290d92b34056593f551ad55baf00dc6f8c700bbe) [#3793](https://github.com/jaredpalmer/formik/pull/3793) Thanks [@probablyup](https://github.com/probablyup)! - Fix potential infinite loop scenario when `initialValues` changes but `enableReinitialize` is not truthy.
+
 ## 2.3.0
 
 ### Minor Changes

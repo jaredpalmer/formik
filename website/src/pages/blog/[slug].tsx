@@ -12,11 +12,14 @@ import { MDXRemote } from 'next-mdx-remote';
 import { serialize } from 'next-mdx-remote/serialize';
 import path from 'path';
 import imageSize from 'rehype-img-size';
+import { Inter } from 'next/font/google';
+import classNames from 'classnames';
 
+const inter = Inter({ subsets: ['latin'] });
 export default function PostPage({ source, frontMatter }: any) {
   return (
     <>
-      <div className="h-full min-h-full">
+      <div className={classNames('h-full min-h-full', inter.className)}>
         <Banner />
         <Sticky className="z-20">
           <Nav />

@@ -23,8 +23,10 @@ To submit a form in Formik, you need to somehow fire off the provided `handleSub
 
 ### Submission
 
-- Proceed with running your submission handler (i.e.`onSubmit` or `handleSubmit`)
-- _you call `setSubmitting(false)`_ in your handler to finish the cycle
+- Proceed with running your submission handler (i.e. `onSubmit` or `handleSubmit`)
+- Did the submit handler return a promise?
+  - Yes: Wait until it is resolved or rejected, then set `setSubmitting` to `false`
+  - No: _You call `setSubmitting(false)`_ in your handler to finish the cycle
 
 ## Frequently Asked Questions
 
@@ -54,4 +56,9 @@ Disable whatever is triggering submission if `isSubmitting` is `true`.
 
 If `isValidating` is `true` and `isSubmitting` is `true`.
 
+</details>
+<summary>Why does `isSubmitting` remain `true` after submission?</summary>
+<details>
+  If the submission handler is returning a promise, make sure the promise has resolved or rejected.
+  If the submission handler is not returning a promise, make sure `setSubmitting(false)` is called at the end of the handler.
 </details>

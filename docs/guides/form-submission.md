@@ -57,8 +57,9 @@ Disable whatever is triggering submission if `isSubmitting` is `true`.
 If `isValidating` is `true` and `isSubmitting` is `true`.
 
 </details>
-<summary>Why does `isSubmitting` remain `true` after submission?</summary>
+
 <details>
+<summary>Why does isSubmitting remain true after submission?</summary>
   If the submission handler returns a promise, make sure it is correctly resolved or rejected when called.
   If the submission handler does not return a promise, make sure `setSubmitting(false)` is called at the end of the handler.
 </details>

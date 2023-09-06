@@ -1,5 +1,13 @@
 # formik
 
+## 2.4.4
+
+### Patch Changes
+
+- [`ae0fe6c`](https://github.com/jaredpalmer/formik/commit/ae0fe6cbd11f2d2664142008225abc237b5bff82) [#3873](https://github.com/jaredpalmer/formik/pull/3873) Thanks [@probablyup](https://github.com/probablyup)! - Forward `className` for custom components used with `Field` 41720c2
+
+* [`ae0fe6c`](https://github.com/jaredpalmer/formik/commit/ae0fe6cbd11f2d2664142008225abc237b5bff82) [#3873](https://github.com/jaredpalmer/formik/pull/3873) Thanks [@probablyup](https://github.com/probablyup)! - Remove use of deprecated `StatelessComponent` type in favor of `FunctionComponent` (da58b29)
+
 ## 2.4.3
 
 ### Patch Changes

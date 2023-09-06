@@ -59,6 +59,6 @@ If `isValidating` is `true` and `isSubmitting` is `true`.
 </details>
 <summary>Why does `isSubmitting` remain `true` after submission?</summary>
 <details>
-  If the submission handler is returning a promise, make sure the promise has resolved or rejected.
-  If the submission handler is not returning a promise, make sure `setSubmitting(false)` is called at the end of the handler.
+  If the submission handler returns a promise, make sure it is correctly resolved or rejected when called.
+  If the submission handler does not return a promise, make sure `setSubmitting(false)` is called at the end of the handler.
 </details>

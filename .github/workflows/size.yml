@@ -16,7 +16,9 @@ jobs:
           files_yaml: |
             src:
               - packages/formik/src/**
+              - packages/formik/package.json
               - packages/formik-native/src/**
+              - packages/formik-native/package.json
   build:
     if: needs.detectChangedSourceFiles.outputs.changes == 'true'
     runs-on: ubuntu-latest

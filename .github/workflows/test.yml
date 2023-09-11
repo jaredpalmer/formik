@@ -8,22 +8,16 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-
     strategy:
       fail-fast: false
-      matrix:
-        node: ['18.x']
-
-    name: Test on node ${{ matrix.node }}
-
+    name: Test on node 18.x
     steps:
       - uses: actions/checkout@v3
 
-      - name: Use Node.js ${{ matrix.node }}
-        uses: actions/setup-node@v3
+      - uses: actions/setup-node@v3
         with:
           cache: yarn
-          node-version: ${{ matrix.node }}
+          node-version-file: .nvmrc
 
       - name: Install deps, build, and test
         run: |

@@ -6,16 +6,28 @@ on:
     branches: [main]
 
 jobs:
-  benchmark:
+  detectChangedSourceFiles:
     runs-on: ubuntu-latest
-
+    outputs:
+      changes: ${{ steps.changed-files-yaml.outputs.src_any_changed }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Detect changed files
+        id: changed-files-yaml
+        uses: tj-actions/changed-files@v39
+        with:
+          files_yaml: |
+            src:
+              - packages/formik/src/**
+              - packages/formik-native/src/**
+  benchmark:
+    if: needs.detectChangedSourceFiles.outputs.changes == 'true'
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         node: ['18.x']
-
     name: Test on node ${{ matrix.node }}
-
     steps:
       - uses: actions/checkout@v3
 
@@ -35,7 +47,6 @@ jobs:
               - packages/formik-native/src/**
 
       - name: Install & build
-        if: steps.changed-files-yaml.outputs.src_any_changed == 'true'
         run: |
           node --version
           npm --version
@@ -44,18 +55,15 @@ jobs:
           yarn build:benchmark
 
       - name: Download previous benchmark data
-        if: steps.changed-files-yaml.outputs.src_any_changed == 'true'
         uses: actions/cache@v3
         with:
           path: ./benchmark-cache
           key: ${{ runner.os }}-benchmark
 
       - name: Run benchmark
-        if: steps.changed-files-yaml.outputs.src_any_changed == 'true'
         run: yarn benchmark
 
       - name: Store benchmark result
-        if: steps.changed-files-yaml.outputs.src_any_changed == 'true'
         uses: benchmark-action/github-action-benchmark@v1
         with:
           tool: benchmarkjs

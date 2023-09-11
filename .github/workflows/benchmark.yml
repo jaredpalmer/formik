@@ -25,7 +25,17 @@ jobs:
           cache: yarn
           node-version: ${{ matrix.node }}
 
+      - name: Detect changed files
+        id: changed-files-yaml
+        uses: tj-actions/changed-files@v39
+        with:
+          files_yaml: |
+            src:
+              - packages/formik/src/**
+              - packages/formik-native/src/**
+
       - name: Install & build
+        if: steps.changed-files-yaml.outputs.src_any_changed == 'true'
         run: |
           node --version
           npm --version
@@ -34,15 +44,18 @@ jobs:
           yarn build:benchmark
 
       - name: Download previous benchmark data
+        if: steps.changed-files-yaml.outputs.src_any_changed == 'true'
         uses: actions/cache@v3
         with:
           path: ./benchmark-cache
           key: ${{ runner.os }}-benchmark
 
       - name: Run benchmark
+        if: steps.changed-files-yaml.outputs.src_any_changed == 'true'
         run: yarn benchmark
 
       - name: Store benchmark result
+        if: steps.changed-files-yaml.outputs.src_any_changed == 'true'
         uses: benchmark-action/github-action-benchmark@v1
         with:
           tool: benchmarkjs

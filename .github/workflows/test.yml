@@ -6,7 +6,22 @@ on:
     branches: [main]
 
 jobs:
+  detectChangedSourceFiles:
+    runs-on: ubuntu-latest
+    outputs:
+      changes: ${{ steps.changed-files-yaml.outputs.src_any_changed }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Detect changed files
+        id: changed-files-yaml
+        uses: tj-actions/changed-files@v39
+        with:
+          files_yaml: |
+            src:
+              - packages/formik/src/**
+              - packages/formik-native/src/**
   test:
+    if: needs.detectChangedSourceFiles.outputs.changes == 'true'
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false

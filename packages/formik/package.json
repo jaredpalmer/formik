@@ -1,7 +1,7 @@
 {
   "name": "formik",
   "description": "Build forms in React, without the tears",
-  "version": "2.4.3",
+  "version": "2.4.4",
   "license": "Apache-2.0",
   "author": "Jared Palmer <jared@palmer.net> (https://jaredpalmer.com)",
   "contributors": [
@@ -37,6 +37,7 @@
   "peerDependencies": {
     "react": ">=16.8.0"
   },
+  "sideEffects": false,
   "scripts": {
     "test": "tsdx test --env=jsdom",
     "test:watch": "npm run test -- --watchAll",

@@ -105,7 +105,7 @@ export interface FormikHelpers<Values> {
     field: string,
     isTouched?: boolean,
     shouldValidate?: boolean
-  ) =>  Promise<void | FormikErrors<Values>>;
+  ) => Promise<void | FormikErrors<Values>>;
   /** Validate form values */
   validateForm: (values?: any) => Promise<FormikErrors<Values>>;
   /** Validate field value */
@@ -302,9 +302,15 @@ export interface FieldMetaProps<Value> {
 /** Imperative handles to change a field's value, error and touched */
 export interface FieldHelperProps<Value> {
   /** Set the field's value */
-  setValue: (value: Value, shouldValidate?: boolean) => Promise<void | FormikErrors<Value>>;
+  setValue: (
+    value: Value,
+    shouldValidate?: boolean
+  ) => Promise<void | FormikErrors<Value>>;
   /** Set the field's touched value */
-  setTouched: (value: boolean, shouldValidate?: boolean) => Promise<void | FormikErrors<Value>>;
+  setTouched: (
+    value: boolean,
+    shouldValidate?: boolean
+  ) => Promise<void | FormikErrors<Value>>;
   /** Set the field's error value */
   setError: (value: string | undefined) => void;
 }
@@ -326,5 +332,6 @@ export interface FieldInputProps<Value> {
 }
 
 export type FieldValidator = (
-  value: any
+  value: any,
+  values: FormikValues
 ) => string | void | Promise<string | void>;

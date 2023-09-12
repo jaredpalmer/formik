@@ -216,7 +216,7 @@ Set `touched` imperatively. Calling this will trigger validation to run if `vali
 
 If `validateOnBlur` is set to `true` and there are errors, they will be resolved in the returned `Promise`.
 
-#### `setValues: (fields: React.SetStateAction<{ [field: string]: any }>, shouldValidate?: boolean) => void`
+#### `setValues: (fields: React.SetStateAction<{ [field: string]: any }>, shouldValidate?: boolean) => Promise<void | FormikErrors<Values>>`
 
 Set `values` imperatively. Calling this will trigger validation to run if `validateOnChange` is set to `true` (which it is by default). You can also explicitly prevent/skip validation by passing a second argument as `false`.
 

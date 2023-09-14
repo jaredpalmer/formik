@@ -1,0 +1,152 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  detectChangedSourceFiles:
+    name: 'determine changes'
+    runs-on: ubuntu-latest
+    outputs:
+      changes: ${{ steps.changed-files-yaml.outputs.src_any_changed }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Detect changed files
+        id: changed-files-yaml
+        uses: tj-actions/changed-files@v39
+        with:
+          files_yaml: |
+            src:
+              - packages/formik/src/**
+              - packages/formik/package.json
+              - packages/formik-native/src/**
+              - packages/formik-native/package.json
+  benchmark:
+    if: needs.detectChangedSourceFiles.outputs.changes == 'true'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v3
+        with:
+          cache: yarn
+          node-version-file: .nvmrc
+
+      - name: Detect changed files
+        id: changed-files-yaml
+        uses: tj-actions/changed-files@v39
+        with:
+          files_yaml: |
+            src:
+              - packages/formik/src/**
+              - packages/formik-native/src/**
+
+      - name: Install & build
+        run: |
+          node --version
+          npm --version
+          yarn --version
+          yarn install --frozen-lockfile
+          yarn build:benchmark
+
+      - name: Download previous benchmark data
+        uses: actions/cache@v3
+        with:
+          path: ./benchmark-cache
+          key: ${{ runner.os }}-benchmark
+
+      - name: Run benchmark
+        run: yarn benchmark
+
+      - name: Store benchmark result
+        uses: benchmark-action/github-action-benchmark@v1
+        with:
+          tool: benchmarkjs
+          external-data-json-path: ./benchmark-cache/benchmark-data.json
+          output-file-path: output.txt
+          # comment for PRs that's updated with current perf relative to baseline (main)
+          summary-always: true
+          # warn if slowness is detected; might be transient on rerun
+          alert-threshold: 110%
+          comment-on-alert: true
+          fail-on-alert: true
+          # if things get considerably slower, deny the PR
+          fail-threshold: 120%
+          # needed for commenting on PRs
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+  interaction:
+    if: needs.detectChangedSourceFiles.outputs.changes == 'true'
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          cache: yarn
+          node-version-file: .nvmrc
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Get installed Playwright version
+        id: playwright-version
+        run: echo "PLAYWRIGHT_VERSION=$(node -e "console.log(require('./package-lock.json').dependencies['@playwright/test'].version)")" >> $GITHUB_ENV
+
+      - name: Cache playwright binaries
+        uses: actions/cache@v3
+        id: playwright-cache
+        with:
+          path: |
+            ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ env.PLAYWRIGHT_VERSION }}
+
+      - name: Install Playwright Browsers
+        run: yarn playwright install --with-deps
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+      - run: yarn playwright install-deps
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+
+      - name: Run Playwright tests
+        run: yarn playwright test
+      - uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 5
+  size:
+    if: needs.detectChangedSourceFiles.outputs.changes == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+      - uses: preactjs/compressed-size-action@v2
+        with:
+          repo-token: '${{ secrets.GITHUB_TOKEN }}'
+          build-script: 'turbo run build --filter {./packages/*}...'
+  unit:
+    if: needs.detectChangedSourceFiles.outputs.changes == 'true'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          cache: yarn
+          node-version-file: .nvmrc
+      - name: Install deps, build, and test
+        run: |
+          node --version
+          npm --version
+          yarn --version
+          yarn install --frozen-lockfile
+          yarn test --coverage
+        env:
+          CI: true
+          NODE_OPTIONS: --max-old-space-size=4096

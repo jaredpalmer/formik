@@ -100,31 +100,19 @@ describe('Field / FastField', () => {
 
   describe('renders an <input /> by default', () => {
     it('<Field />', () => {
-      const className = 'field-custom'
-      const { container } = renderForm(<Field name="name" className={className} />);
+      const className = 'field-custom';
+      const { container } = renderForm(
+        <Field name="name" className={className} />
+      );
       expect(container.querySelectorAll('input')).toHaveLength(1);
-      expect(container.querySelector(`.${className}`)?.getAttribute('value')).toEqual('jared')
+      expect(
+        container.querySelector(`.${className}`)?.getAttribute('value')
+      ).toEqual('jared');
     });
 
     it('<FastField />', () => {
       const { container } = renderForm(<FastField name="name" />);
       expect(container.querySelectorAll('input')).toHaveLength(1);
-    });
-  });
-
-  describe('renders an <input /> with className', () => {
-    it('<Field />', () => {
-      const className = 'field-custom'
-      const { container } = renderForm(<Field name="name" className={className} />);
-      expect(container.querySelectorAll(`.${className}`)).toHaveLength(1)
-      expect(container.querySelector(`.${className}`)?.getAttribute('value')).toEqual('jared')
-    });
-
-    it('<FastField />', () => {
-      const className = 'field-custom'
-      const { container } = renderForm(<FastField name="name" className={className} />);
-      expect(container.querySelectorAll(`.${className}`)).toHaveLength(1)
-      expect(container.querySelector(`.${className}`)?.getAttribute('value')).toEqual('jared')
     });
   });
 
@@ -222,7 +210,7 @@ describe('Field / FastField', () => {
   });
 
   describe('children', () => {
-    cases('renders a child element with component', () => {
+    it('renders a child element with component', () => {
       const { container } = renderForm(
         <Field name="name" component="select">
           <option value="Jared" label={TEXT} />
@@ -233,7 +221,7 @@ describe('Field / FastField', () => {
       expect(container.querySelectorAll('option')).toHaveLength(2);
     });
 
-    cases('renders a child element with as', () => {
+    it('renders a child element with as', () => {
       const { container } = renderForm(
         <Field name="name" as="select">
           <option value="Jared" label={TEXT} />
@@ -604,6 +592,48 @@ describe('Field / FastField', () => {
 
     expect(getProps().field.value).toBe('Binding');
   });
+
+  describe('renders an <input /> with className', () => {
+    it('<Field />', () => {
+      const className = 'field-custom';
+      const { container } = renderForm(
+        <Field name="name" className={className} />
+      );
+      expect(container.querySelectorAll(`.${className}`)).toHaveLength(1);
+      expect(
+        container.querySelector(`.${className}`)?.getAttribute('value')
+      ).toEqual('jared');
+    });
+
+    it('<FastField />', () => {
+      const className = 'field-custom';
+      const { container } = renderForm(
+        <FastField name="name" className={className} />
+      );
+      expect(container.querySelectorAll(`.${className}`)).toHaveLength(1);
+      expect(
+        container.querySelector(`.${className}`)?.getAttribute('value')
+      ).toEqual('jared');
+    });
+  });
+  cases(
+    "render custom component and doesn't overwrite className",
+    renderField => {
+      const { container } = renderField({
+        children: ({ form, field, ...reset }) => (
+          /**
+           *  @see https://github.com/jaredpalmer/formik/issues/3883
+           *  ensure when Field or FastField component don't review classNames,
+           *  they won't pass {className:undefined} to custom component
+           *
+           */
+          <input name="name" className="custom-class" {...reset} />
+        ),
+      });
+
+      expect(container.querySelector('.custom-class')).toBeTruthy();
+    }
+  );
 });
 
 // @todo Deprecated

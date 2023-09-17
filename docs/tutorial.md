@@ -594,7 +594,7 @@ Again, Yup is 100% optional. However, we suggest giving it a try. As you can see
 
 ### `getFieldProps()`
 
-The code above is very explicit about exactly what Formik is doing. `onChange` -> `handleChange`, `onBlur` -> `handleBlur`, and so on. However, to save you time, `useFormik()` returns a helper method called `formik.getFieldProps()` to make it faster to wire up inputs. Given some field-level info, it returns to you the exact group of `onChange`, `onBlur`, `value`, `checked` for a given field. You can then spread that on an `input`, `select`, or `textarea`.
+The code above is very explicit about exactly what Formik is doing. `onChange` -> `handleChange`, `onBlur` -> `handleBlur`, and so on. However, to save you time, `useFormik()` returns a helper method called `formik.getFieldProps()` to make it faster to wire up inputs. Given some field-level info, it returns to you the exact group of `name`, `onChange`, `onBlur`, `value`, `checked` for a given field. You can then spread that on an `input`, `select`, or `textarea`.
 
 ```jsx
 import React from 'react';

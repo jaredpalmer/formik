@@ -380,21 +380,19 @@ an input from uncontrolled to controlled.
 Note: `initialValues` not available to the higher-order component, use
 `mapPropsToValues` instead.
 
-### `onReset?: (values: Values, formikBag: FormikBag) => void`
+### `onReset?: (values: Values, formikHelpersState: FormikHelpers & FormikState) => void`
 
 Your optional form reset handler. It is passed your forms `values` and the
 "FormikBag".
 
-### `onSubmit: (values: Values, formikBag: FormikBag) => void | Promise<any>`
+### `onSubmit: (values: Values, formikHelpersState: FormikHelpers & FormikState) => void | Promise<any>`
 
 Your form submission handler. It is passed your forms `values` and the
 "FormikBag", which includes an object containing a subset of the
 [injected props and methods](#formik-render-methods-and-props) (i.e. all the methods
-with names that start with `set<Thing>` + `resetForm`) and any props that were
-passed to the wrapped component.
+with names that start with `set<Thing>` + `resetForm`) and the state (`values`, `errors`, `touched` etc.)
 
-Note: `errors`, `touched`, `status` and all event handlers are NOT
-included in the `FormikBag`.
+Note: event handlers are NOT included in `FormikHelpers & FormikState`.
 
 > IMPORTANT: If `onSubmit` is async, then Formik will automatically set `isSubmitting` to `false` on your behalf once it has resolved. This means you do NOT need to call `formikBag.setSubmitting(false)` manually. However, if your `onSubmit` function is synchronous, then you need to call `setSubmitting(false)` on your own.
 

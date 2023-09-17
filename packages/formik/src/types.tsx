@@ -214,14 +214,17 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
   /**
    * Reset handler
    */
-  onReset?: (values: Values, formikHelpers: FormikHelpers<Values>) => void;
+  onReset?: (
+    values: Values,
+    formikHelpersState: FormikHelpers<Values> & FormikState<Values>
+  ) => void;
 
   /**
    * Submission handler
    */
   onSubmit: (
     values: Values,
-    formikHelpers: FormikHelpers<Values>
+    formikHelpersState: FormikHelpers<Values> & FormikState<Values>
   ) => void | Promise<any>;
   /**
    * A Yup Schema or a function that returns a Yup schema

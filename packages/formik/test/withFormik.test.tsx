@@ -193,6 +193,13 @@ describe('withFormik()', () => {
           validateField: expect.any(Function),
           validateForm: expect.any(Function),
           submitForm: expect.any(Function),
+          errors: {},
+          isSubmitting: true,
+          isValidating: false,
+          status: undefined,
+          submitCount: 1,
+          touched: { name: true },
+          values: { name: 'jared' },
         }
       )
     );

@@ -1002,7 +1002,7 @@ export function Formik<
   ExtraProps = {}
 >(props: FormikConfig<Values> & ExtraProps) {
   const formikbag = useFormik<Values>(props);
-  const { component, children, render, innerRef } = props;
+  const { component, children, render, innerRef, validationSchema } = props;
 
   // This allows folks to pass a ref to <Formik />
   React.useImperativeHandle(innerRef, () => formikbag);
@@ -1018,7 +1018,12 @@ export function Formik<
     }, []);
   }
   return (
-    <FormikProvider value={formikbag}>
+    <FormikProvider
+      value={{
+        ...formikbag,
+        validationSchema,
+      }}
+    >
       {component
         ? React.createElement(component as any, formikbag)
         : render

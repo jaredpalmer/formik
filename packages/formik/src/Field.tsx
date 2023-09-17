@@ -151,7 +151,6 @@ export function Field({
     ...formik
   } = useFormikContext();
 
-  if (__DEV__) {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     React.useEffect(() => {
       invariant(
@@ -175,7 +174,6 @@ export function Field({
       );
       // eslint-disable-next-line
     }, []);
-  }
 
   // Register field and field-level validation with parent <Formik>
   const { registerField, unregisterField } = formik;

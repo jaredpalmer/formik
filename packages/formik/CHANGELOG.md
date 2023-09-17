@@ -1,15 +1,22 @@
 # formik
 
+## 2.4.5
+
+### Patch Changes
+
+- [`d7db9cd`](https://github.com/jaredpalmer/formik/commit/d7db9cddba9008714f2853013d5d4e82c8c94558) [#3860](https://github.com/jaredpalmer/formik/pull/3860) Thanks [@patik](https://github.com/patik)! - Add missing dependency `@types/hoist-non-react-statics`, closes #3837
+
+* [`fe4ed7e`](https://github.com/jaredpalmer/formik/commit/fe4ed7e048b14331a75e40cabf48e4787d9b2b71) [#3501](https://github.com/jaredpalmer/formik/pull/3501) Thanks [@markspolakovs](https://github.com/markspolakovs)! - Mark `formik` as side-effect free in `package.json`
+
 ## 2.4.4
 
 ### Patch Changes
 
--   [`41720c2`](https://github.com/jaredpalmer/formik/commit/41720c2f69407e41c27b325923bce63436b07f45) [#3862](https://github.com/jaredpalmer/formik/pull/3862) Thanks @yazaldefilimonepinto! - Forward `className` for custom components used with `Field`
+- [`41720c2`](https://github.com/jaredpalmer/formik/commit/41720c2f69407e41c27b325923bce63436b07f45) [#3862](https://github.com/jaredpalmer/formik/pull/3862) Thanks @yazaldefilimonepinto! - Forward `className` for custom components used with `Field`
 
--   [`da58b29`](https://github.com/jaredpalmer/formik/commit/da58b292c9c0b6029ae21ab4b5edff09dd877c1b) [#3858](https://github.com/jaredpalmer/formik/pull/3858) Thanks @alaanescobedo! - Remove use of deprecated `StatelessComponent` type in favor of `FunctionComponent`
+- [`da58b29`](https://github.com/jaredpalmer/formik/commit/da58b292c9c0b6029ae21ab4b5edff09dd877c1b) [#3858](https://github.com/jaredpalmer/formik/pull/3858) Thanks @alaanescobedo! - Remove use of deprecated `StatelessComponent` type in favor of `FunctionComponent`
 
--   [`5c01ee7`](https://github.com/jaredpalmer/formik/commit/5c01ee77b312ff6c375d43f841fe9fbe5846ebd9) [#3872](https://github.com/jaredpalmer/formik/pull/3872) Thanks @rajpatelbot! - FIX: Fixed resetForm function dependency issue
-
+- [`5c01ee7`](https://github.com/jaredpalmer/formik/commit/5c01ee77b312ff6c375d43f841fe9fbe5846ebd9) [#3872](https://github.com/jaredpalmer/formik/pull/3872) Thanks @rajpatelbot! - FIX: Fixed resetForm function dependency issue
 
 ## 2.4.3
 

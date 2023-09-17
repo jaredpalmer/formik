@@ -134,6 +134,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   validateOnChange = true,
   validateOnBlur = true,
   validateOnMount = false,
+  validateAfterSubmit = false,
   isInitialValid,
   enableReinitialize = false,
   onSubmit,
@@ -143,6 +144,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     validateOnChange,
     validateOnBlur,
     validateOnMount,
+    validateAfterSubmit,
     onSubmit,
     ...rest,
   };
@@ -546,7 +548,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     (touched: FormikTouched<Values>, shouldValidate?: boolean) => {
       dispatch({ type: 'SET_TOUCHED', payload: touched });
       const willValidate =
-        shouldValidate === undefined ? validateOnBlur : shouldValidate;
+          shouldValidate ?? (validateAfterSubmit && !state.submitCount ? false : validateOnBlur);
       return willValidate
         ? validateFormWithHighPriority(state.values)
         : Promise.resolve();
@@ -563,7 +565,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
 
       dispatch({ type: 'SET_VALUES', payload: resolvedValues });
       const willValidate =
-        shouldValidate === undefined ? validateOnChange : shouldValidate;
+          shouldValidate ?? (validateAfterSubmit && !state.submitCount ? false : validateOnChange);
       return willValidate
         ? validateFormWithHighPriority(resolvedValues)
         : Promise.resolve();
@@ -590,7 +592,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
         },
       });
       const willValidate =
-        shouldValidate === undefined ? validateOnChange : shouldValidate;
+          shouldValidate ?? (validateAfterSubmit && !state.submitCount ? false : validateOnChange);
       return willValidate
         ? validateFormWithHighPriority(setIn(state.values, field, value))
         : Promise.resolve();
@@ -675,7 +677,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
         },
       });
       const willValidate =
-        shouldValidate === undefined ? validateOnBlur : shouldValidate;
+          shouldValidate ?? (validateAfterSubmit && !state.submitCount ? false : validateOnBlur);
       return willValidate
         ? validateFormWithHighPriority(state.values)
         : Promise.resolve();
@@ -992,6 +994,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     validateOnBlur,
     validateOnChange,
     validateOnMount,
+    validateAfterSubmit,
   };
 
   return ctx;

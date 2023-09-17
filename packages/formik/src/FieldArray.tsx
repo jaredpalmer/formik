@@ -191,12 +191,12 @@ class FieldArrayInner<Values = {}> extends React.Component<
         fn(getIn(prevState.values, name))
       );
 
-      let fieldError = alterErrors
-        ? updateErrors(getIn(prevState.errors, name))
-        : undefined;
-      let fieldTouched = alterTouched
-        ? updateTouched(getIn(prevState.touched, name))
-        : undefined;
+      const prevErrors = getIn(prevState.errors, name);
+      let fieldError =
+        alterErrors && !!prevErrors ? updateErrors(prevErrors) : undefined;
+      const prevTouched = getIn(prevState.touched, name);
+      let fieldTouched =
+        alterTouched && !!prevTouched ? updateTouched(prevTouched) : undefined;
 
       if (isEmptyArray(fieldError)) {
         fieldError = undefined;

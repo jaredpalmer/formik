@@ -135,11 +135,12 @@ export function useField<Val = any>(
 }
 
 export function Field({
+  field,  // Destructuring the field prop
   validate,
   name,
   render,
   children,
-  as: is, // `as` is reserved in typescript lol
+  as: is,
   component,
   className,
   ...props
@@ -147,9 +148,23 @@ export function Field({
   const {
     validate: _validate,
     validationSchema: _validationSchema,
-
+    registerField,  // Corrected: Use directly
+    unregisterField,  // Corrected: Use directly
     ...formik
   } = useFormikContext();
+
+  // Destructure the field prop
+  const { innerRef, ...fieldProps } = field;
+
+  // Register field and field-level validation with parent <Formik>
+  React.useEffect(() => {
+    registerField(name, {
+      validate: validate,
+    });
+    return () => {
+      unregisterField(name);
+    };
+  }, [registerField, unregisterField, name, validate]);
 
   if (__DEV__) {
     // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -165,17 +180,19 @@ export function Field({
       );
 
       invariant(
-        !(component && children && isFunction(children)),
+        !(component && children and isFunction(children)),
         'You should not use <Field component> and <Field children> as a function in the same <Field> component; <Field component> will be ignored.'
       );
 
       invariant(
         !(render && children && !isEmptyChildren(children)),
-        'You should not use <Field render> and <Field children> in the same <Field> component; <Field children> will be ignored'
+        'You should not use <Field render> and <Field children> in the same <Field> component; <Field children> will be ignored.'
       );
       // eslint-disable-next-line
     }, []);
   }
+
+
 
   // Register field and field-level validation with parent <Formik>
   const { registerField, unregisterField } = formik;
@@ -187,47 +204,50 @@ export function Field({
       unregisterField(name);
     };
   }, [registerField, unregisterField, name, validate]);
-  const field = formik.getFieldProps({ name, ...props });
+  
+  // Destructure the field prop
+  const { innerRef, ...fieldProps } = field;
+  
   const meta = formik.getFieldMeta(name);
-  const legacyBag = { field, form: formik };
-
+  const legacyBag = { field: fieldProps, form: formik }; // Use fieldProps instead of field
+  
   if (render) {
     return render({ ...legacyBag, meta });
   }
-
+  
   if (isFunction(children)) {
     return children({ ...legacyBag, meta });
   }
-
+  
   if (component) {
     // This behavior is backwards compat with earlier Formik 0.9 to 1.x
     if (typeof component === 'string') {
       const { innerRef, ...rest } = props;
       return React.createElement(
         component,
-        { ref: innerRef, ...field, ...rest, className },
+        { ref: innerRef, ...fieldProps, ...rest, className }, // Use fieldProps instead of field
         children
       );
     }
     // We don't pass `meta` for backwards compat
     return React.createElement(
       component,
-      { field, form: formik, ...props, className },
+      { field: fieldProps, form: formik, ...props, className }, // Use fieldProps instead of field
       children
     );
   }
-
+  
   // default to input here so we can check for both `as` and `children` above
   const asElement = is || 'input';
-
+  
   if (typeof asElement === 'string') {
     const { innerRef, ...rest } = props;
     return React.createElement(
       asElement,
-      { ref: innerRef, ...field, ...rest, className },
+      { ref: innerRef, ...fieldProps, ...rest, className }, // Use fieldProps instead of field
       children
     );
   }
-
-  return React.createElement(asElement, { ...field, ...props, className }, children);
-}
+  
+  return React.createElement(asElement, { ...fieldProps, ...props, className }, children); // Use fieldProps instead of field
+  

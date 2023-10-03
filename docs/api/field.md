@@ -247,7 +247,7 @@ A function that returns one or more JSX elements.
 
 ### `validate`
 
-`validate?: (value: any) => undefined | string | Promise<any>`
+`validate?: (value: any, values: Values) => undefined | string | Promise<any>`
 
 You can run independent field-level validations by passing a function to the
 `validate` prop. The function will respect the `validateOnBlur` and

@@ -142,7 +142,7 @@ const Basic = () => (
             onBlur={handleBlur}
             value={values.email}
           />
-          {errors.email && touched.email && errors.email}
+          {errors.email && touched.email}
           <input
             type="password"
             name="password"
@@ -150,7 +150,7 @@ const Basic = () => (
             onBlur={handleBlur}
             value={values.password}
           />
-          {errors.password && touched.password && errors.password}
+          {errors.password && touched.password}
           <button type="submit" disabled={isSubmitting}>
             Submit
           </button>

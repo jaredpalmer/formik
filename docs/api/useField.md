@@ -18,7 +18,7 @@ interface Values {
 }
 
 const MyTextField = ({ label, ...props }) => {
-  const [field, meta, helpers] = useField(props);
+  const [field, meta] = useField(props);
   return (
     <>
       <label>

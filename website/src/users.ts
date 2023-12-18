@@ -239,4 +239,9 @@ export const users = [
     image: '/images/logos/authdog.svg',
     infoLink: 'https://www.authdog.com',
   },
+  {
+    caption: 'Techjobs.be IT jobs',
+    image: '/images/logos/techjobsbe.svg',
+    infoLink: 'https://techjobs.be',
+  },
 ];

@@ -200,7 +200,7 @@ Set the value of a field imperatively. `field` should match the key of
 
 If `validateOnChange` is set to `true` and there are errors, they will be resolved in the returned `Promise`.
 
-#### `setStatus: (status?: any) => void`
+#### `setStatus: (status?: React.SetStateAction<any>) => void`
 
 Set a top-level `status` to anything you want imperatively. Useful for
 controlling arbitrary top-level state related to your form. For example, you can

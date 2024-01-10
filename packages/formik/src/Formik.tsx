@@ -137,6 +137,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   isInitialValid,
   enableReinitialize = false,
   onSubmit,
+  onSubmitFailed,
   ...rest
 }: FormikConfig<Values>) {
   const props = {
@@ -144,6 +145,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     validateOnBlur,
     validateOnMount,
     onSubmit,
+    onSubmitFailed,
     ...rest,
   };
   const initialValues = React.useRef(props.initialValues);
@@ -794,6 +796,8 @@ export function useFormik<Values extends FormikValues = FormikValues>({
           // throw combinedErrors;
           if (isInstanceOfError) {
             throw combinedErrors;
+          } else {
+            executeSubmitFailed()
           }
         }
         return;
@@ -857,6 +861,10 @@ export function useFormik<Values extends FormikValues = FormikValues>({
 
   const executeSubmit = useEventCallback(() => {
     return onSubmit(state.values, imperativeMethods);
+  });
+
+  const executeSubmitFailed = useEventCallback(() => {
+    return onSubmitFailed?.(state.errors, imperativeMethods);
   });
 
   const handleReset = useEventCallback(e => {

@@ -223,6 +223,15 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
     values: Values,
     formikHelpers: FormikHelpers<Values>
   ) => void | Promise<any>;
+  
+  /**
+   * Submission failed handler（invoke when validation fails）
+   */
+  onSubmitFailed?: (
+    errors: object | Promise<FormikErrors<Values>>,
+    formikHelpers: FormikHelpers<Values>
+  ) => void;
+
   /**
    * A Yup Schema or a function that returns a Yup schema
    */

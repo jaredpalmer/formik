@@ -190,3 +190,7 @@ details > summary {
 
 @tailwind utilities;
 /* purgecss end ignore */
+
+#container{
+overflow-x: hidden;
+}

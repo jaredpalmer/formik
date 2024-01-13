@@ -8,7 +8,7 @@ import { Logo } from './Logo';
 export const Nav: React.FC = () => {
   const router = useRouter();
   return (
-    <div className="bg-white border-b border-gray-200">
+    <div className="bg-white border-b border-gray-200 ">
       <div className="container px-4 lg:px-0 mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-12 md:gap-8">
           <div className="md:col-span-3 flex items-center justify-between h-16">

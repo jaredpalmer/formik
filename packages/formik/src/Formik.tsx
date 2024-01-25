@@ -418,7 +418,12 @@ export function useFormik<Values extends FormikValues = FormikValues>({
         dispatchFn();
       }
     },
-    [props.initialErrors, props.initialStatus, props.initialTouched, props.onReset]
+    [
+      props.initialErrors,
+      props.initialStatus,
+      props.initialTouched,
+      props.onReset,
+    ]
   );
 
   React.useEffect(() => {
@@ -549,7 +554,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
       const willValidate =
         shouldValidate === undefined ? validateOnBlur : shouldValidate;
       return willValidate
-        ? validateFormWithHighPriority(state.values)
+        ? validateFormWithHighPriority(stateRef.current.values)
         : Promise.resolve();
     }
   );
@@ -560,7 +565,9 @@ export function useFormik<Values extends FormikValues = FormikValues>({
 
   const setValues = useEventCallback(
     (values: React.SetStateAction<Values>, shouldValidate?: boolean) => {
-      const resolvedValues = isFunction(values) ? values(state.values) : values;
+      const resolvedValues = isFunction(values)
+        ? values(stateRef.current.values)
+        : values;
 
       dispatch({ type: 'SET_VALUES', payload: resolvedValues });
       const willValidate =
@@ -595,7 +602,9 @@ export function useFormik<Values extends FormikValues = FormikValues>({
       const willValidate =
         shouldValidate === undefined ? validateOnChange : shouldValidate;
       return willValidate
-        ? validateFormWithHighPriority(setIn(state.values, field, resolvedValue))
+        ? validateFormWithHighPriority(
+            setIn(stateRef.current.values, field, resolvedValue)
+          )
         : Promise.resolve();
     }
   );
@@ -680,7 +689,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
       const willValidate =
         shouldValidate === undefined ? validateOnBlur : shouldValidate;
       return willValidate
-        ? validateFormWithHighPriority(state.values)
+        ? validateFormWithHighPriority(stateRef.current.values)
         : Promise.resolve();
     }
   );

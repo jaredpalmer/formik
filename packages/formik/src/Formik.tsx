@@ -607,7 +607,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
       let parsed;
       // If the first argument is not a string though, it has to be a synthetic React Event (or a fake one),
       // so we handle like we would a normal HTML change event.
-      if (isObject(eventOrTextValue)) {
+      if (!isString(eventOrTextValue) && typeof eventOrTextValue !== 'number' && typeof eventOrTextValue !== 'boolean') {
         // If we can, persist the event
         // @see https://reactjs.org/docs/events.html#event-pooling
         if ((eventOrTextValue as any).persist) {

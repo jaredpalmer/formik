@@ -598,7 +598,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   );
 
   const executeChange = React.useCallback(
-    (eventOrTextValue: string | React.ChangeEvent<any>, maybePath?: string) => {
+    (eventOrTextValue: string | number | boolean | React.ChangeEvent<any>, maybePath?: string) => {
       // By default, assume that the first argument is a string. This allows us to use
       // handleChange with React Native and React Native Web's onChangeText prop which
       // provides just the value of the input.
@@ -607,7 +607,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
       let parsed;
       // If the first argument is not a string though, it has to be a synthetic React Event (or a fake one),
       // so we handle like we would a normal HTML change event.
-      if (!isString(eventOrTextValue)) {
+      if (isObject(eventOrTextValue)) {
         // If we can, persist the event
         // @see https://reactjs.org/docs/events.html#event-pooling
         if ((eventOrTextValue as any).persist) {

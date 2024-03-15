@@ -48,6 +48,19 @@ export const MyApp: React.FC<{}> = () => {
 };
 ```
 
+#### Just some feedback from a new user: 
+The withFormik() section doesn't make sense to me 
+- where it would go
+- how it's connected to the previous script
+- what it should be named
+- is it a component?
+- is it a function that should just go in App.tsx?
+- There's no explanation so I'm completely lost how to link the validation with the typescript form
+- it would be helpful to see a working example of these tied together, maybe a codepen or the like
+
+Thanks
+
+
 #### `withFormik()`
 
 ```tsx

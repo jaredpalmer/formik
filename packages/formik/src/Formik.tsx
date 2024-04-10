@@ -1,5 +1,6 @@
 import deepmerge from 'deepmerge';
 import isPlainObject from 'lodash/isPlainObject';
+import cloneDeep from 'lodash/cloneDeep';
 import * as React from 'react';
 import isEqual from 'react-fast-compare';
 import invariant from 'tiny-warning';
@@ -29,7 +30,6 @@ import {
   setIn,
   setNestedObjectValues,
 } from './utils';
-import cloneDeep from 'lodash/cloneDeep';
 
 type FormikMessage<Values> =
   | { type: 'SUBMIT_ATTEMPT' }

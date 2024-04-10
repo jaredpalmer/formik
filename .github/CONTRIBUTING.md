@@ -69,8 +69,8 @@ git remote add upstream https://github.com/formik/formik.git
 3. Synchronize your local `next` branch with the upstream one:
 
 ```sh
-git checkout master
-git pull upstream master
+git checkout main
+git pull upstream main
 ```
 
 4. Install the dependencies with [yarn](https://yarnpkg.com) (npm isn't supported):
@@ -122,7 +122,7 @@ the results. If any of them fail, refer to [Checks and how to fix them](#checks-
 
 Make sure the following is true:
 
-- The branch is targeted at `master` for ongoing development. We do our best to keep `master` in good shape, with all tests passing. Code that lands in `master` must be compatible with the latest stable release. It may contain additional features, but no breaking changes. We should be able to release a new minor version from the tip of `master` at any time.
+- The branch is targeted at `main` for ongoing development. We do our best to keep `main` in good shape, with all tests passing. Code that lands in `main` must be compatible with the latest stable release. It may contain additional features, but no breaking changes. We should be able to release a new minor version from the tip of `main` at any time.
 - If a feature is being added:
   - If the result was already achievable with the library, explain why this feature needs to be added.
   - If this is a common use case, consider adding an example to the documentation.

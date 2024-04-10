@@ -102,7 +102,7 @@ Either a React component or the name of an HTML element to render. That is, one 
 - A valid HTML element name
 - A custom React component
 
-Custom React components will be passed `onChange`, `onBlur`, `name`, and `value` plus any other props passed to directly to `<Field>`.
+Custom React components will be passed `onChange`, `onBlur`, `name`, and `value` plus any other props passed directly to `<Field>`.
 
 Default is `'input'` (so an `<input>` is rendered by default)
 

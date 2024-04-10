@@ -223,6 +223,12 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
     values: Values,
     formikHelpers: FormikHelpers<Values>
   ) => void | Promise<any>;
+
+  /**
+   * A context object to be passed to the Yup schema's `validate` method.
+   */
+  validationSchemaContext?: any;
+
   /**
    * A Yup Schema or a function that returns a Yup schema
    */

@@ -1,5 +1,6 @@
 import deepmerge from 'deepmerge';
 import isPlainObject from 'lodash/isPlainObject';
+import cloneDeep from 'lodash/cloneDeep';
 import * as React from 'react';
 import isEqual from 'react-fast-compare';
 import invariant from 'tiny-warning';
@@ -173,10 +174,10 @@ export function useFormik<Values extends FormikValues = FormikValues>({
 
   const [, setIteration] = React.useState(0);
   const stateRef = React.useRef<FormikState<Values>>({
-    values: props.initialValues,
-    errors: props.initialErrors || emptyErrors,
-    touched: props.initialTouched || emptyTouched,
-    status: props.initialStatus,
+    values: cloneDeep(props.initialValues),
+    errors: cloneDeep(props.initialErrors) || emptyErrors,
+    touched: cloneDeep(props.initialTouched) || emptyTouched,
+    status: cloneDeep(props.initialStatus),
     isSubmitting: false,
     isValidating: false,
     submitCount: 0,

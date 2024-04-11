@@ -61,6 +61,20 @@ const InitialValues = {
   age: 30,
 };
 
+const InitialValuesWithNestedObject = {
+  content: {
+    items: [
+      {
+        cards: [
+          {
+            desc: 'Initial Desc',
+          },
+        ],
+      },
+    ],
+  },
+};
+
 function renderFormik<V extends FormikValues = Values>(
   props?: Partial<FormikConfig<V>>
 ) {
@@ -1453,5 +1467,35 @@ describe('<Formik>', () => {
     const { getProps } = renderFormik({ innerRef });
 
     expect(innerRef.current).toEqual(getProps());
+  });
+
+  it('should not modify original initialValues object', () => {
+    render(
+      <Formik initialValues={InitialValuesWithNestedObject} onSubmit={noop}>
+        {formikProps => (
+          <input
+            data-testid="desc-input"
+            value={formikProps.values.content.items[0].cards[0].desc}
+            onChange={e => {
+              const copy = { ...formikProps.values.content };
+              copy.items[0].cards[0].desc = e.target.value;
+              formikProps.setValues({
+                ...formikProps.values,
+                content: copy,
+              });
+            }}
+          />
+        )}
+      </Formik>
+    );
+    const input = screen.getByTestId('desc-input');
+
+    fireEvent.change(input, {
+      target: {
+        value: 'New Value',
+      },
+    });
+
+    expect(InitialValuesWithNestedObject.content.items[0].cards[0].desc).toEqual('Initial Desc');
   });
 });

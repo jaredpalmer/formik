@@ -5,6 +5,8 @@ title: useField()
 
 `useField` is a custom React hook that will automagically help you hook up inputs to Formik. You can and should use it to build your own custom input primitives. There are 2 ways to use it.
 
+> This component should be used in formik context spawned by `<Form>` or `useFormikContext`, otherwise `useField` won't work.
+
 ## Example
 
 ```tsx

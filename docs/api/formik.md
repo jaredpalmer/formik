@@ -93,11 +93,11 @@ to `<button onClick={handleReset}>...</button>`
 
 #### `handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void`
 
-Submit handler. This should be passed to `<form onSubmit={props.handleSubmit}>...</form>`. To learn more about the submission process, see [Form Submission](../guides/form-submission.md).
+Submit handler. This should be passed to `<form onSubmit={props.handleSubmit}>...</form>`. To learn more about the submission process, see [Form Submission](./guides/form-submission.md).
 
 #### `isSubmitting: boolean`
 
-Submitting state of the form. Returns `true` if submission is in progress and `false` otherwise. IMPORTANT: Formik will set this to `true` as soon as submission is _attempted_. To learn more about the submission process, see [Form Submission](../guides/form-submission.md).
+Submitting state of the form. Returns `true` if submission is in progress and `false` otherwise. IMPORTANT: Formik will set this to `true` as soon as submission is _attempted_. To learn more about the submission process, see [Form Submission](./guides/form-submission.md).
 
 #### `isValid: boolean`
 
@@ -107,7 +107,7 @@ Returns `true` if there are no `errors` (i.e. the `errors` object is empty) and 
 
 #### `isValidating: boolean`
 
-Returns `true` if Formik is running validation during submission, or by calling [`validateForm`] directly `false` otherwise. To learn more about what happens with `isValidating` during the submission process, see [Form Submission](../guides/form-submission.md).
+Returns `true` if Formik is running validation during submission, or by calling [`validateForm`] directly `false` otherwise. To learn more about what happens with `isValidating` during the submission process, see [Form Submission](./guides/form-submission.md).
 
 #### `resetForm: (nextState?: Partial<FormikState<Values>>) => void`
 
@@ -208,7 +208,7 @@ use it to pass API responses back into your component in `handleSubmit`.
 
 #### `setSubmitting: (isSubmitting: boolean) => void`
 
-Set `isSubmitting` imperatively. You would call it with `setSubmitting(false)` in your `onSubmit` handler to finish the cycle. To learn more about the submission process, see [Form Submission](../guides/form-submission.md).
+Set `isSubmitting` imperatively. You would call it with `setSubmitting(false)` in your `onSubmit` handler to finish the cycle. To learn more about the submission process, see [Form Submission](./guides/form-submission.md).
 
 #### `setTouched: (fields: { [field: string]: boolean }, shouldValidate?: boolean) => Promise<void | FormikErrors>`
 

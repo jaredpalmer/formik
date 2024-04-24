@@ -25,13 +25,16 @@ export type FormikErrors<Values> = {
  * An object containing touched state of the form whose keys correspond to FormikValues.
  */
 export type FormikTouched<Values> = {
-  [K in keyof Values]?: Values[K] extends any[]
-    ? Values[K][number] extends object // [number] is the special sauce to get the type of array's element. More here https://github.com/Microsoft/TypeScript/pull/21316
-      ? FormikTouched<Values[K][number]>[]
-      : boolean
-    : Values[K] extends object
-    ? FormikTouched<Values[K]>
-    : boolean;
+  [K in keyof Values]?:
+    Values[K] extends infer P ? // makes sure the conditional works as expected. More here https://github.com/microsoft/TypeScript/issues/33669#issuecomment-536493169
+      P extends any[]
+      ? P[number] extends object // [number] is the special sauce to get the type of array's element. More here https://github.com/Microsoft/TypeScript/pull/21316
+        ? FormikTouched<P[number]>[]
+        : boolean
+      : P extends object
+        ? FormikTouched<P>
+        : boolean
+    : never;
 };
 
 /**

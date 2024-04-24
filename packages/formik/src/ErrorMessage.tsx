@@ -10,6 +10,7 @@ export interface ErrorMessageProps {
   component?: string | React.ComponentType;
   children?: (errorMessage: string) => React.ReactNode;
   render?: (errorMessage: string) => React.ReactNode;
+  id?: string;
 }
 
 class ErrorMessageImpl extends React.Component<

@@ -266,6 +266,30 @@ describe('<Formik>', () => {
         expect(validate).not.toHaveBeenCalled();
       });
     });
+
+    it('does NOT run validations if validateAfterSubmit is true and the form has not been submitted', async () => {
+      const validate = jest.fn(() => Promise.resolve());
+      const validationSchema = {
+        validate,
+      };
+      const { rerender } = renderFormik({
+        validate,
+        validationSchema,
+        validateAfterSubmit: true,
+      });
+
+      fireEvent.change(screen.getByTestId('name-input'), {
+        persist: noop,
+        target: {
+          name: 'name',
+          value: 'ian',
+        },
+      });
+      rerender();
+      await waitFor(() => {
+        expect(validate).not.toHaveBeenCalled();
+      });
+    });
   });
 
   describe('handleBlur', () => {

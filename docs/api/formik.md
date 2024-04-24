@@ -459,6 +459,11 @@ events and `change`-related methods. More specifically, when either
 Default is `false`. Use this option to tell Formik to run validations when the `<Formik />` component mounts
 and/or `initialValues` change.
 
+### `validateAfterSubmit?: boolean`
+
+Default is `false`. Use this option to tell Formik to not run validations before the first attempt to submit the `<Form />`.
+After submission, validation logic will follow the rules set by `validateOnBlur` and `validateOnChange`.
+
 ### `validationSchema?: Schema | (() => Schema)`
 
 [A Yup schema](https://github.com/jquense/yup) or a function that returns a Yup

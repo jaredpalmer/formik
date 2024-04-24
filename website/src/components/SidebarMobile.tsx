@@ -14,7 +14,6 @@ import { useRouter } from 'next/router';
 export function SidebarMobile({ children }: { children: React.ReactNode }) {
   const [opened, setOpen] = React.useState(false);
   const menuRef = React.useRef<HTMLDivElement>(null);
-  const searchRef = React.useRef<HTMLDivElement>(null);
   const router = useRouter();
   const openMenu = () => {
     if (menuRef.current != null) {

@@ -740,6 +740,55 @@ describe('<Formik>', () => {
         });
       });
 
+      it('setFieldValue sets value by key when takes a setter function', async () => {
+        const { getProps, rerender } = renderFormik<Values>();
+
+        act(() => {
+          getProps().setFieldValue('name', (prev: string) => {
+            return prev + ' chronicus';
+          });
+        });
+        rerender();
+        await waitFor(() => {
+          expect(getProps().values.name).toEqual('jared chronicus');
+        });
+      });
+
+      it(
+        'setFieldValue should run validations with resolved value when takes a setter function and validateOnChange is true (default)',
+        async () => {
+          const validate = jest.fn(() =>({}));
+          const { getProps, rerender } = renderFormik({ validate });
+
+          act(() => {
+            getProps().setFieldValue('name', (prev: string) => prev + ' chronicus');
+          });
+          rerender();
+          await waitFor(() => {
+            // the validate function is called with the second arg as undefined always in this case
+            expect(validate).toHaveBeenCalledWith(expect.objectContaining({
+              name: 'jared chronicus',
+            }), undefined);
+          });
+        }
+      );
+
+      it('setFieldValue should NOT run validations when takes a setter function and validateOnChange is false', async () => {
+        const validate = jest.fn();
+        const { getProps, rerender } = renderFormik({
+          validate,
+          validateOnChange: false,
+        });
+
+        act(() => {
+          getProps().setFieldValue('name', (prev: string) => prev + ' chronicus');
+        });
+        rerender();
+        await waitFor(() => {
+          expect(validate).not.toHaveBeenCalled();
+        });
+      });
+
       it('setTouched sets touched', () => {
         const { getProps } = renderFormik();
 

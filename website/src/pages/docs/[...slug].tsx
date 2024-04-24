@@ -187,7 +187,7 @@ function SidebarRoutes({
     ({ path, title, routes, heading, open }, idx) => {
       if (routes) {
         const pathname = getCategoryPath(routes);
-        const selected = slug.startsWith(pathname as any);
+        const selected = slug === pathname;
         const opened = selected || isMobile ? false : open;
 
         if (heading) {

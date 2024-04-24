@@ -11,6 +11,8 @@ export type FormikFormProps = Pick<
 
 type FormProps = React.ComponentPropsWithoutRef<'form'>;
 
+export const ENTER_KEY_CODE = 13;
+
 // @todo tests
 export const Form = React.forwardRef<HTMLFormElement, FormProps>(
   (props: FormikFormProps, ref) => {
@@ -18,10 +20,31 @@ export const Form = React.forwardRef<HTMLFormElement, FormProps>(
     // We default the action to "#" in case the preventDefault fails (just updates the URL hash)
     const { action, ...rest } = props;
     const _action = action ?? '#';
-    const { handleReset, handleSubmit } = useFormikContext();
+    const {
+      handleReset,
+      handleSubmit,
+      preventStickingSubmissions,
+    } = useFormikContext();
+    const allowSubmit = React.useRef(true);
+    const handleKeyUp = ({ keyCode }: React.KeyboardEvent<HTMLFormElement>) => {
+      if (keyCode === ENTER_KEY_CODE && preventStickingSubmissions) {
+        allowSubmit.current = true;
+      }
+    };
+    const submitWrap = (ev: React.FormEvent<HTMLFormElement>) => {
+      if (allowSubmit.current) {
+        handleSubmit(ev);
+        if (preventStickingSubmissions) {
+          allowSubmit.current = false;
+        }
+      } else {
+        ev.preventDefault();
+      }
+    };
     return (
       <form
-        onSubmit={handleSubmit}
+        onKeyUp={handleKeyUp}
+        onSubmit={submitWrap}
         ref={ref}
         onReset={handleReset}
         action={_action}

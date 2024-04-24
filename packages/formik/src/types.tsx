@@ -223,6 +223,12 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
     values: Values,
     formikHelpers: FormikHelpers<Values>
   ) => void | Promise<any>;
+
+  /**
+   * Prevent multiple submissions
+   */
+  preventStickingSubmissions?: boolean;
+
   /**
    * A Yup Schema or a function that returns a Yup schema
    */
@@ -259,7 +265,10 @@ export interface FormikRegistration {
  * State, handlers, and helpers made available to Formik's primitive components through context.
  */
 export type FormikContextType<Values> = FormikProps<Values> &
-  Pick<FormikConfig<Values>, 'validate' | 'validationSchema'>;
+  Pick<
+    FormikConfig<Values>,
+    'validate' | 'validationSchema' | 'preventStickingSubmissions'
+  >;
 
 export interface SharedRenderProps<T> {
   /**

@@ -23,17 +23,16 @@ export interface FieldConfig<V = any> {
    */
   component?:
   | string
-  | React.ComponentType<FieldProps<V>>
-  | React.ComponentType
+  | React.ComponentType<FieldProps<V> & { className?: string }>
+  | React.ComponentType<any>
   | React.ForwardRefExoticComponent<any>;
 
   /**
    * Component to render. Can either be a string e.g. 'select', 'input', or 'textarea', or a component.
    */
   as?:
-  | React.ComponentType<FieldProps<V>['field']>
+  | React.ComponentType<FieldInputProps<V> & { className?: string }>
   | string
-  | React.ComponentType
   | React.ForwardRefExoticComponent<any>;
 
   /**
@@ -73,8 +72,7 @@ export interface FieldConfig<V = any> {
 }
 
 export type FieldAttributes<T> = { className?: string; } & GenericFieldHTMLAttributes &
-  FieldConfig<T> &
-  T & {
+  FieldConfig<T> & {
     name: string,
   };
 
@@ -134,7 +132,7 @@ export function useField<Val = any>(
   return [getFieldProps(props), getFieldMeta(fieldName), fieldHelpers];
 }
 
-export function Field({
+export function Field<T = any>({
   validate,
   name,
   render,
@@ -143,7 +141,7 @@ export function Field({
   component,
   className,
   ...props
-}: FieldAttributes<any>) {
+}: FieldAttributes<T>) {
   const {
     validate: _validate,
     validationSchema: _validationSchema,
@@ -187,8 +185,8 @@ export function Field({
       unregisterField(name);
     };
   }, [registerField, unregisterField, name, validate]);
-  const field = formik.getFieldProps({ name, ...props });
-  const meta = formik.getFieldMeta(name);
+  const field = formik.getFieldProps<T>({ name, ...props });
+  const meta = formik.getFieldMeta<T>(name);
   const legacyBag = { field, form: formik };
 
   if (render) {

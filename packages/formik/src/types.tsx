@@ -77,7 +77,7 @@ export interface FormikComputedProps<Values> {
  */
 export interface FormikHelpers<Values> {
   /** Manually set top level status. */
-  setStatus: (status?: any) => void;
+  setStatus: (status?: React.SetStateAction<any>) => void;
   /** Manually set errors object */
   setErrors: (errors: FormikErrors<Values>) => void;
   /** Manually set isSubmitting */

@@ -57,7 +57,8 @@ const Basic = () => (
           alert(JSON.stringify(values, null, 2));
         }, 500);
       }}
-      render={formikProps => (
+    >
+      {formikProps => (
         <Form>
           {/** This <FastField> only updates for changes made to
            values.firstName, touched.firstName, errors.firstName */}
@@ -66,8 +67,8 @@ const Basic = () => (
 
           {/** Updates for all changes because it's from the
            top-level formikProps which get all updates */}
-          {form.touched.firstName && form.errors.firstName && (
-            <div>{form.errors.firstName}</div>
+          {formikProps.touched.firstName && formikProps.errors.firstName && (
+            <div>{formikProps.errors.firstName}</div>
           )}
 
           <label htmlFor="middleInitial">Middle Initial</label>
@@ -105,7 +106,7 @@ const Basic = () => (
            and all changes by all <Field>s and <FastField>s */}
           <label htmlFor="lastName">LastName</label>
           <Field name="lastName" placeholder="Baby">
-            {() => (
+            {({ field, form, meta }) => (
               <div>
                 <input {...field} />
                 {/**  Works because this is inside
@@ -125,7 +126,7 @@ const Basic = () => (
           <button type="submit">Submit</button>
         </Form>
       )}
-    />
+    </Formik>
   </div>
 );
 ```

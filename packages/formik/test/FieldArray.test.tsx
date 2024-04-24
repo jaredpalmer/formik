@@ -393,6 +393,63 @@ describe('<FieldArray />', () => {
     });
   });
 
+  describe('props.move()', () => {
+    let formikBag: any;
+    let arrayHelpers: any;
+
+    beforeEach(() => {
+      render(
+        <TestForm>
+          {(props: any) => {
+            formikBag = props;
+            return (
+              <FieldArray
+                name="friends"
+                render={arrayProps => {
+                  arrayHelpers = arrayProps;
+                  return null;
+                }}
+              />
+            );
+          }}
+        </TestForm>
+      );
+    });
+    it('should move an item and touched/errors', () => {
+      act(() => {
+        formikBag.setErrors({ friends: [undefined, 'Field error', undefined] });
+        formikBag.setTouched({ friends: [undefined, true, undefined] });
+      });
+
+      act(() => {
+        arrayHelpers.move(0, 2);
+      });
+
+      expect(formikBag.values.friends).toEqual(['andrea', 'brent', 'jared']);
+      expect(formikBag.errors.friends).toEqual([
+        'Field error',
+        undefined,
+        undefined,
+      ]);
+      expect(formikBag.touched.friends).toEqual([true, undefined, undefined]);
+    });
+
+    it('should handle empty touched/errors', () => {
+      act(() => {
+        formikBag.setErrors({ friends: undefined });
+        formikBag.setTouched({ friends: undefined });
+      });
+
+      act(() => {
+        arrayHelpers.move(0, 2);
+      });
+
+      expect(formikBag.values.friends).toEqual(['andrea', 'brent', 'jared']);
+      expect(formikBag.errors.friends).toEqual(undefined);
+      expect(formikBag.touched.friends).toEqual(undefined);
+    });
+  });
+
   describe('given array-like object representing errors', () => {
     it('should run arrayHelpers successfully', async () => {
       let formikBag: any;

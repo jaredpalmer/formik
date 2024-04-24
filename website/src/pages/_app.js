@@ -4,10 +4,10 @@ import { Analytics } from '@vercel/analytics/react';
 
 function MyApp({ Component, pageProps }) {
   return (
-    <>
+    <div id='container'>
       <Component {...pageProps} />
       <Analytics />
-    </>
+    </div>
   );
 }
 

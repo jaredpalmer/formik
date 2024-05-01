@@ -1,5 +1,11 @@
 # formik
 
+## 2.4.6
+
+### Patch Changes
+
+- [`f57ca9b`](https://github.com/jaredpalmer/formik/commit/f57ca9bc5ee3842d50f74f39b3fb36a744b55ae8) [#3949](https://github.com/jaredpalmer/formik/pull/3949) Thanks [@DeveloperRaj](https://github.com/DeveloperRaj)! - Changing the state inside formik was changing reference of initialValues provided via props, deep cloning the initialvalues will fix it.
+
 ## 2.4.5
 
 ### Patch Changes

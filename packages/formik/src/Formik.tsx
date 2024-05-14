@@ -583,7 +583,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
 
   const setFieldValue = useEventCallback(
     (field: string, value: React.SetStateAction<any>, shouldValidate?: boolean) => {
-      const resolvedValue = isFunction(value) ? value(state.values[field]) : value;
+      const resolvedValue = isFunction(value) ? value(getIn(state.values, field)) : value;
 
       dispatch({
         type: 'SET_FIELD_VALUE',

@@ -193,7 +193,7 @@ Trigger a form submission. The promise will be rejected if form is invalid.
 Number of times user tried to submit the form. Increases when [`handleSubmit`](#handlesubmit-e-reactformeventhtmlformelement--void) is called, resets after calling
 [`handleReset`](#handlereset---void). `submitCount` is readonly computed property and should not be mutated directly.
 
-#### `setFieldValue: (field: string, value: any, shouldValidate?: boolean) => Promise<void | FormikErrors>`
+#### `setFieldValue: (field: string, value: React.SetStateAction<any>, shouldValidate?: boolean) => Promise<void | FormikErrors>`
 
 Set the value of a field imperatively. `field` should match the key of
 `values` you wish to update. Useful for creating custom input change handlers. Calling this will trigger validation to run if `validateOnChange` is set to `true` (which it is by default). You can also explicitly prevent/skip validation by passing a third argument as `false`.

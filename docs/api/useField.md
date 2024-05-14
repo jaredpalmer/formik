@@ -139,8 +139,8 @@ An object that contains:
 
 - `name: string` - The name of the field
 - `checked?: boolean` - Whether or not the input is checked, this is _only_ defined if `useField` is passed an object with a `name`, `type: 'checkbox'` or `type: 'radio'`.
-- `onBlur: () => void` - A blur event handler
-- `onChange: (e: React.ChangeEvent<any>) => void` - A change event handler
+- `onBlur: (e: React.FocusEvent<any> | NativeSyntheticEvent<any>) => void` - A blur event handler
+- `onChange: (e: NativeSyntheticEvent<any> | React.ChangeEvent<any>) => void` - A change event handler
 - `value: Value` - The field's value (plucked out of `values`) or, if it is a checkbox or radio input, then potentially the `value` passed into `useField`.
 - `multiple?: boolean` - Whether or not the multiple values can be selected. This is only ever defined when `useField` is passed an object with `multiple: true`
 
@@ -160,9 +160,9 @@ An object that contains relevant computed metadata about a field. More specifica
 An object that contains helper functions which you can use to imperatively change the value, error value or touched status for the field in question. This is useful for components which need to change a field's status directly, without triggering change or blur events.
 
 - `setValue(value: any, shouldValidate?: boolean): Promise<void | FormikErrors>` - A function to change the field's value. Calling this will trigger validation to run if `validateOnChange` is set to `true` (which it is by default). You can also explicitly prevent/skip validation by passing a second argument as `false`.
-If `validateOnChange` is set to `true` and there are errors, they will be resolved in the returned `Promise`.
+  If `validateOnChange` is set to `true` and there are errors, they will be resolved in the returned `Promise`.
 
 - `setTouched(value: boolean, shouldValidate?: boolean): void` - A function to change the field's touched status. Calling this will trigger validation to run if `validateOnBlur` is set to `true` (which it is by default). You can also explicitly prevent/skip validation by passing a second argument as `false`.
-If `validateOnBlur` is set to `true` and there are errors, they will be resolved in the returned `Promise`.
+  If `validateOnBlur` is set to `true` and there are errors, they will be resolved in the returned `Promise`.
 
 - `setError(value: any): void` - A function to change the field's error value

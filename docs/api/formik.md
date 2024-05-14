@@ -74,24 +74,24 @@ keys and shape will match your schema exactly. Internally, Formik transforms raw
 on your behalf. If you are using `validate`, then that function will determine
 the `errors` objects shape.
 
-#### `handleBlur: (e: any) => void`
+#### `handleBlur: (e: React.FocusEvent<any> | NativeSyntheticEvent<any> | any) => void`
 
 `onBlur` event handler. Useful for when you need to track whether an input has
 been `touched` or not. This should be passed to `<input onBlur={handleBlur} ... />`
 
-#### `handleChange: (e: React.ChangeEvent<any>) => void`
+#### `handleChange: (e: React.ChangeEvent<any> | NativeSyntheticEvent<any>) => void`
 
 General input change event handler. This will update the `values[key]` where
 `key` is the event-emitting input's `name` attribute. If the `name` attribute is
 not present, `handleChange` will look for an input's `id` attribute. Note:
 "input" here means all HTML inputs.
 
-#### `handleReset: () => void`
+#### `handleReset: (e?: React.SyntheticEvent<any> | NativeSyntheticEvent<any>) => void`
 
 Reset handler. Will reset the form to its initial state. This should be passed
 to `<button onClick={handleReset}>...</button>`
 
-#### `handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void`
+#### `handleSubmit: (e?: React.FormEvent<HTMLFormElement> | NativeSyntheticEvent<HTMLFormElement>) => void`
 
 Submit handler. This should be passed to `<form onSubmit={props.handleSubmit}>...</form>`. To learn more about the submission process, see [Form Submission](../guides/form-submission.md).
 

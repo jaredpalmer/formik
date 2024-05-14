@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { NativeSyntheticEvent } from 'react-native';
 import { FieldConfig } from './Field';
 /**
  * Values of fields in the form
@@ -125,29 +126,30 @@ export interface FormikHelpers<Values> {
 
 /**
  * Formik form event handlers
+ * import { NativeSyntheticEvent } from 'react-native';
  */
 export interface FormikHandlers {
   /** Form submit handler */
-  handleSubmit: (e?: React.FormEvent<HTMLFormElement>) => void;
+  handleSubmit: (e?: React.FormEvent<HTMLFormElement> | NativeSyntheticEvent<HTMLFormElement>) => void;
   /** Reset form event handler  */
-  handleReset: (e?: React.SyntheticEvent<any>) => void;
+  handleReset: (e?: React.SyntheticEvent<any> | NativeSyntheticEvent<any>) => void;
   handleBlur: {
     /** Classic React blur handler, keyed by input name */
-    (e: React.FocusEvent<any>): void;
+    (e: React.FocusEvent<any> | NativeSyntheticEvent<any>): void;
     /** Preact-like linkState. Will return a handleBlur function. */
-    <T = string | any>(fieldOrEvent: T): T extends string
-      ? (e: any) => void
+    <T = string | NativeSyntheticEvent<any> | any>(fieldOrEvent: T): T extends string
+      ? (e:  NativeSyntheticEvent<any> | any) => void
       : void;
   };
   handleChange: {
     /** Classic React change handler, keyed by input name */
-    (e: React.ChangeEvent<any>): void;
+    (e: React.ChangeEvent<any> | NativeSyntheticEvent<any>): void;
     /** Preact-like linkState. Will return a handleChange function.  */
-    <T = string | React.ChangeEvent<any>>(
+    <T = string | NativeSyntheticEvent<any> | React.ChangeEvent<any>>(
       field: T
-    ): T extends React.ChangeEvent<any>
+    ): T extends React.ChangeEvent<any> | NativeSyntheticEvent<any>
       ? void
-      : (e: string | React.ChangeEvent<any>) => void;
+      : (e: string | React.ChangeEvent<any> | NativeSyntheticEvent<any>) => void;
   };
 
   getFieldProps: <Value = any>(

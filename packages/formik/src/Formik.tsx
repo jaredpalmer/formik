@@ -536,10 +536,10 @@ export function useFormik<Values extends FormikValues = FormikValues>({
           type: 'SET_FIELD_ERROR',
           payload: {
             field: name,
-            value: maybePromise as string | undefined,
+            value: maybePromise,
           },
         });
-        return Promise.resolve(maybePromise as string | undefined);
+        return maybePromise;
       }
     } else if (props.validationSchema) {
       dispatch({ type: 'SET_ISVALIDATING', payload: true });
@@ -554,7 +554,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
         });
     }
 
-    return Promise.resolve();
+    return;
   });
 
   const registerField = React.useCallback((name: string, { validate }: any) => {

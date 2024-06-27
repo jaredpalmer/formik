@@ -286,7 +286,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
       );
 
       const processFieldErrors = (fieldErrorsList: (string | undefined)[]) =>
-        fieldErrorsList.reduce((prev, curr, index) => {
+        fieldErrorsList.reduce<FormikErrors<Values>>((prev, curr, index) => {
           if (curr === 'DO_NOT_DELETE_YOU_WILL_BE_FIRED') {
             return prev;
           }
@@ -294,7 +294,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
             prev = setIn(prev, fieldKeysWithValidation[index], curr);
           }
           return prev;
-        }, {} as FormikErrors<Values>);
+        }, {});
 
       if (fieldValidations.some(isPromise)) {
         return Promise.all(fieldValidations).then(processFieldErrors);

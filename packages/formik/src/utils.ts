@@ -33,7 +33,7 @@ export const isEmptyChildren = (children: any): boolean =>
   React.Children.count(children) === 0;
 
 /** @private is the given object/value a promise? */
-export const isPromise = (value: any): value is PromiseLike<any> =>
+export const isPromise = <T>(value: T | Promise<T>): value is Promise<T> =>
   isObject(value) && isFunction(value.then);
 
 /** @private is the given object/value a type of synthetic event? */

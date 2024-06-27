@@ -455,7 +455,7 @@ describe('<Formik>', () => {
       }).not.toThrow();
     });
 
-    it('should not error if onSubmit throws an error', () => {
+    it('should not error if onSubmit throws an error', async () => {
       const FormNoPreventDefault = (
         <Formik
           initialValues={{ name: 'jared' }}
@@ -477,6 +477,9 @@ describe('<Formik>', () => {
       expect(() => {
         fireEvent.click(screen.getByTestId('submit-button'));
       }).not.toThrow();
+
+      // Wait for the form submission to finish
+      await act(() => Promise.resolve());
     });
 
     it('should touch all fields', () => {
@@ -501,6 +504,76 @@ describe('<Formik>', () => {
         const { getByTestId } = renderFormik({ validate });
         fireEvent.submit(getByTestId('form'));
         expect(validate).toHaveBeenCalled();
+      });
+
+      it('should run the form validation synchronously', () => {
+        const validate = jest.fn(() => ({}));
+        const { getProps } = renderFormik({ validate });
+
+        const { validateForm } = getProps();
+
+        let formValidationResult: ReturnType<typeof validateForm>;
+        act(() => {
+          formValidationResult = validateForm();
+        });
+
+        expect(formValidationResult!).not.toBeInstanceOf(Promise);
+      });
+
+      it('should set field value synchronously', () => {
+        const validate = jest.fn(() => ({}));
+        const { getProps } = renderFormik({ validate });
+
+        const { setFieldValue } = getProps();
+
+        let result: ReturnType<typeof setFieldValue>;
+        act(() => {
+          result = setFieldValue('name', 'ian');
+        });
+
+        expect(result!).not.toBeInstanceOf(Promise);
+      });
+
+      it('should set field touched synchronously', () => {
+        const validate = jest.fn(() => ({}));
+        const { getProps } = renderFormik({ validate });
+
+        const { setFieldTouched } = getProps();
+
+        let result: ReturnType<typeof setFieldTouched>;
+        act(() => {
+          result = setFieldTouched('name', true);
+        });
+
+        expect(result!).not.toBeInstanceOf(Promise);
+      });
+
+      it('should set form values synchronously', () => {
+        const validate = jest.fn(() => ({}));
+        const { getProps } = renderFormik({ validate });
+
+        const { setValues } = getProps();
+
+        let result: ReturnType<typeof setValues>;
+        act(() => {
+          result = setValues({ name: 'ian', age: 25 });
+        });
+
+        expect(result!).not.toBeInstanceOf(Promise);
+      });
+
+      it('should set form touched synchronously', () => {
+        const validate = jest.fn(() => ({}));
+        const { getProps } = renderFormik({ validate });
+
+        const { setTouched } = getProps();
+
+        let result: ReturnType<typeof setTouched>;
+        act(() => {
+          result = setTouched({ name: true, age: false });
+        });
+
+        expect(result!).not.toBeInstanceOf(Promise);
       });
 
       it('should submit the form if valid', async () => {
@@ -562,12 +635,92 @@ describe('<Formik>', () => {
     });
 
     describe('with validate (ASYNC)', () => {
-      it('should call validate if present', () => {
+      it('should call validate if present', async () => {
         const validate = jest.fn(() => Promise.resolve({}));
         const { getByTestId } = renderFormik({ validate });
 
-        fireEvent.submit(getByTestId('form'));
+        await act(async () => fireEvent.submit(getByTestId('form')));
         expect(validate).toHaveBeenCalled();
+      });
+
+      it('should run the form validation asynchronously', async () => {
+        const validate = jest.fn(() => Promise.resolve({}));
+        const { getProps } = renderFormik({ validate });
+
+        const { validateForm } = getProps();
+
+        let formValidationResult: ReturnType<typeof validateForm>;
+        act(() => {
+          formValidationResult = validateForm();
+        });
+
+        expect(formValidationResult!).toBeInstanceOf(Promise);
+
+        await act(() => formValidationResult);
+      });
+
+      it('should set field value asynchronously', async () => {
+        const validate = jest.fn(() => Promise.resolve({}));
+        const { getProps } = renderFormik({ validate });
+
+        const { setFieldValue } = getProps();
+
+        let result: ReturnType<typeof setFieldValue>;
+        act(() => {
+          result = setFieldValue('name', 'ian');
+        });
+
+        expect(result!).toBeInstanceOf(Promise);
+
+        await act(() => result);
+      });
+
+      it('should set field touched asynchronously', async () => {
+        const validate = jest.fn(() => Promise.resolve({}));
+        const { getProps } = renderFormik({ validate });
+
+        const { setFieldTouched } = getProps();
+
+        let result: ReturnType<typeof setFieldTouched>;
+        act(() => {
+          result = setFieldTouched('name', true);
+        });
+
+        expect(result!).toBeInstanceOf(Promise);
+
+        await act(() => result);
+      });
+
+      it('should set form values asynchronously', async () => {
+        const validate = jest.fn(() => Promise.resolve({}));
+        const { getProps } = renderFormik({ validate });
+
+        const { setValues } = getProps();
+
+        let result: ReturnType<typeof setValues>;
+        act(() => {
+          result = setValues({ name: 'ian', age: 25 });
+        });
+
+        expect(result!).toBeInstanceOf(Promise);
+
+        await act(() => result);
+      });
+
+      it('should set form touched asynchronously', async () => {
+        const validate = jest.fn(() => Promise.resolve({}));
+        const { getProps } = renderFormik({ validate });
+
+        const { setTouched } = getProps();
+
+        let result: ReturnType<typeof setTouched>;
+        act(() => {
+          result = setTouched({ name: true, age: false });
+        });
+
+        expect(result!).toBeInstanceOf(Promise);
+
+        await act(() => result);
       });
 
       it('should submit the form if valid', async () => {
@@ -575,16 +728,16 @@ describe('<Formik>', () => {
         const validate = jest.fn(() => Promise.resolve({}));
         const { getByTestId } = renderFormik({ onSubmit, validate });
 
-        fireEvent.submit(getByTestId('form'));
+        await act(async () => fireEvent.submit(getByTestId('form')));
         await waitFor(() => expect(onSubmit).toBeCalled());
       });
 
-      it('should not submit the form if invalid', () => {
+      it('should not submit the form if invalid', async () => {
         const onSubmit = jest.fn();
         const validate = jest.fn(() => Promise.resolve({ name: 'Error!' }));
         const { getByTestId } = renderFormik({ onSubmit, validate });
 
-        fireEvent.submit(getByTestId('form'));
+        await act(async () => fireEvent.submit(getByTestId('form')));
         expect(onSubmit).not.toBeCalled();
       });
 
@@ -1278,9 +1431,11 @@ describe('<Formik>', () => {
 
   it('isValidating is fired when submit is attempted', async () => {
     const onSubmit = jest.fn();
-    const validate = jest.fn(() => ({
-      name: 'no',
-    }));
+    const validate = jest.fn(() =>
+      Promise.resolve({
+        name: 'no',
+      })
+    );
 
     const { getProps } = renderFormik({
       onSubmit,
@@ -1291,7 +1446,7 @@ describe('<Formik>', () => {
     expect(getProps().isSubmitting).toBe(false);
     expect(getProps().isValidating).toBe(false);
 
-    let submitFormPromise: Promise<any>;
+    let submitFormPromise: void | Promise<void>;
     act(() => {
       // we call set isValidating synchronously
       submitFormPromise = getProps().submitForm();
@@ -1327,7 +1482,7 @@ describe('<Formik>', () => {
     expect(getProps().isSubmitting).toBe(false);
     expect(getProps().isValidating).toBe(false);
 
-    let submitFormPromise: Promise<any>;
+    let submitFormPromise: void | Promise<void>;
     act(() => {
       // we call set isValidating synchronously
       submitFormPromise = getProps().submitForm();
@@ -1362,8 +1517,8 @@ describe('<Formik>', () => {
     expect(getProps().submitCount).toEqual(0);
     expect(getProps().isSubmitting).toBe(false);
     expect(getProps().isValidating).toBe(false);
-    let submitFormPromise: Promise<any>;
 
+    let submitFormPromise: void | Promise<void>;
     act(() => {
       // we call set isValidating synchronously
       submitFormPromise = getProps().submitForm();
@@ -1387,17 +1542,18 @@ describe('<Formik>', () => {
   });
 
   it('isValidating is fired validation is run', async () => {
-    const validate = jest.fn(() => ({ name: 'no' }));
+    const validate = jest.fn(() => Promise.resolve({ name: 'no' }));
     const { getProps } = renderFormik({
       validate,
     });
 
     expect(getProps().isValidating).toBe(false);
 
-    let validatePromise: Promise<any>;
+    const { validateForm } = getProps();
+    let validatePromise: ReturnType<typeof validateForm>;
     act(() => {
       // we call set isValidating synchronously
-      validatePromise = getProps().validateForm();
+      validatePromise = validateForm();
     });
 
     expect(getProps().isValidating).toBe(true);
@@ -1496,6 +1652,8 @@ describe('<Formik>', () => {
       },
     });
 
-    expect(InitialValuesWithNestedObject.content.items[0].cards[0].desc).toEqual('Initial Desc');
+    expect(
+      InitialValuesWithNestedObject.content.items[0].cards[0].desc
+    ).toEqual('Initial Desc');
   });
 });

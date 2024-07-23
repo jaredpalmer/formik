@@ -164,14 +164,6 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     }, []);
   }
 
-  React.useEffect(() => {
-    isMounted.current = true;
-
-    return () => {
-      isMounted.current = false;
-    };
-  }, []);
-
   const [, setIteration] = React.useState(0);
   const stateRef = React.useRef<FormikState<Values>>({
     values: cloneDeep(props.initialValues),
@@ -363,16 +355,6 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     }
   );
 
-  React.useEffect(() => {
-    if (
-      validateOnMount &&
-      isMounted.current === true &&
-      isEqual(initialValues.current, props.initialValues)
-    ) {
-      validateFormWithHighPriority(initialValues.current);
-    }
-  }, [validateOnMount, validateFormWithHighPriority]);
-
   const resetForm = React.useCallback(
     (nextState?: Partial<FormikState<Values>>) => {
       const values =
@@ -445,68 +427,65 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     ]
   );
 
+  // Grouping the effects to it's easier to predict when they run and synchronizing setting isMounted to true, validation on mount and reinitialization
   React.useEffect(() => {
-    if (
-      isMounted.current === true &&
-      !isEqual(initialValues.current, props.initialValues)
-    ) {
-      if (enableReinitialize) {
+    if (isMounted.current === false) {
+      isMounted.current = true;
+
+      if (
+        validateOnMount &&
+        isEqual(initialValues.current, props.initialValues)
+      ) {
+        validateFormWithHighPriority(initialValues.current);
+      }
+    } else if (enableReinitialize) {
+      if (!isEqual(initialValues.current, props.initialValues)) {
         initialValues.current = props.initialValues;
         resetForm();
         if (validateOnMount) {
           validateFormWithHighPriority(initialValues.current);
         }
       }
+      if (!isEqual(initialErrors.current, props.initialErrors)) {
+        initialErrors.current = props.initialErrors || emptyErrors;
+        dispatch({
+          type: 'SET_ERRORS',
+          payload: props.initialErrors || emptyErrors,
+        });
+      }
+      if (!isEqual(initialTouched.current, props.initialTouched)) {
+        initialTouched.current = props.initialTouched || emptyTouched;
+        dispatch({
+          type: 'SET_TOUCHED',
+          payload: props.initialTouched || emptyTouched,
+        });
+      }
+      if (!isEqual(initialStatus.current, props.initialStatus)) {
+        initialStatus.current = props.initialStatus;
+        dispatch({
+          type: 'SET_STATUS',
+          payload: props.initialStatus,
+        });
+      }
     }
   }, [
     enableReinitialize,
     props.initialValues,
+    props.initialErrors,
+    props.initialStatus,
+    props.initialTouched,
     resetForm,
-    validateOnMount,
     validateFormWithHighPriority,
+    validateOnMount,
   ]);
-
-  React.useEffect(() => {
-    if (
-      enableReinitialize &&
-      isMounted.current === true &&
-      !isEqual(initialErrors.current, props.initialErrors)
-    ) {
-      initialErrors.current = props.initialErrors || emptyErrors;
-      dispatch({
-        type: 'SET_ERRORS',
-        payload: props.initialErrors || emptyErrors,
-      });
-    }
-  }, [enableReinitialize, props.initialErrors]);
-
-  React.useEffect(() => {
-    if (
-      enableReinitialize &&
-      isMounted.current === true &&
-      !isEqual(initialTouched.current, props.initialTouched)
-    ) {
-      initialTouched.current = props.initialTouched || emptyTouched;
-      dispatch({
-        type: 'SET_TOUCHED',
-        payload: props.initialTouched || emptyTouched,
-      });
-    }
-  }, [enableReinitialize, props.initialTouched]);
-
-  React.useEffect(() => {
-    if (
-      enableReinitialize &&
-      isMounted.current === true &&
-      !isEqual(initialStatus.current, props.initialStatus)
-    ) {
-      initialStatus.current = props.initialStatus;
-      dispatch({
-        type: 'SET_STATUS',
-        payload: props.initialStatus,
-      });
-    }
-  }, [enableReinitialize, props.initialStatus, props.initialTouched]);
+  // Splitting the mounting reset to its own effect so it is only ever called once: when the component really unmounts
+  // Otherwise it is also called when the effect's dependencies change making the value go back to `false`
+  React.useEffect(
+    () => () => {
+      isMounted.current = false;
+    },
+    []
+  );
 
   const validateField = useEventCallback((name: string) => {
     // This will efficiently validate a single field by avoiding state

@@ -152,80 +152,326 @@ describe('<Formik>', () => {
 
   describe('reinitialization', () => {
     describe('when the setting is enabled', () => {
-      it('should reinitialize the form values', async () => {
-        const { getProps, rerender, getByTestId } = renderFormik({
-          enableReinitialize: true,
-          initialValues: { name: 'jared' },
+      describe(`and the initial values are changed`, () => {
+        it('should reinitialize the form', async () => {
+          const { getProps, rerender, getByTestId } = renderFormik({
+            enableReinitialize: true,
+            initialValues: { name: 'jared' },
+            validate: (values: any) => ({
+              name: values.name ? undefined : 'This field is required',
+            }),
+          });
+
+          expect(getProps().values.name).toEqual('jared');
+          expect(getProps().touched).toEqual({});
+          expect(getProps().errors).toEqual({});
+
+          const input = getByTestId('name-input');
+          fireEvent.change(input, {
+            persist: noop,
+            target: { name: 'name', value: '' },
+          });
+          fireEvent.blur(input, {
+            persist: noop,
+            target: { name: 'name', value: '' },
+          });
+
+          expect(getProps().values.name).toEqual('');
+          expect(getProps().touched).toEqual({ name: true });
+          expect(getProps().errors).toEqual({
+            name: 'This field is required',
+          });
+
+          rerender({ initialValues: { name: 'other' } });
+
+          expect(getProps().values.name).toEqual('other');
+          expect(getProps().touched).toEqual({});
+          expect(getProps().errors).toEqual({});
         });
-
-        expect(getProps().values.name).toEqual('jared');
-
-        const input = getByTestId('name-input');
-        fireEvent.change(input, {
-          persist: noop,
-          target: { name: 'name', value: 'ian' },
-        });
-        fireEvent.blur(input, {
-          persist: noop,
-          target: { name: 'name', value: 'ian' },
-        });
-
-        rerender({ initialValues: { name: 'other' } });
-
-        expect(getProps().values.name).toEqual('other');
       });
 
-      it('should reinitialize the form touches', async () => {
-        const { getProps, getByTestId, rerender } = renderFormik({
-          enableReinitialize: true,
-          initialValues: { name: 'jared' },
+      describe(`and the initial values are changed for the same object with a different reference`, () => {
+        it('should not reinitialize the form', async () => {
+          const { getProps, rerender, getByTestId } = renderFormik({
+            enableReinitialize: true,
+            initialValues: { name: 'jared' },
+            validate: (values: any) => ({
+              name: values.name ? undefined : 'This field is required',
+            }),
+          });
+
+          expect(getProps().values.name).toEqual('jared');
+          expect(getProps().touched).toEqual({});
+          expect(getProps().errors).toEqual({});
+
+          const input = getByTestId('name-input');
+          fireEvent.change(input, {
+            persist: noop,
+            target: { name: 'name', value: '' },
+          });
+          fireEvent.blur(input, {
+            persist: noop,
+            target: { name: 'name', value: '' },
+          });
+
+          expect(getProps().values.name).toEqual('');
+          expect(getProps().touched).toEqual({ name: true });
+          expect(getProps().errors).toEqual({
+            name: 'This field is required',
+          });
+
+          rerender({ initialValues: { name: 'jared' } });
+
+          expect(getProps().values.name).toEqual('');
+          expect(getProps().touched).toEqual({ name: true });
+          expect(getProps().errors).toEqual({
+            name: 'This field is required',
+          });
         });
-
-        expect(getProps().touched).toEqual({});
-
-        const input = getByTestId('name-input');
-        fireEvent.change(input, {
-          persist: noop,
-          target: { name: 'name', value: 'ian' },
-        });
-        fireEvent.blur(input, {
-          persist: noop,
-          target: { name: 'name', value: 'ian' },
-        });
-
-        expect(getProps().touched).toEqual({ name: true });
-
-        rerender({ initialValues: { name: 'other' } });
-
-        expect(getProps().touched).toEqual({});
       });
 
-      it('should reinitialize the form errors', async () => {
-        const { getProps, getByTestId, rerender } = renderFormik({
-          enableReinitialize: true,
-          initialValues: { name: 'jared' },
-          validate: (values: any) => ({
-            name: values.name ? undefined : 'This field is required',
-          }),
+      describe(`and the initial errors are changed`, () => {
+        it('should reinitialize the form errors only', async () => {
+          const { getProps, rerender, getByTestId } = renderFormik({
+            enableReinitialize: true,
+            initialErrors: { name: 'Some custom error' },
+            validate: (values: any) => ({
+              name: values.name ? undefined : 'This field is required',
+            }),
+          });
+
+          expect(getProps().values.name).toEqual('jared');
+          expect(getProps().touched).toEqual({});
+          expect(getProps().errors).toEqual({ name: 'Some custom error' });
+
+          const input = getByTestId('name-input');
+          fireEvent.change(input, {
+            persist: noop,
+            target: { name: 'name', value: '' },
+          });
+          fireEvent.blur(input, {
+            persist: noop,
+            target: { name: 'name', value: '' },
+          });
+
+          expect(getProps().values.name).toEqual('');
+          expect(getProps().touched).toEqual({ name: true });
+          expect(getProps().errors).toEqual({
+            name: 'This field is required',
+          });
+
+          rerender({ initialErrors: { name: 'Some other error' } });
+
+          expect(getProps().values.name).toEqual('');
+          expect(getProps().touched).toEqual({ name: true });
+          expect(getProps().errors).toEqual({ name: 'Some other error' });
         });
+      });
 
-        expect(getProps().errors).toEqual({});
+      describe(`and the initial errors are changed for the same object with a different reference`, () => {
+        it('should not reinitialize the form', async () => {
+          const { getProps, rerender, getByTestId } = renderFormik({
+            enableReinitialize: true,
+            initialErrors: { name: 'Some custom error' },
+            validate: (values: any) => ({
+              name: values.name ? undefined : 'This field is required',
+            }),
+          });
 
-        const input = getByTestId('name-input');
-        fireEvent.change(input, {
-          persist: noop,
-          target: { name: 'name', value: '' },
+          expect(getProps().values.name).toEqual('jared');
+          expect(getProps().touched).toEqual({});
+          expect(getProps().errors).toEqual({
+            name: 'Some custom error',
+          });
+
+          const input = getByTestId('name-input');
+          fireEvent.change(input, {
+            persist: noop,
+            target: { name: 'name', value: '' },
+          });
+          fireEvent.blur(input, {
+            persist: noop,
+            target: { name: 'name', value: '' },
+          });
+
+          expect(getProps().values.name).toEqual('');
+          expect(getProps().touched).toEqual({ name: true });
+          expect(getProps().errors).toEqual({
+            name: 'This field is required',
+          });
+
+          rerender({ initialErrors: { name: 'Some custom error' } });
+
+          expect(getProps().values.name).toEqual('');
+          expect(getProps().touched).toEqual({ name: true });
+          expect(getProps().errors).toEqual({
+            name: 'This field is required',
+          });
         });
-        fireEvent.blur(input, {
-          persist: noop,
-          target: { name: 'name', value: '' },
+      });
+
+      describe(`and the initial touched fields are changed`, () => {
+        it('should reinitialize the form touched fields only', async () => {
+          const { getProps, rerender, getByTestId } = renderFormik({
+            enableReinitialize: true,
+            initialTouched: { name: true },
+            validate: (values: any) => ({
+              name: values.name ? undefined : 'This field is required',
+            }),
+          });
+
+          expect(getProps().values.name).toEqual('jared');
+          expect(getProps().touched).toEqual({ name: true });
+          expect(getProps().errors).toEqual({});
+
+          const input = getByTestId('name-input');
+          fireEvent.change(input, {
+            persist: noop,
+            target: { name: 'name', value: '' },
+          });
+          fireEvent.blur(input, {
+            persist: noop,
+            target: { name: 'name', value: '' },
+          });
+
+          expect(getProps().values.name).toEqual('');
+          expect(getProps().touched).toEqual({ name: true });
+          expect(getProps().errors).toEqual({
+            name: 'This field is required',
+          });
+
+          rerender({ initialTouched: { name: false } });
+
+          expect(getProps().values.name).toEqual('');
+          expect(getProps().touched).toEqual({ name: false });
+          expect(getProps().errors).toEqual({ name: 'This field is required' });
         });
+      });
 
-        expect(getProps().errors).toEqual({ name: 'This field is required' });
+      describe(`and the initial touched fields are changed for the same object with a different reference`, () => {
+        it('should not reinitialize the form', async () => {
+          const { getProps, rerender, getByTestId } = renderFormik({
+            enableReinitialize: true,
+            initialTouched: { name: false },
+            validate: (values: any) => ({
+              name: values.name ? undefined : 'This field is required',
+            }),
+          });
 
-        rerender({ initialValues: { name: 'other' } });
+          expect(getProps().values.name).toEqual('jared');
+          expect(getProps().touched).toEqual({ name: false });
+          expect(getProps().errors).toEqual({});
 
-        expect(getProps().errors).toEqual({});
+          const input = getByTestId('name-input');
+          fireEvent.change(input, {
+            persist: noop,
+            target: { name: 'name', value: '' },
+          });
+          fireEvent.blur(input, {
+            persist: noop,
+            target: { name: 'name', value: '' },
+          });
+
+          expect(getProps().values.name).toEqual('');
+          expect(getProps().touched).toEqual({ name: true });
+          expect(getProps().errors).toEqual({
+            name: 'This field is required',
+          });
+
+          rerender({ initialTouched: { name: false } });
+
+          expect(getProps().values.name).toEqual('');
+          expect(getProps().touched).toEqual({ name: true });
+          expect(getProps().errors).toEqual({
+            name: 'This field is required',
+          });
+        });
+      });
+
+      describe(`and the initial status are changed`, () => {
+        it('should reinitialize the form status only', async () => {
+          const { getProps, rerender, getByTestId } = renderFormik({
+            enableReinitialize: true,
+            initialStatus: { name: 'status 1' },
+            validate: (values: any) => ({
+              name: values.name ? undefined : 'This field is required',
+            }),
+          });
+
+          expect(getProps().values.name).toEqual('jared');
+          expect(getProps().touched).toEqual({});
+          expect(getProps().errors).toEqual({});
+          expect(getProps().status).toEqual({ name: 'status 1' });
+
+          const input = getByTestId('name-input');
+          fireEvent.change(input, {
+            persist: noop,
+            target: { name: 'name', value: '' },
+          });
+          fireEvent.blur(input, {
+            persist: noop,
+            target: { name: 'name', value: '' },
+          });
+          act(() => getProps().setStatus({ name: 'status 3' }));
+
+          expect(getProps().values.name).toEqual('');
+          expect(getProps().touched).toEqual({ name: true });
+          expect(getProps().errors).toEqual({
+            name: 'This field is required',
+          });
+          expect(getProps().status).toEqual({ name: 'status 3' });
+
+          rerender({ initialStatus: { name: 'status 2' } });
+
+          expect(getProps().values.name).toEqual('');
+          expect(getProps().touched).toEqual({ name: true });
+          expect(getProps().errors).toEqual({ name: 'This field is required' });
+          expect(getProps().status).toEqual({ name: 'status 2' });
+        });
+      });
+
+      describe(`and the initial touched fields are changed for the same object with a different reference`, () => {
+        it('should not reinitialize the form', async () => {
+          const { getProps, rerender, getByTestId } = renderFormik({
+            enableReinitialize: true,
+            initialStatus: { name: 'status 1' },
+            validate: (values: any) => ({
+              name: values.name ? undefined : 'This field is required',
+            }),
+          });
+
+          expect(getProps().values.name).toEqual('jared');
+          expect(getProps().touched).toEqual({});
+          expect(getProps().errors).toEqual({});
+          expect(getProps().status).toEqual({ name: 'status 1' });
+
+          const input = getByTestId('name-input');
+          fireEvent.change(input, {
+            persist: noop,
+            target: { name: 'name', value: '' },
+          });
+          fireEvent.blur(input, {
+            persist: noop,
+            target: { name: 'name', value: '' },
+          });
+          act(() => getProps().setStatus({ name: 'status 3' }));
+
+          expect(getProps().values.name).toEqual('');
+          expect(getProps().touched).toEqual({ name: true });
+          expect(getProps().errors).toEqual({
+            name: 'This field is required',
+          });
+          expect(getProps().status).toEqual({ name: 'status 3' });
+
+          rerender({ initialStatus: { name: 'status 1' } });
+
+          expect(getProps().values.name).toEqual('');
+          expect(getProps().touched).toEqual({ name: true });
+          expect(getProps().errors).toEqual({
+            name: 'This field is required',
+          });
+          expect(getProps().status).toEqual({ name: 'status 3' });
+        });
       });
 
       describe('and the data is validated on mount', () => {

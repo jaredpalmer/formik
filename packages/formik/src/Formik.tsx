@@ -446,14 +446,16 @@ export function useFormik<Values extends FormikValues = FormikValues>({
           validateFormWithHighPriority(initialValues.current);
         }
       }
-      if (!isEqual(initialErrors.current, props.initialErrors)) {
+      if (!isEqual(initialErrors.current, props.initialErrors || emptyErrors)) {
         initialErrors.current = props.initialErrors || emptyErrors;
         dispatch({
           type: 'SET_ERRORS',
           payload: props.initialErrors || emptyErrors,
         });
       }
-      if (!isEqual(initialTouched.current, props.initialTouched)) {
+      if (
+        !isEqual(initialTouched.current, props.initialTouched || emptyTouched)
+      ) {
         initialTouched.current = props.initialTouched || emptyTouched;
         dispatch({
           type: 'SET_TOUCHED',

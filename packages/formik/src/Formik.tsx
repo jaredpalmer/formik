@@ -1,6 +1,6 @@
 import deepmerge from 'deepmerge';
-import isPlainObject from 'lodash/isPlainObject';
-import cloneDeep from 'lodash/cloneDeep';
+import isPlainObject from 'lodash.isplainobject';
+import cloneDeep from 'lodash.clonedeep';
 import * as React from 'react';
 import isEqual from 'react-fast-compare';
 import invariant from 'tiny-warning';

@@ -33,7 +33,9 @@
   "umd:main": "dist/formik.umd.production.js",
   "module": "dist/formik.esm.js",
   "typings": "dist/index.d.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "peerDependencies": {
     "react": ">=16.8.0"
   },
@@ -49,15 +51,20 @@
     "@types/hoist-non-react-statics": "^3.3.1",
     "deepmerge": "^2.1.1",
     "hoist-non-react-statics": "^3.3.0",
-    "lodash": "^4.17.21",
-    "lodash-es": "^4.17.21",
+    "lodash.clone": "^4.5.0",
+    "lodash.clonedeep": "^4.5.0",
+    "lodash.isplainobject": "^4.0.6",
+    "lodash.topath": "^4.5.2",
     "react-fast-compare": "^2.0.1",
     "tiny-warning": "^1.0.2",
     "tslib": "^2.0.0"
   },
   "devDependencies": {
     "@testing-library/react": "^14.0.0",
-    "@types/lodash": "^4.14.119",
+    "@types/lodash.clone": "^4.5.9",
+    "@types/lodash.clonedeep": "^4.5.9",
+    "@types/lodash.isplainobject": "^4.0.9",
+    "@types/lodash.topath": "^4.5.9",
     "@types/react": "^18.2.7",
     "@types/react-dom": "^18.2.4",
     "@types/warning": "^3.0.0",

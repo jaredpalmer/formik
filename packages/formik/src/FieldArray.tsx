@@ -1,4 +1,4 @@
-import cloneDeep from 'lodash/cloneDeep';
+import cloneDeep from 'lodash.clonedeep';
 import * as React from 'react';
 import isEqual from 'react-fast-compare';
 import { connect } from './connect';

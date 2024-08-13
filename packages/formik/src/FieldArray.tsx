@@ -52,7 +52,7 @@ export interface ArrayHelpers<T extends any[] = any[]> {
   /** Imperatively add an element to the beginning of an array and return its length */
   unshift<X extends T[number] = T[number]>(value: X): number;
   /** Curried fn to add an element to the beginning of an array */
-  handleUnshift<X = T[number]>(value: X): () => void;
+  handleUnshift<X extends T[number] = T[number]>(value: X): () => void;
   /** Curried fn to remove an element at an index of an array */
   handleRemove: (index: number) => () => void;
   /** Curried fn to remove a value from the end of the array */

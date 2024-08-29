@@ -1,5 +1,6 @@
 import deepmerge from 'deepmerge';
 import isPlainObject from 'lodash/isPlainObject';
+import cloneDeep from 'lodash/cloneDeep';
 import * as React from 'react';
 import isEqual from 'react-fast-compare';
 import invariant from 'tiny-warning';
@@ -173,10 +174,10 @@ export function useFormik<Values extends FormikValues = FormikValues>({
 
   const [, setIteration] = React.useState(0);
   const stateRef = React.useRef<FormikState<Values>>({
-    values: props.initialValues,
-    errors: props.initialErrors || emptyErrors,
-    touched: props.initialTouched || emptyTouched,
-    status: props.initialStatus,
+    values: cloneDeep(props.initialValues),
+    errors: cloneDeep(props.initialErrors) || emptyErrors,
+    touched: cloneDeep(props.initialTouched) || emptyTouched,
+    status: cloneDeep(props.initialStatus),
     isSubmitting: false,
     isValidating: false,
     submitCount: 0,
@@ -581,18 +582,20 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   );
 
   const setFieldValue = useEventCallback(
-    (field: string, value: any, shouldValidate?: boolean) => {
+    (field: string, value: React.SetStateAction<any>, shouldValidate?: boolean) => {
+      const resolvedValue = isFunction(value) ? value(getIn(state.values, field)) : value;
+
       dispatch({
         type: 'SET_FIELD_VALUE',
         payload: {
           field,
-          value,
+          value: resolvedValue,
         },
       });
       const willValidate =
         shouldValidate === undefined ? validateOnChange : shouldValidate;
       return willValidate
-        ? validateFormWithHighPriority(setIn(state.values, field, value))
+        ? validateFormWithHighPriority(setIn(state.values, field, resolvedValue))
         : Promise.resolve();
     }
   );

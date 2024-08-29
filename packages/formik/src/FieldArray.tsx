@@ -30,9 +30,9 @@ export type FieldArrayConfig = {
 } & SharedRenderProps<FieldArrayRenderProps>;
 export interface ArrayHelpers<T extends any[] = any[]> {
   /** Imperatively add a value to the end of an array */
-  push<X = T[number]>(obj: X): void;
+  push<X extends T[number] = T[number]>(obj: X): void;
   /** Curried fn to add a value to the end of an array */
-  handlePush<X = T[number]>(obj: X): () => void;
+  handlePush<X extends T[number] = T[number]>(obj: X): () => void;
   /** Imperatively swap two values in an array */
   swap: (indexA: number, indexB: number) => void;
   /** Curried fn to swap two values in an array */
@@ -42,25 +42,25 @@ export interface ArrayHelpers<T extends any[] = any[]> {
   /** Imperatively move an element in an array to another index */
   handleMove: (from: number, to: number) => () => void;
   /** Imperatively insert an element at a given index into the array */
-  insert<X = T[number]>(index: number, value: X): void;
+  insert<X extends T[number] = T[number]>(index: number, value: X): void;
   /** Curried fn to insert an element at a given index into the array */
-  handleInsert<X = T[number]>(index: number, value: X): () => void;
+  handleInsert<X extends T[number] = T[number]>(index: number, value: X): () => void;
   /** Imperatively replace a value at an index of an array  */
-  replace<X = T[number]>(index: number, value: X): void;
+  replace<X extends T[number] = T[number]>(index: number, value: X): void;
   /** Curried fn to replace an element at a given index into the array */
-  handleReplace<X = T[number]>(index: number, value: X): () => void;
+  handleReplace<X extends T[number] = T[number]>(index: number, value: X): () => void;
   /** Imperatively add an element to the beginning of an array and return its length */
-  unshift<X = T[number]>(value: X): number;
+  unshift<X extends T[number] = T[number]>(value: X): number;
   /** Curried fn to add an element to the beginning of an array */
-  handleUnshift<X = T[number]>(value: X): () => void;
+  handleUnshift<X extends T[number] = T[number]>(value: X): () => void;
   /** Curried fn to remove an element at an index of an array */
   handleRemove: (index: number) => () => void;
   /** Curried fn to remove a value from the end of the array */
   handlePop: () => () => void;
   /** Imperatively remove and element at an index of an array */
-  remove<X = T[number]>(index: number): X | undefined;
+  remove<X extends T[number] = T[number]>(index: number): X | undefined;
   /** Imperatively remove and return value from the end of the array */
-  pop<X = T[number]>(): X | undefined;
+  pop<X extends T[number] = T[number]>(): X | undefined;
 }
 
 /**

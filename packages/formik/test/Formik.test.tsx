@@ -61,6 +61,20 @@ const InitialValues = {
   age: 30,
 };
 
+const InitialValuesWithNestedObject = {
+  content: {
+    items: [
+      {
+        cards: [
+          {
+            desc: 'Initial Desc',
+          },
+        ],
+      },
+    ],
+  },
+};
+
 function renderFormik<V extends FormikValues = Values>(
   props?: Partial<FormikConfig<V>>
 ) {
@@ -719,6 +733,55 @@ describe('<Formik>', () => {
 
         act(() => {
           getProps().setFieldValue('name', 'ian');
+        });
+        rerender();
+        await waitFor(() => {
+          expect(validate).not.toHaveBeenCalled();
+        });
+      });
+
+      it('setFieldValue sets value by key when takes a setter function', async () => {
+        const { getProps, rerender } = renderFormik<Values>();
+
+        act(() => {
+          getProps().setFieldValue('name', (prev: string) => {
+            return prev + ' chronicus';
+          });
+        });
+        rerender();
+        await waitFor(() => {
+          expect(getProps().values.name).toEqual('jared chronicus');
+        });
+      });
+
+      it(
+        'setFieldValue should run validations with resolved value when takes a setter function and validateOnChange is true (default)',
+        async () => {
+          const validate = jest.fn(() =>({}));
+          const { getProps, rerender } = renderFormik({ validate });
+
+          act(() => {
+            getProps().setFieldValue('name', (prev: string) => prev + ' chronicus');
+          });
+          rerender();
+          await waitFor(() => {
+            // the validate function is called with the second arg as undefined always in this case
+            expect(validate).toHaveBeenCalledWith(expect.objectContaining({
+              name: 'jared chronicus',
+            }), undefined);
+          });
+        }
+      );
+
+      it('setFieldValue should NOT run validations when takes a setter function and validateOnChange is false', async () => {
+        const validate = jest.fn();
+        const { getProps, rerender } = renderFormik({
+          validate,
+          validateOnChange: false,
+        });
+
+        act(() => {
+          getProps().setFieldValue('name', (prev: string) => prev + ' chronicus');
         });
         rerender();
         await waitFor(() => {
@@ -1453,5 +1516,35 @@ describe('<Formik>', () => {
     const { getProps } = renderFormik({ innerRef });
 
     expect(innerRef.current).toEqual(getProps());
+  });
+
+  it('should not modify original initialValues object', () => {
+    render(
+      <Formik initialValues={InitialValuesWithNestedObject} onSubmit={noop}>
+        {formikProps => (
+          <input
+            data-testid="desc-input"
+            value={formikProps.values.content.items[0].cards[0].desc}
+            onChange={e => {
+              const copy = { ...formikProps.values.content };
+              copy.items[0].cards[0].desc = e.target.value;
+              formikProps.setValues({
+                ...formikProps.values,
+                content: copy,
+              });
+            }}
+          />
+        )}
+      </Formik>
+    );
+    const input = screen.getByTestId('desc-input');
+
+    fireEvent.change(input, {
+      target: {
+        value: 'New Value',
+      },
+    });
+
+    expect(InitialValuesWithNestedObject.content.items[0].cards[0].desc).toEqual('Initial Desc');
   });
 });

@@ -1,11 +1,11 @@
 {
   "name": "formik",
   "description": "Build forms in React, without the tears",
-  "version": "2.4.5",
+  "version": "2.4.6",
   "license": "Apache-2.0",
   "author": "Jared Palmer <jared@palmer.net> (https://jaredpalmer.com)",
   "contributors": [
-    "Evan Jacobs <probablyup@gmail.com> (https://probablyup.com)"
+    "Evan Jacobs <probablyup@gmail.com> (https://quantizor.dev)"
   ],
   "repository": "jaredpalmer/formik",
   "homepage": "https://formik.org",

@@ -23,9 +23,6 @@ jobs:
             packages/formik/package.json
             packages/formik-native/src/**
             packages/formik-native/package.json
-      - name: print results
-        run: |
-          echo "${{ steps.changed-files-yaml.outputs.any_changed }}"
 
   benchmark:
     if: always() && needs.detectChangedSourceFiles.outputs.changes == 'true'

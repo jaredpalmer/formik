@@ -10,23 +10,26 @@ jobs:
     name: 'determine changes'
     runs-on: ubuntu-latest
     outputs:
-      changes: ${{ steps.changed-files-yaml.outputs.src_any_changed }}
+      changes: ${{ steps.changed-files-yaml.outputs.any_changed }}
     steps:
       - uses: actions/checkout@v4
       - name: Detect changed files
         id: changed-files-yaml
-        uses: tj-actions/changed-files@v39
+        uses: tj-actions/changed-files@v45
         with:
-          files_yaml: |
-            ci:
-              - .github/workflows/ci.yml
-            src:
-              - packages/formik/src/**
-              - packages/formik/package.json
-              - packages/formik-native/src/**
-              - packages/formik-native/package.json
+          files: |
+            .github/workflows/ci.yml
+            packages/formik/src/**
+            packages/formik/package.json
+            packages/formik-native/src/**
+            packages/formik-native/package.json
+      - name: print results
+        run: |
+          echo "${{ steps.changed-files-yaml.outputs.any_changed }}"
+
   benchmark:
-    if: needs.detectChangedSourceFiles.outputs.changes == 'true'
+    if: always() && needs.detectChangedSourceFiles.outputs.changes == 'true'
+    needs: detectChangedSourceFiles
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -35,15 +38,6 @@ jobs:
         with:
           cache: yarn
           node-version-file: .nvmrc
-
-      - name: Detect changed files
-        id: changed-files-yaml
-        uses: tj-actions/changed-files@v39
-        with:
-          files_yaml: |
-            src:
-              - packages/formik/src/**
-              - packages/formik-native/src/**
 
       - name: Install & build
         run: |
@@ -78,8 +72,10 @@ jobs:
           fail-threshold: 120%
           # needed for commenting on PRs
           github-token: ${{ secrets.GITHUB_TOKEN }}
+
   interaction:
-    if: needs.detectChangedSourceFiles.outputs.changes == 'true'
+    needs: detectChangedSourceFiles
+    if: always() && needs.detectChangedSourceFiles.outputs.changes == 'true'
     timeout-minutes: 10
     runs-on: ubuntu-latest
     steps:
@@ -118,8 +114,10 @@ jobs:
           name: playwright-report
           path: playwright-report/
           retention-days: 5
+
   size:
-    if: needs.detectChangedSourceFiles.outputs.changes == 'true'
+    needs: detectChangedSourceFiles
+    if: always() && needs.detectChangedSourceFiles.outputs.changes == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -129,8 +127,10 @@ jobs:
         with:
           repo-token: '${{ secrets.GITHUB_TOKEN }}'
           build-script: 'turbo run build --filter {./packages/*}...'
+
   unit:
-    if: needs.detectChangedSourceFiles.outputs.changes == 'true'
+    needs: detectChangedSourceFiles
+    if: always() && needs.detectChangedSourceFiles.outputs.changes == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

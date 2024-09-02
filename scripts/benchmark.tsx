@@ -6,6 +6,13 @@ import { renderToString } from 'react-dom/server';
 import { useFieldArray, useForm } from 'react-hook-form';
 import * as yup from 'yup';
 
+const schema = yup.object({
+  firstName: yup.string().required(),
+  lastName: yup.string().required(),
+  email: yup.string().email().required(),
+  guests: yup.array(yup.object({ name: yup.string().required() })).ensure(),
+});
+
 const suite = new Benchmark.Suite({ initCount: 50 });
 
 suite
@@ -22,13 +29,6 @@ suite
     console.log(String(event.target));
   })
   .run();
-
-const schema = yup.object({
-  firstName: yup.string().required(),
-  lastName: yup.string().required(),
-  email: yup.string().email().required(),
-  guests: yup.array(yup.object({ name: yup.string().required() })).ensure(),
-});
 
 // generic Formik implementation
 function FormikSimpleExample() {

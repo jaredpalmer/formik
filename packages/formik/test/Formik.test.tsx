@@ -609,6 +609,21 @@ describe('<Formik>', () => {
           );
         });
       });
+      it('submit should reject if validate returns error', async () => {
+        const onSubmit = jest.fn();
+        const validate = jest.fn().mockResolvedValue({ error: 'error' });
+        // expect(global.console.warn).not.toHaveBeenCalled();
+
+        const { getProps } = renderFormik({ onSubmit, validate });
+
+        await act(async () => {
+          await expect(getProps().submitForm()).rejects.toThrow();
+        });
+
+        await waitFor(() => {
+          expect(onSubmit).not.toBeCalled();
+        });
+      });
     });
 
     describe('with validationSchema (ASYNC)', () => {

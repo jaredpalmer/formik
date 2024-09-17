@@ -797,6 +797,9 @@ export function useFormik<Values extends FormikValues = FormikValues>({
           // throw combinedErrors;
           if (isInstanceOfError) {
             throw combinedErrors;
+          } else {
+            // need to fulfill contract: submitForm will throw if validation fails
+            throw new Error();
           }
         }
         return;

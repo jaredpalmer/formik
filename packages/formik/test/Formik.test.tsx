@@ -36,6 +36,7 @@ function Form({
 }: FormikProps<Values>) {
   return (
     <form onSubmit={handleSubmit} data-testid="form">
+      <label htmlFor="name-input">Name</label>
       <input
         type="text"
         onChange={handleChange}
@@ -43,6 +44,8 @@ function Form({
         value={values.name}
         name="name"
         data-testid="name-input"
+        id="name-input"
+        aria-describedby="feedback"
       />
       {touched.name && errors.name && <div id="feedback">{errors.name}</div>}
       {isSubmitting && <div id="submitting">Submitting</div>}
@@ -97,12 +100,13 @@ function renderFormik<V extends FormikValues = Values>(
       return injected;
     },
     ...rest,
-    rerender: () =>
+    rerender: (newProps?: Partial<FormikConfig<V>>) =>
       rerender(
         <Formik
           onSubmit={noop as any}
           initialValues={InitialValues as any}
           {...props}
+          {...newProps}
         >
           {formikProps =>
             (injected = formikProps) && (
@@ -126,6 +130,365 @@ describe('<Formik>', () => {
     expect(props.dirty).toBe(false);
     expect(props.isValid).toBe(true);
     expect(props.submitCount).toBe(0);
+  });
+
+  describe('validation', () => {
+    it('does not validate the form on mount by default', async () => {
+      const validate = () => ({ name: 'This field is required' });
+      const { getProps } = renderFormik({ validate });
+
+      expect(getProps().errors).toEqual({});
+    });
+
+    describe('When the validation on mount is enabled', () => {
+      it('validates the form on mount', async () => {
+        const validate = () => ({ name: 'This field is required' });
+        const { getProps } = renderFormik({ validate, validateOnMount: true });
+
+        expect(getProps().errors).toEqual({ name: 'This field is required' });
+      });
+    });
+  });
+
+  describe('reinitialization', () => {
+    describe('when the setting is enabled', () => {
+      describe(`and the initial values are changed`, () => {
+        it('should reinitialize the form', async () => {
+          const { getProps, rerender, getByTestId } = renderFormik({
+            enableReinitialize: true,
+            initialValues: { name: 'jared' },
+            validate: (values: any) => ({
+              name: values.name ? undefined : 'This field is required',
+            }),
+          });
+
+          expect(getProps().values.name).toEqual('jared');
+          expect(getProps().touched).toEqual({});
+          expect(getProps().errors).toEqual({});
+
+          const input = getByTestId('name-input');
+          fireEvent.change(input, {
+            persist: noop,
+            target: { name: 'name', value: '' },
+          });
+          fireEvent.blur(input, {
+            persist: noop,
+            target: { name: 'name', value: '' },
+          });
+
+          expect(getProps().values.name).toEqual('');
+          expect(getProps().touched).toEqual({ name: true });
+          expect(getProps().errors).toEqual({
+            name: 'This field is required',
+          });
+
+          rerender({ initialValues: { name: 'other' } });
+
+          expect(getProps().values.name).toEqual('other');
+          expect(getProps().touched).toEqual({});
+          expect(getProps().errors).toEqual({});
+        });
+      });
+
+      describe(`and the initial values are changed for the same object with a different reference`, () => {
+        it('should not reinitialize the form', async () => {
+          const { getProps, rerender, getByTestId } = renderFormik({
+            enableReinitialize: true,
+            initialValues: { name: 'jared' },
+            validate: (values: any) => ({
+              name: values.name ? undefined : 'This field is required',
+            }),
+          });
+
+          expect(getProps().values.name).toEqual('jared');
+          expect(getProps().touched).toEqual({});
+          expect(getProps().errors).toEqual({});
+
+          const input = getByTestId('name-input');
+          fireEvent.change(input, {
+            persist: noop,
+            target: { name: 'name', value: '' },
+          });
+          fireEvent.blur(input, {
+            persist: noop,
+            target: { name: 'name', value: '' },
+          });
+
+          expect(getProps().values.name).toEqual('');
+          expect(getProps().touched).toEqual({ name: true });
+          expect(getProps().errors).toEqual({
+            name: 'This field is required',
+          });
+
+          rerender({ initialValues: { name: 'jared' } });
+
+          expect(getProps().values.name).toEqual('');
+          expect(getProps().touched).toEqual({ name: true });
+          expect(getProps().errors).toEqual({
+            name: 'This field is required',
+          });
+        });
+      });
+
+      describe(`and the initial errors are changed`, () => {
+        it('should reinitialize the form errors only', async () => {
+          const { getProps, rerender, getByTestId } = renderFormik({
+            enableReinitialize: true,
+            initialErrors: { name: 'Some custom error' },
+            validate: (values: any) => ({
+              name: values.name ? undefined : 'This field is required',
+            }),
+          });
+
+          expect(getProps().values.name).toEqual('jared');
+          expect(getProps().touched).toEqual({});
+          expect(getProps().errors).toEqual({ name: 'Some custom error' });
+
+          const input = getByTestId('name-input');
+          fireEvent.change(input, {
+            persist: noop,
+            target: { name: 'name', value: '' },
+          });
+          fireEvent.blur(input, {
+            persist: noop,
+            target: { name: 'name', value: '' },
+          });
+
+          expect(getProps().values.name).toEqual('');
+          expect(getProps().touched).toEqual({ name: true });
+          expect(getProps().errors).toEqual({
+            name: 'This field is required',
+          });
+
+          rerender({ initialErrors: { name: 'Some other error' } });
+
+          expect(getProps().values.name).toEqual('');
+          expect(getProps().touched).toEqual({ name: true });
+          expect(getProps().errors).toEqual({ name: 'Some other error' });
+        });
+      });
+
+      describe(`and the initial errors are changed for the same object with a different reference`, () => {
+        it('should not reinitialize the form', async () => {
+          const { getProps, rerender, getByTestId } = renderFormik({
+            enableReinitialize: true,
+            initialErrors: { name: 'Some custom error' },
+            validate: (values: any) => ({
+              name: values.name ? undefined : 'This field is required',
+            }),
+          });
+
+          expect(getProps().values.name).toEqual('jared');
+          expect(getProps().touched).toEqual({});
+          expect(getProps().errors).toEqual({
+            name: 'Some custom error',
+          });
+
+          const input = getByTestId('name-input');
+          fireEvent.change(input, {
+            persist: noop,
+            target: { name: 'name', value: '' },
+          });
+          fireEvent.blur(input, {
+            persist: noop,
+            target: { name: 'name', value: '' },
+          });
+
+          expect(getProps().values.name).toEqual('');
+          expect(getProps().touched).toEqual({ name: true });
+          expect(getProps().errors).toEqual({
+            name: 'This field is required',
+          });
+
+          rerender({ initialErrors: { name: 'Some custom error' } });
+
+          expect(getProps().values.name).toEqual('');
+          expect(getProps().touched).toEqual({ name: true });
+          expect(getProps().errors).toEqual({
+            name: 'This field is required',
+          });
+        });
+      });
+
+      describe(`and the initial touched fields are changed`, () => {
+        it('should reinitialize the form touched fields only', async () => {
+          const { getProps, rerender, getByTestId } = renderFormik({
+            enableReinitialize: true,
+            initialTouched: { name: true },
+            validate: (values: any) => ({
+              name: values.name ? undefined : 'This field is required',
+            }),
+          });
+
+          expect(getProps().values.name).toEqual('jared');
+          expect(getProps().touched).toEqual({ name: true });
+          expect(getProps().errors).toEqual({});
+
+          const input = getByTestId('name-input');
+          fireEvent.change(input, {
+            persist: noop,
+            target: { name: 'name', value: '' },
+          });
+          fireEvent.blur(input, {
+            persist: noop,
+            target: { name: 'name', value: '' },
+          });
+
+          expect(getProps().values.name).toEqual('');
+          expect(getProps().touched).toEqual({ name: true });
+          expect(getProps().errors).toEqual({
+            name: 'This field is required',
+          });
+
+          rerender({ initialTouched: { name: false } });
+
+          expect(getProps().values.name).toEqual('');
+          expect(getProps().touched).toEqual({ name: false });
+          expect(getProps().errors).toEqual({ name: 'This field is required' });
+        });
+      });
+
+      describe(`and the initial touched fields are changed for the same object with a different reference`, () => {
+        it('should not reinitialize the form', async () => {
+          const { getProps, rerender, getByTestId } = renderFormik({
+            enableReinitialize: true,
+            initialTouched: { name: false },
+            validate: (values: any) => ({
+              name: values.name ? undefined : 'This field is required',
+            }),
+          });
+
+          expect(getProps().values.name).toEqual('jared');
+          expect(getProps().touched).toEqual({ name: false });
+          expect(getProps().errors).toEqual({});
+
+          const input = getByTestId('name-input');
+          fireEvent.change(input, {
+            persist: noop,
+            target: { name: 'name', value: '' },
+          });
+          fireEvent.blur(input, {
+            persist: noop,
+            target: { name: 'name', value: '' },
+          });
+
+          expect(getProps().values.name).toEqual('');
+          expect(getProps().touched).toEqual({ name: true });
+          expect(getProps().errors).toEqual({
+            name: 'This field is required',
+          });
+
+          rerender({ initialTouched: { name: false } });
+
+          expect(getProps().values.name).toEqual('');
+          expect(getProps().touched).toEqual({ name: true });
+          expect(getProps().errors).toEqual({
+            name: 'This field is required',
+          });
+        });
+      });
+
+      describe(`and the initial status are changed`, () => {
+        it('should reinitialize the form status only', async () => {
+          const { getProps, rerender, getByTestId } = renderFormik({
+            enableReinitialize: true,
+            initialStatus: { name: 'status 1' },
+            validate: (values: any) => ({
+              name: values.name ? undefined : 'This field is required',
+            }),
+          });
+
+          expect(getProps().values.name).toEqual('jared');
+          expect(getProps().touched).toEqual({});
+          expect(getProps().errors).toEqual({});
+          expect(getProps().status).toEqual({ name: 'status 1' });
+
+          const input = getByTestId('name-input');
+          fireEvent.change(input, {
+            persist: noop,
+            target: { name: 'name', value: '' },
+          });
+          fireEvent.blur(input, {
+            persist: noop,
+            target: { name: 'name', value: '' },
+          });
+          act(() => getProps().setStatus({ name: 'status 3' }));
+
+          expect(getProps().values.name).toEqual('');
+          expect(getProps().touched).toEqual({ name: true });
+          expect(getProps().errors).toEqual({
+            name: 'This field is required',
+          });
+          expect(getProps().status).toEqual({ name: 'status 3' });
+
+          rerender({ initialStatus: { name: 'status 2' } });
+
+          expect(getProps().values.name).toEqual('');
+          expect(getProps().touched).toEqual({ name: true });
+          expect(getProps().errors).toEqual({ name: 'This field is required' });
+          expect(getProps().status).toEqual({ name: 'status 2' });
+        });
+      });
+
+      describe(`and the initial touched fields are changed for the same object with a different reference`, () => {
+        it('should not reinitialize the form', async () => {
+          const { getProps, rerender, getByTestId } = renderFormik({
+            enableReinitialize: true,
+            initialStatus: { name: 'status 1' },
+            validate: (values: any) => ({
+              name: values.name ? undefined : 'This field is required',
+            }),
+          });
+
+          expect(getProps().values.name).toEqual('jared');
+          expect(getProps().touched).toEqual({});
+          expect(getProps().errors).toEqual({});
+          expect(getProps().status).toEqual({ name: 'status 1' });
+
+          const input = getByTestId('name-input');
+          fireEvent.change(input, {
+            persist: noop,
+            target: { name: 'name', value: '' },
+          });
+          fireEvent.blur(input, {
+            persist: noop,
+            target: { name: 'name', value: '' },
+          });
+          act(() => getProps().setStatus({ name: 'status 3' }));
+
+          expect(getProps().values.name).toEqual('');
+          expect(getProps().touched).toEqual({ name: true });
+          expect(getProps().errors).toEqual({
+            name: 'This field is required',
+          });
+          expect(getProps().status).toEqual({ name: 'status 3' });
+
+          rerender({ initialStatus: { name: 'status 1' } });
+
+          expect(getProps().values.name).toEqual('');
+          expect(getProps().touched).toEqual({ name: true });
+          expect(getProps().errors).toEqual({
+            name: 'This field is required',
+          });
+          expect(getProps().status).toEqual({ name: 'status 3' });
+        });
+      });
+
+      describe('and the data is validated on mount', () => {
+        it('the errors are correctly set on the form', async () => {
+          const { getProps } = renderFormik({
+            enableReinitialize: true,
+            validateOnMount: true,
+            initialValues: { name: '' },
+            validate: (values: any) => ({
+              name: values.name ? undefined : 'This field is required',
+            }),
+          });
+
+          expect(getProps().errors).toEqual({ name: 'This field is required' });
+        });
+      });
+    });
   });
 
   describe('handleChange', () => {
@@ -455,7 +818,7 @@ describe('<Formik>', () => {
       }).not.toThrow();
     });
 
-    it('should not error if onSubmit throws an error', () => {
+    it('should not error if onSubmit throws an error', async () => {
       const FormNoPreventDefault = (
         <Formik
           initialValues={{ name: 'jared' }}
@@ -477,6 +840,9 @@ describe('<Formik>', () => {
       expect(() => {
         fireEvent.click(screen.getByTestId('submit-button'));
       }).not.toThrow();
+
+      // Wait for the form submission to finish
+      await act(() => Promise.resolve());
     });
 
     it('should touch all fields', () => {
@@ -501,6 +867,76 @@ describe('<Formik>', () => {
         const { getByTestId } = renderFormik({ validate });
         fireEvent.submit(getByTestId('form'));
         expect(validate).toHaveBeenCalled();
+      });
+
+      it('should run the form validation synchronously', () => {
+        const validate = jest.fn(() => ({}));
+        const { getProps } = renderFormik({ validate });
+
+        const { validateForm } = getProps();
+
+        let formValidationResult: ReturnType<typeof validateForm>;
+        act(() => {
+          formValidationResult = validateForm();
+        });
+
+        expect(formValidationResult!).not.toBeInstanceOf(Promise);
+      });
+
+      it('should set field value synchronously', () => {
+        const validate = jest.fn(() => ({}));
+        const { getProps } = renderFormik({ validate });
+
+        const { setFieldValue } = getProps();
+
+        let result: ReturnType<typeof setFieldValue>;
+        act(() => {
+          result = setFieldValue('name', 'ian');
+        });
+
+        expect(result!).not.toBeInstanceOf(Promise);
+      });
+
+      it('should set field touched synchronously', () => {
+        const validate = jest.fn(() => ({}));
+        const { getProps } = renderFormik({ validate });
+
+        const { setFieldTouched } = getProps();
+
+        let result: ReturnType<typeof setFieldTouched>;
+        act(() => {
+          result = setFieldTouched('name', true);
+        });
+
+        expect(result!).not.toBeInstanceOf(Promise);
+      });
+
+      it('should set form values synchronously', () => {
+        const validate = jest.fn(() => ({}));
+        const { getProps } = renderFormik({ validate });
+
+        const { setValues } = getProps();
+
+        let result: ReturnType<typeof setValues>;
+        act(() => {
+          result = setValues({ name: 'ian', age: 25 });
+        });
+
+        expect(result!).not.toBeInstanceOf(Promise);
+      });
+
+      it('should set form touched synchronously', () => {
+        const validate = jest.fn(() => ({}));
+        const { getProps } = renderFormik({ validate });
+
+        const { setTouched } = getProps();
+
+        let result: ReturnType<typeof setTouched>;
+        act(() => {
+          result = setTouched({ name: true, age: false });
+        });
+
+        expect(result!).not.toBeInstanceOf(Promise);
       });
 
       it('should submit the form if valid', async () => {
@@ -562,12 +998,92 @@ describe('<Formik>', () => {
     });
 
     describe('with validate (ASYNC)', () => {
-      it('should call validate if present', () => {
+      it('should call validate if present', async () => {
         const validate = jest.fn(() => Promise.resolve({}));
         const { getByTestId } = renderFormik({ validate });
 
-        fireEvent.submit(getByTestId('form'));
+        await act(async () => fireEvent.submit(getByTestId('form')));
         expect(validate).toHaveBeenCalled();
+      });
+
+      it('should run the form validation asynchronously', async () => {
+        const validate = jest.fn(() => Promise.resolve({}));
+        const { getProps } = renderFormik({ validate });
+
+        const { validateForm } = getProps();
+
+        let formValidationResult: ReturnType<typeof validateForm>;
+        act(() => {
+          formValidationResult = validateForm();
+        });
+
+        expect(formValidationResult!).toBeInstanceOf(Promise);
+
+        await act(() => formValidationResult);
+      });
+
+      it('should set field value asynchronously', async () => {
+        const validate = jest.fn(() => Promise.resolve({}));
+        const { getProps } = renderFormik({ validate });
+
+        const { setFieldValue } = getProps();
+
+        let result: ReturnType<typeof setFieldValue>;
+        act(() => {
+          result = setFieldValue('name', 'ian');
+        });
+
+        expect(result!).toBeInstanceOf(Promise);
+
+        await act(() => result);
+      });
+
+      it('should set field touched asynchronously', async () => {
+        const validate = jest.fn(() => Promise.resolve({}));
+        const { getProps } = renderFormik({ validate });
+
+        const { setFieldTouched } = getProps();
+
+        let result: ReturnType<typeof setFieldTouched>;
+        act(() => {
+          result = setFieldTouched('name', true);
+        });
+
+        expect(result!).toBeInstanceOf(Promise);
+
+        await act(() => result);
+      });
+
+      it('should set form values asynchronously', async () => {
+        const validate = jest.fn(() => Promise.resolve({}));
+        const { getProps } = renderFormik({ validate });
+
+        const { setValues } = getProps();
+
+        let result: ReturnType<typeof setValues>;
+        act(() => {
+          result = setValues({ name: 'ian', age: 25 });
+        });
+
+        expect(result!).toBeInstanceOf(Promise);
+
+        await act(() => result);
+      });
+
+      it('should set form touched asynchronously', async () => {
+        const validate = jest.fn(() => Promise.resolve({}));
+        const { getProps } = renderFormik({ validate });
+
+        const { setTouched } = getProps();
+
+        let result: ReturnType<typeof setTouched>;
+        act(() => {
+          result = setTouched({ name: true, age: false });
+        });
+
+        expect(result!).toBeInstanceOf(Promise);
+
+        await act(() => result);
       });
 
       it('should submit the form if valid', async () => {
@@ -575,16 +1091,16 @@ describe('<Formik>', () => {
         const validate = jest.fn(() => Promise.resolve({}));
         const { getByTestId } = renderFormik({ onSubmit, validate });
 
-        fireEvent.submit(getByTestId('form'));
+        await act(async () => fireEvent.submit(getByTestId('form')));
         await waitFor(() => expect(onSubmit).toBeCalled());
       });
 
-      it('should not submit the form if invalid', () => {
+      it('should not submit the form if invalid', async () => {
         const onSubmit = jest.fn();
         const validate = jest.fn(() => Promise.resolve({ name: 'Error!' }));
         const { getByTestId } = renderFormik({ onSubmit, validate });
 
-        fireEvent.submit(getByTestId('form'));
+        await act(async () => fireEvent.submit(getByTestId('form')));
         expect(onSubmit).not.toBeCalled();
       });
 
@@ -1327,9 +1843,11 @@ describe('<Formik>', () => {
 
   it('isValidating is fired when submit is attempted', async () => {
     const onSubmit = jest.fn();
-    const validate = jest.fn(() => ({
-      name: 'no',
-    }));
+    const validate = jest.fn(() =>
+      Promise.resolve({
+        name: 'no',
+      })
+    );
 
     const { getProps } = renderFormik({
       onSubmit,
@@ -1340,7 +1858,7 @@ describe('<Formik>', () => {
     expect(getProps().isSubmitting).toBe(false);
     expect(getProps().isValidating).toBe(false);
 
-    let submitFormPromise: Promise<any>;
+    let submitFormPromise: void | Promise<void>;
     act(() => {
       // we call set isValidating synchronously
       submitFormPromise = getProps().submitForm();
@@ -1376,7 +1894,7 @@ describe('<Formik>', () => {
     expect(getProps().isSubmitting).toBe(false);
     expect(getProps().isValidating).toBe(false);
 
-    let submitFormPromise: Promise<any>;
+    let submitFormPromise: void | Promise<void>;
     act(() => {
       // we call set isValidating synchronously
       submitFormPromise = getProps().submitForm();
@@ -1411,8 +1929,8 @@ describe('<Formik>', () => {
     expect(getProps().submitCount).toEqual(0);
     expect(getProps().isSubmitting).toBe(false);
     expect(getProps().isValidating).toBe(false);
-    let submitFormPromise: Promise<any>;
 
+    let submitFormPromise: void | Promise<void>;
     act(() => {
       // we call set isValidating synchronously
       submitFormPromise = getProps().submitForm();
@@ -1436,17 +1954,18 @@ describe('<Formik>', () => {
   });
 
   it('isValidating is fired validation is run', async () => {
-    const validate = jest.fn(() => ({ name: 'no' }));
+    const validate = jest.fn(() => Promise.resolve({ name: 'no' }));
     const { getProps } = renderFormik({
       validate,
     });
 
     expect(getProps().isValidating).toBe(false);
 
-    let validatePromise: Promise<any>;
+    const { validateForm } = getProps();
+    let validatePromise: ReturnType<typeof validateForm>;
     act(() => {
       // we call set isValidating synchronously
-      validatePromise = getProps().validateForm();
+      validatePromise = validateForm();
     });
 
     expect(getProps().isValidating).toBe(true);
@@ -1545,6 +2064,8 @@ describe('<Formik>', () => {
       },
     });
 
-    expect(InitialValuesWithNestedObject.content.items[0].cards[0].desc).toEqual('Initial Desc');
+    expect(
+      InitialValuesWithNestedObject.content.items[0].cards[0].desc
+    ).toEqual('Initial Desc');
   });
 });

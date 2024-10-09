@@ -164,14 +164,6 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     }, []);
   }
 
-  React.useEffect(() => {
-    isMounted.current = true;
-
-    return () => {
-      isMounted.current = false;
-    };
-  }, []);
-
   const [, setIteration] = React.useState(0);
   const stateRef = React.useRef<FormikState<Values>>({
     values: cloneDeep(props.initialValues),
@@ -195,32 +187,31 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   }, []);
 
   const runValidateHandler = React.useCallback(
-    (values: Values, field?: string): Promise<FormikErrors<Values>> => {
-      return new Promise((resolve, reject) => {
-        const maybePromisedErrors = (props.validate as any)(values, field);
-        if (maybePromisedErrors == null) {
-          // use loose null check here on purpose
-          resolve(emptyErrors);
-        } else if (isPromise(maybePromisedErrors)) {
-          (maybePromisedErrors as Promise<any>).then(
-            errors => {
-              resolve(errors || emptyErrors);
-            },
-            actualException => {
-              if (process.env.NODE_ENV !== 'production') {
-                console.warn(
-                  `Warning: An unhandled error was caught during validation in <Formik validate />`,
-                  actualException
-                );
-              }
-
-              reject(actualException);
+    (
+      values: Values,
+      field?: string
+    ): FormikErrors<Values> | Promise<FormikErrors<Values>> => {
+      const maybePromisedErrors = props.validate?.(values, field);
+      if (!maybePromisedErrors) {
+        // use loose null check here on purpose
+        return emptyErrors;
+      } else if (isPromise(maybePromisedErrors)) {
+        return maybePromisedErrors.then(
+          errors => errors || emptyErrors,
+          actualException => {
+            if (process.env.NODE_ENV !== 'production') {
+              console.warn(
+                `Warning: An unhandled error was caught during validation in <Formik validate />`,
+                actualException
+              );
             }
-          );
-        } else {
-          resolve(maybePromisedErrors);
-        }
-      });
+
+            return Promise.reject(actualException);
+          }
+        );
+      } else {
+        return maybePromisedErrors;
+      }
     },
     [props.validate]
   );
@@ -269,30 +260,25 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   );
 
   const runSingleFieldLevelValidation = React.useCallback(
-    (field: string, value: void | string): Promise<string> => {
-      return new Promise(resolve =>
-        resolve(fieldRegistry.current[field].validate(value) as string)
-      );
+    (field: string, value: void | string) => {
+      return fieldRegistry.current[field].validate(value);
     },
     []
   );
 
   const runFieldLevelValidations = React.useCallback(
-    (values: Values): Promise<FormikErrors<Values>> => {
+    (values: Values): FormikErrors<Values> | Promise<FormikErrors<Values>> => {
       const fieldKeysWithValidation: string[] = Object.keys(
         fieldRegistry.current
       ).filter(f => isFunction(fieldRegistry.current[f].validate));
 
       // Construct an array with all of the field validation functions
-      const fieldValidations: Promise<string>[] =
-        fieldKeysWithValidation.length > 0
-          ? fieldKeysWithValidation.map(f =>
-              runSingleFieldLevelValidation(f, getIn(values, f))
-            )
-          : [Promise.resolve('DO_NOT_DELETE_YOU_WILL_BE_FIRED')]; // use special case ;)
+      const fieldValidations = fieldKeysWithValidation.map(f =>
+        runSingleFieldLevelValidation(f, getIn(values, f))
+      );
 
-      return Promise.all(fieldValidations).then((fieldErrorsList: string[]) =>
-        fieldErrorsList.reduce((prev, curr, index) => {
+      const processFieldErrors = (fieldErrorsList: (string | undefined)[]) =>
+        fieldErrorsList.reduce<FormikErrors<Values>>((prev, curr, index) => {
           if (curr === 'DO_NOT_DELETE_YOU_WILL_BE_FIRED') {
             return prev;
           }
@@ -300,8 +286,13 @@ export function useFormik<Values extends FormikValues = FormikValues>({
             prev = setIn(prev, fieldKeysWithValidation[index], curr);
           }
           return prev;
-        }, {})
-      );
+        }, {});
+
+      if (fieldValidations.some(isPromise)) {
+        return Promise.all(fieldValidations).then(processFieldErrors);
+      } else {
+        return processFieldErrors(fieldValidations as (string | undefined)[]);
+      }
     },
     [runSingleFieldLevelValidation]
   );
@@ -309,17 +300,29 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   // Run all validations and return the result
   const runAllValidations = React.useCallback(
     (values: Values) => {
-      return Promise.all([
+      const allValidations = [
         runFieldLevelValidations(values),
         props.validationSchema ? runValidationSchema(values) : {},
         props.validate ? runValidateHandler(values) : {},
-      ]).then(([fieldErrors, schemaErrors, validateErrors]) => {
+      ];
+
+      const processAllValidations = ([
+        fieldErrors,
+        schemaErrors,
+        validateErrors,
+      ]: FormikErrors<Values>[]) => {
         const combinedErrors = deepmerge.all<FormikErrors<Values>>(
           [fieldErrors, schemaErrors, validateErrors],
           { arrayMerge }
         );
         return combinedErrors;
-      });
+      };
+
+      if (allValidations.some(isPromise)) {
+        return Promise.all(allValidations).then(processAllValidations);
+      } else {
+        return processAllValidations(allValidations);
+      }
     },
     [
       props.validate,
@@ -334,25 +337,23 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   const validateFormWithHighPriority = useEventCallback(
     (values: Values = state.values) => {
       dispatch({ type: 'SET_ISVALIDATING', payload: true });
-      return runAllValidations(values).then(combinedErrors => {
+
+      const processCombinedErrors = (combinedErrors: FormikErrors<Values>) => {
         if (!!isMounted.current) {
           dispatch({ type: 'SET_ISVALIDATING', payload: false });
           dispatch({ type: 'SET_ERRORS', payload: combinedErrors });
         }
         return combinedErrors;
-      });
+      };
+
+      const maybePromisedErrors = runAllValidations(values);
+      if (isPromise(maybePromisedErrors)) {
+        return maybePromisedErrors.then(processCombinedErrors);
+      } else {
+        return processCombinedErrors(maybePromisedErrors);
+      }
     }
   );
-
-  React.useEffect(() => {
-    if (
-      validateOnMount &&
-      isMounted.current === true &&
-      isEqual(initialValues.current, props.initialValues)
-    ) {
-      validateFormWithHighPriority(initialValues.current);
-    }
-  }, [validateOnMount, validateFormWithHighPriority]);
 
   const resetForm = React.useCallback(
     (nextState?: Partial<FormikState<Values>>) => {
@@ -418,71 +419,75 @@ export function useFormik<Values extends FormikValues = FormikValues>({
         dispatchFn();
       }
     },
-    [props.initialErrors, props.initialStatus, props.initialTouched, props.onReset]
+    [
+      props.initialErrors,
+      props.initialStatus,
+      props.initialTouched,
+      props.onReset,
+    ]
   );
 
+  // Grouping the effects to it's easier to predict when they run and synchronizing setting isMounted to true, validation on mount and reinitialization
   React.useEffect(() => {
-    if (
-      isMounted.current === true &&
-      !isEqual(initialValues.current, props.initialValues)
-    ) {
-      if (enableReinitialize) {
+    if (isMounted.current === false) {
+      isMounted.current = true;
+
+      if (
+        validateOnMount &&
+        isEqual(initialValues.current, props.initialValues)
+      ) {
+        validateFormWithHighPriority(initialValues.current);
+      }
+    } else if (enableReinitialize) {
+      if (!isEqual(initialValues.current, props.initialValues)) {
         initialValues.current = props.initialValues;
         resetForm();
         if (validateOnMount) {
           validateFormWithHighPriority(initialValues.current);
         }
       }
+      if (!isEqual(initialErrors.current, props.initialErrors || emptyErrors)) {
+        initialErrors.current = props.initialErrors || emptyErrors;
+        dispatch({
+          type: 'SET_ERRORS',
+          payload: props.initialErrors || emptyErrors,
+        });
+      }
+      if (
+        !isEqual(initialTouched.current, props.initialTouched || emptyTouched)
+      ) {
+        initialTouched.current = props.initialTouched || emptyTouched;
+        dispatch({
+          type: 'SET_TOUCHED',
+          payload: props.initialTouched || emptyTouched,
+        });
+      }
+      if (!isEqual(initialStatus.current, props.initialStatus)) {
+        initialStatus.current = props.initialStatus;
+        dispatch({
+          type: 'SET_STATUS',
+          payload: props.initialStatus,
+        });
+      }
     }
   }, [
     enableReinitialize,
     props.initialValues,
+    props.initialErrors,
+    props.initialStatus,
+    props.initialTouched,
     resetForm,
-    validateOnMount,
     validateFormWithHighPriority,
+    validateOnMount,
   ]);
-
-  React.useEffect(() => {
-    if (
-      enableReinitialize &&
-      isMounted.current === true &&
-      !isEqual(initialErrors.current, props.initialErrors)
-    ) {
-      initialErrors.current = props.initialErrors || emptyErrors;
-      dispatch({
-        type: 'SET_ERRORS',
-        payload: props.initialErrors || emptyErrors,
-      });
-    }
-  }, [enableReinitialize, props.initialErrors]);
-
-  React.useEffect(() => {
-    if (
-      enableReinitialize &&
-      isMounted.current === true &&
-      !isEqual(initialTouched.current, props.initialTouched)
-    ) {
-      initialTouched.current = props.initialTouched || emptyTouched;
-      dispatch({
-        type: 'SET_TOUCHED',
-        payload: props.initialTouched || emptyTouched,
-      });
-    }
-  }, [enableReinitialize, props.initialTouched]);
-
-  React.useEffect(() => {
-    if (
-      enableReinitialize &&
-      isMounted.current === true &&
-      !isEqual(initialStatus.current, props.initialStatus)
-    ) {
-      initialStatus.current = props.initialStatus;
-      dispatch({
-        type: 'SET_STATUS',
-        payload: props.initialStatus,
-      });
-    }
-  }, [enableReinitialize, props.initialStatus, props.initialTouched]);
+  // Splitting the mounting reset to its own effect so it is only ever called once: when the component really unmounts
+  // Otherwise it is also called when the effect's dependencies change making the value go back to `false`
+  React.useEffect(
+    () => () => {
+      isMounted.current = false;
+    },
+    []
+  );
 
   const validateField = useEventCallback((name: string) => {
     // This will efficiently validate a single field by avoiding state
@@ -512,10 +517,10 @@ export function useFormik<Values extends FormikValues = FormikValues>({
           type: 'SET_FIELD_ERROR',
           payload: {
             field: name,
-            value: maybePromise as string | undefined,
+            value: maybePromise,
           },
         });
-        return Promise.resolve(maybePromise as string | undefined);
+        return maybePromise;
       }
     } else if (props.validationSchema) {
       dispatch({ type: 'SET_ISVALIDATING', payload: true });
@@ -530,7 +535,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
         });
     }
 
-    return Promise.resolve();
+    return;
   });
 
   const registerField = React.useCallback((name: string, { validate }: any) => {
@@ -741,67 +746,73 @@ export function useFormik<Values extends FormikValues = FormikValues>({
 
   const submitForm = useEventCallback(() => {
     dispatch({ type: 'SUBMIT_ATTEMPT' });
-    return validateFormWithHighPriority().then(
-      (combinedErrors: FormikErrors<Values>) => {
-        // In case an error was thrown and passed to the resolved Promise,
-        // `combinedErrors` can be an instance of an Error. We need to check
-        // that and abort the submit.
-        // If we don't do that, calling `Object.keys(new Error())` yields an
-        // empty array, which causes the validation to pass and the form
-        // to be submitted.
 
-        const isInstanceOfError = combinedErrors instanceof Error;
-        const isActuallyValid =
-          !isInstanceOfError && Object.keys(combinedErrors).length === 0;
-        if (isActuallyValid) {
-          // Proceed with submit...
-          //
-          // To respect sync submit fns, we can't simply wrap executeSubmit in a promise and
-          // _always_ dispatch SUBMIT_SUCCESS because isSubmitting would then always be false.
-          // This would be fine in simple cases, but make it impossible to disable submit
-          // buttons where people use callbacks or promises as side effects (which is basically
-          // all of v1 Formik code). Instead, recall that we are inside of a promise chain already,
-          //  so we can try/catch executeSubmit(), if it returns undefined, then just bail.
-          // If there are errors, throw em. Otherwise, wrap executeSubmit in a promise and handle
-          // cleanup of isSubmitting on behalf of the consumer.
-          let promiseOrUndefined;
-          try {
-            promiseOrUndefined = executeSubmit();
-            // Bail if it's sync, consumer is responsible for cleaning up
-            // via setSubmitting(false)
-            if (promiseOrUndefined === undefined) {
-              return;
-            }
-          } catch (error) {
-            throw error;
-          }
+    const processErrors = (combinedErrors: FormikErrors<Values>) => {
+      // In case an error was thrown and passed to the resolved Promise,
+      // `combinedErrors` can be an instance of an Error. We need to check
+      // that and abort the submit.
+      // If we don't do that, calling `Object.keys(new Error())` yields an
+      // empty array, which causes the validation to pass and the form
+      // to be submitted.
 
-          return Promise.resolve(promiseOrUndefined)
-            .then(result => {
-              if (!!isMounted.current) {
-                dispatch({ type: 'SUBMIT_SUCCESS' });
-              }
-              return result;
-            })
-            .catch(_errors => {
-              if (!!isMounted.current) {
-                dispatch({ type: 'SUBMIT_FAILURE' });
-                // This is a legit error rejected by the onSubmit fn
-                // so we don't want to break the promise chain
-                throw _errors;
-              }
-            });
-        } else if (!!isMounted.current) {
-          // ^^^ Make sure Formik is still mounted before updating state
-          dispatch({ type: 'SUBMIT_FAILURE' });
-          // throw combinedErrors;
-          if (isInstanceOfError) {
-            throw combinedErrors;
+      const isInstanceOfError = combinedErrors instanceof Error;
+      const isActuallyValid =
+        !isInstanceOfError && Object.keys(combinedErrors).length === 0;
+      if (isActuallyValid) {
+        // Proceed with submit...
+        //
+        // To respect sync submit fns, we can't simply wrap executeSubmit in a promise and
+        // _always_ dispatch SUBMIT_SUCCESS because isSubmitting would then always be false.
+        // This would be fine in simple cases, but make it impossible to disable submit
+        // buttons where people use callbacks or promises as side effects (which is basically
+        // all of v1 Formik code). Instead, recall that we are inside of a promise chain already,
+        //  so we can try/catch executeSubmit(), if it returns undefined, then just bail.
+        // If there are errors, throw em. Otherwise, wrap executeSubmit in a promise and handle
+        // cleanup of isSubmitting on behalf of the consumer.
+        let promiseOrUndefined;
+        try {
+          promiseOrUndefined = executeSubmit();
+          // Bail if it's sync, consumer is responsible for cleaning up
+          // via setSubmitting(false)
+          if (promiseOrUndefined === undefined) {
+            return;
           }
+        } catch (error) {
+          throw error;
         }
-        return;
+
+        return Promise.resolve(promiseOrUndefined)
+          .then(result => {
+            if (!!isMounted.current) {
+              dispatch({ type: 'SUBMIT_SUCCESS' });
+            }
+            return result;
+          })
+          .catch(_errors => {
+            if (!!isMounted.current) {
+              dispatch({ type: 'SUBMIT_FAILURE' });
+              // This is a legit error rejected by the onSubmit fn
+              // so we don't want to break the promise chain
+              throw _errors;
+            }
+          });
+      } else if (!!isMounted.current) {
+        // ^^^ Make sure Formik is still mounted before updating state
+        dispatch({ type: 'SUBMIT_FAILURE' });
+        // throw combinedErrors;
+        if (isInstanceOfError) {
+          throw combinedErrors;
+        }
       }
-    );
+      return;
+    };
+
+    const maybePromisedErrors = validateFormWithHighPriority();
+    if (isPromise(maybePromisedErrors)) {
+      return maybePromisedErrors.then(processErrors);
+    } else {
+      return processErrors(maybePromisedErrors);
+    }
   });
 
   const handleSubmit = useEventCallback(
@@ -833,12 +844,15 @@ export function useFormik<Values extends FormikValues = FormikValues>({
         }
       }
 
-      submitForm().catch(reason => {
-        console.warn(
-          `Warning: An unhandled error was caught from submitForm()`,
-          reason
-        );
-      });
+      const maybePromise = submitForm();
+      if (isPromise(maybePromise)) {
+        maybePromise.catch(reason => {
+          console.warn(
+            `Warning: An unhandled error was caught from submitForm()`,
+            reason
+          );
+        });
+      }
     }
   );
 

@@ -22,7 +22,7 @@ jobs:
         run: yarn install
 
       - name: Create Release Pull Request or Publish to npm
-        uses: changesets/action@1.4.8
+        uses: changesets/action@v1
         with:
           publish: yarn release
         env:

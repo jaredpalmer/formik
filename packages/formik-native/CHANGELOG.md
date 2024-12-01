@@ -1,5 +1,40 @@
 # formik-native
 
+## 2.1.30
+
+### Patch Changes
+
+- Updated dependencies [[`99dbc24`](https://github.com/jaredpalmer/formik/commit/99dbc24ce714387b27425df48abb7676bb8b582c)]:
+  - formik@2.4.7
+
+## 2.1.29
+
+### Patch Changes
+
+- Updated dependencies [[`f57ca9b`](https://github.com/jaredpalmer/formik/commit/f57ca9bc5ee3842d50f74f39b3fb36a744b55ae8)]:
+  - formik@2.4.6
+
+## 2.1.28
+
+### Patch Changes
+
+- Updated dependencies [[`d7db9cd`](https://github.com/jaredpalmer/formik/commit/d7db9cddba9008714f2853013d5d4e82c8c94558), [`fe4ed7e`](https://github.com/jaredpalmer/formik/commit/fe4ed7e048b14331a75e40cabf48e4787d9b2b71)]:
+  - formik@2.4.5
+
+## 2.1.27
+
+### Patch Changes
+
+- Updated dependencies [[`ae0fe6c`](https://github.com/jaredpalmer/formik/commit/ae0fe6cbd11f2d2664142008225abc237b5bff82), [`ae0fe6c`](https://github.com/jaredpalmer/formik/commit/ae0fe6cbd11f2d2664142008225abc237b5bff82)]:
+  - formik@2.4.4
+
+## 2.1.26
+
+### Patch Changes
+
+- Updated dependencies [[`9e0a661`](https://github.com/jaredpalmer/formik/commit/9e0a661513af75d1b848e5be7a4916c53b78760f)]:
+  - formik@2.4.3
+
 ## 2.1.25
 
 ### Patch Changes

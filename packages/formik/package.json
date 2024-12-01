@@ -1,11 +1,11 @@
 {
   "name": "formik",
   "description": "Build forms in React, without the tears",
-  "version": "2.4.2",
+  "version": "2.4.7",
   "license": "Apache-2.0",
   "author": "Jared Palmer <jared@palmer.net> (https://jaredpalmer.com)",
   "contributors": [
-    "Evan Jacobs <probablyup@gmail.com> (https://probablyup.com)"
+    "Evan Jacobs <probablyup@gmail.com> (https://quantizor.dev)"
   ],
   "repository": "jaredpalmer/formik",
   "homepage": "https://formik.org",
@@ -33,12 +33,11 @@
   "umd:main": "dist/formik.umd.production.js",
   "module": "dist/formik.esm.js",
   "typings": "dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "peerDependencies": {
     "react": ">=16.8.0"
   },
+  "sideEffects": false,
   "scripts": {
     "test": "tsdx test --env=jsdom",
     "test:watch": "npm run test -- --watchAll",
@@ -47,6 +46,7 @@
     "lint": "tsdx lint"
   },
   "dependencies": {
+    "@types/hoist-non-react-statics": "^3.3.1",
     "deepmerge": "^2.1.1",
     "hoist-non-react-statics": "^3.3.0",
     "lodash": "^4.17.21",
@@ -57,7 +57,6 @@
   },
   "devDependencies": {
     "@testing-library/react": "^14.0.0",
-    "@types/hoist-non-react-statics": "^3.3.1",
     "@types/lodash": "^4.14.119",
     "@types/react": "^18.2.7",
     "@types/react-dom": "^18.2.4",

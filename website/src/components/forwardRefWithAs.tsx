@@ -96,7 +96,7 @@ export function forwardRefWithAs<Props, ComponentType extends As>(
 Test components to make sure our dynamic As prop components work as intended 
 type PopupProps = {
   lol: string;
-  children?: React.ReactNode | ((value?: number) => JSX.Element);
+  children?: React.ReactNode | ((value?: number) => React.JSX.Element);
 };
 export const Popup = forwardRefWithAs<PopupProps, 'input'>(
   ({ as: Comp = 'input', lol, className, children, ...props }, ref) => {

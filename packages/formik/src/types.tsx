@@ -279,9 +279,9 @@ export interface SharedRenderProps<T> {
 }
 
 export type GenericFieldHTMLAttributes =
-  | JSX.IntrinsicElements['input']
-  | JSX.IntrinsicElements['select']
-  | JSX.IntrinsicElements['textarea'];
+  | React.JSX.IntrinsicElements['input']
+  | React.JSX.IntrinsicElements['select']
+  | React.JSX.IntrinsicElements['textarea'];
 
 /** Field metadata */
 export interface FieldMetaProps<Value> {

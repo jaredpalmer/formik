@@ -2,7 +2,7 @@ import * as React from 'react';
 import cn from 'classnames';
 import { HTMLProps } from 'react';
 
-export const Container: React.FC<JSX.IntrinsicElements['div']> = ({
+export const Container: React.FC<React.JSX.IntrinsicElements['div']> = ({
   className,
   ...props
 }) => {

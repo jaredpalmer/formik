@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-export const FormiumLogo: React.FC<JSX.IntrinsicElements['svg']> = props => {
+export const FormiumLogo: React.FC<React.JSX.IntrinsicElements['svg']> = props => {
   return (
     <svg
       width={'101px'}

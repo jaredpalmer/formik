@@ -94,7 +94,7 @@ export interface FormikHelpers<Values> {
   ) => Promise<void | FormikErrors<Values>>;
   /** Set value of form field directly */
   setFieldValue: (
-    field: string,
+    field: string | string[],
     value: any,
     shouldValidate?: boolean
   ) => Promise<void | FormikErrors<Values>>;

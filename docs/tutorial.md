@@ -849,12 +849,13 @@ const MyCheckbox = ({ children, ...props }) => {
   );
 };
 
-const MySelect = ({ label, ...props }) => {
+const MySelect = ({children, label, ...props }) => {
   const [field, meta] = useField(props);
   return (
     <div>
       <label htmlFor={props.id || props.name}>{label}</label>
       <select {...field} {...props} />
+      {children}
       {meta.touched && meta.error ? (
         <div className="error">{meta.error}</div>
       ) : null}

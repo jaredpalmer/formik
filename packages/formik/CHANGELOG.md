@@ -1,5 +1,11 @@
 # formik
 
+## 2.4.7
+
+### Patch Changes
+
+- [`99dbc24`](https://github.com/jaredpalmer/formik/commit/99dbc24ce714387b27425df48abb7676bb8b582c) [#3968](https://github.com/jaredpalmer/formik/pull/3968) Thanks [@ChronicusUA](https://github.com/ChronicusUA)! - Value of setFieldValue can be a function that takes previous field value
+
 ## 2.4.6
 
 ### Patch Changes

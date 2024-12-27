@@ -10,40 +10,31 @@ jobs:
     name: 'determine changes'
     runs-on: ubuntu-latest
     outputs:
-      changes: ${{ steps.changed-files-yaml.outputs.src_any_changed }}
+      changes: ${{ steps.changed-files-yaml.outputs.any_changed }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Detect changed files
         id: changed-files-yaml
-        uses: tj-actions/changed-files@v39
+        uses: tj-actions/changed-files@v45
         with:
-          files_yaml: |
-            src:
-              - packages/formik/src/**
-              - packages/formik/package.json
-              - packages/formik-native/src/**
-              - packages/formik-native/package.json
-  benchmark:
-    if: needs.detectChangedSourceFiles.outputs.changes == 'true'
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-    steps:
-      - uses: actions/checkout@v3
+          files: |
+            .github/workflows/ci.yml
+            packages/formik/src/**
+            packages/formik/package.json
+            packages/formik-native/src/**
+            packages/formik-native/package.json
 
-      - uses: actions/setup-node@v3
+  benchmark:
+    if: always() && needs.detectChangedSourceFiles.outputs.changes == 'true'
+    needs: detectChangedSourceFiles
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
         with:
           cache: yarn
           node-version-file: .nvmrc
-
-      - name: Detect changed files
-        id: changed-files-yaml
-        uses: tj-actions/changed-files@v39
-        with:
-          files_yaml: |
-            src:
-              - packages/formik/src/**
-              - packages/formik-native/src/**
 
       - name: Install & build
         run: |
@@ -54,7 +45,7 @@ jobs:
           yarn build:benchmark
 
       - name: Download previous benchmark data
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ./benchmark-cache
           key: ${{ runner.os }}-benchmark
@@ -78,13 +69,15 @@ jobs:
           fail-threshold: 120%
           # needed for commenting on PRs
           github-token: ${{ secrets.GITHUB_TOKEN }}
+
   interaction:
-    if: needs.detectChangedSourceFiles.outputs.changes == 'true'
+    needs: detectChangedSourceFiles
+    if: always() && needs.detectChangedSourceFiles.outputs.changes == 'true'
     timeout-minutes: 10
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           cache: yarn
           node-version-file: .nvmrc
@@ -97,7 +90,7 @@ jobs:
         run: echo "PLAYWRIGHT_VERSION=$(node -e "console.log(require('./package-lock.json').dependencies['@playwright/test'].version)")" >> $GITHUB_ENV
 
       - name: Cache playwright binaries
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         id: playwright-cache
         with:
           path: |
@@ -112,31 +105,33 @@ jobs:
 
       - name: Run Playwright tests
         run: yarn playwright test
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: playwright-report
           path: playwright-report/
           retention-days: 5
+
   size:
-    if: needs.detectChangedSourceFiles.outputs.changes == 'true'
+    needs: detectChangedSourceFiles
+    if: always() && needs.detectChangedSourceFiles.outputs.changes == 'true'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 1
       - uses: preactjs/compressed-size-action@v2
         with:
           repo-token: '${{ secrets.GITHUB_TOKEN }}'
           build-script: 'turbo run build --filter {./packages/*}...'
+
   unit:
-    if: needs.detectChangedSourceFiles.outputs.changes == 'true'
+    needs: detectChangedSourceFiles
+    if: always() && needs.detectChangedSourceFiles.outputs.changes == 'true'
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           cache: yarn
           node-version-file: .nvmrc

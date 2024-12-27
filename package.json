@@ -19,8 +19,8 @@
     "lint-staged": "^10.4.0",
     "prettier": "^2.1.2",
     "react-hook-form": "^7.45.0",
-    "ts-node": "^10.9.1",
     "tslib": "^2.5.3",
+    "tsx": "^4.19.0",
     "turbo": "^1.9.9"
   },
   "workspaces": [
@@ -43,7 +43,7 @@
     "precommit": "lint-staged",
     "e2e:ui": "playwright test --ui",
     "start:app": "turbo run build --filter formik... && yarn --cwd packages/formik link && yarn --cwd ./app link formik && yarn --cwd ./app && yarn --cwd ./app run dev",
-    "benchmark": "ts-node scripts/benchmark.tsx | tee output.txt"
+    "benchmark": "tsx scripts/benchmark.tsx | tee output.txt"
   },
   "lint-staged": {
     "**/*.{ts,tsx,md,mdx,js,jsx}": [

@@ -406,7 +406,8 @@ export function useFormik<Values extends FormikValues = FormikValues>({
       if (props.onReset) {
         const maybePromisedOnReset = (props.onReset as any)(
           state.values,
-          imperativeMethods
+          imperativeMethods,
+          values
         );
 
         if (isPromise(maybePromisedOnReset)) {

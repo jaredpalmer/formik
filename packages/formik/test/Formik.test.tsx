@@ -1022,10 +1022,10 @@ describe('<Formik>', () => {
         onReset,
       });
 
-      const newInitialValues = { name: 'jared', age: 31,}
+      const NewInitialValues = { name: 'jared', age: 31,}
 
       act(() => {
-        getProps().resetForm({values: newInitialValues});
+        getProps().resetForm({values: NewInitialValues});
       });
 
       expect(onReset).toHaveBeenCalledWith(
@@ -1041,7 +1041,7 @@ describe('<Formik>', () => {
           setTouched: expect.any(Function),
           setValues: expect.any(Function),
         }),
-        newInitialValues
+        NewInitialValues
       );
     });
 

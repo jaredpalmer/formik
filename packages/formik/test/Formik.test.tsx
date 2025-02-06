@@ -1014,7 +1014,7 @@ describe('<Formik>', () => {
       );
     });
 
-    it('should call onReset with values and actions and new initial values when form is reset with values', () => {
+    it('should call onReset with values and actions and initialValues when form is reset with values', () => {
       const onReset = jest.fn();
       const { getProps } = renderFormik({
         initialValues: InitialValues,

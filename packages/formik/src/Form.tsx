@@ -9,6 +9,8 @@ export type FormikFormProps = Pick<
   >
 >;
 
+
+// Type alias for a standard <form> element props without refs
 type FormProps = React.ComponentPropsWithoutRef<'form'>;
 
 // @todo tests
@@ -18,17 +20,32 @@ export const Form = React.forwardRef<HTMLFormElement, FormProps>(
     // We default the action to "#" in case the preventDefault fails (just updates the URL hash)
     const { action, ...rest } = props;
     const _action = action ?? '#';
+
+    // Get Formik handlers from context
     const { handleReset, handleSubmit } = useFormikContext();
+
     return (
       <form
-        onSubmit={handleSubmit}
         ref={ref}
         onReset={handleReset}
         action={_action}
+        onSubmit={(event) => {
+          // Run native HTML5 validation first
+          const form = event.currentTarget;
+          if (!form.reportValidity()) {
+            // Stop Formik from submitting if native validation fails
+            event.preventDefault();
+            return;
+          }
+
+          // Proceed with Formik submit
+          handleSubmit(event);
+        }}
         {...rest}
       />
     );
   }
 );
 
+// For better DevTools display name
 Form.displayName = 'Form';

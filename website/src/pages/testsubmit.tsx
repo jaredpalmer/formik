@@ -97,17 +97,21 @@ const TestSubmit = () => {
       }}
     >
       {({ isValid, touched, errors }) => (
-        <Form style={styles.formContainer} noValidate>
+       <Form style={styles.formContainer}>
           <div style={styles.fieldGroup}>
             <label style={styles.label}>Email:</label>
             <Field name="email" type="email" style={styles.input} />
-            <ErrorMessage name="email" component="div" style={styles.errorText} />
+            <ErrorMessage name="email">
+  {msg => <div style={styles.errorText}>{msg}</div>}
+</ErrorMessage>
           </div>
 
           <div style={styles.fieldGroup}>
             <label style={styles.label}>Age:</label>
             <Field name="age" type="number" style={styles.input} />
-            <ErrorMessage name="age" component="div" style={styles.errorText} />
+            <ErrorMessage name="age">
+  {msg => <div style={styles.errorText}>{msg}</div>}
+</ErrorMessage>
           </div>
 
           <button type="submit" style={styles.submitButton}>

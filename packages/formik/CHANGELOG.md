@@ -1,5 +1,11 @@
 # formik
 
+## 2.4.8
+
+### Patch Changes
+
+- [#4042](https://github.com/jaredpalmer/formik/pull/4042) [`1de45de`](https://github.com/jaredpalmer/formik/commit/1de45decf8fd70c038fca88dc1a6543aac269553) Thanks [@copilot-swe-agent](https://github.com/apps/copilot-swe-agent)! - Replace JSX.IntrinsicElements with React.JSX.IntrinsicElements for React 19 compatibility. The global JSX namespace was removed in React 19, so we now use React.JSX.IntrinsicElements instead.
+
 ## 2.4.7
 
 ### Patch Changes

@@ -10,7 +10,7 @@ export const blog = defineDocs({
   schema: {
     frontmatter: z.object({
       title: z.string(),
-      date: z.string().transform((val) => new Date(val)),
+      date: z.coerce.date(),
       published: z.boolean().optional().default(true),
       slug: z.string(),
       authors: z.array(z.string()).optional(),

@@ -1,0 +1,4 @@
+{
+  "title": "Documentation",
+  "pages": ["overview", "tutorial", "resources", "3rd-party-bindings", "migrating-v2"]
+}

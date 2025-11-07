@@ -7,3 +7,4 @@ node_modules
 .DS_Store
 .vercel
 public/sitemap.xml
+.source

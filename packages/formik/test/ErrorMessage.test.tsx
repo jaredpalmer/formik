@@ -16,7 +16,7 @@ const TestForm: React.FC<any> = p => (
   />
 );
 
-fdescribe('<ErrorMessage />', () => {
+describe('<ErrorMessage />', () => {
   it('renders with children as a function', async () => {
     let actual: any; /** ErrorMessage ;) */
     let actualFProps: any;

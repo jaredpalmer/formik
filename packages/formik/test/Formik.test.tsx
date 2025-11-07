@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { vi } from 'vitest';
 import {
   act,
   fireEvent,
@@ -17,7 +18,7 @@ import {
 } from '../src';
 import { noop } from './testHelpers';
 
-jest.spyOn(global.console, 'warn');
+vi.spyOn(global.console, 'warn');
 
 interface Values {
   name: string;
@@ -221,7 +222,7 @@ describe('<Formik>', () => {
     });
 
     it('runs validations by default', async () => {
-      const validate = jest.fn(() => Promise.resolve());
+      const validate = vi.fn(() => Promise.resolve());
       const validationSchema = {
         validate,
       };
@@ -244,7 +245,7 @@ describe('<Formik>', () => {
     });
 
     it('does NOT run validations if validateOnChange is false', async () => {
-      const validate = jest.fn(() => Promise.resolve());
+      const validate = vi.fn(() => Promise.resolve());
       const validationSchema = {
         validate,
       };
@@ -324,7 +325,7 @@ describe('<Formik>', () => {
     });
 
     it('runs validate by default', async () => {
-      const validate = jest.fn(noop);
+      const validate = vi.fn(noop);
       const { rerender } = renderFormik({ validate });
 
       fireEvent.blur(screen.getByTestId('name-input'), {
@@ -339,7 +340,7 @@ describe('<Formik>', () => {
     });
 
     it('runs validations by default', async () => {
-      const validate = jest.fn(() => Promise.resolve());
+      const validate = vi.fn(() => Promise.resolve());
       const validationSchema = {
         validate,
       };
@@ -360,7 +361,7 @@ describe('<Formik>', () => {
     });
 
     it('runs validations if validateOnBlur is true (default)', async () => {
-      const validate = jest.fn(() => Promise.resolve());
+      const validate = vi.fn(() => Promise.resolve());
       const validationSchema = {
         validate,
       };
@@ -381,7 +382,7 @@ describe('<Formik>', () => {
     });
 
     it('dost NOT run validations if validateOnBlur is false', async () => {
-      const validate = jest.fn(() => Promise.resolve());
+      const validate = vi.fn(() => Promise.resolve());
       const validationSchema = {
         validate,
       };
@@ -397,7 +398,7 @@ describe('<Formik>', () => {
 
   describe('handleSubmit', () => {
     it('should call preventDefault()', () => {
-      const preventDefault = jest.fn();
+      const preventDefault = vi.fn();
       const FormPreventDefault = (
         <Formik initialValues={{ name: 'jared' }} onSubmit={noop}>
           {({ handleSubmit }) => (
@@ -497,15 +498,15 @@ describe('<Formik>', () => {
 
     describe('with validate (SYNC)', () => {
       it('should call validate if present', () => {
-        const validate = jest.fn(() => ({}));
+        const validate = vi.fn(() => ({}));
         const { getByTestId } = renderFormik({ validate });
         fireEvent.submit(getByTestId('form'));
         expect(validate).toHaveBeenCalled();
       });
 
       it('should submit the form if valid', async () => {
-        const onSubmit = jest.fn();
-        const validate = jest.fn(() => ({}));
+        const onSubmit = vi.fn();
+        const validate = vi.fn(() => ({}));
         const { getByTestId } = renderFormik({ onSubmit, validate });
 
         fireEvent.submit(getByTestId('form'));
@@ -513,8 +514,8 @@ describe('<Formik>', () => {
       });
 
       it('should not submit the form if invalid', () => {
-        const onSubmit = jest.fn();
-        const validate = jest.fn(() => ({ name: 'Error!' }));
+        const onSubmit = vi.fn();
+        const validate = vi.fn(() => ({ name: 'Error!' }));
         const { getByTestId } = renderFormik({ onSubmit, validate });
 
         fireEvent.submit(getByTestId('form'));
@@ -522,9 +523,9 @@ describe('<Formik>', () => {
       });
 
       it('should not submit the form if validate function throws an error', async () => {
-        const onSubmit = jest.fn();
+        const onSubmit = vi.fn();
         const err = new Error('Async Error');
-        const validate = jest.fn().mockRejectedValue(err);
+        const validate = vi.fn().mockRejectedValue(err);
         const { getProps } = renderFormik({
           onSubmit,
           validate,
@@ -563,7 +564,7 @@ describe('<Formik>', () => {
 
     describe('with validate (ASYNC)', () => {
       it('should call validate if present', () => {
-        const validate = jest.fn(() => Promise.resolve({}));
+        const validate = vi.fn(() => Promise.resolve({}));
         const { getByTestId } = renderFormik({ validate });
 
         fireEvent.submit(getByTestId('form'));
@@ -571,8 +572,8 @@ describe('<Formik>', () => {
       });
 
       it('should submit the form if valid', async () => {
-        const onSubmit = jest.fn();
-        const validate = jest.fn(() => Promise.resolve({}));
+        const onSubmit = vi.fn();
+        const validate = vi.fn(() => Promise.resolve({}));
         const { getByTestId } = renderFormik({ onSubmit, validate });
 
         fireEvent.submit(getByTestId('form'));
@@ -580,8 +581,8 @@ describe('<Formik>', () => {
       });
 
       it('should not submit the form if invalid', () => {
-        const onSubmit = jest.fn();
-        const validate = jest.fn(() => Promise.resolve({ name: 'Error!' }));
+        const onSubmit = vi.fn();
+        const validate = vi.fn(() => Promise.resolve({ name: 'Error!' }));
         const { getByTestId } = renderFormik({ onSubmit, validate });
 
         fireEvent.submit(getByTestId('form'));
@@ -589,9 +590,9 @@ describe('<Formik>', () => {
       });
 
       it('should not submit the form if validate function rejects with an error', async () => {
-        const onSubmit = jest.fn();
+        const onSubmit = vi.fn();
         const err = new Error('Async Error');
-        const validate = jest.fn().mockRejectedValue(err);
+        const validate = vi.fn().mockRejectedValue(err);
 
         const { getProps } = renderFormik({ onSubmit, validate });
 
@@ -613,7 +614,7 @@ describe('<Formik>', () => {
 
     describe('with validationSchema (ASYNC)', () => {
       it('should run validationSchema if present', async () => {
-        const validate = jest.fn(() => Promise.resolve({}));
+        const validate = vi.fn(() => Promise.resolve({}));
         const validationSchema = {
           validate,
         };
@@ -630,7 +631,7 @@ describe('<Formik>', () => {
       });
 
       it('should call validationSchema if it is a function and present', async () => {
-        const validate = jest.fn(() => Promise.resolve({}));
+        const validate = vi.fn(() => Promise.resolve({}));
         const validationSchema = () => ({
           validate,
         });
@@ -672,7 +673,7 @@ describe('<Formik>', () => {
 
       it('setValues should run validations when validateOnChange is true (default)', async () => {
         const newValue: Values = { name: 'ian' };
-        const validate = jest.fn(_values => ({}));
+        const validate = vi.fn(_values => ({}));
         const { getProps } = renderFormik({ validate });
 
         act(() => {
@@ -684,7 +685,7 @@ describe('<Formik>', () => {
         });
       });
       it('setValues should NOT run validations when validateOnChange is false', async () => {
-        const validate = jest.fn();
+        const validate = vi.fn();
         const { getProps, rerender } = renderFormik<Values>({
           validate,
           validateOnChange: false,
@@ -712,7 +713,7 @@ describe('<Formik>', () => {
       });
 
       it('setFieldValue should run validations when validateOnChange is true (default)', async () => {
-        const validate = jest.fn(() => ({}));
+        const validate = vi.fn(() => ({}));
         const { getProps, rerender } = renderFormik({ validate });
 
         act(() => {
@@ -725,7 +726,7 @@ describe('<Formik>', () => {
       });
 
       it('setFieldValue should NOT run validations when validateOnChange is false', async () => {
-        const validate = jest.fn();
+        const validate = vi.fn();
         const { getProps, rerender } = renderFormik({
           validate,
           validateOnChange: false,
@@ -757,7 +758,7 @@ describe('<Formik>', () => {
       it(
         'setFieldValue should run validations with resolved value when takes a setter function and validateOnChange is true (default)',
         async () => {
-          const validate = jest.fn(() =>({}));
+          const validate = vi.fn(() =>({}));
           const { getProps, rerender } = renderFormik({ validate });
 
           act(() => {
@@ -774,7 +775,7 @@ describe('<Formik>', () => {
       );
 
       it('setFieldValue should NOT run validations when takes a setter function and validateOnChange is false', async () => {
-        const validate = jest.fn();
+        const validate = vi.fn();
         const { getProps, rerender } = renderFormik({
           validate,
           validateOnChange: false,
@@ -799,7 +800,7 @@ describe('<Formik>', () => {
       });
 
       it('setTouched should NOT run validations when validateOnChange is true (default)', async () => {
-        const validate = jest.fn(() => ({}));
+        const validate = vi.fn(() => ({}));
         const { getProps, rerender } = renderFormik({ validate });
 
         act(() => {
@@ -810,7 +811,7 @@ describe('<Formik>', () => {
       });
 
       it('setTouched should run validations when validateOnBlur is false', async () => {
-        const validate = jest.fn(() => ({}));
+        const validate = vi.fn(() => ({}));
         const { getProps, rerender } = renderFormik({
           validate,
           validateOnBlur: false,
@@ -840,7 +841,7 @@ describe('<Formik>', () => {
       });
 
       it('setFieldTouched should run validations when validateOnBlur is true (default)', async () => {
-        const validate = jest.fn(() => ({}));
+        const validate = vi.fn(() => ({}));
         const { getProps, rerender } = renderFormik({ validate });
 
         act(() => {
@@ -851,7 +852,7 @@ describe('<Formik>', () => {
       });
 
       it('setFieldTouched should NOT run validations when validateOnBlur is false', async () => {
-        const validate = jest.fn(() => ({}));
+        const validate = vi.fn(() => ({}));
         const { getProps, rerender } = renderFormik({
           validate,
           validateOnBlur: false,
@@ -968,7 +969,7 @@ describe('<Formik>', () => {
 
   describe('handleReset', () => {
     it('should call onReset if onReset prop is set', () => {
-      const onReset = jest.fn();
+      const onReset = vi.fn();
       const { getProps } = renderFormik({
         initialValues: InitialValues,
         onReset: onReset,
@@ -986,7 +987,7 @@ describe('<Formik>', () => {
 
   describe('resetForm', () => {
     it('should call onReset with values and actions when form is reset', () => {
-      const onReset = jest.fn();
+      const onReset = vi.fn();
       const { getProps } = renderFormik({
         initialValues: InitialValues,
         onSubmit: noop,
@@ -1157,7 +1158,7 @@ describe('<Formik>', () => {
   //       enableReinitialize: true,
   //     });
   //     formik = getRef();
-  //     formik.current.resetForm = jest.fn();
+  //     formik.current.resetForm = vi.fn();
   //   });
 
   //   it('should not resetForm if new initialValues are the same as previous', () => {
@@ -1198,7 +1199,7 @@ describe('<Formik>', () => {
   //       initialValues,
   //     });
   //     formik = getRef();
-  //     formik.current.resetForm = jest.fn();
+  //     formik.current.resetForm = vi.fn();
 
   //     const newInitialValues = {
   //       ...initialValues,
@@ -1309,7 +1310,7 @@ describe('<Formik>', () => {
   });
 
   it('submit count increments', async () => {
-    const onSubmit = jest.fn();
+    const onSubmit = vi.fn();
 
     const { getProps } = renderFormik({
       onSubmit,
@@ -1326,8 +1327,8 @@ describe('<Formik>', () => {
   });
 
   it('isValidating is fired when submit is attempted', async () => {
-    const onSubmit = jest.fn();
-    const validate = jest.fn(() => ({
+    const onSubmit = vi.fn();
+    const validate = vi.fn(() => ({
       name: 'no',
     }));
 
@@ -1364,8 +1365,8 @@ describe('<Formik>', () => {
   });
 
   it('isSubmitting is fired when submit is attempted (v1)', async () => {
-    const onSubmit = jest.fn();
-    const validate = jest.fn(() => Promise.resolve({}));
+    const onSubmit = vi.fn();
+    const validate = vi.fn(() => Promise.resolve({}));
 
     const { getProps } = renderFormik({
       onSubmit,
@@ -1400,8 +1401,8 @@ describe('<Formik>', () => {
   });
 
   it('isSubmitting is fired when submit is attempted (v2, promise)', async () => {
-    const onSubmit = jest.fn().mockResolvedValue(undefined);
-    const validate = jest.fn(() => Promise.resolve({}));
+    const onSubmit = vi.fn().mockResolvedValue(undefined);
+    const validate = vi.fn(() => Promise.resolve({}));
 
     const { getProps } = renderFormik({
       onSubmit,
@@ -1436,7 +1437,7 @@ describe('<Formik>', () => {
   });
 
   it('isValidating is fired validation is run', async () => {
-    const validate = jest.fn(() => ({ name: 'no' }));
+    const validate = vi.fn(() => ({ name: 'no' }));
     const { getProps } = renderFormik({
       validate,
     });

@@ -2,6 +2,7 @@
   "name": "formik-project",
   "private": true,
   "type": "module",
+  "packageManager": "yarn@1.22.22",
   "resolutions": {
     "shelljs": "0.8.5",
     "typescript": "^4.0.0"
@@ -21,7 +22,7 @@
     "react-hook-form": "^7.45.0",
     "tslib": "^2.5.3",
     "tsx": "^4.19.0",
-    "turbo": "^1.9.9"
+    "turbo": "^2.6.0"
   },
   "workspaces": [
     "packages/*",

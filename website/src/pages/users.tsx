@@ -7,9 +7,7 @@ import { Nav } from 'components/Nav';
 import { Container } from 'components/Container';
 import { Seo } from 'components/Seo';
 import { users } from 'users';
-import { Inter } from 'next/font/google';
 import cn from 'classnames';
-const inter = Inter({ subsets: ['latin'] });
 
 export interface UsersProps {}
 
@@ -30,7 +28,7 @@ const Users: React.FC<UsersProps> = props => {
     </a>
   ));
   return (
-    <div className={cn('h-full min-h-full', inter.className)}>
+    <div className={cn('h-full min-h-full font-sans')}>
       <Banner />
       <Sticky>
         <Nav />

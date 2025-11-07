@@ -22,6 +22,7 @@ import { Seo } from './Seo';
 import MDXComponents from './MDXComponents';
 import Head from 'next/head';
 import { getManifest } from 'manifests/getManifest';
+// Temporarily using fallback due to network restrictions - replace with next/font/google in production
 // import { Inter } from 'next/font/google';
 import { Inter } from '../lib/font-fallback';
 

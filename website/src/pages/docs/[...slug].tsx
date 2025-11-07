@@ -40,6 +40,7 @@ import MDXComponents from 'components/MDXComponents';
 import { serialize } from 'next-mdx-remote/serialize';
 import { MDXRemote } from 'next-mdx-remote';
 import rehypeDocs from 'lib/docs/rehype-docs';
+// Temporarily using fallback due to network restrictions - replace with next/font/google in production
 // import { Inter } from 'next/font/google';
 import { Inter } from '../../lib/font-fallback';
 

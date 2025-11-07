@@ -10,6 +10,7 @@ import { ClientsMarquee } from 'components/clients/ClientsMarquee';
 import { Seo } from 'components/Seo';
 import Head from 'next/head';
 import Image from 'next/image';
+// Temporarily using fallback due to network restrictions - replace with next/font/google in production
 // import { Inter } from 'next/font/google';
 import { Inter } from 'lib/font-fallback';
 import cn from 'classnames';

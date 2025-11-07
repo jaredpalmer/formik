@@ -10,6 +10,7 @@ import matter from 'gray-matter';
 import { postFilePaths, POSTS_PATH } from 'lib/blog/mdxUtils';
 import Link from 'next/link';
 import path from 'path';
+// Temporarily using fallback due to network restrictions - replace with next/font/google in production
 // import { Inter } from 'next/font/google';
 import { Inter } from '../../lib/font-fallback';
 

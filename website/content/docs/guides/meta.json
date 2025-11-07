@@ -1,4 +1,11 @@
 {
   "title": "Guides",
-  "pages": ["validation", "arrays", "typescript", "react-native", "form-submission"]
+  "defaultOpen": true,
+  "pages": [
+    "validation",
+    "arrays",
+    "typescript",
+    "react-native",
+    "form-submission"
+  ]
 }

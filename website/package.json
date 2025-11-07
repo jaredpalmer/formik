@@ -69,7 +69,8 @@
     "tailwindcss": "^4.1.17",
     "tslib": "^2.3.1",
     "unist-util-visit": "^2.0.2",
-    "use-onclickoutside": "^0.3.1"
+    "use-onclickoutside": "^0.3.1",
+    "zod": "^4.1.12"
   },
   "devDependencies": {
     "@tailwindcss/forms": "^0.5.3",

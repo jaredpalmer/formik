@@ -8,7 +8,21 @@ export default function Layout({ children }: { children: ReactNode }) {
   return (
     <DocsLayout 
       tree={tree} 
-      nav={{ title: 'Formik' }}
+      nav={{ 
+        title: 'Formik',
+        url: '/',
+      }}
+      links={[
+        {
+          text: 'Blog',
+          url: '/blog',
+        },
+        {
+          text: 'GitHub',
+          url: 'https://github.com/jaredpalmer/formik',
+          external: true,
+        },
+      ]}
     >
       {children}
     </DocsLayout>

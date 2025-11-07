@@ -1,4 +1,17 @@
 {
   "title": "Documentation",
-  "pages": ["overview", "tutorial", "resources", "3rd-party-bindings", "migrating-v2"]
+  "root": true,
+  "pages": [
+    "overview",
+    "tutorial",
+    "---Getting Started---",
+    "guides",
+    "examples",
+    "---Reference---",
+    "api",
+    "---Additional Resources---",
+    "resources",
+    "3rd-party-bindings",
+    "migrating-v2"
+  ]
 }

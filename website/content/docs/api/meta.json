@@ -1,4 +1,19 @@
 {
   "title": "API Reference",
-  "pages": ["connect", "errormessage", "fastfield", "field", "fieldarray", "form", "formik", "useField", "useFormik", "useFormikContext", "withFormik", "utils"]
+  "pages": [
+    "formik",
+    "---Components---",
+    "field",
+    "fastfield",
+    "fieldarray",
+    "form",
+    "errormessage",
+    "---Hooks---",
+    "useFormik",
+    "useField",
+    "useFormikContext",
+    "---Higher Order Components---",
+    "withFormik",
+    "connect"
+  ]
 }

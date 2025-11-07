@@ -26,3 +26,5 @@ website/i18n
 /test-results/
 /playwright-report/
 /playwright/.cache/
+# Turborepo cache
+.turbo

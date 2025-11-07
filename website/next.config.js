@@ -6,10 +6,12 @@ const remarkPlugins = require('./src/lib/docs/remark-plugins');
 
 module.exports = {
   typescript: {
-    // Temporarily ignore type errors during build due to React 19 compatibility
+    // TODO: Re-enable type checking once React 19 compatibility issues are resolved
+    // Temporarily ignoring type errors due to React 19 stricter type checking
+    // See: https://react.dev/blog/2024/12/05/react-19
     ignoreBuildErrors: true,
   },
-  // Empty turbopack config to silence the warning - webpack config still needed for MDX
+  // Empty turbopack config to acknowledge Turbopack as default bundler (Next.js 16)
   turbopack: {},
   pageExtensions: ['jsx', 'js', 'ts', 'tsx', 'mdx', 'md'],
   env: {

@@ -14919,47 +14919,47 @@ tunnel-agent@^0.6.0:
   dependencies:
     safe-buffer "^5.0.1"
 
-turbo-darwin-64@1.9.9:
-  version "1.9.9"
-  resolved "https://registry.yarnpkg.com/turbo-darwin-64/-/turbo-darwin-64-1.9.9.tgz#5bda12cbe8f2cd3ace2ec9b54fa638ed45d4965d"
-  integrity sha512-UDGM9E21eCDzF5t1F4rzrjwWutcup33e7ZjNJcW/mJDPorazZzqXGKEPIy9kXwKhamUUXfC7668r6ZuA1WXF2Q==
+turbo-darwin-64@2.6.0:
+  version "2.6.0"
+  resolved "https://registry.yarnpkg.com/turbo-darwin-64/-/turbo-darwin-64-2.6.0.tgz#5dd0e703239914ccabb519027261f01d639fe6de"
+  integrity sha512-6vHnLAubHj8Ib45Knu+oY0ZVCLO7WcibzAvt5b1E72YHqAs4y8meMAGMZM0jLqWPh/9maHDc16/qBCMxtW4pXg==
 
-turbo-darwin-arm64@1.9.9:
-  version "1.9.9"
-  resolved "https://registry.yarnpkg.com/turbo-darwin-arm64/-/turbo-darwin-arm64-1.9.9.tgz#ada42865b641a7ea0a7e450047ffe4b48d37a461"
-  integrity sha512-VyfkXzTJpYLTAQ9krq2myyEq7RPObilpS04lgJ4OO1piq76RNmSpX9F/t9JCaY9Pj/4TL7i0d8PM7NGhwEA5Ag==
+turbo-darwin-arm64@2.6.0:
+  version "2.6.0"
+  resolved "https://registry.yarnpkg.com/turbo-darwin-arm64/-/turbo-darwin-arm64-2.6.0.tgz#49dd7b03f2f93ce4f7623f885ee68cb8be58b11c"
+  integrity sha512-IU+gWMEXNBw8H0pxvE7nPEa5p6yahxbN8g/Q4Bf0AHymsAFqsScgV0peeNbWybdmY9jk1LPbALOsF2kY1I7ZiQ==
 
-turbo-linux-64@1.9.9:
-  version "1.9.9"
-  resolved "https://registry.yarnpkg.com/turbo-linux-64/-/turbo-linux-64-1.9.9.tgz#69a1f69ebfd90f0c5c68c321f57e84c6b870f106"
-  integrity sha512-Fu1MY29Odg8dHOqXcpIIGC3T63XLOGgnGfbobXMKdrC7JQDvtJv8TUCYciRsyknZYjyyKK1z6zKuYIiDjf3KeQ==
+turbo-linux-64@2.6.0:
+  version "2.6.0"
+  resolved "https://registry.yarnpkg.com/turbo-linux-64/-/turbo-linux-64-2.6.0.tgz#4fc80a29681052d69fdcbdc0fe22830bfa99bcc1"
+  integrity sha512-CKoiJ2ZFJLCDsWdRlZg+ew1BkGn8iCEGdePhISVpjsGwkJwSVhVu49z2zKdBeL1IhcSKS2YALwp9ellNZANJxw==
 
-turbo-linux-arm64@1.9.9:
-  version "1.9.9"
-  resolved "https://registry.yarnpkg.com/turbo-linux-arm64/-/turbo-linux-arm64-1.9.9.tgz#94806037067f527188eabf1ff2a210c6985f2a9d"
-  integrity sha512-50LI8NafPuJxdnMCBeDdzgyt1cgjQG7FwkyY336v4e95WJPUVjrHdrKH6jYXhOUyrv9+jCJxwX1Yrg02t5yJ1g==
+turbo-linux-arm64@2.6.0:
+  version "2.6.0"
+  resolved "https://registry.yarnpkg.com/turbo-linux-arm64/-/turbo-linux-arm64-2.6.0.tgz#d7a242316beba40cef239e75478b62ad620fe3e0"
+  integrity sha512-WroVCdCvJbrhNxNdw7XB7wHAfPPJPV+IXY+ZKNed+9VdfBu/2mQNfKnvqTuFTH7n+Pdpv8to9qwhXRTJe26upg==
 
-turbo-windows-64@1.9.9:
-  version "1.9.9"
-  resolved "https://registry.yarnpkg.com/turbo-windows-64/-/turbo-windows-64-1.9.9.tgz#ef7e8212541eb0fd657c709c6602466bf3702a8b"
-  integrity sha512-9IsTReoLmQl1IRsy3WExe2j2RKWXQyXujfJ4fXF+jp08KxjVF4/tYP2CIRJx/A7UP/7keBta27bZqzAjsmbSTA==
+turbo-windows-64@2.6.0:
+  version "2.6.0"
+  resolved "https://registry.yarnpkg.com/turbo-windows-64/-/turbo-windows-64-2.6.0.tgz#7aa77e9e81a16707e94a12ea0fc2df9c5d0b1fe0"
+  integrity sha512-7pZo5aGQPR+A7RMtWCZHusarJ6y15LQ+o3jOmpMxTic/W6Bad+jSeqo07TWNIseIWjCVzrSv27+0odiYRYtQdA==
 
-turbo-windows-arm64@1.9.9:
-  version "1.9.9"
-  resolved "https://registry.yarnpkg.com/turbo-windows-arm64/-/turbo-windows-arm64-1.9.9.tgz#35e77125c960431ad46b54e00c1b0b37140fa1bc"
-  integrity sha512-CUu4hpeQo68JjDr0V0ygTQRLbS+/sNfdqEVV+Xz9136vpKn2WMQLAuUBVZV0Sp0S/7i+zGnplskT0fED+W46wQ==
+turbo-windows-arm64@2.6.0:
+  version "2.6.0"
+  resolved "https://registry.yarnpkg.com/turbo-windows-arm64/-/turbo-windows-arm64-2.6.0.tgz#a614111eca81d9112d5b7c32f2e653709b1a0531"
+  integrity sha512-1Ty+NwIksQY7AtFUCPrTpcKQE7zmd/f7aRjdT+qkqGFQjIjFYctEtN7qo4vpQPBgCfS1U3ka83A2u/9CfJQ3wQ==
 
-turbo@^1.9.9:
-  version "1.9.9"
-  resolved "https://registry.yarnpkg.com/turbo/-/turbo-1.9.9.tgz#7dd311a8c8a5951fade94e92b4cbe1f8f9eb2160"
-  integrity sha512-+ZS66LOT7ahKHxh6XrIdcmf2Yk9mNpAbPEj4iF2cs0cAeaDU3xLVPZFF0HbSho89Uxwhx7b5HBgPbdcjQTwQkg==
+turbo@^2.6.0:
+  version "2.6.0"
+  resolved "https://registry.yarnpkg.com/turbo/-/turbo-2.6.0.tgz#7a649587f5e873d7ec408d39f1d7ae6ac2054cde"
+  integrity sha512-kC5VJqOXo50k0/0jnJDDjibLAXalqT9j7PQ56so0pN+81VR4Fwb2QgIE9dTzT3phqOTQuEXkPh3sCpnv5Isz2g==
   optionalDependencies:
-    turbo-darwin-64 "1.9.9"
-    turbo-darwin-arm64 "1.9.9"
-    turbo-linux-64 "1.9.9"
-    turbo-linux-arm64 "1.9.9"
-    turbo-windows-64 "1.9.9"
-    turbo-windows-arm64 "1.9.9"
+    turbo-darwin-64 "2.6.0"
+    turbo-darwin-arm64 "2.6.0"
+    turbo-linux-64 "2.6.0"
+    turbo-linux-arm64 "2.6.0"
+    turbo-windows-64 "2.6.0"
+    turbo-windows-arm64 "2.6.0"
 
 tweetnacl@^0.14.3, tweetnacl@~0.14.0:
   version "0.14.5"

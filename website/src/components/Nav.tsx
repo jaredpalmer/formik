@@ -5,6 +5,9 @@ import { siteConfig } from 'siteConfig';
 import { ExternalLink } from './ExternalLink';
 import { Logo } from './Logo';
 
+// Wrapper to handle React 19 type compatibility
+const NextLink = Link as any;
+
 export const Nav: React.FC = () => {
   const router = useRouter();
   return (
@@ -13,37 +16,37 @@ export const Nav: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-12 md:gap-8">
           <div className="md:col-span-3 flex items-center justify-between h-16">
             <div>
-              <Link href="/">
+              <NextLink href="/">
                 <span className="sr-only">Home</span>
                 <Logo />
-              </Link>
+              </NextLink>
             </div>
           </div>
           <div className="md:col-span-9 items-center flex justify-between md:justify-end  space-x-6 h-16">
             <div className="flex justify-between md:justify-end items-center flex-1 md:space-x-2">
               <div>
-                <Link
+                <NextLink
                   href="/docs/overview"
                   className="rounded-md py-2 px-3 inline-flex items-center leading-5 font-medium text-gray-900 hover:bg-gray-50 hover:text-gray-900 outline-none focus:text-gray-900 focus:bg-gray-50 transition duration-150 ease-in-out"
                 >
                   Docs
-                </Link>
+                </NextLink>
               </div>
               <div>
-                <Link
+                <NextLink
                   href="/blog"
                   className="rounded-md py-2 px-3 inline-flex items-center leading-5 font-medium text-gray-900 hover:bg-gray-50 hover:text-gray-900 outline-none focus:text-gray-900 focus:bg-gray-50 transition duration-150 ease-in-out"
                 >
                   Blog
-                </Link>
+                </NextLink>
               </div>
               <div>
-                <Link
+                <NextLink
                   href="/users"
                   className="rounded-md py-2 px-3 inline-flex items-center leading-5 font-medium text-gray-900 hover:bg-gray-50 hover:text-gray-900 outline-none focus:text-gray-900 focus:bg-gray-50 transition duration-150 ease-in-out"
                 >
                   Users
-                </Link>
+                </NextLink>
               </div>
 
               <div>

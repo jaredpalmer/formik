@@ -2,6 +2,9 @@ import React from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 
+// Wrapper to handle React 19 type compatibility
+const NextHead = Head as any;
+
 export interface SeoProps {
   title: string;
   description?: string;
@@ -18,7 +21,7 @@ export const Seo: React.FC<SeoProps> = ({
 }: SeoProps) => {
   const router = useRouter();
   return (
-    <Head>
+    <NextHead>
       {/* DEFAULT */}
 
       {title != undefined && <title key="title">{title}</title>}
@@ -80,6 +83,6 @@ export const Seo: React.FC<SeoProps> = ({
       )}
 
       {children}
-    </Head>
+    </NextHead>
   );
 };

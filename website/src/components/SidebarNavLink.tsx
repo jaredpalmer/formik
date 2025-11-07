@@ -3,6 +3,9 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import cn from 'classnames';
 
+// Wrapper to handle React 19 type compatibility
+const NextLink = Link as any;
+
 export interface SidebarNavLinkProps {
   route: any;
   level: number;
@@ -27,7 +30,7 @@ export function SidebarNavLink({
             {title}
           </a>
         ) : (
-          <Link href={pathname}>{title}</Link>
+          <NextLink href={pathname}>{title}</NextLink>
         )
       }
       <style jsx>{`

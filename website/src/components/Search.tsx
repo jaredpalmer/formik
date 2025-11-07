@@ -6,6 +6,9 @@ import Head from 'next/head';
 import { useDocSearchKeyboardEvents } from '@docsearch/react';
 import { siteConfig } from 'siteConfig';
 
+// Wrapper to handle React 19 type compatibility
+const NextLink = Link as any;
+
 export interface SearchProps {
   appId?: string;
   apiKey?: string;
@@ -15,7 +18,7 @@ export interface SearchProps {
 }
 
 function Hit({ hit, children }: any) {
-  return <Link href={hit.url.replace()}>{children}</Link>;
+  return <NextLink href={hit.url.replace()}>{children}</NextLink>;
 }
 
 const options = {

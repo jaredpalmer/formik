@@ -1,6 +1,5 @@
 {
   "title": "Guides",
-  "defaultOpen": true,
   "pages": [
     "validation",
     "arrays",

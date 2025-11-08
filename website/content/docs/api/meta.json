@@ -2,17 +2,14 @@
   "title": "API Reference",
   "pages": [
     "formik",
-    "---Components---",
     "field",
     "fastfield",
     "fieldarray",
     "form",
     "errormessage",
-    "---Hooks---",
     "useFormik",
     "useField",
     "useFormikContext",
-    "---Higher Order Components---",
     "withFormik",
     "connect"
   ]

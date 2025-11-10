@@ -57,7 +57,7 @@ export interface ArrayHelpers<T extends any[] = any[]> {
   handleRemove: (index: number) => () => void;
   /** Curried fn to remove a value from the end of the array */
   handlePop: () => () => void;
-  /** Imperatively remove and element at an index of an array */
+  /** Imperatively remove an element at an index of an array */
   remove<X extends T[number] = T[number]>(index: number): X | undefined;
   /** Imperatively remove and return value from the end of the array */
   pop<X extends T[number] = T[number]>(): X | undefined;

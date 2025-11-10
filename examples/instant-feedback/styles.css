@@ -183,9 +183,10 @@ input[type='number'] {
   input[type='email'],
   input[type='text'],
   input[type='number'] {
-    background-color: var(--gray-700);
-    border-color: var(--gray-700);
+    background-color: var(--gray-500);
+    border-color: rgb(35, 236, 236);
     color: white;
+    box-shadow: 0px -4px 4px rgba(8, 75, 75, 0.5) inset,1px 4px 4px rgba(8, 75, 75, 0.5) inset;
   }
 }
 
@@ -297,7 +298,7 @@ input[type='checkbox'] {
 @media (prefers-color-scheme: dark) {
   input[type='checkbox'] {
     background-color: var(--gray-900);
-    border-color: white;
+    border-color: rgb(155, 100, 100);
   }
 }
 
@@ -683,6 +684,8 @@ button[type='submit'],
 button[type='reset'] {
   margin-top: 1rem;
   margin-bottom: 0;
+  color: rgb(53, 53, 53);
+  background-color: rgb(35, 236, 236);
 }
 
 .app {
@@ -695,6 +698,7 @@ button[type='reset'] {
   padding: 1rem;
   border: 1px solid var(--gray-200);
   border-radius: var(--border-radius);
+  color: rgb(35, 236, 236);
 }
 
 .example label:first-child,
@@ -704,7 +708,8 @@ button[type='reset'] {
 
 @media (prefers-color-scheme: dark) {
   .example {
-    border: 1px solid var(--gray-700);
+    border: 1px solid rgb(35, 236, 236);
+    box-shadow: 4px 6px 4px 4px rgba(35, 236, 236, 0.5);
   }
 }
 

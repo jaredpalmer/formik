@@ -804,43 +804,52 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     );
   });
 
+ 
+
+// This change ensures:
+//  Proper native validation (e.g., HTML5 required fields)
+//  Defensive programming with event handling
+//  Developer guidance for proper button usage
+//  Controlled async submit error logging
+ 
   const handleSubmit = useEventCallback(
-    (e?: React.FormEvent<HTMLFormElement>) => {
-      if (e && e.preventDefault && isFunction(e.preventDefault)) {
-        e.preventDefault();
-      }
-
-      if (e && e.stopPropagation && isFunction(e.stopPropagation)) {
-        e.stopPropagation();
-      }
-
-      // Warn if form submission is triggered by a <button> without a
-      // specified `type` attribute during development. This mitigates
-      // a common gotcha in forms with both reset and submit buttons,
-      // where the dev forgets to add type="button" to the reset button.
-      if (__DEV__ && typeof document !== 'undefined') {
-        // Safely get the active element (works with IE)
-        const activeElement = getActiveElement();
-        if (
-          activeElement !== null &&
-          activeElement instanceof HTMLButtonElement
-        ) {
-          invariant(
-            activeElement.attributes &&
-              activeElement.attributes.getNamedItem('type'),
-            'You submitted a Formik form using a button with an unspecified `type` attribute.  Most browsers default button elements to `type="submit"`. If this is not a submit button, please add `type="button"`.'
-          );
-        }
-      }
-
-      submitForm().catch(reason => {
-        console.warn(
-          `Warning: An unhandled error was caught from submitForm()`,
-          reason
-        );
-      });
+  (e?: React.FormEvent<HTMLFormElement>) => {
+    const form = e?.currentTarget;
+    if (form && typeof form.reportValidity === 'function' && !form.reportValidity()) {
+      return; 
     }
-  );
+
+
+    if (e && e.preventDefault && isFunction(e.preventDefault)) {
+      e.preventDefault();
+    }
+
+    if (e && e.stopPropagation && isFunction(e.stopPropagation)) {
+      e.stopPropagation();
+    }
+    if (__DEV__ && typeof document !== 'undefined') {
+      const activeElement = getActiveElement();
+      if (
+        activeElement !== null &&
+        activeElement instanceof HTMLButtonElement
+      ) {
+        invariant(
+          activeElement.attributes &&
+            activeElement.attributes.getNamedItem('type'),
+          'You submitted a Formik form using a button with an unspecified `type` attribute. Most browsers default button elements to `type="submit"`. If this is not a submit button, please add `type="button"`.'
+        );
+      }
+    }
+
+    submitForm().catch(reason => {
+      console.warn(
+        `Warning: An unhandled error was caught from submitForm()`,
+        reason
+      );
+    });
+  }
+);
+
 
   const imperativeMethods: FormikHelpers<Values> = {
     resetForm,

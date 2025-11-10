@@ -22,6 +22,12 @@ const deepNestedSchema = Yup.object({
   }),
 });
 
+const whenContextSchema = Yup.object().shape({
+  name: Yup.string().when('$isNameRequired', (isNameRequired, schema) => {
+    return isNameRequired ? schema.required('name is required') : schema;
+  }),
+});
+
 describe('Yup helpers', () => {
   describe('yupToFormErrors()', () => {
     it('should transform Yup ValidationErrors into an object', async () => {
@@ -107,6 +113,18 @@ describe('Yup helpers', () => {
         expect((e as Yup.ValidationError).errors).toEqual([
           'object2.nestedFieldWithRef must be less than or equal to 23',
         ]);
+      }
+    });
+
+    it('should provide context values as context to when method', async () => {
+      try {
+        await validateYupSchema({ name: '' }, whenContextSchema, false, {
+          isNameRequired: true,
+        });
+      } catch (e) {
+        const err = e as Yup.ValidationError;
+        expect(err.name).toEqual('ValidationError');
+        expect(err.errors).toEqual(['name is required']);
       }
     });
   });

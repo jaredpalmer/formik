@@ -112,6 +112,7 @@ describe('withFormik()', () => {
       validateOnBlur: true,
       validateOnMount: false,
       validateOnChange: true,
+      validateAfterSubmit: false,
     });
   });
 

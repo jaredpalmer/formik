@@ -252,7 +252,7 @@ export const FieldLevelValidationExample = () => (
 
 ## When Does Validation Run?
 
-You can control when Formik runs validation by changing the values of `<Formik validateOnChange>` and/or `<Formik validateOnBlur>` props depending on your needs. By default, Formik will run validation methods as follows:
+You can control when Formik runs validation by changing the values of `<Formik validateOnChange>`, `<Formik validateOnBlur>`, and/or `<Formik validateAfterSubmit>` props depending on your needs. By default, Formik will run validation methods as follows:
 
 **After "change" events/methods** (things that update`values`)
 

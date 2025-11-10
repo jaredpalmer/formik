@@ -128,7 +128,7 @@ export interface FormikHelpers<Values> {
  */
 export interface FormikHandlers {
   /** Form submit handler */
-  handleSubmit: (e?: React.FormEvent<HTMLFormElement>) => void;
+  handleSubmit: (e?: React.FormEvent<HTMLFormElement> | any, extraArgs?: any) => void;
   /** Reset form event handler  */
   handleReset: (e?: React.SyntheticEvent<any>) => void;
   handleBlur: {
@@ -221,7 +221,8 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
    */
   onSubmit: (
     values: Values,
-    formikHelpers: FormikHelpers<Values>
+    formikHelpers: FormikHelpers<Values>,
+    extraArgs: any
   ) => void | Promise<any>;
   /**
    * A Yup Schema or a function that returns a Yup schema

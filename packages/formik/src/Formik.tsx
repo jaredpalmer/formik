@@ -5,6 +5,7 @@ import * as React from 'react';
 import isEqual from 'react-fast-compare';
 import invariant from 'tiny-warning';
 import { FieldConfig } from './Field';
+
 import { FormikProvider } from './FormikContext';
 import {
   FieldHelperProps,
@@ -151,6 +152,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   const initialErrors = React.useRef(props.initialErrors || emptyErrors);
   const initialTouched = React.useRef(props.initialTouched || emptyTouched);
   const initialStatus = React.useRef(props.initialStatus);
+  const extraArgsOnSubmit=React.useRef(undefined);
   const isMounted = React.useRef<boolean>(false);
   const fieldRegistry = React.useRef<FieldRegistry>({});
   if (__DEV__) {
@@ -804,8 +806,15 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     );
   });
 
-  const handleSubmit = useEventCallback(
-    (e?: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = useEventCallback(function 
+    (e?: React.FormEvent<HTMLFormElement> | any ,extraArgs?: any) {
+
+      extraArgsOnSubmit.current=extraArgs;
+     
+      if(!(e && e.preventDefault)){
+        extraArgsOnSubmit.current=e as any;
+      }
+
       if (e && e.preventDefault && isFunction(e.preventDefault)) {
         e.preventDefault();
       }
@@ -859,7 +868,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   };
 
   const executeSubmit = useEventCallback(() => {
-    return onSubmit(state.values, imperativeMethods);
+    return onSubmit(state.values, imperativeMethods,extraArgsOnSubmit?.current);
   });
 
   const handleReset = useEventCallback(e => {

@@ -454,6 +454,90 @@ describe('<Formik>', () => {
         fireEvent.click(screen.getByTestId('submit-button'));
       }).not.toThrow();
     });
+    it('should call onSubmit with the extra argument as the 3rd argument, By Pass the extra argument as second argument of handleSubmit',async () => {
+      const onSubmitMock = jest.fn();
+    
+      const FormWithArgument = (
+        <Formik initialValues={{ name: 'jared' }} onSubmit={ onSubmitMock}>
+          {({ handleSubmit }) => (
+            <form  onSubmit={(event) =>{handleSubmit(event ,"extra-arg")}}>
+            <button
+              data-testid="submit-button"
+              type='submit'
+              />
+              </form>
+          )}
+        </Formik>
+      );
+    
+      render(FormWithArgument);
+      act(()=>{
+
+        fireEvent.click(screen.getByTestId('submit-button'));
+      })
+    
+  
+      await waitFor(()=>{
+
+        expect(onSubmitMock).toHaveBeenCalledWith(
+          { name: 'jared' },
+          expect.objectContaining({
+            resetForm: expect.any(Function),
+            setErrors: expect.any(Function),
+            setFieldError: expect.any(Function),
+            setFieldTouched: expect.any(Function),
+            setFieldValue: expect.any(Function),
+            setStatus: expect.any(Function),
+            setSubmitting: expect.any(Function),
+            setTouched: expect.any(Function),
+            setValues: expect.any(Function),
+          }),
+          "extra-arg",
+        )
+      });
+      })
+      
+    it('should call onSubmit with the extra argument as the 3rd argument.By pass the extra argument as first argument of handleSubmit',async () => {
+      const onSubmitMock = jest.fn();
+    
+      const FormWithArgument = (
+        <Formik initialValues={{ name: 'jared' }} onSubmit={ onSubmitMock}>
+          {({ handleSubmit }) => (
+            <button
+              data-testid="submit-button"
+              onClick={() =>{handleSubmit("event")}}
+            />
+          )}
+        </Formik>
+      );
+    
+      render(FormWithArgument);
+      act(()=>{
+
+        fireEvent.click(screen.getByTestId('submit-button'));
+      })
+    
+  
+      await waitFor(()=>{
+
+        expect(onSubmitMock).toHaveBeenCalledWith(
+          { name: 'jared' },
+          expect.objectContaining({
+            resetForm: expect.any(Function),
+            setErrors: expect.any(Function),
+            setFieldError: expect.any(Function),
+            setFieldTouched: expect.any(Function),
+            setFieldValue: expect.any(Function),
+            setStatus: expect.any(Function),
+            setSubmitting: expect.any(Function),
+            setTouched: expect.any(Function),
+            setValues: expect.any(Function),
+          }),
+          "event",
+        )
+      });
+      })
+    
 
     it('should not error if onSubmit throws an error', () => {
       const FormNoPreventDefault = (

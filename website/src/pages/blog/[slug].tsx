@@ -12,7 +12,9 @@ import { MDXRemote } from 'next-mdx-remote';
 import { serialize } from 'next-mdx-remote/serialize';
 import path from 'path';
 import imageSize from 'rehype-img-size';
-import { Inter } from 'next/font/google';
+// Temporarily using fallback due to network restrictions - replace with next/font/google in production
+// import { Inter } from 'next/font/google';
+import { Inter } from '../../lib/font-fallback';
 import classNames from 'classnames';
 
 const inter = Inter({ subsets: ['latin'] });

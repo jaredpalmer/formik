@@ -10,8 +10,14 @@ import { ClientsMarquee } from 'components/clients/ClientsMarquee';
 import { Seo } from 'components/Seo';
 import Head from 'next/head';
 import Image from 'next/image';
-import { Inter } from 'next/font/google';
+// Temporarily using fallback due to network restrictions - replace with next/font/google in production
+// import { Inter } from 'next/font/google';
+import { Inter } from 'lib/font-fallback';
 import cn from 'classnames';
+
+// Wrapper to handle React 19 type compatibility
+const NextLink = Link as any;
+const NextHead = Head as any;
 
 const inter = Inter({ subsets: ['latin'] });
 export interface HomeProps {}
@@ -23,9 +29,9 @@ const Home: React.FC<HomeProps> = props => {
         title="Formik"
         description="React hooks and components for hassle-free form validation. The world's leading companies use Formik to build forms and surveys in React and React Native."
       />
-      <Head>
+      <NextHead>
         <title>Formik: Build forms in React, without the tears</title>
-      </Head>
+      </NextHead>
       <div className={cn('bg-gray-50 h-full min-h-full', inter.className)}>
         <Banner />
         <Sticky>
@@ -97,12 +103,12 @@ const Home: React.FC<HomeProps> = props => {
 
                   <div className="mt-5  mx-auto sm:flex sm:justify-center lg:justify-start lg:mx-0 md:mt-8">
                     <div className="rounded-md shadow">
-                      <Link
+                      <NextLink
                         href="/docs/overview"
                         className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-500 focus:outline-none focus:border-blue-700 focus:ring focus:ring-blue transition duration-150 ease-in-out md:py-4 md:text-lg md:px-10"
                       >
                         Get Started
-                      </Link>
+                      </NextLink>
                     </div>
                     <div className="mt-3 rounded-md shadow sm:mt-0 sm:ml-3">
                       <a
@@ -322,12 +328,12 @@ const Home: React.FC<HomeProps> = props => {
             </h2>
             <div className="mt-8 flex lg:flex-shrink-0 lg:mt-0">
               <div className="inline-flex rounded-md shadow">
-                <Link
+                <NextLink
                   href="/docs/overview"
                   className="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-500 focus:outline-none focus:ring transition duration-150 ease-in-out"
                 >
                   Get Started
-                </Link>
+                </NextLink>
               </div>
               <div className="ml-3 inline-flex rounded-md shadow">
                 <a

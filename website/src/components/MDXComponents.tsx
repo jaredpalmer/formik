@@ -4,6 +4,9 @@ import Image from 'next/image';
 import Head from 'next/head';
 import Link from 'next/link';
 
+// Wrapper to handle React 19 type compatibility
+const NextLink = Link as any;
+
 const Img = (props: any) => (
   <Image
     {...props}
@@ -21,6 +24,6 @@ export default {
   pre: (p: any) => <div {...p} />,
   img: Img,
   code: dynamic(() => import('./Highlight2')),
-  a: Link,
+  a: NextLink,
   Head,
 };

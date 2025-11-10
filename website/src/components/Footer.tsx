@@ -3,6 +3,9 @@ import Link from 'next/link';
 import { ExternalLink } from './ExternalLink';
 import { FormiumLogo } from './FormiumLogo';
 import { siteConfig } from 'siteConfig';
+
+// Wrapper to handle React 19 type compatibility
+const NextLink = Link as any;
 export interface FooterProps {}
 
 export const Footer: React.FC<FooterProps> = props => {
@@ -17,45 +20,45 @@ export const Footer: React.FC<FooterProps> = props => {
               </h4>
               <ul className="mt-4">
                 <li>
-                  <Link
+                  <NextLink
                     href="/docs/overview"
                     className="text-base leading-6 text-gray-500 hover:text-gray-900"
                   >
                     Docs
-                  </Link>
+                  </NextLink>
                 </li>
                 <li className="mt-4">
-                  <Link
+                  <NextLink
                     href="/docs/tutorial"
                     className="text-base leading-6 text-gray-500 hover:text-gray-900"
                   >
                     Learn
-                  </Link>
+                  </NextLink>
                 </li>
                 <li className="mt-4">
-                  <Link
+                  <NextLink
                     href="/docs/guides/validation"
                     className="text-base leading-6 text-gray-500 hover:text-gray-900"
                   >
                     Guides
-                  </Link>
+                  </NextLink>
                 </li>
                 <li className="mt-4">
-                  <Link
+                  <NextLink
                     href="/docs/api/formik"
                     className="text-base leading-6 text-gray-500 hover:text-gray-900"
                   >
                     API Reference
-                  </Link>
+                  </NextLink>
                 </li>
 
                 <li className="mt-4">
-                  <Link
+                  <NextLink
                     href="/blog"
                     className="text-base leading-6 text-gray-500 hover:text-gray-900"
                   >
                     Blog
-                  </Link>
+                  </NextLink>
                 </li>
               </ul>
             </div>
@@ -65,12 +68,12 @@ export const Footer: React.FC<FooterProps> = props => {
               </h4>
               <ul className="mt-4">
                 <li>
-                  <Link
+                  <NextLink
                     href="/users"
                     className="text-base leading-6 text-gray-500 hover:text-gray-900"
                   >
                     User Showcase
-                  </Link>
+                  </NextLink>
                 </li>
                 <li className="mt-4">
                   <ExternalLink

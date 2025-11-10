@@ -7,7 +7,9 @@ import { Nav } from 'components/Nav';
 import { Container } from 'components/Container';
 import { Seo } from 'components/Seo';
 import { users } from 'users';
-import { Inter } from 'next/font/google';
+// Temporarily using fallback due to network restrictions - replace with next/font/google in production
+// import { Inter } from 'next/font/google';
+import { Inter } from '../lib/font-fallback';
 import cn from 'classnames';
 const inter = Inter({ subsets: ['latin'] });
 

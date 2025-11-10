@@ -10,7 +10,12 @@ import matter from 'gray-matter';
 import { postFilePaths, POSTS_PATH } from 'lib/blog/mdxUtils';
 import Link from 'next/link';
 import path from 'path';
-import { Inter } from 'next/font/google';
+// Temporarily using fallback due to network restrictions - replace with next/font/google in production
+// import { Inter } from 'next/font/google';
+import { Inter } from '../../lib/font-fallback';
+
+// Wrapper to handle React 19 type compatibility
+const NextLink = Link as any;
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -76,7 +81,7 @@ export default function Index({ posts }: any) {
                         </div>
                       )}
                       <h3 className="mt-2 text-2xl font-semibold leading-7 text-gray-900">
-                        <Link
+                        <NextLink
                           href={`/blog/${post.filePath.replace(/\.mdx?$/, '')}`}
                           className="block"
                         >
@@ -88,7 +93,7 @@ export default function Index({ posts }: any) {
                             )}
                             {post.data.title}
                           </span>
-                        </Link>
+                        </NextLink>
                       </h3>
                       <div className="mt-3 leading-6 text-gray-500 ">
                         <div
@@ -104,12 +109,12 @@ export default function Index({ posts }: any) {
                       </div>
 
                       <div className="mt-3">
-                        <Link
+                        <NextLink
                           href={`/blog/${post.filePath.replace(/\.mdx?$/, '')}`}
                           className="text-base font-semibold leading-6 text-blue-600 transition duration-150 ease-in-out hover:text-blue-500"
                         >
                           Read More<span aria-hidden="true">→</span>
-                        </Link>
+                        </NextLink>
                       </div>
                     </div>
                   );

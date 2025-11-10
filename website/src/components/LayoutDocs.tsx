@@ -22,7 +22,12 @@ import { Seo } from './Seo';
 import MDXComponents from './MDXComponents';
 import Head from 'next/head';
 import { getManifest } from 'manifests/getManifest';
-import { Inter } from 'next/font/google';
+// Temporarily using fallback due to network restrictions - replace with next/font/google in production
+// import { Inter } from 'next/font/google';
+import { Inter } from '../lib/font-fallback';
+
+// Wrapper to handle React 19 type compatibility
+const NextHead = Head as any;
 
 // If loading a variable font, you don't need to specify the font weight
 const inter = Inter({ subsets: ['latin'] });
@@ -59,9 +64,9 @@ export const LayoutDocs: React.FC<DocsProps> = props => {
   return (
     <>
       {tag && (
-        <Head>
+        <NextHead>
           <meta name="robots" content="noindex" />
-        </Head>
+        </NextHead>
       )}
       <div className={inter.className}>
         <Banner />

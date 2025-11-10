@@ -5,6 +5,9 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import * as React from 'react';
 
+// Wrapper to handle React 19 type compatibility
+const NextHead = Head as any;
+
 import s from 'components/markdown.module.css';
 import { Banner } from 'components/Banner';
 import { SidebarCategory } from 'components/SidebarCategory';
@@ -37,7 +40,9 @@ import MDXComponents from 'components/MDXComponents';
 import { serialize } from 'next-mdx-remote/serialize';
 import { MDXRemote } from 'next-mdx-remote';
 import rehypeDocs from 'lib/docs/rehype-docs';
-import { Inter } from 'next/font/google';
+// Temporarily using fallback due to network restrictions - replace with next/font/google in production
+// import { Inter } from 'next/font/google';
+import { Inter } from '../../lib/font-fallback';
 
 const inter = Inter({ subsets: ['latin'] });
 interface DocsProps {
@@ -86,9 +91,9 @@ export default function Docs({ page, routes, route: _route }: DocsProps) {
   return (
     <>
       {tag && (
-        <Head>
+        <NextHead>
           <meta name="robots" content="noindex" />
-        </Head>
+        </NextHead>
       )}
       <div className={inter.className}>
         <Banner />

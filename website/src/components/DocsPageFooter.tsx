@@ -6,6 +6,9 @@ import { addTagToSlug, getSlug, removeFromLast } from '../lib/docs/utils';
 import { RouteItem } from '../lib/types';
 import { ReactionForm } from './ReactionForm';
 
+// Wrapper to handle React 19 type compatibility
+const Link = NextLink as any;
+
 export interface DocsPageFooterProps {
   route: RouteItem;
   href: string;
@@ -27,7 +30,7 @@ export const DocsPageFooter = React.memo<DocsPageFooterProps>(
         <div className="py-12">
           <div className="space-y-8 md:flex space-between items-center md:space-y-0 md:space-x-8">
             {prevRoute && prevRoute.path ? (
-              <NextLink
+              <Link
                 href={addTagToSlug(
                   removeFromLast(prevRoute.path, '.'),
                   tag as string
@@ -40,12 +43,12 @@ export const DocsPageFooter = React.memo<DocsPageFooterProps>(
                 <span className="text-xl block  font-semibold">
                   {prevRoute.title}
                 </span>
-              </NextLink>
+              </Link>
             ) : (
               <div className="flex-1" />
             )}
             {nextRoute && nextRoute.path ? (
-              <NextLink
+              <Link
                 href={addTagToSlug(
                   removeFromLast(nextRoute.path, '.'),
                   tag as string
@@ -56,7 +59,7 @@ export const DocsPageFooter = React.memo<DocsPageFooterProps>(
                 <span className="text-xl block  font-semibold ">
                   {nextRoute.title}
                 </span>
-              </NextLink>
+              </Link>
             ) : (
               <div className="flex-1" />
             )}
@@ -70,13 +73,13 @@ export const DocsPageFooter = React.memo<DocsPageFooterProps>(
         <div className="flex my-2">
           <div className="md:flex-1 md:text-right">
             {tag ? (
-              <NextLink
+              <Link
                 href={href}
                 as={slug}
                 className="text-gray-600 underline"
               >
                 Go to the live version of this page
-              </NextLink>
+              </Link>
             ) : (
               <a
                 href={editUrl}

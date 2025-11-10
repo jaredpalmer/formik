@@ -139,7 +139,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   enableReinitialize = false,
   onSubmit,
   ...rest
-}: FormikConfig<Values>) {
+}: FormikConfig<Values>): FormikProps<Values> {
   const props = {
     validateOnChange,
     validateOnBlur,
@@ -995,6 +995,8 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     validateOnBlur,
     validateOnChange,
     validateOnMount,
+    isInitialValid,
+    enableReinitialize,
   };
 
   return ctx;

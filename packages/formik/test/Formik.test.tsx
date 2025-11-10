@@ -1547,4 +1547,45 @@ describe('<Formik>', () => {
 
     expect(InitialValuesWithNestedObject.content.items[0].cards[0].desc).toEqual('Initial Desc');
   });
+
+  it('Should run validation on actual values when tirggering setFieldTouched after setFieldValue', async () => {
+
+    const validationShema = {
+      validate: jest.fn(() => Promise.resolve({})),
+    }
+
+    render(
+      <Formik
+        initialValues={InitialValues}
+        onSubmit={noop}
+        validationSchema={validationShema}
+      >
+        {formikProps => (
+          <input
+            data-testid="desc-input"
+            value={formikProps.values.name}
+            onChange={e => {
+              formikProps.setFieldValue('name', e.target.value);
+              formikProps.setFieldTouched('name', true);
+            }}
+          />
+        )}
+      </Formik>
+    );
+
+    const input = screen.getByTestId('desc-input');
+
+    fireEvent.change(input, {
+      target: {
+        value: 'New Value',
+      },
+    });
+
+    await waitFor(() => {
+      expect(validationShema.validate).toHaveBeenLastCalledWith(
+        { age: 30, name: 'New Value' },
+        { abortEarly: false, context: { age: 30, name: 'New Value' } }
+      );
+    });
+  });
 });

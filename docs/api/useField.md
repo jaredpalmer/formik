@@ -5,6 +5,8 @@ title: useField()
 
 `useField` is a React hook used to thread Formik behaviors into arbitrary field components. It provides the greatest amount of flexibility for scenarios where `Field` is inappropriate. There are two ways to use it.
 
+> This component should be used in formik context spawned by `<Form>` or `useFormikContext`, otherwise `useField` won't work.
+
 ## Example
 
 ```tsx

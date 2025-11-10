@@ -14,7 +14,7 @@ const inter = Inter({ subsets: ['latin'] });
 export interface UsersProps {}
 
 const Users: React.FC<UsersProps> = props => {
-  const editUrl = `${siteConfig.repoUrl}/edit/master/website/src/users.ts`;
+  const editUrl = `${siteConfig.repoUrl}/edit/main/website/src/users.ts`;
   const showcase = users.map(user => (
     <a
       href={user.infoLink}
@@ -67,7 +67,7 @@ const Users: React.FC<UsersProps> = props => {
               href={editUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center justify-center max-w-sm px-8 py-3 mx-auto text-base text-xl font-medium leading-6 text-white transition duration-150 ease-in-out bg-blue-600 border border-transparent rounded-md hover:bg-blue-500 focus:outline-none focus:border-blue-700 focus:ring focus:ring-blue md:py-4 md:text-lg md:px-10"
+              className="flex items-center justify-center max-w-sm px-8 py-3 mx-auto text-base font-medium leading-6 text-white transition duration-150 ease-in-out bg-blue-600 border border-transparent rounded-md hover:bg-blue-500 focus:outline-none focus:border-blue-700 focus:ring focus:ring-blue md:py-4 md:text-lg md:px-10"
             >
               Add your company
             </a>

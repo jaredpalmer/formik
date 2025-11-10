@@ -6,7 +6,7 @@ description: Formik conference talks, courses, videos, blog posts, learning reso
 
 ## Conference Talks
 
-- [Taming Forms in React](https://jaredpalmer.com/blog/formik-taming-forms-in-react) by
+- [Taming Forms in React](https://jaredpalmer.com/blog/taming-forms-in-react) by
   [Jared Palmer](https://twitter.com/jaredpalmer) @ React Alicante - Sep 15, 2018
 - [An Introduction to Formik](https://youtu.be/-tDy7ds0dag?t=33s) by
   [Jared Palmer](https://twitter.com/jaredpalmer) @ Spotify NYC - Aug 15, 2017

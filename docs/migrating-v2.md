@@ -52,6 +52,41 @@ formik.resetForm({
   status: 'Foo',
 });
 ```
+### `handleChange`
+
+This method is deprecated in v2, use `setFieldValue` and `setValues` instead. Note that unlike `handleChange`, `setFieldValue` sets values asynchronously but validates synchronously, so for that reason if you have multiple fields to set, use `setValues`.
+
+**v1**
+
+```jsx
+const updateSingleField = (email) => {
+  handleChange('email')(email)
+}
+
+const updateMultipleFields = (name, email, phone) => {
+  handleChange('name')(name)
+  handleChange('email')(email)
+  handleChange('phone')(phone)
+}
+```
+
+**v2**
+
+```jsx
+const updateSingleField = (email) => {
+  setFieldValue('email', email)
+}
+
+// since setValues sets all the values, you need to pass in the rest of the form values
+const updateMultipleFields = (name, email, phone, values) => {
+  setValues({
+    ...values,
+    name,
+    email,
+    phone
+  });
+}
+```
 
 ### `setError`
 

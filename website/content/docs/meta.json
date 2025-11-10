@@ -1,0 +1,14 @@
+{
+  "title": "Documentation",
+  "root": true,
+  "pages": [
+    "overview",
+    "tutorial",
+    "guides",
+    "examples",
+    "api",
+    "resources",
+    "3rd-party-bindings",
+    "migrating-v2"
+  ]
+}

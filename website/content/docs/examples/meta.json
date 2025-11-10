@@ -1,0 +1,15 @@
+{
+  "title": "Examples",
+  "pages": [
+    "basic",
+    "typescript",
+    "async-submission",
+    "checkboxes",
+    "radio-group",
+    "dependent-fields",
+    "dependent-fields-async-api-request",
+    "field-arrays",
+    "instant-feedback",
+    "with-material-ui"
+  ]
+}

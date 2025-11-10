@@ -127,7 +127,10 @@ const emptyTouched: FormikTouched<unknown> = {};
 // and their validate functions
 interface FieldRegistry {
   [field: string]: {
-    validate: (value: any) => string | Promise<string> | undefined;
+    validate: (
+      value: any,
+      values: FormikValues
+    ) => string | Promise<string> | undefined;
   };
 }
 
@@ -269,9 +272,9 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   );
 
   const runSingleFieldLevelValidation = React.useCallback(
-    (field: string, value: void | string): Promise<string> => {
+    (field: string, value: void | string, values: Values): Promise<string> => {
       return new Promise(resolve =>
-        resolve(fieldRegistry.current[field].validate(value) as string)
+        resolve(fieldRegistry.current[field].validate(value, values) as string)
       );
     },
     []
@@ -287,7 +290,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
       const fieldValidations: Promise<string>[] =
         fieldKeysWithValidation.length > 0
           ? fieldKeysWithValidation.map(f =>
-              runSingleFieldLevelValidation(f, getIn(values, f))
+              runSingleFieldLevelValidation(f, getIn(values, f), values)
             )
           : [Promise.resolve('DO_NOT_DELETE_YOU_WILL_BE_FIRED')]; // use special case ;)
 
@@ -418,7 +421,12 @@ export function useFormik<Values extends FormikValues = FormikValues>({
         dispatchFn();
       }
     },
-    [props.initialErrors, props.initialStatus, props.initialTouched, props.onReset]
+    [
+      props.initialErrors,
+      props.initialStatus,
+      props.initialTouched,
+      props.onReset,
+    ]
   );
 
   React.useEffect(() => {
@@ -494,7 +502,10 @@ export function useFormik<Values extends FormikValues = FormikValues>({
       isFunction(fieldRegistry.current[name].validate)
     ) {
       const value = getIn(state.values, name);
-      const maybePromise = fieldRegistry.current[name].validate(value);
+      const maybePromise = fieldRegistry.current[name].validate(
+        value,
+        state.values
+      );
       if (isPromise(maybePromise)) {
         // Only flip isValidating if the function is async.
         dispatch({ type: 'SET_ISVALIDATING', payload: true });

@@ -41,8 +41,10 @@
   },
   "sideEffects": false,
   "scripts": {
-    "test": "tsdx test --env=jsdom",
-    "test:watch": "npm run test -- --watchAll",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest run --coverage",
     "start": "tsdx watch --tsconfig tsconfig.build.json --verbose --noClean",
     "build": "tsdx build --tsconfig tsconfig.build.json",
     "lint": "tsdx lint"
@@ -58,27 +60,21 @@
     "tslib": "^2.0.0"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.1.5",
     "@testing-library/react": "^14.0.0",
     "@types/lodash": "^4.14.119",
     "@types/react": "^18.2.7",
     "@types/react-dom": "^18.2.4",
     "@types/warning": "^3.0.0",
+    "@vitest/coverage-v8": "^1.0.4",
+    "@vitest/ui": "^1.0.4",
+    "jsdom": "^23.0.1",
     "just-debounce-it": "^1.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "tsdx": "^0.14.1",
     "typescript": "^4.0.3",
+    "vitest": "^1.0.4",
     "yup": "^0.32.0"
-  },
-  "jest": {
-    "globals": {
-      "__DEV__": "boolean"
-    },
-    "collectCoverageFrom": [
-      "src/**/*.{ts,tsx}"
-    ],
-    "setupFilesAfterEnv": [
-      "<rootDir>/test/setupTests.ts"
-    ]
   }
 }

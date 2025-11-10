@@ -108,7 +108,7 @@ yarn dev
 
 ### Test
 
-Runs jest on all projects
+Runs Vitest on all projects
 
 ```
 yarn test
@@ -146,7 +146,7 @@ yarn dev
 
 ### Unit testing
 
-This will run `Jest` unit tests
+This will run `Vitest` unit tests
 
 ```
 yarn test

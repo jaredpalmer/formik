@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { vi } from 'vitest';
 import { act, render, waitFor } from '@testing-library/react';
 import * as Yup from 'yup';
 
@@ -121,7 +122,7 @@ describe('withFormik()', () => {
   });
 
   it('calls validate with values and props', async () => {
-    const validate = jest.fn();
+    const validate = vi.fn();
     const myProps = { my: 'prop' };
     const { getProps } = renderWithFormik({ validate }, myProps);
 
@@ -134,7 +135,7 @@ describe('withFormik()', () => {
   });
 
   it('calls validationSchema', async () => {
-    const validate = jest.fn(() => Promise.resolve());
+    const validate = vi.fn(() => Promise.resolve());
     const { getProps } = renderWithFormik({
       validationSchema: { validate },
     });
@@ -146,7 +147,7 @@ describe('withFormik()', () => {
   });
 
   it('calls validationSchema function with props', async () => {
-    const validationSchema = jest.fn(() => Yup.object());
+    const validationSchema = vi.fn(() => Yup.object());
     const myProps = { my: 'prop' };
     const { getProps } = renderWithFormik(
       {
@@ -162,7 +163,7 @@ describe('withFormik()', () => {
   });
 
   it('calls handleSubmit with values, actions and custom props', async () => {
-    const handleSubmit = jest.fn();
+    const handleSubmit = vi.fn();
     const myProps = { my: 'prop' };
     const { getProps } = renderWithFormik(
       {

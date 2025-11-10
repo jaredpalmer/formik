@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { vi } from 'vitest';
 import {
   act,
   cleanup,
@@ -255,7 +256,7 @@ describe('Field / FastField', () => {
     });
 
     cases('assigns innerRef as a ref to string components', renderField => {
-      const innerRef = jest.fn();
+      const innerRef = vi.fn();
       const { container } = renderField({
         innerRef,
         component: 'input',
@@ -268,7 +269,7 @@ describe('Field / FastField', () => {
       let injected: any; /** FieldProps ;) */
       const Component = (props: FieldProps) => (injected = props) && null;
 
-      const innerRef = jest.fn();
+      const innerRef = vi.fn();
       renderField({ component: Component, innerRef });
       expect(injected.innerRef).toBe(innerRef);
     });
@@ -284,7 +285,7 @@ describe('Field / FastField', () => {
     });
 
     cases('assigns innerRef as a ref to string components', renderField => {
-      const innerRef = jest.fn();
+      const innerRef = vi.fn();
       const { container } = renderField({
         innerRef,
         as: 'input',
@@ -298,7 +299,7 @@ describe('Field / FastField', () => {
       const Component = (props: FieldProps['field']) =>
         (injected = props) && null;
 
-      const innerRef = jest.fn();
+      const innerRef = vi.fn();
       renderField({ as: Component, innerRef });
       expect(injected.innerRef).toBe(innerRef);
     });
@@ -306,7 +307,7 @@ describe('Field / FastField', () => {
 
   describe('validate', () => {
     cases('calls validate during onChange if present', async renderField => {
-      const validate = jest.fn();
+      const validate = vi.fn();
       const { getByTestId, rerender } = renderField({
         validate,
         component: 'input',
@@ -325,7 +326,7 @@ describe('Field / FastField', () => {
     cases(
       'does NOT call validate during onChange if validateOnChange is set to false',
       async renderField => {
-        const validate = jest.fn();
+        const validate = vi.fn();
         const { getByTestId, rerender } = renderField(
           { validate, component: 'input' },
           { validateOnChange: false }
@@ -342,7 +343,7 @@ describe('Field / FastField', () => {
     );
 
     cases('calls validate during onBlur if present', async renderField => {
-      const validate = jest.fn();
+      const validate = vi.fn();
       const { getByTestId, rerender } = renderField({
         validate,
         component: 'input',
@@ -360,7 +361,7 @@ describe('Field / FastField', () => {
     cases(
       'does NOT call validate during onBlur if validateOnBlur is set to false',
       async renderField => {
-        const validate = jest.fn();
+        const validate = vi.fn();
         const { getByTestId, rerender } = renderField(
           { validate, component: 'input' },
           { validateOnBlur: false }
@@ -379,7 +380,7 @@ describe('Field / FastField', () => {
     cases(
       'runs validation when validateField is called (SYNC)',
       async renderField => {
-        const validate = jest.fn(() => 'Error!');
+        const validate = vi.fn(() => 'Error!');
         const { getFormProps, rerender } = renderField({
           validate,
           component: 'input',
@@ -401,7 +402,7 @@ describe('Field / FastField', () => {
     cases(
       'runs validation when validateField is called (ASYNC)',
       async renderField => {
-        const validate = jest.fn(() => Promise.resolve('Error!'));
+        const validate = vi.fn(() => Promise.resolve('Error!'));
 
         const { getFormProps, rerender } = renderField({ validate });
 
@@ -473,12 +474,12 @@ describe('Field / FastField', () => {
 
   describe('warnings', () => {
     cases('warns about render prop deprecation', renderField => {
-      global.console.warn = jest.fn();
+      global.console.warn = vi.fn();
       const { rerender } = renderField({
         render: () => null,
       });
       rerender();
-      expect((global.console.warn as jest.Mock).mock.calls[0][0]).toContain(
+      expect((global.console.warn as vi.Mock).mock.calls[0][0]).toContain(
         'deprecated'
       );
     });
@@ -486,14 +487,14 @@ describe('Field / FastField', () => {
     cases(
       'warns if both string component and children as a function',
       renderField => {
-        global.console.warn = jest.fn();
+        global.console.warn = vi.fn();
 
         const { rerender } = renderField({
           component: 'select',
           children: () => <option value="Jared">{TEXT}</option>,
         });
         rerender();
-        expect((global.console.warn as jest.Mock).mock.calls[0][0]).toContain(
+        expect((global.console.warn as vi.Mock).mock.calls[0][0]).toContain(
           'Warning:'
         );
       }
@@ -502,14 +503,14 @@ describe('Field / FastField', () => {
     cases(
       'warns if both string as prop and children as a function',
       renderField => {
-        global.console.warn = jest.fn();
+        global.console.warn = vi.fn();
 
         const { rerender } = renderField({
           as: 'select',
           children: () => <option value="Jared">{TEXT}</option>,
         });
         rerender();
-        expect((global.console.warn as jest.Mock).mock.calls[0][0]).toContain(
+        expect((global.console.warn as vi.Mock).mock.calls[0][0]).toContain(
           'Warning:'
         );
       }
@@ -518,54 +519,54 @@ describe('Field / FastField', () => {
     cases(
       'warns if both non-string component and children children as a function',
       renderField => {
-        global.console.warn = jest.fn();
+        global.console.warn = vi.fn();
 
         const { rerender } = renderField({
           component: () => null,
           children: () => <option value="Jared">{TEXT}</option>,
         });
         rerender();
-        expect((global.console.warn as jest.Mock).mock.calls[0][0]).toContain(
+        expect((global.console.warn as vi.Mock).mock.calls[0][0]).toContain(
           'Warning:'
         );
       }
     );
 
     cases('warns if both string component and render', renderField => {
-      global.console.warn = jest.fn();
+      global.console.warn = vi.fn();
 
       const { rerender } = renderField({
         component: 'textarea',
         render: () => <option value="Jared">{TEXT}</option>,
       });
       rerender();
-      expect((global.console.warn as jest.Mock).mock.calls[0][0]).toContain(
+      expect((global.console.warn as vi.Mock).mock.calls[0][0]).toContain(
         'Warning:'
       );
     });
 
     cases('warns if both non-string component and render', renderField => {
-      global.console.warn = jest.fn();
+      global.console.warn = vi.fn();
 
       const { rerender } = renderField({
         component: () => null,
         render: () => <option value="Jared">{TEXT}</option>,
       });
       rerender();
-      expect((global.console.warn as jest.Mock).mock.calls[0][0]).toContain(
+      expect((global.console.warn as vi.Mock).mock.calls[0][0]).toContain(
         'Warning:'
       );
     });
 
     cases('warns if both children and render', renderField => {
-      global.console.warn = jest.fn();
+      global.console.warn = vi.fn();
 
       const { rerender } = renderField({
         children: <div>{TEXT}</div>,
         render: () => <div>{TEXT}</div>,
       });
       rerender();
-      expect((global.console.warn as jest.Mock).mock.calls[0][0]).toContain(
+      expect((global.console.warn as vi.Mock).mock.calls[0][0]).toContain(
         'Warning:'
       );
     });

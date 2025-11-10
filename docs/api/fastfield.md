@@ -21,6 +21,7 @@ For example, `<FastField name="firstName" />` will only re-render when there are
 - Changes to `values.firstName`, `errors.firstName`, `touched.firstName`, or `isSubmitting`. This is determined by shallow comparison. Note: dotpaths are supported.
 - A prop is added/removed to the `<FastField name="firstName" />`
 - The `name` prop changes
+- The `shouldUpdate` method is used to overwrite FastField's default `shouldComponentUpdate()`
 
 Other than for these aforementioned situations, `<FastField />` will not re-render when other parts of Formik state change. However, all updates triggered by a `<FastField />` will trigger re-renders to other "vanilla" `<Field />` components.
 
@@ -44,12 +45,14 @@ const Basic = () => (
       initialValues={{
         firstName: '',
         lastName: '',
+        address: '',
         email: '',
       }}
       validationSchema={Yup.object().shape({
         firstName: Yup.string().required(),
         middleInitial: Yup.string(),
         lastName: Yup.string().required(),
+        address: Yup.string().required(),
         email: Yup.string().email().required(),
       })}
       onSubmit={values => {
@@ -117,6 +120,13 @@ const Basic = () => (
               </div>
             )}
           </Field>
+
+          {/** This <FastField> override FastField's default shouldComponentUpdate 
+          and only updates for changes made to the address field */}
+          <label htmlFor="address">Address</label>
+          <FastField name="address" placeholder="New York" shouldUpdate={(nextProps, currentProps) => {
+            return nextProps.address.value !== currentProps.address.value;
+          }} />
 
           {/** Updates for all changes to Formik state and
            all changes by all <Field>s and <FastField>s */}

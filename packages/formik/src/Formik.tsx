@@ -687,6 +687,8 @@ export function useFormik<Values extends FormikValues = FormikValues>({
 
   const executeBlur = React.useCallback(
     (e: any, path?: string) => {
+      if (!e) return
+      
       if (e.persist) {
         e.persist();
       }

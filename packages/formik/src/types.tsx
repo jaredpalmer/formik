@@ -265,7 +265,7 @@ export interface SharedRenderProps<T> {
   /**
    * Field component to render. Can either be a string like 'select' or a component.
    */
-  component?: keyof JSX.IntrinsicElements | React.ComponentType<T | void>;
+  component?: keyof React.JSX.IntrinsicElements | React.ComponentType<T | void>;
 
   /**
    * Render prop (works like React router's <Route render={props =>} />)

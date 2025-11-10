@@ -131,7 +131,7 @@ interface FieldRegistry {
   };
 }
 
-export function useFormik<Values extends FormikValues = FormikValues>({
+export function useFormik<Values extends FormikValues = FormikValues, ValidValues extends Values = Values>({
   validateOnChange = true,
   validateOnBlur = true,
   validateOnMount = false,
@@ -139,7 +139,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   enableReinitialize = false,
   onSubmit,
   ...rest
-}: FormikConfig<Values>) {
+}: FormikConfig<Values, ValidValues>) {
   const props = {
     validateOnChange,
     validateOnBlur,

@@ -93,23 +93,23 @@ export interface FormikHelpers<Values> {
     shouldValidate?: boolean
   ) => Promise<void | FormikErrors<Values>>;
   /** Set value of form field directly */
-  setFieldValue: (
-    field: string,
-    value: any,
+  setFieldValue: <T extends keyof Values>(
+    field: T,
+    value: Values[T],
     shouldValidate?: boolean
   ) => Promise<void | FormikErrors<Values>>;
   /** Set error message of a form field directly */
-  setFieldError: (field: string, message: string | undefined) => void;
+  setFieldError: (field: keyof Values, message: string | undefined) => void;
   /** Set whether field has been touched directly */
   setFieldTouched: (
-    field: string,
+    field: keyof  Values,
     isTouched?: boolean,
     shouldValidate?: boolean
   ) =>  Promise<void | FormikErrors<Values>>;
   /** Validate form values */
   validateForm: (values?: any) => Promise<FormikErrors<Values>>;
   /** Validate field value */
-  validateField: (field: string) => Promise<void> | Promise<string | undefined>;
+  validateField: (field: keyof Values) => Promise<void> | Promise<string | undefined>;
   /** Reset form */
   resetForm: (nextState?: Partial<FormikState<Values>>) => void;
   /** Submit the form imperatively */

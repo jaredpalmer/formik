@@ -7,6 +7,8 @@ title: <Field />
 attribute to match up with Formik state. `<Field />` will default to an HTML
 `<input />` element.
 
+*Note* - Formik doesn't currently support `type="file"`. Please refer to the example below for how to implement file upload with Formik. 
+
 ## Rendering
 
 There are a few different ways to render things with `<Field>`.
@@ -82,6 +84,39 @@ const Example = () => (
 );
 ```
 
+## Example with file upload
+
+```jsx
+import React from 'react';
+
+export default (props) => {
+  const { field, form } = props;
+
+  const handleChange = (event) => {
+    if (!event.target.files) return
+
+    const file = event.target.files[0]
+    
+     // Add code here to transform the file such as with an api call, etc
+    
+    form.setFieldValue(field.name, file)
+  }
+
+  return (
+    <div>
+      <input type="file" onChange={event => handleChange(event)} />
+    </div>
+  )
+}
+```
+
+Use inside form like this:
+```jsx
+<Field
+  name="image"
+  component={FileUpload}
+/>
+```
 #### Props
 
 ---
@@ -308,3 +343,5 @@ const MyForm = () => (
 
 Note: To allow for i18n libraries, the TypeScript typings for `validate` are
 slightly relaxed and allow you to return a `Function` (e.g. `i18n('invalid')`).
+
+### 

@@ -181,7 +181,7 @@ export const Footer: React.FC<FooterProps> = props => {
                 className="appearance-none w-full px-4 py-2 outline-none border border-gray-300 text-base leading-6 rounded-md text-gray-900 bg-white placeholder-gray-500 focus:outline-none focus:ring focus:ring-blue focus:border-blue-300 transition duration-150 ease-in-out lg:max-w-xs"
                 placeholder="Enter your email"
               />
-              <span className="mt-2 lg:mt-0 lg:ml-3 flex-shrink-0 inline-flex rounded-md shadow-sm">
+              <span className="sm:mt-0 mt-2 sm:ml-3 flex-shrink-0 inline-flex rounded-md shadow-sm">
                 <button
                   type="button"
                   className="inline-flex items-center px-4 py-2 border border-transparent text-base leading-6 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-500 focus:outline-none focus:border-blue-700 focus:ring focus:ring-blue active:bg-blue-700 transition ease-in-out duration-150"

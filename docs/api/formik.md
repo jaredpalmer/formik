@@ -380,10 +380,10 @@ an input from uncontrolled to controlled.
 Note: `initialValues` not available to the higher-order component, use
 `mapPropsToValues` instead.
 
-### `onReset?: (values: Values, formikBag: FormikBag) => void`
+### `onReset?: (values: Values, formikBag: FormikBag, initialValues: Values) => void`
 
 Your optional form reset handler. It is passed your forms `values` and the
-"FormikBag".
+"FormikBag" and the `initialValues`.
 
 ### `onSubmit: (values: Values, formikBag: FormikBag) => void | Promise<any>`
 

@@ -1009,7 +1009,39 @@ describe('<Formik>', () => {
           setSubmitting: expect.any(Function),
           setTouched: expect.any(Function),
           setValues: expect.any(Function),
-        })
+        }),
+        InitialValues
+      );
+    });
+
+    it('should call onReset with values and actions and initialValues when form is reset with values', () => {
+      const onReset = jest.fn();
+      const { getProps } = renderFormik({
+        initialValues: InitialValues,
+        onSubmit: noop,
+        onReset,
+      });
+
+      const NewInitialValues = { name: 'jared', age: 31,}
+
+      act(() => {
+        getProps().resetForm({values: NewInitialValues});
+      });
+
+      expect(onReset).toHaveBeenCalledWith(
+        InitialValues,
+        expect.objectContaining({
+          resetForm: expect.any(Function),
+          setErrors: expect.any(Function),
+          setFieldError: expect.any(Function),
+          setFieldTouched: expect.any(Function),
+          setFieldValue: expect.any(Function),
+          setStatus: expect.any(Function),
+          setSubmitting: expect.any(Function),
+          setTouched: expect.any(Function),
+          setValues: expect.any(Function),
+        }),
+        NewInitialValues
       );
     });
 

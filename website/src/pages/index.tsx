@@ -1,17 +1,17 @@
-import * as React from 'react';
 import { Banner } from 'components/Banner';
-import { Sticky } from 'components/Sticky';
 import { Nav } from 'components/Nav';
+import { Sticky } from 'components/Sticky';
+import * as React from 'react';
 
-import { siteConfig } from 'siteConfig';
-import Link from 'next/link';
+import cn from 'classnames';
 import { Footer } from 'components/Footer';
-import { ClientsMarquee } from 'components/clients/ClientsMarquee';
 import { Seo } from 'components/Seo';
+import { ClientsMarquee } from 'components/clients/ClientsMarquee';
+import { Inter } from 'next/font/google';
 import Head from 'next/head';
 import Image from 'next/image';
-import { Inter } from 'next/font/google';
-import cn from 'classnames';
+import Link from 'next/link';
+import { siteConfig } from 'siteConfig';
 
 const inter = Inter({ subsets: ['latin'] });
 export interface HomeProps {}
@@ -82,7 +82,7 @@ const Home: React.FC<HomeProps> = props => {
                 }}
               />
             </div>
-            <div className="lg:flex lg:max-w-md xl:max-w-xl lg:items-start lg:space-between">
+            <div className="lg:flex lg:max-w-md lg:mx-4 xl:max-w-xl lg:items-start lg:space-between">
               <div className="">
                 <div className="text-center lg:text-left md:max-w-2xl md:mx-auto ">
                   <h1 className="text-4xl tracking-tight leading-10 font-extrabold text-gray-900 sm:leading-none sm:text-6xl lg:text-5xl xl:text-6xl">
@@ -121,7 +121,7 @@ const Home: React.FC<HomeProps> = props => {
             </div>
           </div>
         </div>
-        <div className="text-lg border-t border-gray-100 bg-gray-50 ">
+        <div className="text-lg border-t border-gray-100 bg-gray-50 lg:mx-4">
           <div className="py-24  ">
             <div className="mx-auto container px-4 lg:px-0">
               <div className="lg:grid lg:grid-cols-3 lg:gap-8">

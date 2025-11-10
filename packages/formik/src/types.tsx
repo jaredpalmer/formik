@@ -86,18 +86,18 @@ export interface FormikHelpers<Values> {
   setTouched: (
     touched: FormikTouched<Values>,
     shouldValidate?: boolean
-  ) => Promise<void | FormikErrors<Values>>;
+  ) => Promise<void | FormikErrors<Values>> | FormikErrors<Values> | void;
   /** Manually set values object  */
   setValues: (
     values: React.SetStateAction<Values>,
     shouldValidate?: boolean
-  ) => Promise<void | FormikErrors<Values>>;
+  ) => Promise<void | FormikErrors<Values>> | FormikErrors<Values> | void;
   /** Set value of form field directly */
   setFieldValue: (
     field: string,
     value: any,
     shouldValidate?: boolean
-  ) => Promise<void | FormikErrors<Values>>;
+  ) => Promise<void | FormikErrors<Values>> | FormikErrors<Values> | void;
   /** Set error message of a form field directly */
   setFieldError: (field: string, message: string | undefined) => void;
   /** Set whether field has been touched directly */
@@ -105,15 +105,19 @@ export interface FormikHelpers<Values> {
     field: string,
     isTouched?: boolean,
     shouldValidate?: boolean
-  ) =>  Promise<void | FormikErrors<Values>>;
+  ) => Promise<void | FormikErrors<Values>> | FormikErrors<Values> | void;
   /** Validate form values */
-  validateForm: (values?: any) => Promise<FormikErrors<Values>>;
+  validateForm: (
+    values?: any
+  ) => FormikErrors<Values> | Promise<FormikErrors<Values>>;
   /** Validate field value */
-  validateField: (field: string) => Promise<void> | Promise<string | undefined>;
+  validateField: (
+    field: string
+  ) => Promise<string | undefined | void> | string | undefined | void;
   /** Reset form */
   resetForm: (nextState?: Partial<FormikState<Values>>) => void;
   /** Submit the form imperatively */
-  submitForm: () => Promise<void>;
+  submitForm: () => Promise<void> | void;
   /** Set Formik state, careful! */
   setFormikState: (
     f:
@@ -232,7 +236,10 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
    * Validation function. Must return an error object or promise that
    * throws an error object where that object keys map to corresponding value.
    */
-  validate?: (values: Values) => void | object | Promise<FormikErrors<Values>>;
+  validate?: (
+    values: Values,
+    field?: string
+  ) => void | object | Promise<FormikErrors<Values>>;
 
   /** Inner ref */
   innerRef?: React.Ref<FormikProps<Values>>;
@@ -247,7 +254,7 @@ export type FormikProps<Values> = FormikSharedConfig &
   FormikHelpers<Values> &
   FormikHandlers &
   FormikComputedProps<Values> &
-  FormikRegistration & { submitForm: () => Promise<any> };
+  FormikRegistration & { submitForm: () => Promise<any> | any };
 
 /** Internal Formik registration methods that get passed down as props */
 export interface FormikRegistration {
@@ -302,9 +309,15 @@ export interface FieldMetaProps<Value> {
 /** Imperative handles to change a field's value, error and touched */
 export interface FieldHelperProps<Value> {
   /** Set the field's value */
-  setValue: (value: Value, shouldValidate?: boolean) => Promise<void | FormikErrors<Value>>;
+  setValue: (
+    value: Value,
+    shouldValidate?: boolean
+  ) => Promise<void | FormikErrors<Value>> | FormikErrors<Value> | void;
   /** Set the field's touched value */
-  setTouched: (value: boolean, shouldValidate?: boolean) => Promise<void | FormikErrors<Value>>;
+  setTouched: (
+    value: boolean,
+    shouldValidate?: boolean
+  ) => Promise<void | FormikErrors<Value>> | FormikErrors<Value> | void;
   /** Set the field's error value */
   setError: (value: string | undefined) => void;
 }

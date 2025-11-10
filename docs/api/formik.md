@@ -243,7 +243,7 @@ component.
 
 #### `validateForm: (values?: any) => Promise<FormikErrors<Values>>`
 
-Imperatively call your `validate` or `validateSchema` depending on what was specified. You can optionally pass values to validate against and this modify Formik state accordingly, otherwise this will use the current `values` of the form.
+Imperatively call your `validate` or `validateSchema` depending on what was specified. You can optionally pass values to validate against, otherwise this will use the current `values` of the form.
 
 #### `validateField: (field: string) => void`
 

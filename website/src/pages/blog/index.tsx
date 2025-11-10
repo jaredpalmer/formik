@@ -10,14 +10,14 @@ import matter from 'gray-matter';
 import { postFilePaths, POSTS_PATH } from 'lib/blog/mdxUtils';
 import Link from 'next/link';
 import path from 'path';
-import { Inter } from 'next/font/google';
+// import { Inter } from 'next/font/google';
 
-const inter = Inter({ subsets: ['latin'] });
+// const inter = Inter({ subsets: ['latin'] });
 
 export default function Index({ posts }: any) {
   return (
     <>
-      <div className={cn('h-full min-h-full', inter.className)}>
+      <div className={cn('h-full min-h-full')}>
         <Banner />
         <Sticky>
           <Nav />

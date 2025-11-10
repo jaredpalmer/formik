@@ -10,10 +10,10 @@ import { ClientsMarquee } from 'components/clients/ClientsMarquee';
 import { Seo } from 'components/Seo';
 import Head from 'next/head';
 import Image from 'next/image';
-import { Inter } from 'next/font/google';
+// import { Inter } from 'next/font/google';
 import cn from 'classnames';
 
-const inter = Inter({ subsets: ['latin'] });
+// const inter = Inter({ subsets: ['latin'] });
 export interface HomeProps {}
 
 const Home: React.FC<HomeProps> = props => {
@@ -26,7 +26,7 @@ const Home: React.FC<HomeProps> = props => {
       <Head>
         <title>Formik: Build forms in React, without the tears</title>
       </Head>
-      <div className={cn('bg-gray-50 h-full min-h-full', inter.className)}>
+      <div className={cn('bg-gray-50 h-full min-h-full')}>
         <Banner />
         <Sticky>
           <Nav />

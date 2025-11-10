@@ -945,7 +945,7 @@ const SignupForm = () => {
 };
 ```
 
-As you can see above, `useField()` gives us the ability to connect any kind input of React component to Formik as if it were a `<Field>` + `<ErrorMessage>`. We can use it to build a group of reusable inputs that fit our needs.
+As you can see above, `useField()` gives us the ability to connect any kind of input in a React component to Formik as if it were a `<Field>` + `<ErrorMessage>`. We can use it to build a group of reusable inputs that fit our needs.
 
 ## Wrapping Up
 

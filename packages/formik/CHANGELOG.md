@@ -1,5 +1,11 @@
 # formik
 
+## 2.4.9
+
+### Patch Changes
+
+- [#4051](https://github.com/jaredpalmer/formik/pull/4051) [`8f9d04d`](https://github.com/jaredpalmer/formik/commit/8f9d04d206146ca941facf37ddd9ddb459c459dc) Thanks [@Moumouls](https://github.com/Moumouls)! - fix: jsx ref for react 19
+
 ## 2.4.8
 
 ### Patch Changes

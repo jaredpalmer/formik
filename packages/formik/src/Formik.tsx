@@ -1000,10 +1000,11 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   return ctx;
 }
 
+type NoInfer<A> = [A, never][A extends any ? 0 : 1];
 export function Formik<
   Values extends FormikValues = FormikValues,
   ExtraProps = {}
->(props: FormikConfig<Values> & ExtraProps) {
+>(props: FormikConfig<Values> & NoInfer<ExtraProps>) {
   const formikbag = useFormik<Values>(props);
   const { component, children, render, innerRef } = props;
 

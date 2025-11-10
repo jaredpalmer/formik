@@ -2,6 +2,7 @@ import deepmerge from 'deepmerge';
 import isPlainObject from 'lodash/isPlainObject';
 import cloneDeep from 'lodash/cloneDeep';
 import * as React from 'react';
+import { NativeSyntheticEvent } from 'react-native'
 import isEqual from 'react-fast-compare';
 import invariant from 'tiny-warning';
 import { FieldConfig } from './Field';
@@ -601,7 +602,13 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   );
 
   const executeChange = React.useCallback(
-    (eventOrTextValue: string | React.ChangeEvent<any>, maybePath?: string) => {
+    (
+      eventOrTextValue:
+        | string
+        | React.ChangeEvent<any>
+        | NativeSyntheticEvent<any>,
+      maybePath?: string
+    ) => {
       // By default, assume that the first argument is a string. This allows us to use
       // handleChange with React Native and React Native Web's onChangeText prop which
       // provides just the value of the input.
@@ -617,8 +624,8 @@ export function useFormik<Values extends FormikValues = FormikValues>({
           (eventOrTextValue as React.ChangeEvent<any>).persist();
         }
         const target = eventOrTextValue.target
-          ? (eventOrTextValue as React.ChangeEvent<any>).target
-          : (eventOrTextValue as React.ChangeEvent<any>).currentTarget;
+          ? (eventOrTextValue as React.ChangeEvent<any> | NativeSyntheticEvent<any>).target
+          : (eventOrTextValue as React.ChangeEvent<any> | NativeSyntheticEvent<any>).currentTarget;
 
         const {
           type,
@@ -658,8 +665,8 @@ export function useFormik<Values extends FormikValues = FormikValues>({
 
   const handleChange = useEventCallback<FormikHandlers['handleChange']>(
     (
-      eventOrPath: string | React.ChangeEvent<any>
-    ): void | ((eventOrTextValue: string | React.ChangeEvent<any>) => void) => {
+      eventOrPath: string | React.ChangeEvent<any> | NativeSyntheticEvent<any>
+    ): void | ((eventOrTextValue: string | React.ChangeEvent<any> | NativeSyntheticEvent<any>) => void) => {
       if (isString(eventOrPath)) {
         return event => executeChange(event, eventOrPath);
       } else {
@@ -805,7 +812,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   });
 
   const handleSubmit = useEventCallback(
-    (e?: React.FormEvent<HTMLFormElement>) => {
+    (e?: React.FormEvent<HTMLFormElement> | NativeSyntheticEvent<HTMLFormElement>) => {
       if (e && e.preventDefault && isFunction(e.preventDefault)) {
         e.preventDefault();
       }

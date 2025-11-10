@@ -226,7 +226,7 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
   /**
    * A Yup Schema or a function that returns a Yup schema
    */
-  validationSchema?: any | (() => any);
+  validationSchema?: any | ((props: FormikProps<Values>) => any);
 
   /**
    * Validation function. Must return an error object or promise that

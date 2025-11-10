@@ -385,15 +385,16 @@ describe('Field / FastField', () => {
           component: 'input',
         });
         rerender();
-
-        act(() => {
-          getFormProps().validateField('name');
+        
+        const error = await act(async () => {
+          return await getFormProps().validateField('name');
         });
 
         rerender();
         await waitFor(() => {
           expect(validate).toHaveBeenCalled();
           expect(getFormProps().errors.name).toBe('Error!');
+          expect(error).toBe('Error!');
         });
       }
     );
@@ -408,12 +409,15 @@ describe('Field / FastField', () => {
         // workaround for `useEffect` to run: https://github.com/facebook/react/issues/14050
         rerender();
 
-        act(() => {
-          getFormProps().validateField('name');
+        const error = await act(async () => {
+          return await getFormProps().validateField('name');
         });
 
         expect(validate).toHaveBeenCalled();
-        await waitFor(() => expect(getFormProps().errors.name).toBe('Error!'));
+        await waitFor(() => {
+          expect(getFormProps().errors.name).toBe('Error!')
+          expect(error).toBe('Error!')
+        });
       }
     );
 
@@ -432,15 +436,16 @@ describe('Field / FastField', () => {
 
         rerender();
 
-        act(() => {
-          getFormProps().validateField('name');
+        const error = await act(async () => {
+          return await getFormProps().validateField('name');
         });
 
-        await waitFor(() =>
+        await waitFor(() => {
           expect(getFormProps().errors).toEqual({
             name: errorMessage,
           })
-        );
+          expect(error).toBe(errorMessage)
+        });
       }
     );
 
@@ -460,13 +465,12 @@ describe('Field / FastField', () => {
 
         rerender();
 
-        act(() => {
-          getFormProps().validateField('user.name');
-        });
+        const error = await act(async () => await getFormProps().validateField('user.name'));
 
-        await waitFor(() =>
+        await waitFor(() => {
           expect(getFormProps().errors).toEqual({ user: { name: 'required' } })
-        );
+          expect(error).toBe('required')
+        });
       }
     );
   });

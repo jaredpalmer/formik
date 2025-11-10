@@ -484,11 +484,10 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     }
   }, [enableReinitialize, props.initialStatus, props.initialTouched]);
 
-  const validateField = useEventCallback((name: string) => {
+  const validateField = useEventCallback((name: string): Promise<string | undefined> => {
     // This will efficiently validate a single field by avoiding state
     // changes if the validation function is synchronous. It's different from
     // what is called when using validateForm.
-
     if (
       fieldRegistry.current[name] &&
       isFunction(fieldRegistry.current[name].validate)
@@ -506,6 +505,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
               payload: { field: name, value: error },
             });
             dispatch({ type: 'SET_ISVALIDATING', payload: false });
+            return error;
           });
       } else {
         dispatch({
@@ -522,15 +522,17 @@ export function useFormik<Values extends FormikValues = FormikValues>({
       return runValidationSchema(state.values, name)
         .then((x: any) => x)
         .then((error: any) => {
+          const fieldError = getIn(error, name);
           dispatch({
             type: 'SET_FIELD_ERROR',
-            payload: { field: name, value: getIn(error, name) },
+            payload: { field: name, value: fieldError },
           });
           dispatch({ type: 'SET_ISVALIDATING', payload: false });
-        });
+          return fieldError
+        })
     }
 
-    return Promise.resolve();
+    return Promise.resolve(undefined);
   });
 
   const registerField = React.useCallback((name: string, { validate }: any) => {

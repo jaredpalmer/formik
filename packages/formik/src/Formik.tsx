@@ -418,7 +418,12 @@ export function useFormik<Values extends FormikValues = FormikValues>({
         dispatchFn();
       }
     },
-    [props.initialErrors, props.initialStatus, props.initialTouched, props.onReset]
+    [
+      props.initialErrors,
+      props.initialStatus,
+      props.initialTouched,
+      props.onReset,
+    ]
   );
 
   React.useEffect(() => {
@@ -1020,21 +1025,43 @@ export function Formik<
       // eslint-disable-next-line
     }, []);
   }
+
+  const getElementToRender = ({
+    component,
+    render,
+    children,
+    formikbag,
+  }: {
+    component:
+      | React.ComponentType<FormikProps<Values>>
+      | React.ReactNode
+      | undefined;
+    render: ((bag: FormikProps<Values>) => React.ReactNode) | undefined;
+    children:
+      | ((bag: FormikProps<Values>) => React.ReactNode)
+      | React.ReactNode
+      | undefined;
+    formikbag: FormikProps<Values>;
+  }): React.ReactNode | null => {
+    if (component && React.isValidElement(component))
+      return React.createElement(
+        (component as unknown) as React.ComponentType<FormikProps<Values>>,
+        formikbag
+      );
+    if (render) return render(formikbag);
+    if (children) {
+      if (isFunction(children))
+        return (children as (bag: FormikProps<Values>) => React.ReactNode)(
+          formikbag as FormikProps<Values>
+        );
+      if (!isEmptyChildren(children)) return React.Children.only(children);
+    }
+    return null;
+  };
+
   return (
     <FormikProvider value={formikbag}>
-      {component
-        ? React.createElement(component as any, formikbag)
-        : render
-        ? render(formikbag)
-        : children // children come last, always called
-        ? isFunction(children)
-          ? (children as (bag: FormikProps<Values>) => React.ReactNode)(
-              formikbag as FormikProps<Values>
-            )
-          : !isEmptyChildren(children)
-          ? React.Children.only(children)
-          : null
-        : null}
+      {getElementToRender({ component, render, children, formikbag })}
     </FormikProvider>
   );
 }

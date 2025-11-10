@@ -128,6 +128,19 @@ describe('<Formik>', () => {
     expect(props.submitCount).toBe(0);
   });
 
+  it('should initialize isValid to false if validateOnMount until validation performed', async () => {
+    const validate = jest.fn(() => Promise.resolve());
+
+    const { getProps } = renderFormik({ validateOnMount: true, validate });
+    expect(getProps().isValid).toBe(false);
+
+    await waitFor(() => {
+      expect(validate).toHaveBeenCalledTimes(1);
+    });
+
+    expect(getProps().isValid).toBe(true);
+  });
+
   describe('handleChange', () => {
     it('updates values based on name attribute', () => {
       const { getProps, getByTestId } = renderFormik<Values>();

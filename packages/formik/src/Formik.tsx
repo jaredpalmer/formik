@@ -152,6 +152,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   const initialTouched = React.useRef(props.initialTouched || emptyTouched);
   const initialStatus = React.useRef(props.initialStatus);
   const isMounted = React.useRef<boolean>(false);
+  const validated = React.useRef<boolean>(false);
   const fieldRegistry = React.useRef<FieldRegistry>({});
   if (__DEV__) {
     // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -314,6 +315,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
         props.validationSchema ? runValidationSchema(values) : {},
         props.validate ? runValidateHandler(values) : {},
       ]).then(([fieldErrors, schemaErrors, validateErrors]) => {
+        validated.current = true;
         const combinedErrors = deepmerge.all<FormikErrors<Values>>(
           [fieldErrors, schemaErrors, validateErrors],
           { arrayMerge }
@@ -951,15 +953,18 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   );
 
   const isValid = React.useMemo(
-    () =>
-      typeof isInitialValid !== 'undefined'
-        ? dirty
-          ? state.errors && Object.keys(state.errors).length === 0
-          : isInitialValid !== false && isFunction(isInitialValid)
-          ? (isInitialValid as (props: FormikConfig<Values>) => boolean)(props)
-          : (isInitialValid as boolean)
-        : state.errors && Object.keys(state.errors).length === 0,
-    [isInitialValid, dirty, state.errors, props]
+    () => {
+      if (!validated.current && validateOnMount) return false
+      if (typeof isInitialValid !== 'undefined') {
+        if (dirty) return state.errors && Object.keys(state.errors).length === 0;
+
+        return isInitialValid !== false && isFunction(isInitialValid)
+            ? (isInitialValid as (props: FormikConfig<Values>) => boolean)(props)
+            : (isInitialValid as boolean)
+      }
+      return state.errors && Object.keys(state.errors).length === 0
+    },
+    [isInitialValid, dirty, state.errors, props, validated.current]
   );
 
   const ctx = {

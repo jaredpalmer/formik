@@ -731,9 +731,10 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     []
   );
 
-  const setStatus = React.useCallback((status: any) => {
-    dispatch({ type: 'SET_STATUS', payload: status });
-  }, []);
+  const setStatus = React.useCallback((status: React.SetStateAction<any>) => {
+    const resolvedStatus = isFunction(status) ? status(state.status) : status;
+    dispatch({ type: 'SET_STATUS', payload: resolvedStatus });
+  }, []);  
 
   const setSubmitting = React.useCallback((isSubmitting: boolean) => {
     dispatch({ type: 'SET_ISSUBMITTING', payload: isSubmitting });

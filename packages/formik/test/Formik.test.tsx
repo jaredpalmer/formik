@@ -892,6 +892,20 @@ describe('<Formik>', () => {
 
         expect(getProps().status).toEqual(status);
       });
+
+      it('setStatus takes a function which can patch status', () => {
+        const initialStatus = { name: 'sam' };
+        const { getProps } = renderFormik({ initialStatus: initialStatus });
+
+        act(() => {
+          getProps().setStatus((status: typeof initialStatus) => ({
+            ...status,
+            age: 80,
+          }));
+        });
+        expect(getProps().status.name).toEqual('sam');
+        expect(getProps().status.age).toEqual(80);
+      });
     });
   });
 

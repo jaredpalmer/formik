@@ -859,7 +859,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   };
 
   const executeSubmit = useEventCallback(() => {
-    return onSubmit(state.values, imperativeMethods);
+    return onSubmit(state.values, { ...imperativeMethods, ...state });
   });
 
   const handleReset = useEventCallback(e => {

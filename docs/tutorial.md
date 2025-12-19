@@ -854,8 +854,9 @@ const MySelect = ({children, label, ...props }) => {
   return (
     <div>
       <label htmlFor={props.id || props.name}>{label}</label>
-      <select {...field} {...props} />
-      {children}
+      <select {...field} {...props}>
+        {children}
+      </select>
       {meta.touched && meta.error ? (
         <div className="error">{meta.error}</div>
       ) : null}

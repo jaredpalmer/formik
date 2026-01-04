@@ -211,7 +211,7 @@ const Home: React.FC<HomeProps> = props => {
               className="shadow-2xl"
               title="dazzling-swanson-wne32"
               allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
-              sandbox="allow-autoplay allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
+              sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
             ></iframe>
           </div>
           <div className="py-24 px-4 sm:px-6 lg:px-8  mx-auto container">

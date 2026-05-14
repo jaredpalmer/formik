@@ -63,10 +63,8 @@ export interface ArrayHelpers<T extends any[] = any[]> {
   pop<X extends T[number] = T[number]>(): X | undefined;
 }
 
-/**
- * Some array helpers!
- */
-export const move = <T,>(array: T[], from: number, to: number) => {
+/** Move an element in an array from one index to another. Returns a new array. */
+export const move = <T,>(array: T[], from: number, to: number): T[] => {
   const copy = copyArrayLike(array);
   const value = copy[from];
   copy.splice(from, 1);
@@ -74,11 +72,12 @@ export const move = <T,>(array: T[], from: number, to: number) => {
   return copy;
 };
 
+/** Swap two elements in an array by index. Returns a new array. */
 export const swap = <T,>(
   arrayLike: ArrayLike<T>,
   indexA: number,
   indexB: number
-) => {
+): T[] => {
   const copy = copyArrayLike(arrayLike);
   const a = copy[indexA];
   copy[indexA] = copy[indexB];
@@ -86,27 +85,29 @@ export const swap = <T,>(
   return copy;
 };
 
+/** Insert an element at the given index. Returns a new array. */
 export const insert = <T,>(
   arrayLike: ArrayLike<T>,
   index: number,
   value: T
-) => {
+): T[] => {
   const copy = copyArrayLike(arrayLike);
   copy.splice(index, 0, value);
   return copy;
 };
 
+/** Replace the element at the given index. Returns a new array. */
 export const replace = <T,>(
   arrayLike: ArrayLike<T>,
   index: number,
   value: T
-) => {
+): T[] => {
   const copy = copyArrayLike(arrayLike);
   copy[index] = value;
   return copy;
 };
 
-const copyArrayLike = (arrayLike: ArrayLike<any>) => {
+const copyArrayLike = <T,>(arrayLike: ArrayLike<T>): T[] => {
   if (!arrayLike) {
     return [];
   } else if (Array.isArray(arrayLike)) {

@@ -26,7 +26,7 @@ const Home: React.FC<HomeProps> = props => {
       <Head>
         <title>Formik: Build forms in React, without the tears</title>
       </Head>
-      <div className={cn('bg-gray-50 h-full min-h-full', inter.className)}>
+      <div className={cn('bg-gray-50 h-full min-h-full lg:px-8', inter.className)}>
         <Banner />
         <Sticky>
           <Nav />

@@ -37,7 +37,13 @@
     "dist"
   ],
   "peerDependencies": {
+    "@types/react": ">=16.8.0",
     "react": ">=16.8.0"
+  },
+  "peerDependenciesMeta": {
+    "@types/react": {
+      "optional": true
+    }
   },
   "sideEffects": false,
   "scripts": {

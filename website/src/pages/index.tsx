@@ -68,7 +68,7 @@ const Home: React.FC<HomeProps> = props => {
             </svg>
           </div>
 
-          <div className="py-24 mx-auto container px-4 lg:px-0 sm:mt-12  relative">
+          <div className="py-24 mx-auto container px-4 sm:px-6 lg:px-8 sm:mt-12  relative">
             <div className="hidden lg:block absolute lg:w-3/5 right-0 lg:-rotate-[30deg] lg:translate-x-1/3 lg:-translate-y-16 md:w-1/2 sm:w-2/3 top-0  transform  -translate-y-12">
               <Image
                 alt="Formik Hero Background Image"
@@ -123,7 +123,7 @@ const Home: React.FC<HomeProps> = props => {
         </div>
         <div className="text-lg border-t border-gray-100 bg-gray-50 ">
           <div className="py-24  ">
-            <div className="mx-auto container px-4 lg:px-0">
+            <div className="mx-auto container px-4 sm:px-6 lg:px-8">
               <div className="lg:grid lg:grid-cols-3 lg:gap-8">
                 <div>
                   <div>

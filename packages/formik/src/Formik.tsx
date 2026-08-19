@@ -316,7 +316,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
       ]).then(([fieldErrors, schemaErrors, validateErrors]) => {
         const combinedErrors = deepmerge.all<FormikErrors<Values>>(
           [fieldErrors, schemaErrors, validateErrors],
-          { arrayMerge }
+          { arrayMerge, isMergeableObject }
         );
         return combinedErrors;
       });
@@ -1117,6 +1117,35 @@ export function prepareDataForValidation<T extends FormikValues>(
     }
   }
   return data;
+}
+
+/**
+ * Custom `isMergeableObject` for deepmerge that excludes React elements.
+ *
+ * Validation error values may be arbitrary React nodes (e.g. rich error
+ * messages rendered in the UI). React elements are plain objects whose
+ * `props` can contain nested elements, so deepmerge would recurse into them
+ * indefinitely and throw "Maximum call stack size exceeded". Marking elements
+ * (and other non-plain objects) as non-mergeable lets them pass through
+ * untouched.
+ */
+const REACT_ELEMENT_TYPE =
+  typeof Symbol === 'function' && Symbol.for
+    ? Symbol.for('react.element')
+    : 0xeac7;
+
+function isMergeableObject(value: any): boolean {
+  if (value === null || typeof value !== 'object' || Array.isArray(value)) {
+    return false;
+  }
+  if ((value as any).$$typeof === REACT_ELEMENT_TYPE) {
+    return false;
+  }
+  return (
+    !(value instanceof Date) &&
+    !(value instanceof RegExp) &&
+    typeof value.then !== 'function'
+  );
 }
 
 /**

@@ -244,4 +244,12 @@ export const users = [
     image: '/images/logos/techjobsbe.svg',
     infoLink: 'https://techjobs.be',
   },
+  {
+    caption: 'Authier',
+    image: '/images/logos/authier.svg',
+    infoLink: 'https://www.authier.pm/',
+    style: {
+      maxWidth: 100,
+    },
+  },
 ];

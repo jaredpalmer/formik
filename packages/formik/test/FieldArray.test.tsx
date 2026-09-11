@@ -212,6 +212,61 @@ describe('<FieldArray />', () => {
       const expected = ['jared', 'andrea'];
       expect(formikBag.values.friends).toEqual(expected);
     });
+
+    it('should return the last value even if it is falsy', () => {
+      let arrayHelpers: FieldArrayRenderProps;
+      render(
+        <TestForm
+          initialValues={{ friends: ['jared', ''] }}
+          initialTouched={{ friends: [true, true] }}
+        >
+          {() => (
+            <FieldArray
+              name="friends"
+              render={arrayProps => {
+                arrayHelpers = arrayProps;
+                return null;
+              }}
+            />
+          )}
+        </TestForm>
+      );
+
+      act(() => {
+        expect(arrayHelpers.pop()).toEqual('');
+      });
+    });
+
+    it('should also pop the last error and touched', () => {
+      let formikBag: any;
+      let arrayHelpers: FieldArrayRenderProps;
+      render(
+        <TestForm
+          initialErrors={{ friends: ['e0', 'e1', 'e2'] }}
+          initialTouched={{ friends: [true, true, true] }}
+        >
+          {(props: any) => {
+            formikBag = props;
+            return (
+              <FieldArray
+                name="friends"
+                validateOnChange={false}
+                render={arrayProps => {
+                  arrayHelpers = arrayProps;
+                  return null;
+                }}
+              />
+            );
+          }}
+        </TestForm>
+      );
+
+      act(() => {
+        arrayHelpers.pop();
+      });
+      expect(formikBag.errors.friends).toEqual(['e0', 'e1']);
+      expect(formikBag.touched.friends).toEqual([true, true]);
+    });
   });
 
   describe('props.swap()', () => {
@@ -390,6 +445,30 @@ describe('<FieldArray />', () => {
       });
 
       expect(formikBag.errors.friends).toEqual(undefined);
+    });
+
+    it('should return the removed value even if it is falsy', () => {
+      let helpers: FieldArrayRenderProps;
+      render(
+        <TestForm
+          initialValues={{ friends: ['', 'bob'] }}
+          initialTouched={{ friends: [true, true] }}
+        >
+          {() => (
+            <FieldArray
+              name="friends"
+              render={arrayProps => {
+                helpers = arrayProps;
+                return null;
+              }}
+            />
+          )}
+        </TestForm>
+      );
+
+      act(() => {
+        expect(helpers.remove(0)).toEqual('');
+      });
     });
   });
 

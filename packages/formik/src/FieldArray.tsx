@@ -290,12 +290,16 @@ class FieldArrayInner<Values = {}> extends React.Component<
   remove<T>(index: number): T {
     // We need to make sure we also remove relevant pieces of `touched` and `errors`
     let result: any;
+    let hasResult = false;
     this.updateArrayField(
       // so this gets call 3 times
       (array?: any[]) => {
         const copy = array ? copyArrayLike(array) : [];
-        if (!result) {
+        // only the first call (values) holds the removed value,
+        // a falsy one must not be overwritten by errors/touched
+        if (!hasResult) {
           result = copy[index];
+          hasResult = true;
         }
         if (isFunction(copy.splice)) {
           copy.splice(index, 1);
@@ -319,12 +323,17 @@ class FieldArrayInner<Values = {}> extends React.Component<
   pop<T>(): T {
     // Remove relevant pieces of `touched` and `errors` too!
     let result: any;
+    let hasResult = false;
     this.updateArrayField(
       // so this gets call 3 times
       (array: any[]) => {
         const tmp = array.slice();
-        if (!result) {
-          result = tmp && tmp.pop && tmp.pop();
+        // pop every time so errors/touched shrink too,
+        // but only the first call (values) holds the result
+        const popped = tmp && tmp.pop && tmp.pop();
+        if (!hasResult) {
+          result = popped;
+          hasResult = true;
         }
         return tmp;
       },

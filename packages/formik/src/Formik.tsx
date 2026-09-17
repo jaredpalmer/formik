@@ -585,6 +585,8 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     (field: string, value: React.SetStateAction<any>, shouldValidate?: boolean) => {
       const resolvedValue = isFunction(value) ? value(getIn(state.values, field)) : value;
 
+      const values = setIn(stateRef.current.values, field, resolvedValue);
+
       dispatch({
         type: 'SET_FIELD_VALUE',
         payload: {
@@ -595,7 +597,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
       const willValidate =
         shouldValidate === undefined ? validateOnChange : shouldValidate;
       return willValidate
-        ? validateFormWithHighPriority(setIn(state.values, field, resolvedValue))
+        ? validateFormWithHighPriority(values)
         : Promise.resolve();
     }
   );

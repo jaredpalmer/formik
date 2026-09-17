@@ -711,6 +711,36 @@ describe('<Formik>', () => {
         });
       });
 
+      it('setFieldValue should validate correctly when called multiple times asynchronously', async () => {
+        const validationSchema = Yup.object({
+          value1: Yup.string().label('Value 1').required(),
+          value2: Yup.string().label('Value 2').required(),
+        });
+
+        const { getProps, rerender } = renderFormik({
+          initialValues: {
+            value1: '',
+            value2: '',
+          },
+          validationSchema,
+        });
+
+        await act(async () => {
+          await Promise.resolve();
+
+          await getProps().setFieldValue('value1', 'New value one');
+          await getProps().setFieldValue('value2', 'New value two');
+        });
+
+        rerender();
+
+        await waitFor(() => {
+          expect(getProps().values.value1).toBe('New value one');
+          expect(getProps().values.value2).toBe('New value two');
+          expect(getProps().errors).toEqual({});
+        });
+      });
+
       it('setFieldValue should run validations when validateOnChange is true (default)', async () => {
         const validate = jest.fn(() => ({}));
         const { getProps, rerender } = renderFormik({ validate });

@@ -545,6 +545,19 @@ describe('<Formik>', () => {
         });
       });
 
+      it('should reset isSubmitting and isValidating if the validate function throws an error', async () => {
+        const err = new Error('Async Error');
+        const validate = jest.fn().mockRejectedValue(err);
+        const { getProps } = renderFormik({ validate });
+
+        await act(async () => {
+          await expect(getProps().submitForm()).rejects.toThrow('Async Error');
+        });
+
+        expect(getProps().isSubmitting).toBe(false);
+        expect(getProps().isValidating).toBe(false);
+      });
+
       describe('submitForm helper should not break promise chain if handleSubmit has returned rejected Promise', () => {
         it('submitForm helper should not break promise chain if handleSubmit has returned rejected Promise', async () => {
           const error = new Error('This Error is typeof Error');
@@ -558,6 +571,20 @@ describe('<Formik>', () => {
             await expect(submitForm()).rejects.toEqual(error);
           });
         });
+      });
+
+      it('should reset isSubmitting if onSubmit throws synchronously', async () => {
+        const error = new Error('This Error is thrown synchronously');
+        const onSubmit = () => {
+          throw error;
+        };
+        const { getProps } = renderFormik({ onSubmit });
+
+        await act(async () => {
+          await expect(getProps().submitForm()).rejects.toEqual(error);
+        });
+
+        expect(getProps().isSubmitting).toBe(false);
       });
     });
 

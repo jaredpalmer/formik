@@ -334,13 +334,21 @@ export function useFormik<Values extends FormikValues = FormikValues>({
   const validateFormWithHighPriority = useEventCallback(
     (values: Values = state.values) => {
       dispatch({ type: 'SET_ISVALIDATING', payload: true });
-      return runAllValidations(values).then(combinedErrors => {
-        if (!!isMounted.current) {
-          dispatch({ type: 'SET_ISVALIDATING', payload: false });
-          dispatch({ type: 'SET_ERRORS', payload: combinedErrors });
+      return runAllValidations(values).then(
+        combinedErrors => {
+          if (!!isMounted.current) {
+            dispatch({ type: 'SET_ISVALIDATING', payload: false });
+            dispatch({ type: 'SET_ERRORS', payload: combinedErrors });
+          }
+          return combinedErrors;
+        },
+        actualException => {
+          if (!!isMounted.current) {
+            dispatch({ type: 'SET_ISVALIDATING', payload: false });
+          }
+          throw actualException;
         }
-        return combinedErrors;
-      });
+      );
     }
   );
 
@@ -773,6 +781,11 @@ export function useFormik<Values extends FormikValues = FormikValues>({
               return;
             }
           } catch (error) {
+            // onSubmit threw before it could call setSubmitting(false),
+            // so we have to clean up here
+            if (!!isMounted.current) {
+              dispatch({ type: 'SUBMIT_FAILURE' });
+            }
             throw error;
           }
 
@@ -800,6 +813,13 @@ export function useFormik<Values extends FormikValues = FormikValues>({
           }
         }
         return;
+      },
+      error => {
+        // validation itself failed, don't leave isSubmitting stuck on true
+        if (!!isMounted.current) {
+          dispatch({ type: 'SUBMIT_FAILURE' });
+        }
+        throw error;
       }
     );
   });

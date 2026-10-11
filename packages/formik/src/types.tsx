@@ -154,6 +154,7 @@ export interface FormikHandlers {
     props: string | FieldConfig<Value>
   ) => FieldInputProps<Value>;
   getFieldMeta: <Value>(name: string) => FieldMetaProps<Value>;
+  getFieldValue?: <Value = any>(name: string) => Value;
   getFieldHelpers: <Value = any>(name: string) => FieldHelperProps<Value>;
 }
 

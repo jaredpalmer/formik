@@ -509,7 +509,7 @@ describe('<Formik>', () => {
         const { getByTestId } = renderFormik({ onSubmit, validate });
 
         fireEvent.submit(getByTestId('form'));
-        await waitFor(() => expect(onSubmit).toBeCalled());
+        await waitFor(() => expect(onSubmit).toHaveBeenCalled());
       });
 
       it('should not submit the form if invalid', () => {
@@ -518,7 +518,7 @@ describe('<Formik>', () => {
         const { getByTestId } = renderFormik({ onSubmit, validate });
 
         fireEvent.submit(getByTestId('form'));
-        expect(onSubmit).not.toBeCalled();
+        expect(onSubmit).not.toHaveBeenCalled();
       });
 
       it('should not submit the form if validate function throws an error', async () => {
@@ -535,7 +535,7 @@ describe('<Formik>', () => {
         });
 
         await waitFor(() => {
-          expect(onSubmit).not.toBeCalled();
+          expect(onSubmit).not.toHaveBeenCalled();
           expect(global.console.warn).toHaveBeenCalledWith(
             expect.stringMatching(
               /Warning: An unhandled error was caught during validation in <Formik validate ./
@@ -576,7 +576,7 @@ describe('<Formik>', () => {
         const { getByTestId } = renderFormik({ onSubmit, validate });
 
         fireEvent.submit(getByTestId('form'));
-        await waitFor(() => expect(onSubmit).toBeCalled());
+        await waitFor(() => expect(onSubmit).toHaveBeenCalled());
       });
 
       it('should not submit the form if invalid', () => {
@@ -585,7 +585,7 @@ describe('<Formik>', () => {
         const { getByTestId } = renderFormik({ onSubmit, validate });
 
         fireEvent.submit(getByTestId('form'));
-        expect(onSubmit).not.toBeCalled();
+        expect(onSubmit).not.toHaveBeenCalled();
       });
 
       it('should not submit the form if validate function rejects with an error', async () => {
@@ -600,7 +600,7 @@ describe('<Formik>', () => {
         });
 
         await waitFor(() => {
-          expect(onSubmit).not.toBeCalled();
+          expect(onSubmit).not.toHaveBeenCalled();
           expect(global.console.warn).toHaveBeenCalledWith(
             expect.stringMatching(
               /Warning: An unhandled error was caught during validation in <Formik validate ./
@@ -1069,6 +1069,36 @@ describe('<Formik>', () => {
         getProps().resetForm({ values: getProps().values });
       });
       expect(getProps().dirty).toBe(false);
+    });
+  });
+
+  describe('getFieldValue', () => {
+    const nestedValues = {
+      name: 'jared',
+      user: { email: 'a@b.com' },
+      addresses: [{ city: 'Boston' }, { city: 'Denver' }],
+    };
+
+    it('returns flat, nested and array-indexed values', () => {
+      const { getProps } = renderFormik<any>({ initialValues: nestedValues });
+      expect(getProps().getFieldValue!('name')).toBe('jared');
+      expect(getProps().getFieldValue!('user.email')).toBe('a@b.com');
+      expect(getProps().getFieldValue!('addresses[1].city')).toBe('Denver');
+      expect(getProps().getFieldValue!('addresses.0.city')).toBe('Boston');
+    });
+
+    it('returns undefined for missing paths', () => {
+      const { getProps } = renderFormik<any>({ initialValues: nestedValues });
+      expect(getProps().getFieldValue!('user.phone')).toBeUndefined();
+      expect(getProps().getFieldValue!('nope.deep.path')).toBeUndefined();
+    });
+
+    it('reflects updated values', () => {
+      const { getProps } = renderFormik<any>({ initialValues: nestedValues });
+      act(() => {
+        getProps().setFieldValue('user.email', 'c@d.com', false);
+      });
+      expect(getProps().getFieldValue!('user.email')).toBe('c@d.com');
     });
   });
 

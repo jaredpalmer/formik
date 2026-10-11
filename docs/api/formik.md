@@ -200,6 +200,14 @@ Set the value of a field imperatively. `field` should match the key of
 
 If `validateOnChange` is set to `true` and there are errors, they will be resolved in the returned `Promise`.
 
+#### `getFieldValue: <Value = any>(name: string) => Value`
+
+Get the current value of a field by name. Supports dot and bracket notation for nested fields (e.g. `user.email` or `friends[0].name`). Returns `undefined` if the path does not exist.
+
+```tsx
+const email = formik.getFieldValue('user.email');
+```
+
 #### `setStatus: (status?: any) => void`
 
 Set a top-level `status` to anything you want imperatively. Useful for

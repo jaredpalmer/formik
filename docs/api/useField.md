@@ -67,7 +67,7 @@ const Example = () => (
 
 ## `useField<Value = any>(name: string | FieldHookConfig<Value>): [FieldInputProps<Value>, FieldMetaProps<Value>, FieldHelperProps]`
 
-A custom React Hook that returns a 3-tuple (an array with three elements) containing `FieldProps`, `FieldMetaProps` and `FieldHelperProps`. It accepts either a string of a field name or an object as an argument. The object must at least contain a `name` key. This object is a subset of the props that you would pass to `<Field>` and the values and functions in `FieldProps` will mimic the behavior of `<Field>` exactly. This is useful, and generally preferred, since it allows you to take advantage of Formik's checkbox, radio, and multiple select behavior when the object contains the relevant key/values (e.g. `type: 'checkbox'`, `multiple: true`, etc.).
+A custom React Hook that returns a 3-tuple (an array with three elements) containing `FieldInputProps`, `FieldMetaProps` and `FieldHelperProps`. It accepts either a string of a field name or an object as an argument. The object must at least contain a `name` key. This object is a subset of the props that you would pass to `<Field>` and the values and functions in `FieldProps` will mimic the behavior of `<Field>` exactly. This is useful, and generally preferred, since it allows you to take advantage of Formik's checkbox, radio, and multiple select behavior when the object contains the relevant key/values (e.g. `type: 'checkbox'`, `multiple: true`, etc.).
 
 `FieldMetaProps` contains computed values about the field which can be used to style or otherwise change the field. `FieldHelperProps` contains helper functions that allow you to imperatively change a field's values.
 

@@ -1487,6 +1487,60 @@ describe('<Formik>', () => {
     });
   });
 
+  it('should not let a `__proto__` key in validation errors replace the prototype of the merged errors', async () => {
+    const validate = () =>
+      JSON.parse(
+        '{"__proto__": {"name": "poisoned", "isAdmin": true}, "age": "required"}'
+      );
+
+    const { getProps } = renderFormik({ validate });
+
+    await act(async () => {
+      await getProps().validateForm();
+    });
+
+    const errors = getProps().errors as any;
+    expect(Object.getPrototypeOf(errors)).toBe(Object.prototype);
+    expect(errors.name).toBeUndefined();
+    expect(errors.isAdmin).toBeUndefined();
+    expect(errors).toEqual({ age: 'required' });
+    expect(({} as any).isAdmin).toBeUndefined();
+  });
+
+  it('should strip nested `__proto__` keys while keeping merged validation errors', async () => {
+    const validate = () =>
+      JSON.parse(
+        '{"users": [{"firstName": "required", "__proto__": {"lastName": "poisoned"}}], "meta": {"__proto__": {"x": 1}, "y": "bad"}}'
+      );
+
+    const validationSchema = Yup.object({
+      users: Yup.array().of(
+        Yup.object({
+          lastName: Yup.string().required('required'),
+        })
+      ),
+    });
+
+    const { getProps } = renderFormik({
+      initialValues: { users: [{ firstName: '', lastName: '' }] } as any,
+      validate,
+      validationSchema,
+    });
+
+    await act(async () => {
+      await getProps().validateForm();
+    });
+
+    const errors = getProps().errors as any;
+    expect(errors).toEqual({
+      users: [{ firstName: 'required', lastName: 'required' }],
+      meta: { y: 'bad' },
+    });
+    expect(Object.getPrototypeOf(errors.users[0])).toBe(Object.prototype);
+    expect(Object.getPrototypeOf(errors.meta)).toBe(Object.prototype);
+    expect(errors.meta.x).toBeUndefined();
+  });
+
   it('should not eat an error thrown by the validationSchema', async () => {
     const validationSchema = () => {
       throw new Error('broken validations');

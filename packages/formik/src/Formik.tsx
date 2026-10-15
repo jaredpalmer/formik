@@ -315,7 +315,9 @@ export function useFormik<Values extends FormikValues = FormikValues>({
         props.validate ? runValidateHandler(values) : {},
       ]).then(([fieldErrors, schemaErrors, validateErrors]) => {
         const combinedErrors = deepmerge.all<FormikErrors<Values>>(
-          [fieldErrors, schemaErrors, validateErrors],
+          [fieldErrors, schemaErrors, validateErrors].map(
+            stripUnsafeErrorKeys
+          ),
           { arrayMerge }
         );
         return combinedErrors;
@@ -1117,6 +1119,64 @@ export function prepareDataForValidation<T extends FormikValues>(
     }
   }
   return data;
+}
+
+/**
+ * Returns `errors` without any own `__proto__` keys (at any depth of plain
+ * objects and arrays).
+ *
+ * Objects created with `JSON.parse` (or `Object.defineProperty`) can carry an
+ * own `__proto__` key. deepmerge assigns every source key onto the merged
+ * result, so such a key would replace the prototype of the merged errors object
+ * instead of being copied as data, letting inherited "errors" appear on fields
+ * that were never reported. The input is returned as-is when it has no such key.
+ */
+function stripUnsafeErrorKeys<T>(errors: T): T {
+  if (Array.isArray(errors)) {
+    let copy: any[] | undefined;
+    errors.forEach((item, index) => {
+      const safeItem = stripUnsafeErrorKeys(item);
+      if (safeItem !== item) {
+        copy = copy || errors.slice();
+        copy[index] = safeItem;
+      }
+    });
+    return (copy || errors) as any;
+  }
+
+  if (!isPlainErrorObject(errors)) {
+    return errors;
+  }
+
+  const source = errors as any;
+  // built key by key so that `__proto__` is never assigned
+  const copy: any = {};
+  let changed = false;
+  Object.keys(source).forEach(key => {
+    if (key === '__proto__') {
+      changed = true;
+      return;
+    }
+    const value = source[key];
+    const safeValue = stripUnsafeErrorKeys(value);
+    if (safeValue !== value) {
+      changed = true;
+    }
+    copy[key] = safeValue;
+  });
+  return changed ? copy : errors;
+}
+
+function isPlainErrorObject(value: any): boolean {
+  if (value === null || typeof value !== 'object') {
+    return false;
+  }
+  // leave React elements (valid error messages) and class instances untouched
+  if (value.$$typeof !== undefined) {
+    return false;
+  }
+  const proto = Object.getPrototypeOf(value);
+  return proto === Object.prototype || proto === null;
 }
 
 /**

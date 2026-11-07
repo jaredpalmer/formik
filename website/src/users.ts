@@ -244,4 +244,9 @@ export const users = [
     image: '/images/logos/techjobsbe.svg',
     infoLink: 'https://techjobs.be',
   },
+  {
+    caption: 'Wordfully',
+    image: '/images/logos/wordfully.svg',
+    infoLink: 'https://wordfully.ai/',
+  },
 ];
